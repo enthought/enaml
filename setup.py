@@ -5,7 +5,7 @@ from distutils.core import setup
 
 
 setup(name = 'traitsml',
-    version='0.1',
+    version='0.1a',
     author = 'Enthought, Inc',
     author_email = 'info@enthought.com',
     url = 'https://github.com/enthought/traitsml',
