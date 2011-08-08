@@ -1,4 +1,4 @@
-from traits.api import HasTraits, Float, Bool, Tuple, List, Enum
+from traits.api import HasTraits, Float, Bool, Tuple, List, Enum, Str
 
 from ..constants import Color
 
@@ -7,7 +7,7 @@ class FontStyle(HasTraits):
     """Styles for text, similar to Cascading Style Sheets."""
     
     # A List of font families: the first available one will be used.
-    families = List
+    families = List(Str)
     
     # The size of a font, in pixels (px).
     size = Float
