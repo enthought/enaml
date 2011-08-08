@@ -2,6 +2,7 @@ from traits.api import HasTraits, Int, Tuple
 
 
 class Geometry(HasTraits):
+    """The position and size of an element, and associated traits."""
     
     # The absolute x-coordinate of an element (in pixels).
     x = Int
