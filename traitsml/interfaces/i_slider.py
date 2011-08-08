@@ -1,11 +1,9 @@
 from traits.api import Any, Bool, Callable, Enum, Float
 
 from ..constants import Orientation, TickPosition
-from ..registry import register_element
 from .i_element import IElement
 
 
-@register_element
 class ISlider(IElement):
     
     # A slider's range is fixed at 0.0 to 1.0. Therefore, the 

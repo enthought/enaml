@@ -1,10 +1,8 @@
 from traits.api import Any, Bool, Callable 
 
-from ..registry import register_element
 from .i_line_edit import ILineEdit
 
 
-@register_element
 class IField(ILineEdit):
     """ A basic value field that performs validation/conversion
     on the text value. It is a subclass of LineEdit.

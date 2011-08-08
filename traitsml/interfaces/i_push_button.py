@@ -1,10 +1,8 @@
 from traits.api import Bool, Event, Str
 
-from ..registry import register_element
 from .i_element import IElement
 
 
-@register_element
 class IPushButton(IElement):
     
     # Whether the button is currently pressed - Bool

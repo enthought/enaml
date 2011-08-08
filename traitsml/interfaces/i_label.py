@@ -1,11 +1,9 @@
 from traits.api import Any, Bool, Enum, Int, Str
 
 from ..constants import Align
-from ..registry import register_element
 from .i_element import IElement
 
 
-@register_element
 class ILabel(IElement):
     
     # The alignment of the text in the label

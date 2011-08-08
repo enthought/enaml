@@ -1,11 +1,9 @@
 from traits.api import Any, Bool, Enum, Event, Int, Str
 
 from ..constants import Align
-from ..registry import register_element
 from .i_element import IElement
 
 
-@register_element
 class ILineEdit(IElement):
 
     # The alignment of the text

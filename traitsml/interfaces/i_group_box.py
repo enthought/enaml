@@ -1,11 +1,9 @@
 from traits.api import Bool, Enum, Str
 
 from ..constants import Align
-from ..registry import register_element
 from .i_element import IElement
 
 
-@register_element
 class IGroupBox(IElement):
 
     # The aligment of the title of the group box.

@@ -1,11 +1,9 @@
 from traits.api import Bool, Enum, Int, Dict, Str
 
 from ..constants import TabPosition
-from ..registry import register_element
 from .i_element import IElement
 
 
-@register_element
 class ITabGroup(IElement):
     
     # The index of the currently shown tab.
