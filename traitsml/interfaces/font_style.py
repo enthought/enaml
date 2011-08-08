@@ -5,7 +5,7 @@ from ..constants import Color
 
 
 class FontStyle(HasTraits):
-    """Style text, similarly to Cascading Style Sheets."""
+    """Styles for text, similar to Cascading Style Sheets."""
     
     # A List of font families: the first available one will be used.
     families = List
