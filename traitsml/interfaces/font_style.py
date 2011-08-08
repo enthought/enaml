@@ -1,5 +1,4 @@
-from traits.api import (HasTraits, Int, Float, Bool, Str, Tuple, List,
-        Enum)
+from traits.api import HasTraits, Float, Bool, Tuple, List, Enum
 
 from ..constants import Color
 
