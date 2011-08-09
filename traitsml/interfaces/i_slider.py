@@ -1,4 +1,4 @@
-from traits.api import Any, Bool, Callable, Enum, Float
+from traits.api import Any, Bool, Callable, Enum, Float, Range
 
 from ..constants import Orientation, TickPosition
 from .i_element import IElement
