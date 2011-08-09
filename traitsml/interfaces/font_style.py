@@ -6,8 +6,11 @@ from ..constants import Color
 class FontStyle(HasTraits):
     """Styles for text, similar to Cascading Style Sheets."""
     
-    # A List of font families: the first available one will be used.
-    families = List(Str)
+    # A prioritized List of font families, e.g., ['times', 'serif'].
+    family = List(Str)
+    
+    # A List of particular fonts within a family, e.g., ['Times Roman'].
+    face = List(Str)
     
     # The size of a font, in pixels (px).
     size = Float
