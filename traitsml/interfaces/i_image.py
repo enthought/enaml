@@ -1,4 +1,4 @@
-from traits.api import 
+from traits.api import Any, Callable, Int
 
 from .i_element import IElement
 
