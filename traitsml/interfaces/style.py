@@ -6,6 +6,9 @@ from ..constants import Color
 class Style(HasTraits):
     """Styles for an element."""
 
+    # An element's foreground color.
+    fg_color = Tuple(Color.DEFAULT)
+
     # An element's background color.
     bg_color = Tuple(Color.DEFAULT)
 
