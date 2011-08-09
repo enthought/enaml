@@ -26,7 +26,7 @@ class ISlider(IElement):
     
     # The floating point percentage (0.0 - 1.0) which is 
     # the position of the slider. Always updated while sliding.
-    slider_pos = Float
+    slider_pos = Range(0.0, 1.0)
     
     # The single tick step for the slider for arrow presses
     single_step = Float
