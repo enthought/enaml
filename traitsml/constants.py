@@ -209,4 +209,37 @@ class TickPosition(ConstantContainer):
 
     RIGHT = Constant()
 
+class WindowRegion(ConstantContainer):
+    """A button's location in a dialog window, for example."""
+    
+    DEFAULT = Constant()
+
+    TOP_LEFT = Constant()
+
+    TOP_CENTER = Constant()
+
+    TOP_RIGHT = Constant()
+
+    MIDDLE_LEFT = Constant()
+
+    MIDDLE_CENTER = Constant()
+
+    MIDDLE_RIGHT = Constant()
+
+    BOTTOM_LEFT = Constant()
+
+    BOTTOM_CENTER = Constant()
+
+    BOTTOM_RIGHT = Constant()
+
+class DialogType(ConstantContainer):
+    """Predefined combinations of buttons to use in a dialog."""
+
+    CLOSE = Constant()
+
+    OK_CANCEL = Constant()
+
+    ACCEPT_REJECT = Constant()
+
+    YES_NO = Constant()
 
