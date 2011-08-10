@@ -4,13 +4,7 @@ from .i_element import IElement
 
 
 class ISpinBox(IElement):
-    """An interface for spin box widgets.
-
-    Use `step` to differentiate between Float and Int spin boxes?
-
-    Different methods/Events for increase and decrease?
-
-    """
+    """An interface for spin box widgets."""
 
     # The minimum value for this spin box.
     min_val = Either(Int, Float)
