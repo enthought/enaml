@@ -1,4 +1,4 @@
-from traits.api import Date, Int
+from traits.api import Date, Int, Either, Str
 
 from .i_element import IElement
 
@@ -6,8 +6,11 @@ from .i_element import IElement
 class ICalendar(IElement):
     """A calendar widget: select day, month, and year."""
 
-    # The currently selected day.
-    selection = Date
+    # The currently selected date.
+    selection = Either(Date, Str)
+
+    # The selected day
+    day = Int
 
     # The visible month
     month = Int
