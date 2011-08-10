@@ -19,3 +19,4 @@ class IImage(IElement):
     
     # The height of an image (in pixels).
     height = Int
+

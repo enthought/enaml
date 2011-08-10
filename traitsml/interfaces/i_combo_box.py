@@ -20,3 +20,4 @@ class IComboBox(IElement):
 
     # The event fired when a combo box is clicked.
     clicked = Event
+

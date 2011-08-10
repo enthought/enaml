@@ -15,3 +15,4 @@ class IDialog(IElement):
     # The event fired when a dialog is closed. 
     # Set this to the desired return value.
     closed = Event
+

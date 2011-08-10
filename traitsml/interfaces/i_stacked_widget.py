@@ -14,3 +14,4 @@ class IStackedWidget(IElement):
 
     # The event fired when a different element is moved to the top.
     reordered = Event
+
