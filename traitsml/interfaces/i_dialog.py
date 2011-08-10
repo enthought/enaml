@@ -1,0 +1,16 @@
+from traits.api import Bool, List, Event
+
+from .i_element import IElement
+
+
+class IDialog(IElement):
+
+    # Does this dialog capture focus?
+    modal = Bool
+
+    #
+    buttons = List # XXX List of what? PushButtons, Strings, etc.
+
+    # The event fired when a dialog is closed. 
+    # Set this to the desired return value.
+    closed = Event
