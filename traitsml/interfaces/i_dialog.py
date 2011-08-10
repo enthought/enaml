@@ -4,7 +4,8 @@ from .i_element import IElement
 
 
 class IDialog(IElement):
-
+    """A base interface for all dialogs."""
+    
     # Does this dialog capture focus?
     modal = Bool
 
