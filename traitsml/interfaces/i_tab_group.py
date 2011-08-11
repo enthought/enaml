@@ -1,6 +1,6 @@
 from traits.api import Bool, Enum, Int, Dict, Str
 
-from ..constants import TabPosition
+from ..constants import Align
 from .i_element import IElement
 
 
@@ -16,6 +16,6 @@ class ITabGroup(IElement):
     tab_names = Dict(IElement, Str)
 
     # The position of the tab bar relative to the pages.
-    tab_position = Enum(TabPosition.DEFAULT, *TabPosition.values())
+    tab_position = Enum(Align.DEFAULT, *Align.values())
 
 
