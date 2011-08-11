@@ -1,9 +1,9 @@
-from traits.api import Bool, HasTraits, Int, Tuple, Enum
+from traits.api import Bool, Interface, Int, Tuple, Enum
 
 from ..constants import Align, Color
 
 
-class Style(HasTraits):
+class IStyle(Interface):
     """ Styles for an element. """
 
     align = Enum(Align.DEFAULT, *Align.values())

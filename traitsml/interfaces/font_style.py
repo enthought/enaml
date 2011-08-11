@@ -1,9 +1,9 @@
-from traits.api import HasTraits, Float, Bool, Tuple, List, Enum, Str
+from traits.api import Interface, Float, Bool, Tuple, List, Enum, Str
 
 from ..constants import Color
 
 
-class FontStyle(HasTraits):
+class IFontStyle(Interface):
     """Styles for text, similar to Cascading Style Sheets."""
     
     # A prioritized List of font families, e.g., ['times', 'serif'].

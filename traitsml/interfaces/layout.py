@@ -1,9 +1,9 @@
-from traits.api import HasTraits, Int, Tuple, Enum
+from traits.api import Interface, Int, Tuple, Enum
 
 from ..constants import Layout
 
 
-class ElementLayout(HasTraits):
+class ILayout(Interface):
     """A configurable representation of an element's layout."""
     
     # The current type of layout, e.g., VERTICAL.

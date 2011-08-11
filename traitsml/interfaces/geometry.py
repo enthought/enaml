@@ -1,7 +1,7 @@
-from traits.api import HasTraits, Int, Tuple
+from traits.api import Interface, Int, Tuple
 
 
-class Geometry(HasTraits):
+class IGeometry(Interface):
     """The position and size of an element, and associated traits."""
     
     # The absolute x-coordinate of an element (in pixels).
