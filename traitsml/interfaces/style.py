@@ -1,6 +1,6 @@
 from traits.api import Bool, Interface, Int, Tuple, Enum
 
-from ..constants import Align, Color
+from ..constants import Align, Border, Color
 
 
 class IStyle(Interface):
@@ -18,7 +18,7 @@ class IStyle(Interface):
     border_size = Tuple(Int, Int, Int, Int)
 
     # The style of border lines.
-    border_type = Enum('solid', 'dashed')
+    border_type = Enum(Border.DEFAULT, *Border.values())
     
     # The color of an element's border.
     border_color = Tuple(Color.DEFAULT)
