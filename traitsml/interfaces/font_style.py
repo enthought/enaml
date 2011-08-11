@@ -4,30 +4,51 @@ from ..constants import Color
 
 
 class IFontStyle(Interface):
-    """Styles for text, similar to Cascading Style Sheets."""
-    
-    # A prioritized List of font families, e.g., ['times', 'serif'].
+    """Styles for text, similar to Cascading Style Sheets.
+
+    Attributes
+    ----------
+    family : List
+        A prioritized List of font families.
+        E.g., "times" or "serif".
+
+    face : List
+        A prioritized list of fonts within a family.
+        For example, "Times Roman".
+
+    size : Float
+        The size of a font, in pixels (px).
+
+    fg_color : Tuple
+        The foreground color of a font.
+
+    bg_color : Tuple
+        The background color of a font.
+
+    bold : Bool
+        Whether text is bold.
+
+    italic : Bool
+        Whether text is italicized or not.
+
+    text_decoration : Enum
+        A line below, through, or above text. 
+
+    """
     family = List(Str)
-    
-    # A List of particular fonts within a family, e.g., ['Times Roman'].
-    face = List(Str)
-    
-    # The size of a font, in pixels (px).
+
+    face = List(Str)    
+
     size = Float
     
-    # The foreground color of a font.
     fg_color = Tuple(Color.DEFAULT)
     
-    # The background color of a font.
     bg_color = Tuple(Color.DEFAULT)
     
-    # Specify if a font is bold.
     bold = Bool(False)
     
-    # Determine whether a font is italicized.
     italic = Bool(False)
     
-    # A line below, through, or above text.
     text_decoration = Enum('underline', 'strike', 'overline')
     
     

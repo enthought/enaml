@@ -4,26 +4,42 @@ from ..constants import Align, Border, Color
 
 
 class IStyle(Interface):
-    """ Styles for an element. """
+    """ Styles for an element.
+    
+    align : Enum
+        An element's alignment, specified as a constant.
 
+    fg_color = Tuple
+        An element's foreground color, given as an RGBA value.
+
+    bg_color : Tuple
+        An element's background color, given as an RGBA value.
+
+    border_size = Tuple
+        The width of an element's border (px): top, right, bottom, left.
+
+    border_type = Enum
+        The style of border lines, specified as a constant.
+
+    border_color = Tuple
+        The color of an element's border.
+
+    wrap = Bool
+        Whether or not to wrap text.
+
+    """
     align = Enum(Align.DEFAULT, *Align.values())
 
-    # An element's foreground color.
     fg_color = Tuple(Color.DEFAULT)
 
-    # An element's background color.
     bg_color = Tuple(Color.DEFAULT)
 
-    # The width of an element's border (px): top, right, bottom, left.
     border_size = Tuple(Int, Int, Int, Int)
 
-    # The style of border lines.
     border_type = Enum(Border.DEFAULT, *Border.values())
     
-    # The color of an element's border.
     border_color = Tuple(Color.DEFAULT)
 
-    # Whether or not to wrap text.
     wrap = Bool
 
 
