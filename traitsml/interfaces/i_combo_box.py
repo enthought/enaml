@@ -8,21 +8,27 @@ class IComboBox(IElement):
     
     Attributes
     ----------
-    items : dict. Maps the string representation of the choices to the
-            the choices themselves.
+    items : Dict
+        Maps the string representations of the choices to the
+        the choices themselves.
 
-    value : object. The current selection.
+    value : Any
+        The current selection.
 
-    sort : boolean. Whether or not to sort the choices for display.
+    sort : Bool
+        Whether or not to sort the choices for display.
 
-    sort_key : callable. If sort is True, this sort key will be used.
+    sort_key : Callable
+        If sort is True, this sort key will be used.
 
-    active : Bool.
+    active : Bool
         Whether or not the combo box is currently dropped down.
 
-    selected : event. Fired when a new selection is made.
+    selected : Event
+        Fired when a new selection is made.
 
-    clicked : event. Fired when the combo box is clicked.
+    clicked : Event
+        Fired when the combo box is clicked.
 
     """
     items = Dict(Str, Any)

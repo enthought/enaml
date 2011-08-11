@@ -8,13 +8,17 @@ class ICalendar(IElement):
     
     Attributes
     ----------
-    date : A Python datetime.date object.
+    date : datetime.date
+        The currently selected date.
     
-    day : An integer.
+    day : Int
+        The selected day.
     
-    month : An integer.
+    month : Int
+        The selected month.
     
-    year : An integer
+    year : Int
+        The selected year.
     
     The date attribute is synchronized bi-directionally with the
     day, month, and year attributes.

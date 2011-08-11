@@ -9,13 +9,17 @@ class IDialog(IElement):
     
     Attributes
     ----------
-    interaction : An Interaction enum value.
+    interaction : Enum
+        The window interaction type (e.g., modal).
 
-    buttons : A Buttons enum value.
+    buttons : Enum
+        One of a predefined list of button combinations.
 
-    closed : event. Fired when the dialog is closed.
+    closed : Event
+        Fired when the dialog is closed.
 
-    result : The value returned by the dialog when it's closed.
+    result : Any
+        The value that a dialog returns when it is closed.
 
     """
     interaction = Enum(Interaction.DEFAULT, *Interaction.values())
