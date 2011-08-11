@@ -4,7 +4,9 @@ from .i_element import IElement
 
 
 class IStackedWidget(IElement):
-    """A stack of widgets, with only one visible element at a time."""
+    """ A stack of widgets, with only one visible widget at a time. 
+    
+    """
 
     # A List of widgets that can be displayed.
     items = List

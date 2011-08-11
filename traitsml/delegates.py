@@ -1,8 +1,8 @@
 import types
-import weakref
 
-from enthought.traits.api import (Any, Bool, CTrait, DelegatesTo, Event, HasStrictTraits, 
-                                  HasTraits, Instance, List, Property, Str, Tuple)
+from enthought.traits.api import (Any, CTrait, DelegatesTo, Event, 
+                                  HasStrictTraits, HasTraits, Instance, List, 
+                                  Property, Str)
 
 
 class Notifier(HasStrictTraits):
@@ -39,7 +39,7 @@ class Assignment(HasStrictTraits):
     
     # The actual trait that holds the value.
     value = Any
-    
+
     def _value_default(self):
         val = eval(self.code, self.global_ns, self.local_ns)
         val = self.validate_trait.validate(self, 'value', val)
@@ -47,19 +47,19 @@ class Assignment(HasStrictTraits):
 
 
 class Binding(HasStrictTraits):
-    
+
     # The code object that holds the expression.
     code = Instance(types.CodeType)
 
-    # The global namespace for the code. 
+    # The global namespace for the code.
     global_ns = Instance(dict)
 
     # The local namespace for the code.
     local_ns = Instance(dict)
-    
+
     # The trait used to validate the default.
     validate_trait = Instance(CTrait)
-    
+
     # The actual trait that holds the value.
     value = Any
     

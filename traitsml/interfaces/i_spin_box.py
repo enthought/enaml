@@ -4,19 +4,34 @@ from .i_element import IElement
 
 
 class ISpinBox(IElement):
-    """An interface for spin box widgets."""
+    """ A spin box widget.
+   
+    Attributes
+    ----------
+    low : Int or Float
+        The minimum value for the spin box.
 
-    # The minimum value for this spin box.
+    high : Int or Float
+        The maximum value for the spin box.
+    
+    value : Int or Float
+        The current value for the spin box.
+
+    step : Int or Float
+        The amount by which `value` can change in a single step.
+
+    changed : Event
+        Fired when the spin box value is updated.
+
+    """
     min_val = Either(Int, Float)
 
-    # The maximum value for this spin box.
     max_val = Either(Int, Float)
 
-    # The current value.
     value = Either(Int, Float)
 
-    # The amount by which `value` can change in a single step.
     step = Either(Int, Float)
 
-    # The event fired when this box's `value` is updated.
     changed = Event
+
+

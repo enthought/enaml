@@ -4,20 +4,29 @@ from .i_element import IElement
 
 
 class ICheckBox(IElement):
-    
-    # Whether the button is currently checked
+    """ A check box widget.
+
+    Attributes
+    ----------
+    checked : boolean. Whether or not the button is currently checked.
+
+    text : string. The text to show next to the check box.
+
+    toggled : event. Fired when the check box is toggled.
+
+    pressed : event. Fired when the check box is pressed.
+
+    released : event. Fired when the check box is released.
+
+    """
     checked = Bool
 
-    # The text to show on the button
     text = Str
     
-    # The event fired when the button is toggled
     toggled = Event
     
-    # The event fired when the button is pressed
     pressed = Event
 
-    # The event fired when the button is released
     released = Event
 
 

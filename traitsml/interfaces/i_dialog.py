@@ -1,24 +1,32 @@
-from traits.api import Bool, Event, Enum, Str
+from traits.api import Any, Event, Enum
 
 from .i_element import IElement
-from ..constants import DialogType, WindowRegion
+from ..constants import Buttons, Interaction
+
 
 class IDialog(IElement):
-    """A base interface for all dialogs."""
+    """ A basic dialog widget whose contents are user defined. 
     
-    # Does this dialog capture focus?
-    modal = Bool
+    Attributes
+    ----------
+    interaction : An Interaction enum value.
 
-    # The part of the dialog in which buttons are located.
-    button_region = Enum(WindowRegion.DEFAULT, *WindowRegion.values())
+    buttons : A Buttons enum value.
 
-    # Available button combinations for a dialog.
-    buttons = Enum(DialogType.DEFAULT, *DialogType.values()) 
+    closed : event. Fired when the dialog is closed.
 
-    # Main content to display in this dialog.
-    message = Str
+    result : The value returned by the dialog when it's closed.
 
-    # The event fired when a dialog is closed. 
-    # Set this to the desired return value.
+    """
+    interaction = Enum(Interaction.DEFAULT, *Interaction.values())
+
+    # XXX - the button position should probably look
+    # at the style.align attribute.
+
+    buttons = Enum(Buttons.DEFAULT, *Buttons.values()) 
+
     closed = Event
+
+    result = Any
+
 

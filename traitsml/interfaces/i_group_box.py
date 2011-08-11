@@ -1,26 +1,29 @@
-from traits.api import Bool, Enum, Str
+from traits.api import Bool, Str
 
-from ..constants import Align
 from .i_element import IElement
 
 
 class IGroupBox(IElement):
+    """ A collection of widgets with optional title, check box
+    and border.
 
-    # The aligment of the title of the group box.
-    alignment = Enum(Align.DEFAULT, *Align.values())
+    Attributes
+    ----------
+    checkable : bool. Whether or not the group has a check box.
 
-    # Whether or not the group box is checkable. Checking a 
-    # group box will enable and disable its children.
+    checked : bool. If checkable, whether or not the box is checked.
+              If a checkable box is unchecked, all children will be
+              disabled.
+
+    title: string. The title of the check box.
+
+    """
     checkable = Bool
 
     # Whether or not the group box is checked.
     checked = Bool(True)
 
-    # A flat group box will not draw sunkend or borders.
-    flat = Bool
-
     # The title of the group box
     title = Str
-
 
 

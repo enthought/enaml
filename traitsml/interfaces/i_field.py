@@ -7,20 +7,26 @@ class IField(ILineEdit):
     """ A basic value field that performs validation/conversion
     on the text value. It is a subclass of LineEdit.
 
+    Attributes
+    ----------
+    error : boolean. Whether or not the from_string or to_string
+            callables raised an exception during conversion.
+    
+    from_string : The callable to be called to convert the string 
+                  in the the text box to the proper python value.
+
+    to_string : The callable to be called to convert the python
+                value to a string for display.
+
+    value : The python value for display in the field.
+
     """
-    # Whether or not the from_string callable raised an 
-    # exception during conversion.
     error = Bool
 
-    # The callable to be called to convert the string in the 
-    # the text box to the proper python value. Defaults to str.
     from_string = Callable(str)
     
-    # The callable to be called to convert the python value
-    # to a string for display. Defaults to str.
     to_string = Callable(str)
       
-    # The python value for display in the field.
     value = Any
  
     

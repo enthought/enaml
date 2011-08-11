@@ -51,32 +51,65 @@ class ConstantContainer(object):
 #------------------------------------------------------------------------------
 class Align(ConstantContainer):
    
-    # The default toolkit alignment
     DEFAULT = Constant()
 
-    # Align with the left edge
     LEFT = Constant()
-
-    # Align with the right edge
+    
     RIGHT = Constant()
+    
+    TOP = Constant()
+    
+    BOTTOM = Constant()
+    
+    CENTER = Constant()
+    
+    TOP_LEFT = Constant()
 
-    # Center horizontally
+    BOTTOM_LEFT = Constant()
+
+    TOP_RIGHT = Constant()
+
+    BOTTOM_RIGHT = Constant()
+
     HCENTER = Constant()
 
-    # Justify in the available space
-    JUSTIFY = Constant()
-
-    # Align with the top
-    TOP = Constant()
-
-    # Align with the bottom
-    BOTTOM = Constant()
-
-    # Center vertically
     VCENTER = Constant()
 
-    # Center vertically and horizontally
-    CENTER = Constant()
+    JUSTIFY = Constant()
+
+
+class Border(ConstantContainer):
+
+    DEFAULT = Constant()
+
+    DOTTED = Constant()
+
+    DASHED = Constant()
+
+    SOLID = Constant()
+
+    RAISED = Constant()
+
+    SUNKEN = Constant()
+
+    NO_BORDER = Constant()
+
+
+class Buttons(ConstantContainer):
+
+    DEFAULT = Constant()
+
+    CLOSE = Constant()
+
+    OK_CANCEL = Constant()
+    
+    SAVE_CANCEL = Constant()
+
+    ACCEPT_REJECT = Constant()
+
+    YES_NO = Constant()
+
+    NO_BUTTONS = Constant()
 
 
 class Color(ConstantContainer):
@@ -122,6 +155,19 @@ class Color(ConstantContainer):
     ERROR = (1.0, 0.75, 0.75, 1.0)
         
 
+class Interaction(ConstantContainer):
+
+    DEFAULT = Constant()
+
+    MODAL = Constant()
+
+    LIVE = Constant()
+
+    NON_MODAL = Constant()
+    
+    LIVE_MODAL = Constant()
+
+
 class Layout(ConstantContainer):
 
     DEFAULT = Constant()
@@ -145,7 +191,7 @@ class Orientation(ConstantContainer):
 
 
 class SizePolicy(ConstantContainer):
-    
+    # XXX - I don't like this even thought i wrote it - SCC.
     # These constant values are intended to be used in 
     # conjunction with the size_hint trait to determine
     # the sizing of a widget. There will be a size policy
@@ -176,70 +222,20 @@ class SizePolicy(ConstantContainer):
     IGNORED = Constant()
 
 
-class TabPosition(ConstantContainer):
-
-    # The position of the tab bar in a TabGroup
+class Ticks(ConstantContainer):
 
     DEFAULT = Constant()
+
+    LEFT = Constant()
+
+    RIGHT = Constant()
 
     TOP = Constant()
 
     BOTTOM = Constant()
 
-    LEFT = Constant()
+    BOTH = Constant()
 
-    RIGHT = Constant()
+    NO_TICKS = ()
 
-
-class TickPosition(ConstantContainer):
-    
-    # The tick position constants for a slider.
-    
-    DEFAULT = Constant()
-    
-    NO_TICKS = Constant()
-
-    BOTH_SIDES = Constant()
-
-    ABOVE = Constant()
-
-    BELOW = Constant()
-
-    LEFT = Constant()
-
-    RIGHT = Constant()
-
-class WindowRegion(ConstantContainer):
-    """A button's location in a dialog window, for example."""
-    
-    DEFAULT = Constant()
-
-    TOP_LEFT = Constant()
-
-    TOP_CENTER = Constant()
-
-    TOP_RIGHT = Constant()
-
-    MIDDLE_LEFT = Constant()
-
-    MIDDLE_CENTER = Constant()
-
-    MIDDLE_RIGHT = Constant()
-
-    BOTTOM_LEFT = Constant()
-
-    BOTTOM_CENTER = Constant()
-
-    BOTTOM_RIGHT = Constant()
-
-class DialogType(ConstantContainer):
-    """Predefined combinations of buttons to use in a dialog."""
-
-    CLOSE = Constant()
-
-    OK_CANCEL = Constant()
-
-    ACCEPT_REJECT = Constant()
-
-    YES_NO = Constant()
 

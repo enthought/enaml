@@ -4,20 +4,34 @@ from .i_element import IElement
 
 
 class IPushButton(IElement):
-    
-    # Whether the button is currently pressed - Bool
+    """ A push button widget.
+
+    Attributes
+    ----------
+    down : Bool.
+        Whether or not the button is currently pressed.
+
+    text : Str.
+        The text to use as the button's label.
+
+    clicked : Event.
+        Fired when the button is clicked.
+
+    pressed : Event.
+        Fired when the button is pressed.
+
+    released: Event. 
+        Fired when the button is released.
+
+    """
     down = Bool
 
-    # The text to show on the button - Str
     text = Str
     
-    # The event fired when the button is clicked - Event
     clicked = Event
     
-    # The event fired when the button is pressed - Event
     pressed = Event
 
-    # The event fired when the button is released - Event
     released = Event
 
 

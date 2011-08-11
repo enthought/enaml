@@ -1,15 +1,16 @@
-from traits.api import Any, Bool, Enum, Int, Str
+from traits.api import Str
 
-from ..constants import Align
 from .i_element import IElement
 
 
 class ILabel(IElement):
+    """ A simple read-only text display.
 
-    # The text in the label - Str
+    Attributes
+    ----------
+    text = string. The text in the label.
+
+    """
     text = Str
     
-    # Whether text should wrap at word break - Bool
-    wrap = Bool
-
 

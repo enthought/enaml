@@ -4,20 +4,40 @@ from .i_element import IElement
 
 
 class IRadioButton(IElement):
+    """ A radio button widget. 
     
-    # Whether the button is currently checked
+    Attributes
+    ----------
+    checked : Bool
+        Whether the button is currently checked.
+
+    text : Str
+        The text to use as the button's label.
+
+    toggled : Event
+        Fired when the button is toggled.
+
+    pressed : Event
+        Fired when the button is pressed.
+
+    released : Event
+        Fired when the button is released.
+    
+    Notes
+    -----
+    If multiple radio buttons are children of the same parent, 
+    then only one of those radio buttons may be checked at a time.
+
+
+    """
     checked = Bool
 
-    # The text to show on the button
     text = Str
     
-    # The event fired when the button is toggled
     toggled = Event
     
-    # The event fired when the button is pressed
     pressed = Event
 
-    # The event fired when the button is released
     released = Event
     
 

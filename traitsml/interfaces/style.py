@@ -1,10 +1,12 @@
-from traits.api import HasTraits, Int, Tuple, Enum
+from traits.api import Bool, HasTraits, Int, Tuple, Enum
 
-from ..constants import Color
+from ..constants import Align, Color
 
 
 class Style(HasTraits):
-    """Styles for an element."""
+    """ Styles for an element. """
+
+    align = Enum(Align.DEFAULT, *Align.values())
 
     # An element's foreground color.
     fg_color = Tuple(Color.DEFAULT)
@@ -20,3 +22,8 @@ class Style(HasTraits):
     
     # The color of an element's border.
     border_color = Tuple(Color.DEFAULT)
+
+    # Whether or not to wrap text.
+    wrap = Bool
+
+

@@ -1,20 +1,31 @@
-from traits.api import Date, Int, Either, Str
+from traits.api import Date, Int
 
 from .i_element import IElement
 
 
 class ICalendar(IElement):
-    """A calendar widget: select day, month, and year."""
+    """ A calendar widget.
+    
+    Attributes
+    ----------
+    date : A Python datetime.date object.
+    
+    day : An integer.
+    
+    month : An integer.
+    
+    year : An integer
+    
+    The date attribute is synchronized bi-directionally with the
+    day, month, and year attributes.
+    
+    """    
+    date = Date
 
-    # The currently selected date.
-    selection = Either(Date, Str)
-
-    # The selected day
     day = Int
 
-    # The visible month
     month = Int
 
-    # The visible year
     year = Int
+
 
