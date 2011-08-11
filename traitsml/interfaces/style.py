@@ -5,7 +5,9 @@ from ..constants import Align, Border, Color
 
 class IStyle(Interface):
     """ Styles for an element.
-    
+
+    Attributes
+    ----------
     align : Enum
         An element's alignment, specified as a constant.
 
