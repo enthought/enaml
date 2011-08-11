@@ -9,16 +9,20 @@ class IField(ILineEdit):
 
     Attributes
     ----------
-    error : boolean. Whether or not the from_string or to_string
-            callables raised an exception during conversion.
+    error : Bool
+        Whether or not the `from_string` or `to_string`
+        callables raised an exception during conversion.
     
-    from_string : The callable to be called to convert the string 
-                  in the the text box to the proper python value.
+    from_string : Callable
+        A callable to convert the string 
+        in the the text box to the proper Python value.
 
-    to_string : The callable to be called to convert the python
-                value to a string for display.
+    to_string : Callable
+        A callable to convert the Python
+        value to a string for display.
 
-    value : The python value for display in the field.
+    value : Any
+        The Python value to display in the field.
 
     """
     error = Bool

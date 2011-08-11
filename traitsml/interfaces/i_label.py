@@ -8,7 +8,8 @@ class ILabel(IElement):
 
     Attributes
     ----------
-    text = string. The text in the label.
+    text : Str
+        The text in the label.
 
     """
     text = Str
