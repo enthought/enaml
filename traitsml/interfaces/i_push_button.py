@@ -8,19 +8,19 @@ class IPushButton(IElement):
 
     Attributes
     ----------
-    down : Bool.
+    down : Bool
         Whether or not the button is currently pressed.
 
-    text : Str.
+    text : Str
         The text to use as the button's label.
 
-    clicked : Event.
+    clicked : Event
         Fired when the button is clicked.
 
-    pressed : Event.
+    pressed : Event
         Fired when the button is pressed.
 
-    released: Event. 
+    released: Event
         Fired when the button is released.
 
     """

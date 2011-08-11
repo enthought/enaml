@@ -13,12 +13,12 @@ class ISlider(IElement):
         Whether or not the slider is pressed down.
 
     from_slider : Callable
-        A conversion function to convert from the slider postion
+        A function to convert from the slider postion
         to the appropriate Python value.
     
     to_slider : Callable
-        A conversion function to convert from the slider position
-        to the appropriate Python value.
+        A function to convert from a Python value
+        to the appropriate slider position.
 
     slider_pos : Float
         The floating point percentage (0.0 - 1.0) which is the 
@@ -66,7 +66,7 @@ class ISlider(IElement):
         
     tick_interval = Float
 
-    ticks = Enum(Ticks.DEFAULT, Ticks.values())
+    ticks = Enum(Ticks.DEFAULT, *Ticks.values())
     
     sliding = Bool
 

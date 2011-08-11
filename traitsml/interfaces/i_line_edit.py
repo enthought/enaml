@@ -4,21 +4,26 @@ from .i_element import IElement
 
 
 class ILineEdit(IElement):
-    """ A single line editable text widget.
+    """ A single-line editable text widget.
 
     Attributes
     ----------
-    max_length : int. The maximum length of the line edit in characters.
+    max_length : Int
+        The maximum length of the line edit in characters.
 
-    read_only : bool. Whether or not the line edit is read only.
+    read_only : Bool
+        Whether or not the line edit is read only.
 
-    text : string. The string to use in the line edit.
+    text : Str
+        The string to use in the line edit.
 
-    text_changed : event. Fired when the text is changed by the user
-                   or programmatically changed.
+    text_changed : Event
+        Fired when the text is changed programmatically,
+        or by the user.
 
-    text_edited : event. Fired when the text is changed by the user
-                  but not programmatically changed.
+    text_edited : Event
+        Fired when the text is changed by the user,
+        and not changed programmatically.
 
     """
     max_length = Int(-1)
