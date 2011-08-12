@@ -146,7 +146,7 @@ class TraitsMLLexer(object):
         # line; it will be ignored for the indentation calculations
         # above. Formfeed characters occurring elsewhere in the
         # leading whitespace have an undefined effect (for instance,
-        # they may reset the space count to zero).
+        # they may reset the space count to zero). 
         value = value.rsplit("\f", 1)[-1]
 
         # First, tabs are replaced (from left to right) by one to eight
