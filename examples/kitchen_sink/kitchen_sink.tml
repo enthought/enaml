@@ -1,41 +1,7 @@
-#------------------------------------------------------------------------------
-# The semantics of the binding operators are as follows:
-#
-#   `=` - Assignment. RHS can be any expression. The assigment will 
-#         be the default value, but the value can be changed later
-#         through Python code or TML expression execution.
-#
-#  `~~' - Delegation. RHS must be a simple attribute expression, 
-#         like a.b or a.b.c and so on. Non attribute expressions here
-#         are a syntax error. The value of the view property and value
-#         of the attribute are synched but the type checking of the
-#         view property is enforced.
-#
-#  `<<` - Binding. RHS can be any expression. The expression will be 
-#         parsed for dependencies and any dependencies which is a trait
-#         attribute on a HasTraits class will have a listener attached.
-#         When the listener fires, the expression will be re-evaluated
-#         and value of the view property updated.
-#
-#  `>>` - Notification. RHS can be any expression. The expression will
-#         be evaluated any time the view property changes.
-#
-#
-# The scoping rules are as follows:
-#
-#  - Imports are global and accessible to everything in the file.
-#  - Each top-level item defines it's own global namespace which is 
-#    unioned with the imports. Included in this namespace are all 
-#    elements that have a declared identfier.
-#  - Each item has a local namespace which includes `self` and `parent`. 
-#    The `self` is a reference to the element itself, whether anonymous
-#    or not. The `parent` is a reference to this items parent element,
-#    whether anonymous or not. The `parent` of top-level elements
-#    is None.
-#
-#------------------------------------------------------------------------------
-from traitsml.constants import Layout, Orientation, SizePolicy, TickPosition
+""" A demonstration of various TraitsML features. """
 
+
+from traitsml.constants import Layout, Orientation, SizePolicy, TickPosition
 
 TabGroup main_container:
     x ~~ model.x
