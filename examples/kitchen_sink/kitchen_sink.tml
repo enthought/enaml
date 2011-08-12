@@ -1,5 +1,6 @@
-""" A demonstration of various TraitsML features. """
-
+#
+# A demonstration of various TraitsML features.
+#
 
 from traitsml.constants import Layout, Orientation, SizePolicy, TickPosition
 

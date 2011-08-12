@@ -1,5 +1,6 @@
-""" An example .tml file for TraitsML. """
-
+#
+# An example .tml file for TraitsML.
+#
 
 from PySide import QtGui
 
