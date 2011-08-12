@@ -9,8 +9,10 @@ but it is not tied to a single widget toolkit.
 
 Prerequisites
 -------------
-* Traits
-* PySide
-* PLY (Python Lex-Yacc), for parsing *.tml* files
-* Python 2.6
-* The "kitchen sink" example requires Chaco
+* `Traits <https://github.com/enthought/traits>`_
+* `PySide <http://www.pyside.org/>`_
+* `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
+  for parsing *.tml* files
+* `Python <http://python.org/>`_ 2.6
+* The "kitchen sink" example requires 
+  `Chaco <https://github.com/enthought/chaco>`_
