@@ -2,8 +2,10 @@
 TraitsML
 ========
 
-TraitsML is like Qt's QML for Traits: a declarative language for building user interfaces with native widgets.
-It's based on Python and currently supports Qt as a backend, via the PySide bindings.
+TraitsML is a tool for building native user interfaces on top of Traits.
+It is a declarative language based on Python, analogous to Qt's QML.
+TraitsML currently supports Qt as a backend via PySide,
+but it is not tied to a single widget toolkit. 
 
 Prerequisites
 -------------
