@@ -1,4 +1,4 @@
-from traits.api import Int, Float, Either, Event
+from traits.api import Int, Str, Callable, Bool 
 
 from .i_element import IElement
 

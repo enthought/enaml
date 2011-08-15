@@ -76,7 +76,7 @@ class ISlider(IElement):
         
     tick_interval = Float
 
-    ticks = Enum(*TicksPostion.values())
+    ticks = Enum(*TickPosition.values())
 
     orientation = Enum(*Orientation.values())
 
