@@ -7,11 +7,9 @@ class Model(HasTraits):
     age = Int
     weight = Float
 
-    view_factory = ViewFactory('./simple.tml')
-
-
 model = Model(name='Billy Bob', age=25, weight=175.5)
-view = model.view_factory('main_container', model=model)
+view_factory = ViewFactory('./simple.tml')
+view = view_factory('main_container', model=model)
 
 #------------------------------------------------------------------------------
 # App startup which will go away at some point
