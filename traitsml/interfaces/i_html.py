@@ -8,10 +8,9 @@ class IHtml(IElement):
     
     Attributes
     ----------
-    text : Str
+    html : Str
         The HTML to be rendered.
     
     """
-    text = Str
-
+    html = Str
 

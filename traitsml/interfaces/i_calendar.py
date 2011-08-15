@@ -5,10 +5,14 @@ from .i_element import IElement
 
 class ICalendar(IElement):
     """ A calendar widget.
+
+    A Calendar displays a Python datetime.date using an appropriate
+    toolkit specific control. The date attribute is synchronized 
+    bi-directionally with the day, month, and year attributes.
     
     Attributes
     ----------
-    date : datetime.date
+    date : Date
         The currently selected date.
     
     day : Int
@@ -20,9 +24,6 @@ class ICalendar(IElement):
     year : Int
         The selected year.
     
-    The date attribute is synchronized bi-directionally with the
-    day, month, and year attributes.
-    
     """    
     date = Date
 
@@ -31,5 +32,4 @@ class ICalendar(IElement):
     month = Int
 
     year = Int
-
 

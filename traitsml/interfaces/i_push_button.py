@@ -34,4 +34,3 @@ class IPushButton(IElement):
 
     released = Event
 
-

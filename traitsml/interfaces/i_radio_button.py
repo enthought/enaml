@@ -6,6 +6,11 @@ from .i_element import IElement
 class IRadioButton(IElement):
     """ A radio button widget. 
     
+    Use a radio button to toggle the value of a boolean field.
+    Use a group of radio buttons to toggle between multiple 
+    values when only one value of the group can be selected 
+    at a time.
+
     Attributes
     ----------
     checked : Bool
@@ -22,12 +27,6 @@ class IRadioButton(IElement):
 
     released : Event
         Fired when the button is released.
-    
-    Notes
-    -----
-    If multiple radio buttons are children of the same parent, 
-    then only one of those radio buttons may be checked at a time.
-
 
     """
     checked = Bool
@@ -39,5 +38,4 @@ class IRadioButton(IElement):
     pressed = Event
 
     released = Event
-    
 

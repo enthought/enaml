@@ -1,11 +1,21 @@
 from traits.api import ReadOnly
 
-from ..constants import Layout
-from .i_element import IElement
+from .i_group import IGroup
+
+from ..enums import Direction
 
 
-class IHGroup(IElement):
-    # A convienence element with a hard-code HORIZONTAL layout
-    layout = ReadOnly(Layout.HORIZONTAL)
+class IHGroup(IGroup):
+    """ A horizontally grouping container.
 
+    This is a convienence subclass of IGroup which hard codes
+    the layout direction to Direction.LEFT_TO_RIGHT
+
+    Attributes
+    ----------
+    direction : ReadOnly
+    	The layout direction is hard coded to Direction.LEFT_TO_RIGHT
+    
+    """	
+    direction = ReadOnly(Direction.LEFT_TO_RIGHT)
 

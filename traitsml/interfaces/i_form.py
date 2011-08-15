@@ -1,11 +1,13 @@
-from traits.api import ReadOnly
-
-from ..constants import Layout
-from .i_element import IElement
+from .i_container import IContainer
 
 
-class IForm(IElement):
-    # A convienence element with a hard coded FORM layout
-    layout = ReadOnly(Layout.FORM)
+class IForm(IContainer):
+    """ A container that lays out its children as a form.
 
+    The Form container arranges its children in N rows and 2 cols.
+    If there are an odd number of children, the last child will
+    span both cols.
+
+    """
+    pass
 

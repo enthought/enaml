@@ -1,11 +1,18 @@
-from traits.api import Any, Bool, Callable, Enum, Float, Range
+from traits.api import Any, Bool, Callable, Enum, Float, Range, Event
 
-from ..constants import Ticks
 from .i_element import IElement
+
+from ..enums import Orientation, TickPosition
 
 
 class ISlider(IElement):
-    """ A slider widget.
+    """ A simple slider widget.
+
+    A slider can be used to select from a continuous range of values.
+    The slider's range is fixed at 0.0 to 1.0. Therefore, the position 
+    of the slider can be viewed as a percentage. To facilitate various 
+    ranges, you can specify from_pos and to_pos callables to convert to 
+    and from the position the value.
 
     Attributes
     ----------
@@ -13,43 +20,46 @@ class ISlider(IElement):
         Whether or not the slider is pressed down.
 
     from_slider : Callable
-        A function to convert from the slider postion
-        to the appropriate Python value.
+        A function that takes one argument to convert from the slider 
+        postion to the appropriate Python value.
     
     to_slider : Callable
-        A function to convert from a Python value
-        to the appropriate slider position.
+        A function that takes one argument to convert from a Python 
+        value to the appropriate slider position.
 
     slider_pos : Float
         The floating point percentage (0.0 - 1.0) which is the 
-        position of the slider. This is always updated while
-        sliding.
+        position of the slider. This value is always updated
+        while the slider is moving.
 
     value : Any
         The value of the slider. This is set to the value of
         from_slider(slider_pos).
 
     tracking : Bool
-        If True, the value is updated while sliding. Otherwise,
-        it is only updated when the slider is released.
+        If True, the value is updated while sliding. Otherwise, 
+        it is only updated when the slider is released. Defaults
+        to True.
 
     tick_interval : Float
         The slider_pos interval to put between tick marks.
 
-    ticks : Enum
-        A Ticks enum value indicating how to display the 
+    tick_position : TickPosition Enum value
+        A TickPosition enum value indicating how to display the 
         tick marks.
 
-    sliding : Bool
-        Will be True when the slider is sliding, False otherwise.
+    orientation : Orientation Enum value
+        The orientation of the slider. One of the Orientation
+        Enum values.
 
-    Notes
-    -----
-    A slider's range is fixed at 0.0 to 1.0. Therefore, the 
-    position of the slider can be viewed as a percentage. 
-    To facilitate various ranges, you can specify from_pos
-    and to_pos callables to convert to and from the position
-    the value.
+    pressed : Event
+        Fired when the slider is pressed.
+
+    released : Event
+        Fired when the slider is released.
+
+    moved : Event
+        Fired when the slider is moved.
 
     """
     down = Bool
@@ -66,19 +76,13 @@ class ISlider(IElement):
         
     tick_interval = Float
 
-    ticks = Enum(Ticks.DEFAULT, *Ticks.values())
-    
-    sliding = Bool
+    ticks = Enum(*TicksPostion.values())
 
-    # XXX - orientation should be contained on a compound object.
-    
-    #--------------------------------------------------------------------------
-    # Features of QSlider which I'm not sure we should include.
-    #--------------------------------------------------------------------------
+    orientation = Enum(*Orientation.values())
 
-    # The multi tick step for paging
-    #multi_step = Float
-    # The single tick step for the slider for arrow presses
-    #single_step = Float
+    pressed = Event
 
+    released = Event
+
+    moved = Event
 

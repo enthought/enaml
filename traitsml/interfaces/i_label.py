@@ -13,5 +13,4 @@ class ILabel(IElement):
 
     """
     text = Str
-    
 

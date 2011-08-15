@@ -1,4 +1,12 @@
-from traits.api import Interface
+from .i_component import IComponent
 
-class IElement(Interface):
-	"""Stub of a base class for all TraitsML abstract widget classes."""
+
+class IElement(IComponent):
+	""" The base class of all visible widgets in TraitsML.
+
+    Elements do not contain children and can be thought of 
+    as terminal widgets in the TraitsML object tree.
+
+	"""
+    pass
+
