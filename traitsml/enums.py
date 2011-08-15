@@ -189,7 +189,7 @@ class TabPosition(Enum):
 
     TOP = Constant()
 
-    BOTTOM = Consant()
+    BOTTOM = Constant()
 
 
 class TickPosition(Enum):
