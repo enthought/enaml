@@ -20,15 +20,15 @@ class IWindow(IComponent):
 
     modality : Modality Enum value.
         The modality of the window. Default is toolkit specific.
-    
-    container : IContainer
-        The container of child widgets and/or containers for
-        this window.
 
     Methods
     -------
     layout()
         Initialize and layout the window and it's children.
+
+    set_container(container)
+        Set the container of child widgets and/or containers for
+        this window.
 
     show(layout=False)
         Make the window visible on the screen.
@@ -40,8 +40,6 @@ class IWindow(IComponent):
     title = Str
 
     modality = Enum(*Modality.values())
-
-    container = Instance(IContainer)
 
     def layout(self):
         """ Initialize and layout the window and it's children.
@@ -68,6 +66,29 @@ class IWindow(IComponent):
         """
         raise NotImplementedError
 
+    def set_container(self, container):
+        """ Set the container of children for this window.
+        
+        Calling this method more than once will replace the previous
+        container with the provided container.
+
+        Arguments
+        ---------
+        container : IContainer
+            The container of child widgets and/or containers for
+            this window.
+
+        Returns
+        -------
+        None
+
+        Raises
+        ------
+        None
+
+        """
+        raise NotImplementedError
+        
     def show(self, layout=False):
         """ Make the window visible on the screen.
 

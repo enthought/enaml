@@ -142,13 +142,11 @@ class Modality(Enum):
     
     DEFAULT = Constant()
 
-    MODAL = Constant()
-
-    LIVE = Constant()
-
     NON_MODAL = Constant()
-    
-    LIVE_MODAL = Constant()
+
+    WINDOW_MODAL = Constant()
+
+    APPLICATION_MODAL = Constant()
 
 
 class Orientation(Enum):

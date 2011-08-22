@@ -16,33 +16,59 @@ class IComponent(Interface):
         components. Note that this is not the same as the identifier 
         that can be assigned to a component as part of the tml grammar.
 
-    widget : Any
-        The underlying toolkit widget being managed by the component.
 
     Methods
     -------
-    add_meta_object(meta_obj)
-        Add the MetaInfo instance to this component.
+    tml_type_name(cls)
+        A classmethod which returns the tml type name of this class.
 
-    remove_meta_object(meta_obj)
-        Remove the MetaInfo instance from this component.
+    add_meta_info(meta_info)
+        Add the IMetaInfo instance to this component.
+
+    remove_meta_info(meta_info)
+        Remove the IMetaInfo instance from this component.
+
+    toolkit_widget()
+        Returns the underlying toolkit widget which is being managed
+        by the component.
 
     """
     name = Str
 
-    widget = Any
+    @classmethod
+    def tml_type_name(cls):
+        """ A classmethod which returns the tml type name of this class.
 
-    def add_meta_obj(self, meta_obj):
-        """ Add the MetaInfo object to this component.
+        The registered tml type name of an object is the name with which
+        the class exposes itself for use in a TML file.
 
-        MetaInfo objects supply additional meta information about an 
-        object (such as styling and layout info) to various other parts
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        result : str
+            The registered tml type name of the component.
+
+        Raises
+        ------
+        None
+
+        """
+        raise NotImplementedError
+
+    def add_meta_info(self, meta_info):
+        """ Add the IMetaInfo object to this component.
+
+        IMetaInfo objects supply additional meta information about an 
+        object (such as styling and geometry info) to various other parts
         of the TraitsML object tree.
 
         Arguments
         ---------
-        meta_obj : MetaInfo
-            The MetaInfo instance to add to this component.
+        meta_info : IMetaInfo
+            The IMetaInfo instance to add to this component.
 
         Returns
         -------
@@ -50,23 +76,26 @@ class IComponent(Interface):
 
         Raises
         ------
-        TypeError
-            The meta_obj is not a MetaInfo instance.
+        TraitError
+            The meta_info is not an IMetaInfo instance.
         
+        ValueError
+            The meta_info instance has already been added.
+
         ComponentError
             Any other reason the operation cannot be completed.
 
         """
         raise NotImplementedError
 
-    def remove_meta_obj(self, meta_obj):
-        """ Remove the MetaInfo object from this component.
+    def remove_meta_info(self, meta_info):
+        """ Remove the IMetaInfo object from this component.
 
         Arguments
         ---------
-        meta_obj : MetaInfo
-            The MetaInfo instance to remove from this component. It
-            must have been previously added via 'add_meta_obj'.
+        meta_info : IMetaInfo
+            The IMetaInfo instance to remove from this component. It
+            must have been previously added via 'add_meta_info'.
 
         Returns
         -------
@@ -74,11 +103,11 @@ class IComponent(Interface):
 
         Raises
         ------
-        TypeError
-            The meta_obj is not a MetaInfo instance.
+        TraitError
+            The meta_info is not an IMetaInfo instance.
 
         ValueError
-            The meta_obj was not previously added via 'add_meta_obj'.
+            The meta_info was not previously added via 'add_meta_info'.
 
         ComponentError
             Any oher reason the operation cannot be completed.
@@ -86,3 +115,25 @@ class IComponent(Interface):
         """
         raise NotImplementedError
 
+    def toolkit_widget(self):
+        """ Returns the toolkit specific widget for this component.
+
+        Call this method to retrieve the toolkit specific widget
+        for this component. Note that the toolkit widget may not
+        be created before the 'layout' method on the top level
+        window is called. In that case, this method will return
+        None.
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        result : widget or None
+            Returns a toolkit specific widget, or None if the widget
+            has not yet been created.
+
+        """
+        raise NotImplementedError
+  
