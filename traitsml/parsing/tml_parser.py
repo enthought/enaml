@@ -137,7 +137,7 @@ def p_tml_suite_item5(p):
 
 
 def p_tml_assign(p):
-    ''' tml_assign : NAME EQUAL test NEWLINE '''
+    ''' tml_assign : NAME DOUBLESLASH test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
     p[0] = tml_ast.TMLAssign(p[1], expr)
@@ -151,7 +151,7 @@ def p_tml_bind(p):
 
 
 def p_tml_delegate(p):
-    ''' tml_delegate : NAME DELEGATE NAME DOT NAME NEWLINE '''
+    ''' tml_delegate : NAME EQEQUAL NAME DOT NAME NEWLINE '''
     p[0] = tml_ast.TMLDelegate(p[1], p[3], p[5])
 
 

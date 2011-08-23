@@ -40,29 +40,29 @@ from traitsml.constants import Color
 
 
 VGroup main_container:
-    width = 200
-    height = 200
+    width // 200
+    height // 200
     Form:
         Label:
-            text = "Name:"
+            text // "Name:"
         Field:
-            value ~~ model.name
-            to_string = lambda text: text.upper()
-            from_string = lambda text: text.lower()
+            value == model.name
+            to_string // lambda text: text.upper()
+            from_string // lambda text: text.lower()
         Label my_label:
-            text = "Age:"
+            text // "Age:"
             bgcolor << Color.ERROR if age_field.error else Color.DEFAULT
         Field age_field:
-            value ~~ model.age
-            from_string = int
+            value == model.age
+            from_string // int
         Label:
-            text = "Weight:"
+            text // "Weight:"
         Field:
-            value ~~ model.weight
+            value == model.weight
             bgcolor << Color.ERROR if self.error else Color.DEFAULT
-            from_string = float
+            from_string // float
     PushButton:
-        text = "Quit"
+        text // "Quit"
         clicked >> QtGui.qApp.quit()
 
 

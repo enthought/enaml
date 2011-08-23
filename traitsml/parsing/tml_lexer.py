@@ -67,7 +67,7 @@ class TraitsMLLexer(object):
         'STRING_END',
         
         # TML specific tokens
-        'DELEGATE',
+        #'DELEGATE',
 
     )
 
@@ -132,7 +132,7 @@ class TraitsMLLexer(object):
     t_TILDE = r'~'
     t_VBAR = r'\|'
     
-    t_DELEGATE = r'@'
+    #t_DELEGATE = r'@'
 
     def t_comment(self, t):
         r'[ ]*\#[^\r\n]*'
