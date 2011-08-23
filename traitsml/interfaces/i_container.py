@@ -1,28 +1,11 @@
-from traits.api import Enum
-
 from .i_component import IComponent
-
-from ..enums import Align
 
 
 class IContainer(IComponent):
     """ The base container interface. 
     
     Containers are non-visible components that are responsible for laying
-    out and arranging their children. A Container implementation should
-    not be instantiable.
-    
-    Attributes
-    ----------
-    h_align : Align Enum value
-        The horizontal alignment of the children in this container.
-        An individual child may override this by providing a Layout 
-        meta info object. The default is toolkit specific.
-
-    v_align : Align Enum value
-        The vertical alignment of the children in this container.
-        An individual child may override this by providing a Layout
-        meta info object. The default is toolkit specific.
+    out and arranging their children.
 
     Methods
     -------
@@ -43,9 +26,6 @@ class IContainer(IComponent):
         An iterator of all the children.
 
     """
-    h_align = Enum(*Align.values())
-
-    v_align = Enum(*Align.values())
 
     def add_child(self, child):
         """ Add the child component to this container.

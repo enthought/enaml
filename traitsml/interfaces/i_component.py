@@ -1,4 +1,4 @@
-from traits.api import Interface, Str, Any
+from traits.api import Interface, Str
 
 
 class IComponent(Interface):
@@ -16,12 +16,8 @@ class IComponent(Interface):
         components. Note that this is not the same as the identifier 
         that can be assigned to a component as part of the tml grammar.
 
-
     Methods
     -------
-    tml_type_name(cls)
-        A classmethod which returns the tml type name of this class.
-
     add_meta_info(meta_info)
         Add the IMetaInfo instance to this component.
 
@@ -34,29 +30,6 @@ class IComponent(Interface):
 
     """
     name = Str
-
-    @classmethod
-    def tml_type_name(cls):
-        """ A classmethod which returns the tml type name of this class.
-
-        The registered tml type name of an object is the name with which
-        the class exposes itself for use in a TML file.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : str
-            The registered tml type name of the component.
-
-        Raises
-        ------
-        None
-
-        """
-        raise NotImplementedError
 
     def add_meta_info(self, meta_info):
         """ Add the IMetaInfo object to this component.

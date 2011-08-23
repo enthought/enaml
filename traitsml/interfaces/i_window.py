@@ -1,7 +1,6 @@
-from traits.api import Str, Enum, Instance
+from traits.api import Str, Enum
 
 from .i_component import IComponent
-from .i_container import IContainer
 
 from ..enums import Modality
 
