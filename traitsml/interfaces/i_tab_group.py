@@ -1,4 +1,4 @@
-from traits.api import Bool, Enum, Int, Dict, Str
+from traits.api import Bool, Event 
 
 from .i_stacked_group import IStackedGroup
 

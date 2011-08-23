@@ -1,28 +1,11 @@
-from traits.api import Enum
-
 from .i_component import IComponent
-
-from ..enums import Align
 
 
 class IContainer(IComponent):
     """ The base container interface. 
     
     Containers are non-visible components that are responsible for laying
-    out and arranging their children. A Container implementation should
-    not be instantiable.
-    
-    Attributes
-    ----------
-    h_align : Align Enum value
-        The horizontal alignment of the children in this container.
-        An individual child may override this by providing a Layout 
-        meta info object. The default is toolkit specific.
-
-    v_align : Align Enum value
-        The vertical alignment of the children in this container.
-        An individual child may override this by providing a Layout
-        meta info object. The default is toolkit specific.
+    out and arranging their children.
 
     Methods
     -------
@@ -30,21 +13,19 @@ class IContainer(IComponent):
         Add the child component to this container. Do not layout.
     
     remove_child(child)
-        Remove the child component from this container. Do not layout.         
+        Remove the child component from this container, but
+        do not update the screen.         
 
     replace_child(child, other_child)
-        Replace child with other_child. Do not layout.
+        Replace child with other_child, but do not update the screen.
 
-    layout()
-        Arrange the current children according to the layout info.
+    rearrange()
+        Rearrange the childrent according to the current layout.
     
     children()
         An iterator of all the children.
 
     """
-    h_align = Enum(*Align.values())
-
-    v_align = Enum(*Align.values())
 
     def add_child(self, child):
         """ Add the child component to this container.
@@ -148,12 +129,13 @@ class IContainer(IComponent):
         """
         raise NotImplementedError
 
-    def layout(self):
-        """ Layout the contained children.
+    def rearrange(self):
+        """  Rearrange the childrent according to the current layout.
 
         Call this method after all child manipulations have been 
-        completed and the children should be layed out. Can also
-        be called when the layout should be refreshed.
+        completed and the children should be visibly rearranged.
+        Calling this is only necessary when changing children
+        *after* the ui has already been made visible.
 
         Arguments
         ---------

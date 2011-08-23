@@ -1,3 +1,5 @@
+from traits.api import Bool, Str
+
 from .i_container import IContainer
 
 
