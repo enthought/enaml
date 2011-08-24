@@ -23,6 +23,7 @@ class TraitsMLLexer(object):
     #--------------------------------------------------------------------------
     tokens = (
         'AMPER',
+        'AT',
         'DOT',
         'CIRCUMFLEX',
         'COLON',
@@ -65,9 +66,9 @@ class TraitsMLLexer(object):
         'STRING_START_TRIPLE',
         'STRING_CONTINUE',
         'STRING_END',
-        
-        # TML specific tokens
-        #'DELEGATE',
+
+        # TML Specific Tokens
+        'COLONEQUAL',
 
     )
 
@@ -84,12 +85,7 @@ class TraitsMLLexer(object):
         'lambda': 'LAMBDA',
         'not': 'NOT',
         'or': 'OR',
-
-        # New keywords
-        #'assign': 'ASSIGN',
-        #'bind': 'BIND',
-        #'delegate': 'DELEGATE',
-        #'notify': 'NOTIFY',
+        'pass': 'PASS'
     }
 
     tokens = tokens + tuple(reserved.values())
@@ -108,9 +104,11 @@ class TraitsMLLexer(object):
     # INITIAL State Rules
     #--------------------------------------------------------------------------
     t_AMPER = r'&'
+    t_AT = r'@'
     t_DOT = r'\.'
     t_CIRCUMFLEX = r'\^'
     t_COLON = r':'
+    t_COLONEQUAL = r':='
     t_COMMA = r','
     t_DOUBLESLASH = r'//'
     t_DOUBLESTAR = r'\*\*'

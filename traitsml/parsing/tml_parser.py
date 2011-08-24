@@ -24,8 +24,9 @@ def set_locations(node, lineno, col_offset):
     """ Recursively set the line number and col_offset on every node in the tree
     descended from node.  Similar to ast.fix_locations, but forces changes.
     """
-    # XXX this is slightly suboptimal, in that we mis-report the line for a multiline expression
-    # XXX this is a rare enough situation, that this is probably not a big deal
+    # XXX this is slightly suboptimal, in that we mis-report the line for a 
+    # XXX multiline expression. This is a rare enough situation, that this 
+    # XXX is probably not a big deal
     for n in ast.walk(node):
         n.lineno = lineno
         n.col_offset = col_offset
@@ -61,29 +62,34 @@ class Arguments(object):
 #------------------------------------------------------------------------------
 def p_tml(p):
     ''' tml : tml_body ENDMARKER '''
-    p[0] = tml_ast.TML(p[1])
+    p[0] = p[1]
     
 
 def p_tml_body1(p):
-    ''' tml_body : tml_body_item '''
-    p[0] = [p[1]]
+    ''' tml_body : tml_imports tml_element '''
+    p[0] = tml_ast.TML(p[1] + [p[2]])
 
 
 def p_tml_body2(p):
-    ''' tml_body : tml_body tml_body_item '''
+    ''' tml_body : tml_element '''
+    p[0] = tml_ast.TML([p[1]])
+
+
+def p_tml_imports1(p):
+    ''' tml_imports : tml_imports tml_import '''
     p[0] = p[1] + [p[2]]
 
 
-def p_tml_item1(p):
-    ''' tml_body_item : import_stmt '''
+def p_tml_imports2(p):
+    ''' tml_imports : tml_import '''
+    p[0] = [p[1]]
+
+
+def p_tml_import(p):
+    ''' tml_import : import_stmt '''
     mod = ast.Module(body=[p[1]])
     tml_imprt = tml_ast.TMLImport(mod)
     p[0] = tml_imprt
-
-
-def p_tml_item2(p):
-    ''' tml_body_item : tml_element '''
-    p[0] = p[1]
 
 
 def p_tml_element1(p):
@@ -97,69 +103,139 @@ def p_tml_element2(p):
 
 
 def p_tml_suite(p):
-    ''' tml_suite : NEWLINE INDENT tml_suite_body DEDENT '''
+    ''' tml_suite : NEWLINE INDENT tml_element_body DEDENT '''
     p[0] = p[3]
 
 
-def p_tml_suite_body1(p):
-    ''' tml_suite_body : tml_suite_item '''
-    p[0] = [p[1]]
+def p_tml_element_body1(p):
+    ''' tml_element_body : tml_metas tml_expressions tml_children '''
+    p[0] = tml_ast.TMLElementBody(p[1], p[2], p[3])
 
 
-def p_tml_suite_body2(p):
-    ''' tml_suite_body : tml_suite_body tml_suite_item '''
+def p_tml_element_body2(p):
+    ''' tml_element_body : tml_metas tml_expressions '''
+    p[0] = tml_ast.TMLElementBody(p[1], p[2], [])
+
+
+def p_tml_element_body3(p):
+    ''' tml_element_body : tml_metas tml_children '''
+    p[0] = tml_ast.TMLElementBody(p[1], [], p[2])
+
+
+def p_tml_element_body4(p):
+    ''' tml_element_body : tml_metas '''
+    p[0] = tml_ast.TMLElementBody(p[1], [], [])
+
+
+def p_tml_element_body5(p):
+    ''' tml_element_body : tml_expressions tml_children '''
+    p[0] = tml_ast.TMLElementBody([], p[1], p[2])
+
+
+def p_tml_element_body6(p):
+    ''' tml_element_body : tml_expressions '''
+    p[0] = tml_ast.TMLElementBody([], p[1], [])
+
+
+def p_tml_element_body7(p):
+    ''' tml_element_body : tml_children '''
+    p[0] = tml_ast.TMLElementBody([], [], p[1])
+
+
+def p_tml_element_body8(p):
+    ''' tml_element_body : PASS NEWLINE '''
+    p[0] = tml_ast.TMLElementBody([], [], [])
+
+
+def p_tml_metas2(p):
+    ''' tml_metas : tml_metas tml_meta '''
     p[0] = p[1] + [p[2]]
 
 
-def p_tml_suite_item1(p):
-    ''' tml_suite_item : tml_element '''
+def p_tml_metas1(p):
+    ''' tml_metas : tml_meta '''
+    p[0] = [p[1]]
+
+
+def p_tml_meta1(p):
+    ''' tml_meta : AT NAME COLON tml_expression_suite '''
+    p[0] = tml_ast.TMLMeta(p[2], None, p[4])
+
+
+def p_tml_meta2(p):
+    ''' tml_meta : AT NAME NAME COLON tml_expression_suite '''
+    p[0] = tml_ast.TMLMeta(p[2], p[3], p[5])
+
+
+def p_tml_expression_suite(p):
+    ''' tml_expression_suite : NEWLINE INDENT tml_expressions DEDENT '''
+    p[0] = p[3]
+
+
+def p_tml_expressions1(p):
+    ''' tml_expressions : tml_expressions tml_expression '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_tml_expressions2(p):
+    ''' tml_expressions : tml_expression '''
+    p[0] = [p[1]]
+
+
+def p_tml_expression1(p):
+    ''' tml_expression : tml_default '''
     p[0] = p[1]
 
 
-def p_tml_suite_item2(p):
-    ''' tml_suite_item : tml_assign '''
+def p_tml_expression2(p):
+    ''' tml_expression : tml_expr_bind '''
     p[0] = p[1]
 
 
-def p_tml_suite_item3(p):
-    ''' tml_suite_item : tml_bind '''
+def p_tml_expression3(p):
+    ''' tml_expression : tml_notify '''
     p[0] = p[1]
 
 
-def p_tml_suite_item4(p):
-    ''' tml_suite_item : tml_changed '''
+def p_tml_expression4(p):
+    ''' tml_expression : tml_delegate '''
     p[0] = p[1]
 
 
-def p_tml_suite_item5(p):
-    ''' tml_suite_item : tml_delegate '''
-    p[0] = p[1]
+def p_tml_children1(p):
+    ''' tml_children : tml_children tml_element '''
+    p[0] = p[1] + [p[2]]
 
 
-def p_tml_assign(p):
-    ''' tml_assign : NAME DOUBLESLASH test NEWLINE '''
+def p_tml_children2(p):
+    ''' tml_children : tml_element '''
+    p[0] = [p[1]]
+
+
+def p_tml_default(p):
+    ''' tml_default : NAME EQUAL test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
-    p[0] = tml_ast.TMLAssign(p[1], expr)
+    p[0] = tml_ast.TMLDefault(p[1], expr)
 
 
-def p_tml_bind(p):
-    ''' tml_bind : NAME LEFTSHIFT test NEWLINE '''
+def p_tml_expr_bind(p):
+    ''' tml_expr_bind : NAME LEFTSHIFT test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
-    p[0] = tml_ast.TMLBind(p[1], expr)
+    p[0] = tml_ast.TMLExprBind(p[1], expr)
 
 
-def p_tml_delegate(p):
-    ''' tml_delegate : NAME EQEQUAL NAME DOT NAME NEWLINE '''
-    p[0] = tml_ast.TMLDelegate(p[1], p[3], p[5])
-
-
-def p_tml_changed(p):
-    ''' tml_changed : NAME RIGHTSHIFT test NEWLINE '''
+def p_tml_notify(p):
+    ''' tml_notify : NAME RIGHTSHIFT test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
     p[0] = tml_ast.TMLNotify(p[1], expr)
+
+
+def p_tml_delegate(p):
+    ''' tml_delegate : NAME COLONEQUAL NAME DOT NAME NEWLINE '''
+    p[0] = tml_ast.TMLDelegate(p[1], p[3], p[5])
 
 
 #------------------------------------------------------------------------------
