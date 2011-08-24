@@ -42,8 +42,8 @@ class TML(Node):
 
 class TMLImport(Node):
 
-    def __init__(self, ast_mod):
-        self.ast_mod = ast_mod
+    def __init__(self, py_ast):
+        self.py_ast = py_ast
 
     def __repr__(self):
         return 'Import'
@@ -61,33 +61,64 @@ class TMLElement(Node):
     
     @property
     def children(self):
-        return self.body
+        return [self.body]
 
 
-class TMLExpr(Node):
+class TMLElementBody(Node):
 
-    def __init__(self, name, expr):
-        self.name = name
-        self.expr = expr
+    def __init__(self, metas, exprs, tml_children):
+        self.metas = metas
+        self.exprs = exprs
+        self.tml_children = tml_children
+    
+    def __repr__(self):
+        return 'TMLElementBody'
     
     @property
     def children(self):
-        return [self.expr]
+        return self.metas + self.exprs + self.tml_children
 
 
-class TMLAssign(TMLExpr):
+class TMLMeta(Node):
+
+    def __init__(self, name, identifier, exprs):
+        self.name = name
+        self.identifier = identifier
+        self.exprs = exprs
+    
+    def __repr__(self):
+        return 'TMLMeta %s' % self.name
+    
+    @property
+    def children(self):
+        return self.exprs
+
+
+class TMLDefault(Node):
+
+    def __init__(self, name, py_ast):
+        self.name = name
+        self.py_ast = py_ast
 
     def __repr__(self):
         return 'Assign %s' % self.name
 
 
-class TMLBind(TMLExpr):
+class TMLExprBind(Node):
+
+    def __init__(self, name, py_ast):
+        self.name = name
+        self.py_ast = py_ast
 
     def __repr__(self):
         return 'Bind %s' % self.name
 
 
-class TMLNotify(TMLExpr):
+class TMLNotify(Node):
+
+    def __init__(self, name, py_ast):
+        self.name = name
+        self.py_ast = py_ast
 
     def __repr__(self):
         return 'Changed %s' % self.name

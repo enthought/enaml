@@ -23,6 +23,7 @@ class TraitsMLLexer(object):
     #--------------------------------------------------------------------------
     tokens = (
         'AMPER',
+        'AT',
         'DOT',
         'CIRCUMFLEX',
         'COLON',
@@ -65,9 +66,9 @@ class TraitsMLLexer(object):
         'STRING_START_TRIPLE',
         'STRING_CONTINUE',
         'STRING_END',
-        
-        # TML specific tokens
-        'DELEGATE',
+
+        # TML Specific Tokens
+        'COLONEQUAL',
 
     )
 
@@ -84,12 +85,7 @@ class TraitsMLLexer(object):
         'lambda': 'LAMBDA',
         'not': 'NOT',
         'or': 'OR',
-
-        # New keywords
-        #'assign': 'ASSIGN',
-        #'bind': 'BIND',
-        #'delegate': 'DELEGATE',
-        #'notify': 'NOTIFY',
+        'pass': 'PASS'
     }
 
     tokens = tokens + tuple(reserved.values())
@@ -108,9 +104,11 @@ class TraitsMLLexer(object):
     # INITIAL State Rules
     #--------------------------------------------------------------------------
     t_AMPER = r'&'
+    t_AT = r'@'
     t_DOT = r'\.'
     t_CIRCUMFLEX = r'\^'
     t_COLON = r':'
+    t_COLONEQUAL = r':='
     t_COMMA = r','
     t_DOUBLESLASH = r'//'
     t_DOUBLESTAR = r'\*\*'
@@ -132,7 +130,7 @@ class TraitsMLLexer(object):
     t_TILDE = r'~'
     t_VBAR = r'\|'
     
-    t_DELEGATE = r'~~'
+    #t_DELEGATE = r'@'
 
     def t_comment(self, t):
         r'[ ]*\#[^\r\n]*'
@@ -146,7 +144,7 @@ class TraitsMLLexer(object):
         # line; it will be ignored for the indentation calculations
         # above. Formfeed characters occurring elsewhere in the
         # leading whitespace have an undefined effect (for instance,
-        # they may reset the space count to zero).
+        # they may reset the space count to zero). 
         value = value.rsplit("\f", 1)[-1]
 
         # First, tabs are replaced (from left to right) by one to eight
