@@ -1,4 +1,4 @@
-from traits.api import Interface, Instance
+from traits.api import Interface, Instance, List, Tuple, Str
 
 from ..interceptors.i_interceptor import IInterceptor
 
@@ -12,6 +12,9 @@ class IToolkitConstructor(Interface):
 
     Attributes
     ----------
+    id : Str
+        The unique identifier assigned to the widget, if any.
+
     metas : List(Instance(IToolkitConstructor))
         The list of constructor instances for any meta objects defined
         for this node of the TML tree.
@@ -34,6 +37,8 @@ class IToolkitConstructor(Interface):
         an appropriate View object.
         
     """
+    id = Str
+
     metas = List(Instance('IToolkitConstructor'))
 
     exprs = List(Tuple(Str, Instance(IInterceptor)))
@@ -54,7 +59,8 @@ class IToolkitConstructor(Interface):
 
         Returns
         -------
-        result : None
+        result : Toolkit class
+            The toolkit specific wrapper class for the widget.
 
         Raises
         ------
