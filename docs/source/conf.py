@@ -277,8 +277,14 @@ def new_docstring(app, what, name, obj, options, lines):
 
 
     if ('function' in what) or ('method' in what):
-        new_doc = FunctionDocString(lines)
-        new_doc.parse()
+        if '.i_container.IContainer' in name:
+            new_doc = FunctionDocString(lines, verbose=True)
+            new_doc.parse()
+            print 'Output'
+            print '\n'.join(lines)
+        else:
+            new_doc = FunctionDocString(lines)
+            new_doc.parse()
 
 
 def setup(app):
