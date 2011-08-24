@@ -3,11 +3,12 @@ import types
 
 from traits.api import implements, HasStrictTraits, Instance, Property, Tuple
 
-from .i_interceptor_factory import IInterceptorFactory
-from .traits_code_interceptors import (NotifierInterceptor, DefaultInterceptor,
-                                       BindingInterceptor, DelegateInterceptor)
+from .code_interceptors import (NotifierInterceptor, DefaultInterceptor,
+                                BindingInterceptor, DelegateInterceptor)
 
-from ..parsing.analyzer import AttributeVisitor
+from ..i_interceptor_factory import IInterceptorFactory
+
+from ...parsing.analyzer import AttributeVisitor
 
 
 class CodeInterceptorFactory(HasStrictTraits):

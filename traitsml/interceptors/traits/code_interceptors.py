@@ -3,7 +3,7 @@ import types
 from traits.api import (Any, CTrait, DelegatesTo, HasStrictTraits, Tuple,
                         HasTraits, Instance, Property, Str, implements)
 
-from .i_interceptor import ITraitInterceptor
+from ..i_interceptor import IInterceptor
 
 
 class Arguments(object):
