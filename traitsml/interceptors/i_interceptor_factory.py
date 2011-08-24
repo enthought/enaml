@@ -11,14 +11,14 @@ class IInterceptorFactory(Interface):
     Methods
     -------
     interceptor()
-        Creates an ITraitInterceptor instance that is primed for 
+        Creates an IInterceptor instance that is primed for 
         injection into a HasTraits object.
 
     """
     def interceptor(self):
-        """ Creates an ITraitInterceptor instance.
+        """ Creates an IInterceptor instance.
 
-        Creates an ITraitInterceptor instance that is primed for 
+        Creates an IInterceptor instance that is primed for 
         injection into a HasTraits object.
 
         Arguments
@@ -27,7 +27,7 @@ class IInterceptorFactory(Interface):
 
         Returns
         -------
-        result : ITraitInterceptor
+        result : IInterceptor
             The interceptor that will handle this code.
 
         Raises

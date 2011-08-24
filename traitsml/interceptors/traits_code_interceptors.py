@@ -3,7 +3,7 @@ import types
 from traits.api import (Any, CTrait, DelegatesTo, HasStrictTraits, Tuple,
                         HasTraits, Instance, Property, Str, implements)
 
-from .i_trait_interceptor import ITraitInterceptor
+from .i_interceptor import ITraitInterceptor
 
 
 class Arguments(object):
@@ -58,7 +58,7 @@ class CodeInterceptor(HasStrictTraits):
 
 class NotifierInterceptor(CodeInterceptor):
     
-    implements(ITraitInterceptor)
+    implements(IInterceptor)
 
     def inject(self, obj, name, global_ns, local_ns):
         self.global_ns = global_ns
@@ -74,7 +74,7 @@ class NotifierInterceptor(CodeInterceptor):
 
 class DefaultInterceptor(CodeInterceptor, InjectionMixin):
     
-    implements(ITraitInterceptor)
+    implements(IInterceptor)
 
     # The trait used to validate the values.
     validate_trait = Instance(CTrait)

@@ -1,7 +1,7 @@
 from traits.api import Interface
 
 
-class ITraitInterceptor(Interface):
+class IInterceptor(Interface):
     """ Defines the IInterceptor interface for TraitsML.
 
     An interceptor is injected into a HasTraits object and is

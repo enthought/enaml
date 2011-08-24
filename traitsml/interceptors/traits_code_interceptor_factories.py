@@ -3,9 +3,9 @@ import types
 
 from traits.api import implements, HasStrictTraits, Instance, Property, Tuple
 
-from .i_trait_interceptor_factory import ITraitInterceptorFactory
-from .code_interceptors import (NotifierInterceptor, DefaultInterceptor,
-                                BindingInterceptor, DelegateInterceptor)
+from .i_interceptor_factory import IInterceptorFactory
+from .traits_code_interceptors import (NotifierInterceptor, DefaultInterceptor,
+                                       BindingInterceptor, DelegateInterceptor)
 
 from ..parsing.analyzer import AttributeVisitor
 
@@ -35,7 +35,7 @@ class CodeInterceptorFactory(HasStrictTraits):
 
 class Default(CodeInterceptorFactory):
 
-    implements(ITraitInterceptorFactory)
+    implements(IInterceptorFactory)
 
     def interceptor(self):
         return DefaultInterceptor(code=self.code)
@@ -43,7 +43,7 @@ class Default(CodeInterceptorFactory):
 
 class Bind(CodeInterceptorFactory):
     
-    implements(ITraitInterceptorFactory)
+    implements(IInterceptorFactory)
 
     def interceptor(self):
         return BindingInterceptor(code=self.code, deps=self.dependencies)
@@ -51,7 +51,7 @@ class Bind(CodeInterceptorFactory):
 
 class Delegate(CodeInterceptorFactory):
 
-    implements(ITraitInterceptorFactory)
+    implements(IInterceptorFactory)
 
     def interceptor(self):
         deps = self.dependencies
@@ -64,7 +64,7 @@ class Delegate(CodeInterceptorFactory):
 
 class Notify(CodeInterceptorFactory):
 
-    implements(ITraitInterceptorFactory)
+    implements(IInterceptorFactory)
 
     def interceptor(self):
         return NotifierInterceptor(code=self.code)
