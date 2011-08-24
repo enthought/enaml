@@ -17,7 +17,7 @@ import sys, os
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 sys.path.insert(0, os.path.abspath('.'))
-#sys.path.insert(0, os.path.abspath('sphinxext'))
+sys.path.insert(0, os.path.abspath('./sphinxext'))
 
 # -- General configuration -----------------------------------------------------
 
@@ -271,3 +271,15 @@ epub_copyright = u'2011, Enthought, Inc.'
 intersphinx_mapping = {'http://docs.python.org/': None}
 
 
+from traitsmldoc import FunctionDocString
+
+def new_docstring(app, what, name, obj, options, lines):
+
+
+    if ('function' in what) or ('method' in what):
+        new_doc = FunctionDocString(lines)
+        new_doc.parse()
+
+
+def setup(app):
+    app.connect('autodoc-process-docstring', new_docstring)

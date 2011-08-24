@@ -74,8 +74,53 @@ And the sphinx output using ``..autoclass::`` is:
 Functions
 ^^^^^^^^^
 
-.. todo:: Create a better parser for the function documentation based on the
-    numpydoc code
+In order to create autodoc friendly docstrings for functions please consider
+the following:
+
+    - The current parser extention supports the following headings::
+
+        Arguments
+        ---------
+
+        Returns
+        -------
+
+        Raises
+        ------
+
+        Yields
+        ------
+
+    - Each section/heading can accept items with the following structure
+      (spaces are important)::
+
+        Heading
+        -------
+        <name> : <type>
+            <description>
+
+        <name> : <type>
+            <description>
+
+        <name> :
+            <description>
+
+
+    - When there is no item formated under the heading then the heading is
+    rendered as,
+
+        **Heading:**
+
+example:
+
+.. currentmodule:: traitsmldoc
+
+.. automethod:: FunctionDocString._extract_parameters
+
+
+
+
+
 
 
 
