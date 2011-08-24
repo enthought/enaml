@@ -1,6 +1,7 @@
 from traits.api import Interface, Instance
 
-from .i_meta_info import IComponent, IMetaInfo
+from .i_component import IComponent
+from .i_meta_info import IMetaInfo
 
 
 class IMetaHandler(Interface):
