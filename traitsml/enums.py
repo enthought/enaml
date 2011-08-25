@@ -1,5 +1,5 @@
 """ The Enums used throughout TraitsML. """
-from ._enum import Constant, Enum
+from .util.enum import Constant, Enum
 
 
 class Align(Enum):
