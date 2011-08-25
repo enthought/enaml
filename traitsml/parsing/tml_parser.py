@@ -1765,16 +1765,16 @@ def p_fplist_list2(p):
 
  
 def p_error(t):
-    print t
     raise_syntax_error('invalid syntax.', t)
 
 
-_lexer = TraitsMLLexer()
 _parser = yacc.yacc(debug=False, tabmodule='tml_parsetab', outputdir=_tml_dir,
                     errorlog=yacc.NullLogger())
 
 
 def parse(tml):
+    # Need to create a new lexer each time, or line numbers get screwy.
+    _lexer = TraitsMLLexer()
     return _parser.parse(tml, lexer=_lexer)
 
 

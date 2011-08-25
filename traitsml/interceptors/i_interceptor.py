@@ -1,7 +1,7 @@
 from traits.api import Interface
 
 
-class ITraitInterceptor(Interface):
+class IInterceptor(Interface):
     """ Defines the IInterceptor interface for TraitsML.
 
     An interceptor is injected into a HasTraits object and is
@@ -42,6 +42,43 @@ class ITraitInterceptor(Interface):
         Returns
         -------
         result : None
+
+        """
+        raise NotImplementedError
+
+
+class IInterceptorFactory(Interface):
+    """ Defines the IInterceptorFactory interface for TraitsML.
+
+    The IInterceptorFactory defines the interface for creating factories
+    that create IInterceptor objects which bind code and/or expressions 
+    to the TraitsML object tree.
+
+    Methods
+    -------
+    interceptor()
+        Creates an IInterceptor instance that is primed for 
+        injection into a HasTraits object.
+
+    """
+    def interceptor(self):
+        """ Creates an IInterceptor instance.
+
+        Creates an IInterceptor instance that is primed for 
+        injection into a HasTraits object.
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        result : IInterceptor
+            The interceptor that will handle this code.
+
+        Raises
+        ------
+        XXX
 
         """
         raise NotImplementedError
