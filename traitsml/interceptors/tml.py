@@ -1,9 +1,13 @@
+import ast
 import types
 
 from traits.api import (Any, CTrait, DelegatesTo, HasStrictTraits, Tuple,
-                        HasTraits, Instance, Property, Str, implements)
+                        HasTraits, Instance, Property, Str, implements,
+                        cached_property)
 
-from ..i_interceptor import IInterceptor
+from .i_interceptor import IInterceptor, IInterceptorFactory
+
+from ..parsing.analyzer import AttributeVisitor
 
 
 class Arguments(object):
@@ -160,5 +164,69 @@ class DelegateInterceptor(DefaultInterceptor, InjectionMixin):
         
     def update_value(self):
         self._value = not self._value
+
+
+class CodeInterceptorFactory(HasStrictTraits):
+
+    ast = Instance(ast.Expression)
+
+    code = Property(Instance(types.CodeType), depends_on='ast')
+
+    dependencies = Property(Tuple, depends_on='ast')
+
+    def __init__(self, ast):
+        super(CodeInterceptorFactory, self).__init__()
+        self.ast = ast
+
+    @cached_property
+    def _get_code(self):
+        return compile(self.ast, 'TML', 'eval')
+
+    @cached_property
+    def _get_dependencies(self):
+        visitor = AttributeVisitor()
+        visitor.visit(self.ast)
+        return visit.results()
+        
+
+class Default(CodeInterceptorFactory):
+
+    implements(IInterceptorFactory)
+
+    def interceptor(self):
+        return DefaultInterceptor(code=self.code)
+
+
+class Bind(CodeInterceptorFactory):
+    
+    implements(IInterceptorFactory)
+
+    def interceptor(self):
+        return BindingInterceptor(code=self.code, deps=self.dependencies)
+
+
+class Notify(CodeInterceptorFactory):
+
+    implements(IInterceptorFactory)
+
+    def interceptor(self):
+        return NotifierInterceptor(code=self.code)
+
+
+class Delegate(HasStrictTraits):
+
+    implements(IInterceptorFactory)
+
+    obj_name = Str
+
+    attr_name = Str
+
+    def __init__(self, obj_name, attr_name):
+        super(Delegate, self).__init__(obj_name=obj_name, attr_name=attr_name)
+        
+    def interceptor(self):
+        obj_name = self.obj_name
+        trait_name = self.attr_name
+        return DelegateInterceptor(obj_name=obj_name, trait_name=trait_name)
 
     

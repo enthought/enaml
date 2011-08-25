@@ -2,16 +2,16 @@ from traits.api import HasStrictTraits, List, Instance, Tuple, Str, Any
 
 from .i_toolkit_constructor import IToolkitConstructor
 
-from ..interceptors.i_interceptor import IInterceptor
+from ..interceptors.i_interceptor import IInterceptorFactory
 
 
 class BaseToolkitCtor(HasStrictTraits):
 
-    id = Str
+    identifier = Str
 
     metas = List(Instance(IToolkitConstructor))
 
-    exprs = List(Tuple(Str, Instance(IInterceptor)))
+    exprs = List(Tuple(Str, Instance(IInterceptorFactory)))
 
     children = List(Instance(IToolkitConstructor))
     
@@ -35,13 +35,13 @@ class BaseToolkitCtor(HasStrictTraits):
         local_ns['self'] = impl
         local_ns['parent'] = parent.impl if parent is not None else None
 
-        name = self.id
-        if name:
-            if name in global_ns:
-                msg = 'The name %s already exists in the namespace.' % name
-                raise NameError(msg)
+        identifier = self.identifier
+        if identifier:
+            if identifier in global_ns:
+                msg = 'The name %s already exists in the namespace.'
+                raise NameError(msg % identifier)
             else:
-                global_ns[name] = impl
+                global_ns[identifier] = impl
         
         for meta in self.metas:
             meta.build_ns(global_ns, self)
@@ -52,7 +52,8 @@ class BaseToolkitCtor(HasStrictTraits):
         impl = self.impl
         global_ns = self.global_ns
         local_ns = self.local_ns
-        for name, interceptor in self.exprs:
+        for name, interceptor_factory in self.exprs:
+            interceptor = interceptor_factory.interceptor()
             interceptor.inject(impl, name, global_ns, local_ns)
         
         for meta in self.metas:

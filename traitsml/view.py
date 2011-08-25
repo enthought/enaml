@@ -9,7 +9,7 @@ class NamespaceProxy(object):
         self.__dict__ = ns
       
 
-class View(HasStrictTraits)
+class View(HasStrictTraits):
     
     window = Instance(IWindow)
 
