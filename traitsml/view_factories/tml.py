@@ -1,10 +1,8 @@
-import ast
-
 from traits.api import HasStrictTraits, Instance
 
 from ..constructors.i_toolkit_constructor import IToolkitConstructor
 from ..constructors.toolkit import default_toolkit
-from ..parsing import tml_parser
+from ..parsing import tml_ast, tml_parser
 
 
 class _ConstructorVisitor(object):
@@ -38,7 +36,7 @@ class _ConstructorVisitor(object):
 
     def visit_TMLImport(self, node):
         code = compile(node.py_ast, 'TML', mode='exec')
-        exec code in self.imports
+        exec code in {}, self.imports
 
     def visit_TMLElement(self, node):
         try:
@@ -128,7 +126,7 @@ class _ConstructorVisitor(object):
 
 class TMLViewFactory(HasStrictTraits):
 
-    _ast = Instance(ast.AST)
+    _ast = Instance(tml_ast.TML)
 
     _toolkit = Instance(dict)
 
@@ -155,11 +153,11 @@ class TMLViewFactory(HasStrictTraits):
     def _build_ctor_tree(self):
         # If we want to build for a different binding semantic (like pixies)
         # import and use different interceptor factories here.
-        from ..interceptors.tml_traits import code_interceptor_factories as cif
-        visitor = _ConstructorVisitor(self.toolkit, default=cif.Default,
-                                      bind=cif.Bind, delegate=cif.Delegate,
-                                      notify=cif.Notify)
-        visitor.visit(ast)
+        from ..interceptors import tml
+        visitor = _ConstructorVisitor(self._toolkit, default=tml.Default,
+                                      bind=tml.Bind, delegate=tml.Delegate,
+                                      notify=tml.Notify)
+        visitor.visit(self._ast)
         tree, imports = visitor.results()
         self._ctor_tree = tree
         self._imports = imports

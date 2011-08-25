@@ -1,6 +1,6 @@
 from traits.api import Interface, Instance, List, Tuple, Str
 
-from ..interceptors.i_interceptor_factory import IInterceptorFactory
+from ..interceptors.i_interceptor import IInterceptorFactory
 
 
 class IToolkitConstructor(Interface):
