@@ -58,7 +58,7 @@ class WXCheckBox(WXElement):
 
     # Event handlers
     def _on_toggled(self, event):
-        self.checked = not self.checked
+        self.checked = self.widget.GetValue()
         self.toggled = event
         event.Skip()
 
