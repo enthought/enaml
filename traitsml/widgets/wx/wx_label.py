@@ -3,8 +3,8 @@ import wx
 from traits.api import implements, Str
 
 from .wx_element import WXElement
-
 from ..i_label import ILabel
+
 
 class WXLabel(WXElement):
     """ A wxWidgets implementation of ILabel.
@@ -14,7 +14,7 @@ class WXLabel(WXElement):
     text : Str
         The text in the label.
 
-    
+
     See Also
     --------
     ILabel
@@ -22,22 +22,34 @@ class WXLabel(WXElement):
     """
     implements(ILabel)
 
- 	#--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # ILabel interface
     #--------------------------------------------------------------------------
+
     text = Str
 
     #--------------------------------------------------------------------------
+    #
     # Implementation
+    #
     #--------------------------------------------------------------------------
+
     def create_widget(self, parent):
-        self.widget = wx.StaticText(parent.widget)
+        self.widget = wx.StaticText(parent=parent.widget)
+
+    #--------------------------------------------------------------------------
+    # Initialization methods
+    #--------------------------------------------------------------------------
 
     def init_attributes(self):
         self.widget.SetLabel(self.text)
 
     def init_meta_handlers(self):
         pass
+
+    #--------------------------------------------------------------------------
+    # Notification methods
+    #--------------------------------------------------------------------------
 
     def _text_changed(self, text):
         self.widget.SetLabel(text)
