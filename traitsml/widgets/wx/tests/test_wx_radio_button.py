@@ -2,7 +2,6 @@
 import unittest
 
 import wx
-from traits.api import HasTraits, Instance
 
 from traitsml.widgets.wx.api import WXRadioButton
 
@@ -38,26 +37,26 @@ class testWXRadioButton(unittest.TestCase):
         self.radio2.init_attributes()
 
         self.radio1.text = 'Label 1'
-        self.radio1.widget.SetPosition((20,10))
-        self.radio1.widget.SetSize((100,20))
+        self.radio1.widget.SetPosition((20, 10))
+        self.radio1.widget.SetSize((100, 20))
         self.radio1.widget.SetWindowStyleFlag(wx.RB_GROUP)
         self.radio1.checked = True
 
         self.radio2.text = 'Label 2'
-        self.radio2.widget.SetSize((100,20))
-        self.radio2.widget.SetPosition((20,30))
+        self.radio2.widget.SetSize((100, 20))
+        self.radio2.widget.SetPosition((20, 30))
 
     def testInitialContents(self):
         """Check the values of the WXRadioButton"""
 
         # checked
         self.assertTrue(self.radio1.widget.GetValue(),
-            'The first radiobutton should selected')
+            'The first radiobutton should be selected')
         self.assertEqual(self.radio1.checked, self.radio1.widget.GetValue(),
             'The checked attribute does not agree with the widget')
 
         self.assertFalse(self.radio2.widget.GetValue(),
-            'The second radiobutton should de-selected')
+            'The second radiobutton should not be selected')
         self.assertEqual(self.radio2.checked, self.radio2.widget.GetValue(),
             'The checked attribute does not agree with the widget')
 
@@ -71,7 +70,6 @@ class testWXRadioButton(unittest.TestCase):
             "The widget's label should be 'Label 2' ")
         self.assertEqual(self.radio2.text, self.radio2.widget.GetLabel(),
             'The text attribute does not agree with the widget label')
-
 
     def testLabelChange(self):
         """Test changing the label of a WXRadioButton"""
@@ -133,5 +131,3 @@ class testWXRadioButton(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-
-
