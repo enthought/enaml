@@ -22,14 +22,14 @@ class IWindow(IComponent):
 
     Methods
     -------
-    layout()
+    layout(parent=None)
         Initialize and layout the window and it's children.
 
     set_container(container)
         Set the container of child widgets and/or containers for
         this window.
 
-    show(layout=False)
+    show()
         Make the window visible on the screen.
     
     hide()
@@ -40,7 +40,7 @@ class IWindow(IComponent):
 
     modality = Enum(*Modality.values())
 
-    def layout(self):
+    def layout(self, parent=None):
         """ Initialize and layout the window and it's children.
 
         Call this method after the object tree has been built
@@ -51,7 +51,13 @@ class IWindow(IComponent):
 
         Arguments
         ---------
-        None
+        parent : IComponent, optional
+            The parent component of this window, if any. Defaults 
+            to None. This is only really useful if you want complex 
+            modal interactions between windows that respects the
+            parent/child heierarchy. The parent should have already
+            been layed out (and therefore have created its internal
+            widget) before being passed in to this method.
 
         Returns
         -------
@@ -88,19 +94,38 @@ class IWindow(IComponent):
         """
         raise NotImplementedError
         
-    def show(self, layout=False):
-        """ Make the window visible on the screen.
+    def get_container(self):
+        """ Return the container of children for this window.
 
-        The 'layout' method must be called at least once prior to
-        calling this method. Alternatively, the layout keyword can
-        be passed as True, which will then cause 'layout' to be 
-        called prior to showing the window.
+        Call this method to retrieve the container previously 
+        set with set_container.
 
         Arguments
         ---------
-        layout : Bool=False
-            Set this keyword argument to True if the 'layout' method 
-            should be called prior to showing the window.
+        None
+
+        Returns
+        -------
+        result : IContainer or None
+            Returns the conainter set on this window if one is set.
+
+        Raises
+        ------
+        None
+
+        """
+        raise NotImplementedError
+        
+    def show(self):
+        """ Make the window visible on the screen.
+
+        If the 'layout' method is not explicity called prior to calling
+        this method, then the window will lay itself out (with no parent)
+        prior to displaying itself to the screen.
+
+        Arguments
+        ---------
+        None
 
         Returns
         -------
@@ -108,12 +133,8 @@ class IWindow(IComponent):
 
         Raises
         ------
-        LayoutError
-            The 'layout' method was not called prior to calling this
-            method.
-
         WindowError
-            Any other reason the action cannot be completed.
+            Any reason the action cannot be completed.
 
         """
         raise NotImplementedError

@@ -15,8 +15,8 @@ class View(HasStrictTraits):
 
     ns = Instance(NamespaceProxy)
 
-    def show(self, layout=False):
-        self.window.show(layout=layout)
+    def show(self):
+        self.window.show()
     
     def hide(self):
         self.window.hide()
