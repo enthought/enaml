@@ -3,7 +3,7 @@ import unittest
 
 import wx
 
-from traitsml.widgets.wx.api import WXRadioButton
+from traitsml.widgets.wx.wx_radio_button import WXRadioButton
 
 
 class WidgetParent(object):

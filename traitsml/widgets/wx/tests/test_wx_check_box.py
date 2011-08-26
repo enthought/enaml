@@ -3,7 +3,7 @@ import unittest
 
 import wx
 
-from traitsml.widgets.wx.api import WXCheckBox
+from traitsml.widgets.wx.wx_check_box import WXCheckBox
 
 
 class WidgetParent(object):
