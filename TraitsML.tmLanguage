@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>tml</string>
+	</array>
+	<key>name</key>
+	<string>TraitsML</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>comment</key>
+			<string>TraitsML element and meta-info names,
+				and their associated identifiers</string>
+			<key>match</key>
+			<string>^\s*(@)?([A-Za-z_]\w*)( [A-Za-z_]\w*)?:$</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>storage.type</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.tag</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter</string>
+				</dict>
+			</dict>
+		</dict>
+		<dict>
+			<key>comment</key>
+			<string>TraitsML expressions</string>
+			<key>begin</key>
+			<string>^\s*([A-Za-z_]\w*) (=|:=|&lt;&lt;|&gt;&gt;)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.class</string>
+				</dict>
+			</dict>
+			<key>end</key>
+			<string>$</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>source.python</string>
+				</dict>
+			</array>
+
+
+
+		</dict>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.import.python</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.import.from.python</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>\b(?:(import)|(from))\b</string>
+		</dict>	
+	
+	</array>
+	<key>scopeName</key>
+	<string>source.python.traitsml</string>
+	<key>uuid</key>
+	<string>42F00A35-6D17-44B8-8C9B-438F9FE9E241</string>
+</dict>
+</plist>
