@@ -1,34 +1,47 @@
-from traits.api import implements, Bool, Event, Str
-
+# -*- coding: utf-8 -*-
 import wx
 
+from traits.api import implements, Bool, Event, Str
+
 from .wx_element import WXElement
+from ..i_radio_button import IRadioButton
 
-from ..i_check_box import ICheckBox
 
+class WXRadioButton(WXElement):
+    """ A wxWidgets implementation of IRadioButton.
 
-class WXCheckBox(WXElement):
-    """A wxWidgets implementation of ICheckBox.
+    Radio buttons are created
 
     Attributes
     ----------
     checked : Bool
-        Whether or not the button is currently checked.
+        Whether the button is currently checked.
 
     text : Str
-         The text to show next to the check box.
+        The text to use as the button's label.
 
     toggled : Event
-        Fired when the check box is toggled.
+        Fired when the button is toggled.
 
     pressed : Event
-        Fired when the check box is pressed.
+        Fired when the button is pressed.
 
     released : Event
-        Fired when the check box is released.
+        Fired when the button is released.
+
+
+    .. note:: When wxRadioButtons are in the same group (but not inside a
+        radiobox) selecting one of them will automatically deselect the others.
+        Yet the other WXRadioButtons will not be aware of the change even
+        though the wxWidgets have changed their values.
+
+    See Also
+    --------
+    IRadioButton
+    wxRadioButton
 
     """
-    implements(ICheckBox)
+    implements(IRadioButton)
 
     #--------------------------------------------------------------------------
     # IRadioButton interface
@@ -45,19 +58,17 @@ class WXCheckBox(WXElement):
     released = Event
 
     #--------------------------------------------------------------------------
-    #
     # Implementation
-    #
     #--------------------------------------------------------------------------
 
-    def create_widget(self, parent=None):
-        """Initialization of ICheckBox element based on wxWidget
+    def create_widget(self, parent):
+        """Initialization of the IRadionButton based on wxWidget
         """
         # create widget
-        widget = wx.CheckBox(parent=parent.widget)
+        widget = wx.RadioButton(parent=parent.widget)
 
-        # Bind class functions to wxwidget events
-        widget.Bind(wx.EVT_CHECKBOX, self._on_toggled)
+        # Bind class functions to wx widget events
+        widget.Bind(wx.EVT_RADIOBUTTON, self._on_toggled)
         widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
         widget.Bind(wx.EVT_LEFT_UP, self._on_released)
 
@@ -69,12 +80,12 @@ class WXCheckBox(WXElement):
     #--------------------------------------------------------------------------
 
     def init_attributes(self):
-        """initialize wxCheckBox attributes"""
+        """initialize wxRadioButton attributes"""
         self.widget.SetLabel(self.text)
         self.widget.SetValue(self.checked)
 
     def init_meta_handlers(self):
-        """initialize wxCheckBox meta styles"""
+        """initialize wxRadioButton meta styles"""
         pass
 
     #--------------------------------------------------------------------------
@@ -82,7 +93,7 @@ class WXCheckBox(WXElement):
     #--------------------------------------------------------------------------
 
     def _checked_changed(self):
-        # only update if the value has actually changed
+        # only update if the value has actually change
         if self.checked != self.widget.GetValue():
             self.widget.SetValue(self.checked)
             self.toggled = True

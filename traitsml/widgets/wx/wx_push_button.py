@@ -1,6 +1,6 @@
-from traits.api import implements, Bool, Event, Str
-
 import wx
+
+from traits.api import implements, Bool, Event, Str
 
 from .wx_element import WXElement
 
@@ -27,46 +27,54 @@ class WXPushButton(WXElement):
     released: Event
         Fired when the button is released.
 
+
+    .. note:: The wxbutton doesn't emit an wx.EVT_LEFT_UP even though it emits
+        an wx.EVT_LEFT_DOWN. So in order to reset the down flag when the mouse
+        leaves the button and then releases, we hook to wx.EVT_LEAVE_WINDOW
+        event.
+
+
     See Also
     --------
     IPushButton
     """
     implements(IPushButton)
 
+    #--------------------------------------------------------------------------
     # IPushButton interface
+    #--------------------------------------------------------------------------
     down = Bool
 
     text = Str
-    
+
     clicked = Event
-    
+
     pressed = Event
 
     released = Event
-    
-    # Setup
-    def init_widget(self, parent=None):
-        """ NOTE: This method is a placeholder.
 
-        It's a generic setup function, whose name might change in the future.
-        Connecting the event handlers is necessary, but it might happen somewhere else.
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def create_widget(self, parent):
+        widget = wx.Button(parent.widget)
+        widget.Bind(wx.EVT_BUTTON, self._on_clicked)
+        widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
+        widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)
+        self.widget = widget
 
-        For now, it's okay to use.
-        """
-        
-        self.widget.Bind(wx.EVT_BUTTON, self._on_clicked)
-        self.widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
-        self.widget.Bind(wx.EVT_LEFT_UP, self._on_released)
-
-    # Notification methods
-    def _down_changed(self):
-        self.widget.SetValue(self.down)
-    
-    def _text_changed(self):
+    def init_attributes(self):
         self.widget.SetLabel(self.text)
-    
-    # Event handlers
+
+    def init_meta_handlers(self):
+        pass
+
+    def _text_changed(self, text):
+        self.widget.SetLabel(text)
+
     def _on_clicked(self, event):
+        self.down = False
+        self.released = event
         self.clicked = event
         event.Skip()
 
@@ -75,8 +83,12 @@ class WXPushButton(WXElement):
         self.pressed = event
         event.Skip()
 
-    def _on_released(self, event):
-        self.down = False
-        self.released = event
+    def _on_leave_window(self, event):
+        # The wx button doesn't emit an EVT_LEFT_UP even though it
+        # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down
+        # flag when the mouse leaves the button and then releases,
+        # we need to hook the window leave event. (double ugh!)
+        if self.down:
+            self.down = False
+            self.released = event
         event.Skip()
-
