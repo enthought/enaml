@@ -50,6 +50,9 @@ class WXCalendar(WXElement):
     # Implementation
     #--------------------------------------------------------------------------
     def create_widget(self, parent):
+        """ Creates and binds a wx.calendar.CalendarCtrl.
+
+        """
         widget = wx.calendar.CalendarCtrl(parent.widget)
         widget.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED, self._on_date_selected)
         widget.Bind(wx.calendar.EVT_CALENDAR_DAY, self._on_day_selected)
@@ -58,6 +61,11 @@ class WXCalendar(WXElement):
         self.widget = widget
 
     def init_attributes(self):
+        """ Sync the widget's display with the date trait.
+
+        Default to today if no date is specified.
+
+        """
         if not self.date:
             self.date = date.today()
         self.widget.PySetDate(self.date)
@@ -67,14 +75,15 @@ class WXCalendar(WXElement):
         pass
 
     def _date_changed(self):
+        """ Sync the widget and day, month, and year traits with the date trait.
+
+        """
         self.widget.PySetDate(self.date)
         
         today = self.date
         self.day = today.day
         self.month = today.month
         self.year = today.year
-        
-        print self.date
 
     def _day_changed(self):
         if self.date.day != self.day:
