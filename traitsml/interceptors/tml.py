@@ -69,6 +69,13 @@ class NotifierInterceptor(CodeInterceptor):
         self.local_ns = local_ns
         obj.on_trait_change(self.notify, name)
 
+        # We need to add ourselves to the obj so that a strong
+        # ref is mantained and we don't get gc'd. We have other
+        # options about where to put the strong ref, but this
+        # is consistent with the style of the other interceptors.
+        i_name = '_notifier_interceptor_%s' % name
+        obj.add_trait(i_name, self)
+
     def notify(self, obj, name, old, new):
         args = Arguments(obj, name, old, new)
         local_ns = self.local_ns
@@ -92,7 +99,7 @@ class DefaultInterceptor(CodeInterceptor, InjectionMixin):
         self.global_ns = global_ns
         self.local_ns = local_ns
         self.validate_trait = self.valid_injection(obj, name)
-        delegate_name = '_%s_%s' % (name. self.__class__.__name__)
+        delegate_name = '_%s_%s' % (name, self.__class__.__name__)
         self.inject_delegate(obj, name, delegate_name, 'value')
 
     def _get_value(self):
@@ -186,7 +193,7 @@ class CodeInterceptorFactory(HasStrictTraits):
     def _get_dependencies(self):
         visitor = AttributeVisitor()
         visitor.visit(self.ast)
-        return visit.results()
+        return visitor.results()
         
 
 class Default(CodeInterceptorFactory):
