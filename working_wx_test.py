@@ -3,9 +3,10 @@ on the wx branch and can be executed via python working_wx_test.py
 from the current directory.
 
 """
-import wx
-
 from cStringIO import StringIO
+import random
+
+import wx
 
 from traits.api import HasTraits, Str
 
@@ -33,6 +34,11 @@ Window:
         PushButton:
             text = "static"
             clicked >> model.print_msg(args)
+        
+        CheckBox:
+            text = "A simple text box"
+            toggled >> setattr(self, 'text', model.randomize(self.text))
+
 """
 
 class Model(HasTraits):
@@ -40,6 +46,11 @@ class Model(HasTraits):
 
     def print_msg(self, args):
         print self.message, args
+
+    def randomize(self, string):
+        l = list(string)
+        random.shuffle(l)
+        return ''.join(l)
 
 
 fact = TMLViewFactory(StringIO(tml))
