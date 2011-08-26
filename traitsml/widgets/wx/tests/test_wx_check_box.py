@@ -26,8 +26,6 @@ class testWXRadioButton(unittest.TestCase):
         parent = WidgetParent()
 
         # setup widgets
-        # we need more than one for RadioButton since we cannot
-        # de-select a single radio button
 
         self.checkbox = WXCheckBox()
         self.checkbox.create_widget(parent)
