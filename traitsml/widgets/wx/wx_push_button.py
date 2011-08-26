@@ -27,28 +27,35 @@ class WXPushButton(WXElement):
     released: Event
         Fired when the button is released.
 
+
+    .. note:: The wxbutton doesn't emit an wx.EVT_LEFT_UP even though it emits
+        an wx.EVT_LEFT_DOWN. So in order to reset the down flag when the mouse
+        leaves the button and then releases, we hook to wx.EVT_LEAVE_WINDOW
+        event.
+
+
     See Also
     --------
     IPushButton
     """
     implements(IPushButton)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # IPushButton interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     down = Bool
 
     text = Str
-    
+
     clicked = Event
-    
+
     pressed = Event
 
     released = Event
-    
-    #---------------------------------------------------------------------------
+
+    #--------------------------------------------------------------------------
     # Implementation
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def create_widget(self, parent):
         widget = wx.Button(parent.widget)
         widget.Bind(wx.EVT_BUTTON, self._on_clicked)
@@ -64,7 +71,7 @@ class WXPushButton(WXElement):
 
     def _text_changed(self, text):
         self.widget.SetLabel(text)
-    
+
     def _on_clicked(self, event):
         self.down = False
         self.released = event
@@ -77,12 +84,11 @@ class WXPushButton(WXElement):
         event.Skip()
 
     def _on_leave_window(self, event):
-        # The wx button doesn't emit an EVT_LEFT_UP even though it 
-        # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down 
-        # flag when the mouse leaves the button and then releases, 
+        # The wx button doesn't emit an EVT_LEFT_UP even though it
+        # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down
+        # flag when the mouse leaves the button and then releases,
         # we need to hook the window leave event. (double ugh!)
         if self.down:
             self.down = False
             self.released = event
         event.Skip()
-
