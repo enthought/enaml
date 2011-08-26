@@ -21,6 +21,9 @@ class IContainer(IComponent):
 
     children()
         An iterator of all the children.
+    
+    layout(parent)
+        Initialize and layout the container and it's children.
 
     """
     def add_child(self, child):
@@ -142,6 +145,31 @@ class IContainer(IComponent):
         -----
         There is no guarantee to the accuracy of the itertor if the
         children of the container are modified during iteration.
+
+        """
+        raise NotImplementedError
+
+    def layout(self, parent):
+        """ Initialize and layout the container and it's children.
+
+        This method should be called by the parent window during
+        its layout process.
+
+        Arguments
+        ---------
+        parent : IWindow
+            The parent window of this container. The parent should 
+            have already been layed out (and therefore have created 
+            its internal widget) before being passed in to this method.
+
+        Returns
+        -------
+        result : None
+
+        Raises
+        ------
+        LayoutError
+            Any reason the action cannot be completed.
 
         """
         raise NotImplementedError

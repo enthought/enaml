@@ -12,15 +12,22 @@ class WXContainer(WXComponent, ContainerMixin):
     
     implements(IContainer)
 
-    #---------------------------------------------------------------------------
+    #===========================================================================
     # IContainer interface
-    #---------------------------------------------------------------------------
+    #===========================================================================
+    def layout(self, parent):
+        self.create_panel(parent)
+        self.create_sizer()
+        self.layout_children()
+        self.init_attributes()
+        self.init_meta_handlers()
+        self.layed_out = True
 
-    # The IContainer interface is provided by the ContainerMixin
+    # The rest of the IContainer interface is provided by the ContainerMixin
 
-    #---------------------------------------------------------------------------
+    #===========================================================================
     # Implementation
-    #---------------------------------------------------------------------------
+    #===========================================================================
     
     # The wx sizer in user for this container
     sizer = Instance(wx.Sizer)
@@ -44,22 +51,15 @@ class WXContainer(WXComponent, ContainerMixin):
         if self.layed_out:
             if child.widget:
                 child.widget.Destroy()
-                self.Layout()
+                self.widget.Layout()
 
     def do_replace_child(self, child, other_child, idx):
         if self.layed_out:
-            if child.widget and other_child.widget:
+            if child.widget:
+                other_child.layout(self)
                 if self.sizer.Replace(child.widget, other_child.widget):
                     child.widget.Destroy()
-                    self.Layout()
-
-    def layout(self, parent):
-        self.create_panel(parent)
-        self.create_sizer()
-        self.layout_children()
-        self.init_attributes()
-        self.init_meta_handlers()
-        self.layed_out = True
+                    self.widget.Layout()
 
     def create_panel(self, parent):
         raise NotImplementedError

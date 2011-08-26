@@ -51,7 +51,7 @@ class IWindow(IComponent):
 
         Arguments
         ---------
-        parent : IComponent, optional
+        parent : Either(IWindow, IContainer, IElement), optional
             The parent component of this window, if any. Defaults 
             to None. This is only really useful if you want complex 
             modal interactions between windows that respects the
