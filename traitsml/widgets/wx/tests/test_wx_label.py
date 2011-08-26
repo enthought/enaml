@@ -3,7 +3,7 @@ import unittest
 
 import wx
 
-from ..wx_label import WXLabel
+from traitsml.widgets.wx.wx_label import WXLabel
 
 
 class WidgetParent(object):
