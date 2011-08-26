@@ -82,6 +82,7 @@ class WXRadioButton(WXElement):
     def init_attributes(self):
         """initialize wxRadioButton attributes"""
         self.widget.SetLabel(self.text)
+        self.widget.SetValue(self.checked)
 
     def init_meta_handlers(self):
         """initialize wxRadioButton meta styles"""
@@ -92,7 +93,7 @@ class WXRadioButton(WXElement):
     #--------------------------------------------------------------------------
 
     def _checked_changed(self):
-        # only update if the value has actually changed
+        # only update if the value has actually change
 
         if self.checked != self.widget.GetValue():
             self.widget.SetValue(self.checked)
