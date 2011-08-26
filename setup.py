@@ -1,7 +1,8 @@
-# -*- coding: utf-8 -*-# Copyright (c) 2011 by Enthought, Inc.
+# Copyright (c) 2011 by Enthought, Inc.
 # All rights reserved.
 
 from setuptools import setup, find_packages
+
 
 setup(name='traitsml',
     version='0.1a',
@@ -13,5 +14,4 @@ setup(name='traitsml',
     requires=['traits', 'PySide', 'ply', 'wx'],
     install_requires=['distribute'],
     packages=find_packages(),
-    test_suite = "traitsml.test_collector"
 )
