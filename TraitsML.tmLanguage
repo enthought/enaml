@@ -39,7 +39,7 @@
 			<key>comment</key>
 			<string>TraitsML expressions</string>
 			<key>begin</key>
-			<string>^\s*([A-Za-z_]\w*) (=|:=|&lt;&lt;|&gt;&gt;)</string>
+			<string>^\s*([A-Za-z_]\w*) (=|:=|&lt;&lt;|&gt;&gt;) </string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
