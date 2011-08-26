@@ -18,7 +18,9 @@ class BaseToolkitCtor(HasStrictTraits):
     # The transient traits that are reset in the cleanup method.
     impl = Any
 
-    local_ns = Instance(dict)
+    local_ns = Instance(dict, ())
+
+    global_ns = Instance(dict)
 
     def construct(self):
         for meta in self.metas:
@@ -48,6 +50,8 @@ class BaseToolkitCtor(HasStrictTraits):
         for child in self.children:
             child.build_ns(global_ns, self)
 
+        self.global_ns = global_ns
+
     def inject_interceptors(self):
         impl = self.impl
         global_ns = self.global_ns
@@ -66,7 +70,7 @@ class BaseToolkitCtor(HasStrictTraits):
         self.local_ns = {}
         for meta in self.metas:
             meta.cleanup()
-        for child in self.children():
+        for child in self.children:
             child.cleanup()
 
     def __call__(self, **ctxt_objs):
@@ -112,7 +116,7 @@ class BaseContainerCtor(BaseComponentCtor):
         super(BaseContainerCtor, self).construct()
         impl = self.impl
         for child in self.children:
-            impl.add_child(child)
+            impl.add_child(child.impl)
 
 
 class BaseElementCtor(BaseComponentCtor):

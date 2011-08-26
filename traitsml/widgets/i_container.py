@@ -10,35 +10,29 @@ class IContainer(IComponent):
     Methods
     -------
     add_child(child)
-        Add the child component to this container. Do not layout.
+        Add the child component to this container.
     
     remove_child(child)
         Remove the child component from this container, but
-        do not update the screen.         
+        do not update the screen.
 
     replace_child(child, other_child)
-        Replace child with other_child, but do not update the screen.
+        Replace child with other_child.
 
-    rearrange()
-        Rearrange the childrent according to the current layout.
-    
     children()
         An iterator of all the children.
 
     """
-
     def add_child(self, child):
         """ Add the child component to this container.
         
         Call this method when a child should be added to the container. 
-        The container will not visibly arrange the children until the
-        'layout' method is called and will continue to function
-        as normal until that time.
-
+        
         Arguments
         ---------
-        child : IComponent
-            The child to add to this container.
+        child : Either(IContainer, IElement)
+            The child to add to this container. The child must not
+            already be in the container.
 
         Returns
         -------
@@ -58,14 +52,12 @@ class IContainer(IComponent):
     def remove_child(self, child):
         """ Remove the child from this container.
 
-        Call this method when a child should be remove from the 
-        container. The container will not visibly arrange the 
-        children until the 'layout' method is called and will 
-        continue to function as normal until that time.
+        Call this method when a child should be removed from the 
+        container.
 
         Arguments
         ---------
-        child : IComponent
+        child : Either(IContainer, IElement)
             The child to remove from the container. The child
             must be contained in the container.
 
@@ -91,17 +83,15 @@ class IContainer(IComponent):
         """ Replace child with other_child.
 
         Call this method when the child should be replaced by the
-        other_child. The container will not visibly arrange the 
-        children until the 'layout' method is called and will
-        continue to function as normal until that time.
+        other_child.
 
         Arguments
         ---------
-        child : IComponent
-            The child being replaced. The child be contained in the 
-            container.
+        child : Either(IContainer, IElement)
+            The child being replaced. The child must be contained in 
+            the container.
 
-        other_child : IComponent
+        other_child : Either(IContainer, IElement)
             The child taking the new place. The child must not be 
             contained in the container.
 
@@ -112,7 +102,7 @@ class IContainer(IComponent):
         Raises
         ------
         TypeError
-            The child or other_child is not an instance of IComponent.
+            The child or other_child is not of the proper type.
 
         ValueError
             The child is not contained in the container or other_child
@@ -125,30 +115,6 @@ class IContainer(IComponent):
         -----
         To replace a child with one that already exists in the container,
         call 'remove_child' followed by 'replace_child'.
-
-        """
-        raise NotImplementedError
-
-    def rearrange(self):
-        """  Rearrange the childrent according to the current layout.
-
-        Call this method after all child manipulations have been 
-        completed and the children should be visibly rearranged.
-        Calling this is only necessary when changing children
-        *after* the ui has already been made visible.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
-        Raises
-        ------
-        LayoutError
-            Any reason the action cannot be completed.
 
         """
         raise NotImplementedError

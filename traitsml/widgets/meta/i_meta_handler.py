@@ -1,17 +1,19 @@
 from traits.api import Interface, Instance
 
-from .i_meta_info import IComponent, IMetaInfo
+from .base import BaseMetaInfo
+
+from ..i_component import IComponent
 
 
 class IMetaHandler(Interface):
 
-    meta_info = Instance(IMetaInfo)
+    meta_info = Instance(BaseMetaInfo)
 
     component = Instance(IComponent)
 
-    def setup(self):
+    def hook(self):
         raise NotImplementedError
-
-    def teardown(self):
+        
+    def unhook(self):
         raise NotImplementedError
 
