@@ -3,7 +3,7 @@ import unittest
 
 import wx
 
-from ..wx_label import WXSpinCtrl
+from traitsml.widgets.wx.wx_spin_box import WXSpinBox
 
 
 class WidgetParent(object):
@@ -15,8 +15,8 @@ class WidgetParent(object):
         self.widget = wx.Frame(None)
 
 
-class testWXSpinCtrl(unittest.TestCase):
-    """Testsuite for WXSpinCtrl
+class testWXSpinBox(unittest.TestCase):
+    """Testsuite for WXSpinBox
 
     The widget is tested in isolation without the traitaml boilerplate
     """
@@ -26,32 +26,60 @@ class testWXSpinCtrl(unittest.TestCase):
         parent = WidgetParent()
 
         # setup widgets
-        self.spin_ctrl = WXSpinCtrl()
-        self.spin_ctrl.create_widget(parent)
-        self.spin_ctrl.init_attributes()
+        self.spin_box = WXSpinBox()
+        self.spin_box.create_widget(parent)
+        self.spin_box.init_attributes()
 
-        self.spin_ctrl.min = -10
-        self.spin_ctrl.max = 10
+        self.spin_box.low = -10
+        self.spin_box.high = 10
+        self.spin_box.value = 2
+
     def test_initial_contents(self):
-        """Check the text value of the WXLabel"""
+        """Check the initial values of the WXSpinBox"""
 
-        widget = self.label.toolkit_widget()
-        self.assertEqual(self.label_text, widget.GetLabel(),
-            "The widget's label should be {0}".format(self.label_text))
-        self.assertEqual(self.label.text, widget.GetLabel(),
-            'The text attribute does not agree with the widget\'s label')
+        widget = self.spin_box.toolkit_widget()
+        self.assertEqual(self.spin_box.value, widget.GetValue(),
+            "The widget's value should be {0}".format(self.spin_box.value))
 
-    def test_label_change(self):
-        """Test changing the label of a WXLabel"""
+    def test_value_change(self):
+        """Test changing the value of a WXSpinBox"""
 
-        new_label = 'new_label'
-        self.label.text = new_label
-        widget = self.label.toolkit_widget()
+        new_value = -2
+        self.spin_box.value = new_value
+        widget = self.spin_box.toolkit_widget()
 
-        self.assertEqual(new_label, widget.GetLabel(),
-            "The widget's label should be {0}".format(new_label))
-        self.assertEqual(self.label.text, widget.GetLabel(),
-            'The text attribute does not agree with the widget\'s label')
+        self.assertEqual(new_value, widget.GetValue(),
+            "The widget's value is {0}".format(widget.GetValue()))
+
+    def test_low_change(self):
+        """Test changing the low value of a WXSpinBox"""
+
+        new_value = -20
+        self.spin_box.low = new_value
+        widget = self.spin_box.toolkit_widget()
+
+        self.assertEqual(new_value, widget.GetMin(),
+            "The widget's min is {0}".format(widget.GetMin()))
+
+    def test_high_change(self):
+        """Test changing the high value of a WXSpinBox"""
+
+        new_value = 20
+        self.spin_box.high = new_value
+        widget = self.spin_box.toolkit_widget()
+
+        self.assertEqual(new_value, widget.GetMax(),
+            "The widget's max is {0}".format(widget.GetMax()))
+
+    def test_validation(self):
+        '''Test validation of the range of a WXSpinBox'''
+
+        new_value = 25
+        self.spin_box.value = new_value
+        widget = self.spin_box.toolkit_widget()
+
+        self.assertEqual(self.spin_box.high, widget.GetValue(),
+            "The widget's value {0} is over the max".format(widget.GetValue()))
 
 
 if __name__ == '__main__':
