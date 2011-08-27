@@ -1,6 +1,6 @@
 import wx
 
-from traits.api import implements, Bool, Event, Str
+from traits.api import implements, Bool, Callable, Event, Int, Str
 
 from .wx_element import WXElement
 
@@ -55,13 +55,13 @@ class WXSpinBox(WXElement):
     #===========================================================================
     # ISpinBox interface
     #===========================================================================
-    low = Int
+    low = Int(0)
 
-    high = Int
+    high = Int(100)
 
-    step = Int
+    step = Int(1)
 
-    value = Int
+    value = Int(0)
 
     prefix = Str
 
@@ -106,7 +106,9 @@ class WXSpinBox(WXElement):
     # Initialization
     #---------------------------------------------------------------------------
     def init_attributes(self):
-        """ Intializes the widget with the attributes of this instance.
+        """ Intializes the widget with the attributes of this
+        instance.
+        Step is not supported in WX
 
         This method is called by the 'layout' method of WXElement.
         It is not meant for public consumption.
@@ -144,10 +146,26 @@ class WXSpinBox(WXElement):
     # Notification
     #---------------------------------------------------------------------------
     def _value_changed(self, value):
-        """ The change handler for the 'text' attribute.
+        """ The change handler for the 'value' attribute.
 
         """
-        self.widget.SetValue(value)
+        if value < self.low:
+            self.value = self.low
+        if value > self.high:
+            self.value = self.high
+            
+        self.widget.SetValue(self.value)
+
+
+    def _low_changed(self):
+        ''' The change handle for the 'low' attribute.
+        '''
+        self.widget.SetRange(self.low, self.high)
+
+    def _high_changed(self):
+        ''' The change handle for the 'high' attribute.
+        '''
+        self.widget.SetRange(self.low, self.high)
 
     #---------------------------------------------------------------------------
     # Event handling
