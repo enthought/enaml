@@ -2,3 +2,15 @@
 *.un~
 *.swp
 /build
+
+traitsml.egg-info/top_level.txt
+
+traitsml.egg-info/requires.txt
+
+traitsml.egg-info/dependency_links.txt
+
+traitsml.egg-info/SOURCES.txt
+
+traitsml.egg-info/PKG-INFO
+
+dist/traitsml-0.1a-py2.7.egg
