@@ -58,7 +58,9 @@ class WXRadioButton(WXElement):
     released = Event
 
     #--------------------------------------------------------------------------
+    #
     # Implementation
+    #
     #--------------------------------------------------------------------------
 
     def create_widget(self, parent):

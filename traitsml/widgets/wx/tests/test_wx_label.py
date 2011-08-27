@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import unittest
+import sys
 
 import wx
 
-from ..wx_label import WXLabel
+from traitsml.widgets.wx.wx_label import WXLabel
 
 
 class WidgetParent(object):
@@ -30,29 +31,27 @@ class testWXLabel(unittest.TestCase):
         self.label.create_widget(parent)
         self.label.init_attributes()
 
-        self.label_text = 'test label'
-        self.label.text = self.label_text
+        self.label.text = 'test label'
 
     def test_initial_contents(self):
         """Check the text value of the WXLabel"""
 
-        widget = self.label.toolkit_widget()
-        self.assertEqual(self.label_text, widget.GetLabel(),
-            "The widget's label should be {0}".format(self.label_text))
-        self.assertEqual(self.label.text, widget.GetLabel(),
-            'The text attribute does not agree with the widget\'s label')
+        self.assertEqual('test label', self.label.widget.GetLabel(),
+            "The widget's label should be {0}".format('test label'))
+        self.assertEqual(self.label.text, self.label.widget.GetLabel(),
+            "The text attribute does not agree with the widget's label")
 
+    @unittest.skipIf(sys.platform.startswith("win"), "Coredump in Windows")
     def test_label_change(self):
         """Test changing the label of a WXLabel"""
 
         new_label = 'new_label'
         self.label.text = new_label
-        widget = self.label.toolkit_widget()
 
-        self.assertEqual(new_label, widget.GetLabel(),
+        self.assertEqual(new_label, self.label.widget.GetLabel(),
             "The widget's label should be {0}".format(new_label))
-        self.assertEqual(self.label.text, widget.GetLabel(),
-            'The text attribute does not agree with the widget\'s label')
+        self.assertEqual(self.label.text, self.label.widget.GetLabel(),
+            "The text attribute does not agree with the widget's label")
 
 
 if __name__ == '__main__':
