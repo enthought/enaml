@@ -65,7 +65,7 @@ class WXPushButton(WXElement):
     #===========================================================================
     # Implementation
     #===========================================================================
-    def create_widget(self, parent):
+    def create_widget(self):
         """ Creates and binds a wx.Button.
 
         This method is called by the 'layout' method of WXElement.
@@ -81,7 +81,7 @@ class WXPushButton(WXElement):
         result : None
 
         """
-        widget = wx.Button(parent.widget)
+        widget = wx.Button(self.parent_widget())
         widget.Bind(wx.EVT_BUTTON, self._on_clicked)
         widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
         widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)
@@ -105,7 +105,7 @@ class WXPushButton(WXElement):
         result : None
 
         """
-        self.widget.SetLabel(self.text)
+        self.set_label(self.text)
 
     def init_meta_handlers(self):
         """ Initializes any meta handlers for this widget.
@@ -131,7 +131,7 @@ class WXPushButton(WXElement):
         """ The change handler for the 'text' attribute.
 
         """
-        self.widget.SetLabel(text)
+        self.set_label(text)
 
     #---------------------------------------------------------------------------
     # Event handling
@@ -165,4 +165,10 @@ class WXPushButton(WXElement):
             self.down = False
             self.released = event
         event.Skip()
+
+    #---------------------------------------------------------------------------
+    # Widget update
+    #---------------------------------------------------------------------------
+    def set_label(self, label):
+        self.widget.SetLabel(label)
 

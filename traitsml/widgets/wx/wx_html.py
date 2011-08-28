@@ -1,6 +1,6 @@
-from traits.api import implements, Str
+import wx.html
 
-import wx
+from traits.api import implements, Str
 
 from .wx_element import WXElement
 
@@ -18,11 +18,36 @@ class WXHtml(WXElement):
     """
     implements(IHtml)
 
+    #===========================================================================
     # IHtml interface
-    html = Str
+    #===========================================================================
+    source = Str
 
-    # Notification methods
-    def _html_changed(self):
-        self.widget.SetPage(self.html)
+    #===========================================================================
+    # Implementation
+    #===========================================================================
 
+    #---------------------------------------------------------------------------
+    # Initialization
+    #---------------------------------------------------------------------------
+    def create_widget(self):
+        self.widget = wx.html.HtmlWindow(self.parent_widget())
+
+    def init_attributes(self):
+        self.set_page_source(self.source)
+
+    def init_meta_handlers(self):
+        pass
+
+    #---------------------------------------------------------------------------
+    # Notification
+    #---------------------------------------------------------------------------
+    def _source_changed(self, source):
+        self.set_page_source(source)
+
+    #---------------------------------------------------------------------------
+    # Widget update
+    #---------------------------------------------------------------------------
+    def set_page_source(self, source):
+        self.widget.SetPage(source)
 

@@ -1,41 +1,19 @@
-from traits.api import Bool, Event, Str
-
-from .i_element import IElement
+from .i_toggle_element import IToggleElement
 
 
-class IRadioButton(IElement):
-    """ A radio button widget. 
+class IRadioButton(IToggleElement):
+    """ A radio button widget derived from IToggleElement 
     
     Use a radio button to toggle the value of a boolean field.
-    Use a group of radio buttons to toggle between multiple 
-    values when only one value of the group can be selected 
-    at a time.
+    For a group of radio buttons with the same widget parent, 
+    only one radio button may be selected at a time. This makes 
+    groups of radio buttons useful for selecting amongst a discrete
+    set of values.
 
-    Attributes
-    ----------
-    checked : Bool
-        Whether the button is currently checked.
-
-    text : Str
-        The text to use as the button's label.
-
-    toggled : Event
-        Fired when the button is toggled.
-
-    pressed : Event
-        Fired when the button is pressed.
-
-    released : Event
-        Fired when the button is released.
-
+    See Also
+    --------
+    IToggleElement
+    
     """
-    checked = Bool
-
-    text = Str
-    
-    toggled = Event
-    
-    pressed = Event
-
-    released = Event
+    pass
 
