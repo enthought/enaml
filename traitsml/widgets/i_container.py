@@ -4,8 +4,8 @@ from .i_component import IComponent
 class IContainer(IComponent):
     """ The base container interface. 
     
-    Containers are non-visible components that are responsible for laying
-    out and arranging their children.
+    Containers are non-visible components that are responsible for 
+    laying out and arranging their children.
 
     Methods
     -------
@@ -13,8 +13,7 @@ class IContainer(IComponent):
         Add the child component to this container.
     
     remove_child(child)
-        Remove the child component from this container, but
-        do not update the screen.
+        Remove the child component from this container.
 
     replace_child(child, other_child)
         Replace child with other_child.
@@ -33,7 +32,7 @@ class IContainer(IComponent):
         
         Arguments
         ---------
-        child : Either(IContainer, IElement)
+        child : Either(IPanel, IElement, IContainer)
             The child to add to this container. The child must not
             already be in the container.
 
@@ -60,7 +59,7 @@ class IContainer(IComponent):
 
         Arguments
         ---------
-        child : Either(IContainer, IElement)
+        child : Either(IPanel, IElement, IContainer)
             The child to remove from the container. The child
             must be contained in the container.
 
@@ -90,11 +89,11 @@ class IContainer(IComponent):
 
         Arguments
         ---------
-        child : Either(IContainer, IElement)
+        child : Either(IPanel, IElement, IContainer)
             The child being replaced. The child must be contained in 
             the container.
 
-        other_child : Either(IContainer, IElement)
+        other_child : Either(IPanel, IElement, IContainer)
             The child taking the new place. The child must not be 
             contained in the container.
 
@@ -152,26 +151,15 @@ class IContainer(IComponent):
     def layout(self, parent):
         """ Initialize and layout the container and it's children.
 
-<<<<<<< wx_local
-        This method should be called by the parent window during
-=======
         This method should be called by the parent panel during
->>>>>>> local
         its layout process.
 
         Arguments
         ---------
-<<<<<<< wx_local
-        parent : IWindow
-            The parent window of this container. The parent should 
-            have already been layed out (and therefore have created 
-            its internal widget) before being passed in to this method.
-=======
         parent : Either(IPanel, IContainer)
-            The parent of this container. The parent should have already 
-            been layed out (and therefore have createdits internal widget) 
-            before being passed in to this method.
->>>>>>> local
+            The parent of this container. The parent should have 
+            already been layed out (and therefore have created its 
+            internal widget) before being passed in to this method.
 
         Returns
         -------

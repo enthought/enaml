@@ -8,7 +8,7 @@ from ...enums import Direction
 
 
 class WXVGroup(WXGroup):
-    """ A wxPython implementation of IVGroup
+    """ A wxPython implementation of IVGroup.
 
     This is a convienence subclass of WXGroup which restricts the 
     layout direction to vertical.

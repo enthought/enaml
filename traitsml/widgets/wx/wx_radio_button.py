@@ -10,10 +10,9 @@ from ..i_radio_button import IRadioButton
 class WXRadioButton(WXToggleElement):
     """ A wxPython implementation of IRadioButton.
 
-    .. note:: When wxRadioButtons are in the same group (but not inside a
-        radiobox) selecting one of them will automatically deselect the 
-        others. Yet the other WXRadioButtons will not be aware of the 
-        change even though the wxWidgets have changed their values.
+    WXRadioButton uses the wx.RadioButton control. Radio buttons with 
+    the same parent will be mutually exclusive. For independent groups,
+    place them in their own Panel.
 
     See Also
     --------
@@ -36,18 +35,10 @@ class WXRadioButton(WXToggleElement):
     # Initialization
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates and binds a wx.RadioButton.
+        """ Creates the underlying wx.RadioButton control.
 
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
+        This method is called by the 'layout' method and is not meant
+        for public consumption.
 
         """
         widget = wx.RadioButton(self.parent_widget())

@@ -4,10 +4,8 @@ from traits.api import Interface, Str
 class IComponent(Interface):
     """ The most base class of the TraitsML component heierarchy. 
     
-    All TraitsML ui interface classes should inherit from this class. A 
-    TraitsML component interface specifies the attributes and minimum 
-    methods required of any backend implementation. This class is 
-    not meant to be instantiated.
+    All TraitsML ui interface classes should inherit from this class.
+    This class is not meant to be instantiated.
     
     Attributes
     ----------
@@ -32,7 +30,7 @@ class IComponent(Interface):
         by the component.
 
     parent()
-        Returns the logical parent of this component or None.
+        Returns the logical parent component of this component or None.
         
     """
     name = Str
@@ -102,12 +100,10 @@ class IComponent(Interface):
     def get_meta_handler(self, meta_info):
         """ Return the IMetaHandler for this meta_info object.
         
-        Return the toolkit specific IMetaHandler instance for
-        this meta_info object. This may return None if the 
-        component does handle this particular meta info type.
-
-        The meta_info object must have already been added via
-        the add_meta_info method.
+        Return the toolkit specific IMetaHandler instance for this 
+        meta_info object. This may return None if the component does 
+        handle this particular meta info type. The meta_info object 
+        must have already been added via the add_meta_info method.
 
         Arguments
         ---------
@@ -131,11 +127,10 @@ class IComponent(Interface):
     def toolkit_widget(self):
         """ Returns the toolkit specific widget for this component.
 
-        Call this method to retrieve the toolkit specific widget
-        for this component. Note that the toolkit widget may not
-        be created before the 'layout' method on the top level
-        window is called. In that case, this method will return
-        None.
+        Call this method to retrieve the toolkit specific widget for 
+        this component. Note that the toolkit widget may not be 
+        created before the 'layout' method on the top level window 
+        is called. In that case, this method will return None.
 
         Arguments
         ---------

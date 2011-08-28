@@ -10,6 +10,8 @@ from ..i_check_box import ICheckBox
 class WXCheckBox(WXToggleElement):
     """ A wxPython implementation of ICheckBox.
 
+    A Checkbox provides a toggleable control using a wx.CheckBox.
+
     See Also
     --------
     ICheckBox
@@ -35,14 +37,6 @@ class WXCheckBox(WXToggleElement):
 
         This method is called by the 'layout' method of WXElement.
         It is not meant for public consumption.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
 
         """
         widget = wx.CheckBox(self.parent_widget())

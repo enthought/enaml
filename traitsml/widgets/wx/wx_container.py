@@ -7,15 +7,30 @@ from ..mixins.container_mixin import ContainerMixin
 
 
 class WXContainer(WXComponent, ContainerMixin):
+    """ A wxPython implementation of IContainer.
 
+    The WXContainer class serves as a base class for other container
+    widgets. It is not meant to be used directly.
+
+    See Also
+    --------
+    IContainer
+
+    """
     implements(IContainer)
 
     #===========================================================================
     # IContainer interface
     #===========================================================================
     def layout(self, parent):
+        """ Initialize and layout the the container and its children.
+
+        This method will be called by the 'layout' method of the 
+        container's parent. It is not meant for public consumption.
+
+        """
         self.set_parent(parent)
-        self.create_sizer()
+        self.create_widget()
         self.layout_children()
         self.init_attributes()
         self.init_meta_handlers()
@@ -29,54 +44,43 @@ class WXContainer(WXComponent, ContainerMixin):
     # A flag to tell whether or not we've been layed out proper
     # and we can therefore expect our children to have widgets
     layed_out = Bool(False)
-
-    #---------------------------------------------------------------------------
-    # Overriden parent class methods
-    #---------------------------------------------------------------------------
-    def do_add_child(self, child):
-        if self.layed_out:
-            child.layout(self)
-            item = child.widget
-            if item:
-                sizer = self.widget
-                sizer.Add(item)
-                sizer.Layout()
-
-    def do_remove_child(self, child, idx):
-        if self.layed_out:
-            item = child.widget
-            if item:
-                sizer = self.widget
-                if sizer.Remove(item):
-                    if item:
-                        item.Destroy()
-                    sizer.Layout()
-
-    def do_replace_child(self, child, other_child, idx):
-        if self.layed_out:
-            item = child.widget
-            if item:
-                other_child.layout(self)
-                other_item = other_child.widget
-                sizer = self.widget
-                if sizer.Replace(item, other_item):
-                    if item:
-                        item.destroy()
-                    sizer.Layout()
     
     #---------------------------------------------------------------------------
     # Initialization
     #---------------------------------------------------------------------------
-    def create_sizer(self):
+    def create_widget(self):
+        """ Create the underlying widget (or sizer) for the container.
+
+        This is called by the 'layout' method and is not meant for 
+        public consumption.
+
+        """
         raise NotImplementedError
 
     def layout_children(self):
-        for child in self.children():
-            child.layout(self)
+        """ Layout the children of the container.
+
+        This is called by the 'layout' method and is not meant for 
+        public consumption.
+
+        """
+        raise NotImplementedError
 
     def init_attributes(self):
+        """ Initialize the attributes of the container.
+
+        This is called by the 'layout' method and is not meant for 
+        public consumption.
+
+        """
         raise NotImplementedError
 
     def init_meta_handlers(self):
+        """ Intialize the meta handlers for the container.
+
+        This is called by the 'layout' method and is not meant for
+        public consumption.
+
+        """
         raise NotImplementedError
 

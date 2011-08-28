@@ -74,12 +74,13 @@ class WXComponent(HasStrictTraits, MetaInfoMixin):
         This is a convienence method to be used during layout in 
         order to store a weakref to the provided parent. The strong
         ref to the parent can be retrieved by calling the 'parent'
-        method.
+        method. This method is called by the 'layout' method of
+        various components and is not meant for public consumption.
 
         Arguments
         ---------
-        parent : IComponent
-            The parent component.
+        parent : Either(IPanel, IContainer)
+            The parent component for this component.
 
         Returns
         -------

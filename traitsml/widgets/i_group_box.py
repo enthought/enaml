@@ -14,17 +14,13 @@ class IGroupBox(IContainer):
 
     Attributes
     ----------
-    border : Border Enum value
-        Draw a border around the group according to the value of
-        the Border enum.
-
     checkable : Bool
         Whether or not the group has a check box.
 
     checked : Bool
-        If checkable, whether or not the box is checked. If a the 
-        group box is checkable and the box unchecked, then all of
-        the children in the group will be disabled.
+        If checkable, whether or not the box is checked. If the 
+        group box is checkable and the box is unchecked, then all 
+        of the children in the group will be disabled.
 
     title: Str
         The title of the group box.

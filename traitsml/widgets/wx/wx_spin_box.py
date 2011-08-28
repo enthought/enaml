@@ -10,28 +10,66 @@ from .wx_element import WXElement
 from ..i_spin_box import ISpinBox
 
 
+# The new changed event for the custom spin ctrl.
 CustomSpinCtrlEvent, EVT_CUSTOM_SPINCTRL = wx.lib.newevent.NewEvent()
 
 
 class CustomSpinCtrl(wx.SpinCtrl):
-    """ A Custom spin control to enable the features of WXSpinBox.
+    """ A custom wx spin control that acts more like QSpinBox.
 
     The standard wx.SpinCtrl doesn't support too many features,
     and the ones it does support are (like wrapping) are limited.
     So, this custom control hard codes the internal range to 
     +- sys.maxint and implements wrapping manually.
 
-    Users should bind to EVT_CUSTOM_SPINCTRL rather than EVT_SPINCTRL.
+    For changed events, users should bind to EVT_CUSTOM_SPINCTRL rather 
+    than EVT_SPINCTRL.
 
-    XXX - document me better.
+    See the method docstrings for supported functionality.
 
     """
     def __init__(self, parent, low=0, high=100, step=1, prefix='', suffix='', 
                  special_value_text='', to_string=None, from_string=None, 
-                 wrap=False, **kwargs):
-   
-        super(CustomSpinCtrl, self).__init__(parent, **kwargs)
+                 wrap=False):
+        """ CustomSpinCtrl constructor.
+
+        Arguments
+        ---------
+        parent : wxWindow
+            The parent of the spin ctrl.
         
+        low : int, optional
+            The minimum value of spin ctrl. Defaults to 0.
+        
+        high : int, optional
+            The maximum value of the spin ctrl. Defaults to 100.
+        
+        step : int, optional
+            The step amount to use for the spin ctrl. Defaults to 1.
+
+        prefix : string, optional
+            A prefix to place in front of the value in the ctrl.
+        
+        suffix : string, optional
+            A suffix to place behind the value in the ctrl.
+
+        special_value_text : string, optional
+            The text to display when the control is at its minimum 
+            value, if different from the normal value.
+
+        to_string : callable, optional
+            A function to convert the integer spin value to a string
+            for display. Should not include prefix and suffix.
+
+        from_string : callable, optional
+            A function to convert a string input by the user into 
+            an integer spin value. 
+        
+        wrap : bool, optional
+            A flag indicating whether the spin ctrl should wrap
+            at the ends.
+        
+        """
         self._hard_min = -sys.maxint
         self._hard_max = sys.maxint
         self._last = low
@@ -45,17 +83,27 @@ class CustomSpinCtrl(wx.SpinCtrl):
         self._from_string = from_string or int
         self._wrap = wrap
 
+        super(CustomSpinCtrl, self).__init__(parent)
         super(CustomSpinCtrl, self).SetRange(self._hard_min, self._hard_max)
-
         self.Bind(wx.EVT_SPINCTRL, self.OnSpinCtrl)
         
     def GetLow(self):
+        """ Returns the minimum value of the control.
+
+        """
         return self._low
     
     def GetMin(self):
+        """ Equivalent to GetLow().
+
+        """
         return self._low
 
     def SetLow(self, low):
+        """ Sets the minimum value of the control and changes the
+        value to the min if the current value would be out of range.
+
+        """
         if low < self._hard_min:
             raise ValueError('%s too low for CustomSpinCtrl.' % low)
         self._low = low
@@ -63,12 +111,22 @@ class CustomSpinCtrl(wx.SpinCtrl):
             self.SetValue(low)
 
     def GetHigh(self):
+        """ Returns the maximum value of the control.
+
+        """
         return self._high
     
     def GetMax(self):
+        """ Equivalent to GetHigh().
+
+        """
         return self._high
 
     def SetHigh(self, high):
+        """ Sets the maximum value of the control and changes the
+        value to the max if the current value would be out of range.
+
+        """
         if high > self._hard_max:
             raise ValueError('%s too high for CustomSpinCtrl.' % high)
         self._high = high
@@ -76,52 +134,103 @@ class CustomSpinCtrl(wx.SpinCtrl):
             self.SetValue(high)
 
     def SetRange(self, low, high):
+        """ Sets the low and high values of the control.
+
+        """
         self.SetLow(low)
         self.SetHigh(high)
 
     def GetStep(self):
+        """ Returns the step size of the control.
+
+        """
         return self._step
 
     def SetStep(self, step):
+        """ Sets the step size of the control.
+
+        """
         self._step = step
 
     def GetPrefix(self):
+        """ Returns the prefix of the control.
+
+        """
         return self._prefix
 
     def SetPrefix(self, prefix):
+        """ Sets the prefix of the control.
+
+        """
         self._prefix = prefix
 
     def GetSuffix(self):
+        """ Returns the suffix of the control.
+
+        """
         return self._suffix
 
     def SetSuffix(self, suffix):
+        """ Sets the suffix of the control.
+
+        """
         self._suffix = suffix
     
     def GetSpecialValueText(self):
+        """ Returns the special value text of the control.
+
+        """
         return self._special_value_text
 
     def SetSpecialValueText(self, text):
+        """ Sets the special value text of the control.
+
+        """
         self._special_value_text = text
 
     def GetToString(self):
+        """ Returns the to_string converter of the control.
+
+        """
         return self._to_string
 
     def SetToString(self, to_string):
+        """ Sets the to_string converter of the control.
+
+        """
         self._to_string = to_string
     
     def GetFromString(self):
+        """ Returns the from_string converter of the control.
+
+        """
         return self._from_string
 
     def SetFromString(self, from_string):
+        """ Sets the from_string converter of the control.
+
+        """
         self._from_string = from_string
     
     def GetWrap(self):
+        """ Gets the wrap flag of the control.
+
+        """
         return self._wrap
             
     def SetWrap(self, wrap):
+        """ Sets the wrap flag of the control.
+
+        """
         self._wrap = wrap
 
     def SetValue(self, value):
+        """ Sets the value of the control to the given value, provided
+        that the value is within the range of the control. If the
+        given value is within range, and is different from the current
+        value of the control, an EVT_CUSTOM_SPINCTRL will be emitted.
+
+        """
         if value >= self._low and value <= self._high:
             changed = value != self.GetValue()
             super(CustomSpinCtrl, self).SetValue(value)
@@ -132,6 +241,10 @@ class CustomSpinCtrl(wx.SpinCtrl):
                 wx.PostEvent(self, evt)
 
     def ComputeValueString(self, value):
+        """ Computes the string that will be displayed in the control
+        for the given value.
+
+        """
         if value == self._low and self._special_value_text:
             res = self._special_value_text
         else:
@@ -139,6 +252,11 @@ class CustomSpinCtrl(wx.SpinCtrl):
         return res
 
     def OnSpinCtrl(self, event):
+        """ Handles the spin control being changes by user interaction.
+        All of the manual stepping and wrapping logic is computed by
+        this method.
+
+        """
         last = self._last
         curr = self.GetValue()
         low = self._low
@@ -175,40 +293,8 @@ class CustomSpinCtrl(wx.SpinCtrl):
 class WXSpinBox(WXElement):
     """ A wxPython implementation of ISpinBox.
 
-    Attributes
-    ----------
-    low : Int
-        The minimum value for the spin box.
-
-    high : Int
-        The maximum value for the spin box.
-    
-    step : Int
-        The amount to increase or decrease the value per click.
-
-    value : Int
-        The current value for the spin box.
-
-    prefix : Str
-        The prefix string to display in the spin box.
-
-    suffix : Str
-        The suffix string to display in the spin box.
-    
-    special_value_text : Str
-        An optional string to display when the user selects the 
-        minimum value in the spin box.
-
-    to_string : Callable
-        An optional callable that takes one argument to convert the 
-        integer value to text to display in the spin box.
-
-    from_string : Callable
-        An optional callable that takes one argument to convert the 
-        user typed string to an integer value.
-
-    wrapping : Bool
-        If True, the spin box will wrap around at its extremes.
+    WXSpinBox uses a custom subclass of wx.SpinCtrl that behaves more
+    like Qt's QSpinBox.
 
     See Also
     --------
@@ -289,61 +375,71 @@ class WXSpinBox(WXElement):
     # Notification
     #---------------------------------------------------------------------------
     def _value_changed(self, value):
-        """ The change handler for the 'value' attribute.
+        """ The change handler for the 'value' attribute. Not meant
+        for public consumption.
 
         """
         self.set_spin_value(value)
 
     def _low_changed(self, low):
-        """ The change handler for the 'low' attribute.
+        """ The change handler for the 'low' attribute. Not meant
+        for public consumption.
 
         """
         self.set_spin_low(low)
 
     def _high_changed(self, high):
-        """ The change handler for the 'high' attribute.
+        """ The change handler for the 'high' attribute. Not meant
+        for public consumption.
         
         """
         self.set_spin_high(high)
     
     def _step_changed(self, step):
-        """ The change handler for the 'step' attribute.
+        """ The change handler for the 'step' attribute. Not meant
+        for public consumption.
         
         """
         self.set_spin_step(step)
     
     def _prefix_changed(self, prefix):
-        """ The change handler for the 'prefix' attribute.
+        """ The change handler for the 'prefix' attribute. Not meant
+        for public consumption.
         
         """
         self.set_spin_prefix(prefix)
     
     def _suffix_changed(self, suffix):
-        """ The change handler for the 'suffix' attribute.
-        
+        """ The change handler for the 'suffix' attribute. Not meant
+        for public consumption.
+
         """
         self.set_spin_suffix(suffix)
     
     def _special_value_text_changed(self, text):
         """ The change handler for the 'special_value_text' attribute.
+        Not meant for public consumption.
         
         """
         self.set_spin_special_value_text(text)
     
     def _to_string_changed(self, to_string):
-        """ The change handler for the 'to_string' attribute.
+        """ The change handler for the 'to_string' attribute. Not meant
+        for public consumption.
         
         """
         self.set_spin_to_string(to_string)
     
     def _from_string_changed(self, from_string):
-        """ The change handler for the 'from_string' attribute.
+        """ The change handler for the 'from_string' attribute. Not meant 
+        for public consumption.
         
         """
         self.set_spin_from_string(from_string)
     
     def _wrap_changed(self, wrap):
-        """ The change handler for the 'wrap' attribute.
+        """ The change handler for the 'wrap' attribute. Not meant for
+        public consumption.
         
         """
         self.set_spin_wrap(wrap)
@@ -352,7 +448,8 @@ class WXSpinBox(WXElement):
     # Event handling
     #---------------------------------------------------------------------------
     def _on_custom_spin_ctrl(self, event):
-        """ The event handler for the widget's spin event.
+        """ The event handler for the widget's spin event. Not meant
+        for public consumption.
 
         """
         self.value = self.widget.GetValue()
@@ -362,61 +459,71 @@ class WXSpinBox(WXElement):
     # Widget Update
     #---------------------------------------------------------------------------
     def set_spin_value(self, value):
-        """ Updates the widget with the given value.
+        """ Updates the widget with the given value. Not meant for 
+        public consumption.
 
         """
         self.widget.SetValue(value)
 
     def set_spin_low(self, low):
-        """ Updates the low limit of the spin box.
+        """ Updates the low limit of the spin box. Not meant for 
+        public consumption.
 
         """
         self.widget.SetLow(low)
     
     def set_spin_high(self, high):
-        """ Updates the high limit of the spin box.
+        """ Updates the high limit of the spin box. Not meant for 
+        public consumption.
 
         """
         self.widget.SetHigh(high)
     
     def set_spin_step(self, step):
-        """ Updates the step of the spin box.
+        """ Updates the step of the spin box. Not meant for public
+        consumption.
 
         """
         self.widget.SetStep(step)
     
     def set_spin_prefix(self, prefix):
-        """ Updates the prefix of the spin box.
+        """ Updates the prefix of the spin box. Not meant for public
+        consumption.
 
         """
         self.widget.SetPrefix(prefix)
 
     def set_spin_suffix(self, suffix):
-        """ Updates the suffix of the spin box.
+        """ Updates the suffix of the spin box. Not meant for public
+        consumption.
 
         """
         self.widget.SetSuffix(suffix)
 
     def set_spin_special_value_text(self, text):
-        """ Updates the special value text of the spin box.
+        """ Updates the special value text of the spin box. Not meant
+        for public consumption.
 
         """
         self.widget.SetSpecialValueText(text)
     
     def set_spin_to_string(self, to_string):
-        """ Updates the to_string function of the spin box.
+        """ Updates the to_string function of the spin box. Not meant
+        for public consumption.
 
         """
         self.widget.SetToString(to_string)
     
     def set_spin_from_string(self, from_string):
-        """ Updates the from_string function of the spin box.
+        """ Updates the from_string function of the spin box. Not meant
+        for public consumption.
 
         """
         self.widget.SetFromString(from_string)
     
     def set_spin_wrap(self, wrap):
-        """ Updates the wrap value of the spin box.
+        """ Updates the wrap value of the spin box. Not meant for public
+        consumption.
 
         """
         self.widget.SetWrap(wrap)

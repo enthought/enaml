@@ -10,25 +10,13 @@ from ..i_calendar import ICalendar
 
 
 class WXCalendar(WXElement):
-    """ A calendar widget.
+    """ A wxPython implementation of ICalendar.
 
-    A Calendar displays a Python datetime.date using an appropriate
-    toolkit specific control. The date attribute is synchronized 
-    bi-directionally with the day, month, and year attributes.
+    A Calendar displays a Python datetime.date using an wx CalendarCtrl.
     
-    Attributes
-    ----------
-    date : Date
-        The currently selected date.
-    
-    day : Int
-        The selected day.
-    
-    month : Int
-        The selected month.
-    
-    year : Int
-        The selected year.
+    See Also
+    --------
+    ICalendar
     
     """
     implements(ICalendar)
@@ -56,6 +44,9 @@ class WXCalendar(WXElement):
     def create_widget(self):
         """ Creates and binds a wx.calendar.CalendarCtrl.
 
+        This is called by the 'layout' method of WXElement and is not
+        meant for public consumption.
+
         """
         widget = wx.calendar.CalendarCtrl(self.parent_widget())
         widget.Bind(wx.calendar.EVT_CALENDAR, self._on_date_selected)
@@ -63,9 +54,10 @@ class WXCalendar(WXElement):
         self.widget = widget
 
     def init_attributes(self):
-        """ Sync the widget's display with the date trait.
+        """ Initializes the attributes of the control.
 
-        Default to today if no date is specified.
+        This is called by the 'layout' method of WXElement and is not
+        meant for public consumption.
 
         """
         self.set_date(self.date)
@@ -77,25 +69,34 @@ class WXCalendar(WXElement):
             self.set_maximum_date(max_date)
         
     def init_meta_handlers(self):
+        """ Initializes the meta handlers of the control.
+
+        This is called by the 'layout' method of WXElement and is not
+        meant for public consumption.
+
+        """
         pass
 
     #---------------------------------------------------------------------------
     # Notification
     #---------------------------------------------------------------------------
     def _date_changed(self, date):
-        """ The change handler for the 'date' attribute.
+        """ The change handler for the 'date' attribute. Not meant for
+        public consumption.
 
         """
         self.set_date(date)
 
     def _minimum_date_changed(self, date):
-        """ The change handler for the 'minimum_date' attribute.
+        """ The change handler for the 'minimum_date' attribute. Not 
+        meant for public consumption.
 
         """
         self.set_minimum_date(date)
 
     def _maximum_date_changed(self, date):
-        """ The change handler for the 'maximum_date' attribute.
+        """ The change handler for the 'maximum_date' attribute. Not
+        meant for public consumption.
 
         """
         self.set_maximum_date(date)
@@ -104,7 +105,8 @@ class WXCalendar(WXElement):
     # Event handlers
     #---------------------------------------------------------------------------
     def _on_date_selected(self, event):
-        """ The event handler for the calendar's activation event.
+        """ The event handler for the calendar's activation event. Not
+        meant for public consumption.
 
         """
         date = self.widget.PyGetDate()
@@ -113,7 +115,8 @@ class WXCalendar(WXElement):
         event.Skip()
 
     def _on_sel_changed(self, event):
-        """ The event handler for the calendar's selection event.
+        """ The event handler for the calendar's selection event. Not
+        meant for public consumption.
 
         """
         date = self.widget.PyGetDate()
@@ -124,19 +127,22 @@ class WXCalendar(WXElement):
     # Widget update
     #---------------------------------------------------------------------------
     def set_date(self, date):
-        """ Sets the date on the widget with the provided value.
+        """ Sets the date on the widget with the provided value. Not
+        meant for public consumption.
 
         """
         self.widget.PySetDate(date)
 
     def set_minimum_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
+        Not meant for public consumption.
 
         """
         self.widget.PySetLowerDateLimit(date)
 
     def set_maximum_date(self, date):
         """ Sets the maximum date on the widget with the provided value.
+        Not meant for public consumption.
 
         """
         self.widget.PySetUpperDateLimit(date)

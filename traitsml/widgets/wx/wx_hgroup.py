@@ -8,7 +8,7 @@ from ...enums import Direction
 
 
 class WXHGroup(WXGroup):
-    """ A wxPython implementation of IHGroup
+    """ A wxPython implementation of IHGroup.
 
     This is a convienence subclass of WXGroup which restrict the
     layout to horizontal.

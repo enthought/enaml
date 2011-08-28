@@ -11,40 +11,11 @@ class WXToggleElement(WXElement):
     This class can serve as a base class for widgets that implement
     toggle behavior such as CheckBox and RadioButton. It is not meant
     to be used directly. Subclasses should implement the 'create_widget'
-    widget.
+    method.
 
-    Attributes
-    ----------
-    checked : Bool
-        Whether or not the element is currently checked. This is has
-        bi-directional behavior in that programmatically setting the 
-        value will cause the element to be updated. However, if
-        setting the value programatically, a toggled event *will not*
-        be emitted.
-
-    down : Bool
-        Whether the user is currently pressing the check box.
-        
-    text : Str
-         The text to show next to the check box.
-
-    toggled : Event
-        Fired when the check box is toggled. This event is only triggered
-        in response to user interaction with the widget.
-
-    pressed : Event
-        Fired when the check box is pressed. This event is only triggered
-        in response to user interaction with the widget.
-
-    released : Event
-        Fired when the check box is released.
-
-    .. note:: The wx toggle elements don't reliably emit EVT_LEFT_UP
-    events even thought they emit EVT_LEFT_DOWN. This results in
-    suboptimal behavior because we don't know if the mouse has been
-    released if the user releases the mouse when not over the control.
-    As a workaround, we hook the EVT_LEAVE_WINDOW which is not ideal,
-    but probably the best we can do in wx.
+    See Also
+    --------
+    IToggleElement
 
     """
     implements(IToggleElement)
@@ -72,23 +43,37 @@ class WXToggleElement(WXElement):
     # Intitialization
     #---------------------------------------------------------------------------
     def init_attributes(self):
+        """ Initializes the attributes of the underlying control.
+
+        This is called by the 'layout' method and is not meant for 
+        public consumption.
+
+        """
         self.set_label(self.text)
         self.set_checked(self.checked)
 
     def init_meta_handlers(self):
+        """ Initializes the meta handlers for the underlying control.
+
+        This is called by the 'layout' method and is not meant for 
+        public consumption.
+
+        """
         pass
 
     #---------------------------------------------------------------------------
     # Notification
     #---------------------------------------------------------------------------
     def _checked_changed(self, checked):
-        """ The change handler for the 'checked' attribute.
+        """ The change handler for the 'checked' attribute. Not meant
+        for public consumption.
 
         """
         self.set_checked(checked)
 
     def _text_changed(self, text):
-        """ The change handler for the 'text' attribute.
+        """ The change handler for the 'text' attribute. Not meant
+        for public consumption.
 
         """
         self.set_label(text)
@@ -97,7 +82,8 @@ class WXToggleElement(WXElement):
     # Event handlers
     #---------------------------------------------------------------------------
     def _on_toggled(self, event):
-        """ The event handler for the toggled event.
+        """ The event handler for the toggled event. Not meant for
+        public consumption.
 
         """
         self.down = False
@@ -107,7 +93,8 @@ class WXToggleElement(WXElement):
         event.Skip()
 
     def _on_pressed(self, event):
-        """ The event handler for the pressed event.
+        """ The event handler for the pressed event. Not meant for
+        public consumption.
 
         """
         self.down = True
@@ -115,7 +102,8 @@ class WXToggleElement(WXElement):
         event.Skip()
 
     def _on_leave_window(self, event):
-        """ The event handler for the leave window event.
+        """ The event handler for the leave window event. Not meant for
+        public consumption.
 
         """
         # The wx buttons don't emit an EVT_LEFT_UP even though they
@@ -131,13 +119,15 @@ class WXToggleElement(WXElement):
     # Widget update
     #---------------------------------------------------------------------------
     def set_label(self, label):
-        """ Update the widget's label with the provided value.
+        """ Sets the widget's label with the provided value. Not 
+        meant for public consumption.
 
         """
         self.widget.SetLabel(label)
 
     def set_checked(self, checked):
-        """ Update the widget's checked state with the provided value.
+        """ Sets the widget's checked state with the provided value.
+        Not meant for public consumption.
 
         """
         self.widget.SetValue(checked)

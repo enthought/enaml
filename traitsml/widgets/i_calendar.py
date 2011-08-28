@@ -23,11 +23,12 @@ class ICalendar(IElement):
     
     selected : Event
         Triggered whenever the user clicks or changes the control. The
-        event payload will be the date.
+        event payload will be the date on the control.
     
     activated : Event
         Triggered whenever the user activates a new date via double
-        click or pressing enter. The event payload will be the date.
+        click or pressing enter. The event payload will be the date
+        on the control.
 
     """    
     date = Date

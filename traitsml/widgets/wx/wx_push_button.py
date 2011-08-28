@@ -10,37 +10,7 @@ from ..i_push_button import IPushButton
 class WXPushButton(WXElement):
     """ A wxPython implementation of IPushButton.
 
-    Attributes
-    ----------
-    down : Bool
-        Whether or not the button is currently pressed. This is single
-        direction as a result of user interaction with the widget.  
-        Programmatically changing this value will not cause the button 
-        to become pressed.
-
-    text : Str
-        The text to use as the button's label.
-
-    clicked : Event
-        Fired when the button is clicked. This event is only triggered
-        in response to user interaction with the widget.
-
-    pressed : Event
-        Fired when the button is pressed. This event is only triggered
-        in response to user interaction with the widget.
-
-    released: Event
-        Fired when the button is released. This event is only triggered
-        in response to user interaction with the widget.
-
-
-    .. note:: The wx.Button doesn't emit an wx.EVT_LEFT_UP even though it 
-        emits a wx.EVT_LEFT_DOWN. So in order to reset the down flag when 
-        the mouse leaves the button and then releases, we need hook to 
-        wx.EVT_LEAVE_WINDOW event. This results in slighly suboptimal
-        behavior if pressing down on a button, the dragging away before
-        releasing. But it seems to be the best we can do in wx.
-
+    WXPushButton uses a wx.Button control.
 
     See Also
     --------
@@ -66,19 +36,10 @@ class WXPushButton(WXElement):
     # Implementation
     #===========================================================================
     def create_widget(self):
-        """ Creates and binds a wx.Button.
+        """ Creates the underlying wx.Button control.
 
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
-
-        Arguments
-        ---------
-        parent : WXContainer
-            The WXContainer instance that is our parent.
-
-        Returns
-        -------
-        result : None
+        This is called by the 'layout' method and is not meant for
+        public consumption.
 
         """
         widget = wx.Button(self.parent_widget())
@@ -93,16 +54,8 @@ class WXPushButton(WXElement):
     def init_attributes(self):
         """ Intializes the widget with the attributes of this instance.
 
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
+        This is called by the 'layout' method and is not meant for
+        public consumption.
 
         """
         self.set_label(self.text)
@@ -110,16 +63,8 @@ class WXPushButton(WXElement):
     def init_meta_handlers(self):
         """ Initializes any meta handlers for this widget.
 
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
+        This is called by the 'layout' method and is not meant for
+        public consumption.
 
         """
         pass
@@ -128,7 +73,8 @@ class WXPushButton(WXElement):
     # Notification
     #---------------------------------------------------------------------------
     def _text_changed(self, text):
-        """ The change handler for the 'text' attribute.
+        """ The change handler for the 'text' attribute. Not meant for
+        public consumption.
 
         """
         self.set_label(text)
@@ -137,7 +83,8 @@ class WXPushButton(WXElement):
     # Event handling
     #---------------------------------------------------------------------------
     def _on_clicked(self, event):
-        """ The event handler for the button's clicked event.
+        """ The event handler for the button's clicked event. Not meant
+        for public consumption.
 
         """
         self.down = False
@@ -146,7 +93,8 @@ class WXPushButton(WXElement):
         event.Skip()
 
     def _on_pressed(self, event):
-        """ The event handlers for the button's pressed event.
+        """ The event handlers for the button's pressed event. Not meant
+        for public consumption.
 
         """
         self.down = True
@@ -154,7 +102,8 @@ class WXPushButton(WXElement):
         event.Skip()
 
     def _on_leave_window(self, event):
-        """ The event handler for the button's leave window event.
+        """ The event handler for the button's leave window event. Not
+        meant for public consumption.
 
         """
         # The wxButton doesn't emit an EVT_LEFT_UP even though it 
@@ -170,5 +119,9 @@ class WXPushButton(WXElement):
     # Widget update
     #---------------------------------------------------------------------------
     def set_label(self, label):
+        """ Sets the label on the button control. Not meant for public
+        consumption.
+
+        """
         self.widget.SetLabel(label)
 

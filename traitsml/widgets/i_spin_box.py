@@ -56,9 +56,9 @@ class ISpinBox(IElement):
 
     special_value_text = Str
 
-    to_string = Callable
+    to_string = Callable(lambda val: str(val))
 
-    from_string = Callable
+    from_string = Callable(lambda val: int(val))
 
     wrap = Bool
 
