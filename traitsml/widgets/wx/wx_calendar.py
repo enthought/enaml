@@ -1,5 +1,4 @@
 from datetime import date
-from calendar import monthrange
 
 import wx.calendar
 
