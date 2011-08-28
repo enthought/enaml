@@ -108,32 +108,32 @@ def p_tml_suite(p):
 
 
 def p_tml_element_body1(p):
-    ''' tml_element_body : tml_metas tml_expressions tml_children '''
+    ''' tml_element_body : tml_expressions tml_metas tml_children '''
     p[0] = tml_ast.TMLElementBody(p[1], p[2], p[3])
 
 
 def p_tml_element_body2(p):
-    ''' tml_element_body : tml_metas tml_expressions '''
+    ''' tml_element_body : tml_expressions tml_metas '''
     p[0] = tml_ast.TMLElementBody(p[1], p[2], [])
 
 
 def p_tml_element_body3(p):
-    ''' tml_element_body : tml_metas tml_children '''
+    ''' tml_element_body : tml_expressions tml_children '''
     p[0] = tml_ast.TMLElementBody(p[1], [], p[2])
 
 
 def p_tml_element_body4(p):
-    ''' tml_element_body : tml_metas '''
+    ''' tml_element_body : tml_expressions '''
     p[0] = tml_ast.TMLElementBody(p[1], [], [])
 
 
 def p_tml_element_body5(p):
-    ''' tml_element_body : tml_expressions tml_children '''
+    ''' tml_element_body : tml_metas tml_children '''
     p[0] = tml_ast.TMLElementBody([], p[1], p[2])
 
 
 def p_tml_element_body6(p):
-    ''' tml_element_body : tml_expressions '''
+    ''' tml_element_body : tml_metas '''
     p[0] = tml_ast.TMLElementBody([], p[1], [])
 
 
@@ -169,7 +169,8 @@ def p_tml_meta2(p):
 
 def p_tml_expression_suite(p):
     ''' tml_expression_suite : NEWLINE INDENT tml_expressions DEDENT '''
-    p[0] = p[3]
+    # Filter out any 'pass' expressions
+    p[0] = filter(None, p[3])
 
 
 def p_tml_expressions1(p):
@@ -200,6 +201,11 @@ def p_tml_expression3(p):
 def p_tml_expression4(p):
     ''' tml_expression : tml_delegate '''
     p[0] = p[1]
+
+
+def p_tml_expression5(p):
+    ''' tml_expression : PASS NEWLINE '''
+    p[0] = None
 
 
 def p_tml_children1(p):
