@@ -53,15 +53,12 @@ class WXComponent(HasStrictTraits, MetaInfoMixin):
         """
         return self.widget
 
-<<<<<<< wx_local
-=======
     def parent(self):
         """ Returns a strong reference to the parent component or None.
 
         """
         return self.parent_ref() if self.parent_ref is not None else None
 
->>>>>>> local
     # The rest of the IComponent interface comes from MetaInfoMixin
 
     #===========================================================================

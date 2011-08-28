@@ -31,7 +31,11 @@ class WXGroup(WXContainer):
     def layout_children(self):
         super(WXGroup, self).layout_children()
         sizer = self.widget
-        self.fill_sizer(sizer, self.children())
+        if self.is_reverse_direction(self.direction):
+            children = reversed(list(self.children()))
+        else:
+            children = self.children()
+        self.fill_sizer(sizer, children)
         sizer.Layout()
 
     def init_attributes(self):
@@ -59,7 +63,7 @@ class WXGroup(WXContainer):
             #sizer.Add(child.widget, weight, expand)
             sizer.Add(child.widget, 1, wx.EXPAND)
         
-    def is_reverse_layout(self, direction):
+    def is_reverse_direction(self, direction):
         dirs = (Direction.RIGHT_TO_LEFT, Direction.BOTTOM_TO_TOP)
         return direction in dirs
 
@@ -71,7 +75,7 @@ class WXGroup(WXContainer):
         new_sizer = self.make_sizer(direction)
         parent_sizer = self.parent_sizer()
 
-        if self.is_reverse_layout(direction):
+        if self.is_reverse_direction(direction):
             children = reversed(list(self.children()))
         else:
             children = self.children()

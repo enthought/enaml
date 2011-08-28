@@ -17,11 +17,11 @@ from traitsml.enums import Direction
 import random
 
 Window:
-    Group:
+    HGroup:
         Group my_group:
 
             direction << random.choice(list(Direction.values())) or pb2.clicked
-
+        
             PushButton:
                 text << "clickme!" if not self.down else "I'm down!"
 
@@ -41,16 +41,13 @@ Window:
             
             RadioButton:
                 text = 'foo'
-        
         Html:
             source = "<h1>Hello Html!</h1>"
-        
-        Group:
-            direction = Direction.TOP_TO_BOTTOM
-            
+
+        VGroup:
             Panel:
-                Group:
-                    direction = Direction.LEFT_TO_RIGHT
+                HGroup:
+                    direction = Direction.RIGHT_TO_LEFT
                     RadioButton:
                         text = 'rb1'
                     RadioButton:
@@ -60,8 +57,7 @@ Window:
                     RadioButton:
                         text = 'rb4'
             Panel:
-                Group:
-                    direction = Direction.LEFT_TO_RIGHT
+                HGroup:
                     RadioButton:
                         text = 'rb1'
                     RadioButton:

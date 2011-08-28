@@ -14,11 +14,7 @@ class WXContainer(WXComponent, ContainerMixin):
     # IContainer interface
     #===========================================================================
     def layout(self, parent):
-<<<<<<< wx_local
-        self.create_panel(parent)
-=======
         self.set_parent(parent)
->>>>>>> local
         self.create_sizer()
         self.layout_children()
         self.init_attributes()
@@ -30,13 +26,6 @@ class WXContainer(WXComponent, ContainerMixin):
     #===========================================================================
     # Implementation
     #===========================================================================
-<<<<<<< wx_local
-    
-    # The wx sizer in user for this container
-    sizer = Instance(wx.Sizer)
-
-=======
->>>>>>> local
     # A flag to tell whether or not we've been layed out proper
     # and we can therefore expect our children to have widgets
     layed_out = Bool(False)
@@ -55,23 +44,6 @@ class WXContainer(WXComponent, ContainerMixin):
 
     def do_remove_child(self, child, idx):
         if self.layed_out:
-<<<<<<< wx_local
-            if child.widget:
-                child.widget.Destroy()
-                self.widget.Layout()
-
-    def do_replace_child(self, child, other_child, idx):
-        if self.layed_out:
-            if child.widget:
-                other_child.layout(self)
-                if self.sizer.Replace(child.widget, other_child.widget):
-                    child.widget.Destroy()
-                    self.widget.Layout()
-
-    def create_panel(self, parent):
-        raise NotImplementedError
-
-=======
             item = child.widget
             if item:
                 sizer = self.widget
@@ -95,7 +67,6 @@ class WXContainer(WXComponent, ContainerMixin):
     #---------------------------------------------------------------------------
     # Initialization
     #---------------------------------------------------------------------------
->>>>>>> local
     def create_sizer(self):
         raise NotImplementedError
 
