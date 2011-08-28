@@ -31,6 +31,9 @@ class IComponent(Interface):
         Returns the underlying toolkit widget which is being managed
         by the component.
 
+    parent()
+        Returns the logical parent of this component or None.
+        
     """
     name = Str
 
@@ -141,9 +144,30 @@ class IComponent(Interface):
         Returns
         -------
         result : widget or None
-            Returns a toolkit specific widget, or None if the widget
-            has not yet been created.
+            The toolkit specific widget, or None if the widget has not 
+            yet been created.
 
         """
         raise NotImplementedError
-  
+
+    def parent(self):
+        """ Returns the logical parent for this component or None.
+
+        Returns the logical parent for this component or None if
+        it is top-level. The component should take care to not
+        create reference cycles to the parent and will likely want
+        to keep an internal weakref to the parent, only creating
+        the strong ref upon request.
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        result : IComponent or None
+            The parent component if this component is not top-level.
+
+        """
+        raise NotImplementedError
+

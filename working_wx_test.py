@@ -17,28 +17,60 @@ from traitsml.enums import Direction
 import random
 
 Window:
+    Group:
+        Group my_group:
 
-    Group my_group:
+            direction << random.choice(list(Direction.values())) or pb2.clicked
 
-        direction << random.choice(list(Direction.values())) or pb2.clicked
+            PushButton:
+                text << "clickme!" if not self.down else "I'm down!"
 
-        PushButton:
-            text << "clickme!" if not self.down else "I'm down!"
+                # args is passed implicitly to any >> notify expressions
+                clicked >> print('clicked!', args.new)
 
-            # args is passed implicitly to any >> notify expressions
-            clicked >> print('clicked!', args.new)
+            PushButton pb2:
+                text = "shuffle"
 
-        PushButton pb2:
-            text = "shuffle"
-
-        PushButton:
-            text = "static"
-            clicked >> model.print_msg(args)
+            PushButton:
+                text = "static"
+                clicked >> model.print_msg(args)
+            
+            CheckBox:
+                text = "A simple text box"
+                toggled >> setattr(self, 'text', model.randomize(self.text))
+            
+            RadioButton:
+                text = 'foo'
         
-        CheckBox:
-            text = "A simple text box"
-            toggled >> setattr(self, 'text', model.randomize(self.text))
-
+        Html:
+            source = "<h1>Hello Html!</h1>"
+        
+        Group:
+            direction = Direction.TOP_TO_BOTTOM
+            
+            Panel:
+                Group:
+                    direction = Direction.LEFT_TO_RIGHT
+                    RadioButton:
+                        text = 'rb1'
+                    RadioButton:
+                        text = 'rb2'
+                    RadioButton:
+                        text = 'rb3'
+                    RadioButton:
+                        text = 'rb4'
+            Panel:
+                Group:
+                    direction = Direction.LEFT_TO_RIGHT
+                    RadioButton:
+                        text = 'rb1'
+                    RadioButton:
+                        text = 'rb2'
+                    RadioButton:
+                        text = 'rb3'
+                    RadioButton:
+                        text = 'rb4'
+                    
 """
 
 class Model(HasTraits):

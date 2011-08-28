@@ -1,16 +1,16 @@
 from traits.api import Str, Enum
 
-from .i_component import IComponent
+from .i_panel import IPanel
 
 from ..enums import Modality
 
 
-class IWindow(IComponent):
-    """ The base window widget. 
+class IWindow(IPanel):
+    """ The base top-level window widget. 
 
-    Window widgets hold a container of components and displays it
-    in a frame. Only components which inherit from window can
-    be shown on the screen.
+    Window widgets are top-level panels which provide window frame
+    decorations and related functionality. Only components which 
+    inherit from window can be shown on the screen.
 
     Attributes
     ----------
@@ -22,13 +22,6 @@ class IWindow(IComponent):
 
     Methods
     -------
-    layout(parent=None)
-        Initialize and layout the window and it's children.
-
-    set_container(container)
-        Set the container of child widgets and/or containers for
-        this window.
-
     show()
         Make the window visible on the screen.
     
@@ -39,6 +32,7 @@ class IWindow(IComponent):
     title = Str
 
     modality = Enum(*Modality.values())
+<<<<<<< wx_local
 
     def layout(self, parent=None):
         """ Initialize and layout the window and it's children.
@@ -116,6 +110,9 @@ class IWindow(IComponent):
         """
         raise NotImplementedError
         
+=======
+    
+>>>>>>> local
     def show(self):
         """ Make the window visible on the screen.
 

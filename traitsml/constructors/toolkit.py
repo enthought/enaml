@@ -25,6 +25,7 @@ def default_toolkit():
 def wx_toolkit():
     from . import wx_constructors as ctors
     return {
+        'Panel': ctors.WXPanelCtor,
         'Window': ctors.WXWindowCtor,
         'Dialog': ctors.WXDialogCtor,
         'Form': ctors.WXFormCtor,
@@ -38,7 +39,7 @@ def wx_toolkit():
         'CheckBox': ctors.WXCheckBoxCtor,
         'ComboBox': ctors.WXComboBoxCtor,
         'Field': ctors.WXFieldCtor,
-        'HTML': ctors.WXHTMLCtor,
+        'Html': ctors.WXHtmlCtor,
         'Image': ctors.WXImageCtor,
         'Label': ctors.WXLabelCtor,
         'LineEdit': ctors.WXLineEditCtor,

@@ -1,41 +1,18 @@
-from traits.api import Bool, Event, Str
-
-from .i_element import IElement
+from .i_toggle_element import IToggleElement
 
 
-class ICheckBox(IElement):
-    """ A check box widget.
+class ICheckBox(IToggleElement):
+    """ A check box widget derived from IToggleElement
 
     Use a check box when it's necessary to toggle a boolean value
     independent of any other widgets in the group. For allowing the
     toggling of only one value in a group of values, use a group
     of radio buttons.
 
-    Attributes
-    ----------
-    checked : Bool
-        Whether or not the button is currently checked.
-
-    text : Str
-         The text to show next to the check box.
-
-    toggled : Event
-        Fired when the check box is toggled.
-
-    pressed : Event
-        Fired when the check box is pressed.
-
-    released : Event
-        Fired when the check box is released.
+    See Also
+    --------
+    IToggleElement
 
     """
-    checked = Bool
-
-    text = Str
+    pass
     
-    toggled = Event
-    
-    pressed = Event
-
-    released = Event
-

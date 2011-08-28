@@ -152,15 +152,26 @@ class IContainer(IComponent):
     def layout(self, parent):
         """ Initialize and layout the container and it's children.
 
+<<<<<<< wx_local
         This method should be called by the parent window during
+=======
+        This method should be called by the parent panel during
+>>>>>>> local
         its layout process.
 
         Arguments
         ---------
+<<<<<<< wx_local
         parent : IWindow
             The parent window of this container. The parent should 
             have already been layed out (and therefore have created 
             its internal widget) before being passed in to this method.
+=======
+        parent : Either(IPanel, IContainer)
+            The parent of this container. The parent should have already 
+            been layed out (and therefore have createdits internal widget) 
+            before being passed in to this method.
+>>>>>>> local
 
         Returns
         -------

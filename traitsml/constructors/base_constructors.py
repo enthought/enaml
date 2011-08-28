@@ -97,15 +97,15 @@ class BaseComponentCtor(BaseToolkitCtor):
             impl.add_meta_info(meta.impl)
 
 
-class BaseWindowCtor(BaseComponentCtor):
+class BasePanelCtor(BaseComponentCtor):
 
     def construct(self):
-        super(BaseWindowCtor, self).construct()
+        super(BasePanelCtor, self).construct()
         children = self.children
         if children:
             if len(children) > 1:
-                msg = 'A Window may have 1 (and only 1) container.'
-                raise ValueError(msg)
+                msg = '%s type can have 1 (and only 1) container.'
+                raise ValueError(msg % type(self.impl))
             else:
                 self.impl.set_container(children[0].impl)
 
@@ -124,6 +124,6 @@ class BaseElementCtor(BaseComponentCtor):
     def construct(self):
         super(BaseElementCtor, self).construct()
         if self.children:
-            msg = 'Element %s cannot have children.' % type(self.impl)
+            msg = '%s type cannot have children.' % type(self.impl)
             raise ValueError(msg)
 

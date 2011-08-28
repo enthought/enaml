@@ -1,26 +1,19 @@
 from traits.api import implements
 
 from .i_toolkit_constructor import IToolkitConstructor
-from .base_constructors import (BaseWindowCtor, BaseContainerCtor, 
+from .base_constructors import (BasePanelCtor, BaseContainerCtor, 
                                 BaseElementCtor)
 
 from ..view import View, NamespaceProxy
 
 
 #-------------------------------------------------------------------------------
-# Base Constructors
+# Constructor helper mixins
 #-------------------------------------------------------------------------------
-class WXBaseWindowCtor(BaseWindowCtor):
+class WrapWindowMixin(object):
+    """ A mixin that wraps a constructor in a WXWindowCtor
 
-    def build_view(self):
-        impl = self.impl
-        ns = self.global_ns
-        view = View(window=impl, ns=NamespaceProxy(ns))
-        return view
-
-
-class WXBaseContainerCtor(BaseContainerCtor):
-
+    """
     def build_view(self):
         # This code should never execute because the __call__
         # method makes sure the code path is only taken by a Window.
@@ -38,14 +31,11 @@ class WXBaseContainerCtor(BaseContainerCtor):
         return window_ctor(**ctxt_objs)
 
 
-class WXBaseElementCtor(BaseElementCtor):
+class WrapWindowVGroupMixin(WrapWindowMixin):
+    """ A mixin that wraps a constructor in a WXWindowCtor with
+    a WXVGroupCtor as its container.
 
-    def build_view(self):
-        # This code should never execute because the __call__
-        # method makes sure the code path is only taken by a Window.
-        msg = "The universe imploded."
-        raise Exception(msg)
-
+    """
     def __call__(self, **ctxt_objs):
         # An element is not directly viewable, it must 
         # first be wrapped in a window and container.
@@ -60,9 +50,59 @@ class WXBaseElementCtor(BaseElementCtor):
         )
         return window_ctor(**ctxt_objs)
 
-    
+
 #-------------------------------------------------------------------------------
-# Window Constructors
+# Base Constructors
+#-------------------------------------------------------------------------------
+class WXBasePanelCtor(BasePanelCtor, WrapWindowVGroupMixin):
+    pass
+
+
+class WXBaseContainerCtor(BaseContainerCtor, WrapWindowMixin):
+    
+    def construct(self):
+        # Replace any toplevel windows with panel constructors.
+        # This facilitates composing other toplevel windows into 
+        # another window. Also, the IPanel interface has no 
+        # attributes, so we don't need (or want) to copy over
+        # the exprs from then window constuctor, just the metas
+        # and the children.
+        children = self.children
+        for idx, child in enumerate(children):
+            if isinstance(child, WXBaseWindowCtor):
+                window_children = child.children
+                window_metas = child.metas
+                children[idx] = WXPanelCtor(children=window_children,
+                                            metas=window_metas)
+        super(WXBaseContainerCtor, self).construct()
+
+
+class WXBaseElementCtor(BaseElementCtor, WrapWindowVGroupMixin):
+    pass
+
+
+class WXBaseWindowCtor(BasePanelCtor):
+
+    def build_view(self):
+        window = self.impl
+        ns = NamespaceProxy(self.global_ns)
+        return View(window=window, ns=ns)
+
+
+#-------------------------------------------------------------------------------
+# Panel Constructors
+#-------------------------------------------------------------------------------
+class WXPanelCtor(WXBasePanelCtor):
+
+    implements(IToolkitConstructor)
+
+    def toolkit_class(self):
+        from ..widgets.wx.wx_panel import WXPanel
+        return WXPanel
+
+
+#-------------------------------------------------------------------------------
+# Window constructors
 #-------------------------------------------------------------------------------
 class WXWindowCtor(WXBaseWindowCtor):
 
@@ -187,13 +227,13 @@ class WXFieldCtor(WXBaseElementCtor):
         return WXField
 
 
-class WXHTMLCtor(WXBaseElementCtor):
+class WXHtmlCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
     def toolkit_class(self):
-        from ..widgets.wx.wx_html import WXHTML
-        return WXHTML
+        from ..widgets.wx.wx_html import WXHtml
+        return WXHtml
 
 
 class WXImageCtor(WXBaseElementCtor):

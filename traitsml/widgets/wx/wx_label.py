@@ -6,8 +6,9 @@ from .wx_element import WXElement
 
 from ..i_label import ILabel
 
+
 class WXLabel(WXElement):
-    """ A wxWidgets implementation of ILabel.
+    """ A wxPython implementation of ILabel.
 
     Attributes
     ----------
@@ -22,22 +23,37 @@ class WXLabel(WXElement):
     """
     implements(ILabel)
 
- 	#--------------------------------------------------------------------------
-    # ILabel interface
-    #--------------------------------------------------------------------------
+ 	#===========================================================================
+    # ILabel interface 
+    #===========================================================================
     text = Str
 
-    #--------------------------------------------------------------------------
+    #===========================================================================
     # Implementation
-    #--------------------------------------------------------------------------
+    #===========================================================================
+
+    #---------------------------------------------------------------------------
+    # Initialization
+    #---------------------------------------------------------------------------
     def create_widget(self, parent):
-        self.widget = wx.StaticText(parent.widget)
+        self.widget = wx.StaticText(self.parent_widget())
 
     def init_attributes(self):
-        self.widget.SetLabel(self.text)
+        self.set_label(self.text)
 
     def init_meta_handlers(self):
         pass
 
+    #---------------------------------------------------------------------------
+    # Notification
+    #---------------------------------------------------------------------------
     def _text_changed(self, text):
-        self.widget.SetLabel(text)
+        self.set_label(text)
+
+    #---------------------------------------------------------------------------
+    # Widget update
+    #---------------------------------------------------------------------------
+    def set_label(self, label):
+        self.widget.SetLabel(label)
+
+    
