@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+import weakref
 
 import wx
 
@@ -13,6 +14,9 @@ class WidgetParent(object):
 
         self.app = wx.App(0)
         self.widget = wx.Frame(None)
+
+    def __call__(self):
+        return weakref.ref(self)
 
 class testWXRadioButton(unittest.TestCase):
     """Testsuite for WXRadioButton
@@ -29,11 +33,13 @@ class testWXRadioButton(unittest.TestCase):
         # de-select a single radio button
 
         self.radio1 = WXRadioButton()
-        self.radio1.create_widget(parent)
+        self.radio1.parent_ref = parent()
+        self.radio1.create_widget()
         self.radio1.init_attributes()
 
         self.radio2 = WXRadioButton()
-        self.radio2.create_widget(parent)
+        self.radio2.parent_ref = parent()
+        self.radio2.create_widget()
         self.radio2.init_attributes()
 
         self.radio1.text = 'Label 1'

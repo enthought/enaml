@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+import weakref
 
 import wx
 
@@ -13,6 +14,9 @@ class WidgetParent(object):
 
         self.app = wx.App(0)
         self.widget = wx.Frame(None)
+
+    def __call__(self):
+        return weakref.ref(self)
 
 
 class testWXRadioButton(unittest.TestCase):
@@ -28,7 +32,8 @@ class testWXRadioButton(unittest.TestCase):
         # setup widgets
 
         self.checkbox = WXCheckBox()
-        self.checkbox.create_widget(parent)
+        self.checkbox.parent_ref = parent()
+        self.checkbox.create_widget()
         self.checkbox.init_attributes()
 
         self.checkbox_label = 'test checkbox'

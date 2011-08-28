@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+import weakref
 
 import wx
 
@@ -14,6 +15,9 @@ class WidgetParent(object):
         self.app = wx.App(0)
         self.widget = wx.Frame(None)
 
+    def __call__(self):
+        return weakref.ref(self)
+
 
 class testWXSpinBox(unittest.TestCase):
     """Testsuite for WXSpinBox
@@ -27,7 +31,8 @@ class testWXSpinBox(unittest.TestCase):
 
         # setup widgets
         self.spin_box = WXSpinBox()
-        self.spin_box.create_widget(parent)
+        self.spin_box.parent_ref = parent()
+        self.spin_box.create_widget()
         self.spin_box.init_attributes()
 
         self.spin_box.low = -10
@@ -77,7 +82,6 @@ class testWXSpinBox(unittest.TestCase):
         new_value = 25
         self.spin_box.value = new_value
         widget = self.spin_box.toolkit_widget()
-
         self.assertEqual(self.spin_box.high, widget.GetValue(),
             "The widget's value {0} is over the max".format(widget.GetValue()))
 

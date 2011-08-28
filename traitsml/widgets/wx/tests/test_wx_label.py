@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import sys
+import weakref
 
 import wx
 
@@ -8,12 +9,15 @@ from traitsml.widgets.wx.wx_label import WXLabel
 
 
 class WidgetParent(object):
-    """Mock parent class"""
+    """Mock parent clas"""
 
     def __init__(self):
 
         self.app = wx.App(0)
         self.widget = wx.Frame(None)
+
+    def __call__(self):
+        return weakref.ref(self)
 
 
 class testWXLabel(unittest.TestCase):
@@ -28,7 +32,8 @@ class testWXLabel(unittest.TestCase):
 
         # setup widgets
         self.label = WXLabel()
-        self.label.create_widget(parent)
+        self.label.parent_ref = parent()
+        self.label.create_widget()
         self.label.init_attributes()
 
         self.label.text = 'test label'
