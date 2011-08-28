@@ -1,4 +1,4 @@
-from traits.api import ReadOnly
+from traits.api import Enum
 
 from .i_group import IGroup
 
@@ -8,14 +8,14 @@ from ..enums import Direction
 class IVGroup(IGroup):
     """ A vertically grouping container.
 
-    This is a convienence subclass of IGroup which hard codes
-    the layout direction to Direction.TOP_TO_BOTTOM
+    This is a convienence subclass of IGroup which restricts the
+    layout direction to vertical.
 
     Attributes
     ----------
-    direction : ReadOnly
-    	The layout direction is hard coded to Direction.TOP_TO_BOTTOM
+    direction : Enum(Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP)
+    	The layout direction is restricted to vertical directions.
     
     """	
-    direction = ReadOnly(Direction.TOP_TO_BOTTOM)
+    direction = Enum(Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP)
 

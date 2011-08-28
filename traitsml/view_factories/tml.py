@@ -164,9 +164,10 @@ class TMLViewFactory(HasStrictTraits):
 
     def __call__(self, **ctxt_objs):
         if self._ctor_tree is None:
-            self._build_ctor_tree
+            self._build_ctor_tree()
         ns = {}
         ns.update(self._imports)
         ns.update(ctxt_objs)
+        ns.update(__builtins__)
         return self._ctor_tree(**ns)
 

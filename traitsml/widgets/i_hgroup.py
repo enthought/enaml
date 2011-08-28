@@ -1,4 +1,4 @@
-from traits.api import ReadOnly
+from traits.api import Enum
 
 from .i_group import IGroup
 
@@ -8,14 +8,14 @@ from ..enums import Direction
 class IHGroup(IGroup):
     """ A horizontally grouping container.
 
-    This is a convienence subclass of IGroup which hard codes
-    the layout direction to Direction.LEFT_TO_RIGHT
+    This is a convienence subclass of IGroup which restricts the 
+    layout direction to horizontal.
 
     Attributes
     ----------
-    direction : ReadOnly
-    	The layout direction is hard coded to Direction.LEFT_TO_RIGHT
+    direction : Enum(Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT)
+    	The layout direction restricted to horizontal directions.
     
     """	
-    direction = ReadOnly(Direction.LEFT_TO_RIGHT)
+    direction = Enum(Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT)
 
