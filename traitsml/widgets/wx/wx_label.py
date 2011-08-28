@@ -15,7 +15,6 @@ class WXLabel(WXElement):
     text : Str
         The text in the label.
 
-    
     See Also
     --------
     ILabel
@@ -56,4 +55,3 @@ class WXLabel(WXElement):
     def set_label(self, label):
         self.widget.SetLabel(label)
 
-    
