@@ -88,8 +88,8 @@ class WXToggleElement(WXElement):
         """
         self.down = False
         self.checked = self.widget.GetValue()
-        self.released = event
-        self.toggled = event
+        self.released = True
+        self.toggled = True
         event.Skip()
 
     def _on_pressed(self, event):
@@ -98,7 +98,7 @@ class WXToggleElement(WXElement):
 
         """
         self.down = True
-        self.pressed = event
+        self.pressed = True
         event.Skip()
 
     def _on_leave_window(self, event):
@@ -112,7 +112,7 @@ class WXToggleElement(WXElement):
         # we need to hook the EVT_LEAVE_WINDOW
         if self.down:
             self.down = False
-            self.released = event
+            self.released = True
         event.Skip()
 
     #---------------------------------------------------------------------------

@@ -80,10 +80,9 @@ class testWXSpinBox(unittest.TestCase):
         '''Test validation of the range of a WXSpinBox'''
 
         new_value = 25
-        self.spin_box.value = new_value
-        widget = self.spin_box.toolkit_widget()
-        self.assertEqual(self.spin_box.high, widget.GetValue(),
-            "The widget's value {0} is over the max".format(widget.GetValue()))
+        f = lambda: setattr(self.spin_box, 'value', new_value)
+        msg = "The value {0} is over the max but was accepted by the widget."
+        self.assertRaises(Exception, f, msg.format(new_value))
 
 
 if __name__ == '__main__':
