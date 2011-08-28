@@ -51,12 +51,16 @@ Window:
                     direction = Direction.RIGHT_TO_LEFT
                     RadioButton:
                         text = 'rb1'
+                        toggled >> print('rb1:', self.checked)
                     RadioButton:
                         text = 'rb2'
+                        toggled >> print('rb2:', self.checked)
                     RadioButton:
                         text = 'rb3'
+                        toggled >> print('rb3:', self.checked)
                     RadioButton:
                         text = 'rb4'
+                        toggled >> print('rb4:', self.checked)
             Panel:
                 HGroup:
                     RadioButton:
