@@ -1,9 +1,9 @@
-import wx.calendar
-
 from datetime import date
 from calendar import monthrange
 
-from traits.api import implements, Date, Int
+import wx.calendar
+
+from traits.api import implements, Date, Event
 
 from .wx_element import WXElement
 
@@ -34,30 +34,33 @@ class WXCalendar(WXElement):
     """
     implements(ICalendar)
 
-    #--------------------------------------------------------------------------
+    #===========================================================================
     # ICalendar interface
-    #--------------------------------------------------------------------------
-    date = Date
+    #===========================================================================
+    date = Date(date.today())
 
-    day = Int
+    minimum_date = Date
 
-    month = Int
+    maximum_date = Date
 
-    year = Int
+    selected = Event
 
+    activated = Event
 
-    #--------------------------------------------------------------------------
+    #===========================================================================
     # Implementation
-    #--------------------------------------------------------------------------
-    def create_widget(self, parent):
+    #===========================================================================
+
+    #---------------------------------------------------------------------------
+    # Initialization
+    #---------------------------------------------------------------------------
+    def create_widget(self):
         """ Creates and binds a wx.calendar.CalendarCtrl.
 
         """
-        widget = wx.calendar.CalendarCtrl(parent.widget)
-        widget.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED, self._on_date_selected)
-        widget.Bind(wx.calendar.EVT_CALENDAR_DAY, self._on_day_selected)
-        widget.Bind(wx.calendar.EVT_CALENDAR_MONTH, self._on_month_selected)
-        widget.Bind(wx.calendar.EVT_CALENDAR_YEAR, self._on_year_selected)
+        widget = wx.calendar.CalendarCtrl(self.parent_widget())
+        widget.Bind(wx.calendar.EVT_CALENDAR, self._on_date_selected)
+        widget.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED, self._on_sel_changed)
         self.widget = widget
 
     def init_attributes(self):
@@ -66,54 +69,76 @@ class WXCalendar(WXElement):
         Default to today if no date is specified.
 
         """
-        if not self.date:
-            self.date = date.today()
-        self.widget.PySetDate(self.date)
+        self.set_date(self.date)
+        min_date = self.minimum_date
+        max_date = self.maximum_date
+        if min_date is not None:
+            self.set_minimum_date(min_date)
+        if max_date is not None:
+            self.set_maximum_date(max_date)
         
-
     def init_meta_handlers(self):
         pass
 
-    def _date_changed(self):
-        """ Sync the widget and day, month, and year traits with the date trait.
+    #---------------------------------------------------------------------------
+    # Notification
+    #---------------------------------------------------------------------------
+    def _date_changed(self, date):
+        """ The change handler for the 'date' attribute.
 
         """
-        self.widget.PySetDate(self.date)
-        
-        today = self.date
-        self.day = today.day
-        self.month = today.month
-        self.year = today.year
+        self.set_date(date)
 
-    def _day_changed(self):
-        if self.date.day != self.day:
-            self._set_pydate()
+    def _minimum_date_changed(self, date):
+        """ The change handler for the 'minimum_date' attribute.
 
-    def _month_changed(self):
-        if self.date.month != self.month:
-            self._set_pydate()
+        """
+        self.set_minimum_date(date)
 
-    def _year_changed(self):
-        if self.date.year != self.year:
-            self._set_pydate()
+    def _maximum_date_changed(self, date):
+        """ The change handler for the 'maximum_date' attribute.
 
+        """
+        self.set_maximum_date(date)
+
+    #---------------------------------------------------------------------------
+    # Event handlers
+    #---------------------------------------------------------------------------
     def _on_date_selected(self, event):
-        today = self.widget.PyGetDate()
-        if self.date != today:
-            self.date = today
-    
-    def _on_day_selected(self, event):
-        pass
-    
-    def _on_month_selected(self, event):
-        pass
-
-
-    def _on_year_selected(self, event):
-        pass
-
-    def _set_pydate(self):
-        """ Set the date trait with the year, month, and day values.
+        """ The event handler for the calendar's activation event.
 
         """
-        self.date = date(self.year, self.month, self.day)
+        date = self.widget.PyGetDate()
+        self.date = date
+        self.activated = date
+        event.Skip()
+
+    def _on_sel_changed(self, event):
+        """ The event handler for the calendar's selection event.
+
+        """
+        date = self.widget.PyGetDate()
+        self.selected = date
+        event.Skip()
+        
+    #---------------------------------------------------------------------------
+    # Widget update
+    #---------------------------------------------------------------------------
+    def set_date(self, date):
+        """ Sets the date on the widget with the provided value.
+
+        """
+        self.widget.PySetDate(date)
+
+    def set_minimum_date(self, date):
+        """ Sets the minimum date on the widget with the provided value.
+
+        """
+        self.widget.PySetLowerDateLimit(date)
+
+    def set_maximum_date(self, date):
+        """ Sets the maximum date on the widget with the provided value.
+
+        """
+        self.widget.PySetUpperDateLimit(date)
+

@@ -15,6 +15,7 @@ from traitsml.view_factories.tml import TMLViewFactory
 tml = """
 from traitsml.enums import Direction
 import random
+import datetime
 
 Window:
     HGroup:
@@ -66,6 +67,11 @@ Window:
                         text = 'rb3'
                     RadioButton:
                         text = 'rb4'
+            Calendar:
+                minimum_date = datetime.date(1970, 1, 1)
+                activated >> print('activated', args.new)
+                selected >> print('selected', args.new)
+                date >> print('new date', args.new)
                     
 """
 
