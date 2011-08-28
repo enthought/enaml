@@ -8,9 +8,9 @@ class IHtml(IElement):
     
     Attributes
     ----------
-    html : Str
-        The HTML to be rendered.
+    source : Str
+        The Html source code to be rendered.
     
     """
-    html = Str
+    source = Str
 

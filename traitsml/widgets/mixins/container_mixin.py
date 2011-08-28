@@ -2,6 +2,7 @@ from traits.api import HasTraits, List, Either
 
 from ..i_container import IContainer
 from ..i_element import IElement
+from ..i_component import IComponent
 
 
 class ContainerMixin(HasTraits):
@@ -12,7 +13,7 @@ class ContainerMixin(HasTraits):
     
     Attributes
     ----------
-    _children = List(Either(IContainer, IElement))
+    _children = List(IComponent)
         The internal list of children for the container.
 
     Methods
@@ -30,7 +31,7 @@ class ContainerMixin(HasTraits):
         See IContainer.children
         
     """
-    _children = List(Either(IContainer, IElement))
+    _children = List(IComponent)
 
     def add_child(self, child):
         if child in self._children:
@@ -39,10 +40,13 @@ class ContainerMixin(HasTraits):
         self.do_add_child(child)
     
     def remove_child(self, child):
-        if child not in self._children:
+        try:
+            idx = self._children.index(child)
+        except IndexError:
             raise ValueError('Child not in container.')
-        self._children.remove(child)
-        self.do_remove_child(child)
+
+        del self._children[idx]
+        self.do_remove_child(child, idx)
 
     def replace_child(self, child, other_child):
         try:
@@ -58,4 +62,13 @@ class ContainerMixin(HasTraits):
 
     def children(self):
         return iter(self._children)
+
+    def do_add_child(self, child):
+        raise NotImplementedError
+
+    def do_remove_child(self, child, idx):
+        raise NotImplementedError
+    
+    def do_replace_child(child, other_child, idx):
+        raise NotImplementedError
 
