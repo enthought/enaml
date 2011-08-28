@@ -33,7 +33,7 @@ class WXLabel(WXElement):
     #---------------------------------------------------------------------------
     # Initialization
     #---------------------------------------------------------------------------
-    def create_widget(self, parent):
+    def create_widget(self):
         self.widget = wx.StaticText(self.parent_widget())
 
     def init_attributes(self):

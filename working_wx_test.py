@@ -32,18 +32,18 @@ Window:
             PushButton pb2:
                 text = "shuffle"
 
-            PushButton:
+            PushButton static:
                 text = "static"
                 clicked >> model.print_msg(args)
             
-            CheckBox:
+            CheckBox cb1:
                 text = "A simple text box"
                 toggled >> setattr(self, 'text', model.randomize(self.text))
             
             RadioButton:
                 text = 'foo'
         Html:
-            source = "<h1>Hello Html!</h1>"
+            source << "<h1>Hello Html!</h1>" if not static.down else "<h1>Static Down!</h1>"
 
         VGroup:
             Panel:
@@ -72,7 +72,33 @@ Window:
                 activated >> print('activated', args.new)
                 selected >> print('selected', args.new)
                 date >> print('new date', args.new)
-                    
+            
+            HGroup:
+                Label:
+                    text = 'min:'
+                Label:
+                    text << str(sb.low)
+                Label:
+                    text = 'max:'
+                Label:
+                    text << str(sb.high)
+                Label:
+                    text = 'val:'
+                Label:
+                    text << str(sb.value)
+            HGroup:
+                CheckBox wrap_box:
+                    text = 'Allow wrap:'
+                SpinBox sb:
+                    prefix = 'Foo '
+                    suffix = ' kg'
+                    wrap := wrap_box.checked
+                    special_value_text = "Auto"
+                    step = 2
+                    low << -20 if not self.wrap else 0
+                    high = 20
+                    value >> print(self.value)
+
 """
 
 class Model(HasTraits):

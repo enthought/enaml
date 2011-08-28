@@ -169,6 +169,9 @@ class DelegateInterceptor(DefaultInterceptor, InjectionMixin):
     def _set_value(self, val):
         setattr(self.obj, self.trait_name, val)
         
+    def __value_default(self):
+        return self.value
+
     def update_value(self):
         self._value = not self._value
 
