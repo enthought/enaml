@@ -1,16 +1,16 @@
 from traits.api import Str, Enum
 
-from .i_component import IComponent
+from .i_panel import IPanel
 
 from ..enums import Modality
 
 
-class IWindow(IComponent):
-    """ The base window widget. 
+class IWindow(IPanel):
+    """ The base top-level window widget. 
 
-    Window widgets hold a container of components and displays it
-    in a frame. Only components which inherit from window can
-    be shown on the screen.
+    Window widgets are top-level panels which provide window frame
+    decorations and related functionality. Only components which 
+    inherit from window can be shown on the screen.
 
     Attributes
     ----------
@@ -22,14 +22,7 @@ class IWindow(IComponent):
 
     Methods
     -------
-    layout()
-        Initialize and layout the window and it's children.
-
-    set_container(container)
-        Set the container of child widgets and/or containers for
-        this window.
-
-    show(layout=False)
+    show()
         Make the window visible on the screen.
     
     hide()
@@ -40,67 +33,16 @@ class IWindow(IComponent):
 
     modality = Enum(*Modality.values())
 
-    def layout(self):
-        """ Initialize and layout the window and it's children.
-
-        Call this method after the object tree has been built
-        in order to create and arrange the underlying widgets.
-        This must be called at least once prior to calling 
-        the 'show' method. It can be called again at a later
-        time in order to rebuild the view.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
-        Raises
-        ------
-        LayoutError
-            Any reason the action cannot be completed.
-
-        """
-        raise NotImplementedError
-
-    def set_container(self, container):
-        """ Set the container of children for this window.
-        
-        Calling this method more than once will replace the previous
-        container with the provided container.
-
-        Arguments
-        ---------
-        container : IContainer
-            The container of child widgets and/or containers for
-            this window.
-
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
-
-        """
-        raise NotImplementedError
-        
-    def show(self, layout=False):
+    def show(self):
         """ Make the window visible on the screen.
 
-        The 'layout' method must be called at least once prior to
-        calling this method. Alternatively, the layout keyword can
-        be passed as True, which will then cause 'layout' to be 
-        called prior to showing the window.
+        If the 'layout' method is not explicity called prior to calling
+        this method, then the window will lay itself out (with no parent)
+        prior to displaying itself to the screen.
 
         Arguments
         ---------
-        layout : Bool=False
-            Set this keyword argument to True if the 'layout' method 
-            should be called prior to showing the window.
+        None
 
         Returns
         -------
@@ -108,12 +50,8 @@ class IWindow(IComponent):
 
         Raises
         ------
-        LayoutError
-            The 'layout' method was not called prior to calling this
-            method.
-
         WindowError
-            Any other reason the action cannot be completed.
+            Any reason the action cannot be completed.
 
         """
         raise NotImplementedError

@@ -66,9 +66,9 @@ class TMLElement(Node):
 
 class TMLElementBody(Node):
 
-    def __init__(self, metas, exprs, tml_children):
-        self.metas = metas
+    def __init__(self, exprs, metas, tml_children):
         self.exprs = exprs
+        self.metas = metas
         self.tml_children = tml_children
     
     def __repr__(self):

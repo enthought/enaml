@@ -1,4 +1,4 @@
-from traits.api import Date, Int
+from traits.api import Date, Event
 
 from .i_element import IElement
 
@@ -7,29 +7,37 @@ class ICalendar(IElement):
     """ A calendar widget.
 
     A Calendar displays a Python datetime.date using an appropriate
-    toolkit specific control. The date attribute is synchronized 
-    bi-directionally with the day, month, and year attributes.
+    toolkit specific control.
     
     Attributes
     ----------
     date : Date
-        The currently selected date.
+        The currently selected date. This is only updated when the user
+        *activates* the control via double-click or pressing enter.
+
+    minimum_date : Date
+        The minimum date available in the calendar.
+
+    maximum_date : Date
+        The maximum date available in the calendar.
     
-    day : Int
-        The selected day.
+    selected : Event
+        Triggered whenever the user clicks or changes the control. The
+        event payload will be the date on the control.
     
-    month : Int
-        The selected month.
-    
-    year : Int
-        The selected year.
-    
+    activated : Event
+        Triggered whenever the user activates a new date via double
+        click or pressing enter. The event payload will be the date
+        on the control.
+
     """    
     date = Date
 
-    day = Int
+    minimum_date = Date
 
-    month = Int
+    maximum_date = Date
 
-    year = Int
+    selected = Event
+
+    activated = Event
 

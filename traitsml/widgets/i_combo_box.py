@@ -8,7 +8,7 @@ class IComboBox(IElement):
 
     Use a combo box to select a single item from a collection of
     items. To select multiple items from a collection of items
-    use a List widget.
+    use a ListBox.
     
     Attributes
     ----------

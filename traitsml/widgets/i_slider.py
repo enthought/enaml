@@ -28,29 +28,28 @@ class ISlider(IElement):
         value to the appropriate slider position.
 
     slider_pos : Float
-        The floating point percentage (0.0 - 1.0) which is the 
-        position of the slider. This value is always updated
-        while the slider is moving.
+        The floating point percentage (0.0 - 1.0) which is the position
+        of the slider. This value is always updated while the slider is 
+        moving.
 
     value : Any
         The value of the slider. This is set to the value of
         from_slider(slider_pos).
 
     tracking : Bool
-        If True, the value is updated while sliding. Otherwise, 
-        it is only updated when the slider is released. Defaults
-        to True.
+        If True, the value is updated while sliding. Otherwise, it is 
+        only updated when the slider is released. Defaults to True.
 
     tick_interval : Float
         The slider_pos interval to put between tick marks.
 
     tick_position : TickPosition Enum value
-        A TickPosition enum value indicating how to display the 
-        tick marks.
+        A TickPosition enum value indicating how to display the tick 
+        marks.
 
     orientation : Orientation Enum value
-        The orientation of the slider. One of the Orientation
-        Enum values.
+        The orientation of the slider. One of the Orientation enum 
+        values.
 
     pressed : Event
         Fired when the slider is pressed.
