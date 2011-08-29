@@ -1,5 +1,3 @@
-import sys
-
 import wx
 import wx.lib.newevent
 
@@ -17,10 +15,10 @@ CustomSpinCtrlEvent, EVT_CUSTOM_SPINCTRL = wx.lib.newevent.NewEvent()
 class CustomSpinCtrl(wx.SpinCtrl):
     """ A custom wx spin control that acts more like QSpinBox.
 
-    The standard wx.SpinCtrl doesn't support too many features,
-    and the ones it does support are (like wrapping) are limited.
-    So, this custom control hard codes the internal range to 
-    +- sys.maxint and implements wrapping manually.
+    The standard wx.SpinCtrl doesn't support too many features, and 
+    the ones it does support are (like wrapping) are limited. So, 
+    this custom control hard codes the internal range to the maximum 
+    range of the wx.SpinCtrl and implements wrapping manually.
 
     For changed events, users should bind to EVT_CUSTOM_SPINCTRL rather 
     than EVT_SPINCTRL.
@@ -70,8 +68,10 @@ class CustomSpinCtrl(wx.SpinCtrl):
             at the ends.
         
         """
-        self._hard_min = -sys.maxint
-        self._hard_max = sys.maxint
+        # The max range of the wx.SpinCtrl is the range 
+        # of a signed 32bit integer
+        self._hard_min = -(1 << 31)
+        self._hard_max = (1 << 31) - 1
         self._last = low
         self._low = low
         self._high = high
@@ -297,7 +297,9 @@ class CustomSpinCtrl(wx.SpinCtrl):
             else:
                 computed = potential
         else:
-            pass
+            # This should never happen, but wx on linux fires extra
+            # events which trigger this clause. Wx on linux is broken.
+            return
 
         self.SetValue(computed)
 
