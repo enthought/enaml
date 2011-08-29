@@ -127,12 +127,8 @@ class WXGroup(WXContainer):
         meant for public consumption.
 
         """
-        # XXX update this logic to use hints from child handlers.
         for child in children:
-            #weight = child.default_layout_weight()
-            #expand = child.default_layout_expand()
-            #sizer.Add(child.widget, weight, expand)
-            sizer.Add(child.widget, 1, wx.EXPAND)
+            sizer.AddF(child.widget, child.default_sizer_flags())
         
     def is_reverse_direction(self, direction):
         """ Returns True or False depending on if the given direction
@@ -150,10 +146,10 @@ class WXGroup(WXContainer):
         for public consumption.
 
         """
-        old_sizer = self.widget
+        # XXX This whole method is a bit of a hack. We probably want
+        # an api on our parent where we can request a relayout.
+        
         new_sizer = self.make_sizer(direction)
-        parent_sizer = self.parent_sizer()
-
         if self.is_reverse_direction(direction):
             children = reversed(list(self.children()))
         else:
@@ -165,12 +161,14 @@ class WXGroup(WXContainer):
         # in OSX 10.6 (I haven't checked other platforms). So the 
         # workaround is manually remove the old and insert the new in
         # proper place.
+        parent_sizer = self.parent_sizer()
         if parent_sizer:
+            old_sizer = self.widget
             sizer_item = parent_sizer.GetItem(old_sizer)
             if sizer_item:
                 idx = parent_sizer.GetChildren().index(sizer_item)
                 parent_sizer.Remove(old_sizer)
-                parent_sizer.Insert(idx, new_sizer, 1, wx.EXPAND)
+                parent_sizer.InsertF(idx, new_sizer, self.default_sizer_flags())
                 self.widget = new_sizer
                 parent_sizer.Layout()
 

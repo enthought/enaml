@@ -140,3 +140,25 @@ class WXComponent(HasStrictTraits, MetaInfoMixin):
                 return widget
             parent = parent.parent()
 
+    #---------------------------------------------------------------------------
+    # Layout helpers
+    #---------------------------------------------------------------------------
+    def default_sizer_flags(self):
+        """ Returns a wx.SizerFlags object.
+        
+        Compenent subclasses which wish to provide default layout
+        hinting information should override this method. This results
+        of this method will be used in cases where the object does
+        not provide a meta layout object, and thus allows us to do
+        semi-intelligent layouts without requiring a bunch of user
+        supplied info.
+
+        The default is an wx.SizerFlags object configured according
+        to its defaults.
+
+        This method is provided explicitly as a convienence for 
+        subclasses. It's of no use for WXComponent itself.
+
+        """
+        return wx.SizerFlags()
+

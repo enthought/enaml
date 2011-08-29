@@ -77,4 +77,15 @@ class WXLabel(WXElement):
 
         """
         self.widget.SetLabel(label)
+    
+    #---------------------------------------------------------------------------
+    # Layout helpers
+    #---------------------------------------------------------------------------
+    def default_sizer_flags(self):
+        """ Updates the default sizer flags to have a proportion of 1.
+
+        """
+        # Labels need to claim a bit of space (rather than just be fixed)
+        # so that groups of labels arrange cleanly.
+        return super(WXLabel, self).default_sizer_flags().Proportion(1)
 

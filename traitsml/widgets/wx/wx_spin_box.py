@@ -528,3 +528,12 @@ class WXSpinBox(WXElement):
         """
         self.widget.SetWrap(wrap)
 
+    #---------------------------------------------------------------------------
+    # Layout helpers
+    #---------------------------------------------------------------------------
+    def default_sizer_flags(self):
+        """ Updates the default flags to have a proportion of 1.
+
+        """
+        return super(WXSpinBox, self).default_sizer_flags().Proportion(1)
+

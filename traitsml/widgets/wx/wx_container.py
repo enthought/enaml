@@ -1,3 +1,5 @@
+import wx
+
 from traits.api import implements, Bool
 
 from .wx_component import WXComponent
@@ -83,4 +85,28 @@ class WXContainer(WXComponent, ContainerMixin):
 
         """
         raise NotImplementedError
+
+    #---------------------------------------------------------------------------
+    # Layout helpers
+    #---------------------------------------------------------------------------
+    def default_sizer_flags(self):
+        """ Computes the default sizer flags based on the flags of its
+        children. Names the flags will only be expanding if one of its
+        children is exanding.
+
+        """
+        for child in self.children():
+            flags = child.default_sizer_flags()
+            if flags.GetFlags() & wx.EXPAND:
+                expand = True
+                break
+        else:
+            expand = False
+        
+        if expand:
+            res = wx.SizerFlags().Expand().Border(wx.ALL, 5)
+        else:
+            res = wx.SizerFlags().Border(wx.ALL, 5)
+        
+        return res
 

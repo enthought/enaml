@@ -18,10 +18,15 @@ import random
 import datetime
 
 Window:
+
+    title := cb1.text
+    
     HGroup:
         Group my_group:
 
-            direction << random.choice(list(Direction.values())) or pb2.clicked
+            direction << (random.choice([Direction.TOP_TO_BOTTOM, 
+                                         Direction.BOTTOM_TO_TOP]) 
+                          or pb2.clicked)
         
             PushButton:
                 text << "clickme!" if not self.down else "I'm down!"
@@ -32,6 +37,7 @@ Window:
             PushButton pb2:
                 text = "shuffle"
                 clicked >> setattr(rb1, 'checked', True)
+
             PushButton static:
                 text = "static"
                 clicked >> model.print_msg(args)
@@ -43,7 +49,9 @@ Window:
             RadioButton:
                 text = 'foo'
         Html:
-            source << "<h1>Hello Html!</h1>" if not static.down else "<h1>Static Down!</h1>"
+            source << ("<center><h1>Hello Html!</h1></center>" 
+                       if not static.down else 
+                       "<center><h1>Static Down!</h1></center>")
 
         VGroup:
             Panel:
@@ -71,6 +79,7 @@ Window:
                         text = 'rb3'
                     RadioButton:
                         text = 'rb4'
+
             Calendar:
                 minimum_date = datetime.date(1970, 1, 1)
                 activated >> print('activated', args.new)

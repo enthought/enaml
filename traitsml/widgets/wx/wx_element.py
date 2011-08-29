@@ -1,3 +1,5 @@
+import wx
+
 from traits.api import implements
 
 from ..i_element import IElement
@@ -33,4 +35,14 @@ class WXElement(WXComponent):
 
     def init_meta_handlers(self):
         raise NotImplementedError
+    
+    #---------------------------------------------------------------------------
+    # Layout helpers
+    #---------------------------------------------------------------------------
+    def default_sizer_flags(self):
+        """ The default sizing for an element is aligned top-left
+        with a 2 pixel border, a proportion of 0 and expanding.
+
+        """
+        return wx.SizerFlags(0).Left().Top().Border(wx.ALL, 2).Expand()
 

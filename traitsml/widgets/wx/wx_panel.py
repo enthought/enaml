@@ -86,8 +86,7 @@ class WXPanel(WXComponent):
                 if child_widget:
                     child_widget.Destroy()
             container.layout(self)
-            self.widget.SetSizer(container.widget, True)
-            self.widget.Layout()
+            self.widget.SetSizerAndFit(container.widget, True)
         self.needs_container_layout = False
 
     def init_attributes(self):

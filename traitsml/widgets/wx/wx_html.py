@@ -1,3 +1,4 @@
+import wx
 import wx.html
 
 from traits.api import implements, Str
@@ -38,7 +39,9 @@ class WXHtml(WXElement):
         consumption.
 
         """
-        self.widget = wx.html.HtmlWindow(self.parent_widget())
+        # GetBestSize on the HtmlWindow returns (0, 0) (wtf?)
+        # So for now, we just set the min size to something sensible.
+        self.widget = wx.html.HtmlWindow(self.parent_widget(), size=(300, 200))
 
     def init_attributes(self):
         """ Initializes the attributes of the control.
@@ -77,4 +80,13 @@ class WXHtml(WXElement):
 
         """
         self.widget.SetPage(source)
+
+    #---------------------------------------------------------------------------
+    # Layout helpers
+    #---------------------------------------------------------------------------
+    def default_sizer_flags(self):
+        """ Updates the default sizer flags to have a proportion of 2.
+
+        """
+        return super(WXHtml, self).default_sizer_flags().Proportion(2)
 
