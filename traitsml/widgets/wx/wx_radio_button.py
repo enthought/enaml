@@ -9,15 +9,20 @@ from ..i_radio_button import IRadioButton
 
 
 # A new radio button event for the custom radio button this is emitted on 
-# the parent whenever any CustomRadioButton is toggled. This allows other
-# radio buttons in the group to determine if they've been changed and
-# then emit a toggled event.
-wxGroupRadioButton, EVT_GROUP_RADIOBUTTON = wx.lib.newevent.NewEvent()
+# the parent whenever any CustomRadioButton is toggled.
+wxGroupRadio, EVT_GROUP_RADIO = wx.lib.newevent.NewEvent()
 
+# A radio button event emitted when the value is interactively turned on.
+wxRadioToggleOn, EVT_RADIO_TOGGLE_ON = wx.lib.newevent.NewEvent()
 
-# A new radio button event that is emitted by a button when it is unchecked
-# automatically by wx.
-wxRadioButtonUnchecked, EVT_RADIOBUTTON_UNCHECKED = wx.lib.newevent.NewEvent()
+# A radio button event that is emited when the button is auto unchecked
+wxRadioToggleOff, EVT_RADIO_TOGGLE_OFF = wx.lib.newevent.NewEvent()
+
+# A radio button event emitted when the value is programatically turned on.
+wxRadioSetChecked, EVT_RADIO_SET_CHECKED = wx.lib.newevent.NewEvent()
+
+# A radio button event emitted when the value is programatically turned off.
+wxRadioSetUnchecked, EVT_RADIO_SET_UNCHECKED = wx.lib.newevent.NewEvent()
 
 
 class CustomRadioButton(wx.RadioButton):
@@ -40,22 +45,38 @@ class CustomRadioButton(wx.RadioButton):
         # instance with the same parent to check to see if it has been 
         # unchecked. If it has, then it emits the unchecked event.
         self.Bind(wx.EVT_RADIOBUTTON, self.OnToggled)
-        self.GetParent().Bind(EVT_GROUP_RADIOBUTTON, self.OnGroupToggled)
+        self.GetParent().Bind(EVT_GROUP_RADIO, self.OnGroupToggled)
         self._last = self.GetValue()
 
     def OnGroupToggled(self, event):
         last = self._last
-        if not self.GetValue() and last:
-            self._last = False
-            evt = wxRadioButtonUnchecked()
-            wx.PostEvent(self, evt)
+        curr = self.GetValue()
+        if not curr and last:
+            self._last = curr
+            off_evt = wxRadioToggleOff()
+            wx.PostEvent(self, off_evt)
         event.Skip()
 
     def OnToggled(self, event):
-        event.Skip()
         self._last = self.GetValue()
-        evt = wxGroupRadioButton()
-        wx.PostEvent(self.GetParent(), evt)
+        on_evt = wxRadioToggleOn()
+        wx.PostEvent(self, on_evt)
+        group_evt = wxGroupRadio()
+        wx.PostEvent(self.GetParent(), group_evt)
+
+    def SetValue(self, val):
+        old = self.GetValue()
+        if old != val:
+            super(CustomRadioButton, self).SetValue(val)
+            self._last = val
+            if not val:
+                off_evt = wxRadioSetUnchecked()
+                wx.PostEvent(self, off_evt)
+            else:
+                on_evt = wxRadioSetChecked()
+                wx.PostEvent(self, on_evt)
+            group_evt = wxGroupRadio()
+            wx.PostEvent(self.GetParent(), group_evt)
 
 
 class WXRadioButton(WXToggleElement):
@@ -93,16 +114,23 @@ class WXRadioButton(WXToggleElement):
 
         """
         widget = CustomRadioButton(self.parent_widget())
-        widget.Bind(wx.EVT_RADIOBUTTON, self._on_toggled)
+        widget.Bind(EVT_RADIO_TOGGLE_ON, self._on_toggled)
+        widget.Bind(EVT_RADIO_TOGGLE_OFF, self._on_simple_toggle)
+        widget.Bind(EVT_RADIO_SET_CHECKED, self._on_simple_toggle)
+        widget.Bind(EVT_RADIO_SET_UNCHECKED, self._on_simple_toggle)
         widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
         widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)
-        widget.Bind(EVT_RADIOBUTTON_UNCHECKED, self._on_unchecked)
         self.widget = widget
 
     #---------------------------------------------------------------------------
     # Event handlers
     #---------------------------------------------------------------------------
-    def _on_unchecked(self, event):
+    def _on_simple_toggle(self, event):
+        """ An event handler for toggle events that have nothing to do
+        with mouse interaction by the user and therefore the events
+        emited by _on_toggled would be inappropriate.
+
+        """
         self.checked = self.widget.GetValue()
         self.toggled = True
         event.Skip()

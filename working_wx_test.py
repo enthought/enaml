@@ -31,7 +31,7 @@ Window:
 
             PushButton pb2:
                 text = "shuffle"
-
+                clicked >> setattr(rb1, 'checked', True)
             PushButton static:
                 text = "static"
                 clicked >> model.print_msg(args)
@@ -49,7 +49,7 @@ Window:
             Panel:
                 HGroup:
                     direction = Direction.RIGHT_TO_LEFT
-                    RadioButton:
+                    RadioButton rb1:
                         text = 'rb1'
                         toggled >> print('rb1:', self.checked)
                     RadioButton:

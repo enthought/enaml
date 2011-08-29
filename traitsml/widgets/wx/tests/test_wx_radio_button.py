@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import unittest
 import weakref
 
@@ -11,12 +10,12 @@ class WidgetParent(object):
     """Mock parent class"""
 
     def __init__(self):
-
-        self.app = wx.App(0)
+        self.app = wx.PySimpleApp()
         self.widget = wx.Frame(None)
 
     def __call__(self):
         return weakref.ref(self)
+
 
 class testWXRadioButton(unittest.TestCase):
     """Testsuite for WXRadioButton
@@ -26,7 +25,7 @@ class testWXRadioButton(unittest.TestCase):
 
     def setUp(self):
         # setup an empty application
-        parent = WidgetParent()
+        self.parent = parent = WidgetParent()
 
         # setup widgets
         # we need more than one for RadioButton since we cannot
@@ -107,18 +106,15 @@ class testWXRadioButton(unittest.TestCase):
         self.assertEqual(self.radio2.checked, self.radio2.widget.GetValue(),
             'The checked attribute does not agree with the widget')
 
-    @unittest.expectedFailure
     def testMultipleRadioButtons(self):
-        """Selecting one of a set radiobuttons
-
-        When wxRadioButtons are in the same group (but not inside a radiobox)
-        selecting one of them will automatically deselect the others. Yet
-        the other WXRadioButtons will not be aware of the change even thouhg
-        the wxWidgets have changed their values.
-
-        """
+        """Selecting one of a set radiobuttons"""
         # select second
         self.radio2.checked = True
+
+        # The synching of values relies on wx events being propogated.
+        # We need to manually dispatch them since we're not currently
+        # in the event loop.
+        self.parent.app.ProcessPendingEvents()
 
         # The selected radio button is ofcourse aware (we did this)
         self.assertEqual(self.radio2.checked, self.radio2.widget.GetValue(),
@@ -130,7 +126,6 @@ class testWXRadioButton(unittest.TestCase):
         self.assertFalse(self.radio1.widget.GetValue(),
             'The first radiobutton should be de-selected')
 
-        # it will fail here if the decorator is commented out
         self.assertEqual(self.radio1.checked, self.radio1.widget.GetValue(),
             'The checked attribute does not agree with the widget')
 
