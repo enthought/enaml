@@ -163,7 +163,8 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         """
         self._prefix = prefix
-
+        self.Update()
+        
     def GetSuffix(self):
         """ Returns the suffix of the control.
 
@@ -175,7 +176,8 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         """
         self._suffix = suffix
-    
+        self.Update()
+
     def GetSpecialValueText(self):
         """ Returns the special value text of the control.
 
@@ -187,6 +189,7 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         """
         self._special_value_text = text
+        self.Update()
 
     def GetToString(self):
         """ Returns the to_string converter of the control.
@@ -199,7 +202,8 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         """
         self._to_string = to_string
-    
+        self.Update()
+
     def GetFromString(self):
         """ Returns the from_string converter of the control.
 
@@ -211,7 +215,8 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         """
         self._from_string = from_string
-    
+        self.Update()
+
     def GetWrap(self):
         """ Gets the wrap flag of the control.
 
@@ -235,10 +240,17 @@ class CustomSpinCtrl(wx.SpinCtrl):
             changed = value != self.GetValue()
             super(CustomSpinCtrl, self).SetValue(value)
             self._last = value
-            self.SetValueString(self.ComputeValueString(value))
+            self.Update()
             if changed:
                 evt = CustomSpinCtrlEvent()
                 wx.PostEvent(self, evt)
+    
+    def Update(self):
+        """ Trigger an update of the displayed string value. Should not
+        need to be called directly by the user.
+
+        """
+        self.SetValueString(self.ComputeValueString(self.GetValue()))
 
     def ComputeValueString(self, value):
         """ Computes the string that will be displayed in the control

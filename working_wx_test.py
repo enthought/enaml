@@ -103,8 +103,8 @@ Window:
                 CheckBox wrap_box:
                     text = 'Allow wrap:'
                 SpinBox sb:
-                    prefix = 'Foo '
-                    suffix = ' kg'
+                    prefix << 'Foo ' if wrap_box.checked else 'Bar '
+                    suffix << ' lb' if wrap_box.checked else ' kg'
                     wrap := wrap_box.checked
                     special_value_text = "Auto"
                     step = 2
