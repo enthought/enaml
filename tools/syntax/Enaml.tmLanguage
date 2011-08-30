@@ -4,15 +4,15 @@
 <dict>
 	<key>fileTypes</key>
 	<array>
-		<string>tml</string>
+		<string>enaml</string>
 	</array>
 	<key>name</key>
-	<string>TraitsML</string>
+	<string>Enaml</string>
 	<key>patterns</key>
 	<array>
         <dict>
             <key>comment</key>
-            <string>TraitsML element name and optional identifier</string>
+            <string>Enaml element name and optional identifier</string>
             <key>match</key>
             <string>^\s*([A-Za-z_][A-Za-z0-9_]*)\s*(?:([A-Za-z_][A-Za-z0-9_]*)*)\s*:\s*$</string>
             <key>captures</key>
@@ -31,7 +31,7 @@
         </dict>
 		<dict>
 			<key>comment</key>
-			<string>TraitsML meta info names and optional identifiers</string>
+			<string>Enaml meta info names and optional identifiers</string>
 			<key>match</key>
 			<string>^\s*(@)\s*([A-Za-z_][A-Za-z0-9_]*)\s*(?:([A-Za-z_][A-Za-z0-9_]*)*)\s*:\s*$</string>
 			<key>captures</key>
@@ -55,7 +55,7 @@
 		</dict>
 		<dict>
 			<key>comment</key>
-			<string>TraitsML property expressions</string>
+			<string>Enaml property expressions</string>
 			<key>begin</key>
 			<string>^\s*([A-Za-z_][A-Za-z_0-9]*)\s*(=|:=|&lt;&lt;|&gt;&gt;)</string>
 			<key>beginCaptures</key>
@@ -78,7 +78,7 @@
 		</dict>
         <dict>
 			<key>comment</key>
-			<string>TraitsML comment</string>
+			<string>Enaml comment</string>
 			<key>match</key>
 			<string>^\s*(#.*)$</string>
 			<key>captures</key>
@@ -109,7 +109,7 @@
 		</dict>	
 	</array>
 	<key>scopeName</key>
-	<string>source.python.traitsml</string>
+	<string>source.python.enaml</string>
 	<key>uuid</key>
 	<string>42F00A35-6D17-44B8-8C9B-438F9FE9E241</string>
 </dict>

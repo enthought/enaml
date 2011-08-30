@@ -10,12 +10,14 @@ import wx
 
 from traits.api import HasTraits, Str
 
-from traitsml.view_factories.tml import TMLViewFactory
+from enaml.factories.stock_enaml import EnamlFactory
 
-tml = """
-from traitsml.enums import Direction
+enml = """
 import random
 import datetime
+
+from enaml.enums import Direction
+
 
 Window:
 
@@ -138,7 +140,7 @@ class Model(HasTraits):
         return ''.join(l)
 
 
-fact = TMLViewFactory(StringIO(tml))
+fact = EnamlFactory(StringIO(enml))
 
 app = wx.PySimpleApp()
 

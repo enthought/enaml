@@ -1,8 +1,7 @@
-# -*- coding: utf-8 -*-
 
 
 def test_collector():
-    """Discover and collect tests for the TraitsML Package
+    """Discover and collect tests for the Enaml Package
 
     .. note :: addapted from the unittest2
     """

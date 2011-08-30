@@ -1,4 +1,3 @@
-""" The Enums used throughout TraitsML. """
 from .util.enum import Constant, Enum
 
 

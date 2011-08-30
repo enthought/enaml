@@ -1,14 +1,26 @@
-========
-TraitsML
-========
+===========================================
+Enaml: Enthought's reActive Markup Language
+===========================================
 
-TraitsML is like Qt's QML for Traits: a declarative language for building user interfaces with native widgets.
-It's based on Python and currently supports Qt as a backend, via the PySide bindings.
+Enaml is a framework for writing declarative user interfaces in Python.
+It provides a Yaml-ish/Pythonic syntax language for declaring a ui
+that binds and reacts to changes in the user's models. Code can freely 
+call back and forth between Python and Enaml.
+
+Enaml is heavily inspired by Qt's QML system, but Enaml uses native
+widgets (as opposed to drawing on a 2D canvas) and is toolkit independent.
+Currently supported/in-development toolkits include Wx and Qt4 via PySide.
+
+Enaml is extensible and makes it extremely easy for the user to define
+their own widgets, override existing widgets, create a new backend toolkit,
+or even hook the runtime to apply their own expression dependency behavior.
+Indeed, about the only thing not hookable is the Enaml langauge syntax
+itself.
 
 Prerequisites
 -------------
+* Python >= 2.6 (not Python 3)
 * Traits
-* PySide
-* PLY (Python Lex-Yacc), for parsing *.tml* files
-* Python 2.6
-* The "kitchen sink" example requires Chaco
+* PySide (only if using the Qt backend)
+* wxPython (only if using the wx backend)
+* PLY (Python Lex-Yacc), for parsing *.enaml* files
