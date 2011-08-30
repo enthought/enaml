@@ -10,7 +10,7 @@ import wx
 
 from traits.api import HasTraits, Str
 
-from enaml.factories.stock_enaml import EnamlFactory
+from enaml.factories.enaml_factory import EnamlFactory
 
 enml = """
 import random
@@ -49,7 +49,7 @@ Window:
                 toggled >> setattr(self, 'text', model.randomize(self.text))
             
         Html:
-            source << ("<center><h1>Hello Html!</h1></center><br>" * cmbx.value 
+            source << ("<center><h1>Hello Enaml!</h1></center><br>" * cmbx.value 
                        if not static.down else 
                        "<center><h1>Static Down!</h1></center>")
 

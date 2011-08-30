@@ -124,7 +124,7 @@ class _ConstructorVisitor(object):
             self.stack[-1].exprs.append(item)
 
 
-class TMLViewFactory(HasStrictTraits):
+class EnamlFactory(HasStrictTraits):
 
     _ast = Instance(tml_ast.TML)
 
@@ -144,7 +144,7 @@ class TMLViewFactory(HasStrictTraits):
         return tml_parser.parse(tml_source)
     
     def __init__(self, filehandle, toolkit=None):
-        super(TMLViewFactory, self).__init__()
+        super(EnamlFactory, self).__init__()
         self._ast = self.parse_tml(filehandle)
         self._toolkit = toolkit or default_toolkit()
         self._ctor_tree = None
