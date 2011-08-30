@@ -3,7 +3,7 @@ import weakref
 
 import wx
 
-from traitsml.widgets.wx.wx_radio_button import WXRadioButton
+from enaml.widgets.wx.wx_radio_button import WXRadioButton
 
 
 class WidgetParent(object):

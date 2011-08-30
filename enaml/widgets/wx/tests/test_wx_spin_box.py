@@ -4,7 +4,7 @@ import weakref
 
 import wx
 
-from traitsml.widgets.wx.wx_spin_box import WXSpinBox
+from enaml.widgets.wx.wx_spin_box import WXSpinBox
 
 
 class WidgetParent(object):

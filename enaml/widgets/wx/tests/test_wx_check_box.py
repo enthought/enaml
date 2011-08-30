@@ -4,7 +4,7 @@ import weakref
 
 import wx
 
-from traitsml.widgets.wx.wx_check_box import WXCheckBox
+from enaml.widgets.wx.wx_check_box import WXCheckBox
 
 
 class WidgetParent(object):
