@@ -1,4 +1,3 @@
-""" Enum machinery for TraitsML """
 import itertools
 
 
