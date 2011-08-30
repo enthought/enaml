@@ -19,7 +19,7 @@ import datetime
 
 Window:
 
-    title := cb1.text
+    title << model.window_title
     
     HGroup:
         Group my_group:
@@ -31,8 +31,8 @@ Window:
             PushButton:
                 text << "clickme!" if not self.down else "I'm down!"
 
-                # args is passed implicitly to any >> notify expressions
-                clicked >> print('clicked!', args.new)
+                # msg is passed implicitly to any >> notify expressions
+                clicked >> print('clicked!', msg.new)
 
             PushButton pb2:
                 text = "shuffle"
@@ -40,14 +40,14 @@ Window:
 
             PushButton static:
                 text = "static"
-                clicked >> model.print_msg(args)
+                clicked >> model.print_msg(msg)
             
             CheckBox cb1:
                 text = "A simple text box"
                 toggled >> setattr(self, 'text', model.randomize(self.text))
             
         Html:
-            source << ("<center><h1>Hello Html!</h1></center>" 
+            source << ("<center><h1>Hello Html!</h1></center><br>" * cmbx.value 
                        if not static.down else 
                        "<center><h1>Static Down!</h1></center>")
 
@@ -80,13 +80,14 @@ Window:
 
             Calendar:
                 minimum_date = datetime.date(1970, 1, 1)
-                activated >> print('activated', args.new)
-                selected >> print('selected', args.new)
-                date >> print('new date', args.new)
+                activated >> print('activated', msg.new)
+                selected >> print('selected', msg.new)
+                date >> print('new date', msg.new)
             
             ComboBox cmbx:
                 items = range(100)
-                selected >> print('selected', args.new)
+                value = 1
+                selected >> print('selected', msg.new)
 
             HGroup:
                 Label:
@@ -115,11 +116,18 @@ Window:
                     low << -20 if not self.wrap else 0
                     high = 20
                     value >> print(self.value)
+
+            HGroup:
+                LineEdit line_edit:
+                    text := model.window_title
             
 """
 
 class Model(HasTraits):
+
     message = Str('Foo Model Message!')
+
+    window_title = Str('Window Title!')
 
     def print_msg(self, args):
         print self.message, args

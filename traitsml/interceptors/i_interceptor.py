@@ -11,6 +11,8 @@ class IInterceptor(Interface):
     -------
     inject(obj, name, global_ns, local_ns)
         Hooks up the interceptor object for the trait on the object.
+        The interceptor should append itself to the __interceptors__
+        list on the object after it has performed its injection.
 
     """
     def inject(self, obj, name, global_ns, local_ns):
@@ -28,7 +30,7 @@ class IInterceptor(Interface):
             intercept. Beware of reference cycle if maintaining a 
             strong ref to this object.
 
-        trait_name : string
+        name : string
             The name of the trait on obj we wish to intercept.
         
         global_ns : dict

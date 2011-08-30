@@ -2,11 +2,12 @@ import weakref
 
 import wx
 
-from traits.api import implements, HasStrictTraits, Instance, Str
+from traits.api import implements, HasStrictTraits, Instance, Str, List
 
 from ..mixins.meta_info_mixin import MetaInfoMixin
-
 from ..i_component import IComponent
+
+from ...interceptors.i_interceptor import IInterceptor
 
 
 class WXComponent(HasStrictTraits, MetaInfoMixin):
@@ -45,6 +46,8 @@ class WXComponent(HasStrictTraits, MetaInfoMixin):
     #===========================================================================
     # IComponent interface
     #===========================================================================
+    _interceptors = List(IInterceptor)
+
     name = Str
 
     def toolkit_widget(self):

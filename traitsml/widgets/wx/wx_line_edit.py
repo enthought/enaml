@@ -180,3 +180,5 @@ class WXLineEdit(WXElement):
         self.return_pressed = event
         event.Skip()
 
+    def default_sizer_flags(self):
+        return super(WXLineEdit, self).default_sizer_flags().Proportion(1)

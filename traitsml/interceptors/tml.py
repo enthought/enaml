@@ -1,5 +1,6 @@
 import ast
 import types
+import weakref
 
 from traits.api import (Any, CTrait, DelegatesTo, HasStrictTraits, Tuple,
                         HasTraits, Instance, Property, Str, implements,
@@ -7,176 +8,211 @@ from traits.api import (Any, CTrait, DelegatesTo, HasStrictTraits, Tuple,
 
 from .i_interceptor import IInterceptor, IInterceptorFactory
 
+from ..message import Message
 from ..parsing.analyzer import AttributeVisitor
 
 
-class Arguments(object):
+class BaseInterceptor(HasStrictTraits):
 
-    __slots__ = ('obj', 'name', 'old', 'new')
-
-    def __init__(self, obj, name, old, new):
-        self.obj = obj
-        self.name = name
-        self.old = old
-        self.new = new
-
-
-class InjectionMixin(object):
-    """ A mixin to help the interception process. """
-
-    def inject_delegate(self, obj, name, delegate_name, delegate_attr_name):
-        obj.add_trait(delegate_name, self)
-        obj.add_trait(name, DelegatesTo(delegate_name, delegate_attr_name))
-        obj.trait_added = name
-
-    def valid_injection(self, obj, name):
-        """ Raises an error if the trait_name on obj does not exist
-        or is not suitable for intercepting. Returns a clone of the
-        trait when successful.
-
-        """
-        trait = obj.trait(name)
-        if trait is None:
-            msg = '`%s` is not trait on the %s object.'
-            raise AttributeError(msg % (name, type(obj).__name__))
-        elif trait.type == 'property':
-            msg = 'Cannot intercept `%s` trait, which is a Property.'
-            raise TypeError(msg % name)
-        elif trait.type == 'event':
-            msg = 'Cannot intercept `%s` trait, which is an Event.'
-            raise TypeError(msg % name)
-        return trait()
-
-
-class CodeInterceptor(HasStrictTraits):
-
-    # The code object that holds the expression.
+    # The code object that holds the expression
     code = Instance(types.CodeType)
 
-    # The global namespace for the code. 
+    # The global namespace for the code.
     global_ns = Instance(dict)
 
     # The local namespace for the code.
     local_ns = Instance(dict)
 
+    # The component object which we're intercepting
+    obj = Property
 
-class NotifierInterceptor(CodeInterceptor):
+    # The weakref to the obj (avoids a circular ref)
+    _obj_ref = Instance(weakref.ref)
+
+    # The trait name on the obj that we are intercepting
+    name = Str
+
+    #---------------------------------------------------------------------------
+    # Property handlers
+    #---------------------------------------------------------------------------
+    def _get_obj(self):
+        obj_ref = self._obj_ref
+        if obj_ref is not None:
+            return obj_ref()
+    
+    def _set_obj(self, obj):
+        self._obj_ref = weakref.ref(obj)
+    
+    #---------------------------------------------------------------------------
+    # Subclass helper methods
+    #---------------------------------------------------------------------------
+    def validate_injection(self, obj, name):
+        """ Raises an error if any of the following conditions exist:
+            
+            * The trait has already been intercepted.
+            * The object does not have a trait with the given name.
+            * The trait is not suitable for intercepting.
+            
+        Returns a clone of the trait and the delegate name upon success.
+
+        """
+        trait = obj.trait(name)
+        interceptor_name = '_%s_interceptor' % name
+
+        if trait is None:
+            msg = '`%s` is not a proper attribute on the `%s` object.'
+            raise AttributeError(msg % (name, type(obj).__name__))
+
+        if trait.type in ('property', 'event'):
+            msg = 'The `%s` attr on the `%s` object cannot be intercepted.'
+            raise TypeError(msg % (name, type(obj).__name__))
+
+        if obj.trait(interceptor_name) is not None:
+            msg = 'The `%s` attr on the `%s` object is already intercepted.'
+            raise ValueError(msg % (name, type(obj).__name__))
+
+        return trait(), interceptor_name
+
+
+class NotifierInterceptor(BaseInterceptor):
     
     implements(IInterceptor)
 
     def inject(self, obj, name, global_ns, local_ns):
+        self.obj = obj
+        self.name = name
         self.global_ns = global_ns
         self.local_ns = local_ns
         obj.on_trait_change(self.notify, name)
-
-        # We need to add ourselves to the obj so that a strong
-        # ref is mantained and we don't get gc'd. We have other
-        # options about where to put the strong ref, but this
-        # is consistent with the style of the other interceptors.
-        i_name = '_notifier_interceptor_%s' % name
-        obj.add_trait(i_name, self)
+        obj._interceptors.append(self)
 
     def notify(self, obj, name, old, new):
-        args = Arguments(obj, name, old, new)
         local_ns = self.local_ns
-        local_ns['args'] = args
+        local_ns['msg'] = Message(obj, name, old, new)
         eval(self.code, self.global_ns, local_ns)
 
 
-class DefaultInterceptor(CodeInterceptor, InjectionMixin):
+class DefaultInterceptor(BaseInterceptor):
     
     implements(IInterceptor)
 
     # The trait used to validate the values.
     validate_trait = Instance(CTrait)
     
-    # The actual trait that holds the value.
+    # The trait to which requests are redirected.
     value = Property(depends_on='_value')
 
+    # The underlying value store.
     _value = Any
 
     def inject(self, obj, name, global_ns, local_ns):
+        self.obj = obj
+        self.name = name
         self.global_ns = global_ns
         self.local_ns = local_ns
-        self.validate_trait = self.valid_injection(obj, name)
-        delegate_name = '_%s_%s' % (name, self.__class__.__name__)
-        self.inject_delegate(obj, name, delegate_name, 'value')
+        self.validate_trait, delegate_name = self.validate_injection(obj, name)
+
+        obj.add_trait(delegate_name, self)
+        obj.add_trait(name, DelegatesTo(delegate_name, 'value'))
+        obj._interceptors.append(self)
+
+        # Need to fire the trait_added or the delegate listeners 
+        # don't get hooked up properly. 
+        obj.trait_added = name
 
     def _get_value(self):
         return self._value
     
     def _set_value(self, val):
-        val = self.validate_trait.validate(self, 'value', val)
+        val = self.validate_trait.validate(self.obj, self.name, val)
         self._value = val
 
     def __value_default(self):
         val = eval(self.code, self.global_ns, self.local_ns)
-        val = self.validate_trait.validate(self, 'value', val)
+        val = self.validate_trait.validate(self.obj, self.name, val)
         return val
 
 
-class BindingInterceptor(DefaultInterceptor, InjectionMixin):
+class BindingInterceptor(DefaultInterceptor):
 
     # The possible dependencies for this interceptor in the 
-    # form ((root, (leaf, leaf,...)),...)
+    # form ((root, (attr, attr, ...)), ...)
     deps = Tuple
 
     def inject(self, obj, name, global_ns, local_ns):
         super(BindingInterceptor, self).inject(obj, name, global_ns, local_ns)
+        
         for obj_name, attrs in self.deps:
-            obj = local_ns.get(obj_name) or global_ns.get(obj_name)
-            if obj is None:
-                msg = '`%s` is not defined or accessible in the namespace.'
-                raise NameError(msg % obj_name)
-            else:
-                if isinstance(obj, HasTraits):
-                    extended_name = '.'.join(attrs)
-                    obj.on_trait_change(self.update_value, extended_name)
 
-    def update_value(self):
+            try:
+                obj = local_ns[obj_name]
+            except KeyError:
+                try:
+                    obj = global_ns[obj_name]
+                except KeyError:
+                    msg = '`%s` is not defined or accessible in the namespace.'
+                    raise NameError(msg % obj_name)
+
+            if isinstance(obj, HasTraits):
+                extended_name = '.'.join(attrs)
+                obj.on_trait_change(self.refresh_value, extended_name)
+
+    def refresh_value(self):
         val = eval(self.code, self.global_ns, self.local_ns)
-        self.value = val 
+        self.value = val
 
 
-class DelegateInterceptor(DefaultInterceptor, InjectionMixin):
+class DelegateInterceptor(DefaultInterceptor):
     
+    implements(IInterceptor)
+
     # The name of the object to which we want to delegate in the ns.
-    obj_name = Str
+    delegate_name = Str
 
     # The trait name on the object to which we are delegating.
-    trait_name = Str
+    delegate_attr_name = Str
 
     # The object to which we are delegating.
-    obj = Instance(HasTraits)
+    delegate_obj = Instance(HasTraits)
     
     def inject(self, obj, name, global_ns, local_ns):
         super(DelegateInterceptor, self).inject(obj, name, global_ns, local_ns)
-        obj_name = self.obj_name
-        obj = local_ns.get(obj_name) or global_ns.get(obj_name)
-        if obj is None:
-            msg = '`%s` is not defined or accessible in the namespace.'
-            raise NameError(msg % obj_name)
-        else:
-            self.obj = obj
-            if isinstance(obj, HasTraits):
-                obj.on_trait_change(self.update_value, self.trait_name)
+        
+        delegate_name = self.delegate_name
+        try:
+            obj = local_ns[delegate_name]
+        except KeyError:
+            try:
+                obj = global_ns[delegate_name]
+            except KeyError:
+                msg = '`%s` is not defined or accessible in the namespace.'
+                raise NameError(msg % delegate_name)
+
+        self.delegate_obj = obj
+        if isinstance(obj, HasTraits):
+            obj.on_trait_change(self.refresh_value, self.delegate_attr_name)
 
     def _get_value(self):
-        val = getattr(self.obj, self.trait_name)
-        val = self.validate_trait.validate(self, 'value', val)
+        val = getattr(self.delegate_obj, self.delegate_attr_name)
+        val = self.validate_trait.validate(self.obj, self.name, val)
         return val
 
     def _set_value(self, val):
-        setattr(self.obj, self.trait_name, val)
+        val = self.validate_trait.validate(self.obj, self.name, val)
+        setattr(self.delegate_obj, self.delegate_attr_name, val)
         
     def __value_default(self):
-        return self.value
+        # Pull the default value via the property getter.
+        return self._get_value()
 
-    def update_value(self):
+    def refresh_value(self):
+        # We just need to invalidate the 'value' property so its
+        # listeners will pull new values. The property getter 
+        # does the actual delegation.
         self._value = not self._value
 
 
-class CodeInterceptorFactory(HasStrictTraits):
+class BaseInterceptorFactory(HasStrictTraits):
 
     ast = Instance(ast.Expression)
 
@@ -185,7 +221,7 @@ class CodeInterceptorFactory(HasStrictTraits):
     dependencies = Property(Tuple, depends_on='ast')
 
     def __init__(self, ast):
-        super(CodeInterceptorFactory, self).__init__()
+        super(BaseInterceptorFactory, self).__init__()
         self.ast = ast
 
     @cached_property
@@ -199,7 +235,7 @@ class CodeInterceptorFactory(HasStrictTraits):
         return visitor.results()
         
 
-class Default(CodeInterceptorFactory):
+class Default(BaseInterceptorFactory):
 
     implements(IInterceptorFactory)
 
@@ -207,7 +243,7 @@ class Default(CodeInterceptorFactory):
         return DefaultInterceptor(code=self.code)
 
 
-class Bind(CodeInterceptorFactory):
+class Bind(BaseInterceptorFactory):
     
     implements(IInterceptorFactory)
 
@@ -215,7 +251,7 @@ class Bind(CodeInterceptorFactory):
         return BindingInterceptor(code=self.code, deps=self.dependencies)
 
 
-class Notify(CodeInterceptorFactory):
+class Notify(BaseInterceptorFactory):
 
     implements(IInterceptorFactory)
 
@@ -227,16 +263,16 @@ class Delegate(HasStrictTraits):
 
     implements(IInterceptorFactory)
 
-    obj_name = Str
+    delegate_name = Str
 
     attr_name = Str
 
-    def __init__(self, obj_name, attr_name):
-        super(Delegate, self).__init__(obj_name=obj_name, attr_name=attr_name)
+    def __init__(self, delegate_name, attr_name):
+        super(Delegate, self).__init__()
+        self.delegate_name = delegate_name
+        self.attr_name = attr_name
         
     def interceptor(self):
-        obj_name = self.obj_name
-        trait_name = self.attr_name
-        return DelegateInterceptor(obj_name=obj_name, trait_name=trait_name)
+        return DelegateInterceptor(delegate_name=self.delegate_name, 
+                                   delegate_attr_name=self.attr_name)
 
-    

@@ -1,4 +1,6 @@
-from traits.api import Interface, Str
+from traits.api import Interface, Str, List
+
+from ..interceptors.i_interceptor import IInterceptor
 
 
 class IComponent(Interface):
@@ -9,6 +11,11 @@ class IComponent(Interface):
     
     Attributes
     ----------
+    __interceptors__ : List(IInterceptor)
+        The list of IInterceptors that are currently intercepting values
+        on this component. This is managed by the framework. Use at your
+        own risk.
+
     name : Str
         The name of this element which may be used as metainfo by other
         components. Note that this is not the same as the identifier 
@@ -33,6 +40,8 @@ class IComponent(Interface):
         Returns the logical parent component of this component or None.
         
     """
+    __interceptors__ = List(IInterceptor)
+    
     name = Str
 
     def add_meta_info(self, meta_info, autohook=True):
