@@ -1,6 +1,7 @@
 import wx
 
-from traits.api import Instance, Any
+from traits.api import Instance, HasTraits, Any
+from traitsui.api import View, Handler
 from traitsui.ui import UI
 
 from .wx_element import WXElement
@@ -9,13 +10,13 @@ from .wx_element import WXElement
 class WXTraitsUIItem(WXElement):
 
     # The HasTraits object that will provide the traits ui view
-    model = Any
+    model = Instance(HasTraits)
 
     # The traits view for editing the object. Optional.
-    view = Any
+    view = Instance(View)
 
     # The handler for editing the object. Optional.
-    handler = Any
+    handler = Instance(Handler)
     
     # The UI instance for the view we are embedding.
     ui_item = Instance(UI)

@@ -47,6 +47,7 @@ def wx_toolkit():
         'RadioButton': ctors.WXRadioButtonCtor,
         'Slider': ctors.WXSliderCtor,
         'SpinBox': ctors.WXSpinBoxCtor,
+        'TraitsUIItem': ctors.WXTraitsUIItemCtor,
     }
 
 

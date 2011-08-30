@@ -298,6 +298,16 @@ class WXSpinBoxCtor(WXBaseElementCtor):
         from ..widgets.wx.wx_spin_box import WXSpinBox
         return WXSpinBox
 
+class WXTraitsUIItemCtor(WXBaseElementCtor):
+
+    implements(IToolkitConstructor)
+
+    def toolkit_class(self):
+        from ..widgets.wx.wx_traitsui_item import WXTraitsUIItem
+        return WXTraitsUIItem
+
+
+
 
 #-------------------------------------------------------------------------------
 # Meta Info Constructors
