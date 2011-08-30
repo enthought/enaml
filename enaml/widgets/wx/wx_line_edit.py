@@ -52,6 +52,57 @@ class WXLineEdit(WXElement):
     return_pressed : Event
         Fired when the return/enter key is pressed in the line edit.
 
+    Methods
+    -------
+    set_selection(start, end)
+        Sets the selection to the bounds of start and end.
+
+    select_all()
+        Select all the text in the line edit.
+
+    deselect()
+        Deselect any selected text.
+
+    clear()
+        Clear the line edit of all text.
+
+    backspace()
+        If no text is selected, deletes the character to the left of the
+        cursor. Otherwise, it deletes the selected text.
+
+    delete()
+        If no text is selected, deletes the character to the right of the
+        cursor. Otherwise, it deletes the selected text.
+
+    end(mark=False)
+        Moves the cursor to the end of the line. If 'mark' is True, also
+        selects the text from the current position to the end.
+
+    home(mark=False)
+        Moves the cursor to the beginning of the line. If 'mark' is True,
+        also selects the text from the current position to the beginning.
+
+    cut()
+        Copies the selected text to the clipboard, then deletes the selected
+        text from the line edit.
+
+    copy()
+        Copies the selected text to the clipboard.
+
+    paste()
+        Inserts the contents of the clipboard into the line edit, replacing
+        any selected text.
+
+    insert(text)
+        Inserts the given text at the current cursor position, replacing
+        any selected text.
+
+    undo()
+        Undoes the last operation.
+
+    redo()
+        Redoes the last operation.
+
     """
 
     implements(ILineEdit)
@@ -144,21 +195,26 @@ class WXLineEdit(WXElement):
         # reset the modifed flag in the widget
         self.widget.SetModified(False)
 
-        self.widget.ChangeValue(self.text)
-        self.cursor_position = self.widget.GetInsertionPoint()
-        self.text_changed = self.text
+        if self.text != self.widget.GetValue():
+            self.widget.ChangeValue(self.text)
+            self.text_changed = self.text
 
+        return
 
     def _read_only_changed(self):
         # only update if the value has actually changed
         if self.read_only == self.widget.IsEditable():
             self.widget.SetEditable(not self.read_only)
+        return
 
     def _max_length_changed(self):
         self.widget.SetMaxLength(self.max_length)
+        return
 
     def _cursor_position_changed(self):
-        self.widget.SetInsertionPoint(self.cursor_position)
+        if self.cursor_position != self.widget.GetInsertionPoint():
+            self.widget.SetInsertionPoint(self.cursor_position)
+        return
 
     #--------------------------------------------------------------------------
     # Event handlers
@@ -167,6 +223,7 @@ class WXLineEdit(WXElement):
     def _on_max_length(self, event):
         # TODO: do something to show that no more characters are allowed
         event.skip()
+        return
 
     def _on_text_updated(self, event):
         new_text = self.widget.GetValue()
@@ -174,11 +231,193 @@ class WXLineEdit(WXElement):
             self.modified = True
             self.text = new_text
             self.text_edited = new_text
+
+        self.cursor_position = self.widget.GetInsertionPoint()
         event.Skip()
+        return
 
     def _on_text_enter(self, event):
         self.return_pressed = event
         event.Skip()
+        return
 
     def default_sizer_flags(self):
         return super(WXLineEdit, self).default_sizer_flags().Proportion(1)
+
+    #--------------------------------------------------------------------------
+    # Getters and Setters
+    #--------------------------------------------------------------------------
+
+    def _get_selected_text(self):
+        return self.widget.GetStringSelection()
+
+    #--------------------------------------------------------------------------
+    # Selection handlers
+    #--------------------------------------------------------------------------
+
+    def set_selection(self, start, end):
+        """ Sets the selection to the bounds of start and end.
+
+        If the indices are invalid, no selection will be made,
+        and any current selection will be cleared.
+
+        Arguments
+        ---------
+        start : Int
+            The start selection index, zero based.
+
+        end : Int
+            The end selection index, zero based.
+
+
+        """
+        self.widget.SetSelection(start, end)
+        return
+
+    def select_all(self):
+        """ Select all the text in the line edit.
+
+        If there is no text in the line edit, the selection will be
+        empty.
+
+        """
+        self.widget.SetSelection(-1, -1)
+        return
+
+    def deselect(self):
+        """ Deselect any selected text.
+
+        """
+        widget = self.widget
+        # setting selection with equal start and stop deselects the previous
+        # string. The current position is as good as any
+        pos = self.widget.GetInsertionPoint()
+        widget.SetSelection(pos, pos)
+        return
+
+    def clear(self):
+        """ Clear the line edit of all text.
+        """
+        self.text = ''
+        return
+
+    def backspace(self):
+        """ Simple backspace functionality.
+
+        If no text is selected, deletes the character to the left
+        of the cursor. Otherwise, it deletes the selected text.
+
+        """
+        selected = self.selected_text()
+        if selected == '':
+            self.widget.Remove(self.current_cursor - 1, self.current_cursor)
+        else:
+            (start, end) = self.widget.GetSelection()
+            self.widget.Replace(start, end, '')
+        return
+
+    def delete(self):
+        """ Simple delete functionality.
+
+        If no text is selected, deletes the character to the right
+        of the cursor. Otherwise, it deletes the selected text.
+
+        """
+        selected = self.selected_text()
+        if selected == '':
+            self.widget.Remove(self.current_cursor, self.current_cursor+1)
+        else:
+            (start, end) = self.widget.GetSelection()
+            self.widget.Replace(start, end, '')
+        return
+
+
+    def end(self, mark=False):
+        """ Moves the cursor to the end of the line.
+
+        Arguments
+        ---------
+        mark : bool, optional
+            If True, select the text from the current position to
+            the end of the line edit. Defaults to False.
+
+        """
+        if mark:
+            self.set_selection(self.widget.GetInsertionPoint(),
+                                        self.widget.GetLastPosition())
+        self.cursor_position = self.widget.GetLastPosition()
+        return
+
+    def home(self, mark=False):
+        """ Moves the cursor to the beginning of the line.
+
+        Arguments
+        ---------
+        mark : bool, optional
+            If True, select the text from the current position to
+            the beginning of the line edit. Defaults to False.
+
+        """
+        if mark:
+            self.set_selection(0, self.widget.GetInsertionPoint())
+        self.cursor_position = 0
+        print 'Selection', self.selected_text
+        return
+
+    def cut(self):
+        """ Cuts the selected text from the line edit.
+
+        Copies the selected text to the clipboard then deletes the selected
+        text from the line edit.
+
+        """
+        self.widget.Cut()
+        return
+
+    def copy(self):
+        """ Copies the selected text to the clipboard.
+
+        .. note:: works under motif and ms windows
+
+        """
+        self.widget.Copy()
+        return
+
+    def paste(self):
+        """ Paste the contents of the clipboard into the line edit.
+
+        Inserts the contents of the clipboard into the line edit at
+        the current cursor position, replacing any selected text.
+
+        """
+        self.widget.Paste()
+        return
+
+    def insert(self, text):
+        """ Insert the text into the line edit.
+
+        Inserts the given text at the current cursor position,
+        replacing any selected text.
+
+        Arguments
+        ---------
+        text : str
+            The text to insert into the line edit.
+
+        """
+        self.widget.WriteText(text)
+        return
+
+    def undo(self):
+        """ Undoes the last operation.
+
+        """
+        self.widget.Undo()
+        return
+
+    def redo(self):
+        """Redoes the last operation
+
+        """
+        self.widget.Redo()
+        return
