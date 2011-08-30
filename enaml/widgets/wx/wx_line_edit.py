@@ -346,7 +346,7 @@ class WXLineEdit(WXElement):
         ---------
         mark : bool, optional
             If True, select the text from the current position to the end of
-            the line edit and the cursor is not moved. Defaults to False.
+            the line edit. Defaults to False.
 
         """
         if mark:
@@ -364,8 +364,7 @@ class WXLineEdit(WXElement):
         ---------
         mark : bool, optional
             If True, select the text from the current position to
-            the beginning of the line edit. The cursor is also not moved to
-            the beginning. Defaults to False.
+            the beginning of the line edit. Defaults to False.
 
         """
         if mark:
