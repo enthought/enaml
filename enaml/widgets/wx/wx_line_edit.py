@@ -272,6 +272,7 @@ class WXLineEdit(WXElement):
 
         """
         self.widget.SetSelection(start, end)
+        self.cursor_position = self.widget.GetInsertionPoint()
         return
 
     def select_all(self):
@@ -281,24 +282,24 @@ class WXLineEdit(WXElement):
         empty.
 
         """
-        self.widget.SetSelection(-1, -1)
+        self.set_selection(-1, -1)
         return
 
     def deselect(self):
         """ Deselect any selected text.
 
+        Sets a selection with  start == stop to deselect the current
+        selection. The cursor is placed at the beginning of selection
         """
-        widget = self.widget
-        # setting selection with equal start and stop deselects the previous
-        # string. The current position is as good as any
         pos = self.widget.GetInsertionPoint()
-        widget.SetSelection(pos, pos)
+        self.set_selection(pos, pos)
         return
 
     def clear(self):
         """ Clear the line edit of all text.
         """
         self.text = ''
+        self.cursor_position = 0
         return
 
     def backspace(self):
@@ -308,12 +309,15 @@ class WXLineEdit(WXElement):
         of the cursor. Otherwise, it deletes the selected text.
 
         """
-        selected = self.selected_text()
+        selected = self.selected_text
+
         if selected == '':
-            self.widget.Remove(self.current_cursor - 1, self.current_cursor)
+            end = self.cursor_position
+            start = end - 1
         else:
             (start, end) = self.widget.GetSelection()
-            self.widget.Replace(start, end, '')
+
+        self.widget.Remove(start, end)
         return
 
     def delete(self):
@@ -323,12 +327,15 @@ class WXLineEdit(WXElement):
         of the cursor. Otherwise, it deletes the selected text.
 
         """
-        selected = self.selected_text()
+        selected = self.selected_text
+
         if selected == '':
-            self.widget.Remove(self.current_cursor, self.current_cursor+1)
+            start = self.cursor_position
+            end = start + 1
         else:
             (start, end) = self.widget.GetSelection()
-            self.widget.Replace(start, end, '')
+
+        self.widget.Remove(start, end)
         return
 
 
@@ -338,14 +345,16 @@ class WXLineEdit(WXElement):
         Arguments
         ---------
         mark : bool, optional
-            If True, select the text from the current position to
-            the end of the line edit. Defaults to False.
+            If True, select the text from the current position to the end of
+            the line edit and the cursor is not moved. Defaults to False.
 
         """
         if mark:
-            self.set_selection(self.widget.GetInsertionPoint(),
-                                        self.widget.GetLastPosition())
-        self.cursor_position = self.widget.GetLastPosition()
+            start_position = self.widget.GetInsertionPoint()
+            stop_position = self.widget.GetLastPosition()
+            self.set_selection(start_position, stop_position)
+        else:
+            self.cursor_position = self.widget.GetLastPosition()
         return
 
     def home(self, mark=False):
@@ -355,13 +364,14 @@ class WXLineEdit(WXElement):
         ---------
         mark : bool, optional
             If True, select the text from the current position to
-            the beginning of the line edit. Defaults to False.
+            the beginning of the line edit. The cursor is also not moved to
+            the beginning. Defaults to False.
 
         """
         if mark:
             self.set_selection(0, self.widget.GetInsertionPoint())
-        self.cursor_position = 0
-        print 'Selection', self.selected_text
+        else:
+            self.cursor_position = 0
         return
 
     def cut(self):
