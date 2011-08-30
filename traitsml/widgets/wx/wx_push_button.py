@@ -88,8 +88,8 @@ class WXPushButton(WXElement):
 
         """
         self.down = False
-        self.released = event
-        self.clicked = event
+        self.released = True
+        self.clicked = True
         event.Skip()
 
     def _on_pressed(self, event):
@@ -98,7 +98,7 @@ class WXPushButton(WXElement):
 
         """
         self.down = True
-        self.pressed = event
+        self.pressed = True
         event.Skip()
 
     def _on_leave_window(self, event):
@@ -112,7 +112,7 @@ class WXPushButton(WXElement):
         # we need to hook the EVT_LEAVE_WINDOW 
         if self.down:
             self.down = False
-            self.released = event
+            self.released = True
         event.Skip()
 
     #---------------------------------------------------------------------------

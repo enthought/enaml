@@ -1,14 +1,7 @@
-""" NOTES: The combo box elements are read-only, the `opened`
-flag doesn't work, and the `value` trait can be set to a string that is
-not in `items`. The `value` trait also is currently just the selected string,
-not the associated value.
-
-"""
-
 import wx
 
-from traits.api import \
-        implements, Dict, Str, Any, Bool, Callable, Event, on_trait_change
+from traits.api import (implements, List, Any, Callable, Event, Property, 
+                        cached_property, on_trait_change)
 
 from .wx_element import WXElement
 
@@ -16,142 +9,113 @@ from ..i_combo_box import IComboBox
 
 
 class WXComboBox(WXElement):
-    """ A wxPython implementation of IPushButton.
+    """ A wxPython implementation of IComboBox.
 
     Use a combo box to select a single item from a collection of
     items. To select multiple items from a collection of items
     use a List widget.
     
-    Attributes
-    ----------
-    items : Dict(Str, Any)
-        Maps the string representations of the items in the collection
-        to the items themselves.
-
-    value : Any
-        The currently selected item from the collection.
-
-    sort : Bool
-        Whether or not to sort the choices for display.
-
-    sort_key : Callable
-        If sort is True, this sort key will be used. The keys in
-        the items dict will be passed as arguments to the key. 
-        The default key sorts by ascii order.
-    
-    opened : Bool
-        Set to True when the combo box is opened, False otherwise.
-
-    selected : Event
-        Fired when a new selection is made. The args object will
-        contain the selection.
-
-    clicked : Event
-        Fired when the combo box is clicked.
+    See Also
+    --------
+    IComboBox
 
     """
     implements(IComboBox)
 
-
     #===========================================================================
     # IComboBox interface
     #===========================================================================
-
-    items = Dict(Str, Any)
+    items = List(Any)
 
     value = Any
 
-    sort = Bool
-
-    sort_key = Callable(lambda val: val)
-
-    opened = Bool
+    to_string = Callable(str)
 
     selected = Event
-
-    clicked = Event
 
     #===========================================================================
     # Implementation
     #===========================================================================
-    def create_widget(self):
-        """ Creates and binds a wx.ComboBox.
-
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
-
-        Arguments
-        ---------
-        parent : WXContainer
-            The WXContainer instance that is our parent.
-
-        Returns
-        -------
-        result : None
-
-        """
-        widget = wx.ComboBox(self.parent_widget(), style=wx.CB_READONLY)
-        widget.Bind(wx.EVT_COMBOBOX, self._on_selected)
-        widget.Bind(wx.EVT_LEFT_DOWN, self._on_clicked)
-        self.widget = widget
 
     #---------------------------------------------------------------------------
     # Initialization
     #---------------------------------------------------------------------------
+    def create_widget(self):
+        """ Creates and binds a wx.ComboBox.
+
+        This is called by the 'layout' method and is not meant for public
+        consumption.
+
+        """
+        widget = wx.ComboBox(self.parent_widget(), style=wx.CB_READONLY)
+        widget.Bind(wx.EVT_COMBOBOX, self._on_selected)
+        self.widget = widget
+
     def init_attributes(self):
         """ Intializes the widget with the attributes of this instance.
         
+        This is called by the 'layout' method and is not meant for public
+        consumption.
+
         """
         self.set_items()
-        widget = self.widget
-        widget.SetSelection(0)
-        self.value = widget.GetStringSelection()
+        self.set_value()
 
     def init_meta_handlers(self):
+        """ Intializes the meta handlers for this control.
+        
+        This is called by the 'layout' method and is not meant for public
+        consumption.
+        
+        """
         pass
+
+    #---------------------------------------------------------------------------
+    # Properties
+    #---------------------------------------------------------------------------
+    # The set of choices for fast membership testing
+    items_set = Property(depends_on=['items[]'])
+
+    @cached_property
+    def _get_items_set(self):
+        return set(self.items)
 
     #---------------------------------------------------------------------------
     # Notification
     #---------------------------------------------------------------------------
-    @on_trait_change('items[]')
-    def items_trait_changed(self):
-        """ Sync the widget with changes to the `self.items` attribute.
+    @on_trait_change('value, to_string, items[]')
+    def _update_value(self):
+        self.set_value()
 
-        """
+    @on_trait_change('to_string, items[]')
+    def _update_items(self):
         self.set_items()
-
-    def _value_changed(self):
-        """ Update the attribute associated with the widget's current selection.
-
-        """
-        self.widget.SetValue(self.value)
-    
-    def _sort_changed(self):
-        self.sort_items()
-    
-    def _sort_key_changed(self):
-        self.sort_items()
 
     #---------------------------------------------------------------------------
     # Event handling
     #---------------------------------------------------------------------------
     def _on_selected(self, event):
-        self.value = self.widget.GetStringSelection()
-        self.selected = True
+        idx = self.widget.GetCurrentSelection()
+        value = self.items[idx]
+        self.value = value
+        self.selected = value
         event.Skip()
 
-    def _on_clicked(self, event):
-        self.clicked = True
-        event.Skip()
-
+    #---------------------------------------------------------------------------
+    # Widget update
+    #---------------------------------------------------------------------------
     def set_items(self):
-        self.widget.SetItems(self.items.keys())
+        str_items = map(self.to_string, self.items)
+        self.widget.SetItems(str_items)
 
-    def sort_items(self):
-        """ Sort the names in the combo box.
+    def set_value(self):
+        value = self.value
+        if value not in self.items_set:
+            # This forces a deselection albeit through expensive means
+            # for large combo boxes. But, there is no deselect method '
+            # on the wx.ComboBox. Hooray wx!
+            self.widget.SetItems(self.widget.GetItems())
+        else:
+            str_value = self.to_string(value)
+            self.widget.SetValue(str_value)
 
-        """
-        if self.sort:
-            items = self.items.keys()
-            items.sort(key=self.sort_key)
-            self.widget.SetItems(items)

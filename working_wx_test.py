@@ -46,8 +46,6 @@ Window:
                 text = "A simple text box"
                 toggled >> setattr(self, 'text', model.randomize(self.text))
             
-            RadioButton:
-                text = 'foo'
         Html:
             source << ("<center><h1>Hello Html!</h1></center>" 
                        if not static.down else 
@@ -86,6 +84,10 @@ Window:
                 selected >> print('selected', args.new)
                 date >> print('new date', args.new)
             
+            ComboBox cmbx:
+                items = range(100)
+                selected >> print('selected', args.new)
+
             HGroup:
                 Label:
                     text = 'min:'
@@ -99,9 +101,11 @@ Window:
                     text = 'val:'
                 Label:
                     text << str(sb.value)
+
             HGroup:
                 CheckBox wrap_box:
                     text = 'Allow wrap:'
+                    toggled >> setattr(cmbx, 'value', 42)
                 SpinBox sb:
                     prefix << 'Foo ' if wrap_box.checked else 'Bar '
                     suffix << ' lb' if wrap_box.checked else ' kg'
@@ -111,7 +115,7 @@ Window:
                     low << -20 if not self.wrap else 0
                     high = 20
                     value >> print(self.value)
-
+            
 """
 
 class Model(HasTraits):
