@@ -1,15 +1,16 @@
 import wx
 
-from traits.api import implements, Str, Enum
+from traits.api import implements, Str, Enum, Instance, Bool
 
-from .wx_panel import WXPanel
+from .wx_component import WXComponent
 
+from ..i_panel import IPanel
 from ..i_window import IWindow
 
 from ...enums import Modality
 
 
-class WXWindow(WXPanel):
+class WXWindow(WXComponent):
     """ A wxPython implementation of IWindow.
 
     WXWindow uses a wx.Frame to create a simple top level window which
@@ -28,6 +29,19 @@ class WXWindow(WXPanel):
     title= Str
 
     modality = Enum(*Modality.values())
+
+    def set_panel(self, panel):
+        # FIXME
+        self.panel = panel
+    
+    def layout(self, parent):
+        # FIXME
+        self.set_parent(parent)
+        self.create_widget()
+        self.layout_panel()
+        self.init_attributes()
+        self.init_meta_handlers()
+        self.needs_layout = False
 
     def show(self):
         """ Displays the window to the screen, laying out if necessary.
@@ -57,6 +71,9 @@ class WXWindow(WXPanel):
     #===========================================================================
     # Implementation
     #===========================================================================
+    panel = Instance(IPanel)
+
+    needs_layout = Bool(True)
 
     #---------------------------------------------------------------------------
     # Initialization
@@ -70,6 +87,9 @@ class WXWindow(WXPanel):
         """
         self.widget = wx.Frame(self.parent_widget())
 
+    def layout_panel(self):
+        self.panel.layout(self)
+
     def init_attributes(self):
         """ Initializes the attributes of the frame.
 
@@ -80,6 +100,9 @@ class WXWindow(WXPanel):
         self.set_title(self.title)
         self.set_modality(self.modality)
     
+    def init_meta_handlers(self):
+        pass
+
     #---------------------------------------------------------------------------
     # Notification
     #---------------------------------------------------------------------------

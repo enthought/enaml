@@ -1,19 +1,25 @@
 from traits.api import implements
 
 from .i_toolkit_constructor import IToolkitConstructor
-from .base_constructors import (BasePanelCtor, BaseContainerCtor, 
-                                BaseElementCtor)
+from .base_constructors import (BasePanelCtor, BaseWindowCtor,
+                                BaseContainerCtor, BaseElementCtor)
 
 from ..view import View, NamespaceProxy
 
 
 #-------------------------------------------------------------------------------
-# Constructor helper mixins
+# Base Constructors
 #-------------------------------------------------------------------------------
-class WrapWindowMixin(object):
-    """ A mixin that wraps a constructor in a WXWindowCtor
+class WXBaseWindowCtor(BaseWindowCtor):
 
-    """
+    def build_view(self):
+        window = self.impl
+        ns = NamespaceProxy(self.global_ns)
+        return View(window=window, ns=ns)
+
+
+class WXBasePanelCtor(BasePanelCtor):
+
     def build_view(self):
         # This code should never execute because the __call__
         # method makes sure the code path is only taken by a Window.
@@ -21,8 +27,7 @@ class WrapWindowMixin(object):
         raise Exception(msg)
 
     def __call__(self, **ctxt_objs):
-        # A container is not directly viewable, 
-        # it must first be wrapped in a window.
+        # A panel must be wrapped in a window to be viewable.
         window_ctor = WXWindowCtor(
             children=[
                 self,
@@ -31,17 +36,36 @@ class WrapWindowMixin(object):
         return window_ctor(**ctxt_objs)
 
 
-class WrapWindowVGroupMixin(WrapWindowMixin):
-    """ A mixin that wraps a constructor in a WXWindowCtor with
-    a WXVGroupCtor as its container.
+class WXBaseContainerCtor(BaseContainerCtor):
+    
+    def construct(self):
+        # Replace any toplevel windows with their internal panel.
+        # This facilitates composing other toplevel windows into 
+        # another window.
+        children = self.children
+        for idx, child in enumerate(children):
+            if isinstance(child, WXBaseWindowCtor):
+                window_children = child.children
+                if not window_children:
+                    children[idx] = WXPanelCtor()
+                else:
+                    if len(children) > 1:
+                        raise ValueError('A window can only have 1 child.')
+                    children[idx] = window_children[0]
+        super(WXBaseContainerCtor, self).construct()
 
-    """
+
+    def build_view(self):
+        # This code should never execute because the __call__
+        # method makes sure the code path is only taken by a Window.
+        msg = "The universe imploded."
+        raise Exception(msg)
+
     def __call__(self, **ctxt_objs):
-        # An element is not directly viewable, it must 
-        # first be wrapped in a window and container.
+        # A container must be wrapped in a window to be viewable.
         window_ctor = WXWindowCtor(
             children=[
-                WXVGroupCtor(
+                WXPanelCtor(
                     children=[
                         self,
                     ],
@@ -51,54 +75,30 @@ class WrapWindowVGroupMixin(WrapWindowMixin):
         return window_ctor(**ctxt_objs)
 
 
-#-------------------------------------------------------------------------------
-# Base Constructors
-#-------------------------------------------------------------------------------
-class WXBasePanelCtor(BasePanelCtor, WrapWindowVGroupMixin):
-    pass
-
-
-class WXBaseContainerCtor(BaseContainerCtor, WrapWindowMixin):
+class WXBaseElementCtor(BaseElementCtor):
     
-    def construct(self):
-        # Replace any toplevel windows with panel constructors.
-        # This facilitates composing other toplevel windows into 
-        # another window. Also, the IPanel interface has no 
-        # attributes, so we don't need (or want) to copy over
-        # the exprs from then window constuctor, just the metas
-        # and the children.
-        children = self.children
-        for idx, child in enumerate(children):
-            if isinstance(child, WXBaseWindowCtor):
-                window_children = child.children
-                window_metas = child.metas
-                children[idx] = WXPanelCtor(children=window_children,
-                                            metas=window_metas)
-        super(WXBaseContainerCtor, self).construct()
-
-
-class WXBaseElementCtor(BaseElementCtor, WrapWindowVGroupMixin):
-    pass
-
-
-class WXBaseWindowCtor(BasePanelCtor):
-
     def build_view(self):
-        window = self.impl
-        ns = NamespaceProxy(self.global_ns)
-        return View(window=window, ns=ns)
+        # This code should never execute because the __call__
+        # method makes sure the code path is only taken by a Window.
+        msg = "The universe imploded."
+        raise Exception(msg)
 
-
-#-------------------------------------------------------------------------------
-# Panel Constructors
-#-------------------------------------------------------------------------------
-class WXPanelCtor(WXBasePanelCtor):
-
-    implements(IToolkitConstructor)
-
-    def toolkit_class(self):
-        from ..widgets.wx.wx_panel import WXPanel
-        return WXPanel
+    def __call__(self, **ctxt_objs):
+        # An element must be wrapped in a window to be viewable.
+        window_ctor = WXWindowCtor(
+            children=[
+                WXPanelCtor(
+                    children=[
+                        WXVGroupCtor(
+                            children=[
+                                self,
+                            ],
+                        ),
+                    ],
+                ),
+            ],
+        )
+        return window_ctor(**ctxt_objs)
 
 
 #-------------------------------------------------------------------------------
@@ -120,6 +120,18 @@ class WXDialogCtor(WXBaseWindowCtor):
     def toolkit_class(self):
         from ..widgets.wx.wx_dialog import WXDialog
         return WXDialog
+
+
+#-------------------------------------------------------------------------------
+# Panel Constructors
+#-------------------------------------------------------------------------------
+class WXPanelCtor(WXBasePanelCtor):
+
+    implements(IToolkitConstructor)
+
+    def toolkit_class(self):
+        from ..widgets.wx.wx_panel import WXPanel
+        return WXPanel
 
 
 #-------------------------------------------------------------------------------

@@ -97,6 +97,19 @@ class BaseComponentCtor(BaseToolkitCtor):
             impl.add_meta_info(meta.impl)
 
 
+class BaseWindowCtor(BaseComponentCtor):
+
+    def construct(self):
+        super(BaseWindowCtor, self).construct()
+        children = self.children
+        if children:
+            if len(children) > 1:
+                msg = '%s type can have 1 (and only 1) panel.'
+                raise ValueError(msg % type(self.impl))
+            else:
+                self.impl.set_panel(children[0].impl)
+
+
 class BasePanelCtor(BaseComponentCtor):
 
     def construct(self):

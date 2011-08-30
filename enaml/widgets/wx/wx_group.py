@@ -172,3 +172,9 @@ class WXGroup(WXContainer):
                 self.widget = new_sizer
                 parent_sizer.Layout()
 
+                # This line is need on Windows because the layout change
+                # doesn't repaint properly. This forces a repaint.
+                parent_widget = parent_sizer.GetContainingWindow()
+                if parent_widget:
+                    parent_widget.Refresh()
+
