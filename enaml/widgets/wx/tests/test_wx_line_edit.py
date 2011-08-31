@@ -284,21 +284,6 @@ class testWXLineEdit(unittest.TestCase):
         self.checkSelectedText('')
         self.checkPosition(1)
 
-    # def testPaste(self):
-        # """Test the paste functionality"""
-
-        # setup clipboard
-        # if not wx.TheClipboard.IsOpened():
-            # wx.TheClipboard.Open()
-        # clipdata = wx.TextDataObject()
-        # clipdata.SetText(' my word')
-        # wx.TheClipboard.SetData()
-        # wx.TheClipboard.Close()
-
-        # widget = self.lineedit.toolkit_widget()
-
-        # self.lineedit.cursor_position = 4
-        # self.lineedit.paste()
 
 
 if __name__ == '__main__':

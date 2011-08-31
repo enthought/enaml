@@ -13,9 +13,9 @@ class ILineEdit(IElement):
 
     read_only : Bool
         Whether or not the line edit is read only.
-    
+
     cursor_position : Int
-        The position of the cursor in the line edit. 
+        The position of the cursor in the line edit.
 
     modified : Bool
         True if the user has modified the line edit from the ui,
@@ -28,22 +28,27 @@ class ILineEdit(IElement):
 
     text : Str
         The string to use in the line edit.
-    
+
     selected_text : Property(Str)
         The text selected in the line edit. This is a read only property
         that is updated whenever the selection changes.
 
     text_changed : Event
-        Fired when the text is changed programmatically, or by the 
+        Fired when the text is changed programmatically, or by the
         user via the ui. The args object will contain the text.
 
     text_edited : Event
         Fired when the text is changed by the user explicitly through
         the ui and not programmatically. The args object will contain
         the text.
-    
+
     return_pressed : Event
         Fired when the return/enter key is pressed in the line edit.
+
+    length_invalid : Event
+        Fired when the user attempts throught the ui to violate maximum number
+        of characters in the line edit.
+
 
     Methods
     -------
@@ -60,7 +65,7 @@ class ILineEdit(IElement):
         Clear the line edit of all text.
 
     backspace()
-        If no text is selected, deletes the character to the left 
+        If no text is selected, deletes the character to the left
         of the cursor. Otherwise, it deletes the selected text.
 
     delete()
@@ -118,10 +123,14 @@ class ILineEdit(IElement):
 
     return_pressed = Event
 
+    max_length = Event
+
+    length_invalid = Event
+
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.
 
-        If the indices are invalid, no selection will be made, 
+        If the indices are invalid, no selection will be made,
         and any current selection will be cleared.
 
         Arguments
@@ -146,7 +155,7 @@ class ILineEdit(IElement):
     def select_all(self):
         """ Select all the text in the line edit.
 
-        If there is no text in the line edit, the selection will be 
+        If there is no text in the line edit, the selection will be
         empty.
 
         Arguments
@@ -181,10 +190,10 @@ class ILineEdit(IElement):
 
         """
         raise NotImplementedError
-    
+
     def clear(self):
         """ Clear the line edit of all text.
-        
+
         Arguments
         ---------
         None
@@ -203,7 +212,7 @@ class ILineEdit(IElement):
     def backspace(self):
         """ Simple backspace functionality.
 
-        If no text is selected, deletes the character to the left 
+        If no text is selected, deletes the character to the left
         of the cursor. Otherwise, it deletes the selected text.
 
         Arguments
@@ -220,7 +229,7 @@ class ILineEdit(IElement):
 
         """
         raise NotImplementedError
-    
+
     def delete(self):
         """ Simple delete functionality.
 
@@ -243,14 +252,14 @@ class ILineEdit(IElement):
         raise NotImplementedError
 
     def end(self, mark=False):
-        """ Moves the cursor to the end of the line. 
-        
+        """ Moves the cursor to the end of the line.
+
         Arguments
         ---------
         mark : bool, optional
-            If True, select the text from the current position to 
+            If True, select the text from the current position to
             the end of the line edit. Defaults to False.
-        
+
         Returns
         -------
         results : None
@@ -261,16 +270,16 @@ class ILineEdit(IElement):
 
         """
         raise NotImplementedError
-    
+
     def home(self, mark=False):
-        """ Moves the cursor to the beginning of the line. 
-        
+        """ Moves the cursor to the beginning of the line.
+
         Arguments
         ---------
         mark : bool, optional
-            If True, select the text from the current position to 
+            If True, select the text from the current position to
             the beginning of the line edit. Defaults to False.
-        
+
         Returns
         -------
         results : None
@@ -281,11 +290,11 @@ class ILineEdit(IElement):
 
         """
         raise NotImplementedError
-    
+
     def cut(self):
         """ Cuts the selected text from the line edit.
 
-        Copies the selected text to the clipthen deletes the selected 
+        Copies the selected text to the clipthen deletes the selected
         text from the line edit.
 
         Arguments
@@ -302,7 +311,7 @@ class ILineEdit(IElement):
 
         """
         raise NotImplementedError
-    
+
     def copy(self):
         """ Copies the selected text to the clipboard.
 
@@ -324,7 +333,7 @@ class ILineEdit(IElement):
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
 
-        Inserts the contents of the clipboard into the line edit at 
+        Inserts the contents of the clipboard into the line edit at
         the current cursor position, replacing any selected text.
 
         Arguments
@@ -341,7 +350,7 @@ class ILineEdit(IElement):
 
         """
         raise NotImplementedError
-    
+
     def insert(self, text):
         """ Insert the text into the line edit.
 
@@ -381,7 +390,7 @@ class ILineEdit(IElement):
 
         """
         raise NotImplementedError
-    
+
     def redo(self):
         """ Redoes the last operation.
 

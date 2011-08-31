@@ -52,6 +52,10 @@ class WXLineEdit(WXElement):
     return_pressed : Event
         Fired when the return/enter key is pressed in the line edit.
 
+    length_invalid : Event
+        Fired when the user attempts throught the ui to violate maximum number
+        of characters in the line edit.
+
     Methods
     -------
     set_selection(start, end)
@@ -131,6 +135,14 @@ class WXLineEdit(WXElement):
 
     return_pressed = Event
 
+    max_length_reached = Event
+
+    #--------------------------------------------------------------------------
+    # ILineEdit private interface
+    #--------------------------------------------------------------------------
+
+    _cursor_offset = Int
+
     #==========================================================================
     # Implementation
     #==========================================================================
@@ -139,11 +151,11 @@ class WXLineEdit(WXElement):
         """Initialization of the IRadionButton based on wxWidget
         """
         # create widget and announce that we want to handle enter events
-        widget = wx.TextCtrl(parent=self.parent_widget(),
-            style=wx.TE_PROCESS_ENTER)
+        widget = wx.TextCtrl(parent=self.parent_widget())
 
         # Bind class functions to wx widget events
-        widget.Bind(wx.EVT_TEXT_MAXLEN, self._on_max_length)
+        if wx.PlatformInfo[1] in ('wxMSW','wxGTK'):
+            widget.Bind(wx.EVT_TEXT_MAXLEN, self._on_max_length)
         widget.Bind(wx.EVT_TEXT, self._on_text_updated)
         widget.Bind(wx.EVT_TEXT_ENTER, self._on_text_enter)
 
@@ -157,14 +169,20 @@ class WXLineEdit(WXElement):
     def init_attributes(self):
         """initialize WXLineEdit attributes"""
 
-        # set text
-        if '' == self.text:
-            self.widget.ChangeValue(self.placeholder_text)
-        else:
-            self.widget.ChangeValue(self.text)
+        # set maximum length
+        self.widget.SetMaxLength(self.max_length)
 
         # set the editable property
         self.widget.SetEditable(not self.read_only)
+
+        # set text
+        if '' == self.text:
+            text = self.placeholder_text[:self.max_length]
+        else:
+            text = self.text[:self.max_length]
+
+        self.widget.ChangeValue(text)
+        self.text = text
 
         # Set initial positions
         pos = len(self.text)
@@ -177,38 +195,45 @@ class WXLineEdit(WXElement):
         """initialize WXLineEdit meta styles"""
         pass
 
+    def default_sizer_flags(self):
+        return super(WXLineEdit, self).default_sizer_flags().Proportion(1)
+
     #--------------------------------------------------------------------------
     # Notification
     #--------------------------------------------------------------------------
 
     def _text_changed(self):
-        # check if the length is valid
+        """Maintenace work to do after the text attribute has changed
+
+        Actions:
+        - The wxTextCtrl value is updated based on `text`
+        - The 'modified' flag is set based on the IsModified function
+        - The text_changed event is fired.
+
+        .. note:: When changed programmaticaly the size of the `text` is
+            checked against `max_length` and trancated if necessary.
+
+        """
         if len(self.text) > self.max_length:
-            new_text = self.text[:self.max_length]
-            # FIXME: recursive call to fix the length of self.text
-            self.text = new_text
+            # FIXME recursive call to correct length
+            self.text = self.text[:self.max_length]
             return
 
-        if not self.widget.IsModified():
-            self.modified = False
-
-        # reset the modifed flag in the widget
+        self.widget.ChangeValue(self.text)
+        self.modified = self.widget.IsModified()
         self.widget.SetModified(False)
-
-        if self.text != self.widget.GetValue():
-            self.widget.ChangeValue(self.text)
-            self.text_changed = self.text
-
+        self.text_changed = self.text
         return
 
     def _read_only_changed(self):
-        # only update if the value has actually changed
         if self.read_only == self.widget.IsEditable():
             self.widget.SetEditable(not self.read_only)
         return
 
     def _max_length_changed(self):
-        self.widget.SetMaxLength(self.max_length)
+        if wx.PlatformInfo[1] in ('wxMSW','wxGTK'):
+            self.widget.SetMaxLength(self.max_length)
+            self.text = self.text[:self.max_length]
         return
 
     def _cursor_position_changed(self):
@@ -220,29 +245,39 @@ class WXLineEdit(WXElement):
     # Event handlers
     #--------------------------------------------------------------------------
 
-    def _on_max_length(self, event):
-        # TODO: do something to show that no more characters are allowed
-        event.skip()
-        return
-
     def _on_text_updated(self, event):
+        """Respond to the text been updated in the ui
+
+        Normaly, the widget text is copied to the object text. The event is
+        delegated to the traits side of the EnAML widget and propagated
+        throught wxpython. However, if there was no actual change no action is
+        taken and the event is stopped.
+        """
         new_text = self.widget.GetValue()
         if self.text != new_text:
-            self.modified = True
+            self.widget.MarkDirty()
             self.text = new_text
-            self.text_edited = new_text
-
-        self.cursor_position = self.widget.GetInsertionPoint()
-        event.Skip()
+            self.text_edited = self.text
+            self.cursor_position = self.widget.GetInsertionPoint()
         return
 
     def _on_text_enter(self, event):
+        """Respond to the enter key pressed
+
+        The event is delegated to the traits side of the EnAML widget and not
+        propagated throught wxpython.
+        """
         self.return_pressed = event
-        event.Skip()
         return
 
-    def default_sizer_flags(self):
-        return super(WXLineEdit, self).default_sizer_flags().Proportion(1)
+    def _on_max_length(self, event):
+        """Respond to a maximum length reached event
+
+        The event is delegated to the traits side of the EnAML widget and not
+        propagated throught wxpython.
+        """
+        self.max_length_reached = True
+        return
 
     #--------------------------------------------------------------------------
     # Getters and Setters
