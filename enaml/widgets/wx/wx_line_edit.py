@@ -141,8 +141,6 @@ class WXLineEdit(WXElement):
     # ILineEdit private interface
     #--------------------------------------------------------------------------
 
-    _cursor_offset = Int
-
     #==========================================================================
     # Implementation
     #==========================================================================
@@ -154,10 +152,11 @@ class WXLineEdit(WXElement):
         widget = wx.TextCtrl(parent=self.parent_widget())
 
         # Bind class functions to wx widget events
-        if wx.PlatformInfo[1] in ('wxMSW','wxGTK'):
+        if wx.PlatformInfo[1] in ('wxMSW', 'wxGTK'):
             widget.Bind(wx.EVT_TEXT_MAXLEN, self._on_max_length)
         widget.Bind(wx.EVT_TEXT, self._on_text_updated)
         widget.Bind(wx.EVT_TEXT_ENTER, self._on_text_enter)
+        widget.SetWindowStyleFlag(wx.TE_PROCESS_ENTER)
 
         # associate widget
         self.widget = widget
@@ -231,7 +230,7 @@ class WXLineEdit(WXElement):
         return
 
     def _max_length_changed(self):
-        if wx.PlatformInfo[1] in ('wxMSW','wxGTK'):
+        if wx.PlatformInfo[1] in ('wxMSW', 'wxGTK'):
             self.widget.SetMaxLength(self.max_length)
             self.text = self.text[:self.max_length]
         return
@@ -257,8 +256,8 @@ class WXLineEdit(WXElement):
         if self.text != new_text:
             self.widget.MarkDirty()
             self.text = new_text
-            self.text_edited = self.text
             self.cursor_position = self.widget.GetInsertionPoint()
+            self.text_edited = self.text
         return
 
     def _on_text_enter(self, event):
@@ -372,7 +371,6 @@ class WXLineEdit(WXElement):
 
         self.widget.Remove(start, end)
         return
-
 
     def end(self, mark=False):
         """ Moves the cursor to the end of the line.
