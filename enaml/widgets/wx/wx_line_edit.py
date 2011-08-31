@@ -35,7 +35,7 @@ class WXLineEdit(WXElement):
 
     text : String
         The string to use in the line edit. If the length of the new text is
-        longer than the maximum length allowed then it is trancated.
+        longer than the maximum length allowed then it is truncated.
 
     selected_text : Property(Str)
         The text selected in the line edit. This is a read only property that
@@ -53,7 +53,7 @@ class WXLineEdit(WXElement):
         Fired when the return/enter key is pressed in the line edit.
 
     length_invalid : Event
-        Fired when the user attempts throught the ui to violate maximum number
+        Fired when the user attempts through the ui to violate maximum number
         of characters in the line edit.
 
     Methods
@@ -203,7 +203,7 @@ class WXLineEdit(WXElement):
     #--------------------------------------------------------------------------
 
     def _text_changed(self):
-        """Maintenace work to do after the text attribute has changed
+        """Maintenance work to do after the text attribute has changed
 
         Actions:
         - The wxTextCtrl value is updated based on `text`
@@ -248,10 +248,10 @@ class WXLineEdit(WXElement):
     def _on_text_updated(self, event):
         """Respond to the text been updated in the ui
 
-        Normaly, the widget text is copied to the object text. The event is
-        delegated to the traits side of the EnAML widget and propagated
-        throught wxpython. However, if there was no actual change no action is
-        taken and the event is stopped.
+        The widget text is copied to the object text. The event is delegated
+        to the traits side of the EnAML widget and propagated through
+        wxpython. However, if there was no actual change no action is taken
+        and the event is stopped.
         """
         new_text = self.widget.GetValue()
         if self.text != new_text:
@@ -265,7 +265,7 @@ class WXLineEdit(WXElement):
         """Respond to the enter key pressed
 
         The event is delegated to the traits side of the EnAML widget and not
-        propagated throught wxpython.
+        propagated through wxpython.
         """
         self.return_pressed = event
         return
@@ -274,7 +274,7 @@ class WXLineEdit(WXElement):
         """Respond to a maximum length reached event
 
         The event is delegated to the traits side of the EnAML widget and not
-        propagated throught wxpython.
+        propagated through wxpython.
         """
         self.max_length_reached = True
         return
