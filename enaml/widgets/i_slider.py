@@ -21,7 +21,7 @@ class ISlider(IElement):
 
     from_slider : Callable
         A function that takes one argument to convert from the slider
-        postion to the appropriate Python value.
+        position to the appropriate Python value.
 
     to_slider : Callable
         A function that takes one argument to convert from a Python
