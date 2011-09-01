@@ -45,7 +45,7 @@ class ILineEdit(IElement):
     return_pressed : Event
         Fired when the return/enter key is pressed in the line edit.
 
-    length_invalid : Event
+    max_length_reached: Event
         Fired when the user attempts through the ui to violate maximum number
         of characters in the line edit.
 
