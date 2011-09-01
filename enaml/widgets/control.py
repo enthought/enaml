@@ -1,7 +1,7 @@
-from .i_component import IComponent
+from .component import Component
 
 
-class IElement(IComponent):
+class Control(Component):
     """ The base class of all concretes widgets in TraitsML.
 
     Elements do not contain children and can be thought of 

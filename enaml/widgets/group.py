@@ -1,11 +1,11 @@
 from traits.api import Enum
 
-from .i_container import IContainer
+from .container import Container
 
 from ..enums import Direction
 
 
-class IGroup(IContainer):
+class Group(Container):
     """ A grouping container.
     
     A container that lays out it's children according to the value

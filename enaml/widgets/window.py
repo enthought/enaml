@@ -1,11 +1,11 @@
 from traits.api import Str, Enum
 
-from .i_panel import IPanel
+from .component import Component
 
 from ..enums import Modality
 
 
-class IWindow(IPanel):
+class Window(Component):
     """ The base top-level window widget. 
 
     Window widgets are top-level panels which provide window frame

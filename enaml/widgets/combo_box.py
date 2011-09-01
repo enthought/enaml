@@ -1,9 +1,9 @@
 from traits.api import List, Any, Event, Callable
 
-from .i_element import IElement
+from .control import Control
 
 
-class IComboBox(IElement):
+class ComboBox(Control):
     """ A drop-down list from which one item can be selected at a time.
 
     Use a combo box to select a single item from a collection of

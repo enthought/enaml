@@ -1,7 +1,7 @@
-from .i_component import IComponent
+from .component import Component
 
 
-class IPanel(IComponent):
+class Panel(Component):
     """ The base panel wiget.
 
     Panel widgets hold a container of components and arrange them on an

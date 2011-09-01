@@ -1,9 +1,9 @@
 from traits.api import Date, Event
 
-from .i_element import IElement
+from .control import Control
 
 
-class ICalendar(IElement):
+class Calendar(Control):
     """ A calendar widget.
 
     A Calendar displays a Python datetime.date using an appropriate

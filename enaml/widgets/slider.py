@@ -1,11 +1,11 @@
 from traits.api import Any, Bool, Callable, Enum, Float, Range, Event
 
-from .i_element import IElement
+from .control import Control
 
 from ..enums import Orientation, TickPosition
 
 
-class ISlider(IElement):
+class Slider(Control):
     """ A simple slider widget.
 
     A slider can be used to select from a continuous range of values.

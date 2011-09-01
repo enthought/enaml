@@ -1,9 +1,9 @@
 from traits.api import Any, Bool, Callable, Instance
 
-from .i_line_edit import ILineEdit
+from .line_edit import LineEdit
 
 
-class IField(ILineEdit):
+class Field(LineEdit):
     """ A basic value field which subclasses from LineEdit.
 
     A Field performs validation/conversion on the text value and

@@ -1,9 +1,9 @@
 from traits.api import Str
 
-from .i_element import IElement
+from .control import Control
 
 
-class ILabel(IElement):
+class Label(Control):
     """ A simple read-only text display.
 
     Attributes

@@ -1,9 +1,9 @@
 from traits.api import Bool, Event, Str
 
-from .i_element import IElement
+from .control import Control
 
 
-class IPushButton(IElement):
+class PushButton(Control):
     """ A push button widget.
 
     Attributes

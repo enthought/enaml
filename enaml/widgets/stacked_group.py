@@ -1,9 +1,9 @@
 from traits.api import Int, Property, Instance
 
-from .i_container import IContainer
+from .container import Container
 
 
-class IStackedGroup(IContainer):
+class StackedGroup(Container):
     """ A container that lays out its child containers as a stack.
 
     A container which lays out its children as a stack and makes only

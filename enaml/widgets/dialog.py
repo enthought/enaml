@@ -1,11 +1,11 @@
 from traits.api import Event, Enum, Bool
 
-from .i_window import IWindow
+from .window import Window
 
 from ..enums import DialogResult
 
 
-class IDialog(IWindow):
+class Dialog(Window):
     """ A basic dialog widget whose contents are user defined. 
 
     The basic dialog has no buttons, but provides methods for the 

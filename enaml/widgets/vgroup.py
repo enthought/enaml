@@ -1,11 +1,11 @@
 from traits.api import Enum
 
-from .i_group import IGroup
+from .group import Group
 
 from ..enums import Direction
 
 
-class IVGroup(IGroup):
+class VGroup(Group):
     """ A vertically grouping container.
 
     This is a convienence subclass of IGroup which restricts the

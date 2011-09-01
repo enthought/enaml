@@ -1,7 +1,7 @@
-from .i_toggle_element import IToggleElement
+from .toggle_element import ToggleElement
 
 
-class ICheckBox(IToggleElement):
+class CheckBox(ToggleElement):
     """ A check box widget derived from IToggleElement
 
     Use a check box when it's necessary to toggle a boolean value

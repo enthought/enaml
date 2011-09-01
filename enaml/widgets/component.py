@@ -1,9 +1,9 @@
-from traits.api import Interface, Str, List
+from traits.api import HasStrictTraits, Str, List
 
 from ..interceptors.i_interceptor import IInterceptor
 
 
-class IComponent(Interface):
+class Component(HasStrictTraits):
     """ The most base class of the TraitsML component heierarchy. 
     
     All TraitsML ui interface classes should inherit from this class.
@@ -40,7 +40,7 @@ class IComponent(Interface):
         Returns the logical parent component of this component or None.
         
     """
-    __interceptors__ = List(IInterceptor)
+    _interceptors = List(IInterceptor)
     
     name = Str
 

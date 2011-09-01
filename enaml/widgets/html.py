@@ -1,9 +1,9 @@
 from traits.api import Str
 
-from .i_element import IElement
+from .control import Control
 
 
-class IHtml(IElement):
+class Html(Control):
     """ A simple widget for displaying HTML.
     
     Attributes

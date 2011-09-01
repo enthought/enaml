@@ -1,9 +1,9 @@
 from traits.api import Int, Str, Callable, Bool, Range
 
-from .i_element import IElement
+from .control import Control
 
 
-class ISpinBox(IElement):
+class SpinBox(Control):
     """ A spin box widget.
    
     Attributes

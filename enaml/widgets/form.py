@@ -1,7 +1,7 @@
-from .i_container import IContainer
+from .container import Container
 
 
-class IForm(IContainer):
+class Form(Container):
     """ A container that lays out its children as a form.
 
     The Form container arranges its children in N rows and 2 cols.

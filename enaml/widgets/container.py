@@ -1,7 +1,7 @@
-from .i_component import IComponent
+from .component import Component
 
 
-class IContainer(IComponent):
+class Container(Component):
     """ The base container interface. 
     
     Containers are non-visible components that are responsible for 

@@ -1,7 +1,7 @@
-from .i_toggle_element import IToggleElement
+from .toggle_element import ToggleElement
 
 
-class IRadioButton(IToggleElement):
+class RadioButton(ToggleElement):
     """ A radio button widget derived from IToggleElement 
     
     Use a radio button to toggle the value of a boolean field. For a 

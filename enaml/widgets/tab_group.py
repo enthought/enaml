@@ -1,9 +1,9 @@
 from traits.api import Bool, Event 
 
-from .i_stacked_group import IStackedGroup
+from .stacked_group import StackedGroup
 
 
-class ITabGroup(IStackedGroup):
+class TabGroup(StackedGroup):
     """ A container that lays out its child containers as a notebook.
 
     A container which lays out its children as a notebook and makes 

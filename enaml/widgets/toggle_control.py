@@ -1,9 +1,9 @@
 from traits.api import Bool, Event, Str
 
-from .i_element import IElement
+from .control import Control
 
 
-class IToggleElement(IElement):
+class ToggleControl(Control):
     """ An abstract toggle element. 
     
     An element which toggles the value of a boolean field.

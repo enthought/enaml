@@ -1,9 +1,9 @@
 from traits.api import Bool, Event, Int, Str, Property
 
-from .i_element import IElement
+from .control import Control
 
 
-class ILineEdit(IElement):
+class LineEdit(Control):
     """ A single-line editable text widget.
 
     Attributes

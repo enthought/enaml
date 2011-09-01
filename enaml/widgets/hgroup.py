@@ -1,11 +1,11 @@
 from traits.api import Enum
 
-from .i_group import IGroup
+from .group import Group
 
 from ..enums import Direction
 
 
-class IHGroup(IGroup):
+class HGroup(Group):
     """ A horizontally grouping container.
 
     This is a convienence subclass of IGroup which restricts the 

@@ -1,9 +1,9 @@
 from traits.api import Any, Callable, Int
 
-from .i_element import IElement
+from .control import Control
 
 
-class IImage(IElement):
+class Image(Control):
     """ A widget for displaying images.
     
     Attributes

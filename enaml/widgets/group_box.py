@@ -1,9 +1,9 @@
 from traits.api import Bool, Str
 
-from .i_container import IContainer
+from .container import Container
 
 
-class IGroupBox(IContainer):
+class GroupBox(Container):
     """ A container that can draw a border around its children.
 
     The GroupBox can draw an optional border around its child widgets.
