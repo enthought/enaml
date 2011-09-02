@@ -67,6 +67,20 @@ class WXSlider(WXElement):
     invalid_value: Event
         Fired when there was an attempt to assign an invalid (out of range)
         value to the slider.
+
+
+    .. note:: The slider enaml widget changes the attributes and fires the
+        necessary events in sequence based on their priority as given below
+        (from highest to lowest):
+
+            # update `slider_pos` (when changed by the ui) or `value` (when
+              changed programmatically).
+            # fire `invalid_value`.
+            # fire `moved`.
+            # update `down`.
+            # fire pressed.
+            # fire released.
+
     """
 
     implements(ISlider)
@@ -106,15 +120,31 @@ class WXSlider(WXElement):
     #==========================================================================
 
     def create_widget(self):
-        """Initialization of ISlider based on wxWidget"""
+        """Initialization of ISlider based on wxWidget
+
+        The method create the wxPython Slider widget and binds the ui events
+        to WXSlider. Individual event binding was prefered instead of events
+        that are platform specific (e.g. wx.EVT_SCROLL_CHANGED) or group
+        events (e.g. wx.EVT_SCROLL), to faciliate finer control on the
+        behaviour of the widget.
+        """
         # create widget
         widget = wx.Slider(parent=self.parent_widget())
 
         # Bind class functions to wx widget events
-        if wx.PlatformInfo[1] == 'wxMSW':
-            widget.Bind(wx.EVT_SCROLL_CHANGED, self._on_slider_changed)
-        widget.Bind(wx.EVT_SCROLL_THUMBRELEASE, self._on_thumb_release)
+
+        # We treat the top, bottom and track events in their own way
         widget.Bind(wx.EVT_SCROLL_THUMBTRACK, self._on_thumb_track)
+
+        # Generic events
+        widget.Bind(wx.EVT_SCROLL_TOP, self._on_slider_changed)
+        widget.Bind(wx.EVT_SCROLL_BOTTOM, self._on_slider_changed)
+        widget.Bind(wx.EVT_SCROLL_LINEUP, self._on_slider_changed)
+        widget.Bind(wx.EVT_SCROLL_LINEDOWN, self._on_slider_changed)
+        widget.Bind(wx.EVT_SCROLL_PAGEUP, self._on_slider_changed)
+        widget.Bind(wx.EVT_SCROLL_PAGEDOWN, self._on_slider_changed)
+
+        # Capture mouse events for pressed and released left button
         widget.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         widget.Bind(wx.EVT_LEFT_UP, self._on_left_up)
 
@@ -168,7 +198,7 @@ class WXSlider(WXElement):
         """Is the point in the thumb area"""
 
         # the relative position of the mouse
-        width, height = [float(x) for x in self.widget.GetSizeTuple()]
+        width, height = [float(x) for x in self.widget.GetClientSizeTuple()]
         if self.orientation == Orientation.VERTICAL:
             mouse = point[1] / height
             thumb = self.widget.GetThumbLength() / height
@@ -189,11 +219,11 @@ class WXSlider(WXElement):
     def _value_changed(self):
         """Update the slider position
 
-        update the `slider_pos` to respond to the `value` change.
-
-        .. note:: The assignment to the slider_pos might fail because 'value'
-            is out of range. In that case the last known good value is given
-            back to the value attribute.
+        Update the `slider_pos` to respond to the `value` change. The
+        assignment to the slider_pos might fail because 'value' is out of
+        range. In that case the last known good value is given back to the
+        value attribute, because we need to keep the `value` attribute in
+        sync with the `slider_pos` and **valid**
         """
         # The try...except block is required because we need to keep the
         # `value` attribute in sync with the `slider_pos` and **valid**
@@ -227,7 +257,7 @@ class WXSlider(WXElement):
         return
 
     def _orientation_changed(self):
-        """Update the widget due change in the orientation attribute"""
+        """Update the widget due to change in the orientation attribute"""
         if self.orientation == Orientation.VERTICAL:
             self.widget.SetWindowStyle(wx.SL_VERTICAL)
 
@@ -240,37 +270,37 @@ class WXSlider(WXElement):
     # Event handlers
     #--------------------------------------------------------------------------
 
-    def _on_thumb_release(self, event):
-        self.down = False
-        if wx.PlatformInfo[1] != 'wxMSW':
-            self._on_slider_changed(event)
-        self.released = event
-        event.Skip()
-        return
-
     def _on_slider_changed(self, event):
-        # comparing the values as integers is probably safer
+        """Respond to a (possible) change in value from the ui.
+
+        Updated the value of the slider_pos based on the possible change from
+        the wxwidget. The `slider_pos` trait will fire the moved event only if
+        the value has changed"""
+
         new_position = self.widget.GetValue()
-        old_position = self._convert_for_wx(self.slider_pos)
-        if new_position != old_position:
-            self.slider_pos = self._convert_from_wx(new_position)
+        self.slider_pos = self._convert_from_wx(new_position)
         event.Skip()
         return
 
     def _on_thumb_track(self, event):
-        self.down = True
+        """Update `slider_pos` when the thumb is dragged.
+
+        The slider_pos attribute is updated during a dragging if the
+        self.tracking atrtribute is True. This will also fire a moved event
+        for a very change.
+
+        The event is not skiped
+        """
         if self.tracking:
             self._on_slider_changed(event)
-        event.Skip()
         return
 
     def _on_left_down(self, event):
         """Check if the mouse was pressed over the thumb
 
-        The function tries to estimate the position of the thumb and then
-        checks if the mouse was pressed over it to fire the `pressed` event and
-        set the `down` attribute.
-
+        Estimates the position of the thumb and then checks if the mouse was
+        pressed over it to fire the `pressed` event and sets the `down`
+        attribute.
         """
         mouse_position = event.GetPosition()
         if self._thumb_hit(mouse_position):
@@ -280,9 +310,17 @@ class WXSlider(WXElement):
         return
 
     def _on_left_up(self, event):
-        if wx.PlatformInfo[1] != 'wxMSW':
+        """Update if the left button was released
+
+        Checks if the `down` attribute was set. In that case the function calls
+        the `_on_slider_changed` function, fires the release event and sets the
+        `down` attribute to false.
+        """
+        if self.down:
             self._on_slider_changed(event)
-        self.down = False
+            self.down = False
+            self.released = event
+
         event.Skip()
         return
 
@@ -302,7 +340,7 @@ from enaml.enums import Orientation
 Window main:
     title = "Slider demo"
     Panel:
-        HGroup:
+        VGroup:
             Label:
                 text << " value :{0} \\n slider_pos: {1} \\n down: {2} \\n tracking {3}".\
                         format(slider.value, slider.slider_pos, slider.down,
