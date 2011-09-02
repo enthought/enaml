@@ -7,6 +7,7 @@ import wx
 import traits.trait_errors
 
 from enaml.widgets.wx.wx_slider import WXSlider
+from enaml.enums import Orientation
 
 
 class WidgetParent(object):
@@ -66,10 +67,14 @@ class testWXSlider(unittest.TestCase):
         # tick interval
         self.assertEqual(0.1, self.slider.tick_interval)
 
+        # orientation
+        self.assertEqual(self.slider.orientation, Orientation.DEFAULT)
+
+
     def testValue(self):
         """Test changing the slider value programmaticaly"""
 
-         # minimum
+        # minimum
         self.slider.value = 0
         self.checkValue(0)
 
@@ -89,7 +94,12 @@ class testWXSlider(unittest.TestCase):
         self.slider.value = 3
         self.checkValue(0.879) #  check that it has not changed the values
 
+    def testOrientation(self):
+        """Test changing the widget orientation"""
 
+        self.slider.orientation = Orientation.VERTICAL
+
+        self.assertEqual(self.slider.orientation, Orientation.VERTICAL)
 
 
 if __name__ == '__main__':

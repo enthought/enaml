@@ -53,7 +53,7 @@ class WXSlider(WXElement):
 
     orientation : Orientation Enum value
         The orientation of the slider. One of the Orientation enum
-        values.
+        values. The default orientation is horizontal.
 
     pressed : Event
         Fired when the slider is pressed.
@@ -138,6 +138,12 @@ class WXSlider(WXElement):
         # slider position
         self.value = self.from_slider(self.slider_pos)
 
+        # orientation
+        if self.orientation == Orientation.VERTICAL:
+            self.widget.SetWindowStyle(wx.SL_VERTICAL)
+        else:
+            self.widget.SetWindowStyle(wx.SL_HORIZONTAL)
+
         return
 
     def init_meta_handlers(self):
@@ -161,20 +167,20 @@ class WXSlider(WXElement):
     def _thumb_hit(self, point):
         """Is the point in the thumb area"""
 
-        # TODO: consider the slider orientation
-        width = float(self.widget.GetSizeTuple()[0])
-
-        # the relative size of the thumb
-        thumb = self.widget.GetThumbLength() / width
-
-        # the relative position of the point
-        y = point[0] / width
+        # the relative position of the mouse
+        width, height = [float(x) for x in self.widget.GetSizeTuple()]
+        if self.orientation == Orientation.VERTICAL:
+            mouse = point[1] / height
+            thumb = self.widget.GetThumbLength() / height
+        else:
+            mouse = point[0] / width
+            thumb = self.widget.GetThumbLength() / width
 
         # minimum and maximum position (edges) of the thumb
         minimum = self.slider_pos - thumb
         maximum = self.slider_pos + thumb
 
-        return minimum <= y <= maximum
+        return minimum <= mouse <= maximum
 
     #--------------------------------------------------------------------------
     # Notification
@@ -220,6 +226,16 @@ class WXSlider(WXElement):
         self.moved = self.value
         return
 
+    def _orientation_changed(self):
+        """Update the widget due change in the orientation attribute"""
+        if self.orientation == Orientation.VERTICAL:
+            self.widget.SetWindowStyle(wx.SL_VERTICAL)
+
+        else:
+            self.widget.SetWindowStyle(wx.SL_HORIZONTAL)
+
+        return
+
     #--------------------------------------------------------------------------
     # Event handlers
     #--------------------------------------------------------------------------
@@ -255,9 +271,7 @@ class WXSlider(WXElement):
         checks if the mouse was pressed over it to fire the `pressed` event and
         set the `down` attribute.
 
-        .. todo:: check with orientation
         """
-        # TODO check orientation
         mouse_position = event.GetPosition()
         if self._thumb_hit(mouse_position):
             self.down = True
@@ -270,6 +284,7 @@ class WXSlider(WXElement):
             self._on_slider_changed(event)
         self.down = False
         event.Skip()
+        return
 
 if __name__ == '__main__':
     """Test example of the WXSlider"""
@@ -282,15 +297,18 @@ if __name__ == '__main__':
 
     enaml = """
 from traits.api import Float
+from enaml.enums import Orientation
 
 Window main:
     title = "Slider demo"
     Panel:
-        VGroup:
+        HGroup:
             Label:
-                text << " value :{0} \\n slider_pos: {1} \\n down: {2}".\
-                        format(slider.value, slider.slider_pos, slider.down)
+                text << " value :{0} \\n slider_pos: {1} \\n down: {2} \\n tracking {3}".\
+                        format(slider.value, slider.slider_pos, slider.down,
+                        slider.tracking)
             Slider slider:
+                orientation << Orientation.VERTICAL if vertical.checked else Orientation.HORIZONTAL
                 value = 0.5
                 tick_interval = 0.1
                 tracking := track.checked
@@ -307,6 +325,8 @@ Window main:
                     clicked >> model.update(slider, -0.1)
                 CheckBox track:
                     text = "Track"
+                CheckBox vertical:
+                    text = "Vertical"
 
 """
 
