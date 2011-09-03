@@ -2,12 +2,12 @@ import wx
 
 from traits.api import implements
 
-from .wx_toggle_element import WXToggleElement
+from .wx_toggle_control import WXToggleControl
 
-from ..i_check_box import ICheckBox
+from ..check_box import ICheckBoxImpl
 
 
-class WXCheckBox(WXToggleElement):
+class WXCheckBox(WXToggleControl):
     """ A wxPython implementation of ICheckBox.
 
     A Checkbox provides a toggleable control using a wx.CheckBox.
@@ -17,31 +17,23 @@ class WXCheckBox(WXToggleElement):
     ICheckBox
 
     """
-    implements(ICheckBox)
-
-    #===========================================================================
-    # ICheckBox interface
-    #===========================================================================
-    
-    # ICheckBox is an empty interface that inherits from IToggleElement
-    
-    #===========================================================================
-    # Implementation
-    #===========================================================================
+    implements(ICheckBoxImpl)
 
     #---------------------------------------------------------------------------
-    # Initialization
+    # ICheckBoxImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
         """ Creates and binds a wx.CheckBox.
 
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
-
         """
-        widget = wx.CheckBox(self.parent_widget())
+        self.widget = wx.CheckBox(self.parent_widget())
+        
+    #---------------------------------------------------------------------------
+    # Implementation
+    #---------------------------------------------------------------------------
+    def bind(self):
+        widget = self.widget
         widget.Bind(wx.EVT_CHECKBOX, self._on_toggled)
         widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
-        widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)
-        self.widget = widget
+        widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)  
 

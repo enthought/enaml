@@ -1,4 +1,10 @@
-from .toggle_element import ToggleElement
+from traits.api import Instance
+
+from .toggle_control import ToggleControl, IToggleControlImpl
+
+
+class IRadioButtonImpl(IToggleControlImpl):
+    pass
 
 
 class RadioButton(ToggleElement):
@@ -15,5 +21,8 @@ class RadioButton(ToggleElement):
     IToggleElement
     
     """
-    pass
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IRadioButtonImpl)
 
