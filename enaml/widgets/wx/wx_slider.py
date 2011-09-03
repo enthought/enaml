@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-import wx
+import warnings
 
+import wx
 from traits.api import (implements, Bool, Event, Str, Enum, Float, Any,
                         Range, Callable, TraitError)
 
@@ -25,7 +26,7 @@ class WXSlider(WXElement):
 
     from_slider : Callable
         A function that takes one argument to convert from the slider
-        postion to the appropriate Python value.
+        position to the appropriate Python value.
 
     to_slider : Callable
         A function that takes one argument to convert from a Python
@@ -47,13 +48,18 @@ class WXSlider(WXElement):
     tick_interval : Float
         The slider_pos interval to put between tick marks. Default is `0.1`.
 
-    tick_position : TickPosition Enum value
+    ticks : TickPosition Enum value
         A TickPosition enum value indicating how to display the tick
-        marks.
+        marks. Please note that the orientation takes precedence over the
+        tick mark position and if for example the user sets the tick to an
+        invalid value it is ignored.
 
     orientation : Orientation Enum value
         The orientation of the slider. One of the Orientation enum
-        values. The default orientation is horizontal.
+        values. When the orientation is flipped the tick positions (if set)
+        also adaptsto reflect the changes  (e.g. the LEFT becomes TOP when
+        the orientation becomes horizontal).  The default orientation is
+        horizontal.
 
     pressed : Event
         Fired when the slider is pressed.
@@ -67,7 +73,6 @@ class WXSlider(WXElement):
     invalid_value: Event
         Fired when there was an attempt to assign an invalid (out of range)
         value to the slider.
-
 
     .. note:: The slider enaml widget changes the attributes and fires the
         necessary events in sequence based on their priority as given below
@@ -123,9 +128,9 @@ class WXSlider(WXElement):
         """Initialization of ISlider based on wxWidget
 
         The method create the wxPython Slider widget and binds the ui events
-        to WXSlider. Individual event binding was prefered instead of events
+        to WXSlider. Individual event binding was preferred instead of events
         that are platform specific (e.g. wx.EVT_SCROLL_CHANGED) or group
-        events (e.g. wx.EVT_SCROLL), to faciliate finer control on the
+        events (e.g. wx.EVT_SCROLL), to facilitate finer control on the
         behaviour of the widget.
         """
         # create widget
@@ -169,10 +174,9 @@ class WXSlider(WXElement):
         self.value = self.from_slider(self.slider_pos)
 
         # orientation
-        if self.orientation == Orientation.VERTICAL:
-            self.widget.SetWindowStyle(wx.SL_VERTICAL)
-        else:
-            self.widget.SetWindowStyle(wx.SL_HORIZONTAL)
+        self._apply_orientation(self.orientation)
+        # ticks
+        self._apply_tick_position(self.ticks)
 
         return
 
@@ -193,6 +197,69 @@ class WXSlider(WXElement):
         """Converts the value to an integer suitable for the wxSlider"""
         position = value * self.tick_interval
         return position
+
+    def _apply_tick_position(self, value):
+        """Converts the `ticks` position into style flags"""
+
+        if self.orientation == Orientation.VERTICAL:
+            style = wx.SL_VERTICAL
+            if value == TickPosition.LEFT:
+                style |= wx.SL_LEFT | wx.SL_AUTOTICKS
+            elif value == TickPosition.RIGHT:
+                style |= wx.SL_RIGHT | wx.SL_AUTOTICKS
+            elif value == TickPosition.BOTH:
+                warnings.warn('Option not implemented in wxPython')
+            elif value == TickPosition.NO_TICKS:
+                pass
+            else:
+                style |= wx.SL_AUTOTICKS
+
+        else:
+            style = wx.SL_HORIZONTAL
+            if value == TickPosition.TOP:
+                style |= wx.SL_TOP | wx.SL_AUTOTICKS
+            elif value == TickPosition.BOTTOM:
+                style |= wx.SL_BOTTOM | wx.SL_AUTOTICKS
+            elif value == TickPosition.BOTH:
+                warnings.warn('Option not implemented in wxPython')
+            elif value == TickPosition.NO_TICKS:
+                style = wx.SL_HORIZONTAL
+            else:
+                style |= wx.SL_AUTOTICKS
+
+        self.widget.SetWindowStyle(style)
+
+        return
+
+    def _apply_orientation(self, value):
+        """Converts the `orientation` into style flags"""
+
+        if self.widget.HasFlag(wx.SL_AUTOTICKS):
+            style = wx.SL_AUTOTICKS
+        else:
+            style = 0
+
+        if value == Orientation.VERTICAL:
+            if self.widget.HasFlag(wx.SL_TOP):
+                style |= wx.SL_LEFT
+
+            elif self.widget.HasFlag(wx.SL_BOTTOM):
+                style |= wx.SL_RIGHT
+
+            style |= wx.SL_VERTICAL
+
+        else:
+            if self.widget.HasFlag(wx.SL_LEFT):
+                style |= wx.SL_TOP
+
+            elif self.widget.HasFlag(wx.SL_RIGHT):
+                style |= wx.SL_BOTTOM
+
+            style |= wx.SL_HORIZONTAL
+
+        self.widget.SetWindowStyle(style)
+
+        return
 
     def _thumb_hit(self, point):
         """Is the point in the thumb area"""
@@ -258,12 +325,12 @@ class WXSlider(WXElement):
 
     def _orientation_changed(self):
         """Update the widget due to change in the orientation attribute"""
-        if self.orientation == Orientation.VERTICAL:
-            self.widget.SetWindowStyle(wx.SL_VERTICAL)
+        self._apply_orientation(self.orientation)
+        return
 
-        else:
-            self.widget.SetWindowStyle(wx.SL_HORIZONTAL)
-
+    def _ticks_changed(self):
+        """Update the widget due to change in the orientation attribute"""
+        self._apply_tick_position(self.ticks)
         return
 
     #--------------------------------------------------------------------------
@@ -286,7 +353,7 @@ class WXSlider(WXElement):
         """Update `slider_pos` when the thumb is dragged.
 
         The slider_pos attribute is updated during a dragging if the
-        self.tracking atrtribute is True. This will also fire a moved event
+        self.tracking attribute is True. This will also fire a moved event
         for a very change.
 
         The event is not skiped
@@ -335,7 +402,7 @@ if __name__ == '__main__':
 
     enaml = """
 from traits.api import Float
-from enaml.enums import Orientation
+from enaml.enums import Orientation, TickPosition
 
 Window main:
     title = "Slider demo"
@@ -347,6 +414,7 @@ Window main:
                         slider.tracking)
             Slider slider:
                 orientation << Orientation.VERTICAL if vertical.checked else Orientation.HORIZONTAL
+                ticks = TickPosition.DEFAULT
                 value = 0.5
                 tick_interval = 0.1
                 tracking := track.checked
@@ -365,7 +433,9 @@ Window main:
                     text = "Track"
                 CheckBox vertical:
                     text = "Vertical"
-
+                ComboBox ticks:
+                    items = [item for item in TickPosition.values()]
+                    selected >> model.update_ticks(slider, self.value)
 """
 
     class Model(HasTraits):
@@ -374,6 +444,10 @@ Window main:
         def update(self, slider, offset):
             slider.value += offset
             return
+
+        def update_ticks(self, slider, value):
+            print type(value)
+            slider.ticks = value
 
     fact = EnamlFactory(StringIO(enaml))
     app = wx.App()
