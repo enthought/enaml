@@ -1,6 +1,21 @@
-from traits.api import List, Any, Event, Callable
+from traits.api import List, Any, Event, Callable, Instance
 
-from .control import Control
+from .control import Control, IControlImpl
+
+
+class IComboBoxImpl(IControlImpl):
+
+    def parent_items_changed(self, items):
+        raise NotImplementedError
+
+    def parent_items_items_changed(self, list_event):
+        raise NotImplementedError
+
+    def parent_value_changed(self, value):
+        raise NotImplementedError
+
+    def parent_to_string_changed(self, to_string):
+        raise NotImplementedError
 
 
 class ComboBox(Control):
@@ -43,4 +58,9 @@ class ComboBox(Control):
     to_string = Callable(str)
 
     selected = Event
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IComboBoxImpl)
 

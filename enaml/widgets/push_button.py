@@ -1,7 +1,13 @@
-from traits.api import Bool, Event, Str
+from traits.api import Bool, Event, Str, Instance
 
-from .control import Control
+from .control import Control, IControlImpl
 
+
+class IPushButtonImpl(IControlImpl):
+
+    def parent_text_changed(self, text):
+        raise NotImplementedError
+    
 
 class PushButton(Control):
     """ A push button widget.
@@ -33,4 +39,9 @@ class PushButton(Control):
     pressed = Event
 
     released = Event
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IPushButtonImpl)
 

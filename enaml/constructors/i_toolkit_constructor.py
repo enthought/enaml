@@ -34,8 +34,8 @@ class IToolkitConstructor(Interface):
     
     Methods
     -------
-    toolkit_class()
-        Imports and returns the toolkit specific wrapper class.
+    component()
+        Imports, instantiates, and returns the toolkit specific component.
 
     __call__(**ctxt_objs)
         When called with context objects, should build an return
@@ -50,13 +50,15 @@ class IToolkitConstructor(Interface):
 
     children = List(Instance('IToolkitConstructor'))
 
-    def toolkit_class(self):
-        """ Imports and returns the toolkit specific class.
+    def component(self):
+        """ Imports, instantiates, and returns the toolkit component.
 
-        This method should import and return the class for creating
-        the toolkit specific widget for this constructor. The import
-        is done here to delay the import of any gui libraries for as
-        long as possible.
+        This method should import, instantiate, and return a toolkit 
+        specific component. This will typically be a pair of objects:
+        the abstract widget object, and its implementation child.
+        Though, this is not required and custom widgets may be implemented
+        more simply. The import is done here to delay the import of any gui 
+        libraries for as long as possible.
 
         Arguments
         ---------
@@ -64,13 +66,8 @@ class IToolkitConstructor(Interface):
 
         Returns
         -------
-        result : Toolkit class
-            The toolkit specific wrapper class for the widget that
-            this constructor creates.
-
-        Raises
-        ------
-        None
+        result : Component 
+            A toolkit specific component.
 
         """
         raise NotImplementedError
@@ -95,9 +92,9 @@ class IToolkitConstructor(Interface):
 
         Returns
         -------
-        result : traitsml.view.View
+        result : View
             A properly instantiated View object that can be layed out and
-            displayed by calling view.show(True)
+            displayed by calling view.show()
 
         """
         raise NotImplementedError

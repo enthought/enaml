@@ -3,6 +3,7 @@ from traits.api import HasStrictTraits, List, Instance, Tuple, Str, Any
 from .i_toolkit_constructor import IToolkitConstructor
 
 from ..interceptors.i_interceptor import IInterceptorFactory
+from ..widgets.component import Component
 
 
 class BaseToolkitCtor(HasStrictTraits):
@@ -15,20 +16,23 @@ class BaseToolkitCtor(HasStrictTraits):
 
     children = List(Instance(IToolkitConstructor))
     
-    # The transient traits that are reset in the cleanup method.
-    impl = Any
+    #---------------------------------------------------------------------------
+    # Transient traits that are reset in the cleanup method.
+    #---------------------------------------------------------------------------
+    impl = Instance(Component)
 
     local_ns = Instance(dict, ())
 
     global_ns = Instance(dict)
 
     def construct(self):
+        self.impl = impl = self.component()
         for meta in self.metas:
             meta.construct()
+            impl.add_meta_info(meta.impl)
         for child in self.children:
             child.construct()
-        cls = self.toolkit_class()
-        self.impl = cls()
+            impl.add_child(child.impl)
 
     def build_ns(self, global_ns, parent=None):
         impl = self.impl
@@ -81,49 +85,9 @@ class BaseToolkitCtor(HasStrictTraits):
         self.cleanup()
         return res
 
-    def toolkit_class(self):
+    def component(self):
         raise NotImplementedError
 
     def build_view(self):
         raise NotImplementedError
-    
-
-class BaseComponentCtor(BaseToolkitCtor):
-
-    def construct(self):
-        super(BaseComponentCtor, self).construct()
-        impl = self.impl
-        for meta in self.metas:
-            impl.add_meta_info(meta.impl)
-
-
-class BasePanelCtor(BaseComponentCtor):
-
-    def construct(self):
-        super(BasePanelCtor, self).construct()
-        children = self.children
-        if children:
-            if len(children) > 1:
-                msg = '%s type can have 1 (and only 1) container.'
-                raise ValueError(msg % type(self.impl))
-            else:
-                self.impl.set_container(children[0].impl)
-
-
-class BaseContainerCtor(BaseComponentCtor):
-
-    def construct(self):
-        super(BaseContainerCtor, self).construct()
-        impl = self.impl
-        for child in self.children:
-            impl.add_child(child.impl)
-
-
-class BaseElementCtor(BaseComponentCtor):
-
-    def construct(self):
-        super(BaseElementCtor, self).construct()
-        if self.children:
-            msg = '%s type cannot have children.' % type(self.impl)
-            raise ValueError(msg)
 
