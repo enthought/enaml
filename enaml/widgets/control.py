@@ -1,4 +1,18 @@
-from .component import Component
+from traits.api import Instance
+
+from .component import Component, IComponentImpl
+
+
+class IControlImpl(IComponentImpl):
+
+    def create_widget(self):
+        raise NotImplementedError
+    
+    def initialize_widget(self):
+        raise NotImplementedError
+    
+    def layout_child_widgets(self):
+        raise NotImplementedError
 
 
 class Control(Component):
@@ -11,7 +25,12 @@ class Control(Component):
         Initialize and layout the widget.
 
     """
-    def layout(self, parent):
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IControlImpl)
+
+    def layout(self):
         """ Initialize and layout the widget.
 
         This method should be called by the parent window during
@@ -19,20 +38,18 @@ class Control(Component):
 
         Arguments
         ---------
-        parent : IContainer
-            The parent container of this widget. The parent should 
-            have already been layed out (and therefore have created 
-            its internal widget) before being passed in to this method.
+        None
 
         Returns
         -------
         result : None
 
-        Raises
-        ------
-        LayoutError
-            Any reason the action cannot be completed.
-
         """
-        raise NotImplementedError
+        impl = self._impl
+        impl.create_widget()
+        for child in self.children:
+            child.layout()
+        impl.initialize_widget()
+        impl.layout_child_widgets()
+        self._hook_impl()
 

@@ -2,47 +2,25 @@ import wx
 
 from traits.api import implements
 
-from ..i_element import IElement
-
 from .wx_component import WXComponent
 
+from ..control import IControlImpl
 
-class WXElement(WXComponent):
 
-    implements(IElement)
+class WXControl(WXComponent):
 
-    #===========================================================================
-    # IElement interface
-    #===========================================================================
-    def layout(self, parent):
-        self.set_parent(parent)
-        self.create_widget()
-        self.init_attributes()
-        self.init_meta_handlers()
-
-    #===========================================================================
-    # Implementation
-    #===========================================================================
+    implements(IControlImpl)
 
     #---------------------------------------------------------------------------
-    # Initialization
+    # IControlImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
         raise NotImplementedError
         
-    def init_attributes(self):
+    def inititialize_widget(self):
         raise NotImplementedError
 
-    def init_meta_handlers(self):
-        raise NotImplementedError
-    
-    #---------------------------------------------------------------------------
-    # Layout helpers
-    #---------------------------------------------------------------------------
-    def default_sizer_flags(self):
-        """ The default sizing for an element is aligned top-left
-        with a 2 pixel border, a proportion of 0 and expanding.
-
-        """
-        return wx.SizerFlags(0).Left().Top().Border(wx.ALL, 2).Expand()
+    def layout_child_widgets(self):
+        if list(self.child_widgets()):
+            raise ValueError('Standard controls cannot have children.')
 

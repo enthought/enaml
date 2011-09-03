@@ -1,6 +1,15 @@
-from traits.api import Bool, Event, Str
+from traits.api import Bool, Event, Str, Instance
 
-from .control import Control
+from .control import Control, IControlImpl
+
+
+class IToggleControlImpl(IControlImpl):
+
+    def parent_checked_changed(self, checked):
+        raise NotImplementedError
+    
+    def parent_text_changed(self, text):
+        raise NotImplementedError
 
 
 class ToggleControl(Control):
@@ -40,4 +49,9 @@ class ToggleControl(Control):
     pressed = Event
 
     released = Event
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IToggleControlImpl)
 

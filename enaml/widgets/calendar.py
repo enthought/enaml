@@ -1,6 +1,20 @@
-from traits.api import Date, Event
+from datetime import date
 
-from .control import Control
+from traits.api import Date, Event, Instance
+
+from .control import Control, IControlImpl
+
+
+class ICalendarImpl(IControlImpl):
+
+    def parent_date_changed(self, date):
+        raise NotImplementedError
+    
+    def parent_minimum_date_changed(self, date):
+        raise NotImplementedError
+    
+    def parent_maximum_date_changed(self, date):
+        raise NotImplementedError
 
 
 class Calendar(Control):
@@ -31,7 +45,7 @@ class Calendar(Control):
         on the control.
 
     """    
-    date = Date
+    date = Date(date.today())
 
     minimum_date = Date
 
@@ -40,4 +54,9 @@ class Calendar(Control):
     selected = Event
 
     activated = Event
+
+    #---------------------------------------------------------------------------
+    # Overridden parent traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(ICalendarImpl)
 

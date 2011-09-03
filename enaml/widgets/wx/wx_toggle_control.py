@@ -1,11 +1,11 @@
-from traits.api import implements, Bool, Str, Event
+from traits.api import implements
 
-from .wx_element import WXElement
+from .wx_control import WXControl
 
-from ..i_toggle_element import IToggleElement
+from ..toggle_control import IToggleControlImpl
 
 
-class WXToggleElement(WXElement):
+class WXToggleControl(WXControl):
     """ A base class for wxPython toggle widgets.
 
     This class can serve as a base class for widgets that implement
@@ -18,60 +18,31 @@ class WXToggleElement(WXElement):
     IToggleElement
 
     """
-    implements(IToggleElement)
-
-    #===========================================================================
-    # IToggleElement interface
-    #===========================================================================
-    checked = Bool
-
-    down = Bool
-    
-    text = Str
-
-    toggled = Event
-
-    pressed = Event
-
-    released = Event
-
-    #===========================================================================
-    # Implementation
-    #===========================================================================
+    implements(IToggleControlImpl)
 
     #---------------------------------------------------------------------------
-    # Intitialization
+    # IToggleControlImpl interface
     #---------------------------------------------------------------------------
-    def init_attributes(self):
+    def initialize_widget(self):
         """ Initializes the attributes of the underlying control.
 
         This is called by the 'layout' method and is not meant for 
         public consumption.
 
         """
-        self.set_label(self.text)
-        self.set_checked(self.checked)
+        parent = self.parent
+        self.set_label(parent.text)
+        self.set_checked(parent.checked)
+        self.bind()
 
-    def init_meta_handlers(self):
-        """ Initializes the meta handlers for the underlying control.
-
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
-
-        """
-        pass
-
-    #---------------------------------------------------------------------------
-    # Notification
-    #---------------------------------------------------------------------------
-    def _checked_changed(self, checked):
+    def parent_checked_changed(self, checked):
         """ The change handler for the 'checked' attribute. Not meant
         for public consumption.
 
         """
         self.set_checked(checked)
 
-    def _text_changed(self, text):
+    def parent_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant
         for public consumption.
 
@@ -79,29 +50,32 @@ class WXToggleElement(WXElement):
         self.set_label(text)
 
     #---------------------------------------------------------------------------
-    # Event handlers
+    # implementation
     #---------------------------------------------------------------------------
-    def _on_toggled(self, event):
+    def bind(self):
+        raise NotImplementedError
+
+    def on_toggled(self, event):
         """ The event handler for the toggled event. Not meant for
         public consumption.
 
         """
-        self.down = False
-        self.checked = self.widget.GetValue()
-        self.released = True
-        self.toggled = True
+        self.parent.down = False
+        self.parent.checked = self.widget.GetValue()
+        self.parent.released = True
+        self.parent.toggled = True
         event.Skip()
 
-    def _on_pressed(self, event):
+    def on_pressed(self, event):
         """ The event handler for the pressed event. Not meant for
         public consumption.
 
         """
-        self.down = True
-        self.pressed = True
+        self.parent.down = True
+        self.parent.pressed = True
         event.Skip()
 
-    def _on_leave_window(self, event):
+    def on_leave_window(self, event):
         """ The event handler for the leave window event. Not meant for
         public consumption.
 
@@ -110,14 +84,11 @@ class WXToggleElement(WXElement):
         # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down 
         # flag when the mouse leaves the button and then releases, 
         # we need to hook the EVT_LEAVE_WINDOW
-        if self.down:
-            self.down = False
-            self.released = True
+        if self.parent.down:
+            self.parent.down = False
+            self.parent.released = True
         event.Skip()
 
-    #---------------------------------------------------------------------------
-    # Widget update
-    #---------------------------------------------------------------------------
     def set_label(self, label):
         """ Sets the widget's label with the provided value. Not 
         meant for public consumption.
