@@ -1,4 +1,19 @@
-from .component import Component
+from traits.api import Instance, List
+
+from .component import Component, IComponentImpl
+from .container import Container
+
+
+class IPanelImpl(IComponentImpl):
+
+    def create_widget(self):
+        raise NotImplementedError
+    
+    def initialize_widget(self):
+        raise NotImplementedError
+
+    def layout_child_widgets(self):
+        raise NotImplementedError
 
 
 class Panel(Component):
@@ -9,64 +24,18 @@ class Panel(Component):
 
     Methods
     -------
-    set_container(container)
-        Set the container of child widgets and/or containers for
-        this window.
-
-    get_container(container)
-        Get the container of child widgets and/or containers for 
-        this panel.
-
     layout(parent)
         Initialize and layout the panel and it's children.
 
     """
-    def set_container(self, container):
-        """ Set the container of children for this panel.
-        
-        Calling this method more than once will replace the previous
-        container with the provided container.
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IPanelImpl)
 
-        Arguments
-        ---------
-        container : IContainer
-            The container of child widgets and/or containers for
-            this window.
+    children = List(Instance(Container))
 
-        Returns
-        -------
-        None
-
-        Raises
-        ------
-        None
-
-        """
-        raise NotImplementedError
-        
-    def get_container(self):
-        """ Return the container of children for this panel.
-
-        Call this method to retrieve the container previously 
-        set with set_container.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : IContainer or None
-            Returns the conainter set on this window if one is set.
-
-        Raises
-        ------
-        None
-
-        """
-        raise NotImplementedError
-
-    def layout(self, parent):
+    def layout(self):
         """ Initialize and layout the panel and it's children.
 
         Call this method after the object tree has been built in order
@@ -75,21 +44,18 @@ class Panel(Component):
 
         Arguments
         ---------
-        parent : IComponent or None
-            The parent component of this window. Pass None if there is
-            not parent. The parent should have already been layed out 
-            (and therefore have created its internal widget) before being 
-            passed into this method.
+        None
 
         Returns
         -------
         result : None
 
-        Raises
-        ------
-        LayoutError
-            Any reason the action cannot be completed.
-
         """
-        raise NotImplementedError
+        impl = self._impl
+        impl.create_widget()
+        for container in self.children:
+            container.layout()
+        impl.initialize_widget()
+        impl.layout_child_widgets()
+        self._hook_impl()
 

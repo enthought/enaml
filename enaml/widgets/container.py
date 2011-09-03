@@ -1,4 +1,25 @@
-from .component import Component
+from traits.api import Instance, List, Either
+
+from .component import Component, IComponentImpl
+from .control import Control
+from .panel import Panel
+
+
+ContainerChildTypes = Either(
+    Instance('Container'), Instance(Panel), Instance(Control),
+)
+
+
+class IContainerImpl(IComponentImpl):
+    
+    def create_widget(self):
+        raise NotImplementedError
+    
+    def initialize_widget(self):
+        raise NotImplementedError
+
+    def layout_child_widgets(self):
+        raise NotImplementedError
 
 
 class Container(Component):
@@ -7,148 +28,15 @@ class Container(Component):
     Containers are non-visible components that are responsible for 
     laying out and arranging their children.
 
-    Methods
-    -------
-    add_child(child)
-        Add the child component to this container.
-    
-    remove_child(child)
-        Remove the child component from this container.
-
-    replace_child(child, other_child)
-        Replace child with other_child.
-
-    children()
-        An iterator of all the children.
-    
-    layout(parent)
-        Initialize and layout the container and it's children.
-
     """
-    def add_child(self, child):
-        """ Add the child component to this container.
-        
-        Call this method when a child should be added to the container. 
-        
-        Arguments
-        ---------
-        child : Either(IPanel, IElement, IContainer)
-            The child to add to this container. The child must not
-            already be in the container.
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IContainerImpl)
 
-        Returns
-        -------
-        result : None
+    children = List(ContainerChildTypes)
 
-        Raises
-        ------
-        TypeError
-            The child is not an instance of IComponent.
-
-        ContainerError
-            Any other reason the action cannot be completed.
-
-        """
-        raise NotImplementedError
-
-    def remove_child(self, child):
-        """ Remove the child from this container.
-
-        Call this method when a child should be removed from the 
-        container.
-
-        Arguments
-        ---------
-        child : Either(IPanel, IElement, IContainer)
-            The child to remove from the container. The child
-            must be contained in the container.
-
-        Returns
-        -------
-        result : None
-
-        Raises
-        ------
-        TypeError
-            The child is not an instance of IComponent.
-
-        ValueError
-            The child is not contained in the container.
-
-        ContainerError
-            Any other reason the action cannot be completed.
-
-        """
-        raise NotImplementedError
-
-    def replace_child(self, child, other_child):
-        """ Replace child with other_child.
-
-        Call this method when the child should be replaced by the
-        other_child.
-
-        Arguments
-        ---------
-        child : Either(IPanel, IElement, IContainer)
-            The child being replaced. The child must be contained in 
-            the container.
-
-        other_child : Either(IPanel, IElement, IContainer)
-            The child taking the new place. The child must not be 
-            contained in the container.
-
-        Returns
-        -------
-        result : None
-
-        Raises
-        ------
-        TypeError
-            The child or other_child is not of the proper type.
-
-        ValueError
-            The child is not contained in the container or other_child
-            is contained in the container.
-
-        ContainerError
-            Any other reason the action cannot be completed.
-
-        Notes
-        -----
-        To replace a child with one that already exists in the container,
-        call 'remove_child' followed by 'replace_child'.
-
-        """
-        raise NotImplementedError
-
-    def children(self):
-        """ An iterator of the contained children.
-
-        Iterate over the results of this method to access all the
-        children of the container.
-
-        Arguments
-        ---------
-        None
-        
-        Returns
-        -------
-        result : iter
-            An iterator of the children contained in the container.
-
-        Raises
-        ------
-        None
-        
-        Notes
-        -----
-        There is no guarantee to the accuracy of the itertor if the
-        children of the container are modified during iteration.
-
-        """
-        raise NotImplementedError
-
-    def layout(self, parent):
+    def layout(self):
         """ Initialize and layout the container and it's children.
 
         This method should be called by the parent panel during
@@ -156,20 +44,18 @@ class Container(Component):
 
         Arguments
         ---------
-        parent : Either(IPanel, IContainer)
-            The parent of this container. The parent should have 
-            already been layed out (and therefore have created its 
-            internal widget) before being passed in to this method.
+        None
 
         Returns
         -------
         result : None
 
-        Raises
-        ------
-        LayoutError
-            Any reason the action cannot be completed.
-
         """
-        raise NotImplementedError
+        impl = self._impl
+        impl.create_widget()
+        for child in self.children:
+            child.layout()
+        impl.initialize_widget()
+        impl.layout_child_widgets()
+        self._hook_impl()
 

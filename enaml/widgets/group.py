@@ -1,8 +1,14 @@
-from traits.api import Enum
+from traits.api import Enum, Instance
 
-from .container import Container
+from .container import Container, IContainerImpl
 
 from ..enums import Direction
+
+
+class IGroupImpl(IContainerImpl):
+
+    def parent_direction_changed(self):
+        raise NotImplementedError
 
 
 class Group(Container):
@@ -18,5 +24,10 @@ class Group(Container):
         is Direction.LEFT_TO_RIGHT.
         
     """
-    direction = Enum(*Direction.values())    
+    direction = Enum(*Direction.values())  
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IGroupImpl)
 

@@ -1,8 +1,12 @@
 from traits.api import Enum
 
-from .group import Group
+from .group import Group, IGroupImpl
 
 from ..enums import Direction
+
+
+class IVGroupImpl(IGroupImpl):
+    pass
 
 
 class VGroup(Group):
@@ -18,4 +22,9 @@ class VGroup(Group):
     
     """	
     direction = Enum(Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP)
+
+    #---------------------------------------------------------------------------
+    # Overridden parent traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IVGroupImpl)
 

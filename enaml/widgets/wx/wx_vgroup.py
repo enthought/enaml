@@ -1,10 +1,10 @@
-from traits.api import Enum, implements
+import wx
+
+from traits.api import implements
 
 from .wx_group import WXGroup
 
-from ..i_vgroup import IVGroup
-
-from ...enums import Direction
+from ..vgroup import IVGroupImpl
 
 
 class WXVGroup(WXGroup):
@@ -18,10 +18,17 @@ class WXVGroup(WXGroup):
     IVGroup
     
     """ 
-    implements(IVGroup)
+    implements(IVGroupImpl)
 
-    #===========================================================================
-    # IHGroup interface
-    #===========================================================================
-    direction = Enum(Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP)
+    #---------------------------------------------------------------------------
+    # IVGroupImpl interface
+    #---------------------------------------------------------------------------
+    
+    # IVGroupImpl interface is empty and implemented by WXGroup
+
+    # We don't *necessarily* need to override this method since 
+    # the direction will always be horizontal, but this will speed
+    # things up just a hair.
+    def make_sizer(self):
+        return wx.BoxSizer(wx.VERTICAL)
 
