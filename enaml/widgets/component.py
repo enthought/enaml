@@ -1,13 +1,15 @@
-from traits.api import HasStrictTraits, Str, List, WeakRef, Instance, Interface
+from traits.api import (HasStrictTraits, Str, Dict, Set, WeakRef, Instance, 
+                        Interface, This, ListThis)
 
-from .component_impl import ComponentImpl
-
-from ..interceptors.i_interceptor import IInterceptor
+from .expression_delegates import IExpressionDelegate, IExpressionNotifier
 
 
 class IComponentImpl(Interface):
 
     parent = WeakRef('Component')
+
+    def set_parent(self, parent):
+        raise NotImplementedError
 
     def toolkit_widget(self):
         raise NotImplementedError
@@ -19,22 +21,18 @@ class IComponentImpl(Interface):
 class Component(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy. 
     
-    All Enaml abstract widget classes should inherit from this class.
-    This class is not meant to be instantiated.
+    All Enaml  widget classes should inherit from this class. This class
+    is not meant to be instantiated.
     
     Attributes
     ----------
-    _interceptors : List(Instance(IInterceptor))
-        The list of IInterceptors that are currently intercepting values
-        on this component. This is managed by the framework. Use at your
-        own risk.
+    _delegates : Dict(Str, Instance(IExpressionDelegate))
+        The expression delegates currently installed on this component. 
+        This is managed internally. Manipulate at your own risk.
     
-    _impl : Instance(ComponentImpl)
-        The toolkit specific object that implements the behavior of 
-        this component. This implementation object is added as a virtual 
-        listener for this component and maintains a weak reference to 
-        this component. Most of the methods defined on this component
-        forward directly to the implementation object.
+    _notifiers : Set(Instance(IExpressionNotifier))
+        The expression notifiers currently installed on this component. 
+        This is managed internally. Manipulate at your own risk.
 
     name : Str
         The name of this element which may be used as metainfo by other
@@ -51,6 +49,13 @@ class Component(HasStrictTraits):
         they allow. This list should not be manipulated outside of
         the *_child(...) methods.    
 
+    toolkit_impl : Instance(ComponentImpl)
+        The toolkit specific object that implements the behavior of 
+        this component. This implementation object is added as a virtual 
+        listener for this component and maintains a weak reference to 
+        this component. The listeners are set up and torn down with the 
+        'hook_impl' and 'unhook_impl' methods.
+
     Methods
     -------
     add_meta_info(meta_info)
@@ -63,35 +68,125 @@ class Component(HasStrictTraits):
         Return the IMetaHandler for this meta_info object.
 
     add_child(child)
-        Add a child component to this component container.
+        Add a child component to this component. This will reparent
+        the child.
     
     remove_child(child)
-        Remove a child component from this component.
+        Remove a child component from this component. This will
+        unparent the child,
 
     replace_child(child, other_child)
-        Replace child in this component with a different one.
+        Replace child in this component with a different one. This
+        will unparent the first child and reparent the second child.
     
+    def set_parent(self, parent):
+        Set the parent for this component to parent.
+
     swap_children(child, other_child)
         Swap the positions of the two children.
 
+    hook_impl()
+        Sets the toolkit_impl object as a virtual listener for this
+        component instance.
+
+    unhook_impl()
+        Removes the toolkit_impl object as a virtual listener for
+        this component instance.
+ 
+    toolkit_widget()
+        Returns the underlying gui toolkit widget which is being 
+        managed by the implemention object.
+    
     refresh(force=False)
         Refreshes the ui tree from this point down, rebuilding children 
         where necessary.
 
-    toolkit_widget()
-        Returns the underlying gui toolkit widget which is being 
-        managed by the implemention object.
-
     """
-    _interceptors = List(Instance(IInterceptor))
+    _delegates = Dict(Str, Instance(IExpressionDelegate))
 
-    _impl = Instance(IComponentImpl)
-    
+    _notifiers = Set(Instance(IExpressionNotifier))
+
     name = Str
 
-    parent = WeakRef('Component')
+    parent = WeakRef(This)
 
-    children = List(Instance('Component'))
+    children = ListThis
+
+    toolkit_impl = Instance(IComponentImpl)
+
+    def delegate_attribute(self, name, delegate):
+        """ Delegates the value of the attribute to the delegate.
+
+        Call this method to intercept the value of the standard trait
+        attribute and delegate that value to the given delegate.
+
+        Arguments
+        ---------
+        name : string
+            The name of the attribute to delegate.
+        
+        delegate : IExpressionDelegate
+            An implementor of the IExpressionDelegate interface.
+
+        Returns
+        -------
+        result : None
+
+        """
+        trait = self.trait(name)
+        delegates = self._delegates
+        delegate_name = '_%s_enaml_delegate' % name
+
+        if trait is None:
+            msg = '`%s` is not a proper attribute on the `%s` object.'
+            raise AttributeError(msg % (name, type(self).__name__))
+
+        if trait.type in ('property', 'event'):
+            msg = 'The `%s` attr on the `%s` object cannot be delegated.'
+            raise TypeError(msg % (name, type(self).__name__))
+
+        if delegate_name in delegates:
+            msg = 'The `%s` attr on the `%s` object is already delegated.'
+            raise ValueError(msg % (name, type(self).__name__))
+        else:
+            delegates[delegate_name] = delegate
+
+        delegate.validate_trait = trait()
+        delegate.bind(self, name)
+
+        self.add_trait(delegate_name, delegate)
+        self.add_trait(name, DelegatesTo(delegate_name, 'value'))
+
+        # Need to fire trait_added or the delegate 
+        # listeners don't get hooked up properly.
+        self.trait_added = name
+
+    def notify_attribute(self, name, notifier):
+        """ Adds a notifier for the given attribute name.
+
+        Call this method to hook up an IExpressionNotifier to the
+        given attribute name.
+
+        Arguments
+        ---------
+        name : string
+            The name of the attribute to delegate.
+        
+        notifier : IExpressionNotifier
+            An implementor of the IExpressionNotifer interface.
+
+        Returns
+        -------
+        result : None
+
+        """
+        trait = self.trait(name)
+        if trait is None:
+            msg = '`%s` is not a proper attribute on the `%s` object.'
+            raise AttributeError(msg % (name, type(self).__name__))
+
+        self._notifiers.add(notifier)
+        notifier.bind(self, name)
 
     def add_meta_info(self, meta_info, autohook=True):
         """ Add the meta info object to this component.
@@ -176,6 +271,7 @@ class Component(HasStrictTraits):
         children = self.children
         if child in children:
             raise ValueError('Child %s already in children.' % child)
+        child.set_parent(self)
         self.children.append(child)
         self.refresh()
 
@@ -202,6 +298,7 @@ class Component(HasStrictTraits):
             self.children.remove(child)
         except ValueError:
             raise ValueError('Child %s not in children.' % child)
+        child.set_parent(None)
         self.refresh()
 
     def replace_child(self, child, other_child):
@@ -234,6 +331,8 @@ class Component(HasStrictTraits):
             raise ValueError('Child %s not in children.' % child)
         if other_child in children:
             raise ValueError('Child %s already in children.' % child)
+        child.set_parent(None)
+        other_child.set_parent(self)
         children[idx] = other_child
         self.refresh()
 
@@ -273,18 +372,60 @@ class Component(HasStrictTraits):
         children[other_idx] = child
         self.refresh()
 
-    def toolkit_widget(self):
-        return self._impl.toolkit_widget()
-            
-    def _hook_impl(self):
-        self.add_trait_listener(self._impl, 'parent')
+    def set_parent(self, parent):
+        """ Set the parent of this component to parent.
+
+        The default implementation of this method simply assigns the
+        parent to the .parent attribute. Subclasses may override this
+        method to do any custom process before the parent is set.
+
+        Arguments
+        ---------
+        parent : Component or None
+            The parent Component of this component or None.
+
+        Returns
+        -------
+        result : None
+
+        """
+        self.parent = parent
     
-    def _unhook_impl(self):
-        self.remove_trait_listener(self._impl, 'parent')
+    def toolkit_widget(self):
+        """ Returns the toolkit specific widget for this component.
+
+        """
+        return self.toolkit_impl.toolkit_widget()
+
+    def parent_impl(self):
+        """ Sets the parent of the toolkit implementation to self.
+
+        """
+        self.toolkit_impl.set_parent(self)
+    
+    def unparent_impl(self):
+        """ Sets the parent of the toolkit implementation to None.
+
+        """
+        self.toolkit_impl.set_parent(None)
+
+    def hook_impl(self):
+        """ Sets the toolkit_impl object as a virtual listener for this
+        component instance.
+
+        """
+        self.add_trait_listener(self.toolkit_impl, 'parent')
+    
+    def unhook_impl(self):
+        """ Removes the toolkit_impl object as a virtual listener for
+        this component instance.
+
+        """
+        self.remove_trait_listener(self.toolit_impl, 'parent')
 
     def refresh(self, force=False):
-        raise NotImplementedError
+        """ Refreshes the layout. 
 
-
-
+        """
+        pass
 

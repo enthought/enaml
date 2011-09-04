@@ -32,6 +32,7 @@ class BaseToolkitCtor(HasStrictTraits):
             impl.add_meta_info(meta.impl)
         for child in self.children:
             child.construct()
+            child.impl.parent = impl
             impl.add_child(child.impl)
 
     def build_ns(self, global_ns, parent=None):

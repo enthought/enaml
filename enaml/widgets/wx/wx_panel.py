@@ -1,9 +1,8 @@
 import wx
 
-from traits.api import implements, Instance, Bool
+from traits.api import implements
 
 from .wx_component import WXComponent
-from .wx_container import WXContainer
 
 from ..panel import IPanelImpl
 
@@ -39,5 +38,5 @@ class WXPanel(WXComponent):
         sizer = wx.BoxSizer(wx.VERTICAL)
         for child in self.child_widgets():
             sizer.Add(child, 1, wx.EXPAND)
-        self.widget.SetSizerAndFit(sizer)
-
+        self.widget.SetSizer(sizer)
+        sizer.Layout()

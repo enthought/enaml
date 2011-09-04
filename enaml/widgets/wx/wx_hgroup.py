@@ -29,6 +29,6 @@ class WXHGroup(WXGroup):
     # We don't *necessarily* need to override this method since 
     # the direction will always be horizontal, but this will speed
     # things up just a hair.
-    def make_sizer(self):
+    def make_sizer(self, direction):
         return wx.BoxSizer(wx.HORIZONTAL)
 

@@ -1,6 +1,6 @@
 from traits.api import HasStrictTraits, Instance
 
-from .widgets.i_window import IWindow
+from .widgets.window import Window
 
   
 class NamespaceProxy(object):
@@ -11,7 +11,7 @@ class NamespaceProxy(object):
 
 class View(HasStrictTraits):
     
-    window = Instance(IWindow)
+    window = Instance(Window)
 
     ns = Instance(NamespaceProxy)
 

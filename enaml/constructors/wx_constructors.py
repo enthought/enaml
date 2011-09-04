@@ -122,7 +122,7 @@ class WXPanelCtor(WXBasePanelCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.panel import Panel
         from ..widgets.wx.wx_panel import WXPanel
         panel = Panel(_impl=WXPanel())
@@ -137,7 +137,7 @@ class WXFormCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.form import Form
         from ..widgets.wx.wx_form import WXForm
         form = Form(_impl=WXForm())
@@ -149,7 +149,7 @@ class WXGroupCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.group import Group
         from ..widgets.wx.wx_group import WXGroup
         group = Group(_impl=WXGroup())
@@ -161,7 +161,7 @@ class WXVGroupCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.vgroup import VGroup
         from ..widgets.wx.wx_vgroup import WXVGroup
         vgroup = VGroup(_impl=WXVGroup())
@@ -173,7 +173,7 @@ class WXHGroupCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.hgroup import HGroup
         from ..widgets.wx.wx_hgroup import WXHGroup
         hgroup = HGroup(_impl=WXHGroup())
@@ -185,7 +185,7 @@ class WXStackedGroupCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.stacked_group import StackedGroup
         from ..widgets.wx.wx_stacked_group import WXStackedGroup
         stacked_group = StackedGroup(_impl=WXStackedGroup())
@@ -197,7 +197,7 @@ class WXTabGroupCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.tab_group import TabGroup
         from ..widgets.wx.wx_tab_group import WXTabGroup
         tab_group = TabGroup(_impl=WXTabGroup())
@@ -212,7 +212,7 @@ class WXGroupBoxCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.group_box import GroupBox
         from ..widgets.wx.wx_group_box import WXGroupBox
         group_box = GroupBox(_impl=WXGroupBox())
@@ -224,7 +224,7 @@ class WXCalendarCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.calendar import Calender
         from ..widgets.wx.wx_calendar import WXCalendar
         calendar = Calendar(_impl=WXCalendar())
@@ -236,7 +236,7 @@ class WXCheckBoxCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.check_box import CheckBox
         from ..widgets.wx.wx_check_box import WXCheckBox
         check_box = CheckBox(_impl=WXCheckBox())
@@ -248,7 +248,7 @@ class WXComboBoxCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.combo_box import ComboBox
         from ..widgets.wx.wx_combo_box import WXComboBox
         combo_box = ComboBox(_impl=WXComboBox())
@@ -260,7 +260,7 @@ class WXFieldCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.field import Field
         from ..widgets.wx.wx_field import WXField
         field = Field(_impl=WXField())
@@ -272,7 +272,7 @@ class WXHtmlCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.html import Html
         from ..widgets.wx.wx_html import WXHtml
         html = Html(_impl=WXHtml())
@@ -284,7 +284,7 @@ class WXImageCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.image import Image
         from ..widgets.wx.wx_image import WXImage
         image = Image(_impl=WXImage())
@@ -296,7 +296,7 @@ class WXLabelCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.label import Label
         from ..widgets.wx.wx_label import WXLabel
         label = Label(_impl=WXLabel())
@@ -308,7 +308,7 @@ class WXLineEditCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.line_edit import LineEdit
         from ..widgets.wx.wx_line_edit import WXLineEdit
         line_edit = LineEdit(_impl=WXLineEdit())
@@ -320,7 +320,7 @@ class WXPushButtonCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.push_button import PushButton
         from ..widgets.wx.wx_push_button import WXPushButton
         push_button = PushButton(_impl=WXPushButton())
@@ -332,7 +332,7 @@ class WXRadioButtonCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.radio_button import RadioButton
         from ..widgets.wx.wx_radio_button import WXRadioButton
         radio_button = RadioButton(_impl=WXRadioButton())
@@ -344,7 +344,7 @@ class WXSliderCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.slider import Slider
         from ..widgets.wx.wx_slider import WXSlider
         slider = Slider(_impl=WXSlider())
@@ -355,7 +355,7 @@ class WXSpinBoxCtor(WXBaseElementCtor):
 
     implements(IToolkitConstructor)
 
-    def toolkit_class(self):
+    def component(self):
         from ..widgets.spin_box import SpinBox
         from ..widgets.wx.wx_spin_box import WXSpinBox
         spin_box = SpinBox(_impl=WXSpinBox())

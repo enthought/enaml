@@ -7,7 +7,7 @@ class ICheckBoxImpl(IToggleControlImpl):
     pass
 
 
-class CheckBox(ToggleElement):
+class CheckBox(ToggleControl):
     """ A check box widget derived from IToggleElement
 
     Use a check box when it's necessary to toggle a boolean value

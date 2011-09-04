@@ -7,7 +7,7 @@ class IRadioButtonImpl(IToggleControlImpl):
     pass
 
 
-class RadioButton(ToggleElement):
+class RadioButton(ToggleControl):
     """ A radio button widget derived from IToggleElement 
     
     Use a radio button to toggle the value of a boolean field. For a 

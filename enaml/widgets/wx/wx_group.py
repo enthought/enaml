@@ -45,6 +45,7 @@ class WXGroup(WXContainer):
             sizer.Add(child, 1, wx.EXPAND)
         sizer.Layout()
 
+
     def parent_direction_changed(self, direction):
         pass
     

@@ -1,6 +1,12 @@
-from traits.api import Str
+from traits.api import Str, Instance
 
-from .control import Control
+from .control import Control, IControlImpl
+
+
+class IHtmlImpl(IControlImpl):
+
+    def parent_source_changed(self, source):
+        raise NotImplementedError
 
 
 class Html(Control):
@@ -13,4 +19,9 @@ class Html(Control):
     
     """
     source = Str
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    _impl = Instance(IHtmlImpl)
 

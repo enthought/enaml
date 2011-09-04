@@ -29,7 +29,7 @@ class WXPushButton(WXControl):
         public consumption.
 
         """
-        widget = wx.Button(self.parent_widget())
+        self.widget = wx.Button(self.parent_widget())
         
     def initialize_widget(self):
         """ Intializes the widget with the attributes of this instance.

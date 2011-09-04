@@ -2,11 +2,10 @@ from traits.api import Instance, List, Either
 
 from .component import Component, IComponentImpl
 from .control import Control
-from .panel import Panel
 
 
 ContainerChildTypes = Either(
-    Instance('Container'), Instance(Panel), Instance(Control),
+    Instance('Container'), Instance('enaml.widgets.panel.Panel'), Instance(Control),
 )
 
 

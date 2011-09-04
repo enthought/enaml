@@ -26,7 +26,7 @@ class WXWindow(WXComponent):
     # IWindowImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        self.widget = wx.Frame(self.parent_widget())
+        self.widget = wx.Frame(None)#self.parent_widget())
     
     def initialize_widget(self):
         self.set_title(self.parent.title)
@@ -36,7 +36,7 @@ class WXWindow(WXComponent):
         sizer = wx.BoxSizer(wx.VERTICAL)
         for child in self.child_widgets():
             sizer.Add(child, 1, wx.EXPAND)
-        self.widget.SetSizerAndFit(sizer)
+        self.widget.SetSizer(sizer)
 
     def show(self):
         """ Displays the window to the screen, laying out if necessary.

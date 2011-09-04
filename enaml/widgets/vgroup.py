@@ -1,4 +1,4 @@
-from traits.api import Enum
+from traits.api import Enum, Instance
 
 from .group import Group, IGroupImpl
 
