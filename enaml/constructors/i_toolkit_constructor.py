@@ -1,6 +1,7 @@
 from traits.api import Interface, Instance, List, Tuple, Str
 
-from ..interceptors.i_interceptor import IInterceptorFactory
+from ..expression_delegates import (IExpressionDelegateFactory, 
+                                    IExpressionNotifierFactory)
 
 
 class IToolkitConstructor(Interface):
@@ -18,16 +19,22 @@ class IToolkitConstructor(Interface):
         The unique identifier assigned to the widget (if any).
         An empty string is considered to be no id.
 
+    delegates : List(Tuple(Str, Instance(IExpressionDelegateFactory)))
+        The list of tuples of info for delegating traits on the toolkit 
+        widget wrapper. The string is the name of the trait to be 
+        delegated and the object is an expression delegate factory which 
+        will create a delegate on demand.
+    
+    notifiers : List(Tuple(Str, Instance(IExpressionNotifierFactory)))
+        The list of tuples of info for setting notifiers on the widget
+        wrapper. The string is the name of the trait on which we want
+        notifications and the object is an expression notifier factory 
+        which will create a notifier on demand.
+
     metas : List(Instance(IToolkitConstructor))
         The list of constructor instances for any meta objects defined
         for this node of the TML tree.
     
-    exprs : List(Tuple(Str, Instance(IInterceptorFactory)))
-        The list of tuples of info for intercepting traits on the 
-        toolkit widget wrapper. The string is the name of the 
-        trait to be intercepted and the object is an interceptor
-        factory which will create an interceptor on demand.
-
     children : List(Instance(IToolkitConstructor))
         The list of constructor instances for any child objects
         defined for this node of the TML tree.
@@ -44,9 +51,11 @@ class IToolkitConstructor(Interface):
     """
     identifier = Str
 
-    metas = List(Instance('IToolkitConstructor'))
+    delegates = List(Tuple(Str, Instance(IExpressionDelegateFactory)))
 
-    exprs = List(Tuple(Str, Instance(IInterceptorFactory)))
+    notifiers = List(Tuple(Str, Instance(IExpressionNotifierFactory)))
+
+    metas = List(Instance('IToolkitConstructor'))
 
     children = List(Instance('IToolkitConstructor'))
 

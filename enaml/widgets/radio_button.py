@@ -24,5 +24,5 @@ class RadioButton(ToggleControl):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IRadioButtonImpl)
+    toolkit_impl = Instance(IRadioButtonImpl)
 

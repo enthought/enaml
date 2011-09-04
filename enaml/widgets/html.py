@@ -23,5 +23,5 @@ class Html(Control):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IHtmlImpl)
+    tookit_impl = Instance(IHtmlImpl)
 

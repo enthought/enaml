@@ -26,5 +26,5 @@ class HGroup(Group):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IHGroupImpl)
+    toolkit_impl = Instance(IHGroupImpl)
 

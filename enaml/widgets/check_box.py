@@ -23,5 +23,5 @@ class CheckBox(ToggleControl):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(ICheckBoxImpl)
+    toolkit_impl = Instance(ICheckBoxImpl)
 

@@ -240,8 +240,10 @@ def p_tml_notify(p):
 
 
 def p_tml_delegate(p):
-    ''' tml_delegate : NAME COLONEQUAL NAME DOT NAME NEWLINE '''
-    p[0] = tml_ast.TMLDelegate(p[1], p[3], p[5])
+    ''' tml_delegate : NAME COLONEQUAL test NEWLINE '''
+    expr = ast.Expression(body=p[3])
+    set_locations(expr, p.lineno(1), 1)
+    p[0] = tml_ast.TMLDelegate(p[1], expr)
 
 
 #------------------------------------------------------------------------------

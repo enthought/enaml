@@ -94,7 +94,7 @@ class _ConstructorVisitor(object):
             raise ValueError(msg)
         else:
             item = (node.name, default(node.py_ast))
-            self.stack[-1].exprs.append(item)
+            self.stack[-1].delegates.append(item)
             
     def visit_TMLExprBind(self, node):
         bind = self.bind
@@ -103,7 +103,7 @@ class _ConstructorVisitor(object):
             raise ValueError(msg)
         else:
             item = (node.name, bind(node.py_ast))
-            self.stack[-1].exprs.append(item)
+            self.stack[-1].delegates.append(item)
     
     def visit_TMLNotify(self, node):
         notify = self.notify
@@ -112,7 +112,7 @@ class _ConstructorVisitor(object):
             raise ValueError(msg)
         else:
             item = (node.name, notify(node.py_ast))
-            self.stack[-1].exprs.append(item)
+            self.stack[-1].notifiers.append(item)
 
     def visit_TMLDelegate(self, node):
         delegate = self.delegate
@@ -120,8 +120,8 @@ class _ConstructorVisitor(object):
             msg = 'No interceptor factory supplied for `delegate`.'
             raise ValueError(msg)
         else:
-            item = (node.name, delegate(node.obj_name, node.attr_name))
-            self.stack[-1].exprs.append(item)
+            item = (node.name, delegate(node.py_ast))
+            self.stack[-1].delegates.append(item)
 
 
 class EnamlFactory(HasStrictTraits):
@@ -153,10 +153,12 @@ class EnamlFactory(HasStrictTraits):
     def _build_ctor_tree(self):
         # If we want to build for a different binding semantic (like pixies)
         # import and use different interceptor factories here.
-        from ..interceptors import tml
-        visitor = _ConstructorVisitor(self._toolkit, default=tml.Default,
-                                      bind=tml.Bind, delegate=tml.Delegate,
-                                      notify=tml.Notify)
+        from .. import expression_delegates as ed
+        visitor = _ConstructorVisitor(self._toolkit, 
+                                      default=ed.DefaultExpressionFactory,
+                                      bind=ed.BindingExpressionFactory, 
+                                      delegate=ed.DelegateExpressionFactory,
+                                      notify=ed.NotifierExpressionFactory)
         visitor.visit(self._ast)
         tree, imports = visitor.results()
         self._ctor_tree = tree

@@ -43,5 +43,5 @@ class PushButton(Control):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IPushButtonImpl)
+    toolkit_impl = Instance(IPushButtonImpl)
 

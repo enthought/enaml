@@ -126,10 +126,9 @@ class TMLNotify(Node):
 
 class TMLDelegate(Node):
     
-    def __init__(self, name, obj_name, attr_name):
+    def __init__(self, name, py_ast):
         self.name = name
-        self.obj_name = obj_name
-        self.attr_name = attr_name
+        self.py_ast = py_ast
 
     def __repr__(self):
         return 'Delegate %s' % self.name

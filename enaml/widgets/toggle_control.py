@@ -53,5 +53,5 @@ class ToggleControl(Control):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IToggleControlImpl)
+    toolkit_impl = Instance(IToggleControlImpl)
 

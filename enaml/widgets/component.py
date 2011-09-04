@@ -1,7 +1,7 @@
 from traits.api import (HasStrictTraits, Str, Dict, Set, WeakRef, Instance, 
-                        Interface, This, ListThis)
+                        Interface, List, DelegatesTo)
 
-from .expression_delegates import IExpressionDelegate, IExpressionNotifier
+from ..expression_delegates import IExpressionDelegate, IExpressionNotifier
 
 
 class IComponentImpl(Interface):
@@ -11,12 +11,21 @@ class IComponentImpl(Interface):
     def set_parent(self, parent):
         raise NotImplementedError
 
+    def create_widget(self):
+        raise NotImplementedError
+    
+    def initialize_widget(self):
+        raise NotImplementedError
+
+    def layout_child_widgets(self):
+        raise NotImplementedError
+
     def toolkit_widget(self):
         raise NotImplementedError
     
     def parent_name_changed(self, name):
         raise NotImplementedError
-
+    
 
 class Component(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy. 
@@ -79,19 +88,15 @@ class Component(HasStrictTraits):
         Replace child in this component with a different one. This
         will unparent the first child and reparent the second child.
     
-    def set_parent(self, parent):
+    set_parent(self, parent):
         Set the parent for this component to parent.
 
     swap_children(child, other_child)
         Swap the positions of the two children.
 
-    hook_impl()
-        Sets the toolkit_impl object as a virtual listener for this
-        component instance.
-
-    unhook_impl()
-        Removes the toolkit_impl object as a virtual listener for
-        this component instance.
+    layout()
+        Lay out and create the widgets for this component and it's
+        children. This builds the widget tree.
  
     toolkit_widget()
         Returns the underlying gui toolkit widget which is being 
@@ -108,9 +113,9 @@ class Component(HasStrictTraits):
 
     name = Str
 
-    parent = WeakRef(This)
+    parent = WeakRef
 
-    children = ListThis
+    children = List(Instance('Component'))
 
     toolkit_impl = Instance(IComponentImpl)
 
@@ -142,7 +147,7 @@ class Component(HasStrictTraits):
             raise AttributeError(msg % (name, type(self).__name__))
 
         if trait.type in ('property', 'event'):
-            msg = 'The `%s` attr on the `%s` object cannot be delegated.'
+            msg = 'The `%s` attr on the `%s` object cannot be assigned.'
             raise TypeError(msg % (name, type(self).__name__))
 
         if delegate_name in delegates:
@@ -391,37 +396,34 @@ class Component(HasStrictTraits):
         """
         self.parent = parent
     
+    def layout(self):
+        """ Initialize and layout the component and it's children.
+
+        This should not typically be called by user code.
+
+        Arguments
+        ---------
+        None
+
+        Returns
+        -------
+        result : None
+
+        """
+        impl = self.toolkit_impl
+        impl.set_parent(self)
+        impl.create_widget()
+        for child in self.children:
+            child.layout()
+        impl.initialize_widget()
+        impl.layout_child_widgets()
+        self.add_trait_listener(impl, 'parent')
+
     def toolkit_widget(self):
         """ Returns the toolkit specific widget for this component.
 
         """
         return self.toolkit_impl.toolkit_widget()
-
-    def parent_impl(self):
-        """ Sets the parent of the toolkit implementation to self.
-
-        """
-        self.toolkit_impl.set_parent(self)
-    
-    def unparent_impl(self):
-        """ Sets the parent of the toolkit implementation to None.
-
-        """
-        self.toolkit_impl.set_parent(None)
-
-    def hook_impl(self):
-        """ Sets the toolkit_impl object as a virtual listener for this
-        component instance.
-
-        """
-        self.add_trait_listener(self.toolkit_impl, 'parent')
-    
-    def unhook_impl(self):
-        """ Removes the toolkit_impl object as a virtual listener for
-        this component instance.
-
-        """
-        self.remove_trait_listener(self.toolit_impl, 'parent')
 
     def refresh(self, force=False):
         """ Refreshes the layout. 

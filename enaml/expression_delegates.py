@@ -74,12 +74,12 @@ class IExpressionDelegateFactory(Interface):
 
     Methods
     -------
-    delgate()
+    __call__()
         Creates an IExpressionDelegate instance that is ready to be
         added to an Enaml ui object.
 
     """
-    def create(self):
+    def __call__(self, global_ns, local_ns):
         """ Creates an IExpressionDelegate instance.
 
         Creates an IExpressionDelegate instance that is ready to be
@@ -87,7 +87,11 @@ class IExpressionDelegateFactory(Interface):
 
         Arguments
         ---------
-        None
+        global_ns : dict
+            The global namespace for the delegate.
+        
+        local_ns : dict
+            The local namespace for the delegate.
 
         Returns
         -------
@@ -147,16 +151,20 @@ class IExpressionNotifierFactory(Interface):
 
     Methods
     -------
-    notifier()
+    __call__()
         Creates and returns an IExpressionNotifier.
 
     """
-    def create(self):
+    def __call__(self, global_ns, local_ns):
         """ Creates and returns an IExpressionNotifier.
 
         Arguments
         ---------
-        None
+        global_ns : dict
+            The global namespace for the delegate.
+        
+        local_ns : dict
+            The local namespace for the delegate.
 
         Returns
         -------
@@ -193,7 +201,7 @@ class BaseExpression(HasStrictTraits):
     validate_trait = Instance(CTrait)
 
     # The value property
-    value = Property
+    value = Property(depends_on='_value')
 
     # The underlying value store
     _value = Any
@@ -227,20 +235,20 @@ class BindingExpression(DefaultExpression):
     dependencies = Tuple
 
     def bind(self, obj, name):
-        super(BindingExpression, self).bind()
+        super(BindingExpression, self).bind(obj, name)
         self.obj = obj
         self.name = name
         for dep_name, attr in self.dependencies:
             try:
-                dep = local_ns[dep_name]
+                dep = self.local_ns[dep_name]
             except KeyError:
                 try:
-                    dep = global_ns[dep_name]
+                    dep = self.global_ns[dep_name]
                 except KeyError:
                     msg = '`%s` is not defined or accessible in the namespace.'
                     raise NameError(msg % dep_name)
             if isinstance(dep, HasTraits):
-                dep.on_trait_change(self.refresh_value, dep_name)
+                dep.on_trait_change(self.refresh_value, attr)
 
     def refresh_value(self):
         val = eval(self.code, self.global_ns, self.local_ns)
@@ -325,7 +333,7 @@ class BaseExpressionFactory(HasStrictTraits):
     dependencies = Property(Tuple, depends_on='ast')
 
     def __init__(self, ast):
-        super(BaseInterceptorFactory, self).__init__()
+        super(BaseExpressionFactory, self).__init__()
         self.ast = ast
 
     @cached_property
@@ -343,32 +351,40 @@ class DefaultExpressionFactory(BaseExpressionFactory):
 
     implements(IExpressionDelegateFactory)
 
-    def create(self):
-        return DefaultExpression(code=self.code)
+    def __call__(self, global_ns, local_ns,):
+        return DefaultExpression(code=self.code, 
+                                 global_ns=global_ns, 
+                                 local_ns=local_ns)
 
 
 class BindingExpressionFactory(BaseExpressionFactory):
     
     implements(IExpressionDelegateFactory)
 
-    def create(self):
-        b = BindingExpression(code=self.code, dependencies=self.dependencies)
-        return b
+    def __call__(self, global_ns, local_ns):
+        return BindingExpression(code=self.code, 
+                                 dependencies=self.dependencies,
+                                 global_ns=global_ns, 
+                                 local_ns=local_ns)
 
 
 class DelegateExpressionFactory(BaseExpressionFactory):
 
     implements(IExpressionDelegateFactory)
 
-    def create(self):
-        d = DelegateExpression(code=self.code, dependencies=self.dependencies)
-        return d
+    def __call__(self, global_ns, local_ns):
+        return DelegateExpression(code=self.code,
+                                  dependencies=self.dependencies,
+                                  global_ns=global_ns, 
+                                  local_ns=local_ns)
 
 
 class NotifierExpressionFactory(BaseExpressionFactory):
 
     implements(IExpressionNotifierFactory)
 
-    def create(self):
-        return NotifierExpression(code=self.code)
+    def __call__(self, global_ns, local_ns):
+        return NotifierExpression(code=self.code,
+                                  global_ns=global_ns, 
+                                  local_ns=local_ns)
 

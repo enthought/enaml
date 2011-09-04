@@ -29,5 +29,5 @@ class Group(Container):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IGroupImpl)
+    toolkit_impl = Instance(IGroupImpl)
 

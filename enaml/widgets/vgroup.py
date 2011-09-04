@@ -26,5 +26,5 @@ class VGroup(Group):
     #---------------------------------------------------------------------------
     # Overridden parent traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IVGroupImpl)
+    toolkit_impl = Instance(IVGroupImpl)
 

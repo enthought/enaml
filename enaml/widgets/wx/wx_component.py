@@ -2,7 +2,7 @@ import wx
 
 from traits.api import implements, HasStrictTraits, WeakRef, Instance
 
-from ..component import IComponentImpl
+from ..component import Component, IComponentImpl
 
 
 class WXComponent(HasStrictTraits):
@@ -22,8 +22,20 @@ class WXComponent(HasStrictTraits):
     #---------------------------------------------------------------------------
     # IComponentImpl interface
     #---------------------------------------------------------------------------
-    parent = WeakRef
+    parent = WeakRef(Component)
 
+    def set_parent(self, parent):
+        self.parent = parent
+        
+    def create_widget(self):
+        raise NotImplementedError
+    
+    def initialize_widget(self):
+        raise NotImplementedError
+    
+    def layout_child_widgets(self):
+        raise NotImplementedError
+    
     def toolkit_widget(self):
         """ Returns the toolkit specific widget for this component.
 
@@ -35,7 +47,7 @@ class WXComponent(HasStrictTraits):
         reimplement if they need that info.
 
         """
-        pass
+        pass    
 
     #---------------------------------------------------------------------------
     # Implementation

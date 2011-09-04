@@ -1,8 +1,9 @@
-from traits.api import HasStrictTraits, List, Instance, Tuple, Str, Any
+from traits.api import HasStrictTraits, List, Instance, Tuple, Str
 
 from .i_toolkit_constructor import IToolkitConstructor
 
-from ..interceptors.i_interceptor import IInterceptorFactory
+from ..expression_delegates import (IExpressionDelegateFactory, 
+                                    IExpressionNotifierFactory)
 from ..widgets.component import Component
 
 
@@ -10,9 +11,11 @@ class BaseToolkitCtor(HasStrictTraits):
 
     identifier = Str
 
-    metas = List(Instance(IToolkitConstructor))
+    delegates = List(Tuple(Str, Instance(IExpressionDelegateFactory)))
 
-    exprs = List(Tuple(Str, Instance(IInterceptorFactory)))
+    notifiers = List(Tuple(Str, Instance(IExpressionNotifierFactory)))
+
+    metas = List(Instance(IToolkitConstructor))
 
     children = List(Instance(IToolkitConstructor))
     
@@ -32,16 +35,11 @@ class BaseToolkitCtor(HasStrictTraits):
             impl.add_meta_info(meta.impl)
         for child in self.children:
             child.construct()
-            child.impl.parent = impl
             impl.add_child(child.impl)
 
-    def build_ns(self, global_ns, parent=None):
+    def build_ns(self, global_ns):
         impl = self.impl
-        
-        local_ns = self.local_ns
-        local_ns['self'] = impl
-        local_ns['parent'] = parent.impl if parent is not None else None
-
+        self.local_ns['self'] = impl
         identifier = self.identifier
         if identifier:
             if identifier in global_ns:
@@ -49,30 +47,31 @@ class BaseToolkitCtor(HasStrictTraits):
                 raise NameError(msg % identifier)
             else:
                 global_ns[identifier] = impl
-        
         for meta in self.metas:
-            meta.build_ns(global_ns, self)
+            meta.build_ns(global_ns)
         for child in self.children:
-            child.build_ns(global_ns, self)
-
+            child.build_ns(global_ns)
         self.global_ns = global_ns
 
-    def inject_interceptors(self):
+    def hook_delegates_and_notifiers(self):
         impl = self.impl
         global_ns = self.global_ns
         local_ns = self.local_ns
-        for name, interceptor_factory in self.exprs:
-            interceptor = interceptor_factory.interceptor()
-            interceptor.inject(impl, name, global_ns, local_ns)
-        
+        for attr, delegate_factory in self.delegates:
+            delegate = delegate_factory(global_ns, local_ns)
+            impl.delegate_attribute(attr, delegate)
+        for attr, notifier_factory in self.notifiers:
+            notifier = notifier_factory(global_ns, local_ns)
+            impl.notify_attribute(attr, notifier)        
         for meta in self.metas:
-            meta.inject_interceptors()
+            meta.hook_delegates_and_notifiers()
         for child in self.children:
-            child.inject_interceptors()
+            child.hook_delegates_and_notifiers()
 
     def cleanup(self):
         self.impl = None
         self.local_ns = {}
+        self.global_ns = {}
         for meta in self.metas:
             meta.cleanup()
         for child in self.children:
@@ -81,7 +80,7 @@ class BaseToolkitCtor(HasStrictTraits):
     def __call__(self, **ctxt_objs):
         self.construct()
         self.build_ns(ctxt_objs)
-        self.inject_interceptors()
+        self.hook_delegates_and_notifiers()
         res = self.build_view()
         self.cleanup()
         return res

@@ -1,4 +1,4 @@
-from traits.api import Str
+from traits.api import Str, Instance
 
 from .control import Control, IControlImpl
 
@@ -19,4 +19,9 @@ class Label(Control):
 
     """
     text = Str
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(ILabelImpl)
 

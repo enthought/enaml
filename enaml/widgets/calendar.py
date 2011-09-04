@@ -58,5 +58,5 @@ class Calendar(Control):
     #---------------------------------------------------------------------------
     # Overridden parent traits
     #---------------------------------------------------------------------------
-    _impl = Instance(ICalendarImpl)
+    toolkit_impl = Instance(ICalendarImpl)
 

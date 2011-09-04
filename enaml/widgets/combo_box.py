@@ -62,5 +62,5 @@ class ComboBox(Control):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    _impl = Instance(IComboBoxImpl)
+    toolkit_impl = Instance(IComboBoxImpl)
 
