@@ -54,6 +54,8 @@ class WXSlider(WXElement):
         tick mark position and if for example the user sets the tick to an
         invalid value it is ignored.
 
+        ..note:: The ticks option BOTH is not supported yet in the wx widget
+
     orientation : Orientation Enum value
         The orientation of the slider. One of the Orientation enum
         values. When the orientation is flipped the tick positions (if set)
