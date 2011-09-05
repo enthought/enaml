@@ -6,7 +6,7 @@ from ..enums import Direction
 
 
 class IGroupImpl(IContainerImpl):
-
+    
     def parent_direction_changed(self, direction):
         raise NotImplementedError
 

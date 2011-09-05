@@ -26,7 +26,7 @@ class WXWindow(WXComponent):
     # IWindowImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        self.widget = wx.Frame(None)#self.parent_widget())
+        self.widget = wx.Frame(self.parent_widget())
     
     def initialize_widget(self):
         self.set_title(self.parent.title)

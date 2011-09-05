@@ -19,5 +19,6 @@ class AttributeVisitor(ast.NodeVisitor):
             self.attr = None
         
     def results(self):
-        return tuple(self.deps)
+        return list(self.deps)
+
 

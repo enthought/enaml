@@ -4,7 +4,7 @@ from .control import Control, IControlImpl
 
 
 class IToggleControlImpl(IControlImpl):
-
+    
     def parent_checked_changed(self, checked):
         raise NotImplementedError
     

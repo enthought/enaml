@@ -55,7 +55,7 @@ class WXToggleControl(WXControl):
     def bind(self):
         raise NotImplementedError
 
-    def on_toggled(self, event):
+    def _on_toggled(self, event):
         """ The event handler for the toggled event. Not meant for
         public consumption.
 
@@ -66,7 +66,7 @@ class WXToggleControl(WXControl):
         self.parent.toggled = True
         event.Skip()
 
-    def on_pressed(self, event):
+    def _on_pressed(self, event):
         """ The event handler for the pressed event. Not meant for
         public consumption.
 
@@ -75,7 +75,7 @@ class WXToggleControl(WXControl):
         self.parent.pressed = True
         event.Skip()
 
-    def on_leave_window(self, event):
+    def _on_leave_window(self, event):
         """ The event handler for the leave window event. Not meant for
         public consumption.
 

@@ -1,31 +1,99 @@
 from traits.api import (HasStrictTraits, Str, Dict, Set, WeakRef, Instance, 
                         Interface, List, DelegatesTo)
 
-from ..expression_delegates import IExpressionDelegate, IExpressionNotifier
+from ..expressions import IExpressionDelegate, IExpressionNotifier
 
 
 class IComponentImpl(Interface):
+    """ The base Component implementation interface.
 
+    A component implementation is responsible for listening to attributes
+    on the parent and doing conversions to and from those attributes
+    and values on the widget. The implementation is added as a virtual
+    listener on the component with a prefix of 'parent', so any 
+    parent_*_changed methods will be called in response to a trait
+    change on the parent. The implementation should set the traits
+    on the parent (including events) when appropriate according to 
+    their documentation.
+ 
+    Attributes
+    ----------
+    parent : WeakRef(Component)
+        A weak referent to the parent component.
+        
+    Methods
+    -------
+    set_parent(parent)
+        Sets the parent to the parent component. This will be called by 
+        the framework before the widget is to be created.
+    
+    create_widget()
+        Creates the underlying toolkit widget.
+
+    initialize_widget()
+        Initializes the widget with attributes from the parent.
+    
+    layout_child_widgets()
+        Add the child widgets of this component to any sizers or
+        layout objects necessary to lay out the ui.
+
+    toolkit_widget()
+        Returns the toolkit specific widget.
+    
+    parent_name_changed(name)
+        Called when the name trait on the parent changes.
+
+    """
     parent = WeakRef('Component')
 
     def set_parent(self, parent):
+        """ Sets the parent to the parent component. 
+
+        This will be called by the framework before the widget is to be
+        created. Typical implementations will just assign it to the 
+        parent weakref. This is the first method called in the layout
+        process.
+
+        """
         raise NotImplementedError
 
     def create_widget(self):
+        """ Creates the underlying toolkit widget. At the time this is
+        called by the frameworks, the 'set_parent' method will have
+        already been called. This is the second method called in the
+        layout process.
+
+        """
         raise NotImplementedError
     
     def initialize_widget(self):
+        """ Initializes the widget with attributes from the parent. This
+        is the third method called in the layout process.
+
+        """
         raise NotImplementedError
 
     def layout_child_widgets(self):
+        """ Adds the child widgets (if any) to any necessary layout
+        components in the ui. This is the fourth and final method called
+        in the layout process.
+
+        """
         raise NotImplementedError
 
     def toolkit_widget(self):
+        """ Returns the toolkit specific widget being mangaged by this
+        implementation object.
+
+        """
         raise NotImplementedError
-    
+
     def parent_name_changed(self, name):
+        """ Called when the name on the component changes.
+
+        """
         raise NotImplementedError
-    
+
 
 class Component(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy. 
@@ -119,7 +187,7 @@ class Component(HasStrictTraits):
 
     toolkit_impl = Instance(IComponentImpl)
 
-    def delegate_attribute(self, name, delegate):
+    def set_attribute_delegate(self, name, delegate):
         """ Delegates the value of the attribute to the delegate.
 
         Call this method to intercept the value of the standard trait
@@ -156,8 +224,7 @@ class Component(HasStrictTraits):
         else:
             delegates[delegate_name] = delegate
 
-        delegate.validate_trait = trait()
-        delegate.bind(self, name)
+        delegate.bind(self, name, trait())
 
         self.add_trait(delegate_name, delegate)
         self.add_trait(name, DelegatesTo(delegate_name, 'value'))
@@ -166,7 +233,7 @@ class Component(HasStrictTraits):
         # listeners don't get hooked up properly.
         self.trait_added = name
 
-    def notify_attribute(self, name, notifier):
+    def add_attribute_notifier(self, name, notifier):
         """ Adds a notifier for the given attribute name.
 
         Call this method to hook up an IExpressionNotifier to the
@@ -397,9 +464,12 @@ class Component(HasStrictTraits):
         self.parent = parent
     
     def layout(self):
-        """ Initialize and layout the component and it's children.
+        """ Initialize and layout the component and it's children. 
 
-        This should not typically be called by user code.
+        In addition to running the layout process, this method calls
+        hook_impl() which will add the implementation as a virtual 
+        listen on this instance. This method should not typically be 
+        called by user code.
 
         Arguments
         ---------
@@ -417,8 +487,16 @@ class Component(HasStrictTraits):
             child.layout()
         impl.initialize_widget()
         impl.layout_child_widgets()
-        self.add_trait_listener(impl, 'parent')
+        self.hook_impl()
 
+    def hook_impl(self):
+        """ Adds the implementation object as a listener via the 
+        'add_trait' method. Override this in a subclass to change
+        behavior (will rarely, if ever, be necessary).
+        
+        """
+        self.add_trait_listener(self.toolkit_impl, 'parent')
+         
     def toolkit_widget(self):
         """ Returns the toolkit specific widget for this component.
 

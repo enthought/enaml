@@ -7,16 +7,13 @@ class IComboBoxImpl(IControlImpl):
 
     def parent_items_changed(self, items):
         raise NotImplementedError
-
-    def parent_items_items_changed(self, list_event):
-        raise NotImplementedError
-
-    def parent_value_changed(self, value):
+    
+    def parent_items_items_changed(self, items_event):
         raise NotImplementedError
 
     def parent_to_string_changed(self, to_string):
         raise NotImplementedError
-
+    
 
 class ComboBox(Control):
     """ A drop-down list from which one item can be selected at a time.

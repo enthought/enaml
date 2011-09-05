@@ -5,7 +5,7 @@ from .control import Control, IControlImpl
 
 class IPushButtonImpl(IControlImpl):
 
-    def parent_text_changed(self, text):
+    def parent_text_changed(self):
         raise NotImplementedError
     
 

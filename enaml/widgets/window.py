@@ -9,15 +9,15 @@ from ..enums import Modality
 class IWindowImpl(IComponentImpl):
 
     def show(self):
+        """ Make the window visible on the screen.
+
+        """
         raise NotImplementedError
     
     def hide(self):
-        raise NotImplementedError
+        """ Hide the window from the screen.
 
-    def parent_title_changed(self, title):
-        raise NotImplementedError
-    
-    def parent_modality_changed(self, modality):
+        """
         raise NotImplementedError
 
 

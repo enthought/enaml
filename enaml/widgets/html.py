@@ -4,7 +4,7 @@ from .control import Control, IControlImpl
 
 
 class IHtmlImpl(IControlImpl):
-
+    
     def parent_source_changed(self, source):
         raise NotImplementedError
 

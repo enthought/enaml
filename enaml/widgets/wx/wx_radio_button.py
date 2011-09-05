@@ -120,7 +120,8 @@ class WXRadioButton(WXToggleControl):
         emited by _on_toggled would be inappropriate.
 
         """
-        self.checked = self.widget.GetValue()
-        self.toggled = True
+        parent = self.parent
+        parent.checked = self.widget.GetValue()
+        parent.toggled = True
         event.Skip()
 

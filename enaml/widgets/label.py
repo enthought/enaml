@@ -4,8 +4,8 @@ from .control import Control, IControlImpl
 
 
 class ILabelImpl(IControlImpl):
-
-    def parent_text_changed(self):
+    
+    def parent_text_changed(self, text):
         raise NotImplementedError
 
     

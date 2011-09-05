@@ -7,7 +7,7 @@ from .control import Control, IControlImpl
 
 class ICalendarImpl(IControlImpl):
 
-    def parent_date_changed(self, date):
+    def parent_data_changed(self, date):
         raise NotImplementedError
     
     def parent_minimum_date_changed(self, date):
