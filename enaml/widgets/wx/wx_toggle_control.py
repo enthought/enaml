@@ -60,10 +60,11 @@ class WXToggleControl(WXControl):
         public consumption.
 
         """
-        self.parent.down = False
-        self.parent.checked = self.widget.GetValue()
-        self.parent.released = True
-        self.parent.toggled = True
+        parent = self.parent
+        parent.checked = self.widget.GetValue()
+        parent._down = False
+        parent.released = True
+        parent.toggled = True
         event.Skip()
 
     def _on_pressed(self, event):
@@ -71,8 +72,9 @@ class WXToggleControl(WXControl):
         public consumption.
 
         """
-        self.parent.down = True
-        self.parent.pressed = True
+        parent = self.parent
+        parent._down = True
+        parent.pressed = True
         event.Skip()
 
     def _on_leave_window(self, event):
@@ -84,9 +86,10 @@ class WXToggleControl(WXControl):
         # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down 
         # flag when the mouse leaves the button and then releases, 
         # we need to hook the EVT_LEAVE_WINDOW
-        if self.parent.down:
-            self.parent.down = False
-            self.parent.released = True
+        parent = self.parent
+        if parent._down:
+            parent._down = False
+            parent.released = True
         event.Skip()
 
     def set_label(self, label):

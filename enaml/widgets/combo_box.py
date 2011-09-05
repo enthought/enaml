@@ -8,6 +8,9 @@ class IComboBoxImpl(IControlImpl):
     def parent_items_changed(self, items):
         raise NotImplementedError
     
+    def parent_value_changed(self, value):
+        raise NotImplementedError
+        
     def parent_items_items_changed(self, items_event):
         raise NotImplementedError
 

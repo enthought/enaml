@@ -22,7 +22,7 @@ class Field(LineEdit):
     """ A basic value field which subclasses from LineEdit.
 
     A Field performs validation/conversion on the text value and
-    updates the 'error' attribute when conversion fails. 
+    updates the 'error' attribute when conversion fails.
 
     Attributes
     ----------

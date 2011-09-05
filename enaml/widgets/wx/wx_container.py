@@ -21,22 +21,6 @@ class WXContainer(WXComponent):
     #---------------------------------------------------------------------------
     # IContainerImpl interface
     #---------------------------------------------------------------------------
-    def create_widget(self):
-        """ Create the underlying widget (or sizer) for the container.
-
-        """
-        raise NotImplementedError
-
-    def initialize_widget(self):
-        """ Initialize the attributes of the container.
-
-        """
-        raise NotImplementedError
-
-    def layout_child_widgets(self):
-        """ Layout the children of the container.
-
-
-        """
-        raise NotImplementedError
+    
+    # The IContainerImpl interface is empty
 

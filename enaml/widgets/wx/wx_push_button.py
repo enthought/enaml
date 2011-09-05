@@ -63,7 +63,7 @@ class WXPushButton(WXControl):
 
         """
         parent = self.parent
-        parent.down = False
+        parent._down = False
         parent.released = True
         parent.clicked = True
         event.Skip()
@@ -74,7 +74,7 @@ class WXPushButton(WXControl):
 
         """
         parent = self.parent
-        parent.down = True
+        parent._down = True
         parent.pressed = True
         event.Skip()
 
@@ -88,8 +88,8 @@ class WXPushButton(WXControl):
         # flag when the mouse leaves the button and then releases,
         # we need to hook the EVT_LEAVE_WINDOW 
         parent = self.parent
-        if parent.down:
-            parent.down = False
+        if parent._down:
+            parent._down = False
             parent.released = True
         event.Skip()
 
