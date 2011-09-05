@@ -6,11 +6,9 @@ from the current directory.
 from cStringIO import StringIO
 import random
 
-import wx
-
 from traits.api import HasTraits, Str
 
-from enaml.factories.enaml_factory import EnamlFactory
+from enaml.factory import EnamlFactory
 
 enml = """
 import random
@@ -22,29 +20,49 @@ from enaml.enums import Direction
 Window:
     title << model.window_title
     Panel:
-        VGroup:
-            HGroup:
-                PushButton this_button:
-                    text = "One"
-                PushButton:
-                    text = "Two"
-                    clicked >> setattr(model, 'window_title', model.randomize(model.window_title))
-                PushButton:
-                    text = "Three"
-            HGroup:
-                PushButton:
-                    text = "One"
-                PushButton:
-                    text = "Two"
-                PushButton:
-                    text = "Three"
-            HGroup:
-                PushButton:
-                    text << "One" if this_button.down else "Four"
-                PushButton:
-                    text = "Two"
-                PushButton:
-                    text = "Three"
+        HGroup:
+            VGroup:
+                CheckBox:
+                    pass
+                RadioButton:
+                    pass
+                RadioButton:
+                    pass
+                RadioButton:
+                    pass
+            VGroup:
+                Panel:
+                    HGroup:
+                        RadioButton:
+                            pass
+                        RadioButton:
+                            pass
+                        RadioButton:
+                            pass
+                HGroup:
+                    PushButton this_button:
+                        text = "One"
+                    PushButton:
+                        text = "Two"
+                        clicked >> setattr(model, 'window_title', model.randomize(model.window_title))
+                    PushButton:
+                        text = "Three"
+                HGroup:
+                    PushButton:
+                        text = "One"
+                    PushButton:
+                        text = "Two"
+                    PushButton:
+                        text = "Three"
+                HGroup:
+                    PushButton:
+                        text << "One" if this_button.down else "Four"
+                    PushButton:
+                        text = "Two"
+                    PushButton:
+                        text = "Three"
+                Calendar:
+                    pass
 """
 
 class Model(HasTraits):
@@ -63,11 +81,6 @@ class Model(HasTraits):
 
 
 fact = EnamlFactory(StringIO(enml))
-
-app = wx.PySimpleApp()
-
 view = fact(model=Model())
 view.show()
-
-app.MainLoop()
 
