@@ -1,7 +1,13 @@
-from traits.api import Bool, Event 
+from traits.api import Bool, Event, Instance
 
-from .stacked_group import StackedGroup
+from .stacked_group import IStackedGroupImpl, StackedGroup
 
+
+class ITabGroupImpl(IStackedGroupImpl):
+
+    def parent_movable_true(self, movable):
+        raise NotImplementedError
+    
 
 class TabGroup(StackedGroup):
     """ A container that lays out its child containers as a notebook.
@@ -27,4 +33,9 @@ class TabGroup(StackedGroup):
     movable = Bool
 
     reordered = Event
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(ITabGroupImpl)
 

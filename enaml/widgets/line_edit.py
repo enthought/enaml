@@ -1,8 +1,71 @@
-from traits.api import Bool, Event, Int, Str, Property
+from traits.api import Bool, Event, Int, Str, Property, Instance
 
-from .control import Control
+from .control import IControlImpl, Control
+
+from ..util.decorators import protected
 
 
+class ILineEditImpl(IControlImpl):
+
+    def parent_max_length_changed(self, max_length):
+        raise NotImplementedError
+    
+    def parent_read_only_changed(self, read_only):
+        raise NotImplementedError
+    
+    def parent_cursor_position_changed(self, cursor_position):
+        raise NotImplementedError
+    
+    def parent_placeholder_text_changed(self, placeholder_text):
+        raise NotImplementedError
+    
+    def parent_text_changed(self, text):
+        raise NotImplementedError
+    
+    def set_selection(self, start, end):
+        raise NotImplementedError
+
+    def select_all(self):
+        raise NotImplementedError
+
+    def deselect(self):
+        raise NotImplementedError
+    
+    def clear(self):
+        raise NotImplementedError
+
+    def backspace(self):
+        raise NotImplementedError
+    
+    def delete(self):
+        raise NotImplementedError
+
+    def end(self, mark=False):
+        raise NotImplementedError
+    
+    def home(self, mark=False):
+        raise NotImplementedError
+    
+    def cut(self):
+        raise NotImplementedError
+    
+    def copy(self):
+        raise NotImplementedError
+
+    def paste(self):
+        raise NotImplementedError
+    
+    def insert(self, text):
+        raise NotImplementedError
+
+    def undo(self):
+        raise NotImplementedError
+    
+    def redo(self):
+        raise NotImplementedError
+
+
+@protected('_modified', '_selected_text')
 class LineEdit(Control):
     """ A single-line editable text widget.
 
@@ -17,10 +80,10 @@ class LineEdit(Control):
     cursor_position : Int
         The position of the cursor in the line edit. 
 
-    modified : Bool
-        True if the user has modified the line edit from the ui,
-        False otherwise. This is reset to False if the text is
-        programmatically changed.
+    modified : Property(Bool)
+        A read only property that is set to True if the user has changed
+        the line edit from the ui, False otherwise. This is reset to 
+        False if the text is programmatically changed.
 
     placeholder_text : Str
         The grayed-out text to display if 'text' is empty and the
@@ -30,8 +93,8 @@ class LineEdit(Control):
         The string to use in the line edit.
     
     selected_text : Property(Str)
-        The text selected in the line edit. This is a read only property
-        that is updated whenever the selection changes.
+        A read only property that is updated with the text selected 
+        in the line edit.
 
     text_changed : Event
         Fired when the text is changed programmatically, or by the 
@@ -44,6 +107,14 @@ class LineEdit(Control):
     
     return_pressed : Event
         Fired when the return/enter key is pressed in the line edit.
+    
+    _modified : Bool
+        A protected attribute that is used by the implementation object
+        to update the value of modified.
+    
+    _selected_text : Str
+        A protected attribute that is used by the implementation object
+        to update the value of selected_text.
 
     Methods
     -------
@@ -104,13 +175,13 @@ class LineEdit(Control):
 
     cursor_position = Int
 
-    modified = Bool
+    modified = Property(Bool, depends_on='_modified')
 
     placeholder_text = Str
 
     text = Str
 
-    selected_text = Property(Str)
+    selected_text = Property(Str, depends_on='_selected_text')
 
     text_changed = Event
 
@@ -118,6 +189,15 @@ class LineEdit(Control):
 
     return_pressed = Event
 
+    _modified = Bool(False)
+
+    _selected_text = Str
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(ILineEditImpl)
+    
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.
 
@@ -136,12 +216,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.set_selection(start, end)
 
     def select_all(self):
         """ Select all the text in the line edit.
@@ -157,12 +233,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.select_all(start, end)
 
     def deselect(self):
         """ Deselect any selected text.
@@ -175,12 +247,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.deselect()
     
     def clear(self):
         """ Clear the line edit of all text.
@@ -193,12 +261,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.clear()
 
     def backspace(self):
         """ Simple backspace functionality.
@@ -214,12 +278,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.backspace()
     
     def delete(self):
         """ Simple delete functionality.
@@ -235,12 +295,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.delete()
 
     def end(self, mark=False):
         """ Moves the cursor to the end of the line. 
@@ -255,12 +311,8 @@ class LineEdit(Control):
         -------
         results : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.end(mark=mark)
     
     def home(self, mark=False):
         """ Moves the cursor to the beginning of the line. 
@@ -275,12 +327,8 @@ class LineEdit(Control):
         -------
         results : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.home(mark=mark)
     
     def cut(self):
         """ Cuts the selected text from the line edit.
@@ -296,12 +344,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.cut()
     
     def copy(self):
         """ Copies the selected text to the clipboard.
@@ -314,12 +358,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.copy()
 
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
@@ -335,12 +375,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.paste()
     
     def insert(self, text):
         """ Insert the text into the line edit.
@@ -357,12 +393,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.insert(text)
 
     def undo(self):
         """ Undoes the last operation.
@@ -375,12 +407,8 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.undo()
     
     def redo(self):
         """ Redoes the last operation.
@@ -393,10 +421,13 @@ class LineEdit(Control):
         -------
         result : None
 
-        Raises
-        ------
-        None
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.redo()
+
+    def _get_modified(self):
+        return self._modified
+    
+    def _get_selected_text(self):
+        return self._selected_text
+
 

@@ -1,6 +1,21 @@
-from traits.api import Any, Callable, Int
+from traits.api import Any, Callable, Int, Instance
 
-from .control import Control
+from .control import IControlImpl, Control
+
+
+class IImageImpl(IControlImpl):
+
+    def parent_value_changed(self):
+        raise NotImplementedError
+    
+    def parent_loader_changed(self):
+        raise NotImplementedError
+    
+    def parent_width_changed(self):
+        raise NotImplementedError
+    
+    def parent_height_changed(self):
+        raise NotImplementedError
 
 
 class Image(Control):
@@ -34,3 +49,9 @@ class Image(Control):
     
     height = Int
 
+    #---------------------------------------------------------------------------
+    # Overriddent parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(IImageImpl)
+
+    

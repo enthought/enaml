@@ -1,6 +1,18 @@
-from traits.api import Bool, Str
+from traits.api import Bool, Str, Instance
 
-from .container import Container
+from .container import IContainerImpl, Container
+
+
+class IGroupBoxImpl(IContainerImpl):
+
+    def parent_checkable_changed(self):
+        raise NotImplementedError
+    
+    def parent_checked_changed(self):
+        raise NotImplementedError
+    
+    def parent_title_changed(self):
+        raise NotImplementedError
 
 
 class GroupBox(Container):
@@ -32,3 +44,9 @@ class GroupBox(Container):
 
     title = Str
 
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(IGroupBoxImpl)
+
+    

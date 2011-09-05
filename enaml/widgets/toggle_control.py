@@ -1,6 +1,8 @@
-from traits.api import Bool, Event, Str, Instance
+from traits.api import Bool, Event, Str, Instance, Property
 
 from .control import Control, IControlImpl
+
+from ..util.decorators import protected
 
 
 class IToggleControlImpl(IControlImpl):
@@ -12,6 +14,7 @@ class IToggleControlImpl(IControlImpl):
         raise NotImplementedError
 
 
+@protected('_down')
 class ToggleControl(Control):
     """ An abstract toggle element. 
     
@@ -22,8 +25,9 @@ class ToggleControl(Control):
     checked : Bool
         Whether the element is currently checked.
 
-    down : Bool
-        Whether the user is currently pressing the element.
+    down : Property(Bool)
+        A read only property which indicates whether the user is 
+        currently pressing the element.
         
     text : Str
         The text to use as the element's label.
@@ -37,10 +41,14 @@ class ToggleControl(Control):
     released : Event
         Fired when the element is released.
 
+    _down : Bool
+        A protected attribute used by the implementation object to
+        set the value of down.
+
     """
     checked = Bool
 
-    down = Bool
+    down = Property(Bool, depends_on='_down')
 
     text = Str
     
@@ -50,8 +58,13 @@ class ToggleControl(Control):
 
     released = Event
 
+    _down = Bool
+
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IToggleControlImpl)
+
+    def _get_down(self):
+        return self._down
 

@@ -1,6 +1,12 @@
 from traits.api import Int, Property, Instance
 
-from .container import Container
+from .container import IContainerImpl, Container
+
+
+class IStackedGroupImpl(IContainerImpl):
+
+    def parent_current_idx_changed(self, current_idx):
+        raise NotImplementedError
 
 
 class StackedGroup(Container):
@@ -16,13 +22,9 @@ class StackedGroup(Container):
         An index which controls which child in the stack is visible.
         This is synchronized with 'current_child'.
 
-    current_child : IContainer
-        The current child container that is visible. This is 
-        synchronized with 'current_index'.
-
     count : Property(Int)
-        A read only property which returns the number of child 
-        containers in the stack.
+        A read only property which returns the number of children
+        in the stack.
     
     Methods
     -------
@@ -35,10 +37,13 @@ class StackedGroup(Container):
     """
     current_index = Int
 
-    current_child = Instance(IContainer)
+    count = Property(Int, depends_on='children')
 
-    count = Property(Int)
-
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(IStackedGroupImpl)
+    
     def child_at(self, idx):
         """ Returns the child container at the given index.
 
@@ -88,4 +93,7 @@ class StackedGroup(Container):
 
         """
         raise NotImplementedError
+
+    def _get_count(self):
+        return len(self.children)
 

@@ -1,10 +1,24 @@
-from traits.api import Event, Enum, Bool
+from traits.api import Event, Enum, Bool, Instance, Property
 
-from .window import Window
+from .window import IWindowImpl, Window
 
 from ..enums import DialogResult
+from ..util.decorators import protected
 
 
+class IDialogImpl(IWindowImpl):
+
+    def open(self):
+        raise NotImplementedError
+
+    def accept(self):
+        raise NotImplementedError
+    
+    def reject(self):
+        raise NotImplementedError
+
+
+@protected('_active', '_shadow')
 class Dialog(Window):
     """ A basic dialog widget whose contents are user defined. 
 
@@ -13,8 +27,9 @@ class Dialog(Window):
     
     Attributes
     ----------
-    active : Bool
-        Set to True when the dialog is open, False otherwise.
+    active : Property(Bool)
+        A read only property which will be True when the dialog is open,
+        False otherwise.
 
     opened : Event
         Fired when the dialog is opened.
@@ -23,12 +38,20 @@ class Dialog(Window):
         Fired when the dialog is closed. The event payload will be the
         dialog result.
 
-    result : DialogResult Enum value.
-        When the dialog is closed this value is updated to the result 
-        of the dialog; REJECTED if rejected() was called or the window 
-        was closed via the 'x' window button, ACCEPTED if accept() was 
-        called. The result is set before the 'closed' event is fired.
+    result : Property(Enum(*DialogResult.values())).
+        A read only property which is set to the result of the dialog; 
+        REJECTED if rejected() was called or the window was closed via 
+        the 'x' window button, ACCEPTED if accept() was called. The 
+        result is set before the 'closed' event is fired.
     
+    _shadow : Bool
+        A protected attribute used by the implementation object to
+        set the value of the active attribute.
+    
+    _shadow : Enum(*Dialog.values())
+        A protected attribute used by the implementation object to
+        set the value of the result attribute.
+
     Methods
     -------
     open()
@@ -41,14 +64,23 @@ class Dialog(Window):
         Close the dialog and set the result to DialogResult.REJECTED.
 
     """
-    active = Bool
+    active = Property(Bool, depends_on='_active')
 
     opened = Event
 
     closed = Event
 
-    result = Enum(*DialogResult.values())
+    result = Property(Enum(*DialogResult.values()), depends_on='_result')
 
+    _active = Bool
+
+    _result = Enum(*DialogResult.values())
+
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(IDialogImpl)
+    
     def open(self):
         """ Open and display the dialog.
 
@@ -62,13 +94,8 @@ class Dialog(Window):
         -------
         result : None
 
-        Raises
-        ------
-        DialogError
-            Any reason the dialog cannot be opened.
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.open()
 
     def accept(self):
         """ Close the dialog and set the result to DialogResult.ACCEPTED.
@@ -84,13 +111,8 @@ class Dialog(Window):
         -------
         result : None
 
-        Raises
-        ------
-        DialogError
-            The dialog is not open and so cannot be closed.
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.accept()
 
     def reject(self):
         """ Close the dialog and set the result to DialogResult.REJECTED.
@@ -106,11 +128,12 @@ class Dialog(Window):
         -------
         result : None
 
-        Raises
-        ------
-        DialogError
-            The dialog is not open and so cannot be closed.
-
         """
-        raise NotImplementedError
+        self.toolkit_impl.reject()
+
+    def _get_active(self):
+        return self._active
+    
+    def _get_result(self):
+        return self._result
 

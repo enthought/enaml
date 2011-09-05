@@ -1,4 +1,8 @@
-from .container import Container
+from .container import IContainerImpl, Container, Instance
+
+
+class IFormImpl(IContainerImpl):
+    pass
 
 
 class Form(Container):
@@ -9,5 +13,8 @@ class Form(Container):
     span both cols.
 
     """
-    pass
+    #---------------------------------------------------------------------------
+    # Overridden parent class traits
+    #---------------------------------------------------------------------------
+    toolkit_impl = Instance(IFormImpl)
 

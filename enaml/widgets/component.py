@@ -2,6 +2,7 @@ from traits.api import (HasStrictTraits, Str, Dict, Set, WeakRef, Instance,
                         Interface, List, DelegatesTo)
 
 from ..expressions import IExpressionDelegate, IExpressionNotifier
+from ..util.decorators import protected
 
 
 class IComponentImpl(Interface):
@@ -95,6 +96,7 @@ class IComponentImpl(Interface):
         raise NotImplementedError
 
 
+@protected('_delegates', '_notifiers', 'parent', 'children', 'toolkit_impl')
 class Component(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy. 
     
@@ -105,11 +107,13 @@ class Component(HasStrictTraits):
     ----------
     _delegates : Dict(Str, Instance(IExpressionDelegate))
         The expression delegates currently installed on this component. 
-        This is managed internally. Manipulate at your own risk.
+        This is a protected attribute and is managed internally. 
+        Manipulate at your own risk.
     
     _notifiers : Set(Instance(IExpressionNotifier))
         The expression notifiers currently installed on this component. 
-        This is managed internally. Manipulate at your own risk.
+        This is a protected attribute and is managed internally. 
+        Manipulate at your own risk.
 
     name : Str
         The name of this element which may be used as metainfo by other
@@ -119,19 +123,21 @@ class Component(HasStrictTraits):
     parent : WeakRef(Component)
         The parent component of this component which is stored as a
         weakref to mitigate memory leak issues from reference cycles.
+        This is a protected attribute.
 
     children : List(Instance(Component))
         The list of children components for this component. Subclasses
         may redefine this trait to restrict which types of children
         they allow. This list should not be manipulated outside of
-        the *_child(...) methods.    
+        the *_child(...) methods. This is a protected attribute.
 
     toolkit_impl : Instance(ComponentImpl)
         The toolkit specific object that implements the behavior of 
         this component. This implementation object is added as a virtual 
         listener for this component and maintains a weak reference to 
         this component. The listeners are set up and torn down with the 
-        'hook_impl' and 'unhook_impl' methods.
+        'hook_impl' and 'unhook_impl' methods. This is a protected 
+        attribute.
 
     Methods
     -------
@@ -206,6 +212,11 @@ class Component(HasStrictTraits):
         result : None
 
         """
+        if name in self.__protected__:
+            msg = ('The `%s` attribute of the `%s` object is protected '
+                   'and cannot be used in an Enaml expression.')
+            raise AttributeError(msg % (name, type(self).__name__))
+        
         trait = self.trait(name)
         delegates = self._delegates
         delegate_name = '_%s_enaml_delegate' % name
@@ -215,7 +226,7 @@ class Component(HasStrictTraits):
             raise AttributeError(msg % (name, type(self).__name__))
 
         if trait.type in ('property', 'event'):
-            msg = 'The `%s` attr on the `%s` object cannot be assigned.'
+            msg = 'The `%s` attr on the `%s` object cannot be delegated.'
             raise TypeError(msg % (name, type(self).__name__))
 
         if delegate_name in delegates:
@@ -252,6 +263,11 @@ class Component(HasStrictTraits):
         result : None
 
         """
+        if name in self.__protected__:
+            msg = ('The `%s` attribute of the `%s` object is protected '
+                   'and cannot be used in an Enaml expression.')
+            raise AttributeError(msg % (name, type(self).__name__))
+
         trait = self.trait(name)
         if trait is None:
             msg = '`%s` is not a proper attribute on the `%s` object.'

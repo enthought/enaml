@@ -8,7 +8,7 @@ class IControlImpl(IComponentImpl):
 
 
 class Control(Component):
-    """ The base class of all concretes widgets in Enaml.
+    """ The base class of all concrete widgets in Enaml.
 
     """
     #---------------------------------------------------------------------------
