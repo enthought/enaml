@@ -3,7 +3,7 @@ import warnings
 
 import wx
 from traits.api import (implements, Bool, Event, Str, Enum, Float, Any,
-                        Range, Callable, TraitError)
+                        Range, Callable, TraitError, Int)
 
 from .wx_element import WXElement
 from ..i_slider import ISlider
@@ -45,8 +45,20 @@ class WXSlider(WXElement):
         If True, the value is updated while sliding. Otherwise, it is
         only updated when the slider is released. Defaults to True.
 
+    single_step : Int
+        Defines the number of ticks that the slider will move when the user
+        presses the arrow keys. Defailt is 1
+
+    page_step : Int
+        Defines the number of ticks that the slider will move when the user
+        presses the page_up/page_down keys. Default is 5
+
     tick_interval : Float
-        The slider_pos interval to put between tick marks. Default is `0.1`.
+        The slider_pos interval to put between tick marks. Default value is
+        `0.1` which is 10% of the full slider range. Please note that this value
+        defined the number of possible values that can be selected. So the
+        default value will create a slider with 9 places between the minimum
+        and maximum values.
 
     ticks : TickPosition Enum value
         A TickPosition enum value indicating how to display the tick
@@ -108,6 +120,10 @@ class WXSlider(WXElement):
 
     tick_interval = Float(0.1)
 
+    single_step = Int(1)
+
+    page_step = Int(5)
+
     ticks = Enum(*TickPosition.values())
 
     orientation = Enum(*Orientation.values())
@@ -166,9 +182,13 @@ class WXSlider(WXElement):
         # down
         self.down = False
 
+        # range
         minimum = self._convert_for_wx(0.0)
         maximum = self._convert_for_wx(1)
         self.widget.SetRange(minimum, maximum)
+
+        self.widget.SetLineSize(self.single_step)
+        self.widget.SetPageSize(self.page_step)
 
         # slider position
         self.value = self.from_slider(self.slider_pos)
@@ -333,6 +353,16 @@ class WXSlider(WXElement):
         self._apply_tick_position(self.ticks)
         return
 
+    def _single_step_changed(self):
+        """Update the widget due to change in the line step"""
+        print "single_step changed to:", self.single_step
+        self.widget.SetLineSize(self.single_step)
+
+    def _page_step_changed(self):
+        """Update the widget due to change in the line step"""
+        print "page_step changed to:", self.page_step
+        self.widget.SetPageSize(self.page_step)
+
     #--------------------------------------------------------------------------
     # Event handlers
     #--------------------------------------------------------------------------
@@ -420,7 +450,7 @@ Window main:
                 orientation << Orientation.VERTICAL if vertical.checked else Orientation.HORIZONTAL
                 ticks = TickPosition.DEFAULT
                 value = 0.5
-                tick_interval = 0.1
+                tick_interval = 0.01
                 tracking := track.checked
                 released >> print('the slider was released!', msg.new)
                 pressed >> print('the slider was pressed!', msg.new)
