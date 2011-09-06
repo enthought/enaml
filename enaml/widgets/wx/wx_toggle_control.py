@@ -11,7 +11,7 @@ class WXToggleControl(WXControl):
     This class can serve as a base class for widgets that implement
     toggle behavior such as CheckBox and RadioButton. It is not meant
     to be used directly. Subclasses should implement the 'create_widget'
-    method.
+    and 'bind' methods.
 
     See Also
     --------
@@ -24,10 +24,8 @@ class WXToggleControl(WXControl):
     # IToggleControlImpl interface
     #---------------------------------------------------------------------------
     def initialize_widget(self):
-        """ Initializes the attributes of the underlying control.
-
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
+        """ Initializes the attributes of the underlying control. Not
+        meant for public consumption.
 
         """
         parent = self.parent
@@ -50,12 +48,16 @@ class WXToggleControl(WXControl):
         self.set_label(text)
 
     #---------------------------------------------------------------------------
-    # implementation
+    # Implementation
     #---------------------------------------------------------------------------
     def bind(self):
+        """ Binds the event handlers of the control. Must be implemented
+        by subclasses.
+
+        """
         raise NotImplementedError
 
-    def _on_toggled(self, event):
+    def on_toggled(self, event):
         """ The event handler for the toggled event. Not meant for
         public consumption.
 
@@ -67,7 +69,7 @@ class WXToggleControl(WXControl):
         parent.toggled = True
         event.Skip()
 
-    def _on_pressed(self, event):
+    def on_pressed(self, event):
         """ The event handler for the pressed event. Not meant for
         public consumption.
 
@@ -77,7 +79,7 @@ class WXToggleControl(WXControl):
         parent.pressed = True
         event.Skip()
 
-    def _on_leave_window(self, event):
+    def on_leave_window(self, event):
         """ The event handler for the leave window event. Not meant for
         public consumption.
 

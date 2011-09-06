@@ -49,11 +49,11 @@ class WXField(WXLineEdit):
         try:
             value = from_string(text)
         except Exception as e:
-            parent.exception = e
-            parent.error = True
+            parent._exception = e
+            parent._error = True
         else:
-            parent.exception = None
-            parent.error = False
+            parent._exception = None
+            parent._error = False
             parent.value = value
     
     def sync_text(self):
@@ -63,10 +63,10 @@ class WXField(WXLineEdit):
         try:
             text = to_string(value)
         except Exception as e:
-            parent.exception = e
-            parent.error = True
+            parent._exception = e
+            parent._error = True
         else:
-            parent.exception = None
-            parent.error = False
+            parent._exception = None
+            parent._error = False
             parent.text = text
 

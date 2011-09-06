@@ -8,13 +8,13 @@ from ..push_button import IPushButtonImpl
 
 
 class WXPushButton(WXControl):
-    """ A wxPython implementation of IPushButton.
+    """ A wxPython implementation of PushButton.
 
     WXPushButton uses a wx.Button control.
 
     See Also
     --------
-    IPushButton
+    PushButton
 
     """
     implements(IPushButtonImpl)
@@ -25,17 +25,11 @@ class WXPushButton(WXControl):
     def create_widget(self):
         """ Creates the underlying wx.Button control.
 
-        This is called by the 'layout' method and is not meant for
-        public consumption.
-
         """
         self.widget = wx.Button(self.parent_widget())
         
     def initialize_widget(self):
         """ Intializes the widget with the attributes of this instance.
-
-        This is called by the 'layout' method and is not meant for
-        public consumption.
 
         """
         self.set_label(self.parent.text)
@@ -52,12 +46,15 @@ class WXPushButton(WXControl):
     # Implementation
     #---------------------------------------------------------------------------
     def bind(self):
-        widget = self.widget
-        widget.Bind(wx.EVT_BUTTON, self._on_clicked)
-        widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
-        widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)
+        """ Binds the event handlers for the push button.
 
-    def _on_clicked(self, event):
+        """
+        widget = self.widget
+        widget.Bind(wx.EVT_BUTTON, self.on_clicked)
+        widget.Bind(wx.EVT_LEFT_DOWN, self.on_pressed)
+        widget.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+
+    def on_clicked(self, event):
         """ The event handler for the button's clicked event. Not meant
         for public consumption.
 
@@ -68,7 +65,7 @@ class WXPushButton(WXControl):
         parent.clicked = True
         event.Skip()
 
-    def _on_pressed(self, event):
+    def on_pressed(self, event):
         """ The event handlers for the button's pressed event. Not meant
         for public consumption.
 
@@ -78,7 +75,7 @@ class WXPushButton(WXControl):
         parent.pressed = True
         event.Skip()
 
-    def _on_leave_window(self, event):
+    def on_leave_window(self, event):
         """ The event handler for the button's leave window event. Not
         meant for public consumption.
 

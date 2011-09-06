@@ -8,13 +8,13 @@ from ..label import ILabelImpl
 
 
 class WXLabel(WXControl):
-    """ A wxPython implementation of ILabel.
+    """ A wxPython implementation of Label.
 
     A WXLabel displays static text using a wx.StaticText control.
 
     See Also
     --------
-    ILabel
+    Label
 
     """
     implements(ILabelImpl)
@@ -25,17 +25,11 @@ class WXLabel(WXControl):
     def create_widget(self):
         """ Creates the underlying text control.
 
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
-
         """
         self.widget = wx.StaticText(self.parent_widget())
 
     def initialize_widget(self):
         """ Initializes the attributes on the underlying control.
-
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
 
         """
         self.set_label(self.text)

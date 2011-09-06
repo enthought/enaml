@@ -45,12 +45,15 @@ class WXGroup(WXContainer):
             sizer.Add(child, 1, wx.EXPAND)
         sizer.Layout()
 
-
     def parent_direction_changed(self, direction):
+        """ The change handler for the 'direction' attribute on the 
+        parent.
+
+        """
         pass
     
     #---------------------------------------------------------------------------
-    # Sizer logic
+    # Implementation
     #---------------------------------------------------------------------------
     def make_sizer(self, direction):
         """ Creates a wxBoxSizer for the given direction value. Not

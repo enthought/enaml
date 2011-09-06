@@ -56,5 +56,8 @@ class PushButton(Control):
     toolkit_impl = Instance(IPushButtonImpl)
 
     def _get_down(self):
+        """ The property getter for the 'down' attribute.
+
+        """
         return self._down
 

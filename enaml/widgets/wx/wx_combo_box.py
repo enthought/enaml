@@ -8,15 +8,13 @@ from ..combo_box import IComboBoxImpl
 
 
 class WXComboBox(WXControl):
-    """ A wxPython implementation of IComboBox.
+    """ A wxPython implementation of ComboBox.
 
-    Use a combo box to select a single item from a collection of
-    items. To select multiple items from a collection of items
-    use a List widget.
+    Use a combo box to select a single item from a collection of items. 
     
     See Also
     --------
-    IComboBox
+    ComboBox
 
     """
     implements(IComboBoxImpl)
@@ -25,7 +23,7 @@ class WXComboBox(WXControl):
     # IComboBoxImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates and binds a wx.ComboBox.
+        """ Creates a wx.ComboBox.
 
         """
         self.widget = wx.ComboBox(self.parent_widget(), style=wx.CB_READONLY)
@@ -39,15 +37,28 @@ class WXComboBox(WXControl):
         self.bind()
 
     def parent_items_changed(self, items):
+        """ The change handler for the 'items' attribute on the parent.
+
+        """
         self.refresh_items = True
     
     def parent_items_items_changed(self, items):
+        """ The change handler for the 'items' event of the 'items'
+        attribute on the parent.
+
+        """
         self.refresh_items = True
     
     def parent_value_changed(self, value):
+        """ The change handler for the 'value' attribute on the parent.
+
+        """
         self.refresh_value = True
 
     def parent_to_string_changed(self, value):
+        """ The change handler for the 'string' attribute on the parent.
+
+        """
         self.refresh_items = True
         self.refresh_value = True
     
@@ -66,28 +77,49 @@ class WXComboBox(WXControl):
 
     @cached_property
     def _get_str_items(self):
+        """ The cached property getter for 'str_items'.
+        
+        """ 
         parent = self.parent
         return map(parent.to_string, parent.items)
     
     @cached_property
     def _get_str_value(self):
+        """ The cached property getter for 'str_value'.
+
+        """
         parent = self.parent
         return parent.to_string(parent.value)
     
     @cached_property
     def _get_items_set(self):
+        """ The cached property getter for 'items_set'.
+
+        """
         return set(self.parent.items)
-    
-    def bind(self):
-        self.widget.Bind(wx.EVT_COMBOBOX, self._on_selected)
-    
+
     def _str_items_changed(self, str_items):
+        """ The change handler for 'str_items'.
+
+        """
         self.set_items(str_items)
     
     def _str_value_changed(self, str_value):
+        """ The change handler for 'str_value'.
+
+        """
         self.set_value(str_value)
 
-    def _on_selected(self, event):
+    def bind(self):
+        """ Binds the event handlers for the combo box.
+
+        """
+        self.widget.Bind(wx.EVT_COMBOBOX, self.on_selected)
+
+    def on_selected(self, event):
+        """ The event handler for a combo box selection event.
+
+        """
         parent = self.parent
         idx = self.widget.GetCurrentSelection()
         value = parent.items[idx]
@@ -96,9 +128,16 @@ class WXComboBox(WXControl):
         event.Skip()
 
     def set_items(self, str_items):
+        """ Sets the items in the combo box.
+
+        """
         self.widget.SetItems(str_items)
 
     def set_value(self, str_value):
+        """ Sets the value in the combo box, or resets the combo box
+        if the value is not in the list of items.
+
+        """
         value = self.parent.value
         if value not in self.items_set:
             # This forces a deselection albeit through expensive means

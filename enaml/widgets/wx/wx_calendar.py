@@ -8,13 +8,13 @@ from ..calendar import ICalendarImpl
 
 
 class WXCalendar(WXControl):
-    """ A wxPython implementation of ICalendar.
+    """ A wxPython implementation of Calendar.
 
-    A Calendar displays a Python datetime.date using an wx CalendarCtrl.
+    A Calendar displays a Python datetime.date using an wx.CalendarCtrl.
     
     See Also
     --------
-    ICalendar
+    Calendar
     
     """
     implements(ICalendarImpl)
@@ -23,7 +23,7 @@ class WXCalendar(WXControl):
     # ICalendarImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates and binds a wx.calendar.CalendarCtrl.
+        """ Creates the wx.calendar.CalendarCtrl.
 
         """
         self.widget = wx.calendar.CalendarCtrl(self.parent_widget())
@@ -67,6 +67,10 @@ class WXCalendar(WXControl):
     # Implementation
     #---------------------------------------------------------------------------
     def bind(self):
+        """ Binds the event handlers for the calendar widget. Not meant
+        for public consumption.
+
+        """
         widget = self.widget
         widget.Bind(wx.calendar.EVT_CALENDAR, self.on_date_selected)
         widget.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED, self.on_sel_changed)

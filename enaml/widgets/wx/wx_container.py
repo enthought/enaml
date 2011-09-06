@@ -6,14 +6,14 @@ from ..container import IContainerImpl
 
 
 class WXContainer(WXComponent):
-    """ A wxPython implementation of IContainer.
+    """ A wxPython implementation of Container.
 
     The WXContainer class serves as a base class for other container
     widgets. It is not meant to be used directly.
 
     See Also
     --------
-    IContainer
+    Container
 
     """
     implements(IContainerImpl)

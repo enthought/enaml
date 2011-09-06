@@ -8,13 +8,13 @@ from ..check_box import ICheckBoxImpl
 
 
 class WXCheckBox(WXToggleControl):
-    """ A wxPython implementation of ICheckBox.
+    """ A wxPython implementation of CheckBox.
 
     A Checkbox provides a toggleable control using a wx.CheckBox.
 
     See Also
     --------
-    ICheckBox
+    CheckBox
 
     """
     implements(ICheckBoxImpl)
@@ -23,7 +23,7 @@ class WXCheckBox(WXToggleControl):
     # ICheckBoxImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates and binds a wx.CheckBox.
+        """ Creates and the wx.CheckBox.
 
         """
         self.widget = wx.CheckBox(self.parent_widget())
@@ -32,8 +32,12 @@ class WXCheckBox(WXToggleControl):
     # Implementation
     #---------------------------------------------------------------------------
     def bind(self):
+        """ Binds the event handlers for the check box. Not meant for
+        public consumption.
+
+        """
         widget = self.widget
-        widget.Bind(wx.EVT_CHECKBOX, self._on_toggled)
-        widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
-        widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)  
+        widget.Bind(wx.EVT_CHECKBOX, self.on_toggled)
+        widget.Bind(wx.EVT_LEFT_DOWN, self.on_pressed)
+        widget.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)  
 

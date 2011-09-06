@@ -49,6 +49,11 @@ class CustomRadioButton(wx.RadioButton):
         self._last = self.GetValue()
 
     def OnGroupToggled(self, event):
+        """ Handles the event emmitted when one of the radio buttons from
+        our group is toggled. Determines whether the button should emit
+        a toggle off event.
+
+        """
         last = self._last
         curr = self.GetValue()
         if not curr and last:
@@ -58,6 +63,10 @@ class CustomRadioButton(wx.RadioButton):
         event.Skip()
 
     def OnToggled(self, event):
+        """ Handles the standard toggle event and emits a toggle on 
+        event.
+
+        """
         self._last = self.GetValue()
         on_evt = wxRadioToggleOn()
         wx.PostEvent(self, on_evt)
@@ -65,6 +74,9 @@ class CustomRadioButton(wx.RadioButton):
         wx.PostEvent(self.GetParent(), group_evt)
 
     def SetValue(self, val):
+        """ Overrides the default SetValue method to emit proper events.
+
+        """
         old = self.GetValue()
         if old != val:
             super(CustomRadioButton, self).SetValue(val)
@@ -80,15 +92,15 @@ class CustomRadioButton(wx.RadioButton):
 
 
 class WXRadioButton(WXToggleControl):
-    """ A wxPython implementation of IRadioButton.
+    """ A wxPython implementation of RadioButton.
 
-    WXRadioButton uses the wx.RadioButton control. Radio buttons with 
-    the same parent will be mutually exclusive. For independent groups,
-    place them in their own Panel.
+    WXRadioButton uses a custom wx.RadioButton control. Radio buttons 
+    with the same parent will be mutually exclusive. For independent 
+    groups, place them in their own Panel.
 
     See Also
     --------
-    IRadioButton
+    RadioButton
 
     """
     implements(IRadioButtonImpl)
@@ -97,7 +109,7 @@ class WXRadioButton(WXToggleControl):
     # IRadioButtonImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates the underlying wx.RadioButton control.
+        """ Creates the underlying custom wx.RadioButton control.
 
         """
         self.widget = CustomRadioButton(self.parent_widget())
@@ -106,15 +118,18 @@ class WXRadioButton(WXToggleControl):
     # Implementation
     #---------------------------------------------------------------------------
     def bind(self):
-        widget = self.widget
-        widget.Bind(EVT_RADIO_TOGGLE_ON, self._on_toggled)
-        widget.Bind(EVT_RADIO_TOGGLE_OFF, self._on_simple_toggle)
-        widget.Bind(EVT_RADIO_SET_CHECKED, self._on_simple_toggle)
-        widget.Bind(EVT_RADIO_SET_UNCHECKED, self._on_simple_toggle)
-        widget.Bind(wx.EVT_LEFT_DOWN, self._on_pressed)
-        widget.Bind(wx.EVT_LEAVE_WINDOW, self._on_leave_window)
+        """ Binds the event handlers of the control.
 
-    def _on_simple_toggle(self, event):
+        """
+        widget = self.widget
+        widget.Bind(EVT_RADIO_TOGGLE_ON, self.on_toggled)
+        widget.Bind(EVT_RADIO_TOGGLE_OFF, self.on_simple_toggle)
+        widget.Bind(EVT_RADIO_SET_CHECKED, self.on_simple_toggle)
+        widget.Bind(EVT_RADIO_SET_UNCHECKED, self.on_simple_toggle)
+        widget.Bind(wx.EVT_LEFT_DOWN, self.on_pressed)
+        widget.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
+
+    def on_simple_toggle(self, event):
         """ An event handler for toggle events that have nothing to do
         with mouse interaction by the user and therefore the events
         emited by _on_toggled would be inappropriate.

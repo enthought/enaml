@@ -73,6 +73,9 @@ class LineEdit(Control):
     ----------
     max_length : Int
         The maximum length of the line edit in characters.
+    
+    max_length_reached : Event
+        An event fired when the max length has been reached.
 
     read_only : Bool
         Whether or not the line edit is read only.
@@ -171,6 +174,8 @@ class LineEdit(Control):
     """
     max_length = Int
 
+    max_length_reached = Event
+
     read_only = Bool
 
     cursor_position = Int
@@ -234,7 +239,7 @@ class LineEdit(Control):
         result : None
 
         """
-        self.toolkit_impl.select_all(start, end)
+        self.toolkit_impl.select_all()
 
     def deselect(self):
         """ Deselect any selected text.

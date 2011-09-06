@@ -5,10 +5,10 @@ from the current directory.
 """
 from cStringIO import StringIO
 import random
-
 from traits.api import HasTraits, Str
 
 from enaml.factory import EnamlFactory
+
 
 enml = """
 import random
@@ -63,6 +63,11 @@ Window:
                         text = "Three"
                 Calendar:
                     pass
+            LineEdit:
+                text = "foo"
+                text >> print('text:', msg.new)
+                selected_text >> print('selected_text:', msg.new)
+                modified >> print('modified:', msg.new)
 """
 
 class Model(HasTraits):

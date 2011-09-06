@@ -18,7 +18,9 @@ class IToggleControlImpl(IControlImpl):
 class ToggleControl(Control):
     """ An abstract toggle element. 
     
-    An element which toggles the value of a boolean field.
+    An element which toggles the value of a boolean field. This is an
+    abstract class which should not be used directly. Rather, it provides
+    common functionality of subclasses such as RadioButton and CheckBox.
 
     Attributes
     ----------
@@ -66,5 +68,8 @@ class ToggleControl(Control):
     toolkit_impl = Instance(IToggleControlImpl)
 
     def _get_down(self):
+        """ The property getter for the 'down' attribute.
+
+        """
         return self._down
 

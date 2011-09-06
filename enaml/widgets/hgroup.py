@@ -12,7 +12,7 @@ class IHGroupImpl(IGroupImpl):
 class HGroup(Group):
     """ A horizontally grouping container.
 
-    This is a convienence subclass of IGroup which restricts the 
+    This is a convienence subclass of Group which restricts the 
     layout direction to horizontal.
 
     Attributes

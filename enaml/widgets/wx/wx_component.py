@@ -25,15 +25,30 @@ class WXComponent(HasStrictTraits):
     parent = WeakRef(Component)
 
     def set_parent(self, parent):
+        """ Sets the parent component to the given parent.
+
+        """
         self.parent = parent
         
     def create_widget(self):
+        """ Creates the underlying wx widget. Must be implemented by 
+        subclasses.
+
+        """
         raise NotImplementedError
     
     def initialize_widget(self):
+        """ Initializes the attribtues of a wiget. Must be implemented
+        by subclasses.
+
+        """
         raise NotImplementedError
     
     def layout_child_widgets(self):
+        """ Arranges the children of this component. Must be implemented
+        by subclasses.
+
+        """
         raise NotImplementedError
     
     def toolkit_widget(self):
@@ -43,7 +58,8 @@ class WXComponent(HasStrictTraits):
         return self.widget
     
     def parent_name_changed(self, name):
-        """ WXComponent doesn't care about the name. Subclasses should
+        """ The change handler for the 'name' attribute on the parent.
+        WXComponent doesn't care about the name. Subclasses should
         reimplement if they need that info.
 
         """
@@ -86,5 +102,4 @@ class WXComponent(HasStrictTraits):
         """
         for child in self.parent.children:
             yield child.toolkit_widget()
-
 

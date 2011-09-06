@@ -1,7 +1,6 @@
-import wx
 import wx.html
 
-from traits.api import implements, Str
+from traits.api import implements
 
 from .wx_control import WXControl
 
@@ -27,7 +26,7 @@ class WXHtml(WXControl):
         """ Creates the underlying html control.
 
         """
-        # GetBestSize on the HtmlWindow returns (0, 0) (wtf?)
+        # XXX GetBestSize on the HtmlWindow returns (0, 0) (wtf?)
         # So for now, we just set the min size to something sensible.
         self.widget = wx.html.HtmlWindow(self.parent_widget(), size=(300, 200))
 

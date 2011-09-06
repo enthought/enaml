@@ -64,6 +64,10 @@ class Field(LineEdit):
       
     value = Any
     
+    _error = Bool
+
+    _exception = Instance(Exception)
+    
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------

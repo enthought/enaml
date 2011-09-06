@@ -8,13 +8,13 @@ from ..panel import IPanelImpl
 
 
 class WXPanel(WXComponent):
-    """ A wxPython implementation of IPanel.
+    """ A wxPython implementation of Panel.
 
     A panel aranges it children onto a wx.Panel.
 
     See Also
     --------
-    IPanel
+    Panel
 
     """
     implements(IPanelImpl)
@@ -35,6 +35,12 @@ class WXPanel(WXComponent):
         pass
     
     def layout_child_widgets(self):
+        """ Arrange the child widgets onto the panel. The children are
+        all Container which provide their own layout. Typically, there
+        will be only one container, but in case there are more, all 
+        containers get added to a vertical box sizer.
+
+        """
         sizer = wx.BoxSizer(wx.VERTICAL)
         for child in self.child_widgets():
             sizer.Add(child, 1, wx.EXPAND)

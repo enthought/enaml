@@ -26,13 +26,23 @@ class WXWindow(WXComponent):
     # IWindowImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
+        """ Creates the underlying wx.Frame control.
+
+        """
         self.widget = wx.Frame(self.parent_widget())
     
     def initialize_widget(self):
+        """ Intializes the attributes on the wx.Frame.
+
+        """
         self.set_title(self.parent.title)
         self.set_modality(self.parent.modality)
 
     def layout_child_widgets(self):
+        """ Arranges the children of the frame (typically only one) in
+        a vertical box sizer.
+
+        """
         sizer = wx.BoxSizer(wx.VERTICAL)
         for child in self.child_widgets():
             sizer.Add(child, 1, wx.EXPAND)
@@ -72,7 +82,7 @@ class WXWindow(WXComponent):
         self.set_modality(modality)
 
     #---------------------------------------------------------------------------
-    # Widget update
+    # Implementation
     #---------------------------------------------------------------------------
     def set_title(self, title):
         """ Sets the title of the frame. Not meant for public 

@@ -8,7 +8,7 @@ class ICheckBoxImpl(IToggleControlImpl):
 
 
 class CheckBox(ToggleControl):
-    """ A check box widget derived from IToggleElement
+    """ A check box widget.
 
     Use a check box when it's necessary to toggle a boolean value
     independent of any other widgets in the group. For allowing the
@@ -17,7 +17,7 @@ class CheckBox(ToggleControl):
 
     See Also
     --------
-    IToggleElement
+    ToggleControl
 
     """
     #---------------------------------------------------------------------------
