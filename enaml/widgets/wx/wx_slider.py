@@ -55,10 +55,10 @@ class WXSlider(WXElement):
 
     tick_interval : Float
         The slider_pos interval to put between tick marks. Default value is
-        `0.1` which is 10% of the full slider range. Please note that this value
-        defined the number of possible values that can be selected. So the
-        default value will create a slider with 9 places between the minimum
-        and maximum values.
+        `0.1` which is 10% of the full slider range. Please note that this
+        value defined the number of possible values that can be selected.
+        So the default value will create a slider with 9 places between the
+        minimum and maximum values.
 
     ticks : TickPosition Enum value
         A TickPosition enum value indicating how to display the tick
@@ -430,8 +430,7 @@ if __name__ == "__main__":
 
     from cStringIO import StringIO
 
-    import wx
-    from traits.api import HasTraits, Str
+    from traits.api import HasTraits
 
     from ...factories.enaml_factory import EnamlFactory
 
@@ -488,4 +487,3 @@ Window main:
     view = fact(model=Model())
     view.show()
     app.MainLoop()
-
