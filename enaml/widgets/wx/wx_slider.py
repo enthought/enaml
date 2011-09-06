@@ -52,16 +52,14 @@ class WXSlider(WXElement):
         A TickPosition enum value indicating how to display the tick
         marks. Please note that the orientation takes precedence over the
         tick mark position and if for example the user sets the tick to an
-        invalid value it is ignored.
-
-        ..note:: The ticks option BOTH is not supported yet in the wx widget
+        invalid value it is ignored. The ticks option BOTH is not supported yet
+        in the wx widget, and will be also ingored.
 
     orientation : Orientation Enum value
-        The orientation of the slider. One of the Orientation enum
-        values. When the orientation is flipped the tick positions (if set)
-        also adaptsto reflect the changes  (e.g. the LEFT becomes TOP when
-        the orientation becomes horizontal).  The default orientation is
-        horizontal.
+        The orientation of the slider. The default orientation is horizontal.
+        When the orientation is flipped the tick positions (if set) also adapt
+        to reflect the changes  (e.g. the LEFT becomes TOP when the orientation
+        becomes horizontal).
 
     pressed : Event
         Fired when the slider is pressed.
