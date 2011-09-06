@@ -119,7 +119,7 @@ class Component(HasStrictTraits):
         The name of this element which may be used as metainfo by other
         components. Note that this is not the same as the identifier 
         that can be assigned to a component as part of the tml grammar.
-    
+
     parent : WeakRef(Component)
         The parent component of this component which is stored as a
         weakref to mitigate memory leak issues from reference cycles.
@@ -141,14 +141,11 @@ class Component(HasStrictTraits):
 
     Methods
     -------
-    add_meta_info(meta_info)
-        Add the meta info instance to this component.
+    set_attribute_delegate(name, delegate)
+        Delegates the value of the attribute to the delegate.
 
-    remove_meta_info(meta_info)
-        Remove the meta info instance from this component.
-
-    get_meta_handler(meta_info):
-        Return the IMetaHandler for this meta_info object.
+    add_attribute_notifier(name, notifier)
+        Adds a notifier for the given attribute name.
 
     add_child(child)
         Add a child component to this component. This will reparent
@@ -162,16 +159,16 @@ class Component(HasStrictTraits):
         Replace child in this component with a different one. This
         will unparent the first child and reparent the second child.
     
-    set_parent(self, parent):
-        Set the parent for this component to parent.
-
     swap_children(child, other_child)
         Swap the positions of the two children.
+
+    set_parent(self, parent):
+        Set the parent for this component to parent.
 
     layout()
         Lay out and create the widgets for this component and it's
         children. This builds the widget tree.
- 
+    
     toolkit_widget()
         Returns the underlying gui toolkit widget which is being 
         managed by the implemention object.
@@ -275,68 +272,6 @@ class Component(HasStrictTraits):
 
         self._notifiers.add(notifier)
         notifier.bind(self, name)
-
-    def add_meta_info(self, meta_info, autohook=True):
-        """ Add the meta info object to this component.
-
-        Meta info objects supply additional meta information about an 
-        object (such as styling and geometry info) to various other parts
-        of the TraitsML object tree.
-
-        Arguments
-        ---------
-        meta_info : BaseMetaInfo subclass instance
-            The meta info instance to add to this component.
-
-        autohook : bool, optional
-            Whether or not to hook the handler immediately. Defaults
-            to True. If False, the hook() method on the handler will 
-            need to be called before it will perform any work.
-            
-        Returns
-        -------
-        result : None
-
-        """
-        pass
-
-    def remove_meta_info(self, meta_info):
-        """ Remove the meta info object from this component.
-
-        Arguments
-        ---------
-        meta_info : BaseMetaInfo subclass instance
-            The meta info instance to remove from this component. 
-            It must have been previously added via 'add_meta_info'.
-
-        Returns
-        -------
-        result : None
-
-        """
-        pass
-
-    def get_meta_handler(self, meta_info):
-        """ Return the IMetaHandler for this meta_info object.
-        
-        Return the toolkit specific IMetaHandler instance for this 
-        meta_info object. This may return None if the component does 
-        handle this particular meta info type. The meta_info object 
-        must have already been added via the add_meta_info method.
-
-        Arguments
-        ---------
-        meta_info : BaseMetaInfo subclass instance
-            The meta info instance for which we want the handler.
-
-        Returns
-        -------
-        result : IMetaHandler or None
-            The toolkit specific meta handler for this meta info
-            object, or None if the component does not handle it.
-
-        """
-        pass
 
     def add_child(self, child):
         """ Add a child component to this component.
@@ -503,15 +438,7 @@ class Component(HasStrictTraits):
             child.layout()
         impl.initialize_widget()
         impl.layout_child_widgets()
-        self.hook_impl()
-
-    def hook_impl(self):
-        """ Adds the implementation object as a listener via the 
-        'add_trait' method. Override this in a subclass to change
-        behavior (will rarely, if ever, be necessary).
-        
-        """
-        self.add_trait_listener(self.toolkit_impl, 'parent')
+        self._hook_impl()
          
     def toolkit_widget(self):
         """ Returns the toolkit specific widget for this component.
@@ -524,4 +451,11 @@ class Component(HasStrictTraits):
 
         """
         pass
+
+    def _hook_impl(self):
+        """ Adds the implementation object as a listener via the 
+        'add_trait' method.
+        
+        """
+        self.add_trait_listener(self.toolkit_impl, 'parent')
 
