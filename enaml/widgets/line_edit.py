@@ -430,9 +430,14 @@ class LineEdit(Control):
         self.toolkit_impl.redo()
 
     def _get_modified(self):
+        """ The property getter for the 'modified' attribute.
+
+        """
         return self._modified
     
     def _get_selected_text(self):
-        return self._selected_text
+        """ The property getter for the 'selected' attribute.
 
+        """
+        return self._selected_text
 
