@@ -154,7 +154,7 @@ class WXSlider(WXElement):
 
         # Bind class functions to wx widget events
 
-        # We treat the top, bottom and track events in their own way
+        # We treat track events in their own way
         widget.Bind(wx.EVT_SCROLL_THUMBTRACK, self._on_thumb_track)
 
         # Generic events
