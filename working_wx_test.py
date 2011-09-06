@@ -10,7 +10,7 @@ import wx
 
 from traits.api import HasTraits, Str
 
-from enaml.factories.enaml_factory import EnamlFactory
+from enaml.factory import EnamlFactory
 
 enml = """
 import random
