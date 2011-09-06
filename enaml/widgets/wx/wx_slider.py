@@ -391,3 +391,72 @@ class WXSlider(WXElement):
         event.Skip()
         return
 
+if __name__ == "__main__":
+    """Test demo example of the WXSlider
+
+    To execute please use python -m enaml.widgets.wx.wx_slider from the top
+    directory.
+    """
+
+    from cStringIO import StringIO
+
+    import wx
+    from traits.api import HasTraits, Str
+
+    from ...factories.enaml_factory import EnamlFactory
+
+    enaml = """
+from enaml.enums import Orientation, TickPosition
+
+Window main:
+    title = "Slider demo"
+    Panel:
+        VGroup:
+            Label:
+                text << " value :{0} \\n slider_pos: {1} \\n down: {2} \\n tracking {3}".\
+                    format(slider.value, slider.slider_pos, slider.down,
+                    slider.tracking)
+            Slider slider:
+                orientation << Orientation.VERTICAL if vertical.checked else Orientation.HORIZONTAL
+                ticks = TickPosition.DEFAULT
+                value = 0.5
+                tick_interval = 0.1
+                tracking := track.checked
+                released >> print('the slider was released!', msg.new)
+                pressed >> print('the slider was pressed!', msg.new)
+                moved >> print('the slider has moved!', msg.new)
+                invalid_value >> print('the value was invalid!', msg.new)
+            HGroup:
+                PushButton:
+                    text = "Adjust by +0.1"
+                    clicked >> model.update(slider, 0.1)
+                PushButton:
+                    text = "Adjust by -0.1"
+                    clicked >> model.update(slider, -0.1)
+                CheckBox track:
+                    text = "Track"
+                CheckBox vertical:
+                    text = "Vertical"
+                ComboBox ticks:
+                    items = [item for item in TickPosition.values()]
+                    selected >> model.update_ticks(slider, self.value)
+"""
+
+    class Model(HasTraits):
+
+        window_title = Str('Slider')
+
+        def update(self, slider, offset):
+            slider.value += offset
+            return
+
+        def update_ticks(self, slider, value):
+            print type(value)
+            slider.ticks = value
+
+    fact = EnamlFactory(StringIO(enaml))
+    app = wx.App()
+    view = fact(model=Model())
+    view.show()
+    app.MainLoop()
+
