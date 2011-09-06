@@ -451,7 +451,6 @@ Window main:
             return
 
         def update_ticks(self, slider, value):
-            print type(value)
             slider.ticks = value
 
     fact = EnamlFactory(StringIO(enaml))
