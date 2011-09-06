@@ -1,10 +1,8 @@
-from traits.api import Enum, implements
+from traits.api import implements
 
 from .wx_group import WXGroup
 
-from ..i_vgroup import IVGroup
-
-from ...enums import Direction
+from ..vgroup import IVGroupImpl
 
 
 class WXVGroup(WXGroup):
@@ -18,10 +16,11 @@ class WXVGroup(WXGroup):
     IVGroup
     
     """ 
-    implements(IVGroup)
+    implements(IVGroupImpl)
 
-    #===========================================================================
-    # IHGroup interface
-    #===========================================================================
-    direction = Enum(Direction.TOP_TO_BOTTOM, Direction.BOTTOM_TO_TOP)
+    #---------------------------------------------------------------------------
+    # IVGroupImpl interface
+    #---------------------------------------------------------------------------
+    
+    # IVGroupImpl interface is empty and fully implemented by WXGroup
 

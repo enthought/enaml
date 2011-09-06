@@ -1,65 +1,59 @@
 import wx
 
-from traits.api import implements, Str, Enum, Instance, Bool
+from traits.api import implements
 
 from .wx_component import WXComponent
 
-from ..i_panel import IPanel
-from ..i_window import IWindow
+from ..window import IWindowImpl
 
 from ...enums import Modality
 
 
 class WXWindow(WXComponent):
-    """ A wxPython implementation of IWindow.
+    """ A wxPython implementation of a Window.
 
     WXWindow uses a wx.Frame to create a simple top level window which
     contains other child widgets and layouts.
 
     See Also
     --------
-    IWindow
+    Window
 
     """
-    implements(IWindow)
+    implements(IWindowImpl)
 
-    #===========================================================================
-    # IWindow interface
-    #===========================================================================
-    title= Str
+    #---------------------------------------------------------------------------
+    # IWindowImpl interface
+    #---------------------------------------------------------------------------
+    def create_widget(self):
+        """ Creates the underlying wx.Frame control.
 
-    modality = Enum(*Modality.values())
-
-    def set_panel(self, panel):
-        # FIXME
-        self.panel = panel
+        """
+        self.widget = wx.Frame(self.parent_widget())
     
-    def layout(self, parent):
-        # FIXME
-        self.set_parent(parent)
-        self.create_widget()
-        self.layout_panel()
-        self.init_attributes()
-        self.init_meta_handlers()
-        self.needs_layout = False
+    def initialize_widget(self):
+        """ Intializes the attributes on the wx.Frame.
+
+        """
+        self.set_title(self.parent.title)
+        self.set_modality(self.parent.modality)
+
+    def layout_child_widgets(self):
+        """ Arranges the children of the frame (typically only one) in
+        a vertical box sizer.
+
+        """
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        for child in self.child_widgets():
+            sizer.Add(child, 1, wx.EXPAND)
+        self.widget.SetSizer(sizer)
 
     def show(self):
-        """ Displays the window to the screen, laying out if necessary.
-        
-        Call this method to display the window to the screen. If layout 
-        is necessary, this method will lay out the window with no parent. 
-        If supplying a parent is necessary, manually call the 'layout' 
-        method with the parent before calling 'show'.
+        """ Displays the window to the screen.
         
         """
-        if self.needs_layout:
-            self.layout(None)
-        else:
-            if self.needs_container_layout:
-                if self.widget:
-                    self.widget.Hide()
-                self.layout_container()
-        self.widget.Show()
+        if self.widget:
+            self.widget.Show()
 
     def hide(self):
         """ Hide the window from the screen.
@@ -68,52 +62,14 @@ class WXWindow(WXComponent):
         if self.widget:
             self.widget.Hide()
 
-    #===========================================================================
-    # Implementation
-    #===========================================================================
-    panel = Instance(IPanel)
-
-    needs_layout = Bool(True)
-
-    #---------------------------------------------------------------------------
-    # Initialization
-    #---------------------------------------------------------------------------
-    def create_widget(self):
-        """ Creates the underlying wx.Frame control.
-
-        This is is called by the 'layout' method and is not meant for
-        public consumption.
-
-        """
-        self.widget = wx.Frame(self.parent_widget())
-
-    def layout_panel(self):
-        self.panel.layout(self)
-
-    def init_attributes(self):
-        """ Initializes the attributes of the frame.
-
-        This is is called by the 'layout' method and is not meant for
-        public consumption.
-
-        """
-        self.set_title(self.title)
-        self.set_modality(self.modality)
-    
-    def init_meta_handlers(self):
-        pass
-
-    #---------------------------------------------------------------------------
-    # Notification
-    #---------------------------------------------------------------------------
-    def _title_changed(self, title):
+    def parent_title_changed(self, title):
         """ The change handler for the 'title' attribute. Not meant for 
         public consumption.
 
         """
         self.set_title(title)
     
-    def _modality_changed(self, modality):
+    def parent_modality_changed(self, modality):
         """ The change handler for the 'modality' attribute. Not meant 
         for public consumption.
 
@@ -121,14 +77,15 @@ class WXWindow(WXComponent):
         self.set_modality(modality)
 
     #---------------------------------------------------------------------------
-    # Widget update
+    # Implementation
     #---------------------------------------------------------------------------
     def set_title(self, title):
         """ Sets the title of the frame. Not meant for public 
         consumption.
 
         """
-        self.widget.SetTitle(title)
+        if self.widget:
+            self.widget.SetTitle(title)
     
     def set_modality(self, modality):
         """ Sets the modality of the frame. Not meant for public
@@ -137,8 +94,9 @@ class WXWindow(WXComponent):
         """
         # The wx frame cannot distinguish between application and
         # window modal (AFAIK). I think we need a wxDialog for that.
-        if modality in (Modality.APPLICATION_MODAL, Modality.WINDOW_MODAL):
-            self.widget.MakeModal(True)
-        else:
-            self.widget.MakeModal(False)
+        if self.widget:
+            if modality in (Modality.APPLICATION_MODAL, Modality.WINDOW_MODAL):
+                self.widget.MakeModal(True)
+            else:
+                self.widget.MakeModal(False)
 

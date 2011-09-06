@@ -1,110 +1,48 @@
 import wx
 
-from traits.api import implements, Instance, Bool
+from traits.api import implements
 
 from .wx_component import WXComponent
-from .wx_container import WXContainer
 
-from ..i_panel import IPanel
+from ..panel import IPanelImpl
 
 
 class WXPanel(WXComponent):
-    """ A wxPython implementation of IPanel.
+    """ A wxPython implementation of Panel.
 
     A panel aranges it children onto a wx.Panel.
 
     See Also
     --------
-    IPanel
+    Panel
 
     """
-    implements(IPanel)
-
-    #===========================================================================
-    # IPanel interface
-    #===========================================================================
-    def layout(self, parent):
-        """ Layout the children in the panel using the given parent.
-
-        This will not typically be called directly by user code.
-
-        """
-        self.set_parent(parent)
-        self.create_widget()
-        self.layout_container()
-        self.init_attributes()
-        self.init_meta_handlers()
-        self.needs_layout = False
-
-    def set_container(self, container):
-        """ Sets the container of child component for this panel.
-
-        """
-        self.container = container
-        self.needs_container_layout = True
-
-    def get_container(self):
-        """ Returns the container of child components.
-
-        """
-        return self.container
-
-    #===========================================================================
-    # Implementation
-    #===========================================================================
-    # The container of child widgets
-    container = Instance(WXContainer)
-
-    # Whether the window needs to be layed out
-    needs_layout = Bool(True)
-
-    # Whether we need to re-layout the container before showing.
-    needs_container_layout = Bool(True)
+    implements(IPanelImpl)
 
     #---------------------------------------------------------------------------
-    # Initialization
+    # IPanelImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying wxPanel.
 
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
-
         """
         self.widget = wx.Panel(self.parent_widget())
-
-    def layout_container(self):
-        """ Lays out the container or child elements. 
-
-        This is called by the 'layout' method and is not meant for
-        public consumption.
-
-        """
-        container = self.container
-        if container is not None:
-            for child_widget in self.widget.GetChildren():
-                if child_widget:
-                    child_widget.Destroy()
-            container.layout(self)
-            self.widget.SetSizerAndFit(container.widget, True)
-        self.needs_container_layout = False
-
-    def init_attributes(self):
-        """ Initializes the attributes of the panel.
-
-        This is called by the 'layout' method and is not meant for
-        public consumption.
+    
+    def initialize_widget(self):
+        """ There is nothing to initialize on a panel.
 
         """
         pass
     
-    def init_meta_handlers(self):
-        """ Initializes the meta handlers of the panel.
-
-        This is called by the 'layout' method and is not meant for
-        public consumption.
+    def layout_child_widgets(self):
+        """ Arrange the child widgets onto the panel. The children are
+        all Container which provide their own layout. Typically, there
+        will be only one container, but in case there are more, all 
+        containers get added to a vertical box sizer.
 
         """
-        pass
-
-    
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        for child in self.child_widgets():
+            sizer.Add(child, 1, wx.EXPAND)
+        self.widget.SetSizer(sizer)
+        sizer.Layout()

@@ -1,67 +1,40 @@
 import wx
 
-from traits.api import implements, Str
+from traits.api import implements
 
-from .wx_element import WXElement
+from .wx_control import WXControl
 
-from ..i_label import ILabel
+from ..label import ILabelImpl
 
 
-class WXLabel(WXElement):
-    """ A wxPython implementation of ILabel.
+class WXLabel(WXControl):
+    """ A wxPython implementation of Label.
 
     A WXLabel displays static text using a wx.StaticText control.
 
     See Also
     --------
-    ILabel
+    Label
 
     """
-    implements(ILabel)
+    implements(ILabelImpl)
 
- 	#===========================================================================
-    # ILabel interface 
-    #===========================================================================
-    text = Str
-
-    #===========================================================================
-    # Implementation
-    #===========================================================================
-
-    #---------------------------------------------------------------------------
-    # Initialization
+ 	#---------------------------------------------------------------------------
+    # ILabelImpl interface 
     #---------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying text control.
 
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
-
         """
         self.widget = wx.StaticText(self.parent_widget())
 
-    def init_attributes(self):
+    def initialize_widget(self):
         """ Initializes the attributes on the underlying control.
-
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
 
         """
         self.set_label(self.text)
 
-    def init_meta_handlers(self):
-        """ Intializes the meta handlers for the underlying control.
-
-        This is called by the 'layout' method and is not meant for 
-        public consumption.
-
-        """
-        pass
-
-    #---------------------------------------------------------------------------
-    # Notification
-    #---------------------------------------------------------------------------
-    def _text_changed(self, text):
+    def parent_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant for
         public consumption.
 
@@ -77,15 +50,4 @@ class WXLabel(WXElement):
 
         """
         self.widget.SetLabel(label)
-    
-    #---------------------------------------------------------------------------
-    # Layout helpers
-    #---------------------------------------------------------------------------
-    def default_sizer_flags(self):
-        """ Updates the default sizer flags to have a proportion of 1.
-
-        """
-        # Labels need to claim a bit of space (rather than just be fixed)
-        # so that groups of labels arrange cleanly.
-        return super(WXLabel, self).default_sizer_flags().Proportion(1)
 

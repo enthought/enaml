@@ -1,55 +1,48 @@
-import wx
-
-from traits.api import Instance, HasTraits, Any
-from traitsui.api import View, Handler
+from traits.api import Instance, implements
 from traitsui.ui import UI
 
-from .wx_element import WXElement
+from .wx_control import WXControl
+
+from ..traitsui_item import ITraitsUIItemImpl
 
 
-class WXTraitsUIItem(WXElement):
+class WXTraitsUIItem(WXControl):
+    """ A wxPython implementation of TraitsUIItem.
 
-    # The HasTraits object that will provide the traits ui view
-    model = Instance(HasTraits)
+    The traits ui item allows the embedding of a traits ui window in 
+    an Enaml application.
 
-    # The traits view for editing the object. Optional.
-    view = Instance(View)
+    See Also
+    --------
+    TraitsUIItem
 
-    # The handler for editing the object. Optional.
-    handler = Instance(Handler)
+    """
+    implements(ITraitsUIItemImpl)
     
-    # The UI instance for the view we are embedding.
-    ui_item = Instance(UI)
-    
+    #---------------------------------------------------------------------------
+    # ITraitsUIItemImpl interface
+    #---------------------------------------------------------------------------
     def create_widget(self):
-        self.widget = wx.Panel(self.parent_widget())
-    
-    def init_attributes(self):
-        widget = self.widget
+        """ Creates the underlying traits ui subpanel.
 
-        ui_item = self.model.edit_traits(parent=widget, view=self.view,
-                handler=self.handler, kind='subpanel')
-        vbox = wx.BoxSizer(wx.VERTICAL)
-        vbox.Add(ui_item.control)
-        self.widget.SetSizer(vbox)
-        self.widget.Show()
-        
-        self.ui_item = ui_item
+        """
+        parent = self.parent
+        model = parent.model
+        view = parent.view
+        handler = parent.handler
+        parent_widget = self.parent_widget()
+        self.ui = ui = model.edit_traits(parent=parent_widget, view=view,
+                                         handler=handler, kind='subpanel')
+        self.widget = ui.control
     
-    def init_meta_handlers(self):
+    def inititialize_widget(self):
+        """ No initialization needs to be done for the traits ui item.
+
+        """
         pass
-
         
-    #--------------------------------------------------------------------------
-    # Change Handlers
-    #--------------------------------------------------------------------------
-    def _model_changed(self):
-        self.layout_children()
-
-    def _view_changed(self):
-        self.layout_children()
-
-    def _handler_changed(self):
-        self.layout_children()
-
+    #---------------------------------------------------------------------------
+    # Implementation
+    #---------------------------------------------------------------------------
+    ui = Instance(UI)
 

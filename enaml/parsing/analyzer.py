@@ -5,20 +5,20 @@ class AttributeVisitor(ast.NodeVisitor):
 
     def __init__(self):
         self.deps = set()
-        self.current = []
+        self.attr = None
 
     def visit_Attribute(self, node):
-        self.current.append(node.attr)
+        self.attr = node.attr
         self.visit(node.value)
 
     def visit_Name(self, node):
-        self.deps.add((node.id, tuple(reversed(self.current))))
-        self.current = []
+        attr = self.attr
+        if attr is not None:
+            self.deps.add((node.id, attr))
+        else:
+            self.attr = None
         
-    def generic_visit(self, node):
-        self.current = []
-        super(AttributeVisitor, self).generic_visit(node)
-
     def results(self):
-        return tuple(self.deps)
+        return list(self.deps)
+
 

@@ -1,27 +1,26 @@
-from traits.api import Enum, implements
+from traits.api import implements
 
 from .wx_group import WXGroup
 
-from ..i_hgroup import IHGroup
-
-from ...enums import Direction
+from ..hgroup import IHGroupImpl
 
 
 class WXHGroup(WXGroup):
     """ A wxPython implementation of IHGroup.
 
-    This is a convienence subclass of WXGroup which restrict the
-    layout to horizontal.
+    This is a convienence subclass of WXGroup which restricts the
+    layout direction to horizontal.
 
     See Also
     --------
     IHGroup
     
     """ 
-    implements(IHGroup)
+    implements(IHGroupImpl)
 
-    #===========================================================================
-    # IHGroup interface
-    #===========================================================================
-    direction = Enum(Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT)
+    #---------------------------------------------------------------------------
+    # IHGroupImpl interface
+    #---------------------------------------------------------------------------
+    
+    # IHGroupImpl interface is empty and fully implemented by WXGroup
 

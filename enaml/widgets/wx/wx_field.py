@@ -1,10 +1,8 @@
-import wx
-
-from traits.api import implements, Bool, Instance, Callable, Any
+from traits.api import implements
 
 from .wx_line_edit import WXLineEdit
 
-from ..i_field import IField
+from ..field import IFieldImpl
 
 
 class WXField(WXLineEdit):
@@ -17,82 +15,81 @@ class WXField(WXLineEdit):
     IField
 
     """
-    implements(IField)
+    implements(IFieldImpl)
 
-    #===========================================================================
-    # IField interface
-    #===========================================================================
-    error = Bool
+    #---------------------------------------------------------------------------
+    # IFieldImpl interface
+    #---------------------------------------------------------------------------
+    def initialize_widget(self):
+        """ Initializes the attributes of the field.
 
-    exception = Instance(Exception)
+        """
+        super(WXField, self).initialize_widget()
+        self.sync_text()
 
-    from_string = Callable
+    def parent_from_string_changed(self, from_string):
+        """ The change handler for the 'from_string' attribute on parent.
+
+        """
+        self.sync_value()
     
-    to_string = Callable
-      
-    value = Any
-
-    #---------------------------------------------------------------------------
-    # Initialization
-    #---------------------------------------------------------------------------
-
-    def create_widget(self):
-        """ Creates the underlying wxPython widget.
-
-        This is called by the 'layout' method and is not meant for
-        public consumption.
+    def parent_to_string_changed(self, to_string):
+        """ The change handler for the 'to_string' attribute on parent.
 
         """
-        super(WXField, self).create_widget()
-        self.try_set(self.text)
-
-    def init_attributes(self):
-        """ Intializes the widget with the attributes of this instance.
-
-        This is called by the 'layout' method and is not meant for
-        public consumption.
+        self.sync_text()
+    
+    def parent_value_changed(self, value):
+        """ The change hadnler for the 'value' attribute on parent.
 
         """
-        super(WXField, self).init_attributes()
-
-    def init_meta_handlers(self):
-        """ Initializes any meta handlers for this widget.
-
-        This is called by the 'layout' method and is not meant for
-        public consumption.
+        self.sync_text()
+    
+    def parent_text_changed(self, text):
+        """ The change handler for the 'text' attribute on parent.
 
         """
-        pass
+        super(WXField, self).parent_text_changed(text)
+        self.sync_value()
 
     #---------------------------------------------------------------------------
-    # Notification
+    # Implementation
     #---------------------------------------------------------------------------
-    def _value_changed(self, value):
-        """ The change handler for the 'text' attribute. Not meant for
-        public consumption.
+    def sync_value(self):
+        """ Synchronizes the 'value' attribute on the parent with the
+        'text' attribute by making the appropriate conversion from 
+        'text' to 'value' and handling any exceptions that arise.
 
         """
-        self.try_set(value)
-
-    def _text_changed(self, text):
-        super(WXField, self)._text_changed()
+        parent = self.parent
+        text = parent.text
+        from_string = parent.from_string
         try:
-            new_value = self.from_string(text)
+            value = from_string(text)
         except Exception as e:
-            self.exception = e
-            self.error = True
+            parent._exception = e
+            parent._error = True
         else:
-            self.exception = None
-            self.error = False
-            self.value = new_value
+            parent._exception = None
+            parent._error = False
+            parent.value = value
+    
+    def sync_text(self):
+        """ Synchronizes the 'text' attribute on the parent with the
+        'value' attribute by making the appropriate conversion from 
+        'value' to 'text' and handling any exceptions that arise.
 
-    def try_set(self, value):
+        """
+        parent = self.parent
+        value = parent.value
+        to_string = parent.to_string
         try:
-            new_value = self.to_string(value)
+            text = to_string(value)
         except Exception as e:
-            self.exception = e
-            self.error = True
+            parent._exception = e
+            parent._error = True
         else:
-            self.exception = None
-            self.error = False
-            self.text = new_value
+            parent._exception = None
+            parent._error = False
+            parent.text = text
+
