@@ -32,7 +32,7 @@ class WXLabel(WXControl):
         """ Initializes the attributes on the underlying control.
 
         """
-        self.set_label(self.text)
+        self.set_label(self.parent.text)
 
     def parent_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant for

@@ -372,7 +372,7 @@ class DelegateExpression(DefaultExpression):
 
         """
         super(DelegateExpression, self).bind(obj, name, validate_trait)
-        obj_name, attr_name = self.dependencies
+        obj_name, attr_name = self.dependencies[0]
         try:
             obj = self.local_ns[obj_name]
         except KeyError:
