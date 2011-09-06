@@ -61,13 +61,22 @@ Window:
                         text = "Two"
                     PushButton:
                         text = "Three"
+                        clicked >> setattr(mle, 'text', 'foo')
                 Calendar:
                     pass
-            LineEdit:
-                text = "foo"
-                text >> print('text:', msg.new)
-                selected_text >> print('selected_text:', msg.new)
-                modified >> print('modified:', msg.new)
+            VGroup:
+                LineEdit mle:
+                    text = "foo"
+                    text >> print('text:', msg.new)
+                    selected_text >> print('selected_text:', msg.new)
+                    modified >> print('modified:', msg.new)
+                Field mf:
+                    value = 1
+                    to_string = str
+                    from_string = int
+                    value >> print(self.value, type(self.value))
+                    exception >> print(self.exception)
+                    error >> print(self.error)
 """
 
 class Model(HasTraits):

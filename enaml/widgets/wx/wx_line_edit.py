@@ -1,6 +1,6 @@
 import wx
 
-from traits.api import implements
+from traits.api import implements, Bool
 
 from .wx_control import WXControl
 from ..line_edit import ILineEditImpl
@@ -41,7 +41,6 @@ class WXLineEdit(WXControl):
         else:
             self.change_text(parent.text)
         parent._modified = False
-        self.widget.SetModified(False)
         self.set_cursor_position(parent.cursor_position)
         self.bind()
 
@@ -52,12 +51,13 @@ class WXLineEdit(WXControl):
         self.set_read_only(read_only)
 
     def parent_cursor_position_changed(self, cursor_position):
-        self.set_cursor_position(cursor_position)
+        if not self.setting_value:
+            self.set_cursor_position(cursor_position)
 
     def parent_text_changed(self, text):
-        self.change_text(text)
-        self.parent._modified = False
-        self.widget.SetModified(False)
+        if not self.setting_value:
+            self.change_text(text)
+            self.parent._modified = False
 
     def set_selection(self, start, end):
         self.widget.SetSelection(start, end)
@@ -217,6 +217,9 @@ class WXLineEdit(WXControl):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
+    # A flag set to True when we're applying updates to the model.
+    setting_value = Bool(False)
+
     def bind(self):
         widget = self.widget
         widget.Bind(wx.EVT_TEXT_MAXLEN, self.on_max_length)
@@ -227,10 +230,12 @@ class WXLineEdit(WXControl):
     def on_text_updated(self, event):
         widget = self.widget
         parent = self.parent
+        self.setting_value = True
         parent.text = text = widget.GetValue()
+        self.setting_value = False
         self.update_parent_selection()
         parent.text_edited = text
-        parent._modified = widget.IsModified()
+        parent._modified = True
 
     def on_text_enter(self, event):
         self.parent.return_pressed = True
@@ -239,14 +244,16 @@ class WXLineEdit(WXControl):
         self.parent.max_length_reached = True
 
     def on_selection(self, event):
-        print 'heard'
         self.update_parent_selection()
+        event.Skip()
 
     def update_parent_selection(self):
         parent = self.parent
         widget = self.widget
         parent._selected_text = widget.GetStringSelection()
+        self.setting_value = True
         parent.cursor_position = widget.GetInsertionPoint()
+        self.setting_value = False
 
     def change_text(self, text):
         self.widget.ChangeValue(text)

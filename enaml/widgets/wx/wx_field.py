@@ -1,5 +1,3 @@
-import wx
-
 from traits.api import implements
 
 from .wx_line_edit import WXLineEdit
