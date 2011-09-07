@@ -40,8 +40,18 @@ class TestWXDialog(unittest.TestCase):
         
         """
         dialog = self.dialog
+        dialog.show()
         dialog.accept()
         self.assertEqual(dialog.result, DialogResult.ACCEPTED)
+    
+    def test_reject_result(self):
+        """ Test the 'result' attribute of an accepted dialog.
+        
+        """
+        dialog = self.dialog
+        dialog.show()
+        dialog.reject()
+        self.assertEqual(dialog.result, DialogResult.REJECTED)
 
 if __name__ == '__main__':
     app = wx.App()

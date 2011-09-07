@@ -52,6 +52,9 @@ class WXDialog(WXWindow):
             self.parent._active = True
 
     def open(self):
+        """ Display the dialog.
+        
+        """
         self.show()
 
     def accept(self):
