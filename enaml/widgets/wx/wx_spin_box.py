@@ -73,6 +73,8 @@ class CustomSpinCtrl(wx.SpinCtrl):
         # the control, since we maintain our own internal counter.
         # and because the internal value of the widget gets reset to
         # the minimum of the range whenever SetValueString is called.
+        #
+        # XXX - look into using a wx.PyValidator for this
         self._hard_min = -(1 << 31)
         self._hard_max = (1 << 31) - 1
         self._internal_value = low
@@ -96,7 +98,7 @@ class CustomSpinCtrl(wx.SpinCtrl):
         self.Bind(wx.EVT_SPINCTRL, self.OnSpinCtrl)
         self.Bind(wx.EVT_TEXT, self.OnText)
         self.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
-    
+
     def OnKillFocus(self, event):
         """ The spin control doesn't emit a spin event when losing focus
         to process typed input change unless it results in a different
@@ -387,7 +389,7 @@ class WXSpinBox(WXControl):
 
         """
         self.widget = CustomSpinCtrl(self.parent_widget())
-        
+
     def initialize_widget(self):
         """ Intializes the widget with the attributes of this instance.
 
