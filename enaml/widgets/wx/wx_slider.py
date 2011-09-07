@@ -34,8 +34,7 @@ class WXSlider(WXElement):
 
     slider_pos : Float
         The floating point percentage (0.0 - 1.0) which is the position
-        of the slider. This value is always updated while the slider is
-        moving.
+        of the slider.
 
     value : Any
         The value of the slider. This is set to the value of
