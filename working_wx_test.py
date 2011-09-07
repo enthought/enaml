@@ -17,7 +17,7 @@ import math
 import random
 import datetime
 
-from enaml.enums import Direction
+from enaml.enums import Direction, Orientation
 
 
 Window:
@@ -129,6 +129,8 @@ Window:
                     value >> print(self.value)
                     to_slider = lambda val: math.log10(val)
                     from_slider = lambda val: 10 ** val
+                    tick_interval = 0.5
+                    orientation << Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
 """
 
 class Model(HasTraits):

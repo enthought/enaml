@@ -2,8 +2,7 @@ import warnings
 
 import wx
 
-from traits.api import (implements, Bool, Event, Str, Enum, Float, Any,
-                        Range, Callable, TraitError, Int)
+from traits.api import implements, Bool, Enum, TraitError
 
 from .wx_control import WXControl
 
