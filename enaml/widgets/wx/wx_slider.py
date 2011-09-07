@@ -191,7 +191,7 @@ class WXSlider(WXElement):
         self.widget.SetPageSize(self.page_step * wx_interval)
 
         # slider position
-        self.value = self.from_slider(self.slider_pos)
+        self.slider_pos = self.to_slider(self.value)
 
         # orientation
         self._apply_orientation(self.orientation)
