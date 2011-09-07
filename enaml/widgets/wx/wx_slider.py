@@ -144,6 +144,10 @@ class WXSlider(WXElement):
     #: is mainly used to control the event firing behaviour of the widget
     #: during initialisation
     _initialising = Bool
+
+    #: holds the last known tick_style to be valid
+    _tick_style = Enum(*TickPosition.values())
+
     #==========================================================================
     # Implementation
     #==========================================================================
@@ -204,8 +208,11 @@ class WXSlider(WXElement):
         self.slider_pos = self.to_slider(self.value)
 
         # orientation
-        self._apply_orientation(self.orientation)
-        # ticks
+        if self.orientation == Orientation.VERTICAL:
+            self.widget.SetWindowStyle(wx.SL_VERTICAL)
+        else:
+            self.widget.SetWindowStyle(wx.SL_HORIZONTAL)
+
         self._apply_tick_position(self.ticks)
         self.widget.SetTickFreq(wx_interval)
 
@@ -232,10 +239,14 @@ class WXSlider(WXElement):
         return position
 
     def _apply_tick_position(self, value):
-        """Converts the `ticks` position into style flags"""
+        """Converts the `ticks` position into style flags
+
+        Attempts to apply the requested tick position option. Returns True of
+        the new value was valid.
+        """
+        style = self.widget.GetWindowStyle()
 
         if self.orientation == Orientation.VERTICAL:
-            style = wx.SL_VERTICAL
             if value == TickPosition.LEFT:
                 style |= wx.SL_LEFT | wx.SL_AUTOTICKS
             elif value == TickPosition.RIGHT:
@@ -244,11 +255,15 @@ class WXSlider(WXElement):
                 warnings.warn('Option not implemented in wxPython')
             elif value == TickPosition.NO_TICKS:
                 pass
-            else:
+            elif value == TickPosition.DEFAULT:
                 style |= wx.SL_AUTOTICKS
+            else:
+                warnings.warn('Option {0} is incompatible with the current'
+                              ' orientation {1} and is ignored'.\
+                              format(str(value), str(self.orientation)))
+                return False
 
         else:
-            style = wx.SL_HORIZONTAL
             if value == TickPosition.TOP:
                 style |= wx.SL_TOP | wx.SL_AUTOTICKS
             elif value == TickPosition.BOTTOM:
@@ -256,43 +271,18 @@ class WXSlider(WXElement):
             elif value == TickPosition.BOTH:
                 warnings.warn('Option not implemented in wxPython')
             elif value == TickPosition.NO_TICKS:
-                style = wx.SL_HORIZONTAL
-            else:
+                pass
+            elif value == TickPosition.DEFAULT:
                 style |= wx.SL_AUTOTICKS
+            else:
+                warnings.warn('Option {0} is incompatible with the current'
+                              ' orientation {1} and is ignored'.\
+                              format(str(value), str(self.orientation)))
+                return False
 
         self.widget.SetWindowStyle(style)
 
-        return
-
-    def _apply_orientation(self, value):
-        """Converts the `orientation` into style flags"""
-
-        if self.widget.HasFlag(wx.SL_AUTOTICKS):
-            style = wx.SL_AUTOTICKS
-        else:
-            style = 0
-
-        if value == Orientation.VERTICAL:
-            if self.widget.HasFlag(wx.SL_TOP):
-                style |= wx.SL_LEFT
-
-            elif self.widget.HasFlag(wx.SL_BOTTOM):
-                style |= wx.SL_RIGHT
-
-            style |= wx.SL_VERTICAL
-
-        else:
-            if self.widget.HasFlag(wx.SL_LEFT):
-                style |= wx.SL_TOP
-
-            elif self.widget.HasFlag(wx.SL_RIGHT):
-                style |= wx.SL_BOTTOM
-
-            style |= wx.SL_HORIZONTAL
-
-        self.widget.SetWindowStyle(style)
-
-        return
+        return True
 
     def _thumb_hit(self, point):
         """Is the point in the thumb area"""
@@ -360,13 +350,50 @@ class WXSlider(WXElement):
         return
 
     def _orientation_changed(self):
-        """Update the widget due to change in the orientation attribute"""
-        self._apply_orientation(self.orientation)
+        """Update the widget due to change in the orientation attribute
+
+        The method applies the orientation style and fixes the tick position
+        option if necessary.
+        """
+
+        if self.orientation == Orientation.VERTICAL:
+            style = self.widget.GetWindowStyle() | wx.SL_VERTICAL
+            self.widget.SetWindowStyle(style)
+
+            if self.ticks in (TickPosition.TOP, TickPosition.DEFAULT):
+                self.ticks = TickPosition.LEFT
+
+            elif self.ticks == TickPosition.BOTTOM:
+                self.ticks = TickPosition.LEFT
+
+        else:
+            style = self.widget.GetWindowStyle() | wx.SL_HORIZONTAL
+            self.widget.SetWindowStyle(style)
+
+            if self.ticks in (TickPosition.LEFT, TickPosition.DEFAULT):
+                self.ticks = TickPosition.TOP
+
+            elif self.ticks == TickPosition.RIGHT:
+                self.ticks = TickPosition.BOTTOM
+
         return
 
-    def _ticks_changed(self):
-        """Update the widget due to change in the orientation attribute"""
-        self._apply_tick_position(self.ticks)
+    def _ticks_changed(self, new, old):
+        """Update the widget due to change in the orientation attribute
+
+        The method makes sure that the tick position style can be applied and
+        uses reverts to the last valid option if it is not.
+        """
+        if self._apply_tick_position(self.ticks):
+            # keep a copy of the last know valid
+            print "style was applied", self.ticks
+            self._tick_style = self.ticks
+        else:
+            # change to the last know valid value
+            print "style was not applied"
+            self.ticks = self._tick_style
+        return
+
     def _tick_interval_changed(self):
         """Update the tick marks interval"""
         wx_interval = self._convert_for_wx(self.tick_interval)
