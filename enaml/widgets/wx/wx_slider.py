@@ -182,10 +182,8 @@ class WXSlider(WXElement):
         # down
         self.down = False
 
-        # range
-        minimum = self._convert_for_wx(0.0)
-        maximum = self._convert_for_wx(1)
-        self.widget.SetRange(minimum, maximum)
+        # Hard coded range for the widget
+        self.widget.SetRange(0, 10000)
 
         self.widget.SetLineSize(self.single_step)
         self.widget.SetPageSize(self.page_step)
@@ -209,13 +207,13 @@ class WXSlider(WXElement):
     #--------------------------------------------------------------------------
 
     def _convert_for_wx(self, value):
-        """Converts the value to an integer suitable for the wxSlider"""
-        position = int(round(value / self.tick_interval))
+        """Converts the float value to an integer suitable for the wxSlider"""
+        position = int(value * 10000)
         return position
 
     def _convert_from_wx(self, value):
         """Converts the value to an integer suitable for the wxSlider"""
-        position = value * self.tick_interval
+        position = value / 10000.0
         return position
 
     def _apply_tick_position(self, value):
