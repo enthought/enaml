@@ -136,6 +136,14 @@ class WXSlider(WXElement):
 
     invalid_value = Event
 
+    #--------------------------------------------------------------------------
+    # Private interface
+    #--------------------------------------------------------------------------
+
+    #: When set the enaml widget is still initialising this value is set. It
+    #: is mainly used to control the event firing behaviour of the widget
+    #: during initialisation
+    _initialising = Bool
     #==========================================================================
     # Implementation
     #==========================================================================
@@ -179,6 +187,8 @@ class WXSlider(WXElement):
     def init_attributes(self):
         """initialize WXSlider attributes"""
 
+        self._initialising = True
+
         # down
         self.down = False
 
@@ -198,6 +208,8 @@ class WXSlider(WXElement):
         # ticks
         self._apply_tick_position(self.ticks)
         self.widget.SetTickFreq(wx_interval)
+
+        self._initialising = False
 
         return
 
@@ -341,7 +353,10 @@ class WXSlider(WXElement):
             self.widget.SetValue(position)
 
         self.value = self.from_slider(self.slider_pos)
-        self.moved = self.value
+
+        # the move event is not fired during initialisation
+        if not self._initialising:
+            self.moved = self.value
         return
 
     def _orientation_changed(self):
