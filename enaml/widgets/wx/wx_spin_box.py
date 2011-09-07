@@ -1,7 +1,7 @@
 import wx
 import wx.lib.newevent
 
-from traits.api import implements, Bool, Callable, Int, Str, Range
+from traits.api import implements
 
 from .wx_control import WXControl
 
@@ -20,8 +20,8 @@ class CustomSpinCtrl(wx.SpinCtrl):
     this custom control hard codes the internal range to the maximum 
     range of the wx.SpinCtrl and implements wrapping manually.
 
-    For changed events, users should bind to EVT_CUSTOM_SPINCTRL rather 
-    than EVT_SPINCTRL.
+    For changed events, users should bind to EVT_CUSTOM_SPINCTRL 
+    rather than EVT_SPINCTRL.
 
     See the method docstrings for supported functionality.
 
@@ -76,6 +76,7 @@ class CustomSpinCtrl(wx.SpinCtrl):
         self._hard_min = -(1 << 31)
         self._hard_max = (1 << 31) - 1
         self._internal_value = low
+        self._user_text = ''
         self._low = low
         self._high = high
         self._step = step
@@ -93,7 +94,30 @@ class CustomSpinCtrl(wx.SpinCtrl):
         self.Bind(wx.EVT_SPIN_UP, self.OnSpinUp)
         self.Bind(wx.EVT_SPIN_DOWN, self.OnSpinDown)
         self.Bind(wx.EVT_SPINCTRL, self.OnSpinCtrl)
-        
+        self.Bind(wx.EVT_TEXT, self.OnText)
+        self.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+    
+    def OnKillFocus(self, event):
+        """ The spin control doesn't emit a spin event when losing focus
+        to process typed input change unless it results in a different
+        value, so we have to handle it manually and update the control
+        again after the event. And it must be on a CallAfter or it doesn't
+        work. Gah, the wx event model is so horribly horribly broken.
+
+        """
+        event.Skip()
+        # The lambda fixes a DeadObjectError if the app 
+        # is closed before the callback executes.
+        wx.CallAfter(lambda: self.Update() if self else None)
+
+    def OnText(self, event):
+        """ Handles the text event of the spin control to store away the
+        user typed text for later conversion.
+
+        """
+        self._user_text = event.GetString()
+        event.Skip()
+
     def OnSpinUp(self, event):
         """ The event handler for the spin up event. We veto the spin 
         event to prevent the control from changing it's internal value. 
@@ -148,12 +172,20 @@ class CustomSpinCtrl(wx.SpinCtrl):
             else:
                 computed = potential
         else:
-            potential = event.GetInt()
+            # The user typed a value, and we need to convert the 
+            # stored text into an int. Bailing to the last value 
+            # if conversion fails.
+            try:
+                potential = self._from_string(self._user_text)
+            except Exception:
+                potential = last
+            finally:
+                self._user_text = ''
             if low <= potential <= high:
                 computed = potential
             else:
                 computed = last
-
+        
         self.SetValue(computed)
 
     def GetLow(self):
@@ -312,10 +344,9 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         """
         if self._low <= value <= self._high:
-            changed = value != self._internal_value
-            self._internal_value = value
-            self.Update()
-            if changed:
+            if self._internal_value != value:
+                self._internal_value = value
+                self.Update()
                 evt = CustomSpinCtrlEvent()
                 wx.PostEvent(self, evt)
     
@@ -339,32 +370,26 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
 
 class WXSpinBox(WXControl):
-    """ A wxPython implementation of ISpinBox.
+    """ A wxPython implementation of SpinBox.
 
     WXSpinBox uses a custom subclass of wx.SpinCtrl that behaves more
     like Qt's QSpinBox.
 
     See Also
     --------
-    ISpinBox
+    SpinBox
 
     """
     implements(ISpinBoxImpl)
 
     def create_widget(self):
-        """ Creates and binds a wx.SpinCtrl.
-
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
+        """ Creates the underlying custom spin control.
 
         """
         self.widget = CustomSpinCtrl(self.parent_widget())
         
     def initialize_widget(self):
         """ Intializes the widget with the attributes of this instance.
-        
-        This method is called by the 'layout' method of WXElement.
-        It is not meant for public consumption.
 
         """
         parent = self.parent
@@ -454,6 +479,9 @@ class WXSpinBox(WXControl):
     # Implementation
     #---------------------------------------------------------------------------
     def bind(self):
+        """ Binds the event handlers for the spin control.
+
+        """
         self.widget.Bind(EVT_CUSTOM_SPINCTRL, self.on_custom_spin_ctrl)
 
     def on_custom_spin_ctrl(self, event):
