@@ -121,9 +121,9 @@ class Color(Enum):
 
 class DialogResult(Enum):
 
-    ACCEPTED = Constant()
-
     REJECTED = Constant()
+    
+    ACCEPTED = Constant()
 
 
 class Direction(Enum):
