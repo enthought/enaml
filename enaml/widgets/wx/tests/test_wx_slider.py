@@ -52,8 +52,8 @@ class testWXSlider(unittest.TestCase):
         self.assertEqual(value, self.slider.value)
         position = self.slider.to_slider(value)
         self.assertEqual(position, self.slider.slider_pos)
-        self.assertEqual(round(position / self.slider.tick_interval),
-                                                            widget.GetValue())
+        wx_position = self.slider._convert_for_wx(position)
+        self.assertEqual(wx_position, widget.GetValue())
 
     def testInitialContents(self):
         """Check the initial values of the WXslider"""
