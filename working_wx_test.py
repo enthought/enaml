@@ -118,7 +118,7 @@ Window:
                         step = 2
                         low << -20 if not self.wrap else 0
                         high = 20
-                        value >> print(self.value)
+                        #value >> print(self.value)
 
                 HGroup:
                     LineEdit line_edit:
@@ -143,11 +143,8 @@ class Model(HasTraits):
 
 fact = EnamlFactory(StringIO(enml))
 
-app = wx.PySimpleApp()
-
 view = fact(model=Model())
 
 view.show()
 
-app.MainLoop()
 
