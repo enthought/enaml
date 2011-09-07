@@ -390,11 +390,9 @@ class WXSlider(WXElement):
         """
         if self._apply_tick_position(self.ticks):
             # keep a copy of the last know valid
-            print "style was applied", self.ticks
             self._tick_style = self.ticks
         else:
             # change to the last know valid value
-            print "style was not applied"
             self.ticks = self._tick_style
         return
 
