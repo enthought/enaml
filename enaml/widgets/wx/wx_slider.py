@@ -185,8 +185,10 @@ class WXSlider(WXElement):
         # Hard coded range for the widget
         self.widget.SetRange(0, 10000)
 
-        self.widget.SetLineSize(self.single_step)
-        self.widget.SetPageSize(self.page_step)
+        # tick marks
+        wx_interval = self._convert_for_wx(self.tick_interval)
+        self.widget.SetLineSize(self.single_step * wx_interval)
+        self.widget.SetPageSize(self.page_step * wx_interval)
 
         # slider position
         self.value = self.from_slider(self.slider_pos)
@@ -195,6 +197,7 @@ class WXSlider(WXElement):
         self._apply_orientation(self.orientation)
         # ticks
         self._apply_tick_position(self.ticks)
+        self.widget.SetTickFreq(wx_interval)
 
         return
 
@@ -349,17 +352,23 @@ class WXSlider(WXElement):
     def _ticks_changed(self):
         """Update the widget due to change in the orientation attribute"""
         self._apply_tick_position(self.ticks)
+    def _tick_interval_changed(self):
+        """Update the tick marks interval"""
+        wx_interval = self._convert_for_wx(self.tick_interval)
+        self.widget.SetTickFreq(wx_interval)
         return
 
     def _single_step_changed(self):
-        """Update the widget due to change in the line step"""
-        print "single_step changed to:", self.single_step
-        self.widget.SetLineSize(self.single_step)
+        """Update the the line step in the widget"""
+        wx_interval = self._convert_for_wx(self.tick_interval)
+        self.widget.SetLineSize(self.single_step * wx_interval)
+        return
 
     def _page_step_changed(self):
         """Update the widget due to change in the line step"""
-        print "page_step changed to:", self.page_step
-        self.widget.SetPageSize(self.page_step)
+        wx_interval = self._convert_for_wx(self.tick_interval)
+        self.widget.SetPageSize(self.page_step * wx_interval)
+        return
 
     #--------------------------------------------------------------------------
     # Event handlers
