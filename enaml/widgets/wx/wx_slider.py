@@ -47,7 +47,7 @@ class WXSlider(WXElement):
 
     single_step : Int
         Defines the number of ticks that the slider will move when the user
-        presses the arrow keys. Defailt is 1
+        presses the arrow keys. Default is 1
 
     page_step : Int
         Defines the number of ticks that the slider will move when the user
@@ -65,7 +65,7 @@ class WXSlider(WXElement):
         marks. Please note that the orientation takes precedence over the
         tick mark position and if for example the user sets the tick to an
         invalid value it is ignored. The ticks option BOTH is not supported yet
-        in the wx widget, and will be also ingored.
+        in the wx widget, and will be also ignored.
 
     orientation : Orientation Enum value
         The orientation of the slider. The default orientation is horizontal.
@@ -91,7 +91,7 @@ class WXSlider(WXElement):
         (from highest to lowest):
 
             # update `slider_pos` (when changed by the ui) or `value` (when
-              changed programmatically).
+              changed programatically).
             # fire `invalid_value`.
             # fire `moved`.
             # update `down`.
@@ -153,7 +153,7 @@ class WXSlider(WXElement):
     #==========================================================================
 
     def create_widget(self):
-        """Initialization of ISlider based on wxWidget
+        """Initialisation of ISlider based on wxWidget
 
         The method create the wxPython Slider widget and binds the ui events
         to WXSlider. Individual event binding was preferred instead of events
@@ -213,6 +213,7 @@ class WXSlider(WXElement):
         else:
             self.widget.SetWindowStyle(wx.SL_HORIZONTAL)
 
+        # ticks style
         self._apply_tick_position(self.ticks)
         self.widget.SetTickFreq(wx_interval)
 
@@ -292,6 +293,7 @@ class WXSlider(WXElement):
         if self.orientation == Orientation.VERTICAL:
             mouse = point[1] / height
             thumb = self.widget.GetThumbLength() / height
+
         else:
             mouse = point[0] / width
             thumb = self.widget.GetThumbLength() / width
@@ -435,7 +437,7 @@ class WXSlider(WXElement):
         self.tracking attribute is True. This will also fire a moved event
         for a very change.
 
-        The event is not skiped
+        The event is not skipped
         """
         if self.tracking:
             self._on_slider_changed(event)
@@ -498,7 +500,7 @@ Window main:
                 orientation << Orientation.VERTICAL if vertical.checked else Orientation.HORIZONTAL
                 ticks = TickPosition.DEFAULT
                 value = 0.5
-                tick_interval = 0.01
+                tick_interval = 0.05
                 tracking := track.checked
                 released >> print('the slider was released!', msg.new)
                 pressed >> print('the slider was pressed!', msg.new)
