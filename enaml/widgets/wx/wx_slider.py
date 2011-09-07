@@ -206,6 +206,8 @@ class WXSlider(WXElement):
 
         # slider position
         self.slider_pos = self.to_slider(self.value)
+        wx_position = self._convert_for_wx(self.slider_pos)
+        self.widget.SetValue(wx_position)
 
         # orientation
         if self.orientation == Orientation.VERTICAL:
