@@ -1,5 +1,5 @@
 from traits.api import (Any, Bool, Callable, Enum, Float, Range, Event, 
-                        Instance, Property)
+                        Instance, Property, Int)
 
 from .control import IControlImpl, Control
 
@@ -15,10 +15,19 @@ class ISliderImpl(IControlImpl):
     def parent_to_slider_changed(self, to_slider):
         raise NotImplementedError
     
+    def parent_slider_pos_changed(self, slider_pos):
+        raise NotImplementedError
+
     def parent_value_changed(self, value):
         raise NotImplementedError
-    
+
     def parent_tracking_changed(self, tracking):
+        raise NotImplementedError
+    
+    def parent_single_step_changed(self, single_step):
+        raise NotImplementedError
+    
+    def parent_page_step_changed(self, page_step):
         raise NotImplementedError
     
     def parent_tick_interval_changed(self, tick_interval):
@@ -31,7 +40,7 @@ class ISliderImpl(IControlImpl):
         raise NotImplementedError
     
 
-@protected('_down', '_slider_pos', )
+@protected('_down')
 class Slider(Control):
     """ A simple slider widget.
 
@@ -55,10 +64,9 @@ class Slider(Control):
         A function that takes one argument to convert from a Python 
         value to the appropriate slider position.
 
-    slider_pos : Property(Float)
+    slider_pos : Float
         A read only property which is the floating point percentage 
-        (0.0 - 1.0) which is the position of the slider. This value 
-        is always updated while the slider is moving.
+        (0.0 - 1.0) which is the position of the slider.
 
     value : Any
         The value of the slider. This is set to the value of
@@ -68,16 +76,33 @@ class Slider(Control):
         If True, the value is updated while sliding. Otherwise, it is 
         only updated when the slider is released. Defaults to True.
 
+    single_step : Int
+        Defines the number of ticks that the slider will move when the 
+        user presses the arrow keys. Default is 1
+
+    page_step : Int
+        Defines the number of ticks that the slider will move when the 
+        user presses the page_up/page_down keys. Default is 5
+
     tick_interval : Float
-        The slider_pos interval to put between tick marks.
+        The slider_pos interval to put between tick marks. Default value 
+        is `0.1` which is 10% of the full slider range. Please note that 
+        this value defined the number of possible values that can be 
+        selected. So the default value will create a slider with 9 places 
+        between the minimum and maximum values.
 
     tick_position : TickPosition Enum value
-        A TickPosition enum value indicating how to display the tick 
-        marks.
+        A TickPosition enum value indicating how to display the tick
+        marks. Please note that the orientation takes precedence over 
+        the tick mark position and if for example the user sets the tick
+        to an invalid value it is ignored. The ticks option BOTH is not 
+        supported yet in the wx backend, and will be also ignored.
 
     orientation : Orientation Enum value
-        The orientation of the slider. One of the Orientation enum 
-        values.
+        The orientation of the slider. The default orientation is 
+        horizontal. When the orientation is flipped the tick positions 
+        (if set) also adapt to reflect the changes  (e.g. the LEFT 
+        becomes TOP when the orientation becomes horizontal).
 
     pressed : Event
         Fired when the slider is pressed.
@@ -100,6 +125,18 @@ class Slider(Control):
         A protected attribute used by the implementation object to
         update the value of slider_pos.
 
+    .. note:: The slider enaml widget changes the attributes and fires 
+        the necessary events in sequence based on their priority as 
+        given below (from highest to lowest):
+
+            # update `slider_pos` (when changed by the ui) or `value` 
+              (when changed programatically).
+            # fire `invalid_value`.
+            # fire `moved`.
+            # update `down`.
+            # fire pressed.
+            # fire released.
+
     """
     down = Property(Bool, depends_on='_down')
     
@@ -107,15 +144,19 @@ class Slider(Control):
     
     to_slider = Callable(lambda val: val)
     
-    slider_pos = Property(Float, depends_on='_slider_pos')
+    slider_pos = Range(0.0, 1.0)
     
     value = Any
     
     tracking = Bool(True)
         
-    tick_interval = Float
+    tick_interval = Float(0.1)
 
-    ticks = Enum(*TickPosition.values())
+    single_step = Int(1)
+
+    page_step = Int(5)
+
+    tick_position = Enum(*TickPosition.values())
 
     orientation = Enum(*Orientation.values())
 
@@ -129,8 +170,6 @@ class Slider(Control):
 
     _down = Bool
 
-    _slider_pos = Range(0.0, 1.0)
-
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
@@ -141,11 +180,5 @@ class Slider(Control):
 
         """
         return self._down
-    
-    def _get_slider_pos(self):
-        """ The property getter for the 'slider_pos' attribute.
-
-        """
-        return self._slider_pos
 
     

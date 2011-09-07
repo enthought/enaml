@@ -13,6 +13,7 @@ from traits.api import HasTraits, Str
 from enaml.factory import EnamlFactory
 
 enml = """
+import math
 import random
 import datetime
 
@@ -123,7 +124,11 @@ Window:
                 HGroup:
                     LineEdit line_edit:
                         text := model.window_title
-            
+                Slider:
+                    value = 10
+                    value >> print(self.value)
+                    to_slider = lambda val: math.log10(val)
+                    from_slider = lambda val: 10 ** val
 """
 
 class Model(HasTraits):
