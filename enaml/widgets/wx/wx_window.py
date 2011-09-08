@@ -6,7 +6,7 @@ from .wx_component import WXComponent
 
 from ..window import IWindowImpl
 
-from ...enums import Modality
+from ...enums import Modality, SizePolicy
 
 
 class WXWindow(WXComponent):
@@ -44,8 +44,17 @@ class WXWindow(WXComponent):
 
         """
         sizer = wx.BoxSizer(wx.VERTICAL)
-        for child in self.child_widgets():
-            sizer.Add(child, 1, wx.EXPAND)
+        #for child in self.child_widgets():
+        #    sizer.Add(child, 1, wx.EXPAND)
+        for child in self.parent.children:
+            size_policy = child.get_style('size_policy')
+            stretch = child.get_style('stretch')
+            spacing = child.get_style('spacing')
+            if size_policy == SizePolicy.EXPANDING:
+                flag = wx.EXPAND
+            else:
+                flag = 0
+            sizer.Add(child.toolkit_impl.widget, stretch, flag | wx.ALL, spacing)
         self.widget.SetSizer(sizer)
 
     def show(self):

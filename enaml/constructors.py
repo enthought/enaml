@@ -21,6 +21,10 @@ class IToolkitConstructor(Interface):
     identifier : Str
         The unique identifier assigned to the widget (if any).
         An empty string is considered to be no id.
+    
+    type_name : Str
+        The type name in use by this component that this constructor
+        will create.
 
     delegates : List(Tuple(Str, Instance(IExpressionDelegateFactory)))
         The list of tuples of info for delegating traits on the toolkit 
@@ -53,6 +57,8 @@ class IToolkitConstructor(Interface):
         
     """
     identifier = Str
+
+    type_name = Str
 
     delegates = List(Tuple(Str, Instance(IExpressionDelegateFactory)))
 
@@ -128,6 +134,8 @@ class BaseToolkitCtor(HasStrictTraits):
     """
     identifier = Str
 
+    type_name = Str
+
     delegates = List(Tuple(Str, Instance(IExpressionDelegateFactory)))
 
     notifiers = List(Tuple(Str, Instance(IExpressionNotifierFactory)))
@@ -155,6 +163,7 @@ class BaseToolkitCtor(HasStrictTraits):
 
         """
         self.impl = impl = self.component()
+        impl._type = self.type_name
         for meta in self.metas:
             meta.construct()
             impl.add_meta_info(meta.impl)

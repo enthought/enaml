@@ -3,6 +3,7 @@ from traits.api import (HasStrictTraits, Str, Dict, Set, WeakRef, Instance,
 
 from ..expressions import IExpressionDelegate, IExpressionNotifier
 from ..util.decorators import protected
+from ..util.style_sheet import StyleSheet, NO_STYLE
 
 
 class IComponentImpl(Interface):
@@ -96,7 +97,7 @@ class IComponentImpl(Interface):
         raise NotImplementedError
 
 
-@protected('_delegates', '_notifiers', 'parent', 'children', 'toolkit_impl')
+@protected('_delegates', '_notifiers', '_id', '_type', 'parent', 'children', 'toolkit_impl')
 class Component(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy. 
     
@@ -114,11 +115,26 @@ class Component(HasStrictTraits):
         The expression notifiers currently installed on this component. 
         This is a protected attribute and is managed internally. 
         Manipulate at your own risk.
+    
+    _id : Str
+        The identifier assigned to this element in the enaml source code.
+        Note that if you change this, you will likely break things.
+
+    _type : Str
+        The type name this component is using in the enaml source code.
 
     name : Str
         The name of this element which may be used as metainfo by other
         components. Note that this is not the same as the identifier 
-        that can be assigned to a component as part of the tml grammar.
+        that can be assigned to a component as part of the enaml grammar.
+
+    style_class = Str
+        The space-separated names of the style classes used by this
+        component.
+
+    style_sheet : Instance(StyleSheet)
+        The style_sheet in use by this component. This is not usually
+        manipulated by the user.
 
     parent : WeakRef(Component)
         The parent component of this component which is stored as a
@@ -182,13 +198,41 @@ class Component(HasStrictTraits):
 
     _notifiers = Set(Instance(IExpressionNotifier))
 
+    _id = Str
+
+    _type = Str
+
     name = Str
+
+    style_class = Str
+
+    style_sheet = Instance(StyleSheet)
 
     parent = WeakRef
 
     children = List(Instance('Component'))
 
     toolkit_impl = Instance(IComponentImpl)
+
+    def get_style(self, tag):
+        sheet = self.get_style_sheet()
+        if sheet is None:
+            res = NO_STYLE
+        else:
+            res = sheet.get_style(
+                tag, type=self._type, cls=self.style_class, id=self._id,
+            )
+        if callable(res):
+            res = res(self)
+        return res
+
+    def get_style_sheet(self):
+        parent = self
+        while parent:
+            style = parent.style_sheet
+            if style is not None:
+                return style
+            parent = parent.parent
 
     def set_attribute_delegate(self, name, delegate):
         """ Delegates the value of the attribute to the delegate.
