@@ -1,6 +1,7 @@
 from traits.api import HasStrictTraits, Instance
 
 from .toolkit import Toolkit
+from .util.style_sheet import StyleSheet
 from .widgets.window import Window
 
   
@@ -42,11 +43,19 @@ class View(HasStrictTraits):
 
     toolkit = Instance(Toolkit)
 
+    style_sheet = Instance(StyleSheet)
+
     def show(self):
+        self.window.style_sheet = self.style_sheet
         self.window.show()
         self.toolkit.start_event_loop()
         
     def hide(self):
         self.window.hide()
 
+    def set_style_sheet(self, style_sheet):
+        self.style_sheet = style_sheet
+
+    def _style_sheet_default(self):
+        return self.toolkit.default_style_sheet()
 

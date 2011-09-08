@@ -1,9 +1,10 @@
 import os
 
-from traits.api import HasStrictTraits, Dict, Str, Callable, Any
+from traits.api import HasStrictTraits, Dict, Str, Callable, Any, Instance
 
 from .constructors import IToolkitConstructor
 from .util.trait_types import SubClass
+from .util.style_sheet import StyleSheet
 
 
 class Toolkit(HasStrictTraits):
@@ -36,6 +37,9 @@ class Toolkit(HasStrictTraits):
         attribute. This will usually be the toolkit's application
         object.
 
+    style_sheet : SubClass(StyleSheet)
+        A default style sheet class for this toolkit.
+
     Methods
     -------
     create_ctor(name):
@@ -49,6 +53,9 @@ class Toolkit(HasStrictTraits):
     start_event_loop()
         Called at the end of the View's 'show' method to start the 
         toolkit's event loop.
+    
+    default_style_sheet()
+        Returns the default style sheet class for this toolkit.
 
     """
     items = Dict(Str, SubClass(IToolkitConstructor))
@@ -59,8 +66,11 @@ class Toolkit(HasStrictTraits):
 
     app = Any
 
-    def __init__(self, items, prime, start):
-        super(Toolkit, self).__init__(items=items, prime=prime, start=start)
+    style_sheet = Instance(StyleSheet)
+
+    def __init__(self, items, prime, start, style_sheet):
+        super(Toolkit, self).__init__(items=items, prime=prime, start=start,
+                                      style_sheet=style_sheet)
 
     def create_ctor(self, name):
         """ Creates the constructor instance for the given name, or 
@@ -72,7 +82,7 @@ class Toolkit(HasStrictTraits):
         except KeyError:
             msg = 'Toolkit does not support the %s item.' % name
             raise ValueError(msg)
-        return ctor_cls()
+        return ctor_cls(type_name=name)
     
     def prime_event_loop(self):
         """ Called before any ui tree building takes place in order to 
@@ -87,6 +97,12 @@ class Toolkit(HasStrictTraits):
         
         """
         self.start(self.app)
+    
+    def default_style_sheet(self):
+        """ Returns the default style sheet class for this toolkit.
+
+        """
+        return self.style_sheet
 
 
 def default_toolkit():
@@ -118,7 +134,7 @@ def wx_toolkit():
 
     """
     from .widgets.wx import constructors as ctors
-    
+    from .widgets.wx.style_sheet import WX_STYLE_SHEET
     items = {
         'Panel': ctors.WXPanelCtor,
         'Window': ctors.WXWindowCtor,
@@ -142,6 +158,7 @@ def wx_toolkit():
         'RadioButton': ctors.WXRadioButtonCtor,
         'Slider': ctors.WXSliderCtor,
         'SpinBox': ctors.WXSpinBoxCtor,
+        'Spacer': ctors.WXSpacerCtor,
     }
 
     def prime_loop():
@@ -154,8 +171,9 @@ def wx_toolkit():
     def start_loop(app):
         if not app.IsMainLoopRunning():
             app.MainLoop()
-
-    return Toolkit(items=items, prime=prime_loop, start=start_loop)
+        
+    return Toolkit(items=items, prime=prime_loop, start=start_loop,
+                   style_sheet=WX_STYLE_SHEET)
 
 
 def pyside_toolkit():

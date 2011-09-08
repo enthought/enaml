@@ -6,7 +6,7 @@ from .wx_container import WXContainer
 
 from ..group import IGroupImpl
 
-from ...enums import Direction
+from ...enums import Direction, SizePolicy
 
 
 class WXGroup(WXContainer):
@@ -41,8 +41,15 @@ class WXGroup(WXContainer):
 
         """
         sizer = self.widget
-        for child in self.child_widgets():
-            sizer.Add(child, 1, wx.EXPAND)
+        for child in self.parent.children:
+            size_policy = child.get_style('size_policy')
+            stretch = child.get_style('stretch')
+            spacing = child.get_style('spacing')
+            if size_policy == SizePolicy.EXPANDING:
+                flag = wx.EXPAND
+            else:
+                flag = 0
+            sizer.Add(child.toolkit_impl.widget, stretch, flag | wx.ALL, spacing)
         sizer.Layout()
 
     def parent_direction_changed(self, direction):
