@@ -85,11 +85,8 @@ class Slider(Control):
         user presses the page_up/page_down keys. Default is 5
 
     tick_interval : Float
-        The slider_pos interval to put between tick marks. Default value 
-        is `0.1` which is 10% of the full slider range. Please note that 
-        this value defined the number of possible values that can be 
-        selected. So the default value will create a slider with 9 places 
-        between the minimum and maximum values.
+        The slider_pos interval to put between tick marks. Default value
+        is `0.1` which is 10% of the full slider range.
 
     tick_position : TickPosition Enum value
         A TickPosition enum value indicating how to display the tick
