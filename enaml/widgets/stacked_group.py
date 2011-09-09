@@ -13,7 +13,7 @@ class StackedGroup(Container):
     """ A container that lays out its child containers as a stack.
 
     A container which lays out its children as a stack and makes only
-    one child visible at a time. All children of the StackedGroup 
+    one child visible at a time. All children of the StackedGroup
     must themselves be Containers.
 
     Attributes
@@ -25,7 +25,7 @@ class StackedGroup(Container):
     count : Property(Int)
         A read only property which returns the number of children
         in the stack.
-    
+
     Methods
     -------
     child_at(idx)
@@ -43,7 +43,7 @@ class StackedGroup(Container):
     # Overridden parent class traits
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IStackedGroupImpl)
-    
+
     def child_at(self, idx):
         """ Returns the child container at the given index.
 
@@ -51,7 +51,7 @@ class StackedGroup(Container):
         ---------
         idx : int
             The zero based index to use to lookup the child container.
-            It may be negative, in which case the lookup will be 
+            It may be negative, in which case the lookup will be
             from the end of the stack.
 
         Returns
@@ -66,7 +66,7 @@ class StackedGroup(Container):
 
         IndexError
             No child corresponds to the given index.
-        
+
         """
         raise NotImplementedError
 
