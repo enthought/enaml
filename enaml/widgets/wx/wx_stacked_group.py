@@ -50,8 +50,8 @@ class WXStackedGroup(WXContainer):
 
         """
         widget = self.widget
-        for i, child in enumerate(self.parent.children):
-            widget.AddPage(child.toolkit_impl.widget, str(i))
+        for child in self.parent.children:
+            widget.AddPage(child.toolkit_impl.widget, child.name)
 
         self.set_page(self.parent.current_index)
 
