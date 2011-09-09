@@ -5,7 +5,7 @@ from .container import IContainerImpl, Container
 
 class IStackedGroupImpl(IContainerImpl):
 
-    def parent_current_idx_changed(self, current_idx):
+    def parent_current_index_changed(self, current_index):
         raise NotImplementedError
 
 
