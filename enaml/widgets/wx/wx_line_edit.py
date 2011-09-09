@@ -262,6 +262,7 @@ class WXLineEdit(WXControl):
         self.update_parent_selection()
         parent.text_edited = text
         parent._modified = True
+        parent.text_changed = text
 
     def on_text_enter(self, event):
         """ The event handler for the return pressed event.
