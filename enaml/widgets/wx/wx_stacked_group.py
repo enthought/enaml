@@ -28,8 +28,6 @@ class wxStackedGroup(wx.Choicebook):
 class WXStackedGroup(WXContainer):
     """ A wxPython implementation of IStackedGroup.
 
-    The WXStackedGroup uses a wxBoxSizer to show one child at a time.
-
     See Also
     --------
     IStackedGroup
