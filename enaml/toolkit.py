@@ -40,6 +40,11 @@ class Toolkit(HasStrictTraits):
     style_sheet : SubClass(StyleSheet)
         A default style sheet class for this toolkit.
 
+    utils : Dict(Str, Callable)
+        Callables used to construct simple ui elements in the RHS of a
+        delegate expression. Unlike 'items', these are not independent
+        components in Enaml source code.
+
     Methods
     -------
     create_ctor(name):
@@ -67,10 +72,12 @@ class Toolkit(HasStrictTraits):
     app = Any
 
     style_sheet = Instance(StyleSheet)
+    
+    utils = Dict(Str, Callable)
 
-    def __init__(self, items, prime, start, style_sheet):
+    def __init__(self, items, prime, start, style_sheet, utils):
         super(Toolkit, self).__init__(items=items, prime=prime, start=start,
-                                      style_sheet=style_sheet)
+                                      style_sheet=style_sheet, utils=utils)
 
     def create_ctor(self, name):
         """ Creates the constructor instance for the given name, or 
@@ -135,6 +142,7 @@ def wx_toolkit():
     """
     from .widgets.wx import constructors as ctors
     from .widgets.wx.style_sheet import WX_STYLE_SHEET
+    from .widgets.wx import dialogs
     items = {
         'Panel': ctors.WXPanelCtor,
         'Window': ctors.WXWindowCtor,
@@ -161,6 +169,13 @@ def wx_toolkit():
         'Spacer': ctors.WXSpacerCtor,
     }
 
+    utils = {
+        'error': dialogs.error,
+        'warning': dialogs.warning,
+        'information': dialogs.information,
+        'question': dialogs.question
+    }
+
     def prime_loop():
         import wx
         app = wx.GetApp()
@@ -173,7 +188,7 @@ def wx_toolkit():
             app.MainLoop()
         
     return Toolkit(items=items, prime=prime_loop, start=start_loop,
-                   style_sheet=WX_STYLE_SHEET)
+                   style_sheet=WX_STYLE_SHEET, utils=utils)
 
 
 def pyside_toolkit():

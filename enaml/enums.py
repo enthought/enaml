@@ -74,6 +74,10 @@ class Buttons(Enum):
     RETRY = Constant()
     
     IGNORE = Constant()
+    
+    OK_CANCEL = Constant()
+    
+    YES_NO = Constant()
 
 
 class Color(Enum):
