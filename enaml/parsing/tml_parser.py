@@ -219,31 +219,42 @@ def p_tml_children2(p):
 
 
 def p_tml_default(p):
-    ''' tml_default : NAME EQUAL test NEWLINE '''
+    ''' tml_default : tml_name EQUAL test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
     p[0] = tml_ast.TMLDefault(p[1], expr)
 
 
 def p_tml_expr_bind(p):
-    ''' tml_expr_bind : NAME LEFTSHIFT test NEWLINE '''
+    ''' tml_expr_bind : tml_name LEFTSHIFT test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
     p[0] = tml_ast.TMLExprBind(p[1], expr)
 
 
 def p_tml_notify(p):
-    ''' tml_notify : NAME RIGHTSHIFT test NEWLINE '''
+    ''' tml_notify : tml_name RIGHTSHIFT test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
     p[0] = tml_ast.TMLNotify(p[1], expr)
 
 
 def p_tml_delegate(p):
-    ''' tml_delegate : NAME COLONEQUAL test NEWLINE '''
+    ''' tml_delegate : tml_name COLONEQUAL test NEWLINE '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
     p[0] = tml_ast.TMLDelegate(p[1], expr)
+
+
+def p_tml_name1(p):
+    ''' tml_name : NAME '''
+    p[0] = p[1]
+
+
+def p_tml_name2(p):
+    ''' tml_name : NAME DOT NAME '''
+    p[0] = '%s.%s' % (p[1], p[3])
+
 
 
 #------------------------------------------------------------------------------
