@@ -25,3 +25,28 @@ class SubClass(TraitType):
             msg = 'Class must be a subclass of %s.' % cls
             raise TypeError(msg)
 
+
+class ReadOnlyConstruct(TraitType):
+
+    def __init__(self, factory):
+        super(ReadOnlyConstruct, self).__init__()
+        self._factory = factory
+
+    def get(self, obj, name):
+        dct = obj.__dict__
+        if name in dct:
+            res = dct[name]
+        else:
+            res = dct[name] = self._factory(obj, name)
+        return res
+
+
+class NamedLookup(TraitType):
+
+    def __init__(self, lookup_func_name):
+        super(NamedLookup, self).__init__()
+        self._lookup_func_name = lookup_func_name
+    
+    def get(self, obj, name):
+        return getattr(obj, self._lookup_func_name)(name)
+

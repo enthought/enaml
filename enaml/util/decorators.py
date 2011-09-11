@@ -6,11 +6,7 @@ def protected(*names):
 
     """
     def closure(cls):
-        try:
-            protected = cls.__protected__
-            protected.update(names)
-        except AttributeError:
-            protected = set(names)
+        protected = set(names)
         parent_cls = cls.mro()[1]
         try:
             parent_protected = parent_cls.__protected__
