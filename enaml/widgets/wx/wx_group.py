@@ -3,12 +3,13 @@ import wx
 from traits.api import implements
 
 from .wx_container import WXContainer
+from .util import compute_sizer_flags
 
 from ..group import IGroupImpl
 
-from ...enums import Direction, SizePolicy
+from ...enums import Direction
 
-
+            
 class WXGroup(WXContainer):
     """ A wxPython implementation of IGroup.
 
@@ -42,14 +43,8 @@ class WXGroup(WXContainer):
         """
         sizer = self.widget
         for child in self.parent.children:
-            size_policy = child.get_style('size_policy')
-            stretch = child.get_style('stretch')
-            spacing = child.get_style('spacing')
-            if size_policy == SizePolicy.EXPANDING:
-                flag = wx.EXPAND
-            else:
-                flag = 0
-            sizer.Add(child.toolkit_impl.widget, stretch, flag | wx.ALL, spacing)
+            flags = compute_sizer_flags(child.style)
+            sizer.AddF(child.toolkit_impl.widget, flags)
         sizer.Layout()
 
     def parent_direction_changed(self, direction):

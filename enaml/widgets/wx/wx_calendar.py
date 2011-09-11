@@ -40,7 +40,6 @@ class WXCalendar(WXControl):
             self.set_minimum_date(min_date)
         if max_date is not None:
             self.set_maximum_date(max_date)
-        self.widget.SetMinSize(parent.get_style('size_hint'))
         self.bind()
 
     def parent_date_changed(self, date):

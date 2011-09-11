@@ -1,100 +1,103 @@
-from ...enums import SizePolicy
-from ...util.style_sheet import StyleSheet
+from ...enums import SizePolicy, Color
+from ...util.style_sheet import StyleSheet, style
 
 
-WX_STYLE_SHEET = StyleSheet({
-    "*": {
-        "size_hint": (-1, -1),
-        "size_policy": SizePolicy.EXPANDING,
-        "stretch": 0,
-        "spacing": 2,
-    },
-    "PushButton": {
-        "size_policy": SizePolicy.MINIMUM,
-    },
-    "CheckBox": {
-        "size_policy": SizePolicy.MINIMUM,
-    },
-    "SpinBox": {
-        "size_policy": SizePolicy.MINIMUM,
-        "stretch": 1,
-    },
-    "ComboBox": {
-        "size_policy": SizePolicy.MINIMUM,
-        "stretch": 1,
-    },
-    "Html": {
-        "stretch": 2,
-    },
-    "Slider": {
-        "stretch": 1,
-    },
-    "Panel": {
-        "stretch": 1,
-    },
-    "LineEdit": {
-        "stretch": 1,
-    },
-    "Field": {
-        "stretch": 1,
-    },
-    "Label": {
-        "stretch": 1,
-    },
-    "Spacer": {
-        "stretch": 2,
-    },
+WX_STYLE_SHEET = StyleSheet(
+    
+    #---------------------------------------------------------------------------
+    # Default style
+    #---------------------------------------------------------------------------
+    style("*",
+        size_policy = "expanding",
+    ),
+
+    #---------------------------------------------------------------------------
+    # default type overrides
+    #---------------------------------------------------------------------------
+    style("PushButton", "CheckBox", "SpinBox", "ComboBox",
+        size_policy = "minimum",
+    ),
+
+    style("SpinBox", "ComboBox", "Slider", "Panel", "LineEdit", "Field", "Label",
+        stretch = 1,
+    ),
+
+    style("Html", "Spacer",
+        stretch = 2,
+    ),
+
+    style("Group", "VGroup", "HGroup",
+        border = 5,
+    ),
 
     #---------------------------------------------------------------------------
     # Convienence style classes
     #---------------------------------------------------------------------------
+    style(".error_colors",
+        background_color = Color.ERROR,
+        color = Color.DEFAULT,
+    ),
 
-    # size_policy
-    ".fixed": {
-        "size_policy": SizePolicy.MINIMUM,
-    },
-    ".expanding": {
-        "size_policy": SizePolicy.EXPANDING,
-    },
+    style(".normal_colors",
+        background_color = Color.DEFAULT,
+        color = Color.DEFAULT,
+    ),
 
-    # stretch
-    ".no_stretch": {
-        "stretch": 0
-    },
-    ".stretch": {
-        "stretch": 1,
-    },
-    ".x_stretch": {
-        "stretch": 2,
-    },
-    ".xx_stretch": {
-        "stretch": 3,
-    },
-    ".X_stretch": {
-        "stretch": 4,
-    },
-    ".XX_stretch": {
-        "stretch": 5,
-    },
+    style(".fixed",
+        size_policy = SizePolicy.MINIMUM,
+    ),
 
-    # spacing
-    ".no_space": {
-        "spacing": 0,
-    },
-    ".space": {
-        "spacing": 2,
-    },
-    ".x_space": {
-        "spacing": 5,
-    },
-    ".xx_space": {
-        "spacing": 10,
-    },
-    ".X_space": {
-        "spacing": 20,
-    },
-    ".XX_space": {
-        "spacing": 40,
-    },
-})
+    style(".expanding",
+        size_policy = SizePolicy.EXPANDING,
+    ),
+
+    style(".no_stretch",
+        stretch = 0,
+    ),
+
+    style(".stretch",
+        stretch = 1,
+    ),
+
+    style(".x_stretch",
+        stretch = 2,
+    ),
+
+    style(".xx_stretch",
+        stretch = 3,
+    ),
+
+    style(".X_stretch",
+        stretch = 4,
+    ),
+
+    style(".XX_stretch",
+        stretch = 5,
+    ),
+
+    style(".no_border",
+        border_width = 0,
+    ),
+
+    style(".border",
+        border_width = 2,
+    ),
+
+    style(".x_border",
+        border_width = 5,
+    ),
+
+    style(".xx_border",
+        border_width = 10,
+    ),
+
+    style(".X_border",
+        border_width = 20,
+    ),
+
+    style(".XX_border",
+        border_width = 40,
+    ),
+
+)
 

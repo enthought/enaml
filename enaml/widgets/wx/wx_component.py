@@ -4,7 +4,7 @@ from traits.api import implements, HasStrictTraits, WeakRef, Instance
 
 from ..component import Component, IComponentImpl
 
-
+    
 class WXComponent(HasStrictTraits):
     """ A wxPython implementation of Component.
 
@@ -29,7 +29,7 @@ class WXComponent(HasStrictTraits):
 
         """
         self.parent = parent
-        
+
     def create_widget(self):
         """ Creates the underlying wx widget. Must be implemented by 
         subclasses.
