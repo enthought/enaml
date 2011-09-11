@@ -29,6 +29,8 @@ class NO_STYLE(object):
         return self.__class__.__name__
     def __str__(self):
         return repr(self)
+    def __nonzero__(self):
+        return False
 NO_STYLE = NO_STYLE()
 
 
@@ -81,13 +83,6 @@ class IStyleNodeData(Interface):
     def parent_node(self):
         """ Returns an IStyleQuery object for the parent element of the
         element being styled.
-
-        """
-        raise NotImplementedError
-
-    def child_nodes(self):
-        """ Returns an iterable of IStyleQuery objects for the children
-        of the element being styled.
 
         """
         raise NotImplementedError
@@ -309,7 +304,7 @@ class StyleSheet(HasStrictTraits):
                     if match_str in selector_map:
                         selector = selector_map[match_str]
                     else:
-                        selector = Selector(counter=counter)
+                        selector = Selector()
                         selector_map[match_str] = selector
                     selector.order = counter.next()
                     selector.properties.update(properties)
@@ -456,10 +451,14 @@ class ReactiveStyleNode(HasTraits):
 
     __metaclass__ = ReactiveStyleNodeMeta
 
-    @on_trait_change('style_sheet.updated')
+    @on_trait_change('style_sheet:updated')
     def _notify_updated_styles(self, updated_styles):
         style_traits = self.__style_traits__
         for name in updated_styles:
             if name in style_traits:
                 self.trait_property_changed(name, None, getattr(self, name))
+    
+    def _style_sheet_changed(self):
+        for name in self.__style_traits__:
+            self.trait_property_changed(name, None, getattr(self, name))
 
