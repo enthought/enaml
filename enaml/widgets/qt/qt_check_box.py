@@ -21,7 +21,7 @@ class QtCheckBox(QtToggleControl):
     # ICheckBoxImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates and the wx.CheckBox.
+        """ Creates the underlying QCheckBox widget.
 
         """
         self.widget = QtGui.QCheckBox(self.parent_widget())
