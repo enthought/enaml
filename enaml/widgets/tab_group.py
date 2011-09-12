@@ -5,7 +5,7 @@ from .stacked_group import IStackedGroupImpl, StackedGroup
 
 class ITabGroupImpl(IStackedGroupImpl):
 
-    def parent_movable_true(self, movable):
+    def parent_movable_changed(self, movable):
         raise NotImplementedError
     
 
