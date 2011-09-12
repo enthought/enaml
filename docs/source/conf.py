@@ -175,7 +175,7 @@ html_show_sourcelink = True
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'traitsmldoc'
+htmlhelp_basename = 'enamldoc'
 
 
 # -- Options for LaTeX output --------------------------------------------------
@@ -189,7 +189,7 @@ htmlhelp_basename = 'traitsmldoc'
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
 latex_documents = [
-  ('index', 'traitsml.tex', u'traitsml Documentation',
+  ('index', 'enaml.tex', u'traitsml Documentation',
    u'Enthought, Inc.', 'manual'),
 ]
 
@@ -222,7 +222,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'traitsml', u'traitsml Documentation',
+    ('index', 'enaml', u'enaml Documentation',
      [u'Enthought, Inc.'], 1)
 ]
 
@@ -230,7 +230,7 @@ man_pages = [
 # -- Options for Epub output ---------------------------------------------------
 
 # Bibliographic Dublin Core info.
-epub_title = u'traitsml'
+epub_title = u'enaml'
 epub_author = u'Chris Colbert'
 epub_publisher = u'Enthought, Inc.'
 epub_copyright = u'2011, Enthought, Inc.'
