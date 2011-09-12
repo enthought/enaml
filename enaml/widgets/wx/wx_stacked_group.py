@@ -58,7 +58,6 @@ class WXStackedGroup(WXContainer):
     def layout_child_widgets(self):
         """ Layout the contained pages.
 
-
         """
         self.widget.Layout()
 
