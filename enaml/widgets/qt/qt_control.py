@@ -18,5 +18,6 @@ class QtControl(QtComponent):
         this method.
 
         """
-        raise NotImplementedError
-        
+        if list(self.child_widgets()):
+            raise ValueError('Standard controls cannot have children.')
+

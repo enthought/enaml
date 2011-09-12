@@ -6,7 +6,7 @@ from ..container import IContainerImpl
 
 
 class QtContainer(QtComponent):
-    """ A PySide implementation of Container.
+    """ A Qt implementation of Container.
 
     The QtContainer class serves as a base class for other container
     widgets. It is not meant to be used directly.
@@ -17,4 +17,10 @@ class QtContainer(QtComponent):
 
     """
     implements(IContainerImpl)
+
+    #---------------------------------------------------------------------------
+    # IContainerImpl interface
+    #---------------------------------------------------------------------------
+    
+    # The IContainerImpl interface is empty
 

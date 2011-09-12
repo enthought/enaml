@@ -7,7 +7,7 @@ from ...constructors import IToolkitConstructor, BaseToolkitCtor
 # Constructor helper mixins
 #-------------------------------------------------------------------------------
 class WrapWindowMixin(object):
-    """ A mixin that wraps a constructor in a QtWindowCtor
+    """ A mixin that wraps a constructor in a WXWindowCtor
 
     """
     def __call__(self, **ctxt_objs):
@@ -88,17 +88,17 @@ class QtWindowCtor(QtBaseWindowCtor):
         window = Window(toolkit_impl=QtWindow())
         return window
 
-
-class QtDialogCtor(QtBaseWindowCtor):
+'''
+class WXDialogCtor(WXBaseWindowCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..dialog import Dialog
-        from .qt_dialog import QtDialog
-        dialog = Dialog(toolkit_impl=QtDialog())
+        from .wx_dialog import WXDialog
+        dialog = Dialog(toolkit_impl=WXDialog())
         return dialog
-
+'''
 
 #-------------------------------------------------------------------------------
 # Panel Constructors
@@ -113,20 +113,20 @@ class QtPanelCtor(QtBasePanelCtor):
         panel = Panel(toolkit_impl=QtPanel())
         return panel
 
-
+'''
 #-------------------------------------------------------------------------------
 # Container Constructors
 #-------------------------------------------------------------------------------
-class QtFormCtor(QtBaseContainerCtor):
+class WXFormCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..form import Form
-        from .qt_form import QtForm
-        form = Form(_impl=QtForm())
+        from .wx_form import WXForm
+        form = Form(_impl=WXForm())
         return form
-
+'''
 
 class QtGroupCtor(QtBaseContainerCtor):
 
@@ -137,7 +137,6 @@ class QtGroupCtor(QtBaseContainerCtor):
         from .qt_group import QtGroup
         group = Group(toolkit_impl=QtGroup())
         return group
-
 
 class QtVGroupCtor(QtBaseContainerCtor):
 
@@ -160,108 +159,108 @@ class QtHGroupCtor(QtBaseContainerCtor):
         hgroup = HGroup(toolkit_impl=QtHGroup())
         return hgroup
 
-
-class QtStackedGroupCtor(QtBaseContainerCtor):
+'''
+class WXStackedGroupCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..stacked_group import StackedGroup
-        from .qt_stacked_group import QtStackedGroup
-        stacked_group = StackedGroup(toolkit_impl=QtStackedGroup())
+        from .wx_stacked_group import WXStackedGroup
+        stacked_group = StackedGroup(toolkit_impl=WXStackedGroup())
         return stacked_group
 
 
-class QtTabGroupCtor(QtBaseContainerCtor):
+class WXTabGroupCtor(WXBaseContainerCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..tab_group import TabGroup
-        from .qt_tab_group import QtTabGroup
-        tab_group = TabGroup(toolkit_impl=QtTabGroup())
+        from .wx_tab_group import WXTabGroup
+        tab_group = TabGroup(toolkit_impl=WXTabGroup())
         return tab_group
 
 
 #-------------------------------------------------------------------------------
 # Element Constructors
 #-------------------------------------------------------------------------------
-class QtGroupBoxCtor(QtBaseComponentCtor):
+class WXGroupBoxCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..group_box import GroupBox
-        from .qt_group_box import QtGroupBox
-        group_box = GroupBox(toolkit_impl=QtGroupBox())
+        from .wx_group_box import WXGroupBox
+        group_box = GroupBox(toolkit_impl=WXGroupBox())
         return group_box
 
 
-class QtCalendarCtor(QtBaseComponentCtor):
+class WXCalendarCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..calendar import Calendar
-        from .qt_calendar import QtCalendar
-        calendar = Calendar(toolkit_impl=QtCalendar())
+        from .wx_calendar import WXCalendar
+        calendar = Calendar(toolkit_impl=WXCalendar())
         return calendar
 
 
-class QtCheckBoxCtor(QtBaseComponentCtor):
+class WXCheckBoxCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..check_box import CheckBox
-        from .qt_check_box import QtCheckBox
-        check_box = CheckBox(toolkit_impl=QtCheckBox())
+        from .wx_check_box import WXCheckBox
+        check_box = CheckBox(toolkit_impl=WXCheckBox())
         return check_box
 
 
-class QtComboBoxCtor(QtBaseComponentCtor):
+class WXComboBoxCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..combo_box import ComboBox
-        from .qt_combo_box import QtComboBox
-        combo_box = ComboBox(toolkit_impl=QtComboBox())
+        from .wx_combo_box import WXComboBox
+        combo_box = ComboBox(toolkit_impl=WXComboBox())
         return combo_box
 
 
-class QtFieldCtor(QtBaseComponentCtor):
+class WXFieldCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..field import Field
-        from .qt_field import QtField
-        field = Field(toolkit_impl=QtField())
+        from .wx_field import WXField
+        field = Field(toolkit_impl=WXField())
         return field
 
 
-class QtHtmlCtor(QtBaseComponentCtor):
+class WXHtmlCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..html import Html
-        from .qt_html import QtHtml
-        html = Html(toolkit_impl=QtHtml())
+        from .wx_html import WXHtml
+        html = Html(toolkit_impl=WXHtml())
         return html
 
 
-class QtImageCtor(QtBaseComponentCtor):
+class WXImageCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..image import Image
-        from .qt_image import QtImage
-        image = Image(toolkit_impl=QtImage())
+        from .wx_image import WXImage
+        image = Image(toolkit_impl=WXImage())
         return image
-
+'''
 
 class QtLabelCtor(QtBaseComponentCtor):
 
@@ -284,48 +283,58 @@ class QtLineEditCtor(QtBaseComponentCtor):
         line_edit = LineEdit(toolkit_impl=QtLineEdit())
         return line_edit
 
-
-class QtPushButtonCtor(QtBaseComponentCtor):
+'''
+class WXPushButtonCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..push_button import PushButton
-        from .qt_push_button import QtPushButton
-        push_button = PushButton(toolkit_impl=QtPushButton())
+        from .wx_push_button import WXPushButton
+        push_button = PushButton(toolkit_impl=WXPushButton())
         return push_button
 
 
-class QtRadioButtonCtor(QtBaseComponentCtor):
+class WXRadioButtonCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..radio_button import RadioButton
-        from .qt_radio_button import QtRadioButton
-        radio_button = RadioButton(toolkit_impl=QtRadioButton())
+        from .wx_radio_button import WXRadioButton
+        radio_button = RadioButton(toolkit_impl=WXRadioButton())
         return radio_button
 
 
-class QtSliderCtor(QtBaseComponentCtor):
+class WXSliderCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..slider import Slider
-        from .qt_slider import QtSlider
-        slider = Slider(toolkit_impl=QtSlider())
+        from .wx_slider import WXSlider
+        slider = Slider(toolkit_impl=WXSlider())
         return slider
 
 
-class QtSpinBoxCtor(QtBaseComponentCtor):
+class WXSpinBoxCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
     def component(self):
         from ..spin_box import SpinBox
-        from .qt_spin_box import QtSpinBox
-        spin_box = SpinBox(toolkit_impl=QtSpinBox())
+        from .wx_spin_box import WXSpinBox
+        spin_box = SpinBox(toolkit_impl=WXSpinBox())
         return spin_box
-        
-        
+
+'''
+
+class QtTraitsUIItemCtor(QtBaseComponentCtor):
+    
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..traitsui_item import TraitsUIItem
+        from .qt_traitsui_item import QtTraitsUIItem
+        traitsui_item = TraitsUIItem(toolkit_impl=QtTraitsUIItem())
+        return traitsui_item

@@ -6,7 +6,7 @@ from ..vgroup import IVGroupImpl
 
 
 class QtVGroup(QtGroup):
-    """ A PySide implementation of IVGroup.
+    """ A Qt implementation of IVGroup.
 
     This is a convienence subclass of QtGroup which restricts the 
     layout direction to vertical.
@@ -22,14 +22,6 @@ class QtVGroup(QtGroup):
     # IVGroupImpl interface
     #---------------------------------------------------------------------------
     
-    def create_widget(self):
-        """ Creates the underlying Qt widget.
-        
-        """
-        
-    def initialize_widget(self):
-        """ Initializes the attributes of the Qt component.
+    # IVGroupImpl interface is empty and fully implemented by WXGroup
 
-        """
-        
-    
+    # XXX should we change implementation to use QVBoxLayout

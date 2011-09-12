@@ -100,7 +100,7 @@ def default_toolkit():
         return wx_toolkit()
         
     if toolkit == 'qt' or toolkit == 'qt4':
-        qt_api = os.environ.get('QT_API', 'pyside').lower()
+        from .widgets.qt.qt_api import qt_api
         
         if qt_api == 'pyside':
             return pyside_toolkit()
@@ -159,10 +159,66 @@ def wx_toolkit():
 
 
 def pyside_toolkit():
-    raise NotImplementedError
+    """ Creates and return a toolkit object for the PySide Qt backend.
+
+    """
+    from .widgets.qt import constructors as ctors
+    
+    items = {
+        'Panel': ctors.QtPanelCtor,
+        'Window': ctors.QtWindowCtor,
+        'Group': ctors.QtGroupCtor,
+        'VGroup': ctors.QtVGroupCtor,
+        'HGroup': ctors.QtHGroupCtor,
+        #'Field': ctors.QtFieldCtor,
+        'Label': ctors.QtLabelCtor,
+        'LineEdit': ctors.QtLineEditCtor,
+        'TraitsUIItem': ctors.QtTraitsUIItemCtor,
+    }
+
+    def prime_loop():
+        from PySide import QtGui
+        app = QtGui.QApplication.instance()
+        if app is None:
+            app = QtGui.QApplication([''])
+        return app
+
+    def start_loop(app):
+        # XXX check for mainloop already running? - Pyface hacks this feature in
+        app.exec_()
+
+    return Toolkit(items=items, prime=prime_loop, start=start_loop)
 
 
 def pyqt_toolkit():
-    raise NotImplementedError
+    """ Creates and return a toolkit object for the PyQt Qt backend.
+
+    """
+    from .widgets.qt import constructors as ctors
+    
+    items = {
+        'Panel': ctors.QtPanelCtor,
+        'Window': ctors.QtWindowCtor,
+        'Group': ctors.QtGroupCtor,
+        'VGroup': ctors.QtVGroupCtor,
+        'HGroup': ctors.QtHGroupCtor,
+        #'Field': ctors.QtFieldCtor,
+        'Label': ctors.QtLabelCtor,
+        'LineEdit': ctors.QtLineEditCtor,
+        'TraitsUIItem': ctors.QtTraitsUIItemCtor,
+    }
+
+    def prime_loop():
+        from PySide import QtGui
+        app = QtGui.QApplication.instance()
+        if app is None:
+            app = QtGui.QApplication([''])
+        return app
+
+    def start_loop(app):
+        # XXX check for mainloop already running? - Pyface hacks this feature in
+        app.exec_()
+
+    return Toolkit(items=items, prime=prime_loop, start=start_loop)
 
 

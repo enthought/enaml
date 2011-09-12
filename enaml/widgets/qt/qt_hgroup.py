@@ -6,7 +6,7 @@ from ..hgroup import IHGroupImpl
 
 
 class QtHGroup(QtGroup):
-    """ A PySide implementation of IHGroup.
+    """ A Qt implementation of IHGroup.
 
     This is a convienence subclass of QtGroup which restricts the
     layout direction to horizontal.
@@ -21,15 +21,8 @@ class QtHGroup(QtGroup):
     #---------------------------------------------------------------------------
     # IHGroupImpl interface
     #---------------------------------------------------------------------------
-
-    def create_widget(self):
-        """ Creates the underlying Qt widget.
-        
-        """
-        
-    def initialize_widget(self):
-        """ Initializes the attributes of the Qt component.
-
-        """
-        
     
+    # IHGroupImpl interface is empty and fully implemented by QtGroup
+    
+    # XXX should we change implementation to use QHBoxLayout?
+
