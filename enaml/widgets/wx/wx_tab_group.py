@@ -1,20 +1,9 @@
-import wx
-from wx.lib.agw.flatnotebook import (FlatNotebook, FlatNotebookEvent,
-                                     FNB_NODRAG, FNB_NO_NAV_BUTTONS,
-                                     FNB_NO_X_BUTTON)
+from wx.lib.agw.flatnotebook import (FlatNotebook, FNB_NODRAG,
+                                     FNB_NO_NAV_BUTTONS, FNB_NO_X_BUTTON)
 from traits.api import implements
 
 from .wx_stacked_group import WXStackedGroup
 from ..tab_group import ITabGroupImpl
-
-wxEVT_FLATNOTEBOOK_PAGE_DROPPED = wx.NewEventType()
-EVT_FLATNOTEBOOK_PAGE_DROPPED = \
-        wx.PyEventBinder(wxEVT_FLATNOTEBOOK_PAGE_DROPPED, 1)
-
-class CustomFlatNotebook(FlatNotebook):
-
-    pass
-
 
 
 class WXTabGroup(WXStackedGroup):
@@ -38,7 +27,7 @@ class WXTabGroup(WXStackedGroup):
         in the pages and no navigation buttons in the tab control.
 
         """
-        self.widget = CustomFlatNotebook(parent=self.parent_widget())
+        self.widget = FlatNotebook(parent=self.parent_widget())
         self.widget.SetWindowStyleFlag(FNB_NO_NAV_BUTTONS | FNB_NO_X_BUTTON)
         self.bind()
 
@@ -94,4 +83,3 @@ class WXTabGroup(WXStackedGroup):
             style |= FNB_NODRAG
 
         widget.SetWindowStyleFlag(style)
-
