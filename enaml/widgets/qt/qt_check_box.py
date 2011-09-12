@@ -1,3 +1,5 @@
+from .qt_api import QtGui
+
 from traits.api import implements
 
 from .qt_toggle_control import QtToggleControl
@@ -18,15 +20,23 @@ class QtCheckBox(QtToggleControl):
     #---------------------------------------------------------------------------
     # ICheckBoxImpl interface
     #---------------------------------------------------------------------------
-
     def create_widget(self):
-        """ Creates the underlying Qt widget.
-        
-        """
-        
-    def initialize_widget(self):
-        """ Initializes the attributes of the Qt component.
+        """ Creates and the wx.CheckBox.
 
         """
+        self.widget = QtGui.QCheckBox(self.parent_widget())
         
-    
+    #---------------------------------------------------------------------------
+    # Implementation
+    #---------------------------------------------------------------------------
+    def bind(self):
+        """ Binds the event handlers for the check box. Not meant for
+        public consumption.
+
+        """
+        widget = self.widget
+        
+        widget.toggled.connect(self.on_toggled)
+        widget.pressed.connect(self.on_pressed)
+        widget.released.connect(self.on_released)
+        

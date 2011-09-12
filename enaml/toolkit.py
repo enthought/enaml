@@ -175,6 +175,7 @@ def pyside_toolkit():
         'LineEdit': ctors.QtLineEditCtor,
         'TraitsUIItem': ctors.QtTraitsUIItemCtor,
         'Calendar': ctors.QtCalendarCtor,
+        'CheckBox': ctors.QtCheckBoxCtor,
     }
 
     def prime_loop():
