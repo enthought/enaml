@@ -1,27 +1,30 @@
-.. traitsml documentation master file, created by
-   sphinx-quickstart on Mon Aug 22 09:16:47 2011.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. enaml documentation master file
 
-Welcome to TraitsML's documentation!
+Welcome to enaml's documentation!
 ====================================
 
-TraitsML is a tool for building native user interfaces on top of Traits.
-It is a declarative language based on Python, analogous to Qt's QML.
-TraitsML currently supports Qt as a backend via PySide,
-but it is not tied to a single widget toolkit.
+enaml is a tool for building native user interfaces on top of Traits. It
+is a declarative language based on Python, analogous to Qt's QML. enaml
+currently supports wxWidgets as a backend via wxPython and soon Qt as a
+backend via PySide. However it is not tied to a single widget
+toolkit.
+
+
+.. warning:: Enaml is currently under heavy development and the
+    documentation is not always up-to-date. Please recompile in order to
+    have the latest changes from the source code.
 
 Overview
 ========
-A TraitsML application consists of regular Python code, and *.tml* files.
+An enaml application consists of regular Python code, and *.tml* files.
 
-A .tml file is used to describe a GUI as a tree of elements.
-Each element can have associated attributes, and an optional identifier.
-Attributes customize the layout and behavior of an application, and
-identifiers allow Python code to access widgets by name.
+A .tml file is used to describe a GUI as a tree of elements. Each element
+can have associated attributes, and an optional identifier. Attributes
+customize the layout and behavior of an application, and identifiers allow
+Python code to access widgets by name.
 
-TraitsML parses a hierarchical .tml file, then renders it with an
-available GUI toolkit. TraitsML abstracts away toolkit-specific details.
+enaml parses a hierarchical .tml file, then renders it with an
+available GUI toolkit. enaml abstracts away toolkit-specific details.
 
 Other features:
 
@@ -32,22 +35,25 @@ Other features:
 Prerequisites
 -------------
 
+Enaml is developed using `Python <http://python.org/>`_ 2.7 and requires
+recent versions of the following libraries:
+
 - `Traits <https://github.com/enthought/traits>`_
 - `PySide <http://www.pyside.org/>`_
+- `wxPython <http://www.wxpython.org/>`_
 - `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
   for parsing *.tml* files
-- `Python <http://python.org/>`_ 2.6
-- The "kitchen sink" example requires
-  `Chaco <https://github.com/enthought/chaco>`
+
+Installation
+------------
 
 
 
-Contents:
----------
+Contents
+========
 
 .. toctree::
-   :maxdepth: 4
+    :maxdepth: 4
 
-   tml
-   traitsml
-   developers_corner
+    tml
+    developers_corner
