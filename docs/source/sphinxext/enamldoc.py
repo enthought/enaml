@@ -14,13 +14,11 @@ from docscrape import Reader
 # the result follows closer the structure and form that the docstring author
 # has selected.
 # In more detail::
-# 1. it does change the order the sections
+# 1. it does not change the order the sections
 # 2. allows notes and other directives to exist between the sections
 
 # TODO:
 # Convert into a proper extention
-# Refactor the class to a more elegant design
-# Add class docstring proccesing
 # Add more sections
 
 
@@ -29,13 +27,10 @@ class BaseDocString(object):
 
     __metaclass__ = abc.ABCMeta
 
-    def __init__(self, lines, headers=None, verbose=False):
+    @abc.abstractmethod
+    def __init__(self, lines, headers, verbose=False):
 
         self._doc = Reader(lines)
-        if headers is None:
-            headers = ('Returns', 'Arguments', 'Parameters', 'Raises',
-                        'Yields')
-
         self.verbose = verbose
         self.headers = headers
 
@@ -43,10 +38,27 @@ class BaseDocString(object):
             print 'Input docstring'
             print '\n'.join(lines)
 
-    @abc.abstractmethod
-    def _refactor(self):
-        """Heading refactor (abstract method)"""
-        return NotImplemented
+    def _refactor(self, header):
+        """Heading refactor"""
+
+        if self.verbose:
+            print 'Header is', header
+            print 'Line is', self._doc._l
+
+        try:
+            parser = self.headers[header]
+        except KeyError:
+            # No need to do anything since shinx will flag the heading as
+            # an error
+            pass
+        else:
+            method_name = ''.join(('_refactor_', parser))
+            method = getattr(self, method_name)
+            method(header)
+
+        finally:
+            return
+
 
     def parse(self):
         self._doc.reset()
@@ -184,28 +196,17 @@ class BaseDocString(object):
             return False
 
 
-class FunctionDocString(BaseDocString):
+class FunctionDocstring(BaseDocString):
     """Docstring refactoring for functions"""
 
-    def _refactor(self, header):
-        if not header:
-            return
+    def __init__(self, lines, headers=None, verbose=False):
 
-        if self.verbose:
-            print 'Header is', header
-            print 'Line is', self._doc._l
+        if headers is None:
+            headers = {'Returns' : 'returns', 'Arguments' : 'arguments',
+                       'Parameters' : 'arguments', 'Raises' : 'raises',
+                       'Yields' : 'returns'}
 
-        if 'Returns' == header:
-            self._refactor_returns(header)
-
-        if 'Raises' == header:
-            self._refactor_raises(header)
-
-        if ('Parameters' == header or 'Arguments' == header or
-            'Yields' == header):
-            self._refactor_arguments(header)
-
-        return
+        super(FunctionDocstring, self).__init__(lines, headers, verbose)
 
     def _refactor_returns(self, header):
         """Refactor the return section to sphinx friendly format"""
@@ -222,7 +223,7 @@ class FunctionDocString(BaseDocString):
         parameters = self._extract_parameters(indent)
 
         if self.verbose:
-            print 'Parameters'
+            print 'return_items'
             print parameters
         # generate sphinx friendly rst
         descriptions = []
@@ -274,7 +275,7 @@ class FunctionDocString(BaseDocString):
         parameters = self._extract_parameters(indent)
 
         if self.verbose:
-            print 'Parameters'
+            print 'raised_items'
             print parameters
         # generate sphinx friendly rst
         descriptions = []
@@ -326,7 +327,7 @@ class FunctionDocString(BaseDocString):
         parameters = self._extract_parameters(indent)
 
         if self.verbose:
-            print 'Parameters'
+            print 'arguments'
             print parameters
         # generate sphinx friendly rst
         descriptions = []
@@ -342,6 +343,71 @@ class FunctionDocString(BaseDocString):
         # no parameters
         if len(parameters) == 0:
             descriptions.append('**{0}:**'.format(header))
+
+        descriptions.append(' ')
+
+        # insert refactored description
+        for line in reversed(descriptions):
+            lines.insert(index, line)
+
+class ClassDocstring(BaseDocString):
+    """Docstring refactoring for classes"""
+
+    def __init__(self, lines, headers=None, verbose=False):
+
+        if headers is None:
+            headers = {'Attributes' : 'attributes'}
+
+        super(ClassDocstring, self).__init__(lines, headers, verbose)
+
+
+    def _refactor_attributes(self, header):
+        """Refactor the return section to sphinx friendly format"""
+
+        lines = self._doc._str
+        index = self._doc._l
+
+        # create header role
+        lines[index] = re.sub(r'Attributes', ':Attributes:', self._doc.read())
+        del lines[index + 1]  # delete underline
+
+        # refactor parameters
+        indent = re.split(r'\w', self._doc.peek())[0]
+        parameters = self._extract_parameters(indent)
+
+        if self.verbose:
+            print 'attribute_items'
+            print parameters
+        # generate sphinx friendly rst
+        descriptions = []
+        index += 1
+
+        descriptions.append(' ')
+        # multiple items are rendered as a unordered lists
+        if len(parameters) > 1:
+            for arg_name, arg_type, desc in parameters:
+                if arg_type != '':
+                    arg_type = '*(' + arg_type + ')*'
+                descriptions.append(indent + '    **{0}** {1} - {2}'.\
+                                    format(arg_name, arg_type, desc[0]))
+                for line in desc[1:]:
+                    descriptions.append('    {0}'.format(line))
+
+                descriptions.append(' ')
+
+        # single items
+        elif len(parameters) == 1:
+            arg_name, arg_type, desc = parameters[0]
+            if arg_type != '':
+                arg_type = '*(' + arg_type + ')*'
+            descriptions.append(indent + '    **{0}** {1} - {2}'.\
+                                format(arg_name, arg_type, desc[0]))
+            for line in desc[1:]:
+                descriptions.append('    {0}'.format(line))
+        # no Items
+        else:
+            del lines[index]
+            lines.insert(index, '**{0}:**'.format(header))
 
         descriptions.append(' ')
 

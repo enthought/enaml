@@ -273,19 +273,16 @@ epub_copyright = u'2011, Enthought, Inc.'
 intersphinx_mapping = {'http://docs.python.org/': None}
 
 
-from traitsmldoc import FunctionDocString
+from enamldoc import FunctionDocstring, ClassDocstring
 
 def new_docstring(app, what, name, obj, options, lines):
 
-
-    if ('function' in what) or ('method' in what):
-        if '.i_container.IContainer' in name:
-            new_doc = FunctionDocString(lines, verbose=True)
+    if ('class' in what):
+            new_doc = ClassDocstring(lines)
             new_doc.parse()
-            print 'Output'
-            print '\n'.join(lines)
-        else:
-            new_doc = FunctionDocString(lines)
+
+    elif ('function' in what) or ('method' in what):
+            new_doc = FunctionDocstring(lines)
             new_doc.parse()
 
 
