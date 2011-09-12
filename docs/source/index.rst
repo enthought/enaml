@@ -42,7 +42,7 @@ recent versions of the following libraries:
 - `PySide <http://www.pyside.org/>`_
 - `wxPython <http://www.wxpython.org/>`_
 - `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
-  for parsing *.tml* files
+  for parsing *.enaml* files
 
 Installation
 ------------
@@ -55,5 +55,5 @@ Contents
 .. toctree::
     :maxdepth: 4
 
-    tml
+    enaml
     developers_corner
