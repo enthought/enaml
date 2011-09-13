@@ -429,3 +429,160 @@ class StyleSheet(HasStrictTraits):
 
         return res
 
+    def get_tags(self):
+        """ Returns an iterable of all the tags in the style_sheet.
+
+        """
+        return self._property_selectors.iterkeys()
+
+    def has_tag(self, tag):
+        """ Returns True or False depending on whether the tag is in the
+        style sheet.
+
+        """
+        return tag in self._property_selectors
+
+
+#-------------------------------------------------------------------------------
+# Style Node and Handler
+#-------------------------------------------------------------------------------
+class StyleNode(HasTraits):
+    """ A basic style node class meant for subclassing.
+
+    StyleNode provides much of the boiler plate needed to integrate 
+    style sheet support with other objects. It will search for the 
+    style object on the class first, then the style sheet. This allows
+    for selectively overriding style sheet values without modifying the
+    style sheet itself. A complete solution will use a subclass of 
+    StyleNode along with a subclass of StyleHandler.
+
+    Attributes
+    ----------
+    style_sheet : Instance(StyleSheet)
+        The StyleSheet on which this node is operating.
+    
+    node_data : Property(Instance(IStyleNodeData))
+        A property whose getter returns an implementor of IStyleNodeData.
+        The getter must be implemented by subclasses.
+    
+    tag_updated : Event
+        A event fired when a tag in the style sheet is updated. The 
+        event payload is the tag name that was updated.
+
+    Methods
+    -------
+    refresh_tags(tags)
+        Refresh all of the tags in the given sequence of tags.
+
+    get_property(tag)
+        Returns the style property for the given tag.
+    
+    """
+    style_sheet = Instance(StyleSheet)
+
+    node_data = Property(Instance(IStyleNodeData))
+
+    tag_updated = Event
+
+    def _get_node_data(self):
+        """ The propery getter for node_data attribute. This should be
+        implemented by subclasses to return an object that implements 
+        IStyleNodeData.
+
+        """
+        raise NotImplementedError
+
+    @on_trait_change('style_sheet:updated')
+    def _style_sheet_updated(self, updated):
+        """ Refreshes the tags for the sequence of updated tags.
+
+        """
+        self.refresh_tags(updated)
+
+    @on_trait_change('style_sheet')
+    def _style_sheet_swapped(self):
+        """ Refreshes the tags for every tag in the sheet.
+
+        """
+        self.refresh_tags(self.style_sheet.get_tags())
+    
+    def refresh_tags(self, tags):
+        """ Triggers the 'tag_updated' event for each of the given tags.
+
+        """
+        for tag in tags:
+            self.tag_updated = tag
+
+    def get_property(self, tag):
+        """ Returns the style property for the given tag.
+
+        Looks first on self, then queries the style sheet if that lookup
+        fails. This allows subclasses to selectively override the style
+        sheet.
+
+        Parameters
+        ----------
+        tag : string
+            The property tag to lookup.
+
+        Returns
+        -------
+        result : object
+            The style property or NO_STYLE
+
+        """
+        try:
+            res = getattr(self, tag)
+        except AttributeError:
+            res = self.style_sheet.get_property(tag, self.node_data)
+        return res
+
+
+class StyleHandler(HasTraits):
+    """ A handler class that reacts to changes on a StyleNode.
+
+    This StyleHandler is meant to be used in conjuction with subclasses
+    of StyleNode. It reacts to changes on the events of the StyleNode
+    and dispatches to specially named handler methods on the subclass.
+    The dispatching is done efficiently so that the style sheet is 
+    only queried if a handler for the tag exists, and the handler is
+    only called if the value has changed.
+
+    Attributes
+    ----------
+    style_node : Instance(StyleNode)
+        The StyleNode instance this object is handling.
+
+    Methods
+    -------
+    style_*
+        Subclasses should implement a style_* method for every tag for
+        which updates are desired.
+
+    """
+    style_node = Instance(StyleNode)
+
+    _style_dict = Instance(dict, ())
+
+    @on_trait_change('style_node:tag_updated')
+    def _tag_updated(self, tag):
+        """ Handles the tag_updated event on the style node.
+
+        """
+        self._update_tag(tag)
+
+    def _update_tag(self, tag, null=object()):
+        """ Dispatches a tag update to specially named methods. Only
+        dispatches if a handler exists and the value has changed.
+
+        """
+        name = 'style_' + tag
+        handler_method = getattr(self, name, None)
+        if handler_method is not None:
+            style_dict = self._style_dict
+            old = style_dict.get(tag, null)
+            new = self.style_node.get_property(tag)
+            if old != new:
+                style_dict[tag] = new
+                handler_method(new)
+

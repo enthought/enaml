@@ -145,7 +145,7 @@ def wx_color_from_color(value, wx_no_color=wx.NullColor):
 
 def compute_sizer_flags(style):
 
-    get_tag = style.get_tag
+    get_property = style.get_property
 
     border_top = None
     border_right = None
@@ -153,14 +153,14 @@ def compute_sizer_flags(style):
     border_left = None
 
     # XXX we need a better way to parse the border shorthand
-    border_width = get_tag("border_width")
+    border_width = get_property("border_width")
     if border_width is not NO_STYLE:
         try:
             border_iter = iter(border_width)
         except TypeError:
             border_iter = iter((border_width,))
     else:
-        border = get_tag("border")
+        border = get_property("border")
         if border is not NO_STYLE:
             try:
                 border_iter = iter(border)
@@ -213,29 +213,29 @@ def compute_sizer_flags(style):
             border_left = width4
             sides |= wx.LEFT
 
-    st = get_tag("border_top_width")
+    st = get_property("border_top_width")
     if st is not NO_STYLE:
         border_top = st
         sides |= wx.TOP
     
-    sr = get_tag("border_right_width")
+    sr = get_property("border_right_width")
     if sr is not NO_STYLE:
         border_right = sr
         sides |= wx.RIGHT
 
-    sb = get_tag("border_bottom_width")
+    sb = get_property("border_bottom_width")
     if sb is not NO_STYLE:
         border_bottom = sb
         sides |= wx.BOTTOM
 
-    sl = get_tag("border_left_width")
+    sl = get_property("border_left_width")
     if sl is not NO_STYLE:
         border_left = sl
         sides |= wx.LEFT
 
     amt = max(border_top, border_right, border_bottom, border_left, -1)
     
-    spacing = get_tag("spacing")
+    spacing = get_property("spacing")
     if spacing is not NO_STYLE and spacing > 0:
         if isinstance(spacing, int):
             amt += spacing
@@ -245,7 +245,7 @@ def compute_sizer_flags(style):
     if amt >= 0:
         flags.Border(sides, amt)
 
-    align = get_tag("align")
+    align = get_property("align")
     if align is not NO_STYLE:
         try:
             align_spec = align.split()
@@ -257,7 +257,7 @@ def compute_sizer_flags(style):
                 align_flags |= ALIGN_MAP.get(align, 0)
             flags.Align(align_flags)
     
-    size_policy = get_tag("size_policy")
+    size_policy = get_property("size_policy")
     if size_policy is not NO_STYLE:
         try:
             size_policy_spec = style.size_policy.strip()
@@ -267,7 +267,7 @@ def compute_sizer_flags(style):
             if size_policy_spec == 'expanding':
                 flags.Expand()
     
-    stretch = get_tag("stretch")
+    stretch = get_property("stretch")
     if stretch is not NO_STYLE and stretch >= 0:
         try:
             flags.Proportion(stretch)

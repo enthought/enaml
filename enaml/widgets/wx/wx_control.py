@@ -5,9 +5,8 @@ from traits.api import implements, Instance
 from .wx_component import WXComponent
 from .styling import wx_color_from_color
 
-from ..style_node import StyleHandler
+from ...util.style_sheet import StyleHandler
 from ..control import IControlImpl
-
 
 
 class WXControlStyleHandler(StyleHandler):
@@ -37,7 +36,7 @@ class WXControl(WXComponent):
     def initialize_style(self):
         style_handler = WXControlStyleHandler(widget=self.widget)
         style = self.parent.style
-        style_handler.style_background_color(style.get_tag('background_color'))
+        style_handler.style_background_color(style.get_property('background_color'))
         style_handler.style_node = style
         self.style_handler = style_handler
         
