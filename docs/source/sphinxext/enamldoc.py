@@ -35,7 +35,7 @@ class BaseDocString(object):
         self.headers = headers
 
         if self.verbose:
-            print 'Input docstring'
+            print 'INPUT DOCSTRING'
             print '\n'.join(lines)
 
     def _refactor(self, header):
@@ -71,6 +71,10 @@ class BaseDocString(object):
                 self._doc.read()
             else:
                 self._refactor(header)
+
+        if self.verbose:
+            print 'REFACTORED DOCSTRING'
+            print '\n'.join(self._doc._str)
 
     def _extract_parameters(self, indent=''):
         """Extract the parameters from the docstring
@@ -211,6 +215,10 @@ class FunctionDocstring(BaseDocString):
     def _refactor_returns(self, header):
         """Refactor the return section to sphinx friendly format"""
 
+        if self.verbose:
+            print 'Return_items'
+            print parameters
+
         lines = self._doc._str
         index = self._doc._l
 
@@ -222,9 +230,6 @@ class FunctionDocstring(BaseDocString):
         indent = re.split(r'\w', self._doc.peek())[0]
         parameters = self._extract_parameters(indent)
 
-        if self.verbose:
-            print 'return_items'
-            print parameters
         # generate sphinx friendly rst
         descriptions = []
         index += 1
@@ -363,6 +368,9 @@ class ClassDocstring(BaseDocString):
 
     def _refactor_attributes(self, header):
         """Refactor the return section to sphinx friendly format"""
+        if self.verbose:
+            print 'Refactoring attributes'
+            print parameters
 
         lines = self._doc._str
         index = self._doc._l
@@ -375,9 +383,6 @@ class ClassDocstring(BaseDocString):
         indent = re.split(r'\w', self._doc.peek())[0]
         parameters = self._extract_parameters(indent)
 
-        if self.verbose:
-            print 'attribute_items'
-            print parameters
         # generate sphinx friendly rst
         descriptions = []
         index += 1
