@@ -229,11 +229,13 @@ class EnamlFactory(HasStrictTraits):
         self._ast = self.parse_tml(filehandle)
         self._toolkit = toolkit or default_toolkit()
 
+    def expression_factories(self):
+        return (DefaultExpressionFactory, BindingExpressionFactory, 
+                DelegateExpressionFactory, NotifierExpressionFactory)
+
     def _build_ctor_tree(self):
         builder = EnamlCtorBuilder(
-            self._toolkit, self._ast ,DefaultExpressionFactory,
-            BindingExpressionFactory, DelegateExpressionFactory,
-            NotifierExpressionFactory,
+            self._toolkit, self._ast , *self.expression_factories()
         )
         builder.build()
         tree, imports = builder.results()

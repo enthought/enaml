@@ -159,6 +159,7 @@ def wx_toolkit():
         'Slider': ctors.WXSliderCtor,
         'SpinBox': ctors.WXSpinBoxCtor,
         'Spacer': ctors.WXSpacerCtor,
+        'EnableCanvas': ctors.WXEnableCanvasCtor,
     }
 
     def prime_loop():

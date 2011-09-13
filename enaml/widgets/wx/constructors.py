@@ -339,3 +339,15 @@ class WXSpacerCtor(WXBaseComponentCtor):
         spacer = Spacer(toolkit_impl=WXSpacer())
         return spacer
 
+
+class WXEnableCanvasCtor(WXBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..enable_canvas import EnableCanvas
+        from .wx_enable_canvas import WXEnableCanvas
+        canvas = EnableCanvas(toolkit_impl=WXEnableCanvas())
+        return canvas
+
+        
