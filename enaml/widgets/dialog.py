@@ -3,7 +3,6 @@ from traits.api import Event, Enum, Bool, Instance, Property
 from .window import IWindowImpl, Window
 
 from ..enums import DialogResult
-from ..util.decorators import protected
 
 
 class IDialogImpl(IWindowImpl):
@@ -18,7 +17,6 @@ class IDialogImpl(IWindowImpl):
         raise NotImplementedError
 
 
-@protected('_active', '_shadow')
 class Dialog(Window):
     """ A basic dialog widget whose contents are user defined. 
 
@@ -136,4 +134,7 @@ class Dialog(Window):
     
     def _get_result(self):
         return self._result
+
+
+Dialog.protect('_active', '_result', 'opened', 'closed', 'result', 'active')
 

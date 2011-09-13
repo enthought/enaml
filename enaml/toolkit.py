@@ -3,8 +3,8 @@ import os
 from traits.api import HasStrictTraits, Dict, Str, Callable, Any, Instance
 
 from .constructors import IToolkitConstructor
+from .style_sheet import StyleSheet
 from .util.trait_types import SubClass
-from .util.style_sheet import StyleSheet
 
 
 class Toolkit(HasStrictTraits):
@@ -141,8 +141,9 @@ def wx_toolkit():
 
     """
     from .widgets.wx import constructors as ctors
-    from .widgets.wx.style_sheet import WX_STYLE_SHEET
     from .widgets.wx import dialogs
+    from .widgets.wx.styling import WX_STYLE_SHEET
+
     items = {
         'Panel': ctors.WXPanelCtor,
         'Window': ctors.WXWindowCtor,

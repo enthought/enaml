@@ -1,7 +1,7 @@
-from traits.api import HasStrictTraits, Instance
+from traits.api import HasStrictTraits, Instance, Bool
 
 from .toolkit import Toolkit
-from .util.style_sheet import StyleSheet
+from .style_sheet import StyleSheet
 from .widgets.window import Window
 
   
@@ -45,8 +45,11 @@ class View(HasStrictTraits):
 
     style_sheet = Instance(StyleSheet)
 
+    _style_sheet_applied = Bool(False)
+
     def show(self):
-        self.window.style_sheet = self.style_sheet
+        if not self._style_sheet_applied:
+            self._apply_style_sheet()
         self.window.show()
         self.toolkit.start_event_loop()
         
@@ -55,7 +58,16 @@ class View(HasStrictTraits):
 
     def set_style_sheet(self, style_sheet):
         self.style_sheet = style_sheet
+        self._apply_style_sheet()
 
     def _style_sheet_default(self):
         return self.toolkit.default_style_sheet()
+        
+    def _apply_style_sheet(self):
+        stack = [self.window]
+        style_sheet = self.style_sheet
+        while stack:
+            node = stack.pop()
+            node.style.style_sheet = style_sheet
+            stack.extend(node.children)
 
