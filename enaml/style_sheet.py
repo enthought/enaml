@@ -1,5 +1,6 @@
 import re
 import itertools
+import functools
 
 from traits.api import (HasStrictTraits, HasTraits, Instance, Event, Interface, 
                         Str, Dict, Any, Set, Int, on_trait_change, Property)
@@ -569,6 +570,27 @@ class StyleHandler(HasTraits):
 
         """
         self._update_tag(tag)
+        
+    def set_style_value(self, value, tag, *args):
+        """ Set the style given by the tag to the value in a generic way for toolkits.
+        
+        This is intended to simplify definition of style handlers for a toolkit
+        where a lot of the code is doing the same sort of thing.
+        
+        Arguments
+        ---------
+        
+        value : style_value
+            The string representation of the style's value.
+        
+        tag : string
+            The style tag that is being set.
+        
+        *args
+            Additional arguments as needed.  This is likely to include a
+            converter function and/or the method name to set.
+        """
+        raise NotImplementedError
 
     def _update_tag(self, tag, null=object()):
         """ Dispatches a tag update to specially named methods. Only
@@ -576,12 +598,22 @@ class StyleHandler(HasTraits):
 
         """
         name = 'style_' + tag
-        handler_method = getattr(self, name, None)
-        if handler_method is not None:
+        callable = getattr(self, name, None)
+        
+        if callable is None and tag in self.tags:
+            args = self.tags[tag]
+            if not isinstance(args, (list, tuple)):
+                args = (args,)
+
+            def callable(value):
+                return self.set_style_value(value, tag, *args)
+        
+        # determine if we should in fact call update
+        if callable is not None:
             style_dict = self._style_dict
             old = style_dict.get(tag, null)
             new = self.style_node.get_property(tag)
             if old != new:
                 style_dict[tag] = new
-                handler_method(new)
+                callable(new)
 

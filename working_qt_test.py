@@ -27,7 +27,8 @@ Window:
             HGroup:
                 Label:
                     text = 'Title:'
-                LineEdit:
+                    style.background_color << 'red' if le.text == 'foo' else 'green'
+                LineEdit le:
                     text := model.window_title
             HGroup:
                 Label:

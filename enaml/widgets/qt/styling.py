@@ -1,8 +1,10 @@
 from .qt_api import QtCore, QtGui
 
+from traits.api import HasTraits, Instance, Dict
+
 from ...color import Color
-from ...style_sheet import StyleSheet, style
-from ...style_converters import PaddingStyle
+from ...style_sheet import StyleSheet, StyleHandler, style
+from ...style_converters import PaddingStyle, color_from_color_style
 
 #-------------------------------------------------------------------------------
 # Default wx style sheet definition
@@ -109,6 +111,72 @@ QT_STYLE_SHEET = StyleSheet(
 #-------------------------------------------------------------------------------
 # qt styling helper and conversion functions
 #-------------------------------------------------------------------------------
+
+class QtStyleHandler(StyleHandler):
+    """ StyleHandler subclass that understands how to set styles via Qt style sheets
+    
+    Attributes
+    ----------
+    
+    widget : QWidget
+        The underlying QWidget that we are interacting with.
+    
+    _qt_stylesheet_values : Dict
+        A dictionary holding the current state.
+    """
+
+    widget = Instance(QtGui.QWidget)
+    
+    _qt_stylesheet_values = Dict
+
+    def set_style_value(self, value, tag, converter):
+        """Set the style given by the tag to the value in a generic way for Qt.
+        
+        This uses Qt's style sheet mechanism.
+        
+        Arguments
+        ---------
+        
+        value : style_value
+            The string representation of the style's value.
+        
+        tag : string
+            The style tag that is being set.
+        
+        args : callable
+            Callable that converts Enaml stylesheet value to Qt stylehseet
+            values of the appropriate type for the tag.
+        """
+        qt_value = converter(value)
+        key = tag.replace('_', '-')
+        if qt_value is not None:
+            self._qt_stylesheet_values[key] = qt_value
+        else:
+            self._qt_stylesheet_values.pop(key, None)
+        stylesheet = generate_qt_stylesheet(self.widget.__class__.__name__,
+                self._qt_stylesheet_values)         
+        self.widget.setStyleSheet(stylesheet)
+
+
+def generate_qt_stylesheet(class_name, values):
+    """ Generate a Qt stylesheet string
+    
+    Arguments
+    ---------
+    
+    class_name : string
+        The name of the Qt class that is having its stylesheet set.
+    
+    values : dictionary
+        A dictionary whose keys are Qt stylesheet property names and
+        whose values are the corresponding string values to be used in
+        the stylesheet.
+    """
+    return (class_name + ' { ' +
+        '; '.join(key+': '+value for key, value in values.items()) +
+    ' }' )
+
+
 ALIGN_MAP = {
     'top': QtCore.Qt.AlignTop,
     'right': QtCore.Qt.AlignRight,
@@ -119,18 +187,24 @@ ALIGN_MAP = {
     'center': QtCore.Qt.AlignCenter,
 }
 
-'''
-def wx_color_from_color(color, wx_no_color=wx.NullColor):
-    """ Converts an enaml.color.Color into a wx color.
+
+def qt_color_from_color(color):
+    """ Converts an enaml.color.Color into a qt stylesheet color.
 
     """
     if color == Color.no_color:
-        res = wx_no_color
+        res = None
     else:
-        res = wx.Color(color.r, color.g, color.b, color.a)
+        res = 'rgb(%s, %s, %s, %s)' % (color.r, color.g, color.b, color.a)
     return res
 
 
+def qt_color(color_style):
+    color = color_from_color_style(color_style)
+    return qt_color_from_color(color)
+
+
+'''
 def compute_sizer_flags(style):
     """ Computes wx sizer flags given a style node.
 
