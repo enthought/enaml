@@ -199,6 +199,21 @@ class BaseDocString(object):
         else:
             return False
 
+    def insert_lines(self, new_lines, index):
+        """Insert refactored lines
+
+        Arguments
+        ---------
+        new_lines : list
+            The list of lines to insert
+
+        index : int
+            Index to start the insertion
+        """
+        lines = self._doc._str
+        for line in reversed(new_lines):
+            lines.insert(index, line)
+
 
 class FunctionDocstring(BaseDocString):
     """Docstring refactoring for functions"""
@@ -260,10 +275,7 @@ class FunctionDocstring(BaseDocString):
             lines.insert(index, '**{0}:**'.format(header))
 
         descriptions.append(' ')
-
-        # insert refactored description
-        for line in reversed(descriptions):
-            lines.insert(index, line)
+        self.insert_lines(desc, index)
 
     def _refactor_raises(self, header):
         """Refactor the raises section to sphinx friendly format"""
@@ -312,10 +324,7 @@ class FunctionDocstring(BaseDocString):
 
 
         descriptions.append(' ')
-
-        # insert refactored description
-        for line in reversed(descriptions):
-            lines.insert(index + 1, line)
+        self.insert_lines(desc, index)
 
     def _refactor_arguments(self, header):
         """Refactor the argument section to sphinx friendly format"""
@@ -351,9 +360,7 @@ class FunctionDocstring(BaseDocString):
 
         descriptions.append(' ')
 
-        # insert refactored description
-        for line in reversed(descriptions):
-            lines.insert(index, line)
+        self.insert_lines(desc, index)
 
 class ClassDocstring(BaseDocString):
     """Docstring refactoring for classes"""
@@ -410,6 +417,4 @@ class ClassDocstring(BaseDocString):
 
         descriptions.append(' ')
 
-        # insert refactored description
-        for line in reversed(descriptions):
-            lines.insert(index, line)
+        self.insert_lines(desc, index)
