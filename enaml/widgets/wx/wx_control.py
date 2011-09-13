@@ -47,7 +47,6 @@ class WXControl(WXComponent):
         this method.
 
         """
-        
         if list(self.child_widgets()):
             raise ValueError('Standard controls cannot have children.')
 

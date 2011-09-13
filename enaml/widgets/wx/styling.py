@@ -143,9 +143,6 @@ def wx_color_from_color(value, wx_no_color=wx.NullColor):
     return res
 
 
-
-
-
 def compute_sizer_flags(style):
 
     get_tag = style.get_tag

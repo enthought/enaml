@@ -3,7 +3,7 @@ import wx
 from traits.api import implements
 
 from .wx_component import WXComponent
-from .util import compute_sizer_flags
+from .styling import compute_sizer_flags
 
 from ..panel import IPanelImpl
 
