@@ -211,6 +211,7 @@ def pyside_toolkit():
         'TraitsUIItem': ctors.QtTraitsUIItemCtor,
         'Calendar': ctors.QtCalendarCtor,
         'CheckBox': ctors.QtCheckBoxCtor,
+        'ComboBox': ctors.QtComboBoxCtor,
         'Html': ctors.QtHtmlCtor,
         'PushButton': ctors.QtPushButtonCtor,
         'SpinBox': ctors.QtSpinBoxCtor,
