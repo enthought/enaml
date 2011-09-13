@@ -134,7 +134,7 @@ def wx_toolkit():
 
     """
     from .widgets.wx import constructors as ctors
-    from .widgets.wx.style_sheet import WX_STYLE_SHEET
+    from .widgets.wx.styling import WX_STYLE_SHEET
     items = {
         'Panel': ctors.WXPanelCtor,
         'Window': ctors.WXWindowCtor,
