@@ -97,3 +97,6 @@ class StackedGroup(Container):
     def _get_count(self):
         return len(self.children)
 
+
+StackedGroup.protect('count')
+

@@ -4,7 +4,6 @@ from traits.api import (Any, Bool, Callable, Enum, Float, Range, Event,
 from .control import IControlImpl, Control
 
 from ..enums import Orientation, TickPosition
-from ..util.decorators import protected
 
 
 class ISliderImpl(IControlImpl):
@@ -40,7 +39,6 @@ class ISliderImpl(IControlImpl):
         raise NotImplementedError
     
 
-@protected('_down')
 class Slider(Control):
     """ A simple slider widget.
 
@@ -182,3 +180,5 @@ class Slider(Control):
         return self._down
 
     
+Slider.protect('down', 'pressed', 'released', 'moved', 'invalid_value', '_down')
+

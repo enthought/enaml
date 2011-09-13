@@ -2,8 +2,6 @@ from traits.api import Bool, Event, Str, Instance, Property
 
 from .control import Control, IControlImpl
 
-from ..util.decorators import protected
-
 
 class IPushButtonImpl(IControlImpl):
 
@@ -11,7 +9,6 @@ class IPushButtonImpl(IControlImpl):
         raise NotImplementedError
     
 
-@protected('_down')
 class PushButton(Control):
     """ A push button widget.
 
@@ -60,4 +57,7 @@ class PushButton(Control):
 
         """
         return self._down
+
+
+PushButton.protect('_down', 'clicked', 'pressed', 'released')
 

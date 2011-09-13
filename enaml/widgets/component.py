@@ -3,7 +3,6 @@ from traits.api import Interface, Str, WeakRef, Instance, List
 from .style_node import StyleNode
 
 from ..enaml_base import EnamlBase
-from ..util.decorators import protected
 from ..util.trait_types import ReadOnlyConstruct
 
 
@@ -384,5 +383,5 @@ class Component(EnamlBase):
         self.add_trait_listener(self.toolkit_impl, 'parent')
 
 
-Component.protect('style', 'toolkit_impl', '_d', '_type', 'parent', 'children')
+Component.protect('_id', '_type', 'parent', 'children', 'style', 'toolkit_impl')
 

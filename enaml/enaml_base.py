@@ -95,8 +95,8 @@ class EnamlBase(HasStrictTraits):
             return
 
         if name in self.__protected__:
-            msg = ('The `%s` attribute of the `%s` object is protected '
-                   'and cannot be used in an Enaml expression.')
+            msg = ('The `%s` attribute of the `%s` object is protected and '
+                   'cannot be used in left associative Enaml expressions.')
             raise AttributeError(msg % (name, type(self).__name__))
         
         trait = self.trait(name)
@@ -107,7 +107,7 @@ class EnamlBase(HasStrictTraits):
             trait = Any()()
 
         if delegate_name in delegates:
-            msg = 'The `%s` attr on the `%s` object is already delegated.'
+            msg = 'The `%s` attr on the `%s` object is already associated.'
             raise ValueError(msg % (name, type(self).__name__))
         else:
             delegates[delegate_name] = delegate
@@ -143,11 +143,6 @@ class EnamlBase(HasStrictTraits):
         if '.' in name:
             self._set_extended_notifier(name, notifier)
             return
-
-        if name in self.__protected__:
-            msg = ('The `%s` attribute of the `%s` object is protected '
-                   'and cannot be used in an Enaml expression.')
-            raise AttributeError(msg % (name, type(self).__name__))
 
         trait = self.trait(name)
         if trait is None:

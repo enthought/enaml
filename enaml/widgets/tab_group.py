@@ -39,3 +39,6 @@ class TabGroup(StackedGroup):
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(ITabGroupImpl)
 
+
+TabGroup.protect('reordered')
+

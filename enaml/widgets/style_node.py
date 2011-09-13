@@ -2,7 +2,6 @@ from traits.api import (implements, Instance, HasStrictTraits, Str, Property,
                         on_trait_change, WeakRef, Event)
 
 from ..enaml_base import EnamlBase
-from ..util.decorators import protected
 from ..util.style_sheet import IStyleNodeData, StyleSheet
 
 
@@ -44,7 +43,6 @@ STYLE_NAMES = set([
 #-------------------------------------------------------------------------------
 # Style Node definition
 #-------------------------------------------------------------------------------
-@protected('_parent', 'node_data', 'tag_updated')
 class StyleNode(EnamlBase):
 
     _parent = WeakRef
@@ -93,6 +91,9 @@ class StyleNode(EnamlBase):
         except AttributeError:
             res = self.style_sheet.get_property(tag, self.node_data)
         return res
+
+
+StyleNode.protect('_parent', 'node_data', 'tag_updated')
 
 
 class StyleNodeData(HasStrictTraits):
