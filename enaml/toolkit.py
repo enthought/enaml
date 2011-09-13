@@ -197,7 +197,8 @@ def pyside_toolkit():
 
     """
     from .widgets.qt import constructors as ctors
-    
+    from .widgets.qt.styling import QT_STYLE_SHEET
+
     items = {
         'Panel': ctors.QtPanelCtor,
         'Window': ctors.QtWindowCtor,
@@ -211,6 +212,8 @@ def pyside_toolkit():
         'Calendar': ctors.QtCalendarCtor,
         'CheckBox': ctors.QtCheckBoxCtor,
     }
+    
+    utils = {}
 
     def prime_loop():
         from PySide import QtGui
@@ -223,14 +226,17 @@ def pyside_toolkit():
         # XXX check for mainloop already running? - Pyface hacks this feature in
         app.exec_()
 
-    return Toolkit(items=items, prime=prime_loop, start=start_loop)
+    return Toolkit(items=items, prime=prime_loop, start=start_loop,
+        style_sheet=QT_STYLE_SHEET, utils=utils)
 
+# XXX should merge these two and add something that does *actual* selection of Qt API
 
 def pyqt_toolkit():
     """ Creates and return a toolkit object for the PyQt Qt backend.
 
     """
     from .widgets.qt import constructors as ctors
+    from .widgets.qt.styling import QT_STYLE_SHEET
     
     items = {
         'Panel': ctors.QtPanelCtor,
@@ -243,6 +249,8 @@ def pyqt_toolkit():
         'LineEdit': ctors.QtLineEditCtor,
         'TraitsUIItem': ctors.QtTraitsUIItemCtor,
     }
+    
+    utils = {}
 
     def prime_loop():
         from PySide import QtGui

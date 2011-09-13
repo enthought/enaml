@@ -43,7 +43,14 @@ class QtComponent(HasStrictTraits):
 
         """
         raise NotImplementedError
-    
+        
+    def initialize_style(self):
+        """ Initializes the style and style handler of a widget. Must
+        be implemented by subclasses.
+
+        """
+        pass #raise NotImplementedError
+
     def layout_child_widgets(self):
         """ Arranges the children of this component. Must be implemented
         by subclasses.
