@@ -1,4 +1,3 @@
-from ...enums import SizePolicy, Color
 from ...util.style_sheet import StyleSheet, style
 
 
@@ -34,21 +33,21 @@ WX_STYLE_SHEET = StyleSheet(
     # Convienence style classes
     #---------------------------------------------------------------------------
     style(".error_colors",
-        background_color = Color.ERROR,
-        color = Color.DEFAULT,
+        background_color = "error",
+        color = "nocolor",
     ),
 
     style(".normal_colors",
-        background_color = Color.DEFAULT,
-        color = Color.DEFAULT,
+        background_color = "nocolor",
+        color = "nocolor",
     ),
 
     style(".fixed",
-        size_policy = SizePolicy.MINIMUM,
+        size_policy = "minimum",
     ),
 
     style(".expanding",
-        size_policy = SizePolicy.EXPANDING,
+        size_policy = "expanding",
     ),
 
     style(".no_stretch",

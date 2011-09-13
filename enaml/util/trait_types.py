@@ -50,3 +50,25 @@ class NamedLookup(TraitType):
     def get(self, obj, name):
         return getattr(obj, self._lookup_func_name)(name)
 
+
+class ORStr(TraitType):
+    """ Allows a space-separated string of any combination of the 
+    constituents of the string passed to the constructor.
+    
+    i.e. StrFlags("foo bar") will validate only the following strings:
+        
+        "", "foo", "foo bar", "bar", "bar foo"
+
+    """
+    default_value = ""
+
+    def __init__(self, allowed):
+        self.allowed = set(allowed.strip().split())
+
+    def is_valid(self, val):
+        if not isinstance(val, basestring):
+            return False
+        components = val.strip.split()
+        allowed = self.allowed
+        return all(component in allowed for component in components)
+

@@ -3,7 +3,7 @@ import itertools
 
 from traits.api import (MetaHasTraits, HasStrictTraits, HasTraits, Instance, 
                         Event, Interface, Str, Dict, Any, Set, Int, TraitType,
-                        on_trait_change)
+                        on_trait_change, TraitFactory, Property, Bool)
 
 
 # Matches the '*' selector
@@ -15,7 +15,8 @@ TYPE_SELECTOR = re.compile(r'([a-zA-Z_][a-zA-Z0-9_]*)$')
 # Matches a class selector like '.expanding.error.underline' or '*.normal'
 CLASS_SELECTOR = re.compile(r'((?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)$')
 
-#QUAL_RE = re.compile(r'([a-zA-Z_][a-zA-Z0-9_]*)\.([a-zA-Z_][a-zA-Z0-9_]*)$')
+# Matches type qualified classes like 'Html.error_colors'
+QUAL_SELECTOR = re.compile(r'([a-zA-Z_][a-zA-Z0-9_]*)((?:\.[a-zA-Z_][a-zA-Z0-9_]*)*)$')
 
 #CHILD_RE = re.compile(r'([a-zA-Z_][a-zA-Z0-9_]*)\.?([a-zA-Z_][a-zA-Z0-9_]*)\s*>\s*([a-zA-Z_][a-zA-Z0-9_]*)$')
 
@@ -169,9 +170,37 @@ class ClassSelector(Selector):
         specificity = 0
         for node_class in node_data.node_classes().split():
             if node_class in these_classes:
+                specificity += 10
+        match = bool(specificity)
+        return match, (specificity, self.order, self.properties)
+
+
+class QualSelector(Selector):
+    """ A style selector which matches type qualified classes.
+
+    See Also
+    --------
+    Selector
+
+    """
+    node_type = Str
+
+    node_classes = Instance(set)
+
+    def match(self, node_data):
+        match = False
+        specificity = 0
+        type_match = node_data.node_type() == self.node_type
+        if type_match:
+            these_classes = self.node_classes
+            for node_class in node_data.node_classes().split():
+                if node_class in these_classes:
+                    specificity += 10
+            # the type only counts if we have class matches
+            if specificity > 0:
                 specificity += 1
         match = bool(specificity)
-        return match, (specificity * 10, self.order, self.properties)
+        return match, (specificity, self.order, self.properties)
 
 
 class IDSelector(Selector):
@@ -285,6 +314,22 @@ class StyleSheet(HasStrictTraits):
                     updated_selectors.add(selector)
                     continue
 
+                match = QUAL_SELECTOR.match(selector_str)
+                if match:
+                    match_str = selector_str
+                    if match_str in selector_map:
+                        selector = selector_map[match_str]
+                    else:
+                        node_type, rest = match_str.split('.', 1)
+                        node_classes = set(rest.split('.'))
+                        selector = QualSelector(node_type=node_type,
+                                                node_classes=node_classes)
+                        selector_map[match_str] = selector
+                    selector.order = counter.next()
+                    selector.properties.update(properties)
+                    updated_selectors.add(selector)
+                    continue
+
                 match = ID_SELECTOR.match(selector_str)
                 if match:
                     match_str = match.group(1)
@@ -383,82 +428,4 @@ class StyleSheet(HasStrictTraits):
             res = NO_STYLE
 
         return res
-
-
-class StyleTrait(TraitType):
-    """ A trait to lookup style properties from a style sheet.
-
-    A StylePropertyLookup behaves like a read-only trait and will 
-    query a StyleSheet for the value of a property tag each time 
-    the trait is accessed. No caching of the results is done, since 
-    the lookup is not a very expensive operation and we would rather
-    save the memory.
-
-    """
-    def __init__(self, sheet_trait, data_trait, tag=None):
-        """ Construct a StylePropertyLookup traits.
-
-        Parameters
-        ----------
-        sheet_trait : string
-            The name of the trait on the object which contains the 
-            style sheet.
-
-        data_trait : string
-            The name of the trait on the object which contains an
-            IStyleNodeData object to use for the matching.
-        
-        tag : string, optional
-            The property tag to query for this attribute, if not given
-            the tag will be the name to which this trait is assigned.
-
-        """
-        super(StyleTrait, self).__init__()
-        if not isinstance(sheet_trait, basestring):
-            raise TypeError('`sheet_trait` should be a string.')
-        if not isinstance(data_trait, basestring):
-            raise TypeError('`data_trait` should be a string.')
-        if tag is not None:
-            if not isinstance(tag, basestring):
-                raise TypeError('`tag` should be a string or None.')
-        self.sheet_trait = sheet_trait
-        self.data_trait = data_trait
-        self.tag = tag
-
-    def get(self, obj, name):
-        tag = self.tag
-        if tag is None:
-            tag = name            
-        sheet = getattr(obj, self.sheet_trait)
-        data = getattr(obj, self.data_trait)
-        return sheet.get_property(tag, data)
-
-
-class ReactiveStyleNodeMeta(MetaHasTraits):
-
-    def __new__(meta, name, bases, cls_dict):
-        cls = MetaHasTraits.__new__(meta, name, bases, cls_dict)
-        style_traits = set()
-        for name, trait in cls.__class_traits__.iteritems():
-            trait_type = trait.trait_type
-            if isinstance(trait_type, StyleTrait):
-                style_traits.add(name)
-        cls.__style_traits__ = style_traits
-        return cls
-
-
-class ReactiveStyleNode(HasTraits):
-
-    __metaclass__ = ReactiveStyleNodeMeta
-
-    @on_trait_change('style_sheet:updated')
-    def _notify_updated_styles(self, updated_styles):
-        style_traits = self.__style_traits__
-        for name in updated_styles:
-            if name in style_traits:
-                self.trait_property_changed(name, None, getattr(self, name))
-    
-    def _style_sheet_changed(self):
-        for name in self.__style_traits__:
-            self.trait_property_changed(name, None, getattr(self, name))
 

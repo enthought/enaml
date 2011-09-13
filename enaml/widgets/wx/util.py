@@ -1,6 +1,7 @@
 import wx
 
 from ...util.style_sheet import NO_STYLE
+from ...color import Color
 
 
 ALIGN_MAP = {
@@ -14,19 +15,38 @@ ALIGN_MAP = {
 }
 
 
-def rgba_to_wx_color(r, g, b, a=1.0):
-    """ Converts 0.0 - 1.0 floating point rgb(a) values into a 
-    wx.Colour object.
+def wx_color_from_color(value):
+    """ Converts an color into a wx color.
 
     """
-    r = max(0, min(255, int(255 * r)))
-    g = max(0, min(255, int(255 * g)))
-    b = max(0, min(255, int(255 * b)))
-    a = max(0, min(255, int(255 * a)))
-    return wx.Color(r, g, b, a)
+    if value is NO_STYLE:
+        color = Color.no_color
+    elif isinstance(value, basestring):
+        color = Color.from_string(value.strip())
+    elif isinstance(value, Color):
+        color = value
+    else:
+        color = Color.no_color
+
+    if color == Color.no_color:
+        res = wx.NullColor
+    else:
+        res = wx.Color(color.r, color.g, color.b, color.a)
+
+    return res
+
+
+class Wrapper(object):
+    def __init__(self, style):
+        self._wrapped_style = style
+    
+    def __getattr__(self, name):
+        return self._wrapped_style.get_tag(name)
 
 
 def compute_sizer_flags(style):
+
+    style = Wrapper(style)
 
     border_top = None
     border_right = None
@@ -52,25 +72,47 @@ def compute_sizer_flags(style):
     
     border_widths = [width for width in border_iter if isinstance(width, int)]
     n = len(border_widths)
+    sides = 0
     if n == 0:
-        sides = 0
+        pass
     elif n == 1:
         width = border_widths[0]
-        border_top = border_right = border_bottom = border_left = width
-        sides = wx.ALL
-    elif n == 2:
-        border_top, border_right = border_widths
-        border_bottom = border_top
-        border_left = border_right
-        sides = wx.ALL
+        if width >= 0:
+            border_top = border_right = border_bottom = border_left = width
+            sides |= wx.ALL
+    elif n == 2: 
+        width1, width2 = border_widths
+        if width1 >= 0:
+            border_bottom = border_top = width1
+            sides |= (wx.TOP | wx.BOTTOM)
+        if width2 >= 0:
+            border_left = border_right = width2
+            sides |= (wx.RIGHT | wx.LEFT)
     elif n == 3:
-        border_top, border_right, border_bottom = border_widths
-        border_left = border_right
-        sides = wx.ALL
+        width1, width2, width3 = border_widths
+        if width1 >= 0:
+            border_top = width1
+            sides |= wx.TOP
+        if width2 >= 0:
+            border_right = border_left = width2
+            sides |= (wx.RIGHT | wx.LEFT)
+        if width3 >= 0:
+            border_bottom = width3
+            sides |= wx.BOTTOM
     else:
-        border_widths = border_widths[:4]
-        border_top, border_right, border_bottom, border_left = border_widths
-        sides = wx.ALL
+        width1, width2, width3, width4 = border_widths
+        if width1 >= 0:
+            border_top = width1
+            sides |= wx.TOP
+        if width2 >= 0:
+            border_right = width2
+            sides |= wx.RIGHT
+        if width3 >= 0:
+            border_bottom = width3
+            sides |= wx.BOTTOM
+        if width4 >= 0:
+            border_left = width4
+            sides |= wx.LEFT
 
     st = style.border_top_width
     if st is not NO_STYLE:
@@ -93,13 +135,16 @@ def compute_sizer_flags(style):
         sides |= wx.LEFT
 
     amt = max(border_top, border_right, border_bottom, border_left, -1)
+    
     spacing = style.spacing
-    if spacing is not NO_STYLE:
+    if spacing is not NO_STYLE and spacing > 0:
         if isinstance(spacing, int):
             amt += spacing
 
     flags = wx.SizerFlags()
-    flags.Border(sides, amt)
+    
+    if amt >= 0:
+        flags.Border(sides, amt)
 
     align = style.align
     if align is not NO_STYLE:
@@ -124,11 +169,12 @@ def compute_sizer_flags(style):
                 flags.Expand()
     
     stretch = style.stretch
-    if stretch is not NO_STYLE:
+    if stretch is not NO_STYLE and stretch >= 0:
         try:
             flags.Proportion(stretch)
         except TypeError:
             pass
 
     return flags
+
 

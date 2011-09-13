@@ -8,11 +8,11 @@ import random
 from traits.api import HasTraits, Str
 
 from enaml.factory import EnamlFactory
-from enaml.enums import Color
+from enaml.color import Color
 from enaml.util.style_sheet import style
 
 
-colors = list(Color.values())
+colors = Color.color_map.keys()
 
 
 class Model(HasTraits):

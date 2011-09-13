@@ -1,9 +1,7 @@
 import math
 import random
 import datetime
-
-from enaml.enums import Direction, Orientation, Color
-
+from enaml.enums import Orientation, Direction
 
 Window:
 
@@ -13,20 +11,17 @@ Window:
         HGroup:
 
             style.cls = "stretch"
-            
-            Group my_group:
+            #style.border_left_width = 50
 
-                direction << (random.choice([Direction.TOP_TO_BOTTOM, 
-                                             Direction.BOTTOM_TO_TOP])
-                              or pb2.clicked)
-                
+            Group my_group:
+                direction = Direction.TOP_TO_BOTTOM
                 PushButton:
                     style.cls = "X_border"
                     text << "clickme!" if not self.down else "I'm down!"
 
                     # msg is passed implicitly to any >> notify expressions
                     clicked >> model.update_style()
-                
+
                 PushButton pb2:
                     style.cls = "expanding"
                     text = "shuffle"
@@ -113,7 +108,7 @@ Window:
 
                 HGroup:
                     CheckBox wrap_box:
-                        style.cls << "error foo" if mf.error else "normal"
+                        style.cls << "error_colors foo" if mf.error else "normal_colors"
                         text = 'Allow wrap:'
                         toggled >> setattr(cmbx, 'value', 42)
                     SpinBox sb:
@@ -128,7 +123,7 @@ Window:
                 HGroup:
                     LineEdit line_edit:
                         text := model.window_title
-
+                        
                 # The wx layout behaves badly if the slider 
                 # orientation is vertical in a vgroup layout
                 HGroup:
@@ -147,7 +142,6 @@ Window:
 
                 Field mf:
                     to_string = str
-                    from_string = int
+                    from_string = lambda val: int(val) if val else 0
                     value = 0
-                    style.background_color << Color.ERROR if self.error else Color.DEFAULT
-
+                    style.background_color << "error" if self.error else "nocolor"
