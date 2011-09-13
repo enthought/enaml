@@ -53,7 +53,8 @@ Contents
 ========
 
 .. toctree::
-    :maxdepth: 4
+    :maxdepth: 2
 
     enaml
+    enaml_file
     developers_corner
