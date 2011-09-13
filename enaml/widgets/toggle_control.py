@@ -2,8 +2,6 @@ from traits.api import Bool, Event, Str, Instance, Property
 
 from .control import Control, IControlImpl
 
-from ..util.decorators import protected
-
 
 class IToggleControlImpl(IControlImpl):
     
@@ -14,7 +12,6 @@ class IToggleControlImpl(IControlImpl):
         raise NotImplementedError
 
 
-@protected('_down')
 class ToggleControl(Control):
     """ An abstract toggle element. 
     
@@ -72,4 +69,7 @@ class ToggleControl(Control):
 
         """
         return self._down
+
+
+ToggleControl.protect('toggled', 'pressed', 'released', '_down')
 

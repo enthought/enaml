@@ -2,8 +2,6 @@ from traits.api import Any, Bool, Callable, Instance, Property
 
 from .line_edit import ILineEditImpl, LineEdit
 
-from ..util.decorators import protected
-
 
 class IFieldImpl(ILineEditImpl):
 
@@ -17,7 +15,6 @@ class IFieldImpl(ILineEditImpl):
         raise NotImplementedError
 
 
-@protected('_error', '_exception')
 class Field(LineEdit):
     """ A basic value field which subclasses from LineEdit.
 
@@ -78,4 +75,7 @@ class Field(LineEdit):
     
     def _get_exception(self):
         return self._exception
+
+
+Field.protect('_error', '_exception', 'error', 'exception')
 

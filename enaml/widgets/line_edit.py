@@ -2,8 +2,6 @@ from traits.api import Bool, Event, Int, Str, Property, Instance
 
 from .control import IControlImpl, Control
 
-from ..util.decorators import protected
-
 
 class ILineEditImpl(IControlImpl):
 
@@ -65,7 +63,6 @@ class ILineEditImpl(IControlImpl):
         raise NotImplementedError
 
 
-@protected('_modified', '_selected_text')
 class LineEdit(Control):
     """ A single-line editable text widget.
 
@@ -440,4 +437,9 @@ class LineEdit(Control):
 
         """
         return self._selected_text
+
+
+LineEdit.protect('max_length_reached', 'modified', 'selected_text', 
+                 'text_changed', 'text_edited', 'return_pressed',
+                 '_modified', '_selected_text')
 

@@ -1,9 +1,8 @@
-from traits.api import (HasStrictTraits, Str, Dict, Set, WeakRef, Instance, 
-                        Interface, List, DelegatesTo)
+from traits.api import Interface, Str, WeakRef, Instance, List
 
-from ..expressions import IExpressionDelegate, IExpressionNotifier
-from ..util.decorators import protected
-from ..util.style_sheet import StyleSheet, NO_STYLE
+from ..enaml_base import EnamlBase
+from ..style_node import EnamlStyleNode
+from ..util.trait_types import ReadOnlyConstruct
 
 
 class IComponentImpl(Interface):
@@ -75,9 +74,16 @@ class IComponentImpl(Interface):
         """
         raise NotImplementedError
 
+    def initialize_style(self):
+        """ Initializes the style and style handler for the widget. This
+        is the fourth method called in the layout proces.
+
+        """
+        raise NotImplementedError
+
     def layout_child_widgets(self):
         """ Adds the child widgets (if any) to any necessary layout
-        components in the ui. This is the fourth and final method called
+        components in the ui. This is the fifth and final method called
         in the layout process.
 
         """
@@ -97,55 +103,41 @@ class IComponentImpl(Interface):
         raise NotImplementedError
 
 
-@protected('_delegates', '_notifiers', '_id', '_type', 'parent', 'children', 'toolkit_impl')
-class Component(HasStrictTraits):
-    """ The most base class of the Enaml component heierarchy. 
+class Component(EnamlBase):
+    """ The most base class of the Enaml widgets component heierarchy. 
     
     All Enaml  widget classes should inherit from this class. This class
     is not meant to be instantiated.
     
     Attributes
     ----------
-    _delegates : Dict(Str, Instance(IExpressionDelegate))
-        The expression delegates currently installed on this component. 
-        This is a protected attribute and is managed internally. 
-        Manipulate at your own risk.
-    
-    _notifiers : Set(Instance(IExpressionNotifier))
-        The expression notifiers currently installed on this component. 
-        This is a protected attribute and is managed internally. 
-        Manipulate at your own risk.
-    
     _id : Str
         The identifier assigned to this element in the enaml source code.
-        Note that if you change this, you will likely break things.
+        Note that if you change this, you will likely break things. This
+        is a protected attribute.
 
     _type : Str
         The type name this component is using in the enaml source code.
+        This is a protected attribute.
+
+    parent : WeakRef(EnamlBase)
+        The parent object which is stored as a weakref to mitigate memory 
+        leak issues from reference cycles. This is a protected attribute.
+
+    children : List(Instance(EnamlBase))
+        The list of children components for this component. Subclasses
+        may redefine this trait to restrict which types of children
+        they allow. This list should not be manipulated outside of
+        the *_child(...) methods. This is a protected attribute.
 
     name : Str
         The name of this element which may be used as metainfo by other
         components. Note that this is not the same as the identifier 
         that can be assigned to a component as part of the enaml grammar.
 
-    style_class = Str
-        The space-separated names of the style classes used by this
-        component.
-
-    style_sheet : Instance(StyleSheet)
-        The style_sheet in use by this component. This is not usually
-        manipulated by the user.
-
-    parent : WeakRef(Component)
-        The parent component of this component which is stored as a
-        weakref to mitigate memory leak issues from reference cycles.
-        This is a protected attribute.
-
-    children : List(Instance(Component))
-        The list of children components for this component. Subclasses
-        may redefine this trait to restrict which types of children
-        they allow. This list should not be manipulated outside of
-        the *_child(...) methods. This is a protected attribute.
+    style : Instance(StyleNode)
+        A protected read-only attribute that holds the component's style
+        node.
 
     toolkit_impl : Instance(ComponentImpl)
         The toolkit specific object that implements the behavior of 
@@ -157,12 +149,6 @@ class Component(HasStrictTraits):
 
     Methods
     -------
-    set_attribute_delegate(name, delegate)
-        Delegates the value of the attribute to the delegate.
-
-    add_attribute_notifier(name, notifier)
-        Adds a notifier for the given attribute name.
-
     add_child(child)
         Add a child component to this component. This will reparent
         the child.
@@ -194,128 +180,20 @@ class Component(HasStrictTraits):
         where necessary.
 
     """
-    _delegates = Dict(Str, Instance(IExpressionDelegate))
-
-    _notifiers = Set(Instance(IExpressionNotifier))
-
     _id = Str
 
     _type = Str
 
-    name = Str
-
-    style_class = Str
-
-    style_sheet = Instance(StyleSheet)
-
-    parent = WeakRef
+    parent = WeakRef('Component')
 
     children = List(Instance('Component'))
 
+    name = Str
+
+    # XXX - I don't like this ReadOnlyConstruct
+    style = ReadOnlyConstruct(lambda self, name: EnamlStyleNode(parent=self))
+
     toolkit_impl = Instance(IComponentImpl)
-
-    def get_style(self, tag):
-        sheet = self.get_style_sheet()
-        if sheet is None:
-            res = NO_STYLE
-        else:
-            res = sheet.get_style(
-                tag, type=self._type, cls=self.style_class, id=self._id,
-            )
-        if callable(res):
-            res = res(self)
-        return res
-
-    def get_style_sheet(self):
-        parent = self
-        while parent:
-            style = parent.style_sheet
-            if style is not None:
-                return style
-            parent = parent.parent
-
-    def set_attribute_delegate(self, name, delegate):
-        """ Delegates the value of the attribute to the delegate.
-
-        Call this method to intercept the value of the standard trait
-        attribute and delegate that value to the given delegate.
-
-        Arguments
-        ---------
-        name : string
-            The name of the attribute to delegate.
-        
-        delegate : IExpressionDelegate
-            An implementor of the IExpressionDelegate interface.
-
-        Returns
-        -------
-        result : None
-
-        """
-        if name in self.__protected__:
-            msg = ('The `%s` attribute of the `%s` object is protected '
-                   'and cannot be used in an Enaml expression.')
-            raise AttributeError(msg % (name, type(self).__name__))
-        
-        trait = self.trait(name)
-        delegates = self._delegates
-        delegate_name = '_%s_enaml_delegate' % name
-
-        if trait is None:
-            msg = '`%s` is not a proper attribute on the `%s` object.'
-            raise AttributeError(msg % (name, type(self).__name__))
-
-        if trait.type in ('property', 'event'):
-            msg = 'The `%s` attr on the `%s` object cannot be delegated.'
-            raise TypeError(msg % (name, type(self).__name__))
-
-        if delegate_name in delegates:
-            msg = 'The `%s` attr on the `%s` object is already delegated.'
-            raise ValueError(msg % (name, type(self).__name__))
-        else:
-            delegates[delegate_name] = delegate
-
-        delegate.bind(self, name, trait())
-
-        self.add_trait(delegate_name, delegate)
-        self.add_trait(name, DelegatesTo(delegate_name, 'value'))
-
-        # Need to fire trait_added or the delegate 
-        # listeners don't get hooked up properly.
-        self.trait_added = name
-
-    def add_attribute_notifier(self, name, notifier):
-        """ Adds a notifier for the given attribute name.
-
-        Call this method to hook up an IExpressionNotifier to the
-        given attribute name.
-
-        Arguments
-        ---------
-        name : string
-            The name of the attribute to delegate.
-        
-        notifier : IExpressionNotifier
-            An implementor of the IExpressionNotifer interface.
-
-        Returns
-        -------
-        result : None
-
-        """
-        if name in self.__protected__:
-            msg = ('The `%s` attribute of the `%s` object is protected '
-                   'and cannot be used in an Enaml expression.')
-            raise AttributeError(msg % (name, type(self).__name__))
-
-        trait = self.trait(name)
-        if trait is None:
-            msg = '`%s` is not a proper attribute on the `%s` object.'
-            raise AttributeError(msg % (name, type(self).__name__))
-
-        self._notifiers.add(notifier)
-        notifier.bind(self, name)
 
     def add_child(self, child):
         """ Add a child component to this component.
@@ -457,7 +335,7 @@ class Component(HasStrictTraits):
 
         """
         self.parent = parent
-    
+
     def layout(self):
         """ Initialize and layout the component and it's children. 
 
@@ -481,9 +359,10 @@ class Component(HasStrictTraits):
         for child in self.children:
             child.layout()
         impl.initialize_widget()
+        impl.initialize_style()
         impl.layout_child_widgets()
         self._hook_impl()
-         
+        
     def toolkit_widget(self):
         """ Returns the toolkit specific widget for this component.
 
@@ -502,4 +381,7 @@ class Component(HasStrictTraits):
         
         """
         self.add_trait_listener(self.toolkit_impl, 'parent')
+
+
+Component.protect('_id', '_type', 'parent', 'children', 'style', 'toolkit_impl')
 

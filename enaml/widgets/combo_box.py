@@ -60,3 +60,6 @@ class ComboBox(Control):
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IComboBoxImpl)
 
+
+ComboBox.protect('selected')
+
