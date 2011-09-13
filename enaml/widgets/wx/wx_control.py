@@ -3,7 +3,8 @@ import wx
 from traits.api import implements, Instance
 
 from .wx_component import WXComponent
-from .util import wx_color_from_color
+from .styling import wx_color_from_color
+
 from ..style_node import StyleHandler
 from ..control import IControlImpl
 
