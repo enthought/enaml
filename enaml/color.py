@@ -1,28 +1,51 @@
 import re
 
-from traits.api import HasStrictTraits, Constant, Range 
+from traits.api import HasStrictTraits, Constant, Range
 
 
 HEX_COLOR = re.compile('#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{8})$')
 
 
 class Color(HasStrictTraits):
+    """ Enaml color representation in the RGBA colorspace.
 
+    """
+
+    #: The red component (0-255)
     r = Range(0, 255)
 
+    #: The green component (0-255)
     g = Range(0, 255)
 
+    #: The blue component (0-255)
     b = Range(0, 255)
 
+    #: The aplha component (0-255)
     a = Range(0, 255)
 
-    @classmethod
     def from_string(cls, color_string):
+        """ Convert a string to an enaml Color class
+
+        Arguments
+        ---------
+        color_string : str
+            String describing color in hexadecimal format or a CSS color
+            name.
+
+        .. note:: All 147 CSS colors plus a few of our own ("error",
+            "nocolor", "readonly")
+
+        Returns
+        -------
+        color : :class:`Color`
+            The color representation in enaml
+
+        """
         color_string = color_string.strip()
         match = HEX_COLOR.match(color_string)
         if match:
             hex_str = match.group(1)
-            r = int(hex_str[:2], 16) * 255 
+            r = int(hex_str[:2], 16) * 255
             g = int(hex_str[2:4], 16) * 255
             b = int(hex_str[4:6], 16) * 255
             if len(hex_str) == 8:
@@ -45,7 +68,7 @@ class Color(HasStrictTraits):
 
     def __eq__(self, other):
         if isinstance(other, Color):
-            return all((self.r == other.r, self.g == other.g, 
+            return all((self.r == other.r, self.g == other.g,
                         self.b == other.b, self.a == other.a))
         return False
 
@@ -234,4 +257,3 @@ Color.color_map = {
     "yellow": rgb(255, 255, 0),
     "yellowgreen": rgb(154, 205, 50),
 }
-
