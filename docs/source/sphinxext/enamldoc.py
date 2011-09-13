@@ -60,7 +60,6 @@ class BaseDocString(object):
         finally:
             return
 
-
     def parse(self):
         self._doc.reset()
         self._doc.read()
@@ -235,9 +234,9 @@ class FunctionDocstring(BaseDocString):
     def __init__(self, lines, headers=None, verbose=False):
 
         if headers is None:
-            headers = {'Returns' : 'returns', 'Arguments' : 'arguments',
-                       'Parameters' : 'arguments', 'Raises' : 'raises',
-                       'Yields' : 'returns'}
+            headers = {'Returns': 'returns', 'Arguments': 'arguments',
+                       'Parameters': 'arguments', 'Raises': 'raises',
+                       'Yields': 'returns'}
 
         super(FunctionDocstring, self).__init__(lines, headers, verbose)
 
@@ -264,7 +263,6 @@ class FunctionDocstring(BaseDocString):
         # generate sphinx friendly rst
         descriptions = []
         index += 1
-
 
         for arg_name, arg_type, desc in parameters:
 
@@ -373,16 +371,16 @@ class FunctionDocstring(BaseDocString):
         descriptions.append(' ')
         self.insert_lines(descriptions, index)
 
+
 class ClassDocstring(BaseDocString):
     """Docstring refactoring for classes"""
 
     def __init__(self, lines, headers=None, verbose=False):
 
         if headers is None:
-            headers = {'Attributes' : 'attributes'}
+            headers = {'Attributes': 'attributes'}
 
         super(ClassDocstring, self).__init__(lines, headers, verbose)
-
 
     def _refactor_attributes(self, header):
         """Refactor the attributes section to sphinx friendly format"""
@@ -429,5 +427,3 @@ class ClassDocstring(BaseDocString):
             descriptions.append(' ')
 
         self.insert_lines(descriptions, index)
-
-
