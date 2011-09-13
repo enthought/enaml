@@ -23,7 +23,7 @@ class QtComboBox(QtControl):
     # IComboBoxImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates a wx.ComboBox.
+        """ Creates a QComboBox.
 
         """
         self.widget = QtGui.QComboBox(self.parent_widget())
@@ -51,6 +51,9 @@ class QtComboBox(QtControl):
     # Implementation
     #---------------------------------------------------------------------------
     def items_changed(self):
+        """ Update the QComboBox with items from `parent`.
+        
+        """
         parent = self.parent
         str_items = map(parent.to_string, parent.items)
         self.set_items(str_items)
@@ -87,6 +90,5 @@ class QtComboBox(QtControl):
         widget = self.widget
         str_value = self.parent.to_string(value)
         index = widget.findText(str_value)
-        print value, index##
         widget.setCurrentIndex(index)
 
