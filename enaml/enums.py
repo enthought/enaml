@@ -74,6 +74,10 @@ class Buttons(Enum):
     RETRY = Constant()
     
     IGNORE = Constant()
+    
+    OK_CANCEL = Constant()
+    
+    YES_NO = Constant()
 
 
 class Color(Enum):
@@ -121,9 +125,9 @@ class Color(Enum):
 
 class DialogResult(Enum):
 
-    ACCEPTED = Constant()
-
     REJECTED = Constant()
+    
+    ACCEPTED = Constant()
 
 
 class Direction(Enum):

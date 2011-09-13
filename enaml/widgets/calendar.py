@@ -60,3 +60,6 @@ class Calendar(Control):
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(ICalendarImpl)
 
+
+Calendar.protect('selected', 'activated')
+

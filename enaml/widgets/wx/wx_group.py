@@ -3,12 +3,13 @@ import wx
 from traits.api import implements
 
 from .wx_container import WXContainer
+from .styling import compute_sizer_flags
 
 from ..group import IGroupImpl
 
 from ...enums import Direction
 
-
+            
 class WXGroup(WXContainer):
     """ A wxPython implementation of IGroup.
 
@@ -40,9 +41,23 @@ class WXGroup(WXContainer):
         """ Adds the children of this container to the sizer.
 
         """
+        # XXX - the wx box model is terrible and we have not way of 
+        # specifying inter-item spacing in a group while also specifying
+        # an independent border. So, if we get a spacing value, we just
+        # punt and add it to the border width and set the border to ALL.
+        spacing = self.parent.style.get_property('spacing')
+        if isinstance(spacing, int) and spacing >= 0:
+            pass
+        else:
+            spacing = False
         sizer = self.widget
-        for child in self.child_widgets():
-            sizer.Add(child, 1, wx.EXPAND)
+        for child in self.parent.children:
+            flags = compute_sizer_flags(child.style)
+            if spacing:
+                border = flags.GetBorderInPixels()
+                border += spacing
+                flags.Border(wx.ALL, border)
+            sizer.AddF(child.toolkit_impl.widget, flags)
         sizer.Layout()
 
     def parent_direction_changed(self, direction):

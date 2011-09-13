@@ -328,3 +328,14 @@ class WXSpinBoxCtor(WXBaseComponentCtor):
         spin_box = SpinBox(toolkit_impl=WXSpinBox())
         return spin_box
 
+
+class WXSpacerCtor(WXBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..spacer import Spacer
+        from .wx_spacer import WXSpacer
+        spacer = Spacer(toolkit_impl=WXSpacer())
+        return spacer
+

@@ -3,6 +3,7 @@ import wx
 from traits.api import implements
 
 from .wx_component import WXComponent
+from .styling import compute_sizer_flags
 
 from ..panel import IPanelImpl
 
@@ -42,7 +43,9 @@ class WXPanel(WXComponent):
 
         """
         sizer = wx.BoxSizer(wx.VERTICAL)
-        for child in self.child_widgets():
-            sizer.Add(child, 1, wx.EXPAND)
+        for child in self.parent.children:
+            flags = compute_sizer_flags(child.style)
+            sizer.AddF(child.toolkit_impl.widget, flags)
         self.widget.SetSizer(sizer)
         sizer.Layout()
+
