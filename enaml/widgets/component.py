@@ -1,8 +1,7 @@
 from traits.api import Interface, Str, WeakRef, Instance, List
 
-from .style_node import EnamlStyleNode
-
 from ..enaml_base import EnamlBase
+from ..style_node import EnamlStyleNode
 from ..util.trait_types import ReadOnlyConstruct
 
 
@@ -191,6 +190,7 @@ class Component(EnamlBase):
 
     name = Str
 
+    # XXX - I don't like this ReadOnlyConstruct
     style = ReadOnlyConstruct(lambda self, name: EnamlStyleNode(parent=self))
 
     toolkit_impl = Instance(IComponentImpl)

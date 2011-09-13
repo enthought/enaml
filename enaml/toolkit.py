@@ -3,8 +3,8 @@ import os
 from traits.api import HasStrictTraits, Dict, Str, Callable, Any, Instance
 
 from .constructors import IToolkitConstructor
+from .style_sheet import StyleSheet
 from .util.trait_types import SubClass
-from .util.style_sheet import StyleSheet
 
 
 class Toolkit(HasStrictTraits):

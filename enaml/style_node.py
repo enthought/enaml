@@ -1,7 +1,7 @@
 from traits.api import implements, HasStrictTraits, Str, WeakRef, cached_property
 
-from ..enaml_base import EnamlBase
-from ..util.style_sheet import IStyleNodeData, StyleNode
+from .enaml_base import EnamlBase
+from .style_sheet import IStyleNodeData, StyleNode
 
 
 #-------------------------------------------------------------------------------

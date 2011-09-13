@@ -1,7 +1,7 @@
 from traits.api import HasStrictTraits, Instance, Bool
 
 from .toolkit import Toolkit
-from .util.style_sheet import StyleSheet
+from .style_sheet import StyleSheet
 from .widgets.window import Window
 
   

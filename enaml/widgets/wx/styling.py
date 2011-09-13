@@ -1,8 +1,8 @@
 import wx
 
 from ...color import Color
-from ...util.style_sheet import StyleSheet, style, NO_STYLE
-
+from ...style_sheet import StyleSheet, style
+from ...style_converters import PaddingStyle
 
 #-------------------------------------------------------------------------------
 # Default wx style sheet definition
@@ -32,7 +32,7 @@ WX_STYLE_SHEET = StyleSheet(
     ),
 
     style("Group", "VGroup", "HGroup",
-        border = 5,
+        spacing = 2,
     ),
 
     #---------------------------------------------------------------------------
@@ -80,37 +80,35 @@ WX_STYLE_SHEET = StyleSheet(
         stretch = 5,
     ),
 
-    style(".no_border",
-        border_width = 0,
+    style(".no_padding",
+        padding = 0,
     ),
 
-    style(".border",
-        border_width = 2,
+    style(".padding",
+        padding = 2,
     ),
 
-    style(".x_border",
-        border_width = 5,
+    style(".x_padding",
+        padding = 5,
     ),
 
-    style(".xx_border",
-        border_width = 10,
+    style(".xx_padding",
+        padding = 10,
     ),
 
-    style(".X_border",
-        border_width = 20,
+    style(".X_padding",
+        padding = 20,
     ),
 
-    style(".XX_border",
-        border_width = 40,
+    style(".XX_padding",
+        padding = 40,
     ),
 
 )
 
-
 #-------------------------------------------------------------------------------
 # wx styling helper and conversion functions
 #-------------------------------------------------------------------------------
-
 ALIGN_MAP = {
     'top': wx.ALIGN_LEFT,
     'right': wx.ALIGN_RIGHT,
@@ -122,157 +120,55 @@ ALIGN_MAP = {
 }
 
 
-def wx_color_from_color(value, wx_no_color=wx.NullColor):
+def wx_color_from_color(color, wx_no_color=wx.NullColor):
     """ Converts an enaml.color.Color into a wx color.
 
     """
-    if value is NO_STYLE:
-        color = Color.no_color
-    elif isinstance(value, basestring):
-        color = Color.from_string(value.strip())
-    elif isinstance(value, Color):
-        color = value
-    else:
-        color = Color.no_color
-
     if color == Color.no_color:
         res = wx_no_color
     else:
         res = wx.Color(color.r, color.g, color.b, color.a)
-
     return res
 
 
 def compute_sizer_flags(style):
+    """ Computes wx sizer flags given a style node.
 
+    """
     get_property = style.get_property
+    padding_style = PaddingStyle.from_style_node(style)
+    order = [wx.TOP, wx.RIGHT, wx.BOTTOM, wx.LEFT]
+    border_flags = 0
+    border_amt = -1
 
-    border_top = None
-    border_right = None
-    border_bottom = None
-    border_left = None
+    for amt, flag in zip(padding_style.padding, order):
+        if amt >= 0:
+            border_amt = max(border_amt, amt)
+            border_flags |= flag
 
-    # XXX we need a better way to parse the border shorthand
-    border_width = get_property("border_width")
-    if border_width is not NO_STYLE:
-        try:
-            border_iter = iter(border_width)
-        except TypeError:
-            border_iter = iter((border_width,))
-    else:
-        border = get_property("border")
-        if border is not NO_STYLE:
-            try:
-                border_iter = iter(border)
-            except TypeError:
-                border_iter = iter((border,))
-        else:
-            border_iter = ()
+    sizer_flags = wx.SizerFlags()
     
-    border_widths = [width for width in border_iter if isinstance(width, int)]
-    n = len(border_widths)
-    sides = 0
-    if n == 0:
-        pass
-    elif n == 1:
-        width = border_widths[0]
-        if width >= 0:
-            border_top = border_right = border_bottom = border_left = width
-            sides |= wx.ALL
-    elif n == 2: 
-        width1, width2 = border_widths
-        if width1 >= 0:
-            border_bottom = border_top = width1
-            sides |= (wx.TOP | wx.BOTTOM)
-        if width2 >= 0:
-            border_left = border_right = width2
-            sides |= (wx.RIGHT | wx.LEFT)
-    elif n == 3:
-        width1, width2, width3 = border_widths
-        if width1 >= 0:
-            border_top = width1
-            sides |= wx.TOP
-        if width2 >= 0:
-            border_right = border_left = width2
-            sides |= (wx.RIGHT | wx.LEFT)
-        if width3 >= 0:
-            border_bottom = width3
-            sides |= wx.BOTTOM
-    else:
-        width1, width2, width3, width4 = border_widths
-        if width1 >= 0:
-            border_top = width1
-            sides |= wx.TOP
-        if width2 >= 0:
-            border_right = width2
-            sides |= wx.RIGHT
-        if width3 >= 0:
-            border_bottom = width3
-            sides |= wx.BOTTOM
-        if width4 >= 0:
-            border_left = width4
-            sides |= wx.LEFT
-
-    st = get_property("border_top_width")
-    if st is not NO_STYLE:
-        border_top = st
-        sides |= wx.TOP
-    
-    sr = get_property("border_right_width")
-    if sr is not NO_STYLE:
-        border_right = sr
-        sides |= wx.RIGHT
-
-    sb = get_property("border_bottom_width")
-    if sb is not NO_STYLE:
-        border_bottom = sb
-        sides |= wx.BOTTOM
-
-    sl = get_property("border_left_width")
-    if sl is not NO_STYLE:
-        border_left = sl
-        sides |= wx.LEFT
-
-    amt = max(border_top, border_right, border_bottom, border_left, -1)
-    
-    spacing = get_property("spacing")
-    if spacing is not NO_STYLE and spacing > 0:
-        if isinstance(spacing, int):
-            amt += spacing
-
-    flags = wx.SizerFlags()
-    
-    if amt >= 0:
-        flags.Border(sides, amt)
+    if border_amt >= 0:
+        sizer_flags.Border(border_flags, amt)
 
     align = get_property("align")
-    if align is not NO_STYLE:
-        try:
-            align_spec = align.split()
-        except AttributeError:
-            pass
-        else:
-            align_flags = 0
-            for align in align_spec:
-                align_flags |= ALIGN_MAP.get(align, 0)
-            flags.Align(align_flags)
+    if isinstance(align, basestring):
+        align_spec = align.split()
+        align_flags = 0
+        for align in align_spec:
+            align_flags |= ALIGN_MAP.get(align, 0)
+        if align_flags != 0:
+            sizer_flags.Align(align_flags)
     
     size_policy = get_property("size_policy")
-    if size_policy is not NO_STYLE:
-        try:
-            size_policy_spec = style.size_policy.strip()
-        except AttributeError:
-            pass
-        else:
-            if size_policy_spec == 'expanding':
-                flags.Expand()
-    
-    stretch = get_property("stretch")
-    if stretch is not NO_STYLE and stretch >= 0:
-        try:
-            flags.Proportion(stretch)
-        except TypeError:
-            pass
+    if isinstance(size_policy, basestring):
+        size_policy_spec = size_policy.strip()
+        if size_policy_spec == 'expanding':
+            sizer_flags.Expand()
 
-    return flags
+    stretch = get_property("stretch")
+    if isinstance(stretch, int) and stretch >= 0:
+        sizer_flags.Proportion(stretch)
+
+    return sizer_flags
 

@@ -1,9 +1,8 @@
 import re
 import itertools
 
-from traits.api import (MetaHasTraits, HasStrictTraits, HasTraits, Instance, 
-                        Event, Interface, Str, Dict, Any, Set, Int, TraitType,
-                        on_trait_change, TraitFactory, Property, Bool)
+from traits.api import (HasStrictTraits, HasTraits, Instance, Event, Interface, 
+                        Str, Dict, Any, Set, Int, on_trait_change, Property)
 
 
 # Matches the '*' selector

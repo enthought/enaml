@@ -11,15 +11,12 @@ Window:
         HGroup:
 
             style.cls = "stretch"
-            #style.border_left_width = 50
 
             Group my_group:
                 direction = Direction.TOP_TO_BOTTOM
                 PushButton:
-                    style.cls = "X_border"
+                    style.cls = "expanding"
                     text << "clickme!" if not self.down else "I'm down!"
-
-                    # msg is passed implicitly to any >> notify expressions
                     clicked >> model.update_style()
 
                 PushButton pb2:
@@ -108,7 +105,7 @@ Window:
 
                 HGroup:
                     CheckBox wrap_box:
-                        style.cls << "error_colors foo" if mf.error else "normal_colors"
+                        style.cls << "error_colors" if mf.error else "normal_colors"
                         text = 'Allow wrap:'
                         toggled >> setattr(cmbx, 'value', 42)
                     SpinBox sb:
