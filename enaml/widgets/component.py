@@ -1,7 +1,8 @@
-from traits.api import Interface, Str, WeakRef, Instance
+from traits.api import Interface, Str, WeakRef, Instance, List
+
+from .style_node import StyleNode
 
 from ..enaml_base import EnamlBase
-from ..style import StyleNode
 from ..util.decorators import protected
 from ..util.trait_types import ReadOnlyConstruct
 
@@ -75,9 +76,16 @@ class IComponentImpl(Interface):
         """
         raise NotImplementedError
 
+    def initialize_style(self):
+        """ Initializes the style and style handler for the widget. This
+        is the fourth method called in the layout proces.
+
+        """
+        raise NotImplementedError
+
     def layout_child_widgets(self):
         """ Adds the child widgets (if any) to any necessary layout
-        components in the ui. This is the fourth and final method called
+        components in the ui. This is the fifth and final method called
         in the layout process.
 
         """
@@ -97,7 +105,6 @@ class IComponentImpl(Interface):
         raise NotImplementedError
 
 
-@protected('style', 'toolkit_impl')
 class Component(EnamlBase):
     """ The most base class of the Enaml widgets component heierarchy. 
     
@@ -106,6 +113,25 @@ class Component(EnamlBase):
     
     Attributes
     ----------
+    _id : Str
+        The identifier assigned to this element in the enaml source code.
+        Note that if you change this, you will likely break things. This
+        is a protected attribute.
+
+    _type : Str
+        The type name this component is using in the enaml source code.
+        This is a protected attribute.
+
+    parent : WeakRef(EnamlBase)
+        The parent object which is stored as a weakref to mitigate memory 
+        leak issues from reference cycles. This is a protected attribute.
+
+    children : List(Instance(EnamlBase))
+        The list of children components for this component. Subclasses
+        may redefine this trait to restrict which types of children
+        they allow. This list should not be manipulated outside of
+        the *_child(...) methods. This is a protected attribute.
+
     name : Str
         The name of this element which may be used as metainfo by other
         components. Note that this is not the same as the identifier 
@@ -125,6 +151,24 @@ class Component(EnamlBase):
 
     Methods
     -------
+    add_child(child)
+        Add a child component to this component. This will reparent
+        the child.
+    
+    remove_child(child)
+        Remove a child component from this component. This will
+        unparent the child,
+
+    replace_child(child, other_child)
+        Replace child in this component with a different one. This
+        will unparent the first child and reparent the second child.
+    
+    swap_children(child, other_child)
+        Swap the positions of the two children.
+
+    set_parent(self, parent):
+        Set the parent for this component to parent.
+
     layout()
         Lay out and create the widgets for this component and it's
         children. This builds the widget tree.
@@ -138,11 +182,160 @@ class Component(EnamlBase):
         where necessary.
 
     """
+    _id = Str
+
+    _type = Str
+
+    parent = WeakRef('Component')
+
+    children = List(Instance('Component'))
+
     name = Str
 
-    style = ReadOnlyConstruct(lambda self, name: StyleNode(parent=self))
+    style = ReadOnlyConstruct(lambda self, name: StyleNode(_parent=self))
 
     toolkit_impl = Instance(IComponentImpl)
+
+    def add_child(self, child):
+        """ Add a child component to this component.
+        
+        Call this method when a child should be added to the component. 
+        
+        Arguments
+        ---------
+        child : Instance(Component)
+            The child to add to the component. The child must not
+            already be in the component.
+
+        Returns
+        -------
+        result : None
+
+        """
+        # XXX this is O(n) but n should be small so I'm not 
+        # worrying about it at the moment
+        children = self.children
+        if child in children:
+            raise ValueError('Child %s already in children.' % child)
+        child.set_parent(self)
+        self.children.append(child)
+        self.refresh()
+
+    def remove_child(self, child):
+        """ Remove the child from this container.
+
+        Call this method when a child should be removed from the 
+        container.
+
+        Arguments
+        ---------
+        child : Instance(Component)
+            The child to remove from the container. The child
+            must be contained in the container.
+
+        Returns
+        -------
+        result : None
+
+        """
+        # XXX this is O(n) but n should be small so I'm not 
+        # worrying about it at the moment
+        try:
+            self.children.remove(child)
+        except ValueError:
+            raise ValueError('Child %s not in children.' % child)
+        child.set_parent(None)
+        self.refresh()
+
+    def replace_child(self, child, other_child):
+        """ Replace child with other_child.
+
+        Call this method when the child should be replaced by the
+        other_child.
+
+        Arguments
+        ---------
+        child : Instance(Component)
+            The child being replaced. The child must be contained in 
+            the container.
+
+        other_child : Instance(Component)
+            The child taking the new place. The child must not be 
+            contained in the container.
+
+        Returns
+        -------
+        result : None
+
+        """
+        # XXX this is O(n) but n should be small so I'm not 
+        # worrying about it at the moment
+        children = self.children
+        try:
+            idx = children.index(child)
+        except ValueError:
+            raise ValueError('Child %s not in children.' % child)
+        if other_child in children:
+            raise ValueError('Child %s already in children.' % child)
+        child.set_parent(None)
+        other_child.set_parent(self)
+        children[idx] = other_child
+        self.refresh()
+
+    def swap_children(self, child, other_child):
+        """ Swap the position of two children.
+
+        Call this method when their are two children in the container
+        whose positions should be swapped.
+
+        Arguments
+        ---------
+        child : Instance(Component)
+            The first child in the swap. The child must be contained 
+            in the container.
+
+        other_child : Instance(Component)
+            The second child in the swap. The child must be contained 
+            in the container.
+
+        Returns
+        -------
+        result : None
+
+        """
+        # XXX this is O(n) but n should be small so I'm not 
+        # worrying about it at the moment
+        children = self.children
+        try:
+            idx = children.index(child)
+        except ValueError:
+            raise ValueError('Child %s not in children.' % child)
+        try:
+            other_idx = children.index(other_child)
+        except ValueError:
+            raise ValueError('Child %s not in children.' % other_child)
+        children[idx] = other_child
+        children[other_idx] = child
+        self.refresh()
+
+    def set_parent(self, parent):
+        """ Set the parent of this component to parent.
+
+        The default implementation of this method simply assigns the
+        parent to the .parent attribute. Subclasses may override this
+        method to do any custom process before the parent is set.
+
+        Arguments
+        ---------
+        parent : Component or None
+            The parent Component of this component or None.
+
+        Returns
+        -------
+        result : None
+
+        """
+        self.parent = parent
 
     def layout(self):
         """ Initialize and layout the component and it's children. 
@@ -167,6 +360,7 @@ class Component(EnamlBase):
         for child in self.children:
             child.layout()
         impl.initialize_widget()
+        impl.initialize_style()
         impl.layout_child_widgets()
         self._hook_impl()
         
@@ -188,4 +382,7 @@ class Component(EnamlBase):
         
         """
         self.add_trait_listener(self.toolkit_impl, 'parent')
+
+
+Component.protect('style', 'toolkit_impl', '_d', '_type', 'parent', 'children')
 
