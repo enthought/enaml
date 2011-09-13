@@ -1,31 +1,18 @@
-enaml Package
-=============
+enaml core
+==========
 
-:mod:`enaml` Package
---------------------
-
-.. automodule:: enaml.__init__
-
-:mod:`color` Module
--------------------
-
-.. automodule:: enaml.color
-    :no-undoc-members:
-
-:mod:`constructors` Module
---------------------------
-
-.. automodule:: enaml.constructors
-
-:mod:`dialogs` Module
----------------------
-
-.. automodule:: enaml.dialogs
+The core implementation provides all the necessary machinery to create a
+thin layer over backend widgets and produce the traits View objects.
 
 :mod:`enaml_base` Module
 ------------------------
 
 .. automodule:: enaml.enaml_base
+
+:mod:`constructors` Module
+--------------------------
+
+.. automodule:: enaml.constructors
 
 :mod:`enums` Module
 -------------------
@@ -36,6 +23,12 @@ enaml Package
 -------------------------
 
 .. automodule:: enaml.expressions
+
+:mod:`color` Module
+-------------------
+
+.. automodule:: enaml.color
+    :no-undoc-members:
 
 :mod:`factory` Module
 ---------------------
@@ -67,12 +60,8 @@ enaml Package
 
 .. automodule:: enaml.view
 
-Subpackages
------------
+:mod:`dialogs` Module
+---------------------
 
-.. toctree::
-
-    enaml.parsing
-    enaml.util
-    enaml.widgets
+.. automodule:: enaml.dialogs
 
