@@ -20,6 +20,7 @@ from docscrape import Reader
 # TODO:
 # Convert into a proper extention
 # Add more sections
+# Remove dependancy to docscarpe
 
 
 class BaseDocString(object):
@@ -48,7 +49,7 @@ class BaseDocString(object):
         try:
             parser = self.headers[header]
         except KeyError:
-            # No need to do anything since shinx will flag the heading as
+            # No need to do anything since shpinx will flag the heading as
             # an error
             pass
         else:
@@ -136,12 +137,22 @@ class BaseDocString(object):
 
         """
 
+        if self.verbose:
+            print "PARSING PARAMETERS"
+            print "input is: "
+            print "\n".join(doc_lines)
+
         # separate name and type
         header = doc_lines[0].strip()
         if ' :' in header:
-            arg_name, arg_type = header.split(' :')[:2]
+            arg_name, arg_type = re.split(' \:\s?', header)
         else:
             arg_name, arg_type = header, ''
+
+        if self.verbose:
+            print "name is:", arg_name, " type is:", arg_type
+            print "the output of 're.split(' \:\s?', header)' was", \
+                        re.split(' \:\s?', header)
 
         if len(doc_lines) > 1:
             return arg_name.strip(), arg_type.strip(), doc_lines[1:]
@@ -214,6 +225,9 @@ class BaseDocString(object):
         for line in reversed(new_lines):
             lines.insert(index, line)
 
+    def get_indent(self, line):
+        return re.split(r'\w', line)[0]
+
 
 class FunctionDocstring(BaseDocString):
     """Docstring refactoring for functions"""
@@ -230,10 +244,6 @@ class FunctionDocstring(BaseDocString):
     def _refactor_returns(self, header):
         """Refactor the return section to sphinx friendly format"""
 
-        if self.verbose:
-            print 'Return_items'
-            print parameters
-
         lines = self._doc._str
         index = self._doc._l
 
@@ -241,41 +251,51 @@ class FunctionDocstring(BaseDocString):
         lines[index] = re.sub(r'Returns', ':returns:', self._doc.read())
         del lines[index + 1]  # delete underline
 
-        # refactor parameters
-        indent = re.split(r'\w', self._doc.peek())[0]
+        # get section indent
+        indent = self.get_indent(self._doc.peek())
+
+        # parse parameters
         parameters = self._extract_parameters(indent)
+
+        if self.verbose:
+            print 'Return_items'
+            print parameters
 
         # generate sphinx friendly rst
         descriptions = []
         index += 1
 
-        # multiple items are rendered as a unordered lists
-        if len(parameters) > 1:
-            for arg_name, arg_type, desc in parameters:
-                if arg_type != '':
-                    arg_type = '*(' + arg_type + ')*'
-                descriptions.append(indent + \
-                        '    - **{0}** {1} -'.format(arg_name, arg_type))
-                for line in desc:
-                    descriptions.append('    {0}'.format(line))
 
-        # single items
-        elif len(parameters) == 1:
-            arg_name, arg_type, desc = parameters[0]
+        for arg_name, arg_type, desc in parameters:
+
+            # get description indent
+            description_indent = re.split(r'\w', desc[0])[0]
+
+            # setup name
+            if len(parameters) == 1:
+                arg_name = description_indent + '**{0}** '.format(arg_name)
+            else:
+                arg_name = description_indent + '- **{0}** '.format(arg_name)
+
+            # setup attribute type string
             if arg_type != '':
-                arg_type = '*(' + arg_type + ')*'
-            descriptions.append(indent + \
-                '    **{0}** {1} -'.format(arg_name, arg_type))
-            for line in desc:
-                descriptions.append('    {0}'.format(line))
+                arg_type = '({0}) - '.format(arg_type)
+            else:
+                arg_type = ' - '
 
-        # no Items
-        else:
-            del lines[index]
-            lines.insert(index, '**{0}:**'.format(header))
+            # setup description paragraph
+            paragraph = ' '.join(desc)
 
-        descriptions.append(' ')
-        self.insert_lines(desc, index)
+            descriptions.append(arg_name + arg_type + paragraph)
+
+            descriptions.append(' ')
+
+        if self.verbose:
+            print "REFACTORED SECTION"
+            print '\n'.join(descriptions)
+            print "END"
+
+        self.insert_lines(descriptions, index)
 
     def _refactor_raises(self, header):
         """Refactor the raises section to sphinx friendly format"""
@@ -317,14 +337,8 @@ class FunctionDocstring(BaseDocString):
             for line in desc:
                 descriptions.append('{0}'.format(line))
 
-        # no Items
-        else:
-            del lines[index]
-            lines.insert(index, '**{0}:**'.format(header))
-
-
         descriptions.append(' ')
-        self.insert_lines(desc, index)
+        self.insert_lines(descriptions, index)
 
     def _refactor_arguments(self, header):
         """Refactor the argument section to sphinx friendly format"""
@@ -336,8 +350,10 @@ class FunctionDocstring(BaseDocString):
         del lines[index]
         del lines[index]
 
-        # refactor parameters
+        # get the global indent of the section
         indent = re.split(r'\w', self._doc.peek())[0]
+
+        # parse parameters
         parameters = self._extract_parameters(indent)
 
         if self.verbose:
@@ -354,13 +370,8 @@ class FunctionDocstring(BaseDocString):
             descriptions.append(indent + ':type {0}: {1}'.format(arg_name,
                                                                     arg_type))
 
-        # no parameters
-        if len(parameters) == 0:
-            descriptions.append('**{0}:**'.format(header))
-
         descriptions.append(' ')
-
-        self.insert_lines(desc, index)
+        self.insert_lines(descriptions, index)
 
 class ClassDocstring(BaseDocString):
     """Docstring refactoring for classes"""
@@ -374,10 +385,7 @@ class ClassDocstring(BaseDocString):
 
 
     def _refactor_attributes(self, header):
-        """Refactor the return section to sphinx friendly format"""
-        if self.verbose:
-            print 'Refactoring attributes'
-            print parameters
+        """Refactor the attributes section to sphinx friendly format"""
 
         lines = self._doc._str
         index = self._doc._l
@@ -391,6 +399,10 @@ class ClassDocstring(BaseDocString):
 
         # parse parameters
         parameters = self._extract_parameters(indent)
+
+        if self.verbose:
+            print 'Refactoring attributes'
+            print parameters
 
         # generate sphinx friendly rst
         descriptions = []
@@ -414,7 +426,8 @@ class ClassDocstring(BaseDocString):
             # setup description paragraph
             paragraph = ' '.join(desc)
             descriptions.append(paragraph)
+            descriptions.append(' ')
 
-        descriptions.append(' ')
+        self.insert_lines(descriptions, index)
 
-        self.insert_lines(desc, index)
+
