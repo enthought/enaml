@@ -212,6 +212,7 @@ def pyside_toolkit():
         'Calendar': ctors.QtCalendarCtor,
         'CheckBox': ctors.QtCheckBoxCtor,
         'Html': ctors.QtHtmlCtor,
+        'PushButton': ctors.QtPushButtonCtor,
     }
     
     utils = {}
