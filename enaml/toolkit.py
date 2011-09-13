@@ -213,6 +213,7 @@ def pyside_toolkit():
         'CheckBox': ctors.QtCheckBoxCtor,
         'Html': ctors.QtHtmlCtor,
         'PushButton': ctors.QtPushButtonCtor,
+        'SpinBox': ctors.QtSpinBoxCtor,
     }
     
     utils = {}
