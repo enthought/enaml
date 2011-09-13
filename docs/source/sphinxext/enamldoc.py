@@ -375,44 +375,38 @@ class ClassDocstring(BaseDocString):
         lines = self._doc._str
         index = self._doc._l
 
-        # create header role
-        lines[index] = re.sub(r'Attributes', ':Attributes:', self._doc.read())
-        del lines[index + 1]  # delete underline
+        # delete header
+        del lines[index]
+        del lines[index]
 
-        # refactor parameters
+        # get the global indent of the section
         indent = re.split(r'\w', self._doc.peek())[0]
+
+        # parse parameters
         parameters = self._extract_parameters(indent)
 
         # generate sphinx friendly rst
         descriptions = []
-        index += 1
 
-        descriptions.append(' ')
-        # multiple items are rendered as a unordered lists
-        if len(parameters) > 1:
-            for arg_name, arg_type, desc in parameters:
-                if arg_type != '':
-                    arg_type = '*(' + arg_type + ')*'
-                descriptions.append(indent + '    **{0}** {1} - {2}'.\
-                                    format(arg_name, arg_type, desc[0]))
-                for line in desc[1:]:
-                    descriptions.append('    {0}'.format(line))
+        # attribute formating
+        for arg_name, arg_type, desc in parameters:
 
-                descriptions.append(' ')
+            # setup the .. attribute:: directive
+            descriptions.append(indent + '.. attribute:: {0}'.\
+                                format(arg_name))
+            descriptions.append(' ')
 
-        # single items
-        elif len(parameters) == 1:
-            arg_name, arg_type, desc = parameters[0]
+            # get description indent
+            description_indent = re.split(r'\w', desc[0])[0]
+
+            # setup attribute type string
             if arg_type != '':
-                arg_type = '*(' + arg_type + ')*'
-            descriptions.append(indent + '    **{0}** {1} - {2}'.\
-                                format(arg_name, arg_type, desc[0]))
-            for line in desc[1:]:
-                descriptions.append('    {0}'.format(line))
-        # no Items
-        else:
-            del lines[index]
-            lines.insert(index, '**{0}:**'.format(header))
+                arg_type = description_indent + '*({0})*'.format(arg_type)
+                descriptions.append(arg_type)
+
+            # setup description paragraph
+            paragraph = ' '.join(desc)
+            descriptions.append(paragraph)
 
         descriptions.append(' ')
 
