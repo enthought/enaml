@@ -9,13 +9,13 @@ class EnamlBase(HasStrictTraits):
     Attributes
     ----------
     _delegates : Dict(Str, Instance(IExpressionDelegate))
-        The expression delegates currently installed on this component. 
-        This is a protected attribute and is managed internally. 
+        The expression delegates currently installed on this component.
+        This is a protected attribute and is managed internally.
         Manipulate at your own risk.
-    
+
     _notifiers : Set(Instance(IExpressionNotifier))
-        The expression notifiers currently installed on this component. 
-        This is a protected attribute and is managed internally. 
+        The expression notifiers currently installed on this component.
+        This is a protected attribute and is managed internally.
         Manipulate at your own risk.
 
     Methods
@@ -25,7 +25,7 @@ class EnamlBase(HasStrictTraits):
 
     add_attribute_notifier(name, notifier)
         Adds a notifier for the given attribute name.
-    
+
     """
     _delegates = Dict(Str, Instance(IExpressionDelegate))
 
@@ -81,7 +81,7 @@ class EnamlBase(HasStrictTraits):
         ---------
         name : string
             The name of the attribute to delegate.
-        
+
         delegate : IExpressionDelegate
             An implementor of the IExpressionDelegate interface.
 
@@ -94,7 +94,7 @@ class EnamlBase(HasStrictTraits):
             msg = ('The `%s` attribute of the `%s` object is protected and '
                    'cannot be used in left associative Enaml expressions.')
             raise AttributeError(msg % (name, type(self).__name__))
-        
+
         trait = self.trait(name)
         delegates = self._delegates
         delegate_name = '_%s_enaml_delegate' % name
@@ -113,7 +113,7 @@ class EnamlBase(HasStrictTraits):
         self.add_trait(delegate_name, delegate)
         self.add_trait(name, DelegatesTo(delegate_name, 'value'))
 
-        # Need to fire trait_added or the delegate 
+        # Need to fire trait_added or the delegate
         # listeners don't get hooked up properly.
         self.trait_added = name
 
@@ -127,7 +127,7 @@ class EnamlBase(HasStrictTraits):
         ---------
         name : string
             The name of the attribute to delegate.
-        
+
         notifier : IExpressionNotifier
             An implementor of the IExpressionNotifer interface.
 
