@@ -1,4 +1,4 @@
-from PySide import QtGui
+from .qt import QtGui
 
 from traits.api import implements
 

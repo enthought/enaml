@@ -1,4 +1,4 @@
-from .qt_api import QtGui
+from .qt import QtGui
 
 from traits.api import implements
 

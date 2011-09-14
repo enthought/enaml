@@ -1,4 +1,4 @@
-from .qt_api import QtCore, QtGui
+from .qt import QtCore, QtGui
 
 from traits.api import implements, Instance
 

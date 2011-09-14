@@ -123,7 +123,7 @@ def default_toolkit():
         return wx_toolkit()
         
     if toolkit == 'qt' or toolkit == 'qt4':
-        return qt_toolkit
+        return qt_toolkit()
     
     raise ValueError('Invalid Toolkit: %s' % toolkit)
 
@@ -213,7 +213,7 @@ def qt_toolkit():
 
     def prime_loop():
         from .util.guisupport import get_app_qt4
-        app = get_app_qt4()
+        return get_app_qt4()
 
     def start_loop(app):
         # XXX check for mainloop already running? - Pyface hacks this feature in
