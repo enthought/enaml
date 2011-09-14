@@ -591,6 +591,26 @@ class StyleHandler(HasTraits):
             converter function and/or the method name to set.
         """
         raise NotImplementedError
+    
+    
+    def initialize_style(self):
+        """ Initialize all style properties that we handle by methods or tags
+        """
+        style_handlers = dict((name[6:], getattr(self, name)) for name in dir(self)
+                if name[:6] == 'style_' and callable(getattr(self, name)))
+        
+        for tag, handler in style_handlers.items():
+            value = self.style_node.get_property(tag)
+            handler(value)
+        
+        for tag, args in self.tags.items():
+            if tag in style_handlers:
+                continue
+            if not isinstance(args, (list, tuple)):
+                args = (args,)
+            value = self.style_node.get_property(tag)
+            self.set_style_value(value, tag, *args)
+        
 
     def _update_tag(self, tag, null=object()):
         """ Dispatches a tag update to specially named methods. Only
@@ -598,22 +618,22 @@ class StyleHandler(HasTraits):
 
         """
         name = 'style_' + tag
-        callable = getattr(self, name, None)
+        handler = getattr(self, name, None)
         
-        if callable is None and tag in self.tags:
+        if (handler is None or not callable(handler)) and tag in self.tags:
             args = self.tags[tag]
             if not isinstance(args, (list, tuple)):
                 args = (args,)
 
-            def callable(value):
+            def handler(value):
                 return self.set_style_value(value, tag, *args)
         
         # determine if we should in fact call update
-        if callable is not None:
+        if handler is not None:
             style_dict = self._style_dict
             old = style_dict.get(tag, null)
             new = self.style_node.get_property(tag)
             if old != new:
                 style_dict[tag] = new
-                callable(new)
+                handler(new)
 

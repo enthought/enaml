@@ -338,3 +338,14 @@ class QtTraitsUIItemCtor(QtBaseComponentCtor):
         from .qt_traitsui_item import QtTraitsUIItem
         traitsui_item = TraitsUIItem(toolkit_impl=QtTraitsUIItem())
         return traitsui_item
+        
+        
+class QtEnableCanvasCtor(QtBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..enable_canvas import EnableCanvas
+        from .qt_enable_canvas import QtEnableCanvas
+        canvas = EnableCanvas(toolkit_impl=QtEnableCanvas())
+        return canvas

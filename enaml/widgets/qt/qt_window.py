@@ -38,6 +38,18 @@ class QtWindow(QtComponent):
         self.set_title(self.parent.title)
         self.set_modality(self.parent.modality)
 
+    def create_style_handler(self):
+        """ Creates and sets the window style handler.
+
+        """
+        pass
+    
+    def initialize_style(self):
+        """ Initializes the style for the window.
+
+        """
+        pass
+
     def layout_child_widgets(self):
         """ Arranges the children of the QWindow (typically only one) in
         a vertical box layout.

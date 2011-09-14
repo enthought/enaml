@@ -33,20 +33,7 @@ class QtLabel(QtControl):
         """ Initializes the attributes on the underlying control.
 
         """
-        self.set_label(self.parent.text)
-
-    def initialize_style(self):
-        tags = qt_box_model
-        style_handler = QtStyleHandler(widget=self.widget, tags=tags)
-        style = self.parent.style
-        
-        for tag, converter in tags.items():
-            value = style.get_property(tag)
-            style_handler.set_style_value(value, tag, converter)
-
-        style_handler.style_node = style
-        self.style_handler = style_handler
- 
+        self.set_label(self.parent.text) 
 
     def parent_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant for
@@ -65,3 +52,4 @@ class QtLabel(QtControl):
         """
         self.widget.setText(label)
 
+    tags = qt_box_model

@@ -33,6 +33,18 @@ class QtPanel(QtComponent):
 
         """
         pass
+
+    def create_style_handler(self):
+        """ Creates and sets the window style handler.
+
+        """
+        pass
+    
+    def initialize_style(self):
+        """ Initializes the style for the window.
+
+        """
+        pass
     
     def layout_child_widgets(self):
         """ Arrange the child widgets onto the panel. The children are

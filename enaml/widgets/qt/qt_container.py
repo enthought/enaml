@@ -21,6 +21,14 @@ class QtContainer(QtComponent):
     #---------------------------------------------------------------------------
     # IContainerImpl interface
     #---------------------------------------------------------------------------
-    
-    # The IContainerImpl interface is empty
+    def create_style_handler(self):
+        """ Creates and sets the window style handler.
 
+        """
+        pass
+    
+    def initialize_style(self):
+        """ Initializes the style for the window.
+
+        """
+        pass
