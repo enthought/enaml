@@ -21,6 +21,11 @@ from docscrape import Reader
 # Convert into a proper extention
 # Add more sections
 # Remove dependancy to docscarpe
+# allow directives to exist inside sections
+# Add error messages when formating is wrong
+# Make variable names consistent
+# Make the parameter parsing more robust
+# Clean up code
 
 
 class BaseDocString(object):
@@ -38,6 +43,8 @@ class BaseDocString(object):
         if self.verbose:
             print 'INPUT DOCSTRING'
             print '\n'.join(lines)
+
+        return
 
     def _refactor(self, header):
         """Heading refactor"""
@@ -59,6 +66,8 @@ class BaseDocString(object):
 
         finally:
             return
+
+        return
 
     def parse(self):
         self._doc.reset()
@@ -98,15 +107,31 @@ class BaseDocString(object):
         """Extract the parameters from the docstring
 
         Finds and parses the parameters into tuples of name, type and
-        description in a list of strings. The strings are also removed from the
-        list
+        description in a list of strings. The strings are also removed
+        from the list.
 
         Arguments
         ---------
         indent : str, optional
-            the indent argument is used to make sure that only the lines with
-            the same indent are considered when checking for a parameter header
-            line.
+            the indent argument is used to make sure that only the lines
+            with the same indent are considered when checking for a
+            parameter header line. The value is used to define the field
+            chekcing function.
+
+        field_check : function
+            Optional function to use for checking if the next line is a
+            field. The signature oif the function is ``foo(line)`` and it
+            should return ``True`` if the line contains a valid field
+            The default function is checking for filed of the
+            following formats::
+
+                <name> : <type>
+                <name> :
+
+            Where the name has to be one word.
+
+            .. note:: The provided function should be already aware of the
+                the current indention.
 
         Returns
         -------
@@ -132,6 +157,9 @@ class BaseDocString(object):
 
         while is_field(self._doc.peek(), indent) and (not self._doc.eof()):
             description = self._doc.read_to_next_empty_line()
+            if self.verbose:
+                print "next parameter is: "
+                print "\n".join(description)
             parameters.append(self._parse_parameter(description))
             self._doc.read()
 
@@ -145,6 +173,21 @@ class BaseDocString(object):
     def _parse_parameter(self, doc_lines):
         """Parse a parameter description
 
+        the parameter is assumed to be in the format::
+
+                <name> : <type>
+                    <description>
+
+        or
+
+            <name> :
+                <description>
+
+        Arguments
+        ---------
+        doc_lines :
+            docstring lines to parse for parameters
+
         Returns
         -------
         arg_name : str
@@ -157,12 +200,6 @@ class BaseDocString(object):
             A list of the strings that make up the description
 
         """
-
-        if self.verbose:
-            print "PARSING PARAMETERS"
-            print "input is: "
-            print "\n".join(doc_lines)
-
         # separate name and type
         header = doc_lines[0].strip()
         if ' :' in header:
@@ -241,6 +278,7 @@ class BaseDocString(object):
         lines = self._doc._str
         for line in reversed(new_lines):
             lines.insert(index, line)
+        return
 
     def get_indent(self, line):
         return re.split(r'\w', line)[0]
@@ -257,6 +295,7 @@ class FunctionDocstring(BaseDocString):
                        'Yields': 'returns'}
 
         super(FunctionDocstring, self).__init__(lines, headers, verbose)
+        return
 
     def _refactor_returns(self, header):
         """Refactor the return section to sphinx friendly format"""
@@ -282,16 +321,18 @@ class FunctionDocstring(BaseDocString):
         descriptions = []
         index += 1
 
+        if len(parameters) == 1:
+            name_format = '**{0}** '
+        else:
+            name_format = '- **{0}** '
+
         for arg_name, arg_type, desc in parameters:
 
             # get description indent
             description_indent = re.split(r'\w', desc[0])[0]
 
             # setup name
-            if len(parameters) == 1:
-                arg_name = description_indent + '**{0}** '.format(arg_name)
-            else:
-                arg_name = description_indent + '- **{0}** '.format(arg_name)
+            arg_name = description_indent + name_format.format(arg_name)
 
             # setup attribute type string
             if arg_type != '':
@@ -304,7 +345,7 @@ class FunctionDocstring(BaseDocString):
 
             descriptions.append(arg_name + arg_type + paragraph)
 
-            descriptions.append(' ')
+            descriptions.append('')
 
         if self.verbose:
             print "REFACTORED SECTION"
@@ -312,6 +353,7 @@ class FunctionDocstring(BaseDocString):
             print "END"
 
         self.insert_lines(descriptions, index)
+        return
 
     def _refactor_raises(self, header):
         """Refactor the raises section to sphinx friendly format"""
@@ -353,8 +395,9 @@ class FunctionDocstring(BaseDocString):
             for line in desc:
                 descriptions.append('{0}'.format(line))
 
-        descriptions.append(' ')
+        descriptions.append('')
         self.insert_lines(descriptions, index)
+        return
 
     def _refactor_arguments(self, header):
         """Refactor the argument section to sphinx friendly format"""
@@ -375,10 +418,10 @@ class FunctionDocstring(BaseDocString):
         if self.verbose:
             print 'arguments'
             print parameters
+
         # generate sphinx friendly rst
         descriptions = []
 
-        # parameters exist
         for arg_name, arg_type, desc in parameters:
             descriptions.append(indent + ':param {0}:'.format(arg_name))
             for line in desc:
@@ -386,8 +429,9 @@ class FunctionDocstring(BaseDocString):
             descriptions.append(indent + ':type {0}: {1}'.format(arg_name,
                                                                     arg_type))
 
-        descriptions.append(' ')
+        descriptions.append('')
         self.insert_lines(descriptions, index)
+        return
 
 
 class ClassDocstring(BaseDocString):
@@ -400,6 +444,7 @@ class ClassDocstring(BaseDocString):
                        'See Also': 'see_also'}
 
         super(ClassDocstring, self).__init__(lines, headers, verbose)
+        return
 
     def _refactor_attributes(self, header):
         """Refactor the attributes section to sphinx friendly format"""
