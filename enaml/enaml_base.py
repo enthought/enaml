@@ -85,10 +85,6 @@ class EnamlBase(HasStrictTraits):
         delegate : IExpressionDelegate
             An implementor of the IExpressionDelegate interface.
 
-        Returns
-        -------
-        result : None
-
         """
         if '.' in name:
             self._set_extended_delegate(name, delegate)
@@ -134,10 +130,6 @@ class EnamlBase(HasStrictTraits):
         
         notifier : IExpressionNotifier
             An implementor of the IExpressionNotifer interface.
-
-        Returns
-        -------
-        result : None
 
         """
         if '.' in name:
