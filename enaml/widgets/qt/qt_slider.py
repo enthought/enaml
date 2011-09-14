@@ -37,10 +37,9 @@ class QtSlider(QtControl):
     """
     implements(ISliderImpl)
 
-    #: When set to True, the enaml widget is still initialising.
-    #: It is mainly used to control the event firing behaviour
-    #: of the widget during initialisation
-    _initialising = Bool
+    # A mechanism to prevent update cycles when syncing `parent.value` with
+    # `parent.slider_pos`.
+    _sync_lock = Bool
 
     #---------------------------------------------------------------------------
     # ISliderImpl interface
@@ -55,8 +54,6 @@ class QtSlider(QtControl):
         """ Initializes the attributes of the toolkit widget.
 
         """
-        self._initialising = True
-
         parent = self.parent
         parent._down = False
         parent.slider_pos = parent.to_slider(parent.value)
@@ -73,8 +70,6 @@ class QtSlider(QtControl):
         self.set_tracking(parent.tracking)
 
         self.bind()
-
-        self._initialising = False
 
     def parent_from_slider_changed(self, from_slider):
         """ Update the slider value with based on the new function
@@ -105,13 +100,13 @@ class QtSlider(QtControl):
         """ Update the position in the slider widget
 
         """
-        parent = self.parent
-        self.set_position(slider_pos)
-        parent.value = value = parent.from_slider(slider_pos)
-
-        # The move event is not fired during initialisation
-        if not self._initialising:
+        if not self._sync_lock:
+            self._sync_lock = True
+            parent = self.parent
+            self.set_position(slider_pos)
+            parent.value = value = parent.from_slider(slider_pos)
             parent.moved = value
+            self._sync_lock = False
 
     def parent_value_changed(self, value):
         """ Update the slider position value
@@ -122,16 +117,21 @@ class QtSlider(QtControl):
         to the value attribute.
 
         """
-        parent = self.parent
-
-        # The try...except block is required because we need to keep the
-        # `value` attribute in sync with the `slider_pos` and **valid**
-        try:
-            parent.slider_pos = parent.to_slider(value)
-        except TraitError as error:
-            # revert value
-            parent.value = parent.from_slider(parent.slider_pos)
-            parent.invalid_value = error
+        
+        if not self._sync_lock:
+            self._sync_lock = True
+            parent = self.parent
+            # The try...except block is required because we need to keep the
+            # `value` attribute in sync with the `slider_pos` and **valid**
+            try:
+                parent.slider_pos = parent.to_slider(value)
+            except TraitError as error:
+                # revert value
+                print error
+                parent.value = parent.from_slider(parent.slider_pos)
+                parent.invalid_value = error
+            finally:
+                self._sync_lock = False
 
     def parent_tracking_changed(self, tracking):
         """ Set the tracking event in the widget
