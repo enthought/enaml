@@ -198,7 +198,7 @@ def qt_toolkit():
         'Group': ctors.QtGroupCtor,
         'VGroup': ctors.QtVGroupCtor,
         'HGroup': ctors.QtHGroupCtor,
-        #'Field': ctors.QtFieldCtor,
+        'Field': ctors.QtFieldCtor,
         'Label': ctors.QtLabelCtor,
         'LineEdit': ctors.QtLineEditCtor,
         'TraitsUIItem': ctors.QtTraitsUIItemCtor,
