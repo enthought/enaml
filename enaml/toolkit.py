@@ -123,15 +123,7 @@ def default_toolkit():
         return wx_toolkit()
         
     if toolkit == 'qt' or toolkit == 'qt4':
-        from .widgets.qt.qt_api import qt_api
-        
-        if qt_api == 'pyside':
-            return pyside_toolkit()
-        
-        if qt_api == 'pyqt' or qt_api == 'pyqt4':
-            return pyqt_toolkit()
-        
-        raise ValueError('Invalid QT_API: %s' % qt_api)
+        return qt_toolkit
     
     raise ValueError('Invalid Toolkit: %s' % toolkit)
 
@@ -192,7 +184,7 @@ def wx_toolkit():
                    style_sheet=WX_STYLE_SHEET, utils=utils)
 
 
-def pyside_toolkit():
+def qt_toolkit():
     """ Creates and return a toolkit object for the PySide Qt backend.
 
     """
@@ -220,15 +212,13 @@ def pyside_toolkit():
     utils = {}
 
     def prime_loop():
-        from PySide import QtGui
-        app = QtGui.QApplication.instance()
-        if app is None:
-            app = QtGui.QApplication([''])
-        return app
+        from .util.guisupport import get_app_qt4
+        app = get_app_qt4()
 
     def start_loop(app):
         # XXX check for mainloop already running? - Pyface hacks this feature in
-        app.exec_()
+        from .util.guisupport import start_event_loop_qt4
+        start_event_loop_qt4()
 
     return Toolkit(items=items, prime=prime_loop, start=start_loop,
         style_sheet=QT_STYLE_SHEET, utils=utils)
