@@ -35,7 +35,7 @@ class WXTraitsUIItem(WXControl):
                                          handler=handler, kind='subpanel')
         self.widget = ui.control
     
-    def inititialize_widget(self):
+    def initialize_widget(self):
         """ No initialization needs to be done for the traits ui item.
 
         """
