@@ -170,6 +170,7 @@ def wx_toolkit():
         'SpinBox': ctors.WXSpinBoxCtor,
         'Spacer': ctors.WXSpacerCtor,
         'EnableCanvas': ctors.WXEnableCanvasCtor,
+        'TableView': ctors.WXTableViewCtor,
     }
 
     utils = {
@@ -178,7 +179,18 @@ def wx_toolkit():
         'information': dialogs.information,
         'question': dialogs.question
     }
-        
+
+    def prime_loop():
+        import wx
+        app = wx.GetApp()
+        if app is None:
+            app = wx.PySimpleApp()
+        return app
+
+    def start_loop(app):
+        if not app.IsMainLoopRunning():
+            app.MainLoop()
+
     return Toolkit(items=items, prime=get_app_wx, start=start_event_loop_wx,
                    style_sheet=WX_STYLE_SHEET, utils=utils)
 

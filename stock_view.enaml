@@ -1,0 +1,48 @@
+
+
+Window:
+    title << "Schmixie PlotTool 0.1dev - %s - %s - %s" % (model.symbol, model.start_date, model.end_date)
+    style.min_width = 400
+    style.min_height = 400
+    Panel:
+        HGroup:
+            style.stretch = 1
+            VGroup:
+                HGroup:
+                    Label my_label:
+                        text = "Symbol:"
+                    ComboBox cmbx:
+                        items = model.available_symbols
+                        value := model.symbol
+                        selected >> print('New Quote Selected: %s' % self.value)
+                HGroup:
+                    Label:
+                        text = "Days History:"
+                    ComboBox:
+                        items := model.days_of_history_choices
+                        value := model.days_of_history
+                HGroup:
+                   Label:
+                       text = "# Data Points:"
+                   SpinBox:
+                       low = 10
+                       high = 1000
+                       step = 10
+                       value := model.num_points
+                HGroup:
+                    Label end_date_label:
+                        text = "End Date:"
+                    Label:
+                        text << "%s" % str(end_date_calendar.date)
+                Calendar end_date_calendar:
+                    minimum_date << model.date_range[0]
+                    maximum_date << model.date_range[1]
+                    date := model.end_date
+                #Html:
+                #    style.min_width = 50
+                #    source << model.Html()
+            VGroup:
+                style.stretch = 1
+                EnableCanvas:
+                    component = plot.get_plot_component()
+                
