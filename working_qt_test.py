@@ -28,6 +28,7 @@ Window:
                 Label:
                     text = 'Title:'
                     style.background_color << 'red' if le.text == 'foo' else 'green'
+                    #style.padding = 20
                 LineEdit le:
                     text := model.window_title
             HGroup:

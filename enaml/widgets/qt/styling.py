@@ -3,7 +3,7 @@ from .qt_api import QtCore, QtGui
 from traits.api import HasTraits, Instance, Dict
 
 from ...color import Color
-from ...style_sheet import StyleSheet, StyleHandler, style
+from ...style_sheet import StyleSheet, StyleHandler, style, NO_STYLE
 from ...style_converters import PaddingStyle, color_from_color_style
 
 #-------------------------------------------------------------------------------
@@ -203,6 +203,48 @@ def qt_color(color_style):
     color = color_from_color_style(color_style)
     return qt_color_from_color(color)
 
+def qt_length(length_style):
+    if length_style is NO_STYLE:
+        return None
+    return '%spx' % length_style
+
+def qt_box_lengths(box_lengths):
+    if box_lengths is NO_STYLE:
+        return None
+    if isinstance(box_lengths, (tuple, list)):
+        return ' '.join(qt_length(x) for x in box_lengths)
+    else:
+        return qt_length(box_lengths)
+
+
+#-------------------------------------------------------------------------------
+# Standard property style models
+#-------------------------------------------------------------------------------
+
+qt_background_model = {
+    'background_color': qt_color
+}
+
+qt_box_model = qt_background_model.copy()
+qt_box_model.update({
+    'padding': qt_box_lengths,
+    'padding_top': qt_length,
+    'padding_bottom': qt_length,
+    'padding_left': qt_length,
+    'padding_right': qt_length,    
+
+    'margin': qt_box_lengths,
+    'margin_top': qt_length,
+    'margin_bottom': qt_length,
+    'margin_left': qt_length,
+    'margin_right': qt_length,    
+
+    'border_width': qt_box_lengths,
+    'border_top_width': qt_length,
+    'border_bottom_width': qt_length,
+    'border_left_width': qt_length,
+    'border_right_width': qt_length,    
+})
 
 '''
 def compute_sizer_flags(style):
