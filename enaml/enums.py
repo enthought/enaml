@@ -210,3 +210,10 @@ class TickPosition(Enum):
     NO_TICKS = Constant()
 
 
+class Validity(Enum):
+    
+    INVALID = Constant()
+    
+    INTERMEDIATE = Constant()
+    
+    ACCEPTABLE = Constant()

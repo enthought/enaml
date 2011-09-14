@@ -36,6 +36,15 @@ Window:
                     text = 'Message:'
                 LineEdit:
                     text := model.message
+            HGroup:
+                ComboBox base:
+                    value = 10
+                    items = [8, 10, 16]
+                SpinBox:
+                    low = 0
+                    high = 255
+                    to_string << oct if base.value == 8 else hex if base.value == 16 else str
+                    from_string << lambda text: int(text, base.value)
             TraitsUIItem:
                 model = model
 """
