@@ -6,13 +6,13 @@ from ..field import IFieldImpl
 
 
 class QtField(QtLineEdit):
-    """ A PySide implementation of IField.
+    """ A PySide implementation of Field.
 
     QtField is a subclass of QtLineEdit.
 
     See Also
     --------
-    IField
+    Field
 
     """
     implements(IFieldImpl)
