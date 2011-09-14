@@ -27,7 +27,7 @@ WX_STYLE_SHEET = StyleSheet(
         stretch = 1,
     ),
 
-    style("Html", "Spacer",
+    style("Html", "Spacer", "EnableCanvas",
         stretch = 2,
     ),
 
@@ -50,6 +50,7 @@ WX_STYLE_SHEET = StyleSheet(
 
     style(".fixed",
         size_policy = "minimum",
+        stretch = 0,
     ),
 
     style(".expanding",

@@ -10,6 +10,7 @@ from traits.api import HasTraits, Str
 from enaml.factory import EnamlFactory
 from enaml.color import Color
 from enaml.style_sheet import style
+from enaml.item_models.abstract_item_model import AbstractTableModel
 
 
 colors = Color.color_map.keys()
@@ -37,9 +38,21 @@ class Model(HasTraits):
         view.style_sheet.update(sty)
 
 
+class TableModel(AbstractTableModel):
+        
+    def column_count(self, parent=None):
+        return 10
+    
+    def row_count(self, parent=None):
+        return 1000
+
+    def data(self, index, role):
+        return '(%s, %s)' % (index.row, index.column)
+
+
 fact = EnamlFactory('./working_wx_test.enaml')
 
-view = fact(model=Model())
+view = fact(model=Model(), table_model=TableModel())
 
 view.show()
 
