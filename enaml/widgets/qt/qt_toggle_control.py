@@ -97,5 +97,5 @@ class QtToggleControl(QtControl):
         Not meant for public consumption.
 
         """
-        self.widget.setDown(checked)
+        self.widget.setChecked(checked)
 
