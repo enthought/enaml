@@ -18,7 +18,7 @@ Overview
 ========
 An enaml application consists of regular Python code, and *.tml* files.
 
-A .tml file is used to describe a GUI as a tree of elements. Each element
+A .enaml file is used to describe a GUI as a tree of elements. Each element
 can have associated attributes, and an optional identifier. Attributes
 customize the layout and behavior of an application, and identifiers allow
 Python code to access widgets by name.
@@ -47,7 +47,7 @@ recent versions of the following libraries:
 Installation
 ------------
 
-
+.. todo :: Add info
 
 Contents
 ========
@@ -55,6 +55,6 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    enaml
+    modules
     enaml_file
     developers_corner

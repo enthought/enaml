@@ -1,5 +1,5 @@
-Writing .tml Files
-==================
+Writing .enaml Files
+====================
 
 Binding Operators
 -----------------
