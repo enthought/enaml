@@ -281,13 +281,17 @@ from enamldoc import FunctionDocstring, ClassDocstring
 
 def new_docstring(app, what, name, obj, options, lines):
 
+    # verbose = False
+    # if 'component.Component' in name:
+        # verbose = True
+
     if ('class' in what):
-            new_doc = ClassDocstring(lines)
-            new_doc.parse()
+        new_doc = ClassDocstring(lines, verbose=verbose)
+        new_doc.parse()
 
     elif ('function' in what) or ('method' in what):
-            new_doc = FunctionDocstring(lines)
-            new_doc.parse()
+        new_doc = FunctionDocstring(lines, verbose=verbose)
+        new_doc.parse()
 
 
 def setup(app):
