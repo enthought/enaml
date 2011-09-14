@@ -2,7 +2,7 @@ import functools
 
 from .qt_api import QtGui
 
-from traits.api import Dict, Instance, implements
+from traits.api import Instance, implements
 
 from .qt_component import QtComponent
 from .styling import QtStyleHandler, qt_color
@@ -19,6 +19,7 @@ class QtControl(QtComponent):
     #---------------------------------------------------------------------------
     # IControlImpl interface
     #---------------------------------------------------------------------------
+    
     def initialize_style(self):
         tags = {
             'background_color': qt_color,
