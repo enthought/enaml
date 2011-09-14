@@ -17,10 +17,16 @@ thin layer over backend widgets and produce the traits View objects.
 :mod:`enums` Module
 -------------------
 
+.. inheritance-diagram:: enaml.enums
+
 .. automodule:: enaml.enums
 
 :mod:`expressions` Module
 -------------------------
+
+.. todo:: Fix diagram
+
+.. inheritance-diagram:: enaml.expressions
 
 .. automodule:: enaml.expressions
 
@@ -43,10 +49,18 @@ thin layer over backend widgets and produce the traits View objects.
 :mod:`style_node` Module
 ------------------------
 
+.. todo:: Fix diagram
+
+.. inheritance-diagram:: enaml.style_node
+
 .. automodule:: enaml.style_node
 
 :mod:`style_sheet` Module
 -------------------------
+
+.. todo:: Fix diagram
+
+.. inheritance-diagram:: enaml.style_sheet
 
 .. automodule:: enaml.style_sheet
 

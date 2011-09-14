@@ -1,6 +1,34 @@
 widgets Package
 ===============
 
+.. inheritance-diagram::
+    enaml.widgets.calendar
+    enaml.widgets.check_box
+    enaml.widgets.combo_box
+    enaml.widgets.component
+    enaml.widgets.container
+    enaml.widgets.control
+    enaml.widgets.dialog
+    enaml.widgets.field
+    enaml.widgets.form
+    enaml.widgets.group
+    enaml.widgets.group_box
+    enaml.widgets.hgroup
+    enaml.widgets.html
+    enaml.widgets.window
+    enaml.widgets.vgroup
+    enaml.widgets.traitsui_item
+    enaml.widgets.image
+    enaml.widgets.label
+    enaml.widgets.line_edit
+    enaml.widgets.toggle_control
+    enaml.widgets.spacer
+    enaml.widgets.spin_box
+    enaml.widgets.tab_group
+    enaml.widgets.stacked_group
+    :parts: 1
+
+
 :mod:`calendar` Module
 ----------------------
 
@@ -141,8 +169,8 @@ widgets Package
 
 .. automodule:: enaml.widgets.window
 
-Subpackages
------------
+Backends
+--------
 
 .. toctree::
 

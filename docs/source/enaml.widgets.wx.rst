@@ -1,5 +1,31 @@
-wx Package
+wx Backend
 ==========
+
+.. inheritance-diagram::
+    enaml.widgets.wx.constructors
+    enaml.widgets.wx.styling
+    enaml.widgets.wx.wx_calendar
+    enaml.widgets.wx.wx_check_box
+    enaml.widgets.wx.wx_combo_box
+    enaml.widgets.wx.wx_component
+    enaml.widgets.wx.wx_container
+    enaml.widgets.wx.wx_control
+    enaml.widgets.wx.wx_dialog
+    enaml.widgets.wx.wx_field
+    enaml.widgets.wx.wx_group
+    enaml.widgets.wx.wx_hgroup
+    enaml.widgets.wx.wx_html
+    enaml.widgets.wx.wx_window
+    enaml.widgets.wx.wx_vgroup
+    enaml.widgets.wx.wx_traitsui_item
+    enaml.widgets.wx.wx_label
+    enaml.widgets.wx.wx_line_edit
+    enaml.widgets.wx.wx_toggle_control
+    enaml.widgets.wx.wx_spacer
+    enaml.widgets.wx.wx_spin_box
+    enaml.widgets.wx.wx_tab_group
+    enaml.widgets.wx.wx_stacked_group
+
 
 :mod:`constructors` Module
 --------------------------
