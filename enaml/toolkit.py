@@ -188,6 +188,7 @@ def qt_toolkit():
     """ Creates and return a toolkit object for the PySide Qt backend.
 
     """
+    from .util.guisupport import get_app_qt4, start_event_loop_qt4
     from .widgets.qt import constructors as ctors
     from .widgets.qt.styling import QT_STYLE_SHEET
 
@@ -212,14 +213,5 @@ def qt_toolkit():
     
     utils = {}
 
-    def prime_loop():
-        from .util.guisupport import get_app_qt4
-        return get_app_qt4()
-
-    def start_loop(app):
-        # XXX check for mainloop already running? - Pyface hacks this feature in
-        from .util.guisupport import start_event_loop_qt4
-        start_event_loop_qt4()
-
-    return Toolkit(items=items, prime=prime_loop, start=start_loop,
+    return Toolkit(items=items, prime=get_app_qt4, start=start_event_loop_qt4,
         style_sheet=QT_STYLE_SHEET, utils=utils)
