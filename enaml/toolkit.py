@@ -140,6 +140,7 @@ def wx_toolkit():
     """ Creates and return a toolkit object for the wx backend.
 
     """
+    from .util.guisupport import get_app_wx, start_event_loop_wx
     from .widgets.wx import constructors as ctors
     from .widgets.wx import dialogs
     from .widgets.wx.styling import WX_STYLE_SHEET
@@ -177,19 +178,8 @@ def wx_toolkit():
         'information': dialogs.information,
         'question': dialogs.question
     }
-
-    def prime_loop():
-        import wx
-        app = wx.GetApp()
-        if app is None:
-            app = wx.PySimpleApp()
-        return app
-
-    def start_loop(app):
-        if not app.IsMainLoopRunning():
-            app.MainLoop()
         
-    return Toolkit(items=items, prime=prime_loop, start=start_loop,
+    return Toolkit(items=items, prime=get_app_wx, start=start_event_loop_wx,
                    style_sheet=WX_STYLE_SHEET, utils=utils)
 
 
