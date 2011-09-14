@@ -203,6 +203,7 @@ def qt_toolkit():
         'RadioButton': ctors.QtRadioButtonCtor,
         'Slider': ctors.QtSliderCtor,
         'SpinBox': ctors.QtSpinBoxCtor,
+        'EnableCanvas': ctors.QtEnableCanvasCtor,
     }
     
     utils = {}
