@@ -160,7 +160,15 @@ def wx_toolkit():
         'SpinBox': ctors.WXSpinBoxCtor,
         'Spacer': ctors.WXSpacerCtor,
         'EnableCanvas': ctors.WXEnableCanvasCtor,
+        'TableView': ctors.WXTableViewCtor,
     }
+
+    #utils = {
+    #    'error': dialogs.error,
+    #    'warning': dialogs.warning,
+    #    'information': dialogs.information,
+    #    'question': dialogs.question
+    #}
 
     def prime_loop():
         import wx

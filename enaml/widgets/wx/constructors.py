@@ -350,4 +350,16 @@ class WXEnableCanvasCtor(WXBaseComponentCtor):
         canvas = EnableCanvas(toolkit_impl=WXEnableCanvas())
         return canvas
 
+
+class WXTableViewCtor(WXBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    
+    def component(self):
+        from ..table_view import TableView
+        from .wx_table_view import WXTableView
+        table_view = TableView(toolkit_impl=WXTableView())
+        return table_view
+
         

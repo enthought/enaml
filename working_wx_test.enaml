@@ -33,6 +33,9 @@ Window:
                     text = "A simple text box"
                     toggled >> setattr(self, 'text', model.randomize(self.text))
                  
+            TableView:
+                item_model = table_model
+                
             Html:
                 source << ("<center><h1>Hello Enaml!</h1></center><br>" * cmbx.value 
                            if not static.down else 
