@@ -180,17 +180,6 @@ def wx_toolkit():
         'question': dialogs.question
     }
 
-    def prime_loop():
-        import wx
-        app = wx.GetApp()
-        if app is None:
-            app = wx.PySimpleApp()
-        return app
-
-    def start_loop(app):
-        if not app.IsMainLoopRunning():
-            app.MainLoop()
-
     return Toolkit(items=items, prime=get_app_wx, start=start_event_loop_wx,
                    style_sheet=WX_STYLE_SHEET, utils=utils)
 
