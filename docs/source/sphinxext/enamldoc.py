@@ -76,7 +76,25 @@ class BaseDocString(object):
             print 'REFACTORED DOCSTRING'
             print '\n'.join(self._doc._str)
 
-    def _extract_parameters(self, indent=''):
+        return
+
+    def is_field(self, line, indent=''):
+        if self.verbose:
+            print "Checking if '{0}' is a parameter field".format(line)
+        match = re.match(indent + r'\w+\s:\s*', line)
+        if self.verbose:
+            print "Check is", bool(match)
+        return match
+
+    def is_method(self, line, indent=''):
+        if self.verbose:
+            print "Checking if '{0}' is a method field".format(line)
+        match = re.match(indent + r'\w+\(.*\)\s*', line)
+        if self.verbose:
+            print "Check is", bool(match)
+        return match
+
+    def _extract_parameters(self, indent='', field_check=None):
         """Extract the parameters from the docstring
 
         Finds and parses the parameters into tuples of name, type and
@@ -98,17 +116,21 @@ class BaseDocString(object):
 
         """
 
-        def is_parameter(line):
-            match = re.match(indent + r'\w+\s:\s*', line)
-            return match
-
         #TODO raise error when there is no parameter
+
+        if self.verbose:
+            print "PARSING PARAMETERS"
+
+        if field_check:
+            is_field = field_check
+        else:
+            is_field = self.is_field
 
         parameters = []
 
         start = self._doc._l
 
-        while is_parameter(self._doc.peek()) and (not self._doc.eof()):
+        while is_field(self._doc.peek(), indent) and (not self._doc.eof()):
             description = self._doc.read_to_next_empty_line()
             parameters.append(self._parse_parameter(description))
             self._doc.read()
@@ -170,22 +192,18 @@ class BaseDocString(object):
             return [indent_str + line for line in lines]
 
     def _is_section(self):
-        """Check if the line defines a section"""
+        """Check if the line defines a section.
+
+        """
 
         if self._doc.eof():
             return False
 
         # peek at line
-        line1 = self._doc.peek()
-
-        # is it a header type line?
-        header = re.match(r'\s*\w+\s*\Z', line1)
-
-        if header is None:
-            return False
+        header = self._doc.peek()
 
         # is it a known header?
-        if header.group().strip() not in self.headers:
+        if header.strip() not in self.headers:
             return False
 
         # peek at second line
@@ -197,14 +215,14 @@ class BaseDocString(object):
             return False
 
         # is the next line an rst underline?
-        striped_header = header.group().rstrip()
+        striped_header = header.rstrip()
 
-        expected_underline1 = re.sub(r'[A-Za-z]', '-', striped_header)
-        expected_underline2 = re.sub(r'[A-Za-z]', '=', striped_header)
+        expected_underline1 = re.sub(r'[A-Za-z]|\b\s', '-', striped_header)
+        expected_underline2 = re.sub(r'[A-Za-z]|\b\s', '=', striped_header)
 
         if ((underline.group().rstrip() == expected_underline1) or
             (underline.group().rstrip() == expected_underline2)):
-            return header.group().strip()
+            return header.strip()
 
         else:
             return False
@@ -424,6 +442,152 @@ class ClassDocstring(BaseDocString):
             # setup description paragraph
             paragraph = ' '.join(desc)
             descriptions.append(paragraph)
-            descriptions.append(' ')
+            descriptions.append('')
 
         self.insert_lines(descriptions, index)
+        return
+
+    def _refactor_methods(self, header):
+        """Refactor the attributes section to sphinx friendly format"""
+
+        lines = self._doc._str
+        index = self._doc._l
+
+        # delete header
+        del lines[index]
+        del lines[index]
+
+        # get the global indent of the section
+        indent = re.split(r'\w', self._doc.peek())[0]
+
+        # parse parameters
+        parameters = self._extract_parameters(indent, self.is_method)
+
+        if self.verbose:
+            print 'Refactoring methods'
+            print parameters
+
+        # generate sphinx friendly rst
+        descriptions = []
+
+
+        # prepare table lines
+        max_name_length, max_method_length, max_desc_length = \
+                                                self.max_lengths(parameters)
+        max_method_length += 11 + max_name_length  # to account for the
+                                                   # additional rst directives
+        first_column = len(indent)
+        second_column = first_column + max_method_length + 1
+
+        table_line = '{0}{1} {2}'.format(indent, '=' * max_method_length,
+                                         '=' * max_desc_length)
+        empty_line = table_line.replace('=', ' ')
+        headings_line = empty_line[:]
+        headings_line = self.replace_at('Methods', headings_line,
+                                        first_column)
+        headings_line = self.replace_at('Description', headings_line,
+                                        second_column)
+
+        # draw table
+        descriptions.append(table_line)
+        descriptions.append(headings_line)
+        descriptions.append(table_line)
+
+        # attribute formating
+        for arg_name, arg_type, desc in parameters:
+
+            #separate function name from signature
+            split_result = re.split('\((.*)\)', arg_name)
+            name = split_result[0]
+
+            # and recombine them with the signature in italics
+            method_text = ':meth:`{0} <{1}>`'.format(arg_name, name)
+
+            summary = ' '.join(desc)
+            # create line
+            line = empty_line[:]
+            line = self.replace_at(method_text, line, first_column)
+            line = self.replace_at(summary, line, second_column)
+
+            descriptions.append(line)
+
+        descriptions.append(table_line)
+        descriptions.append('')
+        descriptions.append('|')
+        descriptions.append('')
+
+
+        self.insert_lines(descriptions, index)
+        return
+
+    def max_lengths(self, parameters):
+        """ Find the max lenght of the name and discription in the
+        parameters.
+
+        Arguments
+        ---------
+        parameters : list of tuples
+            list of parsed parameter tuples as returned from the
+            :meth:`~_FunctionDocString._parse_parameter` function.
+
+        """
+        max_name_length = max([parameter[0].find('(')
+                               for parameter in parameters])
+        max_method_length = max([len(parameter[0])
+                               for parameter in parameters])
+        max_desc_length = max([len(' '.join(parameter[2]))
+                               for parameter in parameters])
+        return max_name_length, max_method_length, max_desc_length
+
+    def replace_at(self, word, line, index):
+        """ Replace the text in line
+
+        The text in line is replaced with the word without changing the
+        size of the line (in most cases). The replace takes place at the
+        index.
+
+        Arguments
+        ---------
+        word : str
+            The text to copy into the :param:`line`.
+
+        line : str
+            The line where the copy takes place.
+
+        index: int
+            The index to start coping.
+
+        Returns
+        -------
+        result : str
+            line of text with the text replaced
+
+        """
+        word_length = len(word)
+        line_list = list(line)
+        line_list[index: index + word_length] = list(word)
+        return ''.join(line_list)
+
+    def _refactor_see_also(self, header):
+        """Refactor the see also section to sphinx friendly format"""
+
+        lines = self._doc._str
+        index = self._doc._l
+
+        # delete header
+        del lines[index]
+        del lines[index]
+
+        # get the global indent of the section
+        indent = re.split(r'\w', self._doc.peek())[0]
+
+        if self.verbose:
+            print 'Refactoring See Also'
+
+        # generate sphinx friendly rst
+        descriptions = []
+        descriptions.append(indent + '**{0}**'.format(header))
+        descriptions.append('')
+
+        self.insert_lines(descriptions, index)
+        return
