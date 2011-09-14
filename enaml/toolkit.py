@@ -195,6 +195,7 @@ def qt_toolkit():
     items = {
         'Panel': ctors.QtPanelCtor,
         'Window': ctors.QtWindowCtor,
+        'Dialog': ctors.QtDialogCtor,
         'Group': ctors.QtGroupCtor,
         'VGroup': ctors.QtVGroupCtor,
         'HGroup': ctors.QtHGroupCtor,
