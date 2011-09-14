@@ -288,7 +288,7 @@ from enamldoc import FunctionDocstring, ClassDocstring
 
 def new_docstring(app, what, name, obj, options, lines):
 
-    # verbose = False
+    verbose = False
     # if 'component.Component' in name:
         # verbose = True
 
