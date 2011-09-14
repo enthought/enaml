@@ -35,7 +35,6 @@ class QtCheckBox(QtToggleControl):
 
         """
         widget = self.widget
-        
         widget.toggled.connect(self.on_toggled)
         widget.pressed.connect(self.on_pressed)
         widget.released.connect(self.on_released)

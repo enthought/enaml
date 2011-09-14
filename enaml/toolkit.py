@@ -207,6 +207,7 @@ def qt_toolkit():
         'ComboBox': ctors.QtComboBoxCtor,
         'Html': ctors.QtHtmlCtor,
         'PushButton': ctors.QtPushButtonCtor,
+        'RadioButton': ctors.QtRadioButtonCtor,
         'Slider': ctors.QtSliderCtor,
         'SpinBox': ctors.QtSpinBoxCtor,
     }

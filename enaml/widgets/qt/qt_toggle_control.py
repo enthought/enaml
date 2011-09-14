@@ -64,8 +64,6 @@ class QtToggleControl(QtControl):
         """
         parent = self.parent
         parent.checked = self.widget.isChecked()
-        parent._down = False
-        parent.released = True
         parent.toggled = True
 
     def on_pressed(self):
@@ -84,9 +82,8 @@ class QtToggleControl(QtControl):
         """
         
         parent = self.parent
-        if parent._down:
-            parent._down = False
-            parent.released = True
+        parent._down = False
+        parent.released = True
 
     def set_label(self, label):
         """ Sets the widget's label with the provided value. Not 
