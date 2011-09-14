@@ -27,8 +27,9 @@ class QtRadioButton(QtToggleControl):
         """
         self.widget = QtGui.QRadioButton(self.parent_widget())
         
-    def initialize_widget(self):
-        """ Initializes the attributes of the Qt component.
+    def bind(self):
+        """ Binds the event handlers for the radio button. Not meant for
+        public consumption.
 
         """
         widget = self.widget
