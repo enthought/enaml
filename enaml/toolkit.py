@@ -192,6 +192,7 @@ def qt_toolkit():
         'VGroup': ctors.QtVGroupCtor,
         'HGroup': ctors.QtHGroupCtor,
         'StackedGroup': ctors.QtStackedGroupCtor,
+        'TabGroup': ctors.QtTabGroupCtor,
         'Field': ctors.QtFieldCtor,
         'Label': ctors.QtLabelCtor,
         'LineEdit': ctors.QtLineEditCtor,

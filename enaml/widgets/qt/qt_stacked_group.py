@@ -8,10 +8,6 @@ from ..container import Container
 from ..stacked_group import IStackedGroupImpl
 
 
-# The return value indicating that a child widget was not in the QStackedWidget.
-CHILD_NOT_FOUND = -1
-
-
 class QtStackedGroup(QtContainer):
     """ A Qt implementation of StackedGroup.
 
@@ -35,7 +31,7 @@ class QtStackedGroup(QtContainer):
         """ Initialize the StackedGroup widget.
 
         """
-        pass
+        self.widget.currentChanged.connect(self.on_current_changed)
 
     def layout_child_widgets(self):
         """ Lay out the contained pages.
@@ -54,13 +50,13 @@ class QtStackedGroup(QtContainer):
         ---------
         current_index : int
             The index of the page to make visible
+            
         """
         self.set_page(current_index)
 
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-
     def wrap_child_containers(self):
         """ Yield a "page" for each child container.
         
@@ -74,6 +70,9 @@ class QtStackedGroup(QtContainer):
             child_wrapper = QtGui.QWidget(self.widget)
             child_wrapper.setLayout(child_container.toolkit_impl.widget)
             yield child_wrapper
+
+    def on_current_changed(self, index):
+        self.parent.current_index = index
 
     def child_at(self, idx):
         """ Returns the child container at the given index.
@@ -153,8 +152,4 @@ class QtStackedGroup(QtContainer):
             Index of the page to select
 
         """
-        # Adjust for negative indices.
-        if index < 0:
-            index = self.parent.count + index 
-        
         self.widget.setCurrentIndex(index)
