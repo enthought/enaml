@@ -95,18 +95,6 @@ class WXSlider(WXControl):
         parent = self.parent
         parent.slider_pos = to_slider(parent.value)
 
-    def parent_slider_pos_changed(self, slider_pos):
-        """ Update the position in the slider widget
-
-        """
-        parent = self.parent
-        self.set_position(slider_pos)
-        parent.value = value = parent.from_slider(slider_pos)
-
-        # The move event is not fired during initialisation
-        if not self._initialising:
-            parent.moved = value
-
     def parent_value_changed(self, value):
         """ Update the slider position value
 
@@ -278,36 +266,49 @@ class WXSlider(WXControl):
         tick_interval = self.widget.GetTickFreq()
         self.widget.SetPageSize(tick_interval * step)
 
-    def set_position(self, value):
-        """Set the slider position to value.
+    def set_position(self):
+        """Set the slider position based on the value and to_slider().
 
-        Converts the 'value' to an integer and changes the position of
-        the slider in the widget if necessary.
-
-        Arguments
-        ---------
-        value : float
-            The new position of the slider in the range 0.0 - 1.0.
+        Changes the position of the slider in the widget if necessary.
+        We use a larger range in the Qt widget for fine-grained control.
 
         """
-        position = value * SLIDER_MAX
-        if position != self.widget.GetValue():
-            self.widget.SetValue(position)
+        self._setting = True
+        parent = self.parent
+        try:
+            position = parent.to_slider(parent.value)
+            print 'position->', position
+            if not (isinstance(position, float) and 0.0 <= position <= 1.0):
+                raise ValueError('to_slider() must return a float between 0.0 and 1.0, but instead returned %s'
+                        % repr(position))
+            wx_position = position * SLIDER_MAX
+            if wx_position != self.widget.GetValue():
+                self.widget.SetValue(wx_position)
+            parent.exception = None
+            parent.error = False
+        except Exception, e:
+            parent.exception = e
+            parent.error = True
+        finally:
+            self._setting = False
 
     def get_position(self):
         """Get the slider position.
 
-        Read the slider position from the widget and convert it to a
-        float.
-
-        Returns
-        -------
-        value : float
-            The position of the widget slider in the range 0.0 - 1.0.
+        Read the slider position from the widget and convert it to an
+        appropriate value, and set the value trait of the widget.
 
         """
-        wx_position = float(self.widget.GetValue())
-        return wx_position / SLIDER_MAX
+        parent = self.parent
+        try:
+            wx_position = float(self.widget.value())
+            value = parent.from_slider(wx_position / SLIDER_MAX)
+            parent.value = value
+            parent.exception = None
+            parent.error = False
+        except Exception, e:
+            parent.exception = e
+            parent.error = True
 
     def set_tick_position(self, ticks):
         """ Apply the tick position in the widget.

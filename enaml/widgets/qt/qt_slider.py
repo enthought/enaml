@@ -39,7 +39,7 @@ class QtSlider(QtControl):
 
     # A mechanism to prevent update cycles when syncing `parent.value` with
     # `parent.slider_pos`.
-    _sync_lock = Bool
+    _setting = Bool
 
     #---------------------------------------------------------------------------
     # ISliderImpl interface
@@ -56,12 +56,11 @@ class QtSlider(QtControl):
         """
         parent = self.parent
         parent._down = False
-        parent.slider_pos = parent.to_slider(parent.value)
 
         # We hard-coded range for the widget since we are managing the
         # conversion.
         self.set_range(0, SLIDER_MAX)
-        self.set_position(parent.slider_pos)
+        self.set_position()
         self.set_orientation(parent.orientation)
         self.set_tick_position(parent.tick_position)
         self.set_tick_frequency(parent.tick_interval)
@@ -81,8 +80,7 @@ class QtSlider(QtControl):
             postion to the appropriate Python value.
 
         """
-        parent = self.parent
-        parent.value = from_slider(parent.slider_pos)
+        self.get_position()
 
     def parent_to_slider_changed(self, to_slider):
         """ Update the slider position with based on the new function
@@ -93,20 +91,8 @@ class QtSlider(QtControl):
             A function that takes one argument to convert from a Python
             value to the appropriate slider position.
         """
-        parent = self.parent
-        parent.slider_pos = to_slider(parent.value)
-
-    def parent_slider_pos_changed(self, slider_pos):
-        """ Update the position in the slider widget
-
-        """
-        if not self._sync_lock:
-            self._sync_lock = True
-            parent = self.parent
-            self.set_position(slider_pos)
-            parent.value = value = parent.from_slider(slider_pos)
-            parent.moved = value
-            self._sync_lock = False
+        print 'here'
+        self.set_position()
 
     def parent_value_changed(self, value):
         """ Update the slider position value
@@ -116,22 +102,8 @@ class QtSlider(QtControl):
         of range. In that case the last known good value is given back
         to the value attribute.
 
-        """
-        
-        if not self._sync_lock:
-            self._sync_lock = True
-            parent = self.parent
-            # The try...except block is required because we need to keep the
-            # `value` attribute in sync with the `slider_pos` and **valid**
-            try:
-                parent.slider_pos = parent.to_slider(value)
-            except TraitError as error:
-                # revert value
-                print error
-                parent.value = parent.from_slider(parent.slider_pos)
-                parent.invalid_value = error
-            finally:
-                self._sync_lock = False
+        """        
+        self.set_position()
 
     def parent_tracking_changed(self, tracking):
         """ Set the tracking event in the widget
@@ -205,7 +177,8 @@ class QtSlider(QtControl):
         event only if the value has changed.
 
         """
-        self.parent.slider_pos = self.get_position()
+        if not self._setting:
+            self.get_position()
 
     def _on_pressed(self):
         """ Update if the left button was pressed.
@@ -262,21 +235,31 @@ class QtSlider(QtControl):
         tick_interval = widget.tickInterval()
         widget.setPageStep(step * tick_interval)
 
-    def set_position(self, value):
-        """Set the slider position to value.
+    def set_position(self):
+        """Set the slider position based on the value and to_slider().
 
-        Converts the 'value' to an integer and changes the position of
-        the slider in the widget if necessary.
-
-        Arguments
-        ---------
-        value : float
-            The new position of the slider in the range 0.0 - 1.0.
+        Changes the position of the slider in the widget if necessary.
+        We use a larger range in the Qt widget for fine-grained control.
 
         """
-        position = value * SLIDER_MAX
-        if position != self.widget.value():
-            self.widget.setValue(position)
+        self._setting = True
+        parent = self.parent
+        try:
+            position = parent.to_slider(parent.value)
+            print 'position->', position
+            if not (isinstance(position, float) and 0.0 <= position <= 1.0):
+                raise ValueError('to_slider() must return a float between 0.0 and 1.0, but instead returned %s'
+                        % repr(position))
+            qt_position = position * SLIDER_MAX
+            if qt_position != self.widget.value():
+                self.widget.setValue(qt_position)
+            parent.exception = None
+            parent.error = False
+        except Exception, e:
+            parent.exception = e
+            parent.error = True
+        finally:
+            self._setting = False
 
     def get_position(self):
         """Get the slider position.
@@ -284,14 +267,17 @@ class QtSlider(QtControl):
         Read the slider position from the widget and convert it to a
         float.
 
-        Returns
-        -------
-        value : float
-            The position of the widget slider in the range 0.0 - 1.0.
-
         """
-        wx_position = float(self.widget.value())
-        return wx_position / SLIDER_MAX
+        parent = self.parent
+        try:
+            qt_position = float(self.widget.value())
+            value = parent.from_slider(qt_position / SLIDER_MAX)
+            parent.value = value
+            parent.exception = None
+            parent.error = False
+        except Exception, e:
+            parent.exception = e
+            parent.error = True
 
     def set_tick_position(self, ticks):
         """ Apply the tick position in the widget.

@@ -23,15 +23,6 @@ class Field(LineEdit):
 
     Attributes
     ----------
-    error : Property(Bool)
-        A read only property which indicates whether or not the 
-        `from_string` or `to_string` callables raised an exception 
-        during conversion.
-    
-    exception : Property(Instance(Exception))
-        A read only property which holds the exception raised (if any) 
-        during coversion.
-    
     from_string : Callable
         A callable to convert the string in the the text box to a
         Python value.
@@ -41,41 +32,16 @@ class Field(LineEdit):
 
     value : Any
         The Python value to display in the field.
-    
-    _error : Bool
-        A protected attribute that is used by the implementation object
-        to set the value of error.
-    
-    _exception: Instance(Exception)
-        A protected attribute that is used by the implementation object
-        to set the value of exception.
 
     """
-    error = Property(Bool, depends_on='_error')
-
-    exception = Property(Instance(Exception), depends_on='_exception')
-
     from_string = Callable
     
     to_string = Callable
       
     value = Any
     
-    _error = Bool
-
-    _exception = Instance(Exception)
-    
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IFieldImpl)
-
-    def _get_error(self):
-        return self._error
-    
-    def _get_exception(self):
-        return self._exception
-
-
-Field.protect('_error', '_exception', 'error', 'exception')
 

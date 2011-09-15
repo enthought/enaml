@@ -15,7 +15,7 @@ import math
 import random
 import datetime
 
-from enaml.enums import Direction
+from enaml.enums import Direction, Orientation
 
 
 Window:
@@ -40,11 +40,22 @@ Window:
                 ComboBox base:
                     value = 10
                     items = [8, 10, 16]
-                SpinBox:
+                SpinBox sb:
                     low = 0
                     high = 255
                     to_string << oct if base.value == 8 else hex if base.value == 16 else str
                     from_string << lambda text: int(text, base.value)
+            HGroup:
+                Slider sl:
+                    to_slider = lambda value: (value/float(M.text))
+                    from_slider = lambda pos: int(pos*float(M.text))
+                    value := sb.value
+                    value >> print(self.value)
+                    orientation = Orientation.HORIZONTAL
+                    style.background_color << 'pink' if self.error else 'nocolor'
+                LineEdit M:
+                    text = '255'
+
             TraitsUIItem:
                 model = model
 """

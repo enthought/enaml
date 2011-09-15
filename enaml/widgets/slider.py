@@ -1,5 +1,5 @@
 from traits.api import (Any, Bool, Callable, Enum, Float, Range, Event,
-                        Instance, Property, Int)
+                        Instance, Property, Int, Either)
 
 from .control import IControlImpl, Control
 
@@ -12,9 +12,6 @@ class ISliderImpl(IControlImpl):
         raise NotImplementedError
 
     def parent_to_slider_changed(self, to_slider):
-        raise NotImplementedError
-
-    def parent_slider_pos_changed(self, slider_pos):
         raise NotImplementedError
 
     def parent_value_changed(self, value):
@@ -50,25 +47,22 @@ class Slider(Control):
 
     Attributes
     ----------
-    down : Property(Bool)
-        A read only property which indicates whether or not the slider
-        is pressed down.
-
     from_slider : Callable
-        A function that takes one argument to convert from the slider
-        postion to the appropriate Python value.
+        A function that takes one floating point argument in the range 0.0 - 1.0
+        and converts from to the appropriate Python value.
 
     to_slider : Callable
         A function that takes one argument to convert from a Python
-        value to the appropriate slider position.
-
-    slider_pos : Float
-        A read only property which is the floating point percentage
-        (0.0 - 1.0) which is the position of the slider.
+        value to the appropriate value in the range 0.0 - 1.0.
 
     value : Any
-        The value of the slider. This is set to the value of
-        from_slider(slider_pos).
+        The value of the slider.  When the slider is moved, the value is set
+        to the result of from_slider.  If the value is changed, then the
+        result of to_slider is used to position the slider
+
+    down : Property(Bool)
+        A read only property which indicates whether or not the slider
+        is pressed down.
 
     tracking : Bool
         If True, the value is updated while sliding. Otherwise, it is
@@ -82,9 +76,9 @@ class Slider(Control):
         Defines the number of ticks that the slider will move when the
         user presses the page_up/page_down keys. Default is 5
 
-    tick_interval : Float
-        The slider_pos interval to put between tick marks. Default value
-        is `0.1` which is 10% of the full slider range.
+    tick_interval : Range(0.0, 1.0, 0.1, exclude_low=True, exclude_high=True)
+        The interval to put between tick marks in slider range units.
+        Default value is `0.1` which is 10% of the full slider range.
 
     tick_position : TickPosition Enum value
         A TickPosition enum value indicating how to display the tick
@@ -108,17 +102,9 @@ class Slider(Control):
     moved : Event
         Fired when the slider is moved.
 
-    invalid_value: Event
-        Fired when there was an attempt to assign an invalid (out of
-        range) value to the slider.
-
     _down : Bool
         A protected attribute used by the implementation object to
         update the value of down.
-
-    _slider_pos : Range(0.0, 1.0)
-        A protected attribute used by the implementation object to
-        update the value of slider_pos.
 
     .. note:: The slider enaml widget changes the attributes and fires
         the necessary events in sequence based on their priority as
@@ -138,9 +124,7 @@ class Slider(Control):
     from_slider = Callable(lambda pos: pos)
 
     to_slider = Callable(lambda val: val)
-
-    slider_pos = Range(0.0, 1.0)
-
+    
     value = Any
 
     tracking = Bool(True)
@@ -176,6 +160,16 @@ class Slider(Control):
         """
         return self._down
 
+    def _validate(self, value):
+        if self.validate_slider is not None:
+            return self.validate_slider(value)
+        
+        try:
+            slider = self.to_slider(value)
+            return isinstance(slider, float) and 0.0 <= slider <= 1.0
+        except Exception, e:
+            logging.exception('Slider Validation: to_slider() raised exception:', e)
+            return False
  
 Slider.protect('down', 'pressed', 'released', 'moved', 'invalid_value', '_down')
 
