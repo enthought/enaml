@@ -169,10 +169,11 @@ widgets Package
 
 .. automodule:: enaml.widgets.window
 
+
 Backends
---------
+========
 
 .. toctree::
 
     enaml.widgets.wx
-
+    enaml.widgets.qt
