@@ -74,16 +74,24 @@ class IComponentImpl(Interface):
         """
         raise NotImplementedError
 
+    def create_style_handler(self):
+        """ Creates and assigns the style handler for this toolkit
+        specific widget. This is the fourth method called in the layout
+        process.
+
+        """
+        raise NotImplementedError
+
     def initialize_style(self):
         """ Initializes the style and style handler for the widget. This
-        is the fourth method called in the layout proces.
+        is the fifth method called in the layout proces.
 
         """
         raise NotImplementedError
 
     def layout_child_widgets(self):
         """ Adds the child widgets (if any) to any necessary layout
-        components in the ui. This is the fifth and final method called
+        components in the ui. This is the sixth and final method called
         in the layout process.
 
         """
@@ -355,12 +363,17 @@ class Component(EnamlBase):
         """
         impl = self.toolkit_impl
         impl.set_parent(self)
+        
         impl.create_widget()
         for child in self.children:
             child.layout()
         impl.initialize_widget()
+
+        impl.create_style_handler()
         impl.initialize_style()
+
         impl.layout_child_widgets()
+
         self._hook_impl()
 
     def toolkit_widget(self):
