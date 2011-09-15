@@ -6,7 +6,8 @@ from .wx_control import WXControl
 
 from ..table_view import ITableViewImpl
 
-from ...item_models.abstract_item_model import ModelIndex, DISPLAY_ROLE, VERTICAL, HORIZONTAL
+from ...item_models.abstract_item_model import ModelIndex
+from ...enums import DataRole, Orientation
 
 
 class AbstractItemModelWrapper(wx.grid.PyGridTableBase):
@@ -31,15 +32,15 @@ class AbstractItemModelWrapper(wx.grid.PyGridTableBase):
     def GetValue(self, row, col, parent_index=ModelIndex()):
         model = self._item_model
         index = model.index(row, col, parent_index)
-        return self._item_model.data(index, DISPLAY_ROLE)
+        return self._item_model.data(index, DataRole.DISPLAY)
 
     def GetRowLabelValue(self, row):
         model = self._item_model
-        return model.header_data(row, VERTICAL, DISPLAY_ROLE)
+        return model.header_data(row, Orientation.VERTICAL, DataRole.DISPLAY)
 
     def GetColLabelValue(self, col):
         model = self._item_model
-        return model.header_data(col, HORIZONTAL, DISPLAY_ROLE)
+        return model.header_data(col, Orientation.HORIZONTAL, DataRole.DISPLAY)
 
 
 class WXTableView(WXControl):
