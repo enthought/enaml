@@ -3,8 +3,9 @@ import datetime
 from traits.api import HasTraits, List, Str, Date, Enum, Property, Array, Int, Tuple, on_trait_change
 
 from enaml.factory import EnamlFactory
-from enaml.item_models.abstract_item_model import AbstractTableModel, VERTICAL
+from enaml.item_models.abstract_item_model import AbstractTableModel
 from enaml.style_sheet import style
+from enaml.enums import Orientation
 
 import stock_data
 from plot_driver import PlotDriver
@@ -100,7 +101,7 @@ class StockDataTable(AbstractTableModel):
         return res
 
     def header_data(self, section, orientation, role):
-        if orientation == VERTICAL:
+        if orientation == Orientation.VERTICAL:
             ts = self._data['dates'][section]
             return str(datetime.date.fromtimestamp(ts))
         else:
