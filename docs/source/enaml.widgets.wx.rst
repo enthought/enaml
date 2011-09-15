@@ -25,7 +25,7 @@ wx Backend
     enaml.widgets.wx.wx_spin_box
     enaml.widgets.wx.wx_tab_group
     enaml.widgets.wx.wx_stacked_group
-
+    :parts: 1
 
 :mod:`constructors` Module
 --------------------------
