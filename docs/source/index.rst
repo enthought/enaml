@@ -3,11 +3,11 @@
 Welcome to enaml's documentation!
 ====================================
 
-**E**\naml is **N**\ot **A** **M**\arkup **L**\anguage, is a tool for building
-native user interfaces on top of Traits. It is a declarative language
-based on Python, analogous to Qt's QML. enaml currently supports wxWidgets
-as a backend via wxPython and Qt as a backend via PySide. However it is
-not tied to a single widget toolkit.
+**E**\naml is **N**\ot **A** **M**\arkup **L**\anguage, is a tool for
+building native user interfaces on top of Traits. It is a declarative
+language based on Python, analogous to Qt's QML. enaml currently supports
+wxWidgets as a backend via wxPython and Qt as a backend via PySide. However
+it is not tied to a single widget toolkit.
 
 .. warning:: Enaml is currently under heavy development and the
     documentation is not always up-to-date. Please recompile in order to
@@ -80,25 +80,32 @@ To test the package just execute::
 
     python setup.py test
 
-.. note:: Currently the test coverage of the project is relatively low. Also
-    due to the fast development paces tests become often obsolete and fail
-    because the overall architecture has changed.
+.. note:: Currently the test coverage of the project is relatively low.
+    Also due to the fast development paces tests become often obsolete and
+    fail because the overall architecture has changed.
 
 
 Example
 ^^^^^^^
 
-For the impatient enaml user here an example::
+For the impatient enaml user here is an example showcaseing some of the wx
+based widgets:
 
-    enaml code
+.. include:: example.enaml
+    :literal:
 
-An the python script to execute it::
+And the python script to execute it:
 
-    python code
+.. include:: example.py
+    :literal:
 
 Results in the following widget
 
+.. figure:: images/example.png
+    :align: center
+    :figwidth: 70%
 
+    example using enaml machinery.
 
 
 Contents
