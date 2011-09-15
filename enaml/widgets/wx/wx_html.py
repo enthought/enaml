@@ -59,13 +59,14 @@ class WXHtml(WXControl):
         """ Initializes the style handler and style of the widget.
 
         """
+        super(WXHtml, self).initialize_style()
         style_handler = WXHtmlStyleHandler(widget=self.widget)
         style = self.parent.style
         bgcolor = style.get_property('background_color')
         style_handler.style_background_color(bgcolor)
         style_handler.style_node = style
         self.style_handler = style_handler
-
+    
     def parent_source_changed(self, source):
         """ The change handler for the 'source' attribute. Not meant for
         public consumption.

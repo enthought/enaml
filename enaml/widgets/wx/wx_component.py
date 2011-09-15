@@ -44,12 +44,19 @@ class WXComponent(HasStrictTraits):
         """
         raise NotImplementedError
     
+    def create_style_handler(self):
+        """ Creates and sets the style handler for the widget. Must
+        be implemented by subclasses.
+
+        """
+        raise NotImplementedError
+
     def initialize_style(self):
         """ Initializes the style and style handler of a widget. Must
         be implemented by subclasses.
 
         """
-        pass#raise NotImplementedError
+        raise NotImplementedError
 
     def layout_child_widgets(self):
         """ Arranges the children of this component. Must be implemented

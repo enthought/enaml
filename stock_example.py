@@ -6,7 +6,6 @@ from enaml.factory import EnamlFactory
 from enaml.item_models.abstract_item_model import AbstractTableModel, VERTICAL
 from enaml.style_sheet import style
 
-
 import stock_data
 from plot_driver import PlotDriver
 
@@ -70,6 +69,7 @@ class HistoricData(HasTraits):
         ns = style('.error_colors', background_color='blue')
         view.style_sheet.update(ns)
 
+
 class StockDataTable(AbstractTableModel):
 
     categories = ['open', 'high', 'low', 'close', 'volume']
@@ -114,4 +114,4 @@ if __name__ == '__main__':
     factory = EnamlFactory('./stock_view.enaml')
     view = factory(model=model, plot=plot_driver, stock_data_table=data_table)
     view.show()
-
+    

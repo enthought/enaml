@@ -23,11 +23,12 @@ WX_STYLE_SHEET = StyleSheet(
         size_policy = "minimum",
     ),
 
-    style("SpinBox", "ComboBox", "Slider", "Panel", "LineEdit", "Field", "Label",
+    style("SpinBox", "ComboBox", "Slider", "Panel", "LineEdit", "Field", 
+        "Label", "TableView",
         stretch = 1,
     ),
 
-    style("Html", "Spacer",
+    style("Html", "Spacer", "EnableCanvas",
         stretch = 2,
     ),
 
@@ -50,6 +51,7 @@ WX_STYLE_SHEET = StyleSheet(
 
     style(".fixed",
         size_policy = "minimum",
+        stretch = 0,
     ),
 
     style(".expanding",
