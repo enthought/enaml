@@ -43,6 +43,11 @@ class WXCalendar(WXControl):
             self.set_maximum_date(max_date)
         self.bind()
 
+    def initialize_style(self):
+        # XXX Calendar doesn't handle null color background properly
+        # so for now we just don't let the parent class set the color.
+        pass
+
     def parent_date_changed(self, date):
         """ The change handler for the 'date' attribute. Not meant for
         public consumption.
