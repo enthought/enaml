@@ -29,15 +29,15 @@ available GUI toolkit. Enaml abstracts away toolkit-specific details.
 Goals
 ^^^^^
 
-The goals of the enaml project is to:
+The goals of the enaml project are to:
 
-- Intergrate well with `Traits <https://github.com/enthought/traits>`_ and
+- Integrate well with `Traits <https://github.com/enthought/traits>`_ and
   `Chaco <http://code.enthought.com/chaco/>`_ .
 - Help **separate** the presentation and content (i.e., MVC)
 - A **single** script can work across *multiple* widget toolkits when
   using the default interfaces.
-- Easily **extensible** to accomodate adaptation and addition of the base
-  widgets.
+- Be **extensible** and allow adaptation and addition of the base widgets
+  with little effort.
 
 Prerequisites
 ^^^^^^^^^^^^^
@@ -59,7 +59,7 @@ recent versions of the following libraries:
 
 *Optional*:
 
-- `Graphviz <http://www.graphviz.org/>`_ (used for documention)
+- `Graphviz <http://www.graphviz.org/>`_ (used for documentation)
 
 
 Installation
@@ -80,9 +80,9 @@ To test the package just execute::
 
     python setup.py test
 
-.. note:: Currently the test coverage of the project is relativly low. Also
-    due to the fast development paces tests become often obsolute and fail
-    because the overall arhitecture has changed.
+.. note:: Currently the test coverage of the project is relatively low. Also
+    due to the fast development paces tests become often obsolete and fail
+    because the overall architecture has changed.
 
 
 Example
