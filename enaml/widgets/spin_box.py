@@ -1,4 +1,4 @@
-from traits.api import Int, Str, Callable, Bool, Range, Instance
+from traits.api import Int, Str, Callable, Bool, Range, Instance, Either
 
 from .control import IControlImpl, Control
 
@@ -42,13 +42,13 @@ class SpinBox(Control):
     Attributes
     ----------
     low : Int
-        The minimum value for the spin box.
+        The minimum value for the spin box. Defautls to 0.
 
     high : Int
-        The maximum value for the spin box.
+        The maximum value for the spin box.  Defaults to 1.
     
     step : Int
-        The amount to increase or decrease the value per click.
+        The amount to increase or decrease the value per click.  Defaults to 1.
 
     value : Range('low', 'high')
         The current value for the spin box, constrained to low-high.
@@ -70,6 +70,13 @@ class SpinBox(Control):
     from_string : Callable
         An optional callable that takes one argument to convert the 
         user typed string to an integer value.
+    
+    validate_string : Callable
+        An optional callable that takes a one argument and checks
+        if it is a valid text value.  Must return an enums.Validity
+        value.  It a from_string is supplied without a validate_string,
+        the SpinBox will consider the input acceptable if from_string
+        does not raise an exception, and intermediate otherwise.
 
     wrap : Bool
         If True, the spin box will wrap around at its extremes.
@@ -77,9 +84,9 @@ class SpinBox(Control):
     """
     low = Int
 
-    high = Int
+    high = Int(1)
 
-    step = Int
+    step = Int(1)
 
     value = Range('low', 'high')
 
@@ -89,9 +96,11 @@ class SpinBox(Control):
 
     special_value_text = Str
 
-    to_string = Callable(lambda val: str(val))
+    to_string = Callable(str)
 
-    from_string = Callable(lambda val: int(val))
+    from_string = Callable(int)
+    
+    validate_string = Either(Callable, None)
 
     wrap = Bool
 

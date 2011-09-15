@@ -123,15 +123,7 @@ def default_toolkit():
         return wx_toolkit()
         
     if toolkit == 'qt' or toolkit == 'qt4':
-        qt_api = os.environ.get('QT_API', 'pyside').lower()
-        
-        if qt_api == 'pyside':
-            return pyside_toolkit()
-        
-        if qt_api == 'pyqt' or qt_api == 'pyqt4':
-            return pyqt_toolkit()
-        
-        raise ValueError('Invalid QT_API: %s' % qt_api)
+        return qt_toolkit()
     
     raise ValueError('Invalid Toolkit: %s' % toolkit)
 
@@ -184,11 +176,37 @@ def wx_toolkit():
                    style_sheet=WX_STYLE_SHEET, utils=utils)
 
 
-def pyside_toolkit():
-    raise NotImplementedError
+def qt_toolkit():
+    """ Creates and return a toolkit object for the PySide Qt backend.
 
+    """
+    from .util.guisupport import get_app_qt4, start_event_loop_qt4
+    from .widgets.qt import constructors as ctors
+    from .widgets.qt.styling import QT_STYLE_SHEET
 
-def pyqt_toolkit():
-    raise NotImplementedError
+    items = {
+        'Panel': ctors.QtPanelCtor,
+        'Window': ctors.QtWindowCtor,
+        'Dialog': ctors.QtDialogCtor,
+        'Group': ctors.QtGroupCtor,
+        'VGroup': ctors.QtVGroupCtor,
+        'HGroup': ctors.QtHGroupCtor,
+        'Field': ctors.QtFieldCtor,
+        'Label': ctors.QtLabelCtor,
+        'LineEdit': ctors.QtLineEditCtor,
+        'TraitsUIItem': ctors.QtTraitsUIItemCtor,
+        'Calendar': ctors.QtCalendarCtor,
+        'CheckBox': ctors.QtCheckBoxCtor,
+        'ComboBox': ctors.QtComboBoxCtor,
+        'Html': ctors.QtHtmlCtor,
+        'PushButton': ctors.QtPushButtonCtor,
+        'RadioButton': ctors.QtRadioButtonCtor,
+        'Slider': ctors.QtSliderCtor,
+        'SpinBox': ctors.QtSpinBoxCtor,
+        'EnableCanvas': ctors.QtEnableCanvasCtor,
+    }
+    
+    utils = {}
 
-
+    return Toolkit(items=items, prime=get_app_qt4, start=start_event_loop_qt4,
+        style_sheet=QT_STYLE_SHEET, utils=utils)

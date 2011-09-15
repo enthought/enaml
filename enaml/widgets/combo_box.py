@@ -59,6 +59,9 @@ class ComboBox(Control):
     # Overridden parent class traits
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IComboBoxImpl)
+    
+    #def _items_items_changed(self):
+    #    self.toolkit_impl.items_changed()
 
 
 ComboBox.protect('selected')

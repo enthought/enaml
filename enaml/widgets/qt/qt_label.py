@@ -1,16 +1,17 @@
-import wx
+from .qt import QtGui
 
 from traits.api import implements
 
-from .wx_control import WXControl
+from .qt_control import QtControl
+from .styling import QtStyleHandler, qt_box_model
 
 from ..label import ILabelImpl
 
 
-class WXLabel(WXControl):
-    """ A wxPython implementation of Label.
+class QtLabel(QtControl):
+    """ A Qt implementation of Label.
 
-    A WXLabel displays static text using a wx.StaticText control.
+    A QtLabel displays static text using a QLabel control.
 
     See Also
     --------
@@ -26,13 +27,13 @@ class WXLabel(WXControl):
         """ Creates the underlying text control.
 
         """
-        self.widget = wx.StaticText(self.parent_widget())
+        self.widget = QtGui.QLabel(self.parent_widget())
 
     def initialize_widget(self):
         """ Initializes the attributes on the underlying control.
 
         """
-        self.set_label(self.parent.text)
+        self.set_label(self.parent.text) 
 
     def parent_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant for
@@ -49,5 +50,6 @@ class WXLabel(WXControl):
         public consumption.
 
         """
-        self.widget.SetLabel(label)
+        self.widget.setText(label)
 
+    tags = qt_box_model
