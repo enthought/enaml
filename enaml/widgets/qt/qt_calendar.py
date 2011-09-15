@@ -1,10 +1,17 @@
-from .qt import QtGui
+from .qt import QtGui, QtCore
 
 from traits.api import implements
 
 from .qt_control import QtControl
 
 from ..calendar import ICalendarImpl
+
+
+# Workaround for an incompatibility between PySide and PyQt
+try:
+    qdate_to_python = QtCore.QDate.toPython
+except AttributeError:
+    qdate_to_python = QtCore.QDate.toPyDate
 
 
 class QtCalendar(QtControl):
@@ -78,17 +85,20 @@ class QtCalendar(QtControl):
         meant for public consumption.
 
         """
-        date = self.widget.selectedDate().toPython()
-        self.parent.date = date
-        self.parent.activated = date
+        qdate = self.widget.selectedDate()
+        py_date = qdate_to_python(qdate)
+        parent = self.parent
+        parent.date = py_date
+        parent.activated = py_date
 
     def on_date_selected(self):
         """ The event handler for the calendar's selection event. Not
         meant for public consumption.
 
         """
-        date = self.widget.selectedDate().toPython()
-        self.parent.selected = date
+        qdate = self.widget.selectedDate()
+        py_date = qdate_to_python(qdate)
+        self.parent.selected = py_date
         
     def set_date(self, date):
         """ Sets the date on the widget with the provided value. Not
