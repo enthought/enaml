@@ -1,4 +1,4 @@
-from traits.api import Int, Property, Instance
+from traits.api import Int, Property, Instance, List
 
 from .container import IContainerImpl, Container
 
@@ -38,6 +38,8 @@ class StackedGroup(Container):
     current_index = Int
 
     count = Property(Int, depends_on='children')
+    
+    children = List(Container)
 
     #---------------------------------------------------------------------------
     # Overridden parent class traits
@@ -68,7 +70,7 @@ class StackedGroup(Container):
             No child corresponds to the given index.
 
         """
-        raise NotImplementedError
+        return self.toolkit_impl.child_at(idx)
 
     def index_of(self, child):
         """ Returns the index corresponding to the given child container.
@@ -92,7 +94,7 @@ class StackedGroup(Container):
             The child does not exist in the group.
 
         """
-        raise NotImplementedError
+        return self.toolkit_impl.index_of(child)
 
     def _get_count(self):
         return len(self.children)
