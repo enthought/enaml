@@ -7,7 +7,7 @@ from .styling import wx_color_from_color
 
 from ..table_view import ITableViewImpl
 
-from ...item_models.abstract_item_model import ModelIndex
+from ...item_models.abstract_item_model import AbstractItemModel, ModelIndex
 from ...enums import DataRole, Orientation
 
 
@@ -17,12 +17,22 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
 
     def __init__(self, item_model):
         super(AbstractItemModelTable, self).__init__()
+        if not isinstance(item_model, AbstractItemModel):
+            raise TypeError('Model must be an instance of AbstractItemModel.')
         self._item_model = item_model
         self._item_model.on_trait_change(self._end_model_reset, 'model_reset')
+        self._item_model.on_trait_change(self._data_changed, 'data_changed')
 
     def _end_model_reset(self):
         grid = self.GetView()
         grid.SetTable(self)
+        grid.Refresh()
+
+    def _data_changed(self):
+        grid = self.GetView()
+        flag = wx.grid.GRIDTABLE_REQUEST_VIEW_GET_VALUES
+        msg = wx.grid.GridTableMessage(self, flag)
+        grid.ProcessTableMessage(msg)
         grid.Refresh()
 
     def GetNumberRows(self):
@@ -73,9 +83,7 @@ class WXTableView(WXControl):
         widget.SetDoubleBuffered(True)
 
     def initialize_widget(self):
-        model_wrapper = AbstractItemModelTable(self.parent.item_model)
-        self.widget.SetTable(model_wrapper)
-        self.model_wrapper = model_wrapper
+        self.set_table_model(self.parent.item_model)
 
     def create_style_handler(self):
         pass
@@ -98,9 +106,14 @@ class WXTableView(WXControl):
         self.widget.SetMinSize((min_width, min_height))
 
     def parent_item_model_changed(self, item_model):
-        pass
-    
+        self.set_table_model(item_model)
+        
     #---------------------------------------------------------------------------
     # implementation
     #---------------------------------------------------------------------------
-    
+    def set_table_model(self, model):
+        model_wrapper = AbstractItemModelTable(model)
+        self.widget.SetTable(model_wrapper)
+        self.widget.Refresh()
+        self.model_wrapper = model_wrapper
+
