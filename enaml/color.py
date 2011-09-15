@@ -23,6 +23,7 @@ class Color(HasStrictTraits):
     #: The aplha component (0-255)
     a = Range(0, 255)
 
+    @classmethod
     def from_string(cls, color_string):
         """ Convert a string to an enaml Color class
 
