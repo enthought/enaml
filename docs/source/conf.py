@@ -103,8 +103,8 @@ todo_include_todos = True
 autodoc_member_order = 'bysource'
 autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 
-inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
-                              color='dodgerblue1', style='filled')
+##inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
+##                              color='dodgerblue1', style='filled')
 
 inheritance_graph_attrs = dict(rankdir="LR", size='"20.0, 20.0"',
                                fontsize=14, ratio='compress')
