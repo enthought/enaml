@@ -3,6 +3,7 @@ import wx.grid
 from traits.api import implements, Instance
 
 from .wx_control import WXControl
+from .styling import wx_color_from_color
 
 from ..table_view import ITableViewImpl
 
@@ -10,18 +11,19 @@ from ...item_models.abstract_item_model import ModelIndex
 from ...enums import DataRole, Orientation
 
 
-class AbstractItemModelWrapper(wx.grid.PyGridTableBase):
+# XXX we need to add more handler support for the different modes of 
+# resetting the grid.
+class AbstractItemModelTable(wx.grid.PyGridTableBase):
 
     def __init__(self, item_model):
-        super(AbstractItemModelWrapper, self).__init__()
+        super(AbstractItemModelTable, self).__init__()
         self._item_model = item_model
-        self._item_model.on_trait_change(self._refresh_table, 'data_changed')
-    
-    def _refresh_table(self):
-        self.Clear()
-        msg = wx.grid.GridTableMessage(self, wx.grid.GRIDTABLE_REQUEST_VIEW_GET_VALUES)
-        self.GetView().ProcessTableMessage(msg)
-        self.GetView().Refresh()
+        self._item_model.on_trait_change(self._end_model_reset, 'model_reset')
+
+    def _end_model_reset(self):
+        grid = self.GetView()
+        grid.SetTable(self)
+        grid.Refresh()
 
     def GetNumberRows(self):
         return self._item_model.row_count()
@@ -32,7 +34,21 @@ class AbstractItemModelWrapper(wx.grid.PyGridTableBase):
     def GetValue(self, row, col, parent_index=ModelIndex()):
         model = self._item_model
         index = model.index(row, col, parent_index)
-        return self._item_model.data(index, DataRole.DISPLAY)
+        return model.data(index, DataRole.DISPLAY)
+
+    def GetAttr(self, row, col, ignored, parent_index=ModelIndex()):
+        model = self._item_model
+        index = model.index(row, col, parent_index)
+
+        attr = wx.grid.GridCellAttr()
+
+        bgcolor = model.data(index, DataRole.BACKGROUND)
+        attr.SetBackgroundColour(wx_color_from_color(bgcolor))
+
+        fgcolor = model.data(index, DataRole.FOREGROUND)
+        attr.SetTextColour(wx_color_from_color(fgcolor))
+
+        return attr
 
     def GetRowLabelValue(self, row):
         model = self._item_model
@@ -47,7 +63,7 @@ class WXTableView(WXControl):
 
     implements(ITableViewImpl)
 
-    model_wrapper = Instance(AbstractItemModelWrapper)
+    model_wrapper = Instance(AbstractItemModelTable)
 
     #---------------------------------------------------------------------------
     # ITableViewImpl interface
@@ -57,7 +73,7 @@ class WXTableView(WXControl):
         widget.SetDoubleBuffered(True)
 
     def initialize_widget(self):
-        model_wrapper = AbstractItemModelWrapper(self.parent.item_model)
+        model_wrapper = AbstractItemModelTable(self.parent.item_model)
         self.widget.SetTable(model_wrapper)
         self.model_wrapper = model_wrapper
 
