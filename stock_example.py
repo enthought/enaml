@@ -1,11 +1,14 @@
 import datetime
 
-from traits.api import HasTraits, List, Str, Date, Enum, Property, Array, Int, Tuple, on_trait_change
+from traits.api import (HasTraits, List, Str, Date, Enum, Property, Array, Int, 
+                        Tuple, on_trait_change, Instance, ReadOnly, Event, 
+                        cached_property, DelegatesTo)
 
 from enaml.factory import EnamlFactory
 from enaml.item_models.abstract_item_model import AbstractTableModel
 from enaml.style_sheet import style
-from enaml.enums import Orientation
+from enaml.enums import Orientation, DataRole
+from enaml.color import Color
 
 import stock_data
 from plot_driver import PlotDriver
@@ -65,54 +68,104 @@ class HistoricData(HasTraits):
     def _refresh_data(self):
         self.data = self._compute_data()
 
-    def update_bgcolor(self):
-        global view
-        ns = style('.error_colors', background_color='blue')
-        view.style_sheet.update(ns)
+
+class GridDataAdapter(HasTraits):
+
+    model = Instance(HistoricData, ())
+
+    data = DelegatesTo('model')
+
+    available_columns = List(Str)
+    
+    grid_columns = List(Str)
+
+    highlight = ReadOnly(Color.from_string('lightskyblue'))
+
+    text_color = ReadOnly(Color.from_string('darkgray'))
+
+    thresh = Property(depends_on='data')
+
+    grid_size = Property(depends_on=['data', 'grid_columns'])
+
+    grid_changed = Event
+
+    def _available_columns_default(self):
+        return ['open', 'close', 'low', 'high', 'volume']
+    
+    def _grid_columns_default(self):
+        return ['open', 'close', 'low', 'high', 'volume']
+
+    @cached_property
+    def _get_grid_size(self):
+        return (len(self.model.data), len(self.grid_columns))
+
+    @on_trait_change('data, grid_columns')
+    def grid_updated(self):
+        self.grid_changed = True
+
+    @cached_property
+    def _get_thresh(self):
+        data = self.data
+        min = data['close'].min()
+        max = data['close'].max()
+        return 0.9 * (max - min) + min
 
 
 class StockDataTable(AbstractTableModel):
 
-    categories = ['open', 'high', 'low', 'close', 'volume']
-
-    def __init__(self, model):
+    def __init__(self, adapter):
         super(StockDataTable, self).__init__()
-        self.model = model
-        self._data = model.data
-        self.model.on_trait_change(self.refresh_table, 'data')
+        self.adapter = adapter
+        adapter.on_trait_change(self.refresh_table, 'grid_changed')
 
-    def refresh_table(self, data):
-        self._data = data
-        self.notify_data_changed(-1, -1)
-    
+    def refresh_table(self):
+        self.begin_reset_model()
+        self.end_reset_model()
+
     def column_count(self, parent=None):
-        return len(self.categories)
+        return self.adapter.grid_size[1]
 
     def row_count(self, parent=None):
-        return len(self._data)
+        return self.adapter.grid_size[0]
     
     def data(self, index, role):
-        category = self.categories[index.column]
-        data = self._data[category][index.row]
-        if data > 1e4:
-            res = '%.2E' % data
-        else:
-            res = '%.2f' % data
-        return res
+        adapter = self.adapter
+        data = adapter.data
+        if role == DataRole.DISPLAY:
+            column = adapter.grid_columns[index.column]
+            data = data[column][index.row]
+            if data > 1e4:
+                res = '%.2E' % data
+            else:
+                res = '%.2f' % data
+            return res
+        elif role == DataRole.BACKGROUND:
+            data = data['close'][index.row]
+            if data > adapter.thresh:
+                return adapter.highlight
+            return Color.no_color
+        elif role == DataRole.FOREGROUND:
+            data = data['close'][index.row]
+            if data > adapter.thresh:
+                return Color.no_color
+            return adapter.text_color
 
     def header_data(self, section, orientation, role):
+        data = self.adapter.data
         if orientation == Orientation.VERTICAL:
-            ts = self._data['dates'][section]
+            ts = data['dates'][section]
             return str(datetime.date.fromtimestamp(ts))
         else:
-            return self.categories[section].capitalize()
+            return self.adapter.grid_columns[section].capitalize()
 
 
 if __name__ == '__main__':
     model = HistoricData()
     plot_driver = PlotDriver(model)
-    data_table = StockDataTable(model)
+    adapter = GridDataAdapter(model=model)
+    data_table = StockDataTable(adapter)
     factory = EnamlFactory('./stock_view.enaml')
-    view = factory(model=model, plot=plot_driver, stock_data_table=data_table)
+    view = factory(model=model, plot=plot_driver, adapter=adapter,
+                   stock_data_table=data_table)
     view.show()
     

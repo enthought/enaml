@@ -171,6 +171,7 @@ def wx_toolkit():
         'Spacer': ctors.WXSpacerCtor,
         'EnableCanvas': ctors.WXEnableCanvasCtor,
         'TableView': ctors.WXTableViewCtor,
+        'CheckGroup': ctors.WXCheckGroupCtor,
     }
 
     utils = {
