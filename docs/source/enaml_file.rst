@@ -9,7 +9,7 @@ Binding Operators
   default value, but the value can be changed later through Python code or
   TML expression execution.
 
-`~~`
+`:=`
   *Delegation*. RHS must be a simple attribute expression, like a.b or
   a.b.c and so on. Non-attribute expressions here are a syntax error. The
   value of the view property and value of the attribute are synced, but
