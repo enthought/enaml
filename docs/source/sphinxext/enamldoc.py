@@ -17,15 +17,14 @@ from docscrape import Reader
 # 1. it does not change the order the sections
 # 2. allows notes and other directives to exist between the sections
 
-# TODO:
-# Convert into a proper extention
-# Add more sections
-# Remove dependancy to docscarpe
-# allow directives to exist inside sections
-# Add error messages when formating is wrong
-# Make variable names consistent
-# Make the parameter parsing more robust
-# Clean up code
+# TODO: Convert into a proper extention
+# TODO: Add more sections
+# TODO: Remove dependancy to docscarpe
+# TODO: allow directives to exist inside sections
+# TODO: Add error messages when formating is wrong
+# TODO: Make variable names consistent
+# TODO: Make the parameter parsing more robust
+# TODO: Clean up code
 
 
 class BaseDocString(object):
