@@ -43,8 +43,9 @@ class WXSlider(WXControl):
         to WXSlider.
 
         """
-        self.widget = wx.Slider(parent=self.parent_widget())
-
+        self.widget = widget = wx.Slider(parent=self.parent_widget())
+        widget.SetDoubleBuffered(True)
+        
     def initialize_widget(self):
         """ Initializes the attributes of the widget.
 

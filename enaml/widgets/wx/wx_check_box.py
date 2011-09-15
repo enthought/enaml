@@ -26,7 +26,8 @@ class WXCheckBox(WXToggleControl):
         """ Creates and the wx.CheckBox.
 
         """
-        self.widget = wx.CheckBox(self.parent_widget())
+        self.widget = widget = wx.CheckBox(self.parent_widget())
+        widget.SetDoubleBuffered(True)
         
     #---------------------------------------------------------------------------
     # Implementation

@@ -388,8 +388,9 @@ class WXSpinBox(WXControl):
         """ Creates the underlying custom spin control.
 
         """
-        self.widget = CustomSpinCtrl(self.parent_widget())
-
+        self.widget = widget = CustomSpinCtrl(self.parent_widget())
+        widget.SetDoubleBuffered(True)
+        
     def initialize_widget(self):
         """ Intializes the widget with the attributes of this instance.
 

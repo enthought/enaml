@@ -47,7 +47,9 @@ class WXHtml(WXControl):
         """
         # XXX GetBestSize on the HtmlWindow returns (0, 0) (wtf?)
         # So for now, we just set the min size to something sensible.
-        self.widget = wx.html.HtmlWindow(self.parent_widget(), size=(300, 200))
+        self.widget = widget = wx.html.HtmlWindow(self.parent_widget(), 
+                                                  size=(300, 200))
+        widget.SetDoubleBuffered(True)
 
     def initialize_widget(self):
         """ Initializes the attributes of the control.

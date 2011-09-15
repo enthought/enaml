@@ -52,7 +52,8 @@ class WXTableView(WXControl):
     # ITableViewImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        self.widget = wx.grid.Grid(self.parent_widget())
+        self.widget = widget = wx.grid.Grid(self.parent_widget())
+        widget.SetDoubleBuffered(True)
 
     def initialize_widget(self):
         model_wrapper = AbstractItemModelWrapper(self.parent.item_model)

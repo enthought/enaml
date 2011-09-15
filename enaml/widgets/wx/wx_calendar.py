@@ -26,8 +26,9 @@ class WXCalendar(WXControl):
         """ Creates the wx.calendar.CalendarCtrl.
 
         """
-        self.widget = wx.calendar.CalendarCtrl(self.parent_widget())
-
+        self.widget = widget = wx.calendar.CalendarCtrl(self.parent_widget())
+        widget.SetDoubleBuffered(True)
+        
     def initialize_widget(self):
         """ Initializes the attributes of the control.
 
