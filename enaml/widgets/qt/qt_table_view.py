@@ -52,7 +52,8 @@ class AbstractItemModelTable(QtCore.QAbstractTableModel):
         
         # adapt Enaml data values to Qt data values where appropriate
         if role == QtCore.Qt.BackgroundRole or role == QtCore.Qt.ForegroundRole:
-            data = QColor_form_color(data)
+            if data is not None:
+                data = QColor_form_color(data)
         return data
 
     def headerData(self, section, orientation, role):
