@@ -207,6 +207,7 @@ def qt_toolkit():
         'SpinBox': ctors.QtSpinBoxCtor,
         'EnableCanvas': ctors.QtEnableCanvasCtor,
         'TableView': ctors.QtTableViewCtor,
+        'CheckGroup': ctors.QtCheckGroupCtor,
     }
     
     utils = {}

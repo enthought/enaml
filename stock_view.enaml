@@ -37,10 +37,10 @@ Window:
                     minimum_date << model.date_range[0]
                     maximum_date << model.date_range[1]
                     date := model.end_date
-                #CheckGroup:
-                #    rows = 1
-                #    items := adapter.available_columns
-                #    selected := adapter.grid_columns
+                CheckGroup:
+                    rows = 1
+                    items := adapter.available_columns
+                    selected := adapter.grid_columns
                 TableView:
                     style.min_width = 50
                     item_model = stock_data_table

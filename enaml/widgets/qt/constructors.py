@@ -349,3 +349,14 @@ class QtTableViewCtor(QtBaseComponentCtor):
         from .qt_table_view import QtTableView
         table_view = TableView(toolkit_impl=QtTableView())
         return table_view
+
+
+class QtCheckGroupCtor(QtBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..check_group import CheckGroup
+        from .qt_check_group import QtCheckGroup
+        check_group = CheckGroup(toolkit_impl=QtCheckGroup())
+        return check_group
