@@ -31,7 +31,7 @@ class WXWindow(WXComponent):
 
         """
         self.widget = wx.Frame(self.parent_widget())
-    
+
     def initialize_widget(self):
         """ Intializes the attributes on the wx.Frame.
 
@@ -49,7 +49,21 @@ class WXWindow(WXComponent):
         """ Initializes the style for the window.
 
         """
-        pass
+        # XXX this is a hack!
+        style = self.parent.style
+        width = style.get_property('min_width')
+        height = style.get_property('min_height')
+        if isinstance(width, int):
+            if width < 0:
+                width = 800
+        else:
+            width = 800
+        if isinstance(height, int):
+            if height < 0:
+                height = 600
+        else:
+            height = 600
+        self.widget.SetSize((width, height))
         
     def layout_child_widgets(self):
         """ Arranges the children of the frame (typically only one) in

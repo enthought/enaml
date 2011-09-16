@@ -28,7 +28,7 @@ class WXCalendar(WXControl):
         """
         self.widget = widget = wx.calendar.CalendarCtrl(self.parent_widget())
         widget.SetDoubleBuffered(True)
-        
+    
     def initialize_widget(self):
         """ Initializes the attributes of the control.
 
@@ -42,6 +42,11 @@ class WXCalendar(WXControl):
         if max_date is not None:
             self.set_maximum_date(max_date)
         self.bind()
+
+    def create_style_handler(self):
+        # XXX Calendar doesn't handle null color background properly
+        # so for now we just don't let the parent class set the color.
+        pass
 
     def initialize_style(self):
         # XXX Calendar doesn't handle null color background properly

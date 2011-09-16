@@ -27,15 +27,14 @@ Window:
             HGroup:
                 Label:
                     text = 'Title:'
-                    style.background_color << 'red' if le.text == 'foo' else 'green'
-                    #style.padding = 20
-                LineEdit le:
-                    text := model.window_title
+                    style.background_color << 'red' if fld.value == 'foo' else 'green'
+                Field fld:
+                    value := model.window_title
             HGroup:
                 Label:
                     text = 'Message:'
-                LineEdit:
-                    text := model.message
+                Field:
+                    value := model.message
             HGroup:
                 ComboBox base:
                     value = 10
@@ -47,14 +46,14 @@ Window:
                     from_string << lambda text: int(text, base.value)
             HGroup:
                 Slider sl:
-                    to_slider = lambda value: (value/float(M.text))
-                    from_slider = lambda pos: int(pos*float(M.text))
+                    to_slider = lambda value: (value/float(M.value))
+                    from_slider = lambda pos: int(pos*float(M.value))
                     value := sb.value
                     value >> print(self.value)
                     orientation = Orientation.HORIZONTAL
                     style.background_color << 'pink' if self.error else 'nocolor'
-                LineEdit M:
-                    text = '255'
+                Field M:
+                    value = '255'
 
             TraitsUIItem:
                 model = model
