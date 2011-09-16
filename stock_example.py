@@ -152,11 +152,12 @@ class StockDataTable(AbstractTableModel):
 
     def header_data(self, section, orientation, role):
         data = self.adapter.data
-        if orientation == Orientation.VERTICAL:
-            ts = data['dates'][section]
-            return str(datetime.date.fromtimestamp(ts))
-        else:
-            return self.adapter.grid_columns[section].capitalize()
+        if role == DataRole.DISPLAY:
+            if orientation == Orientation.VERTICAL:
+                ts = data['dates'][section]
+                return str(datetime.date.fromtimestamp(ts))
+            else:
+                return self.adapter.grid_columns[section].capitalize()
 
 
 if __name__ == '__main__':
