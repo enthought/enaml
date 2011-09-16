@@ -53,10 +53,12 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
         attr = wx.grid.GridCellAttr()
 
         bgcolor = model.data(index, DataRole.BACKGROUND)
-        attr.SetBackgroundColour(wx_color_from_color(bgcolor))
+        if bgcolor:
+            attr.SetBackgroundColour(wx_color_from_color(bgcolor))
 
         fgcolor = model.data(index, DataRole.FOREGROUND)
-        attr.SetTextColour(wx_color_from_color(fgcolor))
+        if fgcolor:
+            attr.SetTextColour(wx_color_from_color(fgcolor))
 
         return attr
 
