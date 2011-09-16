@@ -90,7 +90,6 @@ class QtSlider(QtControl):
             A function that takes one argument to convert from a Python
             value to the appropriate slider position.
         """
-        print 'here'
         self.set_position()
 
     def parent_value_changed(self, value):
@@ -245,7 +244,6 @@ class QtSlider(QtControl):
         parent = self.parent
         try:
             position = parent.to_slider(parent.value)
-            print 'position->', position
             if not (isinstance(position, float) and 0.0 <= position <= 1.0):
                 raise ValueError('to_slider() must return a float between 0.0 and 1.0, but instead returned %s'
                         % repr(position))
