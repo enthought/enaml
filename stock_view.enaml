@@ -3,8 +3,6 @@
 Window:
     title << ("Schmixie PlotTool 0.1dev - %s - %s - %s" % 
               (model.symbol, model.start_date, model.end_date))
-    style.min_width = 400
-    style.min_height = 400
     Panel:
         HGroup:
             style.stretch = 1

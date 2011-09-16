@@ -66,7 +66,7 @@ class WXHtml(WXControl):
         style = self.parent.style
         bgcolor = style.get_property('background_color')
         style_handler.style_background_color(bgcolor)
-        style_handler.style_node = style
+        style_handler.node = style
         self.style_handler = style_handler
     
     def parent_source_changed(self, source):
