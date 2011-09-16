@@ -196,7 +196,6 @@ def qt_toolkit():
         'TabGroup': ctors.QtTabGroupCtor,
         'Field': ctors.QtFieldCtor,
         'Label': ctors.QtLabelCtor,
-        'LineEdit': ctors.QtLineEditCtor,
         'TraitsUIItem': ctors.QtTraitsUIItemCtor,
         'Calendar': ctors.QtCalendarCtor,
         'CheckBox': ctors.QtCheckBoxCtor,

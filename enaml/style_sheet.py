@@ -538,7 +538,7 @@ class StyleNode(HasTraits):
         return res
 
 
-class StyleHandler(HasTraits):
+class StyleHandler(HasStrictTraits):
     """ A handler class that reacts to changes on a StyleNode.
 
     This StyleHandler is meant to be used in conjuction with subclasses
@@ -623,8 +623,10 @@ class StyleHandler(HasTraits):
             if name.startswith('style_'):
                 style_handlers[name] = getattr(self, name)
         
+        node = self.node
+        
         for tag, handler in style_handlers.iteritems():
-            value = self.style_node.get_property(tag)
+            value = node.get_property(tag)
             handler(value)
         
         for tag, args in self.tags.items():
@@ -632,7 +634,7 @@ class StyleHandler(HasTraits):
                 continue
             if not isinstance(args, (list, tuple)):
                 args = (args,)
-            value = self.style_node.get_property(tag)
+            value = node.get_property(tag)
             self.set_style_value(value, tag, *args)
         
     def _update_tag(self, tag, null=object()):

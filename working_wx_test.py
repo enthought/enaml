@@ -42,7 +42,7 @@ class Model(HasTraits):
 class TableModel(AbstractTableModel):
         
     def column_count(self, parent=None):
-        return 10
+        return 1500000
     
     def row_count(self, parent=None):
         return 5000000

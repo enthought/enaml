@@ -274,17 +274,6 @@ class QtLabelCtor(QtBaseComponentCtor):
         return label
 
 
-class QtLineEditCtor(QtBaseComponentCtor):
-
-    implements(IToolkitConstructor)
-
-    def component(self):
-        from ..line_edit import LineEdit
-        from .qt_line_edit import QtLineEdit
-        line_edit = LineEdit(toolkit_impl=QtLineEdit())
-        return line_edit
-
-
 class QtPushButtonCtor(QtBaseComponentCtor):
 
     implements(IToolkitConstructor)

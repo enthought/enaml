@@ -24,7 +24,7 @@ class QtControl(QtComponent):
 
         """
         style_handler = QtStyleHandler(widget=self.widget, tags=self.tags)
-        style_handler.style_node = self.parent.style
+        style_handler.node = self.parent.style
         self.style_handler = style_handler
 
     def initialize_style(self):

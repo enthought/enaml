@@ -121,19 +121,19 @@ Window:
                             
                     # The wx layout behaves badly if the slider 
                     # orientation is vertical in a vgroup layout
-                    # HGroup:
-                    #     Label:
-                    #         text = "A Slider!"
-                    #         style.cls = "no_stretch"
-                    #     Slider:
-                    #         value = 10
-                    #         value >> print(self.value)
-                    #         to_slider = lambda val: math.log10(val)
-                    #         from_slider = lambda val: 10 ** val
-                    #         tick_interval = 0.5
-                    #         orientation << (Orientation.VERTICAL 
-                    #                         if wrap_box.checked else 
-                    #                         Orientation.HORIZONTAL)
+                    HGroup:
+                        Label:
+                            text = "A Slider!"
+                            style.cls = "no_stretch"
+                        Slider:
+                            value = 10
+                            value >> print(self.value)
+                            to_slider = lambda val: math.log10(val)
+                            from_slider = lambda val: 10 ** val
+                            tick_interval = 0.5
+                            orientation << (Orientation.VERTICAL 
+                                            if wrap_box.checked else 
+                                            Orientation.HORIZONTAL)
 
                     Field mf:
                         to_string = str
