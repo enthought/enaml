@@ -198,6 +198,15 @@ def qt_color_from_color(color):
         res = 'rgb(%s, %s, %s, %s)' % (color.r, color.g, color.b, color.a)
     return res
 
+def QColor_form_color(color):
+    """ Converts an enaml.color.Color into a qt stylesheet color.
+
+    """
+    if color == Color.no_color:
+        res = None
+    else:
+        res = QtGui.QColor(color.r, color.g, color.b, color.a)
+    return res
 
 def qt_color(color_style):
     color = color_from_color_style(color_style)

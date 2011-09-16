@@ -208,6 +208,7 @@ def qt_toolkit():
         'Slider': ctors.QtSliderCtor,
         'SpinBox': ctors.QtSpinBoxCtor,
         'EnableCanvas': ctors.QtEnableCanvasCtor,
+        'TableView': ctors.QtTableViewCtor,
     }
     
     utils = {}

@@ -349,3 +349,14 @@ class QtEnableCanvasCtor(QtBaseComponentCtor):
         from .qt_enable_canvas import QtEnableCanvas
         canvas = EnableCanvas(toolkit_impl=QtEnableCanvas())
         return canvas
+
+
+class QtTableViewCtor(QtBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..table_view import TableView
+        from .qt_table_view import QtTableView
+        table_view = TableView(toolkit_impl=QtTableView())
+        return table_view
