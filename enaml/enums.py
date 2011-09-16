@@ -207,8 +207,8 @@ class Sorted(Enum):
 
 class Validity(Enum):
     
-    INVALID = Constant()
+    INVALID = 0x0
     
-    INTERMEDIATE = Constant()
+    INTERMEDIATE = 0x1
     
-    ACCEPTABLE = Constant()
+    ACCEPTABLE = 0x2

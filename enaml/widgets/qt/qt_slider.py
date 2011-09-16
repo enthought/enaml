@@ -22,8 +22,7 @@ TICK_POS_MAP = {TickPosition.DEFAULT: QtGui.QSlider.NoTicks,
                 TickPosition.NO_TICKS: QtGui.QSlider.NoTicks}
 
 # A map from Enaml enums to Qt constants for horizontal or vertical orientation.
-ORIENTATION_MAP = {Orientation.DEFAULT: QtCore.Qt.Vertical,
-                   Orientation.HORIZONTAL: QtCore.Qt.Horizontal,
+ORIENTATION_MAP = {Orientation.HORIZONTAL: QtCore.Qt.Horizontal,
                    Orientation.VERTICAL: QtCore.Qt.Vertical}
 
 
