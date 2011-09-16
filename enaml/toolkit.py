@@ -155,7 +155,6 @@ def wx_toolkit():
         'Html': ctors.WXHtmlCtor,
         'Image': ctors.WXImageCtor,
         'Label': ctors.WXLabelCtor,
-        'LineEdit': ctors.WXLineEditCtor,
         'PushButton': ctors.WXPushButtonCtor,
         'RadioButton': ctors.WXRadioButtonCtor,
         'Slider': ctors.WXSliderCtor,

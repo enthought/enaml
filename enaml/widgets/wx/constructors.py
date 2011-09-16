@@ -274,17 +274,6 @@ class WXLabelCtor(WXBaseComponentCtor):
         return label
 
 
-class WXLineEditCtor(WXBaseComponentCtor):
-
-    implements(IToolkitConstructor)
-
-    def component(self):
-        from ..line_edit import LineEdit
-        from .wx_line_edit import WXLineEdit
-        line_edit = LineEdit(toolkit_impl=WXLineEdit())
-        return line_edit
-
-
 class WXPushButtonCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)

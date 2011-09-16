@@ -11,6 +11,7 @@ from enaml.factory import EnamlFactory
 from enaml.color import Color
 from enaml.style_sheet import style
 from enaml.item_models.abstract_item_model import AbstractTableModel
+from enaml.enums import DataRole
 
 
 colors = Color.color_map.keys()
@@ -44,10 +45,11 @@ class TableModel(AbstractTableModel):
         return 10
     
     def row_count(self, parent=None):
-        return 1000
+        return 5000000
 
     def data(self, index, role):
-        return '(%s, %s)' % (index.row, index.column)
+        if role == DataRole.DISPLAY:
+            return index.row + index.column
 
 
 fact = EnamlFactory('./working_wx_test.enaml')
