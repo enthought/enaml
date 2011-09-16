@@ -2,92 +2,7 @@ from functools import total_ordering
 
 from traits.api import Event, HasTraits, ReadOnly
 
-
-#-------------------------------------------------------------------------------
-# Role Flags
-#-------------------------------------------------------------------------------
-DISPLAY_ROLE = 0
-
-DECORATION_ROLE = 1
-
-EDIT_ROLE = 2
-
-TOOL_TIP_ROLE = 3
-
-STATUS_TIP_ROLE = 4
-
-WHATS_THIS_ROLE = 5
-
-FONT_ROLE = 6
-
-TEXT_ALIGNMENT_ROLE = 7
-
-BACKGROUND_ROLE = 8
-
-FOREGROUND_ROLE = 9
-
-CHECK_STATE_ROLE = 10
-
-SIZE_HINT_ROLE = 11
-
-USER_ROLE = 12
-
-# XXX - HACK!
-ALL_ROLES = tuple(range(12))
-
-
-#-------------------------------------------------------------------------------
-# Item Flags
-#-------------------------------------------------------------------------------
-NO_ITEM_FLAGS = 0
-
-ITEM_IS_SELECTABLE = 1
-
-ITEM_IS_EDITABLE = 2
-
-ITEM_IS_DRAG_ENABLED = 4
-
-ITEM_IS_DROP_ENABLED = 8
-
-ITEM_IS_USER_CHECKABLE = 16
-
-ITEM_IS_ENABLED = 32
-
-ITEM_IS_TRISTATE = 64
-
-
-#-------------------------------------------------------------------------------
-# Match Flags
-#-------------------------------------------------------------------------------
-MATCH_EXACTLY = 0
-
-MATCH_FIXED_STRING = 8
-
-MATCH_CONTAINS = 1
-
-MATCH_STARTS_WITH = 2
-
-MATCH_ENDS_WITH = 3
-
-MATCH_CASE_SENSITIVE = 16
-
-MATCH_REG_EXP = 4
-
-MATCH_WILD_CARD = 5
-
-MATCH_WRAP = 32
-
-MATCH_RECURSIVE = 64
-
-DEFAULT_MATCH = MATCH_STARTS_WITH | MATCH_WRAP
-
-
-#-------------------------------------------------------------------------------
-# Sorting Flags
-#-------------------------------------------------------------------------------
-ASCENDING_ORDER = 0
-
-DESCENDING_ORDER = 1
+from ..enums import DataRole, ItemFlags, Match, Sorted
 
 
 #-------------------------------------------------------------------------------
@@ -146,7 +61,7 @@ class ModelIndex(object):
     def child(self, row, column):
         return self.model.index(row, column, self)
 
-    def data(self, role=DISPLAY_ROLE):
+    def data(self, role=DataRole.DISPLAY):
         return self.model.data(self, role)
 
     def flags(self):
@@ -297,25 +212,26 @@ class AbstractItemModel(HasTraits):
     def flags(self, index):
         if not index.is_valid():
             return 0
-        return ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
+        return ItemFlags.IS_SELECTABLE | ItemFlags.IS_ENABLED
 
-    def header_data(self, section, orientation, role=DISPLAY_ROLE):
-        if role == DISPLAY_ROLE:
+    def header_data(self, section, orientation, role=DataRole.DISPLAY):
+        if role == DataRole.DISPLAY:
             return section + 1
 
     def item_data(self, index):
         res = {}
-        for role in ALL_ROLES:
+        for role in DataRole.ALL:
             res[role] = self.data(index, role)
         return res
 
-    def match(self, start, role, value, hits=1, flags=DEFAULT_MATCH):
+    def match(self, start, role, value, hits=1, 
+              flags=Match.STARTS_WITH | Match.WRAP):
         pass
 
-    def set_data(self, index, value, role=EDIT_ROLE):
+    def set_data(self, index, value, role=DataRole.EDIT):
         return False
     
-    def set_header_data(self, section, orientation, value, role=EDIT_ROLE):
+    def set_header_data(self, section, orientation, value, role=DataRole.EDIT):
         return False
     
     def set_item_data(self, index, roles):
@@ -327,7 +243,7 @@ class AbstractItemModel(HasTraits):
     def sibling(self, row, column, index):
         return self.index(row, column, self.parent(index))
 
-    def sort(self, column, order=ASCENDING_ORDER):
+    def sort(self, column, order=Sorted.ASCENDING):
         pass
 
     #---------------------------------------------------------------------------
@@ -345,7 +261,7 @@ class AbstractItemModel(HasTraits):
     def parent(self, index):
         raise NotImplementedError
     
-    def data(self, index, role=DISPLAY_ROLE):
+    def data(self, index, role=DataRole.DISPLAY):
         raise NotImplementedError
 
 
@@ -403,44 +319,44 @@ class DispatchMixin(HasTraits):
 
     def __data_dispatch_table_default(self):
         table = {
-            DISPLAY_ROLE: self.data_display,
-            DECORATION_ROLE: self.data_decoration,
-            EDIT_ROLE: self.data_edit,
-            TOOL_TIP_ROLE: self.data_tool_tip,
-            STATUS_TIP_ROLE: self.data_status_tip,
-            WHATS_THIS_ROLE: self.data_whats_this,
-            FONT_ROLE: self.data_font,
-            TEXT_ALIGNMENT_ROLE: self.data_text_alignment,
-            BACKGROUND_ROLE: self.data_background,
-            FOREGROUND_ROLE: self.data_foreground,
-            CHECK_STATE_ROLE: self.data_check_state,
-            SIZE_HINT_ROLE: self.data_size_hint,
-            USER_ROLE: self.data_user,
+            DataRole.DISPLAY: self.data_display,
+            DataRole.DECORATION: self.data_decoration,
+            DataRole.EDIT: self.data_edit,
+            DataRole.TOOL_TIP: self.data_tool_tip,
+            DataRole.STATUS_TIP: self.data_status_tip,
+            DataRole.WHATS_THIS: self.data_whats_this,
+            DataRole.FONT: self.data_font,
+            DataRole.TEXT_ALIGNMENT: self.data_text_alignment,
+            DataRole.BACKGROUND: self.data_background,
+            DataRole.FOREGROUND: self.data_foreground,
+            DataRole.CHECK_STATE: self.data_check_state,
+            DataRole.SIZE_HINT: self.data_size_hint,
+            DataRole.USER: self.data_user,
         }
         return table
 
     def __header_dispatch_table_default(self):
         table = {
-            DISPLAY_ROLE: self.header_display,
-            DECORATION_ROLE: self.header_decoration,
-            EDIT_ROLE: self.header_edit,
-            TOOL_TIP_ROLE: self.header_tool_tip,
-            STATUS_TIP_ROLE: self.header_status_tip,
-            WHATS_THIS_ROLE: self.header_whats_this,
-            FONT_ROLE: self.header_font,
-            TEXT_ALIGNMENT_ROLE: self.header_text_alignment,
-            BACKGROUND_ROLE: self.header_background,
-            FOREGROUND_ROLE: self.header_foreground,
-            CHECK_STATE_ROLE: self.header_check_state,
-            SIZE_HINT_ROLE: self.header_size_hint,
-            USER_ROLE: self.header_user,
+            DataRole.DISPLAY: self.header_display,
+            DataRole.DECORATION: self.header_decoration,
+            DataRole.EDIT: self.header_edit,
+            DataRole.TOOL_TIP: self.header_tool_tip,
+            DataRole.STATUS_TIP: self.header_status_tip,
+            DataRole.WHATS_THIS: self.header_whats_this,
+            DataRole.FONT: self.header_font,
+            DataRole.TEXT_ALIGNMENT: self.header_text_alignment,
+            DataRole.BACKGROUND: self.header_background,
+            DataRole.FOREGROUND: self.header_foreground,
+            DataRole.CHECK_STATE: self.header_check_state,
+            DataRole.SIZE_HINT: self.header_size_hint,
+            DataRole.USER: self.header_user,
         }
         return table
 
     #---------------------------------------------------------------------------
     # Data dispatching
     #---------------------------------------------------------------------------
-    def data(self, index, role=DISPLAY_ROLE):
+    def data(self, index, role=DataRole.DISPLAY):
         return self._data_dispatch_table[role](index)
 
     def data_display(self, index):
@@ -485,7 +401,7 @@ class DispatchMixin(HasTraits):
     #---------------------------------------------------------------------------
     # Header dispatching
     #---------------------------------------------------------------------------
-    def header_data(self, section, orientation, role=DISPLAY_ROLE):
+    def header_data(self, section, orientation, role=DataRole.DISPLAY):
         return self._header_dispatch_table(section, orientation)
 
     def header_display(self, section, orientation):

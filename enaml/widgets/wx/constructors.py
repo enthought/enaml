@@ -355,7 +355,6 @@ class WXTableViewCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
-    
     def component(self):
         from ..table_view import TableView
         from .wx_table_view import WXTableView

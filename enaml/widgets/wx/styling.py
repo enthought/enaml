@@ -23,7 +23,8 @@ WX_STYLE_SHEET = StyleSheet(
         size_policy = "minimum",
     ),
 
-    style("SpinBox", "ComboBox", "Slider", "Panel", "LineEdit", "Field", "Label",
+    style("SpinBox", "ComboBox", "Slider", "Panel", "LineEdit", "Field", 
+        "Label", "TableView",
         stretch = 1,
     ),
 

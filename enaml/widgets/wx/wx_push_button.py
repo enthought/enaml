@@ -26,7 +26,8 @@ class WXPushButton(WXControl):
         """ Creates the underlying wx.Button control.
 
         """
-        self.widget = wx.Button(self.parent_widget())
+        self.widget = widget = wx.Button(self.parent_widget())
+        widget.SetDoubleBuffered(True)
         
     def initialize_widget(self):
         """ Intializes the widget with the attributes of this instance.

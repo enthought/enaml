@@ -12,9 +12,12 @@ Window:
                     Label my_label:
                         text = "Symbol:"
                     ComboBox cmbx:
+                        style.cls = "error_colors"
+                        style.background_color = "yellow"
                         items = model.available_symbols
                         value := model.symbol
                         selected >> print('New Quote Selected: %s' % self.value)
+                        selected >> model.update_bgcolor()
                 HGroup:
                     Label:
                         text = "Days History:"
@@ -38,9 +41,9 @@ Window:
                     minimum_date << model.date_range[0]
                     maximum_date << model.date_range[1]
                     date := model.end_date
-                #Html:
-                #    style.min_width = 50
-                #    source << model.Html()
+                TableView:
+                    style.min_width = 50
+                    item_model = stock_data_table
             VGroup:
                 style.stretch = 1
                 EnableCanvas:

@@ -26,9 +26,10 @@ class WXLineEdit(WXControl):
         """ Creates the underlying wx.TextCtrl.
 
         """
-        self.widget = wx.TextCtrl(parent=self.parent_widget(),
-                                  style=wx.TE_PROCESS_ENTER)
-
+        self.widget = widget = wx.TextCtrl(parent=self.parent_widget(),
+                                           style=wx.TE_PROCESS_ENTER)
+        widget.SetDoubleBuffered(True)
+        
     def initialize_widget(self):
         """ Initializes the attributes of the wx.TextCtrl.
 

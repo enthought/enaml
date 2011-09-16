@@ -3,6 +3,9 @@ import datetime
 from traits.api import HasTraits, List, Str, Date, Enum, Property, Array, Int, Tuple, on_trait_change
 
 from enaml.factory import EnamlFactory
+from enaml.item_models.abstract_item_model import AbstractTableModel
+from enaml.style_sheet import style
+from enaml.enums import Orientation
 
 import stock_data
 from plot_driver import PlotDriver
@@ -62,11 +65,54 @@ class HistoricData(HasTraits):
     def _refresh_data(self):
         self.data = self._compute_data()
 
+    def update_bgcolor(self):
+        global view
+        ns = style('.error_colors', background_color='blue')
+        view.style_sheet.update(ns)
+
+
+class StockDataTable(AbstractTableModel):
+
+    categories = ['open', 'high', 'low', 'close', 'volume']
+
+    def __init__(self, model):
+        super(StockDataTable, self).__init__()
+        self.model = model
+        self._data = model.data
+        self.model.on_trait_change(self.refresh_table, 'data')
+
+    def refresh_table(self, data):
+        self._data = data
+        self.notify_data_changed(-1, -1)
+    
+    def column_count(self, parent=None):
+        return len(self.categories)
+
+    def row_count(self, parent=None):
+        return len(self._data)
+    
+    def data(self, index, role):
+        category = self.categories[index.column]
+        data = self._data[category][index.row]
+        if data > 1e4:
+            res = '%.2E' % data
+        else:
+            res = '%.2f' % data
+        return res
+
+    def header_data(self, section, orientation, role):
+        if orientation == Orientation.VERTICAL:
+            ts = self._data['dates'][section]
+            return str(datetime.date.fromtimestamp(ts))
+        else:
+            return self.categories[section].capitalize()
+
 
 if __name__ == '__main__':
     model = HistoricData()
     plot_driver = PlotDriver(model)
+    data_table = StockDataTable(model)
     factory = EnamlFactory('./stock_view.enaml')
-    view = factory(model=model, plot=plot_driver)
+    view = factory(model=model, plot=plot_driver, stock_data_table=data_table)
     view.show()
-
+    

@@ -1,214 +1,209 @@
-from .util.enum import Constant, Enum
+from .util.enum import Enum
 
 
 class Align(Enum):
    
-    DEFAULT = Constant()
+    DEFAULT = 0x0
 
-    LEFT = Constant()
+    LEFT = 0x1
     
-    RIGHT = Constant()
+    RIGHT = 0x2
     
-    TOP = Constant()
+    TOP = 0x4
     
-    BOTTOM = Constant()
+    BOTTOM = 0x8
     
-    CENTER = Constant()
+    CENTER = 0x10
 
-    JUSTIFY = Constant()
-
-
-class Border(Enum):
-
-    DEFAULT = Constant()
-
-    NO_BORDER = Constant()
-
-    DOTTED = Constant()
-
-    DASHED = Constant()
-
-    SOLID = Constant()
-
-    RAISED = Constant()
-
-    SUNKEN = Constant()
+    JUSTIFY = 0x20
 
 
 class Buttons(Enum):
 
-    DEFAULT = Constant()
+    NO_BUTTONS = 0x0
 
-    OK = Constant()
+    OK = 0x1
     
-    OPEN = Constant()
+    OPEN = 0x2
     
-    SAVE = Constant()
+    SAVE = 0x4
     
-    CANCEL = Constant()
+    CANCEL = 0x8
     
-    CLOSE = Constant()
+    CLOSE = 0x10
     
-    DISCARD = Constant()
+    DISCARD = 0x20
     
-    APPLY = Constant()
+    APPLY = 0x40
     
-    RESET = Constant()
+    RESET = 0x80
     
-    RESTORE_DEFAULTS = Constant()
+    RESTORE_DEFAULTS = 0x100
     
-    HELP = Constant()
+    HELP = 0x200
     
-    SAVE_ALL = Constant()
+    SAVE_ALL = 0x400
     
-    YES = Constant()
+    YES = 0x800
     
-    YES_TO_ALL = Constant()
+    YES_TO_ALL = 0x1000
     
-    NO = Constant()
+    NO = 0x2000
     
-    NO_TO_ALL = Constant()
+    NO_TO_ALL = 0x4000
     
-    ABORT = Constant()
+    ABORT = 0x8000
     
-    RETRY = Constant()
+    RETRY = 0x10000
     
-    IGNORE = Constant()
+    IGNORE = 0x20000
     
-    OK_CANCEL = Constant()
+    OK_CANCEL = OK | CANCEL
     
-    YES_NO = Constant()
+    YES_NO = YES | NO
 
-
-class Color(Enum):
-    
-    DEFAULT = Constant((-1.0, -1.0, -1.0, -1.0))
-
-    WHITE = Constant((1.0, 1.0, 1.0, 1.0))
-    
-    BLACK = Constant((0.0, 0.0, 0.0, 1.0))
-    
-    RED = Constant((1.0, 0.0, 0.0, 1.0))
-
-    DARK_RED = Constant((0.5, 0.0, 0.0, 1.0))
-
-    GREEN = Constant((0.0, 1.0, 0.0, 1.0))
-    
-    DARK_GREEN = Constant((0.0, 0.5, 0.0, 1.0))
-
-    BLUE = Constant((0.0, 0.0, 1.0, 1.0))
-    
-    DARK_BLUE = Constant((0.0, 0.0, 0.5, 1.0))
-
-    CYAN = Constant((0.0, 1.0, 1.0, 1.0))
-    
-    DARK_CYAN = Constant((0.0, 0.5, 0.5, 1.0))
-
-    MAGENTA = Constant((1.0, 0.0, 1.0, 1.0))
-
-    DARK_MAGENTA = Constant((0.5, 0.0, 0.5, 1.0))
-
-    YELLOW = Constant((1.0, 1.0, 0.0, 1.0))
-    
-    DARK_YELLOW = Constant((0.5, 0.5, 0.0, 1.0))
-
-    GRAY = Constant((0.627, 0.627, 0.643, 1.0))
-    
-    DARK_GRAY = Constant((0.5, 0.5, 0.5, 1.0))
-
-    LIGHT_GRAY = Constant((0.753, 0.753, 0.753, 1.0))
-
-    TRANSPARENT = Constant((0.0, 0.0, 0.0, 0.0))
-
-    ERROR = Constant((1.0, 0.75, 0.75, 1.0))
-        
 
 class DialogResult(Enum):
 
-    REJECTED = Constant()
+    REJECTED = 0
     
-    ACCEPTED = Constant()
+    ACCEPTED = 1
 
 
 class Direction(Enum):
     
-    LEFT_TO_RIGHT = Constant()
+    LEFT_TO_RIGHT = 0
 
-    RIGHT_TO_LEFT = Constant()
+    RIGHT_TO_LEFT = 1
 
-    TOP_TO_BOTTOM = Constant()
+    TOP_TO_BOTTOM = 2
 
-    BOTTOM_TO_TOP = Constant()
+    BOTTOM_TO_TOP = 3
 
 
 class Modality(Enum):
-    
-    DEFAULT = Constant()
 
-    NON_MODAL = Constant()
+    NON_MODAL = 0
 
-    WINDOW_MODAL = Constant()
+    WINDOW_MODAL = 1
 
-    APPLICATION_MODAL = Constant()
+    APPLICATION_MODAL = 2
 
 
 class Orientation(Enum):
 
-    DEFAULT = Constant()
-
-    HORIZONTAL = Constant()
+    HORIZONTAL = 0
     
-    VERTICAL = Constant()
-
-
-class SizePolicy(Enum):
-
-    DEFAULT = Constant()
-    
-    FIXED = Constant()
-
-    MINIMUM = Constant()
-
-    MAXIMUM = Constant()
-    
-    PREFERRED = Constant()
-
-    EXPANDING = Constant()
-
-    MINIMUM_EXPANDING = Constant()
-
-    IGNORED = Constant()
+    VERTICAL = 1
 
 
 class TabPosition(Enum):
 
-    DEFAULT = Constant()
+    LEFT = 0
 
-    LEFT = Constant()
+    RIGHT = 1
 
-    RIGHT = Constant()
+    TOP = 2
 
-    TOP = Constant()
-
-    BOTTOM = Constant()
+    BOTTOM = 3
 
 
 class TickPosition(Enum):
-    
-    DEFAULT = Constant()
 
-    LEFT = Constant()
+    LEFT = 0
 
-    RIGHT = Constant()
+    RIGHT = 1
 
-    TOP = Constant()
+    TOP = 2
 
-    BOTTOM = Constant()
+    BOTTOM = 3
 
-    BOTH = Constant()
+    BOTH = 4
 
-    NO_TICKS = Constant()
+    NO_TICKS = 5
 
+    DEFAULT = 6
+
+
+class DataRole(Enum):
+
+    DISPLAY = 0
+
+    DECORATION = 1
+
+    EDIT = 2
+
+    TOOL_TIP = 3
+
+    STATUS_TIP = 4
+
+    WHATS_THIS = 5
+
+    FONT = 6
+
+    TEXT_ALIGNMENT = 7
+
+    BACKGROUND = 8
+
+    FOREGROUND = 9
+
+    CHECK_STATE = 10
+
+    SIZE_HINT = 11
+
+    USER = 12
+
+    # XXX - HACK!
+    ALL = tuple(range(12))
+
+
+class ItemFlags(Enum):
+
+    NO_FLAGS = 0x0
+
+    IS_SELECTABLE = 0x1
+
+    IS_EDITABLE = 0x2
+
+    IS_DRAG_ENABLED = 0x4
+
+    IS_DROP_ENABLED = 0x8
+
+    IS_USER_CHECKABLE = 0x10
+
+    IS_ENABLED = 0x20
+
+    IS_TRISTATE = 0x40
+
+
+class Match(Enum):
+
+    EXACTLY = 0x0
+
+    CONTAINS = 0x1
+
+    STARTS_WITH = 0x2
+
+    ENDS_WITH = 0x4
+
+    REG_EXP = 0x8
+
+    WILD_CARD = 0x10
+
+    FIXED_STRING = 0x20
+
+    CASE_SENSITIVE = 0x40
+
+    WRAP = 0x80
+
+    RECURSIVE = 0x100
+
+
+class Sorted(Enum):
+
+    ASCENDING = 0
+
+    DESCENDING = 1
 
 class Validity(Enum):
     

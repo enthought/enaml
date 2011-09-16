@@ -112,8 +112,9 @@ class WXRadioButton(WXToggleControl):
         """ Creates the underlying custom wx.RadioButton control.
 
         """
-        self.widget = CustomRadioButton(self.parent_widget())
-
+        self.widget = widget = CustomRadioButton(self.parent_widget())
+        widget.SetDoubleBuffered(True)
+        
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
