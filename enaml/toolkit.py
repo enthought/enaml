@@ -162,6 +162,7 @@ def wx_toolkit():
         'SpinBox': ctors.WXSpinBoxCtor,
         'Spacer': ctors.WXSpacerCtor,
         'EnableCanvas': ctors.WXEnableCanvasCtor,
+        'TraitsUIItem': ctors.WXTraitsUIItemCtor,
         'TableView': ctors.WXTableViewCtor,
         'CheckGroup': ctors.WXCheckGroupCtor,
     }

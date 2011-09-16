@@ -351,6 +351,17 @@ class WXEnableCanvasCtor(WXBaseComponentCtor):
         return canvas
 
 
+class WXTraitsUIItemCtor(WXBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..traitsui_item import TraitsUIItem
+        from .wx_traitsui_item import WXTraitsUIItem
+        traits_ui_item = TraitsUIItem(toolkit_impl=WXTraitsUIItem())
+        return traits_ui_item
+
+
 class WXTableViewCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
