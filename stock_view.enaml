@@ -1,7 +1,8 @@
 
 
 Window:
-    title << "Schmixie PlotTool 0.1dev - %s - %s - %s" % (model.symbol, model.start_date, model.end_date)
+    title << ("Schmixie PlotTool 0.1dev - %s - %s - %s" % 
+              (model.symbol, model.start_date, model.end_date))
     style.min_width = 400
     style.min_height = 400
     Panel:
@@ -12,12 +13,9 @@ Window:
                     Label my_label:
                         text = "Symbol:"
                     ComboBox cmbx:
-                        style.cls = "error_colors"
-                        style.background_color = "yellow"
                         items = model.available_symbols
                         value := model.symbol
                         selected >> print('New Quote Selected: %s' % self.value)
-                        selected >> model.update_bgcolor()
                 HGroup:
                     Label:
                         text = "Days History:"
@@ -41,6 +39,10 @@ Window:
                     minimum_date << model.date_range[0]
                     maximum_date << model.date_range[1]
                     date := model.end_date
+                CheckGroup:
+                    rows = 1
+                    items := adapter.available_columns
+                    selected := adapter.grid_columns
                 TableView:
                     style.min_width = 50
                     item_model = stock_data_table

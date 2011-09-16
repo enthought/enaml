@@ -361,4 +361,15 @@ class WXTableViewCtor(WXBaseComponentCtor):
         table_view = TableView(toolkit_impl=WXTableView())
         return table_view
 
-        
+
+class WXCheckGroupCtor(WXBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..check_group import CheckGroup
+        from .wx_check_group import WXCheckGroup
+        check_group = CheckGroup(toolkit_impl=WXCheckGroup())
+        return check_group
+
+    
