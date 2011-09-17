@@ -23,11 +23,13 @@ if qt_api is None:
     try:
         import PySide
         qt_api = 'pyside'
+        os.environ['QT_API'] = qt_api
     except ImportError:
         try:
             prepare_pyqt4()
             import PyQt4
             qt_api = 'pyqt'
+            os.environ['QT_API'] = qt_api
         except ImportError:
             raise ImportError('Cannot import PySide or PyQt4')
 
