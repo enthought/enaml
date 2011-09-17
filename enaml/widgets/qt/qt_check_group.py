@@ -128,11 +128,11 @@ class QtCheckGroup(QtControl):
         columns = self.parent.columns
         boxes = self.boxes
 
-        nboxes = len(self.boxes)
+        nboxes = len(boxes)
         if rows > 0:
             columns = int(ceil(nboxes / float(rows)))
         elif columns > 0:
-            rows = int(ceil(nboxes / float(columns)))
+            pass
         else:
             columns = nboxes
              
