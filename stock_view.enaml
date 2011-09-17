@@ -1,7 +1,7 @@
 
 
 Window:
-    title << ("Schmixie PlotTool 0.1dev - %s - %s - %s" % 
+    title << ("Enaml Stock Viewer - %s - %s - %s" % 
               (model.symbol, model.start_date, model.end_date))
     Panel:
         HGroup:
