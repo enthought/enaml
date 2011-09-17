@@ -1,3 +1,5 @@
+import math
+
 import wx
 
 from traits.api import implements, List, Instance
@@ -13,6 +15,8 @@ class WXCheckGroup(WXControl):
     
     boxes = List(Instance(wx.CheckBox))
 
+    sizer = Instance(wx.GridSizer)
+
     #---------------------------------------------------------------------------
     # ICheckGroupImpl interface
     #---------------------------------------------------------------------------
@@ -20,35 +24,22 @@ class WXCheckGroup(WXControl):
         self.widget = wx.Panel(self.parent_widget())
         
     def initialize_widget(self):
-        sizer = wx.GridSizer(wx.HORIZONTAL)
-        rows = self.parent.rows
-        columns = self.parent.columns
-        if rows > 0:
-            sizer.SetRows(self.parent.rows)
-        if columns > 0:
-            sizer.SetCols(self.parent.columns)
-
-        boxes = []
-        box_parent = self.widget
-        for item in self.parent.items:
-            check_box = wx.CheckBox(box_parent)
-            check_box.Bind(wx.EVT_CHECKBOX, self.on_toggled)
-            boxes.append(check_box)
-            sizer.Add(check_box, 1)
-    
-        self.boxes = boxes
+        self.create_boxes()
         self.set_box_labels(self.parent.to_string)
         self.set_checked_state(self.parent.selected)
-        self.widget.SetSizer(sizer)
-        sizer.Layout()
+
+        # We want to layout the boxes after we set the checked state
+        # since the state change may trigger a layout change that
+        # would be otherwise lost.
+        self.layout_boxes()
+        self.widget.SetSizer(self.sizer)
 
     def parent_rows_changed(self, rows):
         """ Called when the number of rows changes. Will relayout the
         group according the to the number of rows.
 
         """
-        for box in self.boxes:
-            box.Destroy()
+        self.destroy_boxes()
         self.initialize_widget()
         self.widget.GetParent().Layout()
 
@@ -57,8 +48,7 @@ class WXCheckGroup(WXControl):
         group according to the number of columns
 
         """
-        for box in self.boxes:
-            box.Destroy()
+        self.destroy_boxes()
         self.initialize_widget()
         self.widget.GetParent().Layout()
         
@@ -67,8 +57,7 @@ class WXCheckGroup(WXControl):
         group according to the new items.
 
         """
-        for box in self.boxes:
-            box.Destroy()
+        self.destroy_boxes()
         self.initialize_widget()
         self.widget.GetParent().Layout()
 
@@ -90,6 +79,54 @@ class WXCheckGroup(WXControl):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
+    def create_boxes(self):
+        """ Creates the list of check boxes for the group.
+
+        """
+        boxes = []
+        box_parent = self.widget
+        for item in self.parent.items:
+            check_box = wx.CheckBox(box_parent)
+            check_box.Bind(wx.EVT_CHECKBOX, self.on_toggled)
+            boxes.append(check_box)
+        self.boxes = boxes
+    
+    def destroy_boxes(self):
+        """ Destroys all of the check boxes in the group. 
+        
+        """
+        for box in self.boxes:
+            box.Destroy()
+        self.boxes = []
+
+    def layout_boxes(self):
+        """ Lays out the check boxes in an appropriate grid.
+
+        """
+        # XXX wx still manages to bork this up when the row count
+        # dynamically changes to 1. On Windows, it results in all of
+        # the check boxes being drawn on top of one another. Explicitly
+        # setting the row and columns sizes doesn't help. I'm adding
+        # this to my long list of reasons I hate wx.
+        sizer = wx.GridSizer()
+        rows = self.parent.rows
+        columns = self.parent.columns
+        nitems = len(self.parent.items)
+
+        if rows > 0:
+            sizer.SetRows(rows)
+        elif columns > 0:
+            rows = math.ceil(nitems / columns)
+            sizer.SetRows(rows)
+        else:
+            sizer.SetRows(1)
+
+        for box in self.boxes:
+            sizer.Add(box, 1)
+        
+        sizer.Layout()
+        self.sizer = sizer
+
     def on_toggled(self, event):
         """ The toggle event handler for the check boxes. Updates the
         list of selected items when the check boxes are toggled.
