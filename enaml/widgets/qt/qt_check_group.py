@@ -1,3 +1,5 @@
+from math import ceil
+
 from .qt import QtGui
 
 from traits.api import implements, List, Instance
@@ -24,11 +26,14 @@ class QtCheckGroup(QtControl):
     def initialize_widget(self):
         self.layout = QtGui.QGridLayout()
         self.create_boxes()
-        self.layout_boxes()
         self.set_box_labels(self.parent.to_string)
         self.set_checked_state(self.parent.selected)
-        self.widget.setLayout(self.layout)
 
+        # We want to layout the boxes after we set the checked state
+        # since the state change may trigger a layout change that
+        # would be otherwise lost.
+        self.layout_boxes()
+        self.widget.setLayout(self.layout)
 
     def parent_rows_changed(self, rows):
         """ Called when the number of rows changes. Will relayout the
@@ -53,8 +58,6 @@ class QtCheckGroup(QtControl):
         """
         self.clear_layout()
         self.delete_boxes()
-        self.create_boxes()
-        self.layout_boxes()
         self.initialize_widget()
 
     def parent_selected_changed(self, selected):
@@ -106,7 +109,8 @@ class QtCheckGroup(QtControl):
             box.setChecked(item in selected)
 
     def create_boxes(self):
-        """ Create checkbox widgets
+        """ Create checkbox widgets.
+
         """
         boxes = []
         box_parent = self.widget
@@ -117,28 +121,49 @@ class QtCheckGroup(QtControl):
         self.boxes = boxes
         
     def layout_boxes(self):
-        """ Lay out the checkboxes in a grid
+        """ Lay out the checkboxes in a grid. Num rows gets priority.
+
         """
         rows = self.parent.rows
         columns = self.parent.columns
-        num_items = len(self.parent.items)
-        if columns == 0 and rows > 0:
-            columns = num_items/rows + 1
-        elif columns == 0:
-            columns = num_items + 1
+        boxes = self.boxes
+
+        nboxes = len(self.boxes)
+        if rows > 0:
+            columns = int(ceil(nboxes / float(rows)))
+        elif columns > 0:
+            rows = int(ceil(nboxes / float(columns)))
+        else:
+            columns = nboxes
+             
+        boxes = list(reversed(boxes))
+        grid = []
+        while boxes:
+            row = []
+            grid.append(row)
+            for i in range(columns):
+                try:
+                    row.append(boxes.pop())
+                except IndexError:
+                    break
         
-        for i, check_box in enumerate(self.boxes):
-            row, column = divmod(i, columns)
-            self.layout.addWidget(check_box, row, column)
+        layout = self.layout
+        for i, cols in enumerate(grid):
+            for j, check_box in enumerate(cols):
+                layout.addWidget(check_box, i, j)
+                
+        layout.update()
 
     def clear_layout(self):
-        """ Remove all the boxes from the layout
+        """ Remove all the boxes from the layout.
+
         """
         for box in self.boxes:
             self.layout.removeWidget(box)
 
     def delete_boxes(self):
-        """ Remove all of the boxes from the layout
+        """ Remove all of the boxes from the layout.
+
         """
         for box in self.boxes:
             self.widget.removeChild(box)
