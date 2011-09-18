@@ -10,16 +10,44 @@ from ..enums import DataRole, ItemFlags, Match, Sorted
 #-------------------------------------------------------------------------------
 @total_ordering
 class ModelIndex(object):
+    """ ModelIndexes are used to navigate an AbstractItemModel.
 
+    A ModelIndex is a lightweight object and should be created on the
+    fly, rather than attempting some form of caching.
+
+    """
     __slots__ = ('row', 'column', 'context', 'model')
 
     def __init__(self, row=-1, column=-1, context=None, model=None):
+        """ Construct a model index.
+
+        Arguments
+        ---------
+        row : int, optional
+            The row index represented by this index. Defaults to -1.
+
+        column : int, optional
+            The column index represented by this index. Defaults to -1.
+
+        context : object, optional
+            A user supplied object that aids in navigating the user's
+            model. Defaults to None.
+        
+        model : AbstractItemModel, optional
+            The model in which this index is active. This is typically
+            supplied by the create_index method of the AbstractItemModel.
+
+        """
         self.row = row
         self.column = column
         self.context = context
         self.model = model
 
     def __eq__(self, other):
+        """ Returns True if this index is functionally equivalent to 
+        another. False otherwise.
+
+        """
         if isinstance(other, ModelIndex):
             return (self.row == other.row and
                     self.column == other.column and
@@ -31,6 +59,10 @@ class ModelIndex(object):
         return not self.__eq__(other)
     
     def __lt__(self, other):
+        """ Returns True if this index is functionally less than another.
+        False otherwise.
+
+        """
         if isinstance(other, ModelIndex):
             if self.row < other.row:
                 return True
@@ -51,23 +83,44 @@ class ModelIndex(object):
         return False
 
     def parent(self):
+        """ Returns the parent ModelIndex of this index.
+
+        """
         return self.model.parent(self)
 
     def sibling(self, row, column):
+        """ Returns the sibling ModelIndex of this index for the given
+        row and column indexes.
+
+        """
         if self.row == row and self.column == column:
             return self
         return self.model.index(row, column, self.model.parent(self))
 
     def child(self, row, column):
+        """ Returns the child ModelIndex of this index for the given
+        row and column indexes.
+
+        """
         return self.model.index(row, column, self)
 
     def data(self, role=DataRole.DISPLAY):
+        """ Returns the data for this index for the given role.
+
+        """
         return self.model.data(self, role)
 
     def flags(self):
+        """ Returns the flags for this index.
+
+        """
         return self.model.flags(self)
     
     def is_valid(self):
+        """ Returns True if the if the row and column indices are greater
+        than zero and the model is not None. False otherwise.
+
+        """
         return self.row >= 0 and self.column >= 0 and self.model is not None
 
 
