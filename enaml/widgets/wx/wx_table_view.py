@@ -86,6 +86,7 @@ class WXTableView(WXControl):
 
     def initialize_widget(self):
         self.set_table_model(self.parent.item_model)
+        self.bind()
 
     def create_style_handler(self):
         pass
@@ -113,6 +114,25 @@ class WXTableView(WXControl):
     #---------------------------------------------------------------------------
     # implementation
     #---------------------------------------------------------------------------
+    def bind(self):
+        widget = self.widget
+        widget.Bind(wx.grid.EVT_GRID_SELECT_CELL, self.on_select_cell)
+        widget.Bind(wx.grid.EVT_GRID_CELL_LEFT_DCLICK, self.on_left_dclick)
+    
+    def on_select_cell(self, event):
+        event.Skip()
+        parent = self.parent
+        parent_index = ModelIndex()
+        row = event.GetRow()
+        col = event.GetCol()
+        index = parent.item_model.index(row, col, parent_index)
+        parent.selected = index
+        
+
+    def on_left_dclick(self, event):
+        event.Skip()
+        self.parent.left_dclick = self.parent.selected
+        
     def set_table_model(self, model):
         model_wrapper = AbstractItemModelTable(model)
         self.widget.SetTable(model_wrapper)
