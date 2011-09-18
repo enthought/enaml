@@ -621,7 +621,8 @@ class StyleHandler(HasStrictTraits):
         style_handlers = {}
         for name in dir(self):
             if name.startswith('style_'):
-                style_handlers[name] = getattr(self, name)
+                tag_name = name[6:]
+                style_handlers[tag_name] = getattr(self, name)
         
         node = self.node
         
