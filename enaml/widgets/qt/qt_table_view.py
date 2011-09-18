@@ -76,21 +76,6 @@ class QtTableView(QtControl):
     def initialize_widget(self):
         self.set_table_model(self.parent.item_model)
 
-    def create_style_handler(self):
-        pass
-    
-    def initialize_style(self):
-        style = self.parent.style
-        min_width = style.get_property("min_width")
-        min_height = style.get_property("min_height")
-
-        if isinstance(min_width, int) and min_width >= 0:
-            self.widget.setMinimumWidth(min_width)
-
-        if isinstance(min_height, int) and min_height >= 0:
-            self.widget.setMinimumHeight(min_height)
-
-
     def parent_item_model_changed(self, item_model):
         self.set_table_model(item_model)
         
