@@ -52,7 +52,7 @@ class TableModel(AbstractTableModel):
             return index.row + index.column
 
 
-fact = EnamlFactory('./working_wx_test.enaml')
+fact = EnamlFactory('./working_test1.enaml')
 
 view = fact(model=Model(), table_model=TableModel())
 
