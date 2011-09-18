@@ -1,7 +1,3 @@
-import functools
-
-from .qt import QtGui
-
 from traits.api import Instance, implements
 
 from .qt_component import QtComponent
@@ -17,7 +13,6 @@ class QtControl(QtComponent):
     #---------------------------------------------------------------------------
     # IControlImpl interface
     #---------------------------------------------------------------------------
-     
     def create_style_handler(self):
         """ Creates and sets the style handler for the widget. Must
         be implemented by subclasses.
@@ -33,7 +28,7 @@ class QtControl(QtComponent):
 
         """
         self.style_handler.initialize_style()
-        
+
     def layout_child_widgets(self):
         """ Ensures that the control does not contain children. Special
         control subclasses that do allow for children should reimplement
