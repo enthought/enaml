@@ -124,7 +124,7 @@ class WXFormCtor(WXBaseContainerCtor):
     def component(self):
         from ..form import Form
         from .wx_form import WXForm
-        form = Form(_impl=WXForm())
+        form = Form(toolkit_impl=WXForm())
         return form
 
 
