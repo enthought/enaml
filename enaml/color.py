@@ -46,11 +46,11 @@ class Color(HasStrictTraits):
         match = HEX_COLOR.match(color_string)
         if match:
             hex_str = match.group(1)
-            r = int(hex_str[:2], 16) * 255
-            g = int(hex_str[2:4], 16) * 255
-            b = int(hex_str[4:6], 16) * 255
+            r = int(hex_str[:2], 16)
+            g = int(hex_str[2:4], 16)
+            b = int(hex_str[4:6], 16)
             if len(hex_str) == 8:
-                a = int(hex_str[6:8], 16) * 255
+                a = int(hex_str[6:8], 16)
             else:
                 a = 255
             res = cls(r=r, g=g, b=b, a=a)
