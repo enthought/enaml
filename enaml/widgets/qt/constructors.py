@@ -124,7 +124,7 @@ class QtFormCtor(QtBaseContainerCtor):
     def component(self):
         from ..form import Form
         from .qt_form import QtForm
-        form = Form(_impl=QtForm())
+        form = Form(toolkit_impl=QtForm())
         return form
 
 
