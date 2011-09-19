@@ -302,7 +302,8 @@ class WXSlider(WXControl):
         """
         widget = self.widget
         style = widget.GetWindowStyle()
-        style &= ~(wx.SL_TOP | wx.SL_BOTTOM | wx.SL_LEFT | wx.SL_RIGHT)
+        style &= ~(wx.SL_TOP | wx.SL_BOTTOM |
+                  wx.SL_LEFT | wx.SL_RIGHT | wx.SL_BOTH)
 
         if widget.HasFlag(wx.SL_VERTICAL):
             if ticks == TickPosition.LEFT:
@@ -310,8 +311,7 @@ class WXSlider(WXControl):
             elif ticks == TickPosition.RIGHT:
                 style |= wx.SL_RIGHT | wx.SL_AUTOTICKS
             elif ticks == TickPosition.BOTH:
-                warnings.warn('Option not implemented in wxPython')
-                return False
+                style |= wx.SL_BOTH | wx.SL_AUTOTICKS
             elif ticks == TickPosition.NO_TICKS:
                 style &= ~wx.SL_AUTOTICKS
             elif ticks == TickPosition.DEFAULT:
@@ -328,8 +328,7 @@ class WXSlider(WXControl):
             elif ticks == TickPosition.BOTTOM:
                 style |= wx.SL_BOTTOM | wx.SL_AUTOTICKS
             elif ticks == TickPosition.BOTH:
-                warnings.warn('Option not implemented in wxPython')
-                return False
+                style |= wx.SL_BOTH | wx.SL_AUTOTICKS
             elif ticks == TickPosition.NO_TICKS:
                 style &= ~wx.SL_AUTOTICKS
             elif ticks == TickPosition.DEFAULT:
