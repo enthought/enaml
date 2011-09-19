@@ -39,7 +39,7 @@ class WXControl(WXComponent):
     #---------------------------------------------------------------------------
     def create_style_handler(self):
         style_handler = WXControlStyleHandler(widget=self.widget)
-        style_handler.style_node = self.parent.style
+        style_handler.node = self.parent.style
         self.style_handler = style_handler
 
     def initialize_style(self):

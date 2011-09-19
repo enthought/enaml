@@ -1,10 +1,9 @@
+from traits.api import Instance, Dict
 from .qt import QtCore, QtGui
-
-from traits.api import HasTraits, Instance, Dict
 
 from ...color import Color
 from ...style_sheet import StyleSheet, StyleHandler, style, NO_STYLE
-from ...style_converters import PaddingStyle, color_from_color_style
+from ...style_converters import color_from_color_style
 
 #-------------------------------------------------------------------------------
 # Default wx style sheet definition
@@ -14,28 +13,28 @@ QT_STYLE_SHEET = StyleSheet(
     #---------------------------------------------------------------------------
     # Default style
     #---------------------------------------------------------------------------
-    style("*",
-        size_policy = "expanding",
-    ),
+    #style("*",
+    #    size_policy = "expanding",
+    #),
 
     #---------------------------------------------------------------------------
     # default type overrides
     #---------------------------------------------------------------------------
-    style("PushButton", "CheckBox", "SpinBox", "ComboBox",
-        size_policy = "minimum",
-    ),
+    #style("PushButton", "CheckBox", "SpinBox", "ComboBox",
+    #    size_policy = "preferre",
+    #),
 
-    style("SpinBox", "ComboBox", "Slider", "Panel", "LineEdit", "Field", "Label",
-        stretch = 1,
-    ),
+    #style("SpinBox", "ComboBox", "Slider", "Panel", "LineEdit", "Field", "Label",
+    #    stretch = 1,
+    #),
 
-    style("Html", "Spacer",
-        stretch = 2,
-    ),
+    #style("Html", "Spacer",
+    #    stretch = 2,
+    #),
 
-    style("Group", "VGroup", "HGroup",
-        spacing = 2,
-    ),
+    #style("Group", "VGroup", "HGroup",
+    #    spacing = 2,
+    #),
 
     #---------------------------------------------------------------------------
     # Convienence style classes
@@ -111,6 +110,16 @@ QT_STYLE_SHEET = StyleSheet(
 #-------------------------------------------------------------------------------
 # qt styling helper and conversion functions
 #-------------------------------------------------------------------------------
+Q_SIZE_POLICIES = {
+    "fixed": QtGui.QSizePolicy.Fixed,
+    "minimum": QtGui.QSizePolicy.Minimum,
+    "maximum": QtGui.QSizePolicy.Maximum,
+    "preferred": QtGui.QSizePolicy.Preferred,
+    "expanding": QtGui.QSizePolicy.Expanding,
+    "minimum_expanding": QtGui.QSizePolicy.MinimumExpanding,
+    "ignored": QtGui.QSizePolicy.Ignored,
+}
+
 
 class QtStyleHandler(StyleHandler):
     """ StyleHandler subclass that understands how to set styles via Qt style sheets
@@ -154,8 +163,30 @@ class QtStyleHandler(StyleHandler):
         else:
             self._qt_stylesheet_values.pop(key, None)
         stylesheet = generate_qt_stylesheet(self.widget.__class__.__name__,
-                self._qt_stylesheet_values)         
+                                            self._qt_stylesheet_values)         
         self.widget.setStyleSheet(stylesheet)
+
+    def style_size_policy(self, size_policy):
+        if size_policy is not NO_STYLE:
+            widget = self.widget
+            old = widget.sizePolicy()
+            new = QtGui.QSizePolicy(old.horizontalPolicy(), 
+                                    old.verticalPolicy())
+            
+            if isinstance(size_policy, (list, tuple)):
+                hpolicy, vpolicy = size_policy
+            else:
+                hpolicy = vpolicy = size_policy
+            
+            hpolicy = Q_SIZE_POLICIES.get(hpolicy)
+            vpolicy = Q_SIZE_POLICIES.get(vpolicy)
+            
+            if hpolicy is not None:
+                new.setHorizontalPolicy(hpolicy)
+            if vpolicy is not None:
+                new.setVerticalPolicy(vpolicy)
+
+            widget.setSizePolicy(new)
 
 
 def generate_qt_stylesheet(class_name, values):
@@ -172,9 +203,9 @@ def generate_qt_stylesheet(class_name, values):
         whose values are the corresponding string values to be used in
         the stylesheet.
     """
-    return (class_name + ' { ' +
-        '; '.join(key+': '+value for key, value in values.items()) +
-    ' }' )
+    templ = '%s { %s }'
+    items = '; '.join(key+': '+value for key, value in values.items())
+    return templ % (class_name, items)
 
 
 ALIGN_MAP = {
@@ -198,6 +229,15 @@ def qt_color_from_color(color):
         res = 'rgb(%s, %s, %s, %s)' % (color.r, color.g, color.b, color.a)
     return res
 
+def QColor_form_color(color):
+    """ Converts an enaml.color.Color into a qt stylesheet color.
+
+    """
+    if color == Color.no_color:
+        res = None
+    else:
+        res = QtGui.QColor(color.r, color.g, color.b, color.a)
+    return res
 
 def qt_color(color_style):
     color = color_from_color_style(color_style)

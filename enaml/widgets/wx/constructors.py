@@ -124,7 +124,7 @@ class WXFormCtor(WXBaseContainerCtor):
     def component(self):
         from ..form import Form
         from .wx_form import WXForm
-        form = Form(_impl=WXForm())
+        form = Form(toolkit_impl=WXForm())
         return form
 
 
@@ -272,17 +272,6 @@ class WXLabelCtor(WXBaseComponentCtor):
         from .wx_label import WXLabel
         label = Label(toolkit_impl=WXLabel())
         return label
-
-
-class WXLineEditCtor(WXBaseComponentCtor):
-
-    implements(IToolkitConstructor)
-
-    def component(self):
-        from ..line_edit import LineEdit
-        from .wx_line_edit import WXLineEdit
-        line_edit = LineEdit(toolkit_impl=WXLineEdit())
-        return line_edit
 
 
 class WXPushButtonCtor(WXBaseComponentCtor):

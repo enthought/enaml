@@ -124,7 +124,7 @@ class QtFormCtor(QtBaseContainerCtor):
     def component(self):
         from ..form import Form
         from .qt_form import QtForm
-        form = Form(_impl=QtForm())
+        form = Form(toolkit_impl=QtForm())
         return form
 
 
@@ -274,17 +274,6 @@ class QtLabelCtor(QtBaseComponentCtor):
         return label
 
 
-class QtLineEditCtor(QtBaseComponentCtor):
-
-    implements(IToolkitConstructor)
-
-    def component(self):
-        from ..line_edit import LineEdit
-        from .qt_line_edit import QtLineEdit
-        line_edit = LineEdit(toolkit_impl=QtLineEdit())
-        return line_edit
-
-
 class QtPushButtonCtor(QtBaseComponentCtor):
 
     implements(IToolkitConstructor)
@@ -349,3 +338,25 @@ class QtEnableCanvasCtor(QtBaseComponentCtor):
         from .qt_enable_canvas import QtEnableCanvas
         canvas = EnableCanvas(toolkit_impl=QtEnableCanvas())
         return canvas
+
+
+class QtTableViewCtor(QtBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..table_view import TableView
+        from .qt_table_view import QtTableView
+        table_view = TableView(toolkit_impl=QtTableView())
+        return table_view
+
+
+class QtCheckGroupCtor(QtBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..check_group import CheckGroup
+        from .qt_check_group import QtCheckGroup
+        check_group = CheckGroup(toolkit_impl=QtCheckGroup())
+        return check_group

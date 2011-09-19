@@ -155,7 +155,6 @@ def wx_toolkit():
         'Html': ctors.WXHtmlCtor,
         'Image': ctors.WXImageCtor,
         'Label': ctors.WXLabelCtor,
-        'LineEdit': ctors.WXLineEditCtor,
         'PushButton': ctors.WXPushButtonCtor,
         'RadioButton': ctors.WXRadioButtonCtor,
         'Slider': ctors.WXSliderCtor,
@@ -193,11 +192,11 @@ def qt_toolkit():
         'Group': ctors.QtGroupCtor,
         'VGroup': ctors.QtVGroupCtor,
         'HGroup': ctors.QtHGroupCtor,
+        'Form': ctors.QtFormCtor,
         'StackedGroup': ctors.QtStackedGroupCtor,
         'TabGroup': ctors.QtTabGroupCtor,
         'Field': ctors.QtFieldCtor,
         'Label': ctors.QtLabelCtor,
-        'LineEdit': ctors.QtLineEditCtor,
         'TraitsUIItem': ctors.QtTraitsUIItemCtor,
         'Calendar': ctors.QtCalendarCtor,
         'CheckBox': ctors.QtCheckBoxCtor,
@@ -208,6 +207,8 @@ def qt_toolkit():
         'Slider': ctors.QtSliderCtor,
         'SpinBox': ctors.QtSpinBoxCtor,
         'EnableCanvas': ctors.QtEnableCanvasCtor,
+        'TableView': ctors.QtTableViewCtor,
+        'CheckGroup': ctors.QtCheckGroupCtor,
     }
     
     utils = {}

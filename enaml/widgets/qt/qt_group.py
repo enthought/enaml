@@ -8,12 +8,14 @@ from ..group import IGroupImpl
 
 from ...enums import Direction
 
+
 _QBoxLayoutDirections = {
     Direction.LEFT_TO_RIGHT: QtGui.QBoxLayout.LeftToRight,
     Direction.RIGHT_TO_LEFT: QtGui.QBoxLayout.RightToLeft,
     Direction.BOTTOM_TO_TOP: QtGui.QBoxLayout.BottomToTop,
     Direction.TOP_TO_BOTTOM: QtGui.QBoxLayout.TopToBottom
 }
+
 
 class QtGroup(QtContainer):
     """ A Qt implementation of IGroup.

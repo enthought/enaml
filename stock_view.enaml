@@ -1,10 +1,8 @@
 
 
 Window:
-    title << ("Schmixie PlotTool 0.1dev - %s - %s - %s" % 
+    title << ("Enaml Stock Viewer - %s - %s - %s" % 
               (model.symbol, model.start_date, model.end_date))
-    style.min_width = 400
-    style.min_height = 400
     Panel:
         HGroup:
             style.stretch = 1
@@ -40,7 +38,6 @@ Window:
                     maximum_date << model.date_range[1]
                     date := model.end_date
                 CheckGroup:
-                    rows = 1
                     items := adapter.available_columns
                     selected := adapter.grid_columns
                 TableView:

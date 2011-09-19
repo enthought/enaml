@@ -538,7 +538,7 @@ class StyleNode(HasTraits):
         return res
 
 
-class StyleHandler(HasTraits):
+class StyleHandler(HasStrictTraits):
     """ A handler class that reacts to changes on a StyleNode.
 
     This StyleHandler is meant to be used in conjuction with subclasses
@@ -550,8 +550,12 @@ class StyleHandler(HasTraits):
 
     Attributes
     ----------
-    style_node : Instance(StyleNode)
+    node : Instance(StyleNode)
         The StyleNode instance this object is handling.
+
+    tags : dict, optional
+        A dictionary of string tags to arguments to pass to the 
+        set_style_value method on subclasses.
 
     Methods
     -------
@@ -559,12 +563,21 @@ class StyleHandler(HasTraits):
         Subclasses should implement a style_* method for every tag for
         which updates are desired.
 
-    """
-    style_node = Instance(StyleNode)
+    set_style_value(self, value, tag, *args)
+        A method that can be optionally implemented by subclasses for
+        easier style dispatching. If a tag is defined in the `tags` dict 
+        and the subclass does not define adefault a style_<tag> method, 
+        then set_style_value will be called with the (value, tag, *args) 
+        where the *args are the args that key in the dict. 
 
+    """
+    node = Instance(StyleNode)
+
+    tags = Instance(dict, ())
+    
     _style_dict = Instance(dict, ())
 
-    @on_trait_change('style_node:tag_updated')
+    @on_trait_change('node:tag_updated')
     def _tag_updated(self, tag):
         """ Handles the tag_updated event on the style node.
 
@@ -572,14 +585,13 @@ class StyleHandler(HasTraits):
         self._update_tag(tag)
         
     def set_style_value(self, value, tag, *args):
-        """ Set the style given by the tag to the value in a generic way for toolkits.
+        """ Set the style given by the tag to the value in a generic way.
         
         This is intended to simplify definition of style handlers for a toolkit
         where a lot of the code is doing the same sort of thing.
         
         Arguments
         ---------
-        
         value : style_value
             The string representation of the style's value.
         
@@ -589,18 +601,33 @@ class StyleHandler(HasTraits):
         *args
             Additional arguments as needed.  This is likely to include a
             converter function and/or the method name to set.
+        
+        Returns
+        -------
+        result : None
+
+        Notes
+        -----
+        This method will only be called if the tag exists in the `tags` 
+        dict and there is no style_<tag> handler defined for it.
+
         """
         raise NotImplementedError
     
-    
     def initialize_style(self):
-        """ Initialize all style properties that we handle by methods or tags
+        """ Initialize all style properties handled by methods or tags.
+
         """
-        style_handlers = dict((name[6:], getattr(self, name)) for name in dir(self)
-                if name[:6] == 'style_' and callable(getattr(self, name)))
+        style_handlers = {}
+        for name in dir(self):
+            if name.startswith('style_'):
+                tag_name = name[6:]
+                style_handlers[tag_name] = getattr(self, name)
         
-        for tag, handler in style_handlers.items():
-            value = self.style_node.get_property(tag)
+        node = self.node
+        
+        for tag, handler in style_handlers.iteritems():
+            value = node.get_property(tag)
             handler(value)
         
         for tag, args in self.tags.items():
@@ -608,10 +635,9 @@ class StyleHandler(HasTraits):
                 continue
             if not isinstance(args, (list, tuple)):
                 args = (args,)
-            value = self.style_node.get_property(tag)
+            value = node.get_property(tag)
             self.set_style_value(value, tag, *args)
         
-
     def _update_tag(self, tag, null=object()):
         """ Dispatches a tag update to specially named methods. Only
         dispatches if a handler exists and the value has changed.
@@ -619,20 +645,20 @@ class StyleHandler(HasTraits):
         """
         name = 'style_' + tag
         handler = getattr(self, name, None)
-        
-        if (handler is None or not callable(handler)) and tag in self.tags:
-            args = self.tags[tag]
+        tags = self.tags
+
+        if handler is None and tag in tags:
+            args = tags[tag]
             if not isinstance(args, (list, tuple)):
                 args = (args,)
 
             def handler(value):
                 return self.set_style_value(value, tag, *args)
         
-        # determine if we should in fact call update
         if handler is not None:
             style_dict = self._style_dict
             old = style_dict.get(tag, null)
-            new = self.style_node.get_property(tag)
+            new = self.node.get_property(tag)
             if old != new:
                 style_dict[tag] = new
                 handler(new)

@@ -116,8 +116,8 @@ Window:
                             high = 20
         
                     HGroup:
-                        LineEdit line_edit:
-                            text := model.window_title
+                        Field line_edit:
+                            value := model.window_title
                             
                     # The wx layout behaves badly if the slider 
                     # orientation is vertical in a vgroup layout
@@ -138,9 +138,9 @@ Window:
                     Field mf:
                         to_string = str
                         from_string = lambda val: int(val) if val else 0
-                        value = 0
+                        placeholder_text = 'Integers Only!'
                         style.background_color << "error" if self.error else "nocolor"
-            
+                        
             TableView:
                 item_model = table_model
 
