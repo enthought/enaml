@@ -191,82 +191,379 @@ class AbstractItemModel(HasTraits):
     header_data_changed = Event
 
     def begin_insert_columns(self, parent, first, last):
+        """ Begins inserting a column.
+        
+        This method must be called before inserting data into
+        the model.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            The parent into which the new columns will be inserted.
+        
+        first : int
+            The column position at which insertion will begin.
+        
+        last : int
+            The column position at which insertion will end.
+            
+        """
         self.columns_about_to_be_inserted = True
     
     def begin_move_columns(self, source_parent, source_first, source_last, 
                            destination_parent, destination_child):
+        """ Begins to move a column.
+        
+        Arguments
+        ---------
+        source_parent : ModelIndex
+            The parent index from which columns will be moved.
+            
+        source_first : int
+            The number of the first column to be moved.
+        
+        source_last : int
+            The number of the last column to be moved.
+            
+        destination_parent : ModelIndex
+            The parent index into which the columns will be moved.
+            
+        destination_child : int
+            The column number to which the columns will be moved.
+        
+        """
         self.columns_about_to_be_moved = True
 
     def begin_remove_columns(self, parent, first, last):
+        """ Begins to remove columns.
+        
+        This method must be called before removing data from the
+        model.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            The parent from which the columns will be removed.
+        
+        first : int
+            The number of the first column to remove.
+        
+        last : int
+            The number of the last column to remove.
+            
+        """
         self.columns_about_to_be_removed = True
 
     def end_insert_columns(self):
+        """ Finish inserting columns.
+        
+        This method must be called after inserting data into
+        the model.
+        
+        """
         self.columns_inserted = True
 
     def end_move_columns(self):
+        """ Finish moving columns.
+        
+        This method must be called after moving data in a model.
+        
+        """
         self.columns_moved = True
     
     def end_remove_columns(self):
+        """ Finish removing columns.
+        
+        This method must be called after removing data from a model.
+        
+        """
         self.columns_removed = True
     
     def begin_insert_rows(self, parent, first, last):
+        """ Begins a row insertion.
+        
+        This method must be called before inserting data into
+        the model.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            The parent into which the new rows will be inserted.
+        
+        first : int
+            The row position at which insertion will begin.
+        
+        last : int
+            The row position at which insertion will end.
+            
+        """
+        
         self.rows_about_to_be_inserted = True
     
     def begin_move_rows(self, source_parent, source_first, source_last,
                         destination_parent, destination_child):
+         """ Begins to move a row.
+        
+        Arguments
+        ---------
+        source_parent : ModelIndex
+            The parent index from which rows will be moved.
+            
+        source_first : int
+            The number of the first row to be moved.
+        
+        source_last : int
+            The number of the last row to be moved.
+            
+        destination_parent : ModelIndex
+            The parent index into which the rows will be moved.
+            
+        destination_child : int
+            The row number to which the rows will be moved.
+        
+        """
         self.rows_about_to_be_moved = True
 
     def begin_remove_rows(self, parent, first, last):
+        """ Begins to remove rows.
+        
+        This method must be called before removing data from the
+        model.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            The parent from which the rows will be removed.
+        
+        first : int
+            The number of the first row to remove.
+        
+        last : int
+            The number of the last row to remove.
+            
+        """
         self.rows_about_to_be_removed = True
 
     def end_insert_rows(self):
+        """ Finish inserting rows.
+        
+        This method must be called after inserting data into
+        the model.
+        
+        """
         self.rows_inserted = True
     
     def end_move_rows(self):
+        """ Finish moving rows
+        
+        This method must be called after moving data in a model.
+        
+        """
         self.rows_moved = True
     
     def end_remove_rows(self):
+        """ Finish removing rows.
+        
+        This method must be called after moving data in a model.
+        
+        """
         self.rows_removed = True
 
     def begin_change_layout(self):
+        """ Begin a change to the layout of the model -- e.g., sort it.
+        
+        This method must be called before rearranging data in a model.
+        
+        """
         self.layout_about_to_be_changed = True
     
     def end_change_layout(self):
+        """ Finish a change to the layout of the model.
+        
+        This method must be called after rearrangin data in a model.
+        
+        """
         self.layout_changed = True
     
     def begin_reset_model(self):
+        """ Begin to reset a model.
+        
+        Model indices must be recomputed, and any associated 
+        views will also reset.
+        
+        This method must be called before a model is reset.
+        
+        """
         self.model_about_to_be_reset = True
 
     def end_reset_model(self):
+        """ Finish resetting a model.
+        
+        This method must be called after a model is reset.
+        
+        """
         self.model_reset = True
 
     def buddy(self, index):
+        """ Refers the caller to an item in the model to edit.
+    
+        Each item is its own buddy by default, but this is not required.
+        
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which a buddy will 
+        
+        Returns
+        -------
+        buddy : ModelIndex
+            The item that should be edited.
+        
+        """
         return index
     
     def can_fetch_more(self, parent):
+        """ Returns `True` if itmes of `parent` can provide more data.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            A model item, possibly with more data that can be fetched.
+            
+        Returns
+        -------
+        has_more : bool
+            True if more data is available, False otherwise.
+        
+        """
         return False
 
     def fetch_more(self, parent):
+        """ Obtain data from model items, if more is available.
+        
+        This method is useful when incrementally adding data to a model.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            An index to query.
+        
+        Returns
+        -------
+        data : AbstractItemModel
+            Data that has yet to be received.
+        
+        """
         pass
 
     def has_index(self, row, column, parent=ModelIndex()):
+        """ Determine whether this model can provide a valid index with
+        certain specifications.
+        
+        Arguments
+        ---------
+        row : int
+            A row to be used in the index.
+            
+        column : int
+            A column to be used in the index.
+            
+        parent : ModelIndex, optional
+            A parent on which to base the new model index.
+        
+        Returns
+        -------
+        result : bool
+            True if the inputs produce a valid index, False otherwise.
+            
+        """
         if row < 0 or column < 0:
             return False
         return row < self.row_count(parent) and column < self.column_count(parent)
 
     def has_children(self, parent=ModelIndex()):
+        """ Determines if an index has any child items.
+        
+        Arguments
+        ---------
+        parent : ModelIndex, optional
+            A model index to check for children.
+        
+        Returns
+        -------
+        result : bool
+            True if the index has children, False otherwise.
+            
+        """
         return self.row_count(parent) > 0 and self.column_count(parent) > 0
 
     def create_index(self, row, column, context):
+        """ Create a new index into this model.
+        
+        Arguments
+        ---------
+        row : int
+            A row to specify the index
+        
+        column : int
+            A column to specify the index.
+            
+        context : object
+            A value that can be useful when working with a model.
+        
+        Returns
+        -------
+        index : ModelIndex
+            A new index into this model.
+        
+        """
         return ModelIndex(row, column, context, self)
 
-    def notify_data_changed(self, top_left, top_right):
+    def notify_data_changed(self, top_left, bottom_right):
+        """ Create a notification that model data has changed.
+        
+        Arguments
+        ---------
+        top_left : ModelIndex
+            The upper-left boundary of the changed items.
+        
+        bottom_right : ModelIndex
+            The bottom-right boundary of the changed items.
+        
+        """
         self.data_changed = (top_left, top_right)
 
     def notify_header_data_changed(self, orientation, first, last):
+        """ Create a notification that model header data has changed.
+        
+        Arguments
+        ---------
+        orientation : enaml.enums.Orientation
+            Specify if changed the header is vertical or horizontal.
+        
+        first : int
+            The first column or row header that has been modified.
+            
+        last : int
+            The last column or row header that has been modified.
+            
+        """
         self.header_data_changed = (orientation, first, last)
 
     def flags(self, index):
+        """ Obtain the flags that specify user interaction with items.
+        
+        Arguments
+        ---------
+        index : ModelIndex
+            Items to query.
+        
+        Returns
+        -------
+        item_flags : enaml.enums.ItemFlags
+            The ways in which a view can interact with the items.
+        
+        """
         if not index.is_valid():
             return 0
         return ItemFlags.IS_SELECTABLE | ItemFlags.IS_ENABLED
