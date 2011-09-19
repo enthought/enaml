@@ -248,7 +248,7 @@ class WXSlider(WXControl):
         """Set the slider position based on the value and to_slider().
 
         Changes the position of the slider in the widget if necessary.
-        We use a larger range in the Qt widget for fine-grained control.
+        We use a larger range in the wx widget for fine-grained control.
 
         """
         parent = self.parent
