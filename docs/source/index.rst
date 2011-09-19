@@ -1,4 +1,4 @@
-﻿.. enaml documentation master file
+.. enaml documentation master file
 
 Welcome to enaml's documentation!
 ====================================
@@ -116,5 +116,6 @@ Contents
 
     Examples
     enaml_file
+    architecture
     Library Reference <modules>
     developers_corner
