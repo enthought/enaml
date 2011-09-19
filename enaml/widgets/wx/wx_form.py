@@ -20,7 +20,8 @@ class WXForm(WXContainer):
     def layout_child_widgets(self):
         sizer = self.widget
         sizer.SetCols(2)
-        sizer.SetHGap(12)
+        sizer.SetHGap(5)
+        sizer.SetVGap(5)
         sizer.AddGrowableCol(1, 1)
         sizer.SetFlexibleDirection(wx.HORIZONTAL)
         parent_widget = self.parent_widget()
@@ -31,16 +32,15 @@ class WXForm(WXContainer):
             sizer.Add(label)
             sizer.Add(child_widget, 1, wx.EXPAND)
     
-    @on_trait_change('parent:children:name')
-    def update_names(self, obj, name, old, new):
+    def child_name_updated(self, child, name):
         sizer = self.widget
-        control = obj.toolkit_widget()
+        control = child.toolkit_widget()
         sizer_item = sizer.GetItem(control)
         if sizer_item:
             sizer_items = sizer.GetChildren()
             idx = sizer_items.index(sizer_item)
             item = sizer_items[idx - 1]
             label = item.GetWindow()
-            label.SetLabel(new)
+            label.SetLabel(name)
             sizer.Layout()
 
