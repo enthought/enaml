@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.abspath('./sphinxext'))
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
@@ -41,6 +41,7 @@ extensions = [
                 'sphinx.ext.viewcode',
                 'sphinx.ext.graphviz',
                 'sphinx.ext.inheritance_diagram',
+                'sphinx.ext.autosummary'
             ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -80,7 +81,7 @@ today_fmt = '%B %d, %Y'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['_templates']
 
 # The reST default role (used for this markup: `text`) to use for all documents.
 #default_role = None
@@ -112,6 +113,8 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 
 inheritance_graph_attrs = dict(rankdir="LR", size='"20.0, 20.0"',
                                fontsize=14, ratio='compress')
+
+autosummary_generate = True
 
 # -- Options for HTML output ---------------------------------------------------
 

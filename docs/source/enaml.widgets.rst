@@ -1,179 +1,119 @@
 widgets Package
 ===============
 
+For each gui toolkit that is supported by Enaml a basic set of widgets
+have been implemented and exist in the enaml.widget submodule.
+
+What is a widget?
+-----------------
+
+A widget in Enaml is a toolkit spesific implementation of an interface.
+
+Interface
+^^^^^^^^^
+
+The interface describes the attributes and events that are exposed by the
+enaml machinery and are available to the asossiated traits model to interact
+with the graphics widget (i.e. the *view*).
+
+
+*Class Hierarchy*
+
 .. inheritance-diagram::
-    enaml.widgets.calendar
-    enaml.widgets.check_box
-    enaml.widgets.combo_box
-    enaml.widgets.component
-    enaml.widgets.container
-    enaml.widgets.control
-    enaml.widgets.dialog
-    enaml.widgets.field
-    enaml.widgets.form
-    enaml.widgets.group
-    enaml.widgets.group_box
-    enaml.widgets.hgroup
-    enaml.widgets.html
-    enaml.widgets.window
-    enaml.widgets.vgroup
-    enaml.widgets.traitsui_item
-    enaml.widgets.image
-    enaml.widgets.label
-    enaml.widgets.line_edit
-    enaml.widgets.toggle_control
-    enaml.widgets.spacer
-    enaml.widgets.spin_box
-    enaml.widgets.tab_group
-    enaml.widgets.stacked_group
+    enaml.widgets.calendar.Calendar
+    enaml.widgets.check_box.CheckBox
+    enaml.widgets.combo_box.ComboBox
+    enaml.widgets.component.Component
+    enaml.widgets.container.Container
+    enaml.widgets.control.Control
+    enaml.widgets.dialog.Dialog
+    enaml.widgets.field.Field
+    enaml.widgets.form.Form
+    enaml.widgets.group.Group
+    enaml.widgets.group_box.GroupBox
+    enaml.widgets.hgroup.HGroup
+    enaml.widgets.html.Html
+    enaml.widgets.window.Window
+    enaml.widgets.vgroup.VGroup
+    enaml.widgets.traitsui_item.TraitsUIItem
+    enaml.widgets.image.Image
+    enaml.widgets.label.Label
+    enaml.widgets.line_edit.LineEdit
+    enaml.widgets.toggle_control.ToggleControl
+    enaml.widgets.slider.Slider
+    enaml.widgets.spacer.Spacer
+    enaml.widgets.spin_box.SpinBox
+    enaml.widgets.tab_group.TabGroup
+    enaml.widgets.stacked_group.StackedGroup
     :parts: 1
 
+Implementation
+^^^^^^^^^^^^^^
 
-:mod:`calendar` Module
-----------------------
+For each interface there exists a traits object that implements the
+required interface throught a very thin layer that wraps the tookit
+specific widgets and exposes the necessary attributes. Value modifications
+and events that take place during the life time of the graphic application can be
+connected to our traits model by listing and updating the attributes
+described in the interface.
 
-.. automodule:: enaml.widgets.calendar
+.. inheritance-diagram::
+    enaml.widgets.calendar.ICalendarImpl
+    enaml.widgets.check_box.ICheckBoxImpl
+    enaml.widgets.combo_box.IComboBoxImpl
+    enaml.widgets.component.IComponentImpl
+    enaml.widgets.container.IContainerImpl
+    enaml.widgets.control.IControlImpl
+    enaml.widgets.dialog.IDialogImpl
+    enaml.widgets.field.IFieldImpl
+    enaml.widgets.form.IFormImpl
+    enaml.widgets.group.IGroupImpl
+    enaml.widgets.group_box.IGroupBoxImpl
+    enaml.widgets.hgroup.IHGroupImpl
+    enaml.widgets.html.IHtmlImpl
+    enaml.widgets.window.IWindowImpl
+    enaml.widgets.vgroup.IVGroupImpl
+    enaml.widgets.traitsui_item.ITraitsUIItemImpl
+    enaml.widgets.image.IImageImpl
+    enaml.widgets.label.ILabelImpl
+    enaml.widgets.line_edit.ILineEditImpl
+    enaml.widgets.toggle_control.IToggleControlImpl
+    enaml.widgets.slider.ISliderImpl
+    enaml.widgets.spacer.ISpacerImpl
+    enaml.widgets.spin_box.ISpinBoxImpl
+    enaml.widgets.tab_group.ITabGroupImpl
+    enaml.widgets.stacked_group.IStackedGroupImpl
+    :parts: 1
 
-:mod:`check_box` Module
------------------------
+Standard Wdigets
+----------------
 
-.. automodule:: enaml.widgets.check_box
+.. autosummary::
+    :toctree: widgets
+    :template: widget.rst
 
-:mod:`combo_box` Module
------------------------
-
-.. automodule:: enaml.widgets.combo_box
-
-:mod:`component` Module
------------------------
-
-.. automodule:: enaml.widgets.component
-
-:mod:`container` Module
------------------------
-
-.. automodule:: enaml.widgets.container
-
-:mod:`control` Module
----------------------
-
-.. automodule:: enaml.widgets.control
-
-:mod:`dialog` Module
---------------------
-
-.. automodule:: enaml.widgets.dialog
-
-:mod:`field` Module
--------------------
-
-.. automodule:: enaml.widgets.field
-
-:mod:`form` Module
-------------------
-
-.. automodule:: enaml.widgets.form
-
-:mod:`group` Module
--------------------
-
-.. automodule:: enaml.widgets.group
-
-:mod:`group_box` Module
------------------------
-
-.. automodule:: enaml.widgets.group_box
-
-:mod:`hgroup` Module
---------------------
-
-.. automodule:: enaml.widgets.hgroup
-
-:mod:`html` Module
-------------------
-
-.. automodule:: enaml.widgets.html
-
-:mod:`image` Module
--------------------
-
-.. automodule:: enaml.widgets.image
-
-:mod:`label` Module
--------------------
-
-.. automodule:: enaml.widgets.label
-
-:mod:`line_edit` Module
------------------------
-
-.. automodule:: enaml.widgets.line_edit
-
-:mod:`panel` Module
--------------------
-
-.. automodule:: enaml.widgets.panel
-
-:mod:`push_button` Module
--------------------------
-
-.. automodule:: enaml.widgets.push_button
-
-:mod:`radio_button` Module
---------------------------
-
-.. automodule:: enaml.widgets.radio_button
-
-:mod:`slider` Module
---------------------
-
-.. automodule:: enaml.widgets.slider
-
-:mod:`spacer` Module
---------------------
-
-.. automodule:: enaml.widgets.spacer
-
-:mod:`spin_box` Module
-----------------------
-
-.. automodule:: enaml.widgets.spin_box
-
-:mod:`stacked_group` Module
----------------------------
-
-.. automodule:: enaml.widgets.stacked_group
-
-:mod:`tab_group` Module
------------------------
-
-.. automodule:: enaml.widgets.tab_group
-
-:mod:`toggle_control` Module
-----------------------------
-
-.. automodule:: enaml.widgets.toggle_control
-
-:mod:`traitsui_item` Module
----------------------------
-
-.. automodule:: enaml.widgets.traitsui_item
-
-:mod:`vgroup` Module
---------------------
-
-.. automodule:: enaml.widgets.vgroup
-
-:mod:`window` Module
---------------------
-
-.. automodule:: enaml.widgets.window
-
-
-Backends
-========
-
-.. toctree::
-
-    enaml.widgets.wx
-    enaml.widgets.qt
+    enaml.widgets.calendar.Calendar
+    enaml.widgets.check_box.CheckBox
+    enaml.widgets.combo_box.ComboBox
+    enaml.widgets.component.Component
+    enaml.widgets.container.Container
+    enaml.widgets.control.Control
+    enaml.widgets.dialog.Dialog
+    enaml.widgets.field.Field
+    enaml.widgets.form.Form
+    enaml.widgets.group.Group
+    enaml.widgets.group_box.GroupBox
+    enaml.widgets.hgroup.HGroup
+    enaml.widgets.html.Html
+    enaml.widgets.window.Window
+    enaml.widgets.vgroup.VGroup
+    enaml.widgets.traitsui_item.TraitsUIItem
+    enaml.widgets.image.Image
+    enaml.widgets.label.Label
+    enaml.widgets.line_edit.LineEdit
+    enaml.widgets.toggle_control.ToggleControl
+    enaml.widgets.spacer.Spacer
+    enaml.widgets.slider.Slider
+    enaml.widgets.spin_box.SpinBox
+    enaml.widgets.tab_group.TabGroup
+    enaml.widgets.stacked_group.StackedGroup
