@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ This module defines extra built-in functions that will be available
 from the right-hand side of expressions in .enaml files.
 

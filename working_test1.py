@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ A working example that tracks the development of the widgets
 on the wx branch and can be executed via python working_wx_test.py 
 from the current directory.

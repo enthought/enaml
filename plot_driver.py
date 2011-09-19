@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 from traits.api import HasTraits, Any, on_trait_change
 
 from chaco.api import (ArrayPlotData, ArrayDataSource, DataRange1D, 

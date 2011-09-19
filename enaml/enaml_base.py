@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 from traits.api import HasStrictTraits, Instance, Dict, Str, Set, DelegatesTo, Any
 
 from .expressions import IExpressionDelegate, IExpressionNotifier

@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 from traits.api import implements, HasStrictTraits, Str, WeakRef, cached_property
 
 from .enaml_base import EnamlBase

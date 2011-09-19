@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 # -*- coding: utf-8 -*-
 #
 # traitsml documentation build configuration file, created by

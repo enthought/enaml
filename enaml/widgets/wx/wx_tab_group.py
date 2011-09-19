@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 from wx.lib.agw.flatnotebook import (FlatNotebook, FNB_NODRAG,
                                      FNB_NO_NAV_BUTTONS, FNB_NO_X_BUTTON,
                                      EVT_FLATNOTEBOOK_PAGE_DROPPED,

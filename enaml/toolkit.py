@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 import os
 
 from traits.api import HasStrictTraits, Dict, Str, Callable, Any, Instance
