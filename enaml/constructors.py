@@ -12,8 +12,8 @@ class IToolkitConstructor(Interface):
 
     An IToolkitConstructor object is responsible for creating a toolkit
     specific widget for a named element in an enaml file. The instance
-    of the constructors are composed together to create a constructor 
-    tree. The root of the constructor tree is callable with context 
+    of the constructors are composed together to create a constructor
+    tree. The root of the constructor tree is callable with context
     objects as keyword arguments, and returns an enaml.view.View object.
 
     Attributes
@@ -21,31 +21,31 @@ class IToolkitConstructor(Interface):
     identifier : Str
         The unique identifier assigned to the widget (if any).
         An empty string is considered to be no id.
-    
+
     type_name : Str
         The type name in use by this component that this constructor
         will create.
 
     delegates : List(Tuple(Str, Instance(IExpressionDelegateFactory)))
-        The list of tuples of info for delegating traits on the toolkit 
-        widget wrapper. The string is the name of the trait to be 
-        delegated and the object is an expression delegate factory which 
+        The list of tuples of info for delegating traits on the toolkit
+        widget wrapper. The string is the name of the trait to be
+        delegated and the object is an expression delegate factory which
         will create a delegate on demand.
-    
+
     notifiers : List(Tuple(Str, Instance(IExpressionNotifierFactory)))
         The list of tuples of info for setting notifiers on the widget
         wrapper. The string is the name of the trait on which we want
-        notifications and the object is an expression notifier factory 
+        notifications and the object is an expression notifier factory
         which will create a notifier on demand.
 
     metas : List(Instance(IToolkitConstructor))
         The list of constructor instances for any meta objects defined
         for this node of the Enaml tree.
-    
+
     children : List(Instance(IToolkitConstructor))
         The list of constructor instances for any child objects
         defined for this node of the Enaml tree.
-    
+
     Methods
     -------
     component()
@@ -54,7 +54,7 @@ class IToolkitConstructor(Interface):
     __call__(**ctxt_objs)
         When called with context objects, should build and return
         an appropriate enaml.view.View object.
-        
+
     """
     identifier = Str
 
@@ -71,8 +71,8 @@ class IToolkitConstructor(Interface):
     def component(self):
         """ Imports, instantiates, and returns the toolkit component.
 
-        This method should import, instantiate, and return a toolkit 
-        specific component. The import is done here to delay the import 
+        This method should import, instantiate, and return a toolkit
+        specific component. The import is done here to delay the import
         of any gui libraries for as long as possible.
 
         Arguments
@@ -81,7 +81,7 @@ class IToolkitConstructor(Interface):
 
         Returns
         -------
-        result : enaml.widgets.component.Component 
+        result : enaml.widgets.component.Component
             A toolkit specific component.
 
         """
@@ -90,18 +90,18 @@ class IToolkitConstructor(Interface):
     def __call__(self, **ctxt_objs):
         """ Called with the users desired scope objects to create a View.
 
-        This method performs the actual building of the toolkit specific 
+        This method performs the actual building of the toolkit specific
         ui tree using the provided ctxt_objs as the minimum global scope.
-        The constructor is free to add items to the global scope and to 
-        create it's own local scopes as necessary. If a constructor is 
-        not a proper top level item and it's __call__ method is called, 
-        then it should wrap itself in an appropraite default top-level 
+        The constructor is free to add items to the global scope and to
+        create it's own local scopes as necessary. If a constructor is
+        not a proper top level item and it's __call__ method is called,
+        then it should wrap itself in an appropraite default top-level
         container, and return the view for that.
-        
+
         Arguments
         ---------
         **ctxt_objs
-            Items that should appear in the global namespace of the 
+            Items that should appear in the global namespace of the
             expressions.
 
         Returns
@@ -122,11 +122,11 @@ class BaseToolkitCtor(HasStrictTraits):
 
     This class provides some common functionality for the majority of
     toolkit constructor classes that will need to be created. Proper
-    implementations can be created by minimal subclassing of this 
+    implementations can be created by minimal subclassing of this
     class. Most subclasses will only need to implement the 'component'
     method. Selected subclasses will need to override '__call__' to do
     appropriate wrapping in default toplevel components.
-    
+
     See Also
     --------
     enaml.constructors.IToolkitConstructor
@@ -143,17 +143,17 @@ class BaseToolkitCtor(HasStrictTraits):
     metas = List(Instance(IToolkitConstructor))
 
     children = List(Instance(IToolkitConstructor))
-    
+
     #--------------------------------------------------------------------------
     # Transient traits that are reset in the cleanup method.
     #--------------------------------------------------------------------------
     # The Component instance that is created by the toolkit constructor.
     impl = Instance(Component)
-    
+
     # The local namespace for this component (will contain 'self')
     local_ns = Instance(dict, ())
 
-    # The global namespace for this component. 
+    # The global namespace for this component.
     # It is shared amongst all components in the view.
     global_ns = Instance(dict)
 
@@ -205,14 +205,14 @@ class BaseToolkitCtor(HasStrictTraits):
             impl.set_attribute_delegate(attr, delegate)
         for attr, notifier_factory in self.notifiers:
             notifier = notifier_factory(global_ns, local_ns)
-            impl.add_attribute_notifier(attr, notifier)        
+            impl.add_attribute_notifier(attr, notifier)
         for meta in self.metas:
             meta.hook_expressions()
         for child in self.children:
             child.hook_expressions()
-    
+
     def build_view(self):
-        """ Creates a returns an enaml.view.View which will layout and 
+        """ Creates a returns an enaml.view.View which will layout and
         show the ui by calling its 'show' method. The fourth step in
         the construction process.
 
@@ -235,7 +235,7 @@ class BaseToolkitCtor(HasStrictTraits):
             meta.cleanup()
         for child in self.children:
             child.cleanup()
-    
+
     def __call__(self, **ctxt_objs):
         """ Performs the construction process.
 
@@ -247,7 +247,7 @@ class BaseToolkitCtor(HasStrictTraits):
         Returns
         -------
         result : enaml.view.View
-            A view object that can diplay the ui to the screen by 
+            A view object that can diplay the ui to the screen by
             calling its 'show' method.
 
         """
@@ -257,7 +257,7 @@ class BaseToolkitCtor(HasStrictTraits):
         res = self.build_view()
         self.cleanup()
         return res
-    
+
     def component(self):
         """ Creates an returns the Component instance for this
         constructor. Must be implemented by subclasses.

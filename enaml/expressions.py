@@ -2,7 +2,7 @@ import ast
 from collections import namedtuple
 import types
 
-from traits.api import (Any, CTrait, HasStrictTraits, Tuple, HasTraits, 
+from traits.api import (Any, CTrait, HasStrictTraits, Tuple, HasTraits,
                         Instance, Property, Str, implements, cached_property,
                         Interface, WeakRef, List)
 
@@ -23,7 +23,7 @@ class IExpressionDelegate(Interface):
     ----------
     value : Property
         Should get and set the value of the expression.
-    
+
     validate_trait : Instance(CTrait)
         The trait to use to validate the expression values.
 
@@ -32,7 +32,7 @@ class IExpressionDelegate(Interface):
 
     local_ns : Intance(dict)
         The local namespace in which the expression should execute.
-    
+
     Methods
     -------
     bind(obj, name)
@@ -54,7 +54,7 @@ class IExpressionDelegate(Interface):
         ---------
         obj : Component
             The enaml component widget.
-        
+
         name : string
             The name of the attribute on the component to which we
             are delegating.
@@ -73,8 +73,8 @@ class IExpressionDelegate(Interface):
 class IExpressionDelegateFactory(Interface):
     """ Defines the IExpressionDelegateFactory interface for Enaml.
 
-    The IExpressionDelegateFactory defines the interface for creating 
-    factories that create IExpressionDelegate objects which bind code 
+    The IExpressionDelegateFactory defines the interface for creating
+    factories that create IExpressionDelegate objects which bind code
     and/or expressions to the Enaml object tree.
 
     Methods
@@ -94,7 +94,7 @@ class IExpressionDelegateFactory(Interface):
         ---------
         global_ns : dict
             The global namespace for the delegate.
-        
+
         local_ns : dict
             The local namespace for the delegate.
 
@@ -138,9 +138,9 @@ class IExpressionNotifier(Interface):
         ---------
         obj : Component
             The enaml component widget.
-        
+
         name : string
-            The name of the attribute on the component to which we are 
+            The name of the attribute on the component to which we are
             delegating.
 
         Returns
@@ -171,7 +171,7 @@ class IExpressionNotifierFactory(Interface):
         ---------
         global_ns : dict
             The global namespace for the delegate.
-        
+
         local_ns : dict
             The local namespace for the delegate.
 
@@ -190,35 +190,35 @@ class IExpressionNotifierFactory(Interface):
 class BaseExpression(HasStrictTraits):
     """ A base class with common traits needed to implement various
     expression delegates and notifiers.
-    
+
     Attributes
     ----------
     code : Instance(types.CodeType)
         The code object that holds the expression
-    
+
     global_ns : Instance(dict)
         The global namespace in which the expression should execute.
 
     local_ns : Intance(dict)
         The local namespace in which the expression should execute.
-    
+
     obj : WeakRef
-        The object for which we are providing delegation. We don't 
-        specify the type (which would be Component) in order to avoid 
+        The object for which we are providing delegation. We don't
+        specify the type (which would be Component) in order to avoid
         a circular import.
-    
+
     name : Str
         The name on the object which we are delegating
-    
+
     validate_trait : Instance(CTrait)
         The trait to use to validate the expression values.
-   
+
     value : Property
         A property which gets and sest the value of the expression.
-    
+
     _value : Any
         The underlying value store.
-    
+
     """
     code = Instance(types.CodeType)
 
@@ -239,9 +239,9 @@ class BaseExpression(HasStrictTraits):
 
 class DefaultExpression(BaseExpression):
     """ An expression delegate which provides a default value for an
-    attribute on an enaml widget. The default value is set once during 
+    attribute on an enaml widget. The default value is set once during
     startup but is free to be changed by user code at a later time.
-    
+
     See Also
     --------
     IExpressionDelegate
@@ -264,7 +264,7 @@ class DefaultExpression(BaseExpression):
 
         """
         return self._value
-    
+
     def _set_value(self, val):
         """ The setter for the 'value' property. Validates the value
         against the validate trait before assigning it to '_value'.
@@ -286,16 +286,16 @@ class DefaultExpression(BaseExpression):
 
 class BindingExpression(DefaultExpression):
     """ An expression delegate which binds the results of an expression
-    to the attribute of an enaml widget. Whenever the dependencies in 
-    the expression change, the expression is re-evaluated and the 
+    to the attribute of an enaml widget. Whenever the dependencies in
+    the expression change, the expression is re-evaluated and the
     value of the attribute is updated.
-    
+
     Attributes
     ----------
     dependencies : List(Tuple(Str, Str))
         A list of dependencies information provided by the factory
         that created this instance. It has the form [(root, attr), ...]
-        where root and attr are string that make up an attribute 
+        where root and attr are string that make up an attribute
         expression such as 'a.b' or 'a.b()' or 'a.b.c()'. Only
         one level of attribute access is tracked.
 
@@ -328,7 +328,7 @@ class BindingExpression(DefaultExpression):
 
     def refresh_value(self):
         """ The refresh function that is called by the dependency
-        listeners. It re-evaluates the expression and sets it as 
+        listeners. It re-evaluates the expression and sets it as
         the value.
 
         """
@@ -338,17 +338,17 @@ class BindingExpression(DefaultExpression):
 
 class DelegateExpression(DefaultExpression):
     """ An expression delegate which provides a two-way binding between
-    an attribute on an enaml widget, and an attribute on a model. The 
+    an attribute on an enaml widget, and an attribute on a model. The
     values of the two attributes remain synced together.
-    
+
     Attributes
     ----------
     dependencies : List(Tuple(Str, Str))
         A tuple of dependencies information provided by the factory
         that created this instance. It has the form [(root, attr)]
-        where root and attr are string that make up an attribute 
+        where root and attr are string that make up an attribute
         expression such as 'a.b'.
-    
+
     delegate : Any
         The object to which we are delegating
 
@@ -361,7 +361,7 @@ class DelegateExpression(DefaultExpression):
 
     """
     dependencies = List(Tuple(Str, Str), maxlen=1)
-    
+
     delegate_obj = Any
 
     delegate_attr_name = Str
@@ -388,7 +388,7 @@ class DelegateExpression(DefaultExpression):
 
     def _get_value(self):
         """ Overridden from the parent class property getter to pull
-        the value from the delegate object rather than the '_value' 
+        the value from the delegate object rather than the '_value'
         attribute on this instance.
 
         """
@@ -397,14 +397,14 @@ class DelegateExpression(DefaultExpression):
         return val
 
     def _set_value(self, val):
-        """ Overridden from the parent class property setter to set 
+        """ Overridden from the parent class property setter to set
         the value on the delegate object rather than the '_value'
         attribute on this instance.
 
         """
         val = self.validate_trait.validate(self.obj, self.name, val)
         setattr(self.delegate_obj, self.delegate_attr_name, val)
-    
+
     def refresh_value(self):
         """ Refreshes the value of the delegate by invalidating
         the '_value' attribute which will cause the 'value' property
@@ -418,12 +418,12 @@ class NotifierExpression(BaseExpression):
     """ An expression notifier which will evaluate an expression
     whenever an attribute on an Enaml widget changes. A message
     object will be added to the local namespace of the expression
-    at the 'msg' name. This allows the expression to accept 
+    at the 'msg' name. This allows the expression to accept
     arguments from the attribute change.
-    
+
     """
     implements(IExpressionNotifier)
-    
+
     message = namedtuple('Message', ('obj', 'name', 'old', 'new'))
 
     def bind(self, obj, name):
@@ -463,7 +463,7 @@ class BaseExpressionFactory(HasStrictTraits):
 
     dependencies : Property(List(Tuple(Str, Str)))
         The dependencies created by parsing the Python ast.
-    
+
     """
     ast = Instance(ast.Expression)
 
@@ -490,7 +490,7 @@ class BaseExpressionFactory(HasStrictTraits):
         visitor = AttributeVisitor()
         visitor.visit(self.ast)
         return visitor.results()
-        
+
 
 class DefaultExpressionFactory(BaseExpressionFactory):
     """ An implementor of IExpressionDelegateFactory that creates
@@ -500,22 +500,22 @@ class DefaultExpressionFactory(BaseExpressionFactory):
     implements(IExpressionDelegateFactory)
 
     def __call__(self, global_ns, local_ns,):
-        return DefaultExpression(code=self.code, 
-                                 global_ns=global_ns, 
+        return DefaultExpression(code=self.code,
+                                 global_ns=global_ns,
                                  local_ns=local_ns)
 
 
 class BindingExpressionFactory(BaseExpressionFactory):
     """ An implementor of IExpressionDelegateFactory that creates
     a BindingExpression.
-    
+
     """
     implements(IExpressionDelegateFactory)
 
     def __call__(self, global_ns, local_ns):
-        return BindingExpression(code=self.code, 
+        return BindingExpression(code=self.code,
                                  dependencies=self.dependencies,
-                                 global_ns=global_ns, 
+                                 global_ns=global_ns,
                                  local_ns=local_ns)
 
 
@@ -529,7 +529,7 @@ class DelegateExpressionFactory(BaseExpressionFactory):
     def __call__(self, global_ns, local_ns):
         return DelegateExpression(code=self.code,
                                   dependencies=self.dependencies,
-                                  global_ns=global_ns, 
+                                  global_ns=global_ns,
                                   local_ns=local_ns)
 
 
@@ -542,7 +542,7 @@ class NotifierExpressionFactory(BaseExpressionFactory):
 
     def __call__(self, global_ns, local_ns):
         return NotifierExpression(code=self.code,
-                                  global_ns=global_ns, 
+                                  global_ns=global_ns,
                                   local_ns=local_ns)
 
 
