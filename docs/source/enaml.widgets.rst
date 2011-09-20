@@ -90,7 +90,8 @@ described in the interface.
 Standard Widgets
 ----------------
 
-*Abstract base widgets*
+Abstract base widgets
+^^^^^^^^^^^^^^^^^^^^^
 
 .. autosummary::
     :toctree: widgets
@@ -102,7 +103,8 @@ Standard Widgets
     enaml.widgets.window.Window
     enaml.widgets.toggle_control.ToggleControl
 
-*Container widgets*
+Container widgets
+^^^^^^^^^^^^^^^^^
 
 .. autosummary::
     :toctree: widgets
@@ -116,7 +118,8 @@ Standard Widgets
     enaml.widgets.stacked_group.StackedGroup
     enaml.widgets.tab_group.TabGroup
 
-*Basic widgets*
+Basic widgets
+^^^^^^^^^^^^^
 
 .. autosummary::
     :toctree: widgets
@@ -125,6 +128,8 @@ Standard Widgets
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
+    enaml.widgets.push_button.PushButton
+    enaml.widgets.radio_button.RadioButton
     enaml.widgets.dialog.Dialog
     enaml.widgets.field.Field
     enaml.widgets.image.Image
@@ -133,7 +138,8 @@ Standard Widgets
     enaml.widgets.spin_box.SpinBox
     enaml.widgets.spacer.Spacer
 
-*Special widgets*
+Special widgets
+^^^^^^^^^^^^^^^
 
 .. autosummary::
     :toctree: widgets
