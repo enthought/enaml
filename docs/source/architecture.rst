@@ -363,5 +363,5 @@ Having written these classes, you will need to define
 :py:meth:`__call__` methods construct the appropriate expression instance. 
 
 Finally you will need to subclass :py:class:`EnamlFactory` and override the
-:py:method:`expression_factories` method to return the new expression factory
+:py:meth:`expression_factories` method to return the new expression factory
 classes.
