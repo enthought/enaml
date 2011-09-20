@@ -19,6 +19,7 @@ with the graphics widget (i.e. the *view*).
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
+    enaml.widgets.radio_button.RadioButton
     enaml.widgets.component.Component
     enaml.widgets.container.Container
     enaml.widgets.control.Control
@@ -61,6 +62,7 @@ described in the interface.
     enaml.widgets.combo_box.IComboBoxImpl
     enaml.widgets.component.IComponentImpl
     enaml.widgets.container.IContainerImpl
+    enaml.widgets.radio_button.IRadioButtonImpl
     enaml.widgets.control.IControlImpl
     enaml.widgets.dialog.IDialogImpl
     enaml.widgets.field.IFieldImpl
