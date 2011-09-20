@@ -302,7 +302,7 @@ class AbstractItemModel(HasTraits):
     
     def begin_move_rows(self, source_parent, source_first, source_last,
                         destination_parent, destination_child):
-         """ Begins to move a row.
+        """ Begins to move a row.
         
         Arguments
         ---------
