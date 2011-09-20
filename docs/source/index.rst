@@ -77,7 +77,7 @@ Alternatively you can work in developing mode with::
 Example
 ^^^^^^^
 
-For the impatient enaml user here is an example showcaseing some of the wx
+For the impatient enaml user here is an example showcasing some of the wx
 based widgets:
 
 .. include:: example.enaml
