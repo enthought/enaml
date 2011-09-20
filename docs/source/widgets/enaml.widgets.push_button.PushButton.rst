@@ -1,4 +1,4 @@
-Toggle Group
+Push Button
 ==========================================
 
 .. currentmodule:: enaml.widgets.push_button

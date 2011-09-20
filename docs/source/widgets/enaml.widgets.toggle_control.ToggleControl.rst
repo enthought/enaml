@@ -1,4 +1,4 @@
-Toggle Group
+Toggle control
 ==========================================
 
 .. currentmodule:: enaml.widgets.toggle_control
