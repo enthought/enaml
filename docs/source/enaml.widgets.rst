@@ -125,9 +125,9 @@ Standard Widgets
     enaml.widgets.field.Field
     enaml.widgets.image.Image
     enaml.widgets.label.Label
-    enaml.widgets.spacer.Spacer
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
+    enaml.widgets.spacer.Spacer
 
 *Special widgets*
 
