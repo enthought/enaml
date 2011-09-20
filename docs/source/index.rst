@@ -77,7 +77,7 @@ Alternatively you can work in developing mode with::
 Example
 ^^^^^^^
 
-For the impatient enaml user here is an example showcasing some of the wx
+For the impatient Enaml user here is an example showcasing some of the wx
 based widgets:
 
 .. include:: example.enaml
@@ -94,8 +94,7 @@ Results in the following widget
     :align: center
     :figwidth: 70%
 
-    example using enaml machinery.
-
+    example using the Enaml machinery.
 
 Contents
 --------
@@ -104,7 +103,7 @@ Contents
     :maxdepth: 2
 
     Examples
-    enaml_file
     architecture
+    enaml_file
     Library Reference <modules>
     developers_corner
