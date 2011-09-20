@@ -136,58 +136,58 @@ class AbstractItemModel(HasTraits):
     widgets.
 
     """
-    # Fired by the begin_insert_columns method
+    #: Fired by the begin_insert_columns method
     columns_about_to_be_inserted = Event
 
-    # Fired by the begin_move_columns method
+    #: Fired by the begin_move_columns method
     columns_about_to_be_moved = Event
 
-    # Fired by the begin_remove_columns method
+    #: Fired by the begin_remove_columns method
     columns_about_to_be_removed = Event
 
-    # Fired by the end_insert_columns method
+    #: Fired by the end_insert_columns method
     columns_inserted = Event
 
-    # Fired by the end_move_columns method
+    #: Fired by the end_move_columns method
     columns_moved = Event
 
-    # Fired by the end_remove_rows method
+    #: Fired by the end_remove_rows method
     columns_removed = Event
 
-    # Fired by the begin_insert_rows method
+    #: Fired by the begin_insert_rows method
     rows_about_to_be_inserted = Event
 
-    # Fired by the begin_move_rows method
+    #: Fired by the begin_move_rows method
     rows_about_to_be_moved = Event
 
-    # Fired by the begin_remove_columns method
+    #: Fired by the begin_remove_columns method
     rows_about_to_be_removed = Event
 
-    # Fired by the end_insert_rows method
+    #: Fired by the end_insert_rows method
     rows_inserted = Event
 
-    # Fired by the end_move_rows method
+    #: Fired by the end_move_rows method
     rows_moved = Event
 
-    # Fired by the end_remove_rows method
+    #: Fired by the end_remove_rows method
     rows_removed = Event
 
-    # Fired by the begin_change_layout method
+    #: Fired by the begin_change_layout method
     layout_about_to_be_changed = Event
 
-    # Fired by the end_change_layout method
+    #: Fired by the end_change_layout method
     layout_changed = Event
     
-    # Fired by the begin_reset_model method
+    #: Fired by the begin_reset_model method
     model_about_to_be_reset = Event
 
-    # Fired by the end_reset_model method
+    #: Fired by the end_reset_model method
     model_reset = Event
 
-    # Fired by the notify_data_changed method
+    #: Fired by the notify_data_changed method
     data_changed = Event
 
-    # Fired by the notify_header_data_changed method
+    #: Fired by the notify_header_data_changed method
     header_data_changed = Event
 
     def begin_insert_columns(self, parent, first, last):
