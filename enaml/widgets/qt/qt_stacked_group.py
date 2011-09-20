@@ -39,14 +39,14 @@ class QtStackedGroup(QtContainer):
 
     def layout_child_widgets(self):
         """ Lay out the contained pages.
-        
+
         """
         self_add_widget = self.widget.addWidget
         for child_wrapper in self.wrap_child_containers():
             self_add_widget(child_wrapper)
-            
+
         self.set_page(self.parent.current_index)
-    
+
     def parent_current_index_changed(self, current_index):
         """ Update the visible page
 
@@ -54,7 +54,7 @@ class QtStackedGroup(QtContainer):
         ---------
         current_index : int
             The index of the page to make visible
-            
+
         """
         self.set_page(current_index)
 
@@ -63,12 +63,12 @@ class QtStackedGroup(QtContainer):
     #---------------------------------------------------------------------------
     def wrap_child_containers(self):
         """ Yield a "page" for each child container.
-        
+
         Each element in `self.parent.children` is a Container with a QLayout
         as its 'widget' attribute. This function creates a dummy QWidget and
         sets its layout to the aforementioned QLayout. The QStackedWidget
         doesn't support adding layouts directly.
-        
+
         """
         for child_container in self.parent.children:
             child_wrapper = QtGui.QWidget(self.widget)
@@ -95,7 +95,7 @@ class QtStackedGroup(QtContainer):
 
         Raises
         ------
-        TypeError
+        TypeError :
             The index is not an integer.
 
         IndexError
@@ -104,7 +104,7 @@ class QtStackedGroup(QtContainer):
         """
         if not isinstance(idx, int):
             raise TypeError('The value "{0}" is not an integer.'.format(idx))
-            
+
         return self.parent.children[idx]
 
     def index_of(self, child):
@@ -122,10 +122,10 @@ class QtStackedGroup(QtContainer):
 
         Raises
         ------
-        TypeError
+        TypeError :
             The child is not a Container.
 
-        IndexError
+        IndexError :
             The child does not exist in the group.
 
         """
@@ -141,7 +141,7 @@ class QtStackedGroup(QtContainer):
             raise IndexError(message)
 
         return index
-        
+
 
     #---------------------------------------------------------------------------
     # Implementation

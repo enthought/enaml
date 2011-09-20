@@ -42,7 +42,7 @@ class StackedGroup(Container):
     current_index = Int
 
     count = Property(Int, depends_on='children')
-    
+
     children = List(Container)
 
     #---------------------------------------------------------------------------

@@ -96,10 +96,10 @@ class WXStackedGroup(WXContainer):
 
         Raises
         ------
-        TypeError
+        TypeError :
             The index is not an integer.
 
-        IndexError
+        IndexError :
             No child corresponds to the given index.
 
         """
@@ -120,10 +120,10 @@ class WXStackedGroup(WXContainer):
 
         Raises
         ------
-        TypeError
+        TypeError :
             The child is not a Container.
 
-        IndexError
+        IndexError :
             The child does not exist in the group.
 
         """
