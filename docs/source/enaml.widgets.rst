@@ -1,13 +1,9 @@
-widgets Package
-===============
-
-For each gui toolkit that is supported by Enaml a basic set of widgets
-have been implemented and exist in the enaml.widget submodule.
-
-What is a widget?
------------------
+Widgets
+=======
 
 A widget in Enaml is a toolkit spesific implementation of an interface.
+For each gui toolkit that is supported by Enaml a basic set of widgets
+have been implemented and exist in the :mod:`enaml.widgets` submodule.
 
 Interface
 ^^^^^^^^^
@@ -53,8 +49,8 @@ Implementation
 For each interface there exists a traits object that implements the
 required interface throught a very thin layer that wraps the tookit
 specific widgets and exposes the necessary attributes. Value modifications
-and events that take place during the life time of the graphic application can be
-connected to our traits model by listing and updating the attributes
+and events that take place during the life time of the graphic application
+can be connected to our traits model by listing and updating the attributes
 described in the interface.
 
 *Standard Implementations*
@@ -87,7 +83,7 @@ described in the interface.
     enaml.widgets.enable_canvas.IEnableCanvasImpl
     :parts: 1
 
-Standard Wdigets
+Standard Widgets
 ----------------
 
 *Abstract base widgets*
