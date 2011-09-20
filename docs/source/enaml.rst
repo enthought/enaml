@@ -61,6 +61,11 @@ thin layer over backend widgets and produce the traits View objects.
 
 .. automodule:: enaml.style_sheet
 
+:mod:`style_converters` Module
+-------------------------
+
+.. automodule:: enaml.style_converters
+
 :mod:`toolkit` Module
 ---------------------
 
