@@ -76,26 +76,45 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
 
 
 class WXTableView(WXControl):
-
+    """ A wxPython implementation of TableView.
+    
+    See Also
+    --------
+    TableView
+    
+    """
     implements(ITableViewImpl)
 
+    #: The underlying model.
     model_wrapper = Instance(AbstractItemModelTable)
 
     #---------------------------------------------------------------------------
     # ITableViewImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
+        """ Create the underlying wx.grid.Grid control.
+        
+        """
         self.widget = widget = wx.grid.Grid(self.parent_widget())
         widget.SetDoubleBuffered(True)
 
     def initialize_widget(self):
+        """ Intialize the widget with the attributes of this instance.
+        
+        """
         self.set_table_model(self.parent.item_model)
         self.bind()
 
     def create_style_handler(self):
+        """ Initialize a style handler.
+        
+        """
         pass
     
     def initialize_style(self):
+        """ Configure the widget's minimum width and height.
+        
+        """
         style = self.parent.style
         min_width = style.get_property("min_width")
         min_height = style.get_property("min_height")
@@ -113,17 +132,29 @@ class WXTableView(WXControl):
         self.widget.SetMinSize((min_width, min_height))
 
     def parent_item_model_changed(self, item_model):
+        """ The change handler for the 'item_model' attribute. Not meant
+        for public consumption.
+        
+        """
         self.set_table_model(item_model)
         
     #---------------------------------------------------------------------------
     # implementation
     #---------------------------------------------------------------------------
     def bind(self):
+        """ Bind the event handlers for the table view. Not meant for
+        public consumption.
+
+        """
         widget = self.widget
         widget.Bind(wx.grid.EVT_GRID_SELECT_CELL, self.on_select_cell)
         widget.Bind(wx.grid.EVT_GRID_CELL_LEFT_DCLICK, self.on_left_dclick)
     
     def on_select_cell(self, event):
+        """ The event handler for the cell selection event.  Not meant
+        for public consumption.
+
+        """
         event.Skip()
         parent = self.parent
         parent_index = ModelIndex()
@@ -134,10 +165,18 @@ class WXTableView(WXControl):
         
 
     def on_left_dclick(self, event):
+        """ The event handler for the double-click event.  Not meant
+        for public consumption.
+
+        """
         event.Skip()
         self.parent.left_dclick = self.parent.selected
         
     def set_table_model(self, model):
+        """ Set the table view's model.  Not meant for public
+        consumption.
+
+        """
         model_wrapper = AbstractItemModelTable(model)
         self.widget.SetTable(model_wrapper)
         self.widget.Refresh()

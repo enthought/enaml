@@ -66,27 +66,48 @@ class AbstractItemModelTable(QtCore.QAbstractTableModel):
 
 
 class QtTableView(QtControl):
-
+    """ A Qt implementation of TableView.
+    
+    See Also
+    --------
+    TableView
+    
+    """
     implements(ITableViewImpl)
 
+    #: The underlying model.
     model_wrapper = Instance(AbstractItemModelTable)
 
     #---------------------------------------------------------------------------
     # ITableViewImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
+        """ Create the underlying QTableView control.
+        
+        """
         self.widget = QtGui.QTableView()
 
     def initialize_widget(self):
+        """ Initialize the widget with the attributes of this instance.
+        
+        """
         self.set_table_model(self.parent.item_model)
 
     def parent_item_model_changed(self, item_model):
+        """ The change handler for the 'item_model' attribute. Not meant
+        for public consumption.
+        
+        """
         self.set_table_model(item_model)
         
     #---------------------------------------------------------------------------
-    # implementation
+    # Implementation
     #---------------------------------------------------------------------------
     def set_table_model(self, model):
+        """ Set the table view's model.  Not meant for public
+        consumption.
+        
+        """
         model_wrapper = AbstractItemModelTable(model)
         self.widget.setModel(model_wrapper)
         self.model_wrapper = model_wrapper

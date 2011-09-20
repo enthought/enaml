@@ -16,12 +16,16 @@ class ITableViewImpl(IControlImpl):
 
 
 class TableView(Control):
-
+    """ A view for tabular data.
+    
+    """
+    #: The model for which this table is a view.
     item_model = Instance(AbstractItemModel)
 
-    # The selected model index
+    #: The selected model index.
     selected = Instance(ModelIndex)
 
+    #: Fired after the left button is double-clicked.
     left_dclick = Event
 
     #---------------------------------------------------------------------------
