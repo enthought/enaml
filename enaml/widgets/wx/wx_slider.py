@@ -143,7 +143,8 @@ class WXSlider(WXControl):
 
         """
         self.set_orientation(orientation)
-
+        self.widget.GetParent().Layout()
+        
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
