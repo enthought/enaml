@@ -217,7 +217,7 @@ class AbstractItemModel(HasTraits):
         Arguments
         ---------
         source_parent : ModelIndex
-            The parent index from which columns will be moved.
+            The item from which columns will be moved.
             
         source_first : int
             The number of the first column to be moved.
@@ -226,7 +226,7 @@ class AbstractItemModel(HasTraits):
             The number of the last column to be moved.
             
         destination_parent : ModelIndex
-            The parent index into which the columns will be moved.
+            The item into which the columns will be moved.
             
         destination_child : int
             The column number to which the columns will be moved.
@@ -243,7 +243,7 @@ class AbstractItemModel(HasTraits):
         Arguments
         ---------
         parent : ModelIndex
-            The parent from which the columns will be removed.
+            The item from which the columns will be removed.
         
         first : int
             The number of the first column to remove.
@@ -288,7 +288,7 @@ class AbstractItemModel(HasTraits):
         Arguments
         ---------
         parent : ModelIndex
-            The parent into which the new rows will be inserted.
+            The item into which the new rows will be inserted.
         
         first : int
             The row position at which insertion will begin.
@@ -307,7 +307,7 @@ class AbstractItemModel(HasTraits):
         Arguments
         ---------
         source_parent : ModelIndex
-            The parent index from which rows will be moved.
+            The item from which rows will be moved.
             
         source_first : int
             The number of the first row to be moved.
@@ -316,7 +316,7 @@ class AbstractItemModel(HasTraits):
             The number of the last row to be moved.
             
         destination_parent : ModelIndex
-            The parent index into which the rows will be moved.
+            The item into which the rows will be moved.
             
         destination_child : int
             The row number to which the rows will be moved.
@@ -333,7 +333,7 @@ class AbstractItemModel(HasTraits):
         Arguments
         ---------
         parent : ModelIndex
-            The parent from which the rows will be removed.
+            The item from which the rows will be removed.
         
         first : int
             The number of the first row to remove.
@@ -569,10 +569,43 @@ class AbstractItemModel(HasTraits):
         return ItemFlags.IS_SELECTABLE | ItemFlags.IS_ENABLED
 
     def header_data(self, section, orientation, role=DataRole.DISPLAY):
+        """ Get data from a header, possibly specifying the data role.
+        
+        Arguments
+        ---------
+        section : int
+            The row or column number of a header.
+        
+        orientation : enaml.enums.Orientation
+            Select a horizontal header or a vertical header.
+        
+        role : enaml.enums.DataRole
+            Select data with a particular role.
+            
+        Returns
+        -------
+        data : Any
+            The requested data.
+            
+        """
         if role == DataRole.DISPLAY:
             return section + 1
 
     def item_data(self, index):
+        """ Get a mapping of the form {DataRole: value} for each data
+        role defined on the given item.
+        
+        Arguments
+        ---------
+        index : ModelIndex
+            An item from which to obtain data.
+        
+        Returns
+        -------
+        data : Dict(enaml.enums.DataRole, Any)
+            The requested data.
+            
+        """
         res = {}
         for role in DataRole.ALL:
             res[role] = self.data(index, role)
@@ -580,42 +613,224 @@ class AbstractItemModel(HasTraits):
 
     def match(self, start, role, value, hits=1, 
               flags=Match.STARTS_WITH | Match.WRAP):
+        """ Search along an axis for data matching a particular value.
+        
+        Arguments
+        ---------
+        start : int
+            A row or column at which to begin the search.
+        
+        role : enaml.enums.DataRole
+            A data role to check in the search.
+        
+        value : Any
+            The sought-after result.
+        
+        hits : int
+            The maximum number of matches.
+        
+        flags : enaml.enums.Match
+            Options to customize the search.
+        
+        Returns
+        -------
+        matches : List(ModelIndex)
+            An index for each item that matched.
+            
+        """
         pass
 
     def set_data(self, index, value, role=DataRole.EDIT):
+        """ Update a model item's data.
+        
+        Arguments
+        ---------
+        index : ModelIndex
+            An item to update.
+        
+        value : Any
+            A new value.
+        
+        role : enaml.enums.DataRole
+            The data role to modify.
+        
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+            
+        """
         return False
     
     def set_header_data(self, section, orientation, value, role=DataRole.EDIT):
+        """ Update a header's data.
+        
+        Arguments
+        ---------
+        section : int
+            The row or column of a header.
+        
+        orientation : enaml.enums.Orientation
+            The axis along which the update will occur.
+        
+        value : Any
+            A new value.
+        
+        role : enaml.enums.DataRole
+            The data role to modify.
+        
+        Returns
+        -------
+        success : bool
+            True if the header data was updated, False otherwise.
+        
+        """
         return False
     
     def set_item_data(self, index, roles):
+        """ Update an item's data, for certain data roles.
+        
+        Arguments
+        ---------
+        index : ModelIndex
+            An item to update.
+        
+        roles : Dict(enaml.enums.DataRole, Any)
+            A map of data roles to their associated new values.
+        
+        Returns
+        -------
+        success : bool
+            True if the data was updated succesfully, False otherwise.
+        """
         res = True
         for role, value in roles.iteritems():
             res &= self.dat_data(index, value, role)
         return res
 
     def sibling(self, row, column, index):
+        """ Obtain an item with the same parent as `index`.
+        
+        Arguments
+        ---------
+        row : int
+            The row of the new item.
+        
+        column : int
+            The column of the new item.
+        
+        index : ModelIndex
+            An item for which to find a "sibling".
+           
+        Returns
+        -------
+        index : ModelIndex
+            An element with the same parent as the specified item.
+            
+        """
         return self.index(row, column, self.parent(index))
 
     def sort(self, column, order=Sorted.ASCENDING):
+        """ Sort the model by values in a column.
+        
+        Arguments
+        ---------
+        column : int
+            The column on which to sort.
+        
+        order : enaml.enums.Sorted
+            The ordering of the sort.
+            
+        """
         pass
 
     #---------------------------------------------------------------------------
     # Abstract Methods
     #---------------------------------------------------------------------------
     def column_count(self, parent=ModelIndex()):
+        """ Count the number of columns in the children of an item.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            A model item with children.
+        
+        Returns
+        -------
+        count : int
+            The number of columns in the model.
+        
+        """
         raise NotImplementedError
     
     def row_count(self, parent=ModelIndex()):
+        """ Count the number of rows in the children of an item.
+        
+        Arguments
+        ---------
+        parent : ModelIndex
+            A model item with children.
+        
+        Returns
+        -------
+        count : int
+            The number of rows in the model.
+        
+        """
         raise NotImplementedError
 
     def index(self, row, column, parent=ModelIndex()):
+        """ Obtain an index coresponding to an item in the model.
+        
+        Arguments
+        ---------
+        row : int
+            The sought-after item's row.
+        
+        column : int
+            The sought-after item's column.
+            
+        parent : ModelIndex
+            The parent item that is the base of this index.
+        
+        Returns
+        -------
+        item : ModelIndex
+            An index for the specified item.
+            
+        """
         raise NotImplementedError
 
     def parent(self, index):
+        """ Obtain the parent of a model item.
+        
+        Arguments
+        ---------
+        index : ModelIndex
+            A model item, possibly with a valid parent.
+        
+        Returns
+        -------
+        index : ModelIndex
+            An index for the parent item.
+        
+        """
         raise NotImplementedError
     
     def data(self, index, role=DataRole.DISPLAY):
+        """ Get a model item's data, for a particular role.
+        
+        Arguments
+        ---------
+        index : ModelIndex
+            An item to query.
+        
+        Returns
+        -------
+        value : Any
+            The requested value.
+        
+        """
         raise NotImplementedError
 
 
