@@ -284,3 +284,84 @@ implement a new architecture, you will need to perform the following steps:
 
 If all of the above steps are performed correctly, you should be able to display
 any Enaml UI in your new toolkit.
+
+
+Using A Different Notification Model
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Enaml uses Enthought's Traits system by default for handling binding and
+notification of expressions to model attributes.  You may have existing code
+which uses a different system for reacting to changes within the model, and
+Enaml can be extended to be able to use these systems as well.  This would
+allow developers to write code which might do things like access a model on
+a remote machine, or stored in a database.
+
+To support this sort of behaviour, you will probably want to have a base class
+that all model objects with this new reaction mechanism inherit from, or some
+other simple way that these model instances can be distinguished from regular
+Python or Traits instances.
+
+You may then need to implement subclasses of
+:py:class:`enaml.expressions.DefaultExpression`,
+:py:class:`enaml.expressions.BindingExpression`, 
+:py:class:`enaml.expressions.DelegateExpression`,  and
+:py:class:`enaml.expressions.NotifierExpression` that correctly handle these
+interactions.  When implementing overriden methods, all of these subclasses
+must check to see whether the model object is of the new model type, and if
+it is not then they need to use the standard superclass implementation of the
+method.  If this is not done then expressions involving widget traits will
+fail to work correctly.
+
+    :py:class:`~enaml.expressions.DefaultExpression`
+        This class needs to be able to provide a default value for the
+        expression, but does not need to react to changes in the model object
+        or in the Enaml namespace.
+        
+        You may need to override the :py:meth:`__value_default()` handler
+        to compute the default value from the model, but ideally you should
+        be able to use this class unmodified.
+
+    :py:class:`~enaml.expressions.BindingExpression`
+        This class needs to provide a default value for the expression, but
+        also needs to analyze the expression for dependencies and react to
+        changes in the dependency values.
+
+        You may need to override the :py:meth:`__value_default()` handler
+        to as in the :py:class:`~enaml.expressions.DefaultExpression` case.
+    
+        You will also need to override the :py:meth:`bind()` method to correctly
+        hook up the expression to its dependencies in your model's notification
+        model.  For example, you may have to register a callback with an
+        appropriate object.  This callback will probably look something
+        like the :py:meth:`refresh_value()` method, but may need to perform
+        additional steps depending on your model.
+    
+    :py:class:`~enaml.expressions.NotifierExpression`
+        This class requires the ability to execute a code expression whenever
+        an Enaml attribute changes.
+        
+        You may need to override the :py:meth:`notify()` method to compute the
+        expression correctly, but ideally you should be able to use this
+        class unmodified.
+    
+    :py:class:`~enaml.expressions.DelegateExpression`
+        This class requires both the ability to analyze and react to changes
+        in expression dependencies, but also push changes from the Enaml
+        trait which it is connected to onto the designated object.
+    
+        This will require an appropriate :py:meth:`bind()` method similar to
+        the one that the :py:class:`~enaml.expressions.BindingExpression` uses,
+        although the allowable expressions are much simpler for
+        :py:class:`~enaml.expressions.DelegateExpression`.
+        
+        You will also need to override the implementations of
+        :py:meth:`_get_value()` and :py:meth:`_set_value()` to appropriately
+        change the value on the underlying model.
+
+Having written these classes, you will need to define
+:py:class:`BaseExpressionFactory` subclasses for each class and have the
+:py:meth:`__call__` methods construct the appropriate expression instance. 
+
+Finally you will need to subclass :py:class:`EnamlFactory` and override the
+:py:method:`expression_factories` method to return the new expression factory
+classes.
