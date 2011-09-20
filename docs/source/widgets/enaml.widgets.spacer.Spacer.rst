@@ -6,7 +6,7 @@ Spacer
 .. autoclass:: Spacer
 
 
-Backends
+Sample
 --------
 
 

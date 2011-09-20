@@ -5,13 +5,8 @@ Traits UI Item
 
 .. autoclass:: TraitsUIItem
 
-
-Backends
---------
-
-
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_traitsui_item.QtTraitsUIItem
@@ -20,7 +15,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_traitsui_item.QtTraitsUIItem
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_traitsui_item.WXTraitsUIItem

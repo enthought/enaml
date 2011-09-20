@@ -6,7 +6,7 @@ Html
 .. autoclass:: Html
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -18,7 +18,7 @@ Windows
 
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_html.QtHtml
@@ -27,7 +27,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_html.QtHtml
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_html.WXHtml

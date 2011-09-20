@@ -5,13 +5,8 @@ Tab Group
 
 .. autoclass:: TabGroup
 
-
-Backends
---------
-
-
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_tab_group.QtTabGroup
@@ -20,7 +15,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_tab_group.QtTabGroup
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_tab_group.WXTabGroup

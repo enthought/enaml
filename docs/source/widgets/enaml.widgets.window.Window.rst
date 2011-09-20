@@ -5,11 +5,6 @@ Window
 
 .. autoclass:: Window
 
-
-Backends
---------
-
-
 Qt
 ^^
 

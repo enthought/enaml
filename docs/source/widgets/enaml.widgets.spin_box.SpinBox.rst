@@ -6,7 +6,7 @@ Spin Box
 .. autoclass:: SpinBox
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -19,7 +19,7 @@ Windows
 ========= ===================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_spin_box.QtSpinBox
@@ -28,7 +28,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_spin_box.QtSpinBox
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_spin_box.WXSpinBox

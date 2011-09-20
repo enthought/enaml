@@ -6,7 +6,7 @@ Toggle Group
 .. autoclass:: PushButton
 
 
-Backends
+Sample
 --------
 
 ========= ======================================= ================================
@@ -20,7 +20,7 @@ Windows
 
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_push_button.QtPushButton
@@ -29,7 +29,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_push_button.QtPushButton
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_push_button.WXPushButton

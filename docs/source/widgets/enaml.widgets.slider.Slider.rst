@@ -6,7 +6,7 @@ Slider
 .. autoclass:: Slider
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -19,7 +19,7 @@ Windows
 ========= ===================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_slider.QtSlider
@@ -28,7 +28,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_slider.QtSlider
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_slider.WXSlider

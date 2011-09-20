@@ -6,7 +6,7 @@ Calendar
 .. autoclass:: Calendar
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -17,7 +17,7 @@ Windows
 ========= ===================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_calendar.QtCalendar
@@ -26,7 +26,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_calendar.QtCalendar
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_calendar.WXCalendar

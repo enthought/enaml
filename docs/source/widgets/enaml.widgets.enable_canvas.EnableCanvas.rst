@@ -5,13 +5,8 @@ Enable Canvas
 
 .. autoclass:: EnableCanvas
 
-
-Backends
---------
-
-
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas
@@ -20,7 +15,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas

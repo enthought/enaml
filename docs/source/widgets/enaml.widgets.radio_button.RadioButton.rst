@@ -6,7 +6,7 @@ Toggle Group
 .. autoclass:: RadioButton
 
 
-Backends
+Sample
 --------
 
 ========= ======================================== ================================
@@ -19,7 +19,7 @@ Windows
 ========= ======================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_radio_button.QtRadioButton
@@ -28,7 +28,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_radio_button.QtRadioButton
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_radio_button.WXRadioButton

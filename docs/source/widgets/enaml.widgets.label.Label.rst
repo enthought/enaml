@@ -6,7 +6,7 @@ Label
 .. autoclass:: Label
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -20,7 +20,7 @@ Windows
 
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_label.QtLabel
@@ -29,7 +29,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_label.QtLabel
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_label.WXLabel

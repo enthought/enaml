@@ -6,7 +6,7 @@ HGroup
 .. autoclass:: HGroup
 
 
-Backends
+sample
 --------
 
 ========= ===================================== ================================
@@ -19,7 +19,7 @@ Windows
 ========= ===================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_hgroup.QtHGroup
@@ -28,7 +28,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_hgroup.QtHGroup
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_hgroup.WXHGroup

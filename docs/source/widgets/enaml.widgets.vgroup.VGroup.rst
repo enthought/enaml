@@ -6,7 +6,7 @@ VGroup
 .. autoclass:: VGroup
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -19,7 +19,7 @@ Windows
 ========= ===================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_vgroup.QtVGroup
@@ -28,7 +28,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_vgroup.QtVGroup
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_vgroup.WXVGroup

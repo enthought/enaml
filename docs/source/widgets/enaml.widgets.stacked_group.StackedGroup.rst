@@ -6,12 +6,8 @@ Stacked Group
 .. autoclass:: StackedGroup
 
 
-Backends
---------
-
-
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_stacked_group.QtStackedGroup
@@ -20,7 +16,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_stacked_group.QtStackedGroup
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_stacked_group.WXStackedGroup

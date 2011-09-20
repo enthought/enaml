@@ -6,7 +6,7 @@ Field
 .. autoclass:: Field
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -18,7 +18,7 @@ Windows
 
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_field.QtField
@@ -27,7 +27,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_field.QtField
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_field.WXField

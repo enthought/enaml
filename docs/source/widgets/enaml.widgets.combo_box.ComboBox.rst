@@ -6,7 +6,7 @@ ComboBox
 .. autoclass:: ComboBox
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -17,7 +17,7 @@ Windows
 ========= ===================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_combo_box.QtComboBox
@@ -26,7 +26,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_combo_box.QtComboBox
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_combo_box.WXComboBox

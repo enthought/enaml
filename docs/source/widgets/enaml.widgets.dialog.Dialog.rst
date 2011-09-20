@@ -6,12 +6,8 @@ Dialog
 .. autoclass:: Dialog
 
 
-Backends
---------
-
-
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_dialog.QtDialog
@@ -20,7 +16,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_dialog.QtDialog
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_dialog.WXDialog

@@ -5,8 +5,4 @@ GroupBox
 
 .. autoclass:: GroupBox
 
-
-Backends
---------
-
-
+.. note:: No implementation of the GroupBox exists yet

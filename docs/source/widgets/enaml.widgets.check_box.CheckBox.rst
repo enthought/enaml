@@ -6,7 +6,7 @@ CheckBox
 .. autoclass:: CheckBox
 
 
-Backends
+Sample
 --------
 
 ========= ===================================== ================================
@@ -18,7 +18,7 @@ Windows
 
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_check_box.QtCheckBox
@@ -27,7 +27,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_check_box.QtCheckBox
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_check_box.WXCheckBox

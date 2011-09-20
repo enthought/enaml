@@ -6,12 +6,11 @@ Group
 .. autoclass:: Group
 
 
-Backends
---------
+.. note:: A Group is a base class for the VGroup and HGroup widgets
 
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_group.QtGroup
@@ -20,7 +19,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_group.QtGroup
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_group.WXGroup

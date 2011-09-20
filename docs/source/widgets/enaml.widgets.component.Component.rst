@@ -6,12 +6,8 @@ Component
 .. autoclass:: Component
 
 
-Backends
---------
-
-
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_component.QtComponent
@@ -20,7 +16,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_component.QtComponent
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_component.WXComponent
