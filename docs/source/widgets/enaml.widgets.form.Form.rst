@@ -6,12 +6,20 @@ Form
 .. autoclass:: Form
 
 
-Backends
---------
+Sample
+------
 
+========= ===================================== ================================
+ System                                     Backend
+--------- ----------------------------------------------------------------------
+   --                 Wx                                  Qt
+========= ===================================== ================================
+Windows
+          .. image:: ../images/wx/form.png
+========= ===================================== ================================
 
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_form.QtForm
@@ -20,7 +28,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_form.QtForm
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_form.WXForm
