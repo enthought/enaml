@@ -136,8 +136,8 @@ class BaseDocString(object):
 
             Where the name has to be one word.
 
-            .. note:: The provided function should be already aware of the
-                the current indention.
+        .. note:: The provided function should be already aware of the
+            the current indention.
 
         Returns
         -------
