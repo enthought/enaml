@@ -80,8 +80,8 @@ Contents
 .. toctree::
     :maxdepth: 2
 
-    architecture
     enaml_file
+    architecture
     Examples <example>
     Library Reference <modules>
     developers_corner
