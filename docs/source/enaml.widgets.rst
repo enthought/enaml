@@ -38,7 +38,6 @@ with the graphics widget (i.e. the *view*).
     enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.image.Image
     enaml.widgets.label.Label
-    enaml.widgets.line_edit.LineEdit
     enaml.widgets.toggle_control.ToggleControl
     enaml.widgets.slider.Slider
     enaml.widgets.spacer.Spacer
@@ -76,7 +75,6 @@ described in the interface.
     enaml.widgets.traitsui_item.ITraitsUIItemImpl
     enaml.widgets.image.IImageImpl
     enaml.widgets.label.ILabelImpl
-    enaml.widgets.line_edit.ILineEditImpl
     enaml.widgets.toggle_control.IToggleControlImpl
     enaml.widgets.slider.ISliderImpl
     enaml.widgets.spacer.ISpacerImpl
@@ -110,7 +108,6 @@ Standard Wdigets
     enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.image.Image
     enaml.widgets.label.Label
-    enaml.widgets.line_edit.LineEdit
     enaml.widgets.toggle_control.ToggleControl
     enaml.widgets.spacer.Spacer
     enaml.widgets.slider.Slider
