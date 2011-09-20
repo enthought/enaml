@@ -1,0 +1,10 @@
+from enaml.enums import TickPosition
+
+Window:
+    title = "Slider example"
+    Panel:
+        HGroup:
+            Slider:
+                value = 0.5
+                tick_interval = 0.05
+                tick_position = TickPosition.BOTTOM

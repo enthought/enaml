@@ -1,0 +1,7 @@
+Window:
+    title = "ComboBox example"
+    Panel:
+        VGroup:
+            ComboBox:
+                items = ['first choice', 'second choice']
+                value = 'first choice'

@@ -1,0 +1,11 @@
+from enaml.enums import TickPosition
+
+Window:
+    title = "SpinBox example"
+    Panel:
+        VGroup:
+            SpinBox:
+                special_value_text = "Auto"
+                step = 2
+                low = -20
+                high = 20

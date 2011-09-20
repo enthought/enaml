@@ -1,0 +1,9 @@
+Window:
+    title = "CheckBox example"
+    Panel:
+        VGroup:
+            CheckBox:
+                text = "I am a CheckBox"
+                checked = True
+            CheckBox:
+                text = "I am another CheckBox"

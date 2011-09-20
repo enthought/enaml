@@ -1,0 +1,8 @@
+Window:
+    title = "Push button example"
+    Panel:
+        HGroup:
+            PushButton:
+                text = "Press me"
+            PushButton:
+                text = "or Press me"

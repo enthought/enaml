@@ -1,0 +1,8 @@
+Window:
+    title = "Form example"
+    Panel:
+        Form:
+            Field:
+                name = 'Name'
+            Field:
+                name = 'Surname'

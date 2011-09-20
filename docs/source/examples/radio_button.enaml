@@ -1,0 +1,16 @@
+Window:
+    title = "Radio button example"
+    Panel:
+        HGroup:
+            RadioButton:
+                style.cls = "stretch"
+                text = 'rb1'
+            RadioButton:
+                style.cls = "stretch"
+                text = 'rb2'
+            RadioButton:
+                style.cls = "stretch"
+                text = 'rb3'
+            RadioButton:
+                style.cls = "stretch"
+                text = 'rb4'

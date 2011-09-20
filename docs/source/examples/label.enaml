@@ -1,0 +1,8 @@
+Window:
+    title = "Label example"
+    Panel:
+        HGroup:
+            Label:
+                text = "First label"
+            Label:
+                text = "Second label"

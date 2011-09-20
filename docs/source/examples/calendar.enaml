@@ -1,0 +1,7 @@
+from datetime import date
+Window:
+    title = "Calendar example"
+    Panel:
+        VGroup:
+            Calendar:
+                minimum_date = date(2012, 1, 1)

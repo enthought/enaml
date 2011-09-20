@@ -1,0 +1,16 @@
+Window:
+    title = "VGroup example"
+    Panel:
+        VGroup:
+            PushButton:
+                style.cls = "stretch"
+                text = 'b1'
+            PushButton:
+                style.cls = "stretch"
+                text = 'b2'
+            PushButton:
+                style.cls = "stretch"
+                text = 'b3'
+            PushButton:
+                style.cls = "stretch"
+                text = 'b4'
