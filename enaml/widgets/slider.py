@@ -110,25 +110,13 @@ class Slider(Control):
         A protected attribute used by the implementation object to
         update the value of down.
 
-    .. note:: The slider enaml widget changes the attributes and fires
-        the necessary events in sequence based on their priority as
-        given below (from highest to lowest):
-
-            # update `slider_pos` (when changed by the ui) or `value`
-              (when changed programatically).
-            # fire `invalid_value`.
-            # fire `moved`.
-            # update `down`.
-            # fire pressed.
-            # fire released.
-
     """
     down = Property(Bool, depends_on='_down')
 
     from_slider = Callable(lambda pos: pos)
 
     to_slider = Callable(lambda val: val)
-    
+
     value = Any
 
     tracking = Bool(True)
@@ -167,13 +155,13 @@ class Slider(Control):
     def _validate(self, value):
         if self.validate_slider is not None:
             return self.validate_slider(value)
-        
+
         try:
             slider = self.to_slider(value)
             return isinstance(slider, float) and 0.0 <= slider <= 1.0
         except Exception, e:
             logging.exception('Slider Validation: to_slider() raised exception:', e)
             return False
- 
+
 Slider.protect('down', 'pressed', 'released', 'moved', 'invalid_value', '_down')
 
