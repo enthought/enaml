@@ -76,6 +76,9 @@ class BaseDocString(object):
         self._doc.reset()
         self._doc.read()
 
+##        if self.verbose:
+##            import pdb; pdb.set_trace()
+
         while not self._doc.eof():
             self._doc.seek_next_non_empty_line()
             header = self._is_section()
@@ -246,6 +249,9 @@ class BaseDocString(object):
         if header.strip() not in self.headers:
             return False
 
+        if self.verbose:
+            print 'current line is', self._doc._l
+            print 'current text is', self._doc._str[self._doc._l]
         # peek at second line
         line2 = self._doc.peek(1)
 
