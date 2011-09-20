@@ -17,7 +17,7 @@ their purpose
 label              description
 ================== ============================================
 ``master``         main stable branch
-``documentation``  temporary branch for the documentation tools
+``develop``        developing branch (unstable)
 ``wx``             wxWidget backend development
 ``pyside``         PySide backend development
 ``parsing``        Future work for replacing the ply parser
