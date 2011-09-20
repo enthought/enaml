@@ -6,12 +6,8 @@ TableView
 .. autoclass:: TableView
 
 
-Backends
---------
-
-
 Qt
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.qt.qt_table_view.QtTableView
@@ -20,7 +16,7 @@ Qt
 .. autoclass:: enaml.widgets.qt.qt_table_view.QtTableView
 
 Wx
-^^
+--
 
 .. inheritance-diagram::
     enaml.widgets.wx.wx_table_view.WXTableView
