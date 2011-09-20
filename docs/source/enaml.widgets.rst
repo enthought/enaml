@@ -88,6 +88,33 @@ described in the interface.
 Standard Wdigets
 ----------------
 
+*Abstract base widgets*
+
+.. autosummary::
+    :toctree: widgets
+    :template: widget.rst
+
+    enaml.widgets.component.Component
+    enaml.widgets.container.Container
+    enaml.widgets.control.Control
+    enaml.widgets.window.Window
+    enaml.widgets.toggle_control.ToggleControl
+
+*Container widgets*
+
+.. autosummary::
+    :toctree: widgets
+    :template: widget.rst
+
+    enaml.widgets.group.Group
+    enaml.widgets.vgroup.VGroup
+    enaml.widgets.hgroup.HGroup
+    enaml.widgets.group_box.GroupBox
+    enaml.widgets.stacked_group.StackedGroup
+    enaml.widgets.tab_group.TabGroup
+
+*Basic widgets*
+
 .. autosummary::
     :toctree: widgets
     :template: widget.rst
@@ -95,24 +122,20 @@ Standard Wdigets
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
-    enaml.widgets.component.Component
-    enaml.widgets.container.Container
-    enaml.widgets.control.Control
     enaml.widgets.dialog.Dialog
     enaml.widgets.field.Field
     enaml.widgets.form.Form
-    enaml.widgets.group.Group
-    enaml.widgets.group_box.GroupBox
-    enaml.widgets.hgroup.HGroup
-    enaml.widgets.html.Html
-    enaml.widgets.window.Window
-    enaml.widgets.vgroup.VGroup
-    enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.image.Image
     enaml.widgets.label.Label
-    enaml.widgets.toggle_control.ToggleControl
     enaml.widgets.spacer.Spacer
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
-    enaml.widgets.tab_group.TabGroup
-    enaml.widgets.stacked_group.StackedGroup
+
+*Special widgets*
+
+.. autosummary::
+    :toctree: widgets
+    :template: widget.rst
+
+    enaml.widgets.html.Html
+    enaml.widgets.traitsui_item.TraitsUIItem
