@@ -123,10 +123,6 @@ Window:
                         high = 20
 
                 HGroup:
-                    LineEdit line_edit:
-                        text := model.window_title
-
-                HGroup:
                     Label:
                         text = "A Slider!"
                         style.cls = "no_stretch"
