@@ -17,7 +17,7 @@ enaml machinery and are available to the asossiated traits model to interact
 with the graphics widget (i.e. the *view*).
 
 
-*Class Hierarchy*
+*Standard interfaces*
 
 .. inheritance-diagram::
     enaml.widgets.calendar.Calendar
@@ -55,6 +55,8 @@ specific widgets and exposes the necessary attributes. Value modifications
 and events that take place during the life time of the graphic application can be
 connected to our traits model by listing and updating the attributes
 described in the interface.
+
+*Standard Implementations*
 
 .. inheritance-diagram::
     enaml.widgets.calendar.ICalendarImpl
