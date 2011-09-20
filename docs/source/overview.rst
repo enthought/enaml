@@ -61,5 +61,3 @@ To install the package please check out the source from
 Alternatively you can work in developing mode with::
 
     python setup.py develop
-
->>>>>>> 010215fc6222f866f3bd8e60159161ff66721153
