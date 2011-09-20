@@ -1,42 +1,42 @@
 Developer's corner
 ==================
 
-This section describes a set of guidelines for the developers of the enaml.
+This section describes a set of guidelines for the developers of the Enaml.
 
 .. note:: The content of this section is currently under discussion and
    the guidelines are only suggestions.
 
 
-Github branches
+GitHub Branches
 ---------------
 
 The following table provides a summary of the main developing branches and
 their purpose
 
 ================== ============================================
-label              description
+Label              Description
 ================== ============================================
 ``master``         main stable branch
 ``develop``        developing branch (unstable)
-``wx``             wxWidget backend development
-``pyside``         PySide backend development
+``wx``             wxWidgets backend development
+``qt``             Qt backend development
 ``parsing``        Future work for replacing the ply parser
 ================== ============================================
 
-Sphinx source
+Sphinx Source
 -------------
 
-For sphinx source please use 4 spaces for indention and a utf-8 encoding.
+For Sphinx source, please use 4 spaces for indention and a UTF-8 encoding.
 The line length is preferred to be between 72-74 characters.
 
-Due to the magic under the hood of the trait objects, automatically
+Due to the magic under the hood of the traits objects, automatically
 extracting documentation from the source with the standard autodoc tools
-is a little tricky. To this extent the sphinx source should take notice on
-the following:
+is a little tricky. Enaml's Sphinx source should therefore use the following
+conventions:
 
     - When documenting classes with Traits the sphinx directive
       ``.. autoattribute::`` does not work. To document single attributes
-      use the (undocumented) ``.. autoattribureinstance::``  directive
+      use the (undocumented) ``.. autoattributeinstance::``  directive
       instead.
     - The ``..autoclass::`` directive works fine as long as specific
       members are not specified in the ``:members:`` context parameter.
@@ -44,16 +44,16 @@ the following:
 Source Code
 -----------
 
-The coding style follow the pep8 guidelines using 4 spaces for indention.
-The line length is 80 characters. However the documentation is preferred to
-be between 72-74 characters.
+The coding style follows the `PEP 8 <http://www.python.org/dev/peps/pep-0008/>`_
+guidelines and uses 4 spaces for indention. The maximum line length is 80
+characters; however, the documentation is preferred to be between 72-74 
+characters.
 
 Preamble
 ++++++++
 
-The preamble of each file contains a small summary, the name of the author
-and the date of the last revision. The following example can be used as a
-template
+The preamble of each file contains copyright notice. The following example
+can be used as a template
 
 .. include:: preamble.py
     :literal:
@@ -61,37 +61,34 @@ template
 Docstrings
 ++++++++++
 
-To document the source code the current documentation is utilising the
-autodoc extension of the sphinx distribution. The autodoc parsing is also
-extended to convert heading based docstring description to standard rst
-based role directives.
+The current documentation uses the autodoc extension of the Sphinx
+distribution. The autodoc parsing is also extended to convert heading-based
+docstring descriptions to standard reStructedText role directives.
 
 Traits classes
 ^^^^^^^^^^^^^^
 
-In order to create autodoc friendly docstrings for classes that have
-please consider the following:
+In order to create autodoc-friendly docstrings for classes that inherit
+from `traits.HasTraits`, please consider the following:
 
     - Avoid placing headings (except those that are described below) in
       the multi-line docstrings since they are not rendered properly by
-      sphinx.
+      Sphinx.
 
     - Document the class attributes using one or multiple lines commented
       with ``#:`` before (i.e. above) the attribute definition. These will
       be picked up by the autodoc commands and used as the docstring for
-      the current::
+      the following vavlue::
 
         <other code>
 
         # this comment will not appear since it lacks the ':'
-        #: The file name of the qbc file to load
+        #: The file name of the .qbc file to load
         filename = File
 
     - Alternative you can document the attributes at the main class using
-      the Attribute heading. However, in this case the description and
-      usage of the attribute is way from the actual definition. The
-      current autodoc extension supports the following headings for
-      classes
+      the Attribute heading. The current autodoc extension supports
+      the following headings for classes:
 
       ========== =========================================
       Heading    Description
@@ -99,12 +96,12 @@ please consider the following:
       Attributes Set of class attributes and their usage
       ========== =========================================
 
-In the following example the python code is:
+For example, the Python code
 
 .. include:: traits_class.py
     :literal:
 
-And the sphinx output using ``..autoclass::`` is:
+leads to this Sphinx output (using ``..autoclass::``):
 
 .. currentmodule:: traits_class
 
@@ -118,7 +115,7 @@ And the sphinx output using ``..autoclass::`` is:
 Functions
 ^^^^^^^^^
 
-In order to create autodoc friendly docstrings for functions please consider
+In order to create autodoc-friendly docstrings for functions, please consider
 the following:
 
     - The current parser extension supports the following headings for
