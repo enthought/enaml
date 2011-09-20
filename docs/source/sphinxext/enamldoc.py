@@ -306,9 +306,9 @@ class FunctionDocstring(BaseDocString):
         lines = self._doc._str
         index = self._doc._l
 
-        # create header role
-        lines[index] = re.sub(r'Returns', ':returns:', self._doc.read())
-        del lines[index + 1]  # delete underline
+        # delete header
+        del lines[index]
+        del lines[index]
 
         # get section indent
         indent = self.get_indent(self._doc.peek())
@@ -322,7 +322,10 @@ class FunctionDocstring(BaseDocString):
 
         # generate sphinx friendly rst
         descriptions = []
-        index += 1
+
+        # create header role
+        descriptions.append(indent + ':returns:')
+        descriptions.append('')
 
         if len(parameters) == 1:
             name_format = '**{0}** '
