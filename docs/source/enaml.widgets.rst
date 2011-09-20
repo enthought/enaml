@@ -138,3 +138,4 @@ Standard Widgets
     enaml.widgets.html.Html
     enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.enable_canvas.EnableCanvas
+    enaml.widgets.table_view.TableView
