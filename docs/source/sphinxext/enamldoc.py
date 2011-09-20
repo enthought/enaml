@@ -364,44 +364,64 @@ class FunctionDocstring(BaseDocString):
     def _refactor_raises(self, header):
         """Refactor the raises section to sphinx friendly format"""
 
+        if self.verbose:
+            print 'Raise section called'
+
         lines = self._doc._str
         index = self._doc._l
 
-        # create header role
-        lines[index] = re.sub(r'Raises', ':raises:', self._doc.read())
-        del lines[index + 1]  # delete underline
+        # delete header
+        del lines[index]
+        del lines[index]
 
-        # refactor parameters
-        indent = re.split(r'\w', self._doc.peek())[0]
+        # get section indent
+        indent = self.get_indent(self._doc.peek())
+
+        # parse parameters
         parameters = self._extract_parameters(indent)
 
         if self.verbose:
             print 'raised_items'
             print parameters
+
         # generate sphinx friendly rst
         descriptions = []
 
-        # multiple items are rendered as a unordered lists
-        if len(parameters) > 1:
-            for arg_name, arg_type, desc in parameters:
-                if arg_type != '':
-                    arg_type = '*(' + arg_type + ')*'
-                descriptions.append(indent + \
-                        '    - **{0}** {1} -'.format(arg_name, arg_type))
-                for line in desc:
-                    descriptions.append('    {0}'.format(line))
-
-        # single items
-        elif len(parameters) == 1:
-            arg_name, arg_type, desc = parameters[0]
-            if arg_type != '':
-                arg_type = '*(' + arg_type + ')*'
-            descriptions.append(indent + \
-                    '    **{0}** {1} -'.format(arg_name, arg_type))
-            for line in desc:
-                descriptions.append('{0}'.format(line))
-
+        # create header role
+        descriptions.append(indent + ':raises:')
         descriptions.append('')
+
+        if len(parameters) == 1:
+            name_format = '**{0}** '
+        else:
+            name_format = '- **{0}** '
+
+        for arg_name, arg_type, desc in parameters:
+
+            # get description indent
+            description_indent = re.split(r'\w', desc[0])[0]
+
+            # setup name
+            arg_name = description_indent + name_format.format(arg_name)
+
+            # setup attribute type string
+            if arg_type != '':
+                arg_type = '({0}) - '.format(arg_type)
+            else:
+                arg_type = ' - '
+
+            # setup description paragraph
+            paragraph = ' '.join(desc)
+
+            descriptions.append(arg_name + arg_type + paragraph)
+
+            descriptions.append('')
+
+        if self.verbose:
+            print "REFACTORED SECTION"
+            print '\n'.join(descriptions)
+            print "END"
+
         self.insert_lines(descriptions, index)
         return
 
