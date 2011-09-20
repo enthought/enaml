@@ -15,6 +15,7 @@ parsing Package
 -----------------------
 
 .. inheritance-diagram:: enaml.parsing.tml_ast
+    :parts: 1
 
 .. automodule:: enaml.parsing.tml_lexer
 
