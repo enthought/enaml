@@ -74,17 +74,6 @@ Alternatively you can work in developing mode with::
 
     python setup.py develop
 
-|
-
-To test the package just execute::
-
-    python setup.py test
-
-.. note:: Currently the test coverage of the project is relatively low.
-    Also due to the fast development paces tests become often obsolete and
-    fail because the overall architecture has changed.
-
-
 Example
 ^^^^^^^
 
