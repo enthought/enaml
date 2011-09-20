@@ -107,6 +107,7 @@ Standard Widgets
     enaml.widgets.group.Group
     enaml.widgets.vgroup.VGroup
     enaml.widgets.hgroup.HGroup
+    enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
     enaml.widgets.stacked_group.StackedGroup
     enaml.widgets.tab_group.TabGroup
@@ -122,7 +123,6 @@ Standard Widgets
     enaml.widgets.combo_box.ComboBox
     enaml.widgets.dialog.Dialog
     enaml.widgets.field.Field
-    enaml.widgets.form.Form
     enaml.widgets.image.Image
     enaml.widgets.label.Label
     enaml.widgets.spacer.Spacer
