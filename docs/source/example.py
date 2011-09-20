@@ -2,16 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-#-------------------------------------------------------------------------------
-# Name:        example.py
-# Purpose:     Example show case of basic enaml widgets
-#
-# Author:      Chris Colbert
-#
-# Created:     15/09/2011
-# Copyright:   (c) Enthought Inc 2011
-# Licence:     BSD
-#-------------------------------------------------------------------------------
 #!/usr/bin/env python
 
 import random

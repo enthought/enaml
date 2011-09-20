@@ -1,13 +1,7 @@
-#-------------------------------------------------------------------------------
-# Name:        example.enaml
-# Purpose:     Example enaml file showcasing basic enaml widgets
-#
-# Author:      Chris Colbert
-#
-# Created:     15/09/2011
-# Copyright:   (c) Enthought Inc 2011
-# Licence:     BSD
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 import math
 import random
 import datetime
