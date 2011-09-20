@@ -10,7 +10,7 @@ from ...style_sheet import StyleSheet, StyleHandler, style, NO_STYLE
 from ...style_converters import color_from_color_style
 
 #-------------------------------------------------------------------------------
-# Default wx style sheet definition
+# Default Qt style sheet definition
 #-------------------------------------------------------------------------------
 QT_STYLE_SHEET = StyleSheet(
     

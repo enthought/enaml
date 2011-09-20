@@ -159,11 +159,6 @@ class QtSlider(QtControl):
     def bind(self):
         """ Binds the event handlers for the slider widget.
 
-        Individual event binding was preferred instead of events that
-        are platform specific (e.g. wx.EVT_SCROLL_CHANGED) or group
-        events (e.g. wx.EVT_SCROLL), to facilitate finer control on
-        the behaviour of the widget.
-
         """
         widget = self.widget
         widget.valueChanged.connect(self._on_slider_changed)
@@ -173,10 +168,6 @@ class QtSlider(QtControl):
 
     def _on_slider_changed(self, value):
         """ Respond to a (possible) change in value from the ui.
-
-        Updated the value of the slider_pos based on the possible change
-        from the wxWidget. The `slider_pos` trait will fire the moved
-        event only if the value has changed.
 
         """
         if not self._setting:
@@ -208,7 +199,7 @@ class QtSlider(QtControl):
         parent.released = True
 
     def set_single_step(self, step):
-        """ Set the single step attribute in the wx widget.
+        """ Set the single step attribute in the Qt widget.
 
         Arguments
         ---------
@@ -222,7 +213,7 @@ class QtSlider(QtControl):
         widget.setSingleStep(step * tick_interval)
 
     def set_page_step(self, step):
-        """ Set the page step attribute in the wx widget.
+        """ Set the page step attribute in the Qt widget.
 
         Arguments
         ---------

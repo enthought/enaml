@@ -12,7 +12,7 @@ from ..combo_box import IComboBoxImpl
 
 
 class QtComboBox(QtControl):
-    """ A PySide implementation of ComboBox.
+    """ A Qt implementation of ComboBox.
 
     Use a combo box to select a single item from a collection of items. 
     

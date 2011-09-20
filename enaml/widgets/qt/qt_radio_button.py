@@ -12,7 +12,7 @@ from ..radio_button import IRadioButtonImpl
 
 
 class QtRadioButton(QtToggleControl):
-    """ A PySide implementation of RadioButton.
+    """ A Qt implementation of RadioButton.
 
     See Also
     --------

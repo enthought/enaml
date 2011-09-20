@@ -26,6 +26,6 @@ class QtVGroup(QtGroup):
     # IVGroupImpl interface
     #---------------------------------------------------------------------------
     
-    # IVGroupImpl interface is empty and fully implemented by WXGroup
+    # IVGroupImpl interface is empty and fully implemented by QtGroup
 
     # XXX should we change implementation to use QVBoxLayout

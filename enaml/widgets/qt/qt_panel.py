@@ -27,7 +27,7 @@ class QtPanel(QtComponent):
     # IPanelImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates the underlying wxPanel.
+        """ Creates the underlying QFrame.
 
         """
         self.widget = QtGui.QFrame(self.parent_widget())

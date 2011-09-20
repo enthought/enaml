@@ -12,7 +12,7 @@ from ..html import IHtmlImpl
 
 
 class QtHtml(QtControl):
-    """ A PySide implementation of Html.
+    """ A Qt implementation of Html.
 
     See Also
     --------

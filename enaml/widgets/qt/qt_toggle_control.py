@@ -10,7 +10,7 @@ from ..toggle_control import IToggleControlImpl
 
 
 class QtToggleControl(QtControl):
-    """ A base class for PySide toggle widgets.
+    """ A base class for Qt toggle widgets.
 
     This class can serve as a base class for widgets that implement
     toggle behavior such as CheckBox and RadioButton. It is not meant

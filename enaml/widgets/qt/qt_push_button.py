@@ -12,7 +12,7 @@ from ..push_button import IPushButtonImpl
 
 
 class QtPushButton(QtControl):
-    """ A PySide implementation of PushButton.
+    """ A Qt implementation of PushButton.
 
     See Also
     --------
@@ -25,7 +25,7 @@ class QtPushButton(QtControl):
     # IPushButtonImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates the underlying wx.Button control.
+        """ Creates the underlying QPushButton control.
 
         """
         self.widget = QtGui.QPushButton(self.parent_widget())

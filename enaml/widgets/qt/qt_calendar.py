@@ -19,7 +19,7 @@ except AttributeError:
 
 
 class QtCalendar(QtControl):
-    """ A PySide implementation of Calendar.
+    """ A Qt implementation of Calendar.
 
     See Also
     --------

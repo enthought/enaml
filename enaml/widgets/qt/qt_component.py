@@ -34,7 +34,7 @@ class QtComponent(HasStrictTraits):
         self.parent = parent
         
     def create_widget(self):
-        """ Creates the underlying wx widget. Must be implemented by 
+        """ Creates the underlying Qt widget. Must be implemented by 
         subclasses.
 
         """

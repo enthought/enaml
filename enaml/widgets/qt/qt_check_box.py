@@ -12,7 +12,7 @@ from ..check_box import ICheckBoxImpl
 
 
 class QtCheckBox(QtToggleControl):
-    """ A PySide implementation of CheckBox.
+    """ A Qt implementation of CheckBox.
 
     See Also
     --------

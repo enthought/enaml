@@ -11,7 +11,7 @@ from ..field import IFieldImpl
 
 
 class QtField(QtControl):
-    """ A wxPython implementation of a LineEdit.
+    """ A Qt implementation of a LineEdit.
 
     The LineEdit uses a QLineEdit and provides a single line of
     editable text.
@@ -27,13 +27,13 @@ class QtField(QtControl):
     # ILineEditImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates the underlying wx.TextCtrl.
+        """ Creates the underlying QLineEdit.
 
         """
         self.widget = QtGui.QLineEdit(parent=self.parent_widget())
 
     def initialize_widget(self):
-        """ Initializes the attributes of the wx.TextCtrl.
+        """ Initializes the attributes of the Qt widget.
 
         """
         parent = self.parent
