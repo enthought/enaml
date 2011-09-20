@@ -10,7 +10,7 @@ enml = """
 from enaml.enums import TickPosition
 
 Window:
-    title = "VGroup example"
+    title = "SpinBox example"
     Panel:
         VGroup:
             SpinBox:
