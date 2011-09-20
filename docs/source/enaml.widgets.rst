@@ -44,6 +44,7 @@ with the graphics widget (i.e. the *view*).
     enaml.widgets.spin_box.SpinBox
     enaml.widgets.tab_group.TabGroup
     enaml.widgets.stacked_group.StackedGroup
+    enaml.widgets.enable_canvas.EnableCanvas
     :parts: 1
 
 Implementation
@@ -83,6 +84,7 @@ described in the interface.
     enaml.widgets.spin_box.ISpinBoxImpl
     enaml.widgets.tab_group.ITabGroupImpl
     enaml.widgets.stacked_group.IStackedGroupImpl
+    enaml.widgets.enable_canvas.IEnableCanvasImpl
     :parts: 1
 
 Standard Wdigets
@@ -139,3 +141,4 @@ Standard Wdigets
 
     enaml.widgets.html.Html
     enaml.widgets.traitsui_item.TraitsUIItem
+    enaml.widgets.enable_canvas.EnableCanvas
