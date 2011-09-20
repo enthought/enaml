@@ -1,16 +1,17 @@
 Widgets
 =======
 
-A widget in Enaml is a toolkit spesific implementation of an interface.
-For each gui toolkit that is supported by Enaml a basic set of widgets
+An Enaml widget is a toolkit-independent abstraction.
+Each GUI toolkit that Enaml supports is a set of widgets that
 have been implemented and exist in the :mod:`enaml.widgets` submodule.
+A widget interface is not tied to any particular implementation.
 
 Interface
 ---------
 
-The interface describes the attributes and events that are exposed by the
-enaml machinery and are available to the asossiated traits model to interact
-with the graphics widget (i.e. the *view*).
+An Enaml widget's interface describes the attributes and events that the
+widget exposes as its API. Enaml orchestrates communication between
+user-facing views and the underlying graphical toolkits.
 
 
 *Standard interfaces*
@@ -48,12 +49,10 @@ with the graphics widget (i.e. the *view*).
 Implementation
 --------------
 
-For each interface there exists a traits object that implements the
-required interface throught a very thin layer that wraps the tookit
-specific widgets and exposes the necessary attributes. Value modifications
-and events that take place during the life time of the graphic application
-can be connected to our traits model by listing and updating the attributes
-described in the interface.
+The available backends provide concrete versions of Enaml widget
+interfaces. An interface utilizes an implementation-specific
+class, which wraps an actual toolkit widget.
+
 
 *Standard Implementations*
 
