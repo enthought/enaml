@@ -1,7 +1,7 @@
 .. Enaml documentation master file
 
 Welcome to Enaml's documentation!
-=================================
+====================================
 
 **E**\naml is **N**\ot **A** **M**\arkup **L**\anguage, is a tool for
 building native user interfaces on top of Traits. It is a declarative
