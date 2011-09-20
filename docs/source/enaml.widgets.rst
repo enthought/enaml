@@ -6,7 +6,7 @@ For each gui toolkit that is supported by Enaml a basic set of widgets
 have been implemented and exist in the :mod:`enaml.widgets` submodule.
 
 Interface
-^^^^^^^^^
+---------
 
 The interface describes the attributes and events that are exposed by the
 enaml machinery and are available to the asossiated traits model to interact
@@ -46,7 +46,7 @@ with the graphics widget (i.e. the *view*).
     :parts: 1
 
 Implementation
-^^^^^^^^^^^^^^
+--------------
 
 For each interface there exists a traits object that implements the
 required interface throught a very thin layer that wraps the tookit
