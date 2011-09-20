@@ -74,36 +74,14 @@ Alternatively you can work in developing mode with::
 
     python setup.py develop
 
-Example
-^^^^^^^
-
-For the impatient Enaml user here is an example showcasing some of the wx
-based widgets:
-
-.. include:: example.enaml
-    :literal:
-
-And the python script to execute it:
-
-.. include:: example.py
-    :literal:
-
-Results in the following widget
-
-.. figure:: images/example.png
-    :align: center
-    :figwidth: 70%
-
-    example using the Enaml machinery.
-
 Contents
 --------
 
 .. toctree::
     :maxdepth: 2
 
-    Examples
     architecture
     enaml_file
+    Examples <example>
     Library Reference <modules>
     developers_corner
