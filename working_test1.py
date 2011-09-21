@@ -9,7 +9,7 @@ from the current directory.
 """
 import random
 
-from traits.api import HasTraits, Str
+from traits.api import HasTraits, Str, Property, cached_property
 
 from enaml.factory import EnamlFactory
 from enaml.color import Color
@@ -27,6 +27,8 @@ class Model(HasTraits):
 
     window_title = Str('Window Title!')
 
+    html_source = Property(Str)
+
     def print_msg(self, args):
         print self.message, args
 
@@ -35,13 +37,18 @@ class Model(HasTraits):
         random.shuffle(l)
         return ''.join(l)
 
-    def update_style(self):
+    def randomize_error_colors(self):
         sty = style('.error_colors', 
             color = random.choice(colors),
             background_color=random.choice(colors),
         )
         view.style_sheet.update(sty)
 
+    @cached_property
+    def _get_html_source(self):
+        import cgi
+        txt = open('./working_test1.enaml').read() 
+        return '<pre>' + cgi.escape(txt) + '</pre>'
 
 class TableModel(AbstractTableModel):
         

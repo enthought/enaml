@@ -10,6 +10,74 @@ from .wx_control import WXControl
 from ..field import IFieldImpl
 
 
+class CustomTextCtrl(wx.TextCtrl):
+    """ A wx.TextCtrl subclass that supports placeholder text.
+
+    This text control will display grayed out provided placeholder text
+    when the control is empty and loses focus. As soon as the control 
+    gains focus, the placeholder text is removed.
+     
+    """
+    def __init__(self, *args, **kwargs):
+        super(CustomTextCtrl, self).__init__(*args, **kwargs)
+        self._placeholder_text = ''
+        self._placeholder_active = False
+        self._user_fgcolor = None
+        self.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+        self.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
+
+    def SetPlaceHolderText(self, placeholder_text):
+        """ Sets the placeholder text to the given value. Pass an empty
+        string to turn off the placeholder text functionality.
+
+        """
+        self._placeholder_text = placeholder_text
+        self.OnKillFocus(None)
+
+    def GetPlaceHolderText(self):
+        """ Returns the placeholder text for this control.
+
+        """
+        return self._placeholder_text
+    
+    def OnKillFocus(self, event):
+        """ Handles the kill focus event on the control and refreshes
+        the placeholder text if necessary.
+
+        """
+        if not self.GetValue() and self._placeholder_text:
+            self.ChangeValue(self._placeholder_text)
+            color = wx.Color(95, 95, 95)
+            super(CustomTextCtrl, self).SetForegroundColour(color)
+            self._placeholder_active = True
+    
+    def OnSetFocus(self, event):
+        """ Handles the on focus event on the control and removes the
+        placeholder test if necessary.
+
+        """
+        if self._placeholder_active:
+            self.ChangeValue('')
+            color = self._user_fgcolor or wx.Color(0, 0, 0)
+            super(CustomTextCtrl, self).SetForegroundColour(color)
+            self._placeholder_active = False
+
+    def GetValue(self):
+        """ Returns string value in the control, or an empty string if
+        the placeholder text is active.
+
+        """
+        if self._placeholder_active:
+            return ''
+        return super(CustomTextCtrl, self).GetValue()
+
+    def SetForegroundColour(self, wxColor, force=False):
+        self._user_fgcolor = wxColor
+        if self._placeholder_active and not force:
+            return
+        super(CustomTextCtrl, self).SetForegroundColour(wxColor)
+
+
 class WXField(WXControl):
     """ A wxPython implementation of a LineEdit.
 
@@ -30,8 +98,8 @@ class WXField(WXControl):
         """ Creates the underlying wx.TextCtrl.
 
         """
-        self.widget = widget = wx.TextCtrl(parent=self.parent_widget(),
-                                           style=wx.TE_PROCESS_ENTER)
+        self.widget = widget = CustomTextCtrl(parent=self.parent_widget(),
+                                              style=wx.TE_PROCESS_ENTER)
         widget.SetDoubleBuffered(True)
         
     def initialize_widget(self):
@@ -41,9 +109,8 @@ class WXField(WXControl):
         parent = self.parent
         self.set_max_length(parent.max_length)
         self.set_read_only(parent.read_only)
-        if not parent.value:
-            self.change_text(parent.placeholder_text)
-        else:
+        self.set_placeholder_text(parent.placeholder_text)
+        if parent.value:
             self.update_text()
         parent._modified = False
         self.set_cursor_position(parent.cursor_position)
@@ -62,6 +129,13 @@ class WXField(WXControl):
 
         """
         self.set_read_only(read_only)
+
+    def parent_placeholder_text_changed(self, placeholder_text):
+        """ The change handler for the 'placeholder_text' attribute on 
+        the parent.
+
+        """
+        self.set_placeholder_text(placeholder_text)
 
     def parent_cursor_position_changed(self, cursor_position):
         """ The change handler for the 'cursor_position' attribute on 
@@ -259,6 +333,7 @@ class WXField(WXControl):
         """ The event handler for the text update event.
 
         """
+        event.Skip()
         widget = self.widget
         parent = self.parent
         text = widget.GetValue()
@@ -346,6 +421,9 @@ class WXField(WXControl):
         # XXX this may require some trickery in Windows to change
         # this value properly on the fly.
         self.widget.SetEditable(not read_only)
+
+    def set_placeholder_text(self, placeholder_text):
+        self.widget.SetPlaceHolderText(placeholder_text)
 
     def set_cursor_position(self, cursor_position):
         """ Sets the cursor position of the widget.

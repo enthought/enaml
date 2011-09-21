@@ -37,11 +37,9 @@ class QtField(QtControl):
 
         """
         parent = self.parent
-        #self.set_max_length(parent.max_length)
         self.set_read_only(parent.read_only)
-        if not parent.value:
-            self.change_text(parent.placeholder_text)
-        else:
+        self.set_placeholder_text(parent.placeholder_text)
+        if parent.value:
             self.update_text()
         parent._modified = False
         self.set_cursor_position(parent.cursor_position)
@@ -60,6 +58,13 @@ class QtField(QtControl):
 
         """
         self.set_read_only(read_only)
+
+    def parent_placeholder_text_changed(self, placeholder_text):
+        """ The change handler for the 'placeholder_text' attribute
+        on the parent.
+
+        """
+        self.set_placeholder_text(placeholder_text)
 
     def parent_cursor_position_changed(self, cursor_position):
         """ The change handler for the 'cursor_position' attribute on 
@@ -343,6 +348,9 @@ class QtField(QtControl):
 
         """
         self.widget.setReadOnly(read_only)
+
+    def set_placeholder_text(self, placeholder_text):
+        self.widget.setPlaceholderText(placeholder_text)
 
     def set_cursor_position(self, cursor_position):
         """ Sets the cursor position of the widget.
