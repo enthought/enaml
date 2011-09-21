@@ -33,6 +33,7 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.hgroup.HGroup
     enaml.widgets.html.Html
     enaml.widgets.window.Window
+    enaml.widgets.panel.Panel
     enaml.widgets.vgroup.VGroup
     enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.image.Image
@@ -73,6 +74,7 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.hgroup.IHGroupImpl
     enaml.widgets.html.IHtmlImpl
     enaml.widgets.window.IWindowImpl
+    enaml.widgets.panel.IPanelImpl
     enaml.widgets.vgroup.IVGroupImpl
     enaml.widgets.traitsui_item.ITraitsUIItemImpl
     enaml.widgets.image.IImageImpl
@@ -114,6 +116,7 @@ Container widgets
     enaml.widgets.hgroup.HGroup
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
+    enaml.widgets.panel.Panel
     enaml.widgets.stacked_group.StackedGroup
     enaml.widgets.tab_group.TabGroup
 
