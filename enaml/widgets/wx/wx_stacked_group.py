@@ -103,7 +103,7 @@ class WXStackedGroup(WXContainer):
             No child corresponds to the given index.
 
         """
-        return self.children[idx]
+        return self.parent.children[idx]
 
     def index_of(self, child):
         """ Returns the index corresponding to the given child container.
@@ -133,7 +133,7 @@ class WXStackedGroup(WXContainer):
             raise TypeError(message)
 
         try:
-            index = self.children.index(child)
+            index = self.parent.children.index(child)
         except ValueError:
             message = 'The child {0} was not found'.format(child)
             raise IndexError(message)
