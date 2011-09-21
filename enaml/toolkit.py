@@ -168,6 +168,7 @@ def wx_toolkit():
         'TraitsUIItem': ctors.WXTraitsUIItemCtor,
         'TableView': ctors.WXTableViewCtor,
         'CheckGroup': ctors.WXCheckGroupCtor,
+        'DateEdit': ctors.WXDateEditCtor,
     }
 
     utils = {
@@ -213,6 +214,8 @@ def qt_toolkit():
         'EnableCanvas': ctors.QtEnableCanvasCtor,
         'TableView': ctors.QtTableViewCtor,
         'CheckGroup': ctors.QtCheckGroupCtor,
+        'DateEdit': ctors.QtDateEditCtor,
+        'DateTimeEdit': ctors.QtDateTimeEditCtor,
     }
     
     utils = {}

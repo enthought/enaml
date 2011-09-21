@@ -376,4 +376,14 @@ class WXCheckGroupCtor(WXBaseComponentCtor):
         check_group = CheckGroup(toolkit_impl=WXCheckGroup())
         return check_group
 
-    
+
+class WXDateEditCtor(WXBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..date_edit import DateEdit
+        from .wx_date_edit import WXDateEdit
+        date_edit = DateEdit(toolkit_impl=WXDateEdit())
+        return date_edit
+

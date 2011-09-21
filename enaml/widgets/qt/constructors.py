@@ -364,3 +364,26 @@ class QtCheckGroupCtor(QtBaseComponentCtor):
         from .qt_check_group import QtCheckGroup
         check_group = CheckGroup(toolkit_impl=QtCheckGroup())
         return check_group
+
+
+class QtDateEditCtor(QtBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..date_edit import DateEdit
+        from .qt_date_edit import QtDateEdit
+        date_edit = DateEdit(toolkit_impl=QtDateEdit())
+        return date_edit
+
+
+class QtDateTimeEditCtor(QtBaseComponentCtor):
+
+    implements(IToolkitConstructor)
+
+    def component(self):
+        from ..datetime_edit import DateTimeEdit
+        from .qt_datetime_edit import QtDateTimeEdit
+        datetime_edit = DateTimeEdit(toolkit_impl=QtDateTimeEdit())
+        return datetime_edit
+
