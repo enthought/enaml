@@ -39,7 +39,10 @@ QT_STYLE_SHEET = StyleSheet(
     #style("Group", "VGroup", "HGroup",
     #    spacing = 2,
     #),
-
+    style("TableView",
+        stretch = 1,
+    ),
+    
     #---------------------------------------------------------------------------
     # Convienence style classes
     #---------------------------------------------------------------------------

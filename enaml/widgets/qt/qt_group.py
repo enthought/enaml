@@ -53,11 +53,13 @@ class QtGroup(QtContainer):
 
         """
         layout = self.widget
-        for child in self.child_widgets():
-            if isinstance(child, QtGui.QLayout):
-                layout.addLayout(child)
+        for child in self.parent.children:
+            child_widget = child.toolkit_widget()
+            stretch = child.style.get_property('stretch') or 0
+            if isinstance(child_widget, QtGui.QLayout):
+                layout.addLayout(child_widget, stretch)
             else:
-                layout.addWidget(child)
+                layout.addWidget(child_widget, stretch)
 
     def parent_direction_changed(self, direction):
         """ The change handler for the 'direction' attribute on the 

@@ -1,43 +1,39 @@
 
-
 Window:
+    style.min_width = 800
+    style.min_height = 600
     title << ("Enaml Stock Viewer - %s - %s - %s" % 
               (model.symbol, model.start_date, model.end_date))
     Panel:
         HGroup:
             style.stretch = 1
             VGroup:
-                HGroup:
-                    Label my_label:
-                        text = "Symbol:"
+                style.stretch = 0
+                Form:
                     ComboBox cmbx:
+                        name = "Symbol"
                         items = model.available_symbols
                         value := model.symbol
                         selected >> print('New Quote Selected: %s' % self.value)
-                HGroup:
-                    Label:
-                        text = "Days History:"
                     ComboBox:
+                        name = "Days History"
                         items := model.days_of_history_choices
                         value := model.days_of_history
-                HGroup:
-                   Label:
-                       text = "# Data Points:"
-                   SpinBox:
-                       low = 10
-                       high = 1000
-                       step = 10
-                       value := model.num_points
-                HGroup:
-                    Label end_date_label:
-                        text = "End Date:"
+                    SpinBox:
+                        name = "# Data Points"
+                        low = 10
+                        high = 1000
+                        step = 10
+                        value := model.num_points
                     Label:
+                        name = "End Date"
                         text << "%s" % str(end_date_calendar.date)
                 Calendar end_date_calendar:
                     minimum_date << model.date_range[0]
                     maximum_date << model.date_range[1]
                     date := model.end_date
                 CheckGroup:
+                    rows = 1
                     items := adapter.available_columns
                     selected := adapter.grid_columns
                 TableView:

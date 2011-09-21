@@ -10,7 +10,7 @@ Window:
         HGroup:
             style.stretch = 1
             VGroup:
-                style.size_policy = 'minimum'
+                style.size_policy = 'fixed'
                 Panel:
                     HGroup:
                         direction = Direction.RIGHT_TO_LEFT
@@ -128,6 +128,10 @@ Window:
                     Field:
                         name = "eggs"
                         placeholder_text = self.name + ' field'
+                # XXX this really shouldn't be necessary, but it is at the
+                # moment because of differences in wx and qt layout behavior
+                Panel:
+                    style.stretch = 1
             VGroup:
                 style.stretch = 1
                 TableView:
