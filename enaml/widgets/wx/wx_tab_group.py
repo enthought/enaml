@@ -43,7 +43,6 @@ class WXTabGroup(WXStackedGroup):
         """ Initialize the StackedGroup widget.
 
         """
-        super(WXTabGroup, self).initialize_widget()
         self.set_movable_flag(self.parent.movable)
 
     def parent_movable_changed(self, movable):

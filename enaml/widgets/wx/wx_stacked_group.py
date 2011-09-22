@@ -55,16 +55,17 @@ class WXStackedGroup(WXContainer):
         """ Initialize the StackedGroup widget.
 
         """
-        widget = self.widget
-        for child_wrapper, name in self.wrap_child_containers():
-            widget.AddPage(child_wrapper, name)
-
-        self.set_page(self.parent.current_index)
+        pass
 
     def layout_child_widgets(self):
         """ Layout the contained pages.
 
         """
+        widget = self.widget
+        for child in self.parent.children:
+            widget.AddPage(child.toolkit_impl.widget, child.name)
+
+        self.set_page(self.parent.current_index)
         self.widget.Layout()
 
     def parent_current_index_changed(self, current_index):
@@ -80,64 +81,6 @@ class WXStackedGroup(WXContainer):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-
-    def wrap_child_containers(self):
-        """ Yield a "page" for each child container.
-
-        The wxStackedWidget doesn't support adding Sizers directly. Thus
-        The wxcontainers (i.e. sizers) need to be wrapped inside a dummy
-        wxPanel object. The parent of all the sizer's widgets is changed
-        to the dummy wxPanel. However since it is possible the some of the
-        children are sizers themselves we need to wrapp them into dummy
-        wxPanel widgets also.
-
-        .. note:: Currenlty it is not supported to have more than one
-           container group inside on of the children containers. Thus the
-           following example will fail with an attribute error::
-
-                Window main:
-                    title = "StackedGroup"
-                    Panel:
-                        StackedGroup:
-                            current_index << 1 if page2.checked else 0
-                            HGroup:
-                                name = "page 1"
-                                VGroup:
-                                    Label:
-                                        text = "This is group 1"
-                                    Label:
-                                        text = "This is group 1"
-                                HGroup:
-                                    Label:
-                                        text = "This is group 2"
-                                    Label:
-                                        text = "This is group 2"
-                            VGroup:
-                                name = "page 2"
-                                Label:
-                                    text = "Well, this is not page 1!!!!"
-                        HGroup:
-                            CheckBox page2:
-                                text = "page 2"
-
-        """
-        for child_container in self.parent.children:
-
-            child_wrapper = wx.Panel(self.widget)
-            sizer = child_container.toolkit_impl.widget
-
-            for child in child_container.children:
-                child.toolkit_impl.widget.Reparent(child_wrapper)
-
-##                try:
-##                    child.toolkit_impl.widget.Reparent(child_wrapper)
-##                except AttributeError:
-##                    wrapped_child = child.wrap_child_containers()
-##                    wrapped_child.Reparent(child_wrapper)
-
-            child_wrapper.SetSizer(sizer)
-            yield child_wrapper, child_container.name
-
 
     def child_at(self, idx):
         """ Returns the child container at the given index.
