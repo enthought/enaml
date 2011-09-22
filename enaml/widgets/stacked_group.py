@@ -5,6 +5,7 @@
 from traits.api import Int, Property, Instance, List
 
 from .container import IContainerImpl, Container
+from .panel import Panel
 
 
 class IStackedGroupImpl(IContainerImpl):
@@ -18,7 +19,7 @@ class StackedGroup(Container):
 
     A container which lays out its children as a stack and makes only
     one child visible at a time. All children of the StackedGroup
-    must themselves be Containers.
+    must be Panel items.
 
     Attributes
     ----------
@@ -43,7 +44,7 @@ class StackedGroup(Container):
 
     count = Property(Int, depends_on='children')
 
-    children = List(Container)
+    children = List(Instance(Panel))
 
     #---------------------------------------------------------------------------
     # Overridden parent class traits

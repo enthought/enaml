@@ -18,7 +18,7 @@ class TabGroup(StackedGroup):
 
     A container which lays out its children as a notebook and makes
     only one child visible at a time. All children of the TabGroup
-    must themselves be Containers. The names of the tabs will be
+    must themselves be Panels. The names of the tabs will be
     derive from the 'name' attributes of the children.
 
     Attributes
