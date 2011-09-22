@@ -10,6 +10,7 @@ from .qt_container import QtContainer
 
 from ..container import Container
 from ..stacked_group import IStackedGroupImpl
+from ..panel import Panel
 
 
 class QtStackedGroup(QtContainer):
@@ -41,9 +42,9 @@ class QtStackedGroup(QtContainer):
         """ Lay out the contained pages.
 
         """
-        self_add_widget = self.widget.addWidget
-        for child_wrapper in self.wrap_child_containers():
-            self_add_widget(child_wrapper)
+        widget = self.widget
+        for child in self.parent.children:
+            widget.addWidget(child.toolkit_impl.widget)
 
         self.set_page(self.parent.current_index)
 
@@ -61,20 +62,6 @@ class QtStackedGroup(QtContainer):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-    def wrap_child_containers(self):
-        """ Yield a "page" for each child container.
-
-        Each element in `self.parent.children` is a Container with a QLayout
-        as its 'widget' attribute. This function creates a dummy QWidget and
-        sets its layout to the aforementioned QLayout. The QStackedWidget
-        doesn't support adding layouts directly.
-
-        """
-        for child_container in self.parent.children:
-            child_wrapper = QtGui.QWidget(self.widget)
-            child_wrapper.setLayout(child_container.toolkit_impl.widget)
-            yield child_wrapper
-
     def on_current_changed(self, index):
         self.parent.current_index = index
 
@@ -129,8 +116,8 @@ class QtStackedGroup(QtContainer):
             The child does not exist in the group.
 
         """
-        if not isinstance(child, Container):
-            message = ('Input argument child is not a Container '
+        if not isinstance(child, Panel):
+            message = ('Input argument child is not a Panel'
                       'type but a {0}'.format(type(child)))
             raise TypeError(message)
 

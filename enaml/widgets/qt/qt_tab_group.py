@@ -43,13 +43,10 @@ class QtTabGroup(QtStackedGroup):
         """ Layout the contained pages.
 
         """
-        self_add_tab = self.widget.addTab
-        self_parent_children = self.parent.children
-        wrapped_children = self.wrap_child_containers()
-        
-        for i, child_wrapper in enumerate(wrapped_children):
-            self_add_tab(child_wrapper, self_parent_children[i].name)
-            
+        widget = self.widget
+        for child in self.parent.children:
+            widget.addTab(child.toolkit_impl.widget, child.name)
+
         self.set_page(self.parent.current_index)
 
     def parent_movable_changed(self, movable):
@@ -75,7 +72,7 @@ class QtTabGroup(QtStackedGroup):
 
     def on_tab_moved(self, to_idx, from_idx):
         """ Event handler for the 'tabMoved' signal on the QTabWidget's QTabBar.
-        
+
         """
         self.parent.current_index = to_idx
         self.parent.reordered = (from_idx, to_idx)
