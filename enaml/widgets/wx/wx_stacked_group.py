@@ -7,6 +7,8 @@ import wx
 from traits.api import implements
 
 from .wx_container import WXContainer
+from .wx_panel import WXPanel
+
 from ..stacked_group import IStackedGroupImpl
 
 
@@ -83,18 +85,18 @@ class WXStackedGroup(WXContainer):
     #---------------------------------------------------------------------------
 
     def child_at(self, idx):
-        """ Returns the child container at the given index.
+        """ Returns the child panel at the given index.
 
         Arguments
         ---------
         idx : int
-            The zero based index to use to lookup the child container.
+            The zero based index to use to lookup the child panel.
             It may be negative, in which case the lookup will be
             from the end of the stack.
 
         Returns
         -------
-        result : WXContainer
+        result : WXPanel
             The child container at the given index.
 
         Raises
@@ -113,7 +115,7 @@ class WXStackedGroup(WXContainer):
 
         Arguments
         ---------
-        child : WXContainer
+        child : WXPanel
             The child container to lookup.
 
         Returns
@@ -124,14 +126,14 @@ class WXStackedGroup(WXContainer):
         Raises
         ------
         TypeError :
-            The child is not a Container.
+            The child is not a WXPanel.
 
         IndexError :
             The child does not exist in the group.
 
         """
-        if not isinstance(child, WXContainer):
-            message = ('Input argument child is not a WXContainer '
+        if not isinstance(child, WXPanel):
+            message = ('Input argument child is not a WXPanel '
                       'type but a {0}'.format(type(child)))
             raise TypeError(message)
 

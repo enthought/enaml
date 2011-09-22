@@ -7,10 +7,10 @@ from .qt import QtGui
 from traits.api import implements
 
 from .qt_container import QtContainer
+from .qt_panel import QtPanel
 
 from ..container import Container
 from ..stacked_group import IStackedGroupImpl
-from ..panel import Panel
 
 
 class QtStackedGroup(QtContainer):
@@ -66,18 +66,18 @@ class QtStackedGroup(QtContainer):
         self.parent.current_index = index
 
     def child_at(self, idx):
-        """ Returns the child container at the given index.
+        """ Returns the child panel at the given index.
 
         Arguments
         ---------
         idx : int
-            The zero based index to use to lookup the child container.
+            The zero based index to use to lookup the child panel.
             It may be negative, in which case the lookup will be
             from the end of the stack.
 
         Returns
         -------
-        result : Container
+        result : QtPanel
             The child container at the given index.
 
         Raises
@@ -95,11 +95,11 @@ class QtStackedGroup(QtContainer):
         return self.parent.children[idx]
 
     def index_of(self, child):
-        """ Returns the index corresponding to the given child container.
+        """ Returns the index corresponding to the given child panel.
 
         Arguments
         ---------
-        child : Container
+        child : QtPanel
             The child container to lookup.
 
         Returns
@@ -110,14 +110,14 @@ class QtStackedGroup(QtContainer):
         Raises
         ------
         TypeError :
-            The child is not a Container.
+            The child is not a WXPanel.
 
         IndexError :
             The child does not exist in the group.
 
         """
-        if not isinstance(child, Panel):
-            message = ('Input argument child is not a Panel'
+        if not isinstance(child, QtPanel):
+            message = ('Input argument child is not a QtPanel'
                       'type but a {0}'.format(type(child)))
             raise TypeError(message)
 
