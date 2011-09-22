@@ -74,18 +74,19 @@ class BaseDocString(object):
 
     def parse(self):
         self._doc.reset()
-        self._doc.read()
 
-##        if self.verbose:
-##            import pdb; pdb.set_trace()
+##        import pdb; pdb.set_trace()
 
         while not self._doc.eof():
+            current_index = self._doc._l
             self._doc.seek_next_non_empty_line()
+            if self.verbose:
+                print 'current index is', self._doc._l
             header = self._is_section()
-            if not header:
-                self._doc.read()
-            else:
+            if header:
                 self._refactor(header)
+            else:
+                self._doc.read()
 
         if self.verbose:
             print 'REFACTORED DOCSTRING'
@@ -173,7 +174,7 @@ class BaseDocString(object):
 
         # remove parsed lines
         del self._doc._str[start:stop]
-
+        self._doc._l = start
         return parameters
 
     def _parse_parameter(self, doc_lines):
@@ -181,13 +182,15 @@ class BaseDocString(object):
 
         the parameter is assumed to be in the format::
 
-                <name> : <type>
-                    <description>
-
-        or
+            <name> : <type>
+                <description>
 
             <name> :
                 <description>
+
+            <name>
+                <description>
+
 
         Arguments
         ---------
@@ -212,12 +215,10 @@ class BaseDocString(object):
             arg_name, arg_type = re.split(' \:\s?', header)
         else:
             arg_name, arg_type = header, ''
-
         if self.verbose:
             print "name is:", arg_name, " type is:", arg_type
             print "the output of 're.split(' \:\s?', header)' was", \
                         re.split(' \:\s?', header)
-
         if len(doc_lines) > 1:
             return arg_name.strip(), arg_type.strip(), doc_lines[1:]
         else:
@@ -245,36 +246,36 @@ class BaseDocString(object):
         # peek at line
         header = self._doc.peek()
 
+
+        if self.verbose:
+            print 'current line is: {0} at index {1}'.format(header, self._doc._l)
+            print 'next line is:', self._doc.peek(1)
+
         # is it a known header?
         if header.strip() not in self.headers:
             return False
-
-        if self.verbose:
-            print 'current line is', self._doc._l
-            print 'current text is', self._doc._str[self._doc._l]
         # peek at second line
         line2 = self._doc.peek(1)
+
+        if self.verbose:
+            print 'second line is:', header
 
         # check for underline type format
         underline = re.match(r'\s*\S+\s*\Z', line2)
         if underline is None:
             return False
-
         # is the next line an rst underline?
         striped_header = header.rstrip()
-
         expected_underline1 = re.sub(r'[A-Za-z]|\b\s', '-', striped_header)
         expected_underline2 = re.sub(r'[A-Za-z]|\b\s', '=', striped_header)
-
         if ((underline.group().rstrip() == expected_underline1) or
             (underline.group().rstrip() == expected_underline2)):
             return header.strip()
-
         else:
             return False
 
     def insert_lines(self, new_lines, index):
-        """Insert refactored lines
+        """ Insert refactored lines
 
         Arguments
         ---------
@@ -291,6 +292,14 @@ class BaseDocString(object):
 
     def get_indent(self, line):
         return re.split(r'\w', line)[0]
+
+
+    def move_forward(self, lines):
+        """ Move forward by the specified number of lines
+
+        """
+        for x in range(lines):
+            self._doc.read()
 
 
 class FunctionDocstring(BaseDocString):
@@ -365,6 +374,7 @@ class FunctionDocstring(BaseDocString):
             print "END"
 
         self.insert_lines(descriptions, index)
+        self.move_forward(len(descriptions))
         return
 
     def _refactor_raises(self, header):
@@ -429,6 +439,7 @@ class FunctionDocstring(BaseDocString):
             print "END"
 
         self.insert_lines(descriptions, index)
+        self.move_forward(len(description))
         return
 
     def _refactor_arguments(self, header):
@@ -463,6 +474,7 @@ class FunctionDocstring(BaseDocString):
 
         descriptions.append('')
         self.insert_lines(descriptions, index)
+        self.move_forward(len(descriptions))
         return
 
 
@@ -489,7 +501,7 @@ class ClassDocstring(BaseDocString):
         del lines[index]
 
         # get the global indent of the section
-        indent = re.split(r'\w', self._doc.peek())[0]
+        indent = self.get_indent(self._doc.peek())
 
         # parse parameters
         parameters = self._extract_parameters(indent)
@@ -523,6 +535,7 @@ class ClassDocstring(BaseDocString):
             descriptions.append('')
 
         self.insert_lines(descriptions, index)
+        self.move_forward(len(descriptions))
         return
 
     def _refactor_methods(self, header):
@@ -596,6 +609,7 @@ class ClassDocstring(BaseDocString):
 
 
         self.insert_lines(descriptions, index)
+        self.move_forward(len(descriptions))
         return
 
     def max_lengths(self, parameters):
@@ -622,7 +636,7 @@ class ClassDocstring(BaseDocString):
 
         The text in line is replaced with the word without changing the
         size of the line (in most cases). The replace takes place at the
-        index.
+        provided index.
 
         Arguments
         ---------
@@ -647,7 +661,9 @@ class ClassDocstring(BaseDocString):
         return ''.join(line_list)
 
     def _refactor_see_also(self, header):
-        """Refactor the see also section to sphinx friendly format"""
+        """ Refactor the see also section to sphinx friendly format
+
+        """
 
         lines = self._doc._str
         index = self._doc._l
@@ -668,4 +684,5 @@ class ClassDocstring(BaseDocString):
         descriptions.append('')
 
         self.insert_lines(descriptions, index)
+        self.move_forward(len(descriptions))
         return
