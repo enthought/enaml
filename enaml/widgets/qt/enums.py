@@ -11,8 +11,8 @@ from ...enums import DataRole, Orientation
 
 
 QtOrientation = {
-    Orientation.HORIZONTAL: QtCore.Qt.Orientation.Horizontal,
-    Orientation.VERTICAL: QtCore.Qt.Orientation.Vertical
+    Orientation.HORIZONTAL: QtCore.Qt.Horizontal,
+    Orientation.VERTICAL: QtCore.Qt.Vertical
 }
 
 EnamlOrientation = dict((value, key) for key, value in QtOrientation.items())
