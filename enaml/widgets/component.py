@@ -140,7 +140,7 @@ class Component(EnamlBase):
         The list of children components for this component. Subclasses
         may redefine this trait to restrict which types of children
         they allow. This list should not be manipulated outside of
-        the *_child(...) methods. This is a protected attribute.
+        the ``*_child(...)`` methods. This is a protected attribute.
 
     name : Str
         The name of this element which may be used as metainfo by other
@@ -176,7 +176,7 @@ class Component(EnamlBase):
     swap_children(child, other_child)
         Swap the positions of the two children.
 
-    set_parent(self, parent):
+    set_parent(self, parent)
         Set the parent for this component to parent.
 
     layout()
@@ -218,10 +218,6 @@ class Component(EnamlBase):
             The child to add to the component. The child must not
             already be in the component.
 
-        Returns
-        -------
-        result : None
-
         """
         # XXX this is O(n) but n should be small so I'm not
         # worrying about it at the moment
@@ -243,10 +239,6 @@ class Component(EnamlBase):
         child : Instance(Component)
             The child to remove from the container. The child
             must be contained in the container.
-
-        Returns
-        -------
-        result : None
 
         """
         # XXX this is O(n) but n should be small so I'm not
@@ -273,10 +265,6 @@ class Component(EnamlBase):
         other_child : Instance(Component)
             The child taking the new place. The child must not be
             contained in the container.
-
-        Returns
-        -------
-        result : None
 
         """
         # XXX this is O(n) but n should be small so I'm not
@@ -309,10 +297,6 @@ class Component(EnamlBase):
             The second child in the swap. The child must be contained
             in the container.
 
-        Returns
-        -------
-        result : None
-
         """
         # XXX this is O(n) but n should be small so I'm not
         # worrying about it at the moment
@@ -341,10 +325,6 @@ class Component(EnamlBase):
         parent : Component or None
             The parent Component of this component or None.
 
-        Returns
-        -------
-        result : None
-
         """
         self.parent = parent
 
@@ -356,18 +336,10 @@ class Component(EnamlBase):
         listen on this instance. This method should not typically be
         called by user code.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
         impl = self.toolkit_impl
         impl.set_parent(self)
-        
+
         impl.create_widget()
         for child in self.children:
             child.layout()
