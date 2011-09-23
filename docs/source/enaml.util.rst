@@ -15,3 +15,8 @@ util Package
 -------------------------
 
 .. automodule:: enaml.util.guisupport
+
+:mod:`test_util` Module
+-------------------------
+
+.. automodule:: enaml.util.test_utils
