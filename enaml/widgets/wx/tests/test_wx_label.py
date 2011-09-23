@@ -6,7 +6,7 @@
 
 import unittest
 import sys
-from enaml.widgets.wx.tests.utility import EnamlTestCase
+from enaml.util.test_utils import EnamlTestCase
 
 class testWXLabel(EnamlTestCase):
     """ Testsuite for WXLabel

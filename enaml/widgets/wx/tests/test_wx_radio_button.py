@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import unittest
 
-from enaml.widgets.wx.tests.utility import EnamlTestCase
+from enaml.util.test_utils import EnamlTestCase
 
 class testWXRadioButton(EnamlTestCase):
     """ Testsuite for WXRadioButton
