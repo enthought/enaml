@@ -7,21 +7,21 @@ import os
 
 import ply.yacc as yacc
 
-from . import tml_ast
-from .tml_lexer import raise_syntax_error, TraitsMLLexer
+from . import enaml_ast
+from .lexer import raise_syntax_error, EnamlLexer
 
 
 # Get a save directory for the lex and parse tables
-_tml_dir = os.path.join(os.path.expanduser('~'), '.traitsml')
+_enaml_dir = os.path.join(os.path.expanduser('~'), '.enaml')
 try:
-    if not os.path.exists(_tml_dir):
-        os.mkdir(_tml_dir)
+    if not os.path.exists(_enaml_dir):
+        os.mkdir(_enaml_dir)
 except OSError:
-    _tml_dir = os.getcwd()
+    _enaml_dir = os.getcwd()
 
 
 # Need to expose the lexer tokens.
-tokens = TraitsMLLexer.tokens
+tokens = EnamlLexer.tokens
 
 
 def set_locations(node, lineno, col_offset):
@@ -62,203 +62,170 @@ class Arguments(object):
 
 
 #------------------------------------------------------------------------------
-# TML File grammar
+# Enaml Module Grammar
 #------------------------------------------------------------------------------
-def p_tml(p):
-    ''' tml : tml_body ENDMARKER '''
+def p_enaml(p):
+    ''' enaml : enaml_module ENDMARKER '''
     p[0] = p[1]
     
 
-def p_tml_body1(p):
-    ''' tml_body : tml_imports tml_element '''
-    p[0] = tml_ast.TML(p[1] + [p[2]])
+def p_enaml_module1(p):
+    ''' enaml_module : enaml_imports enaml_components '''
+    p[0] = enaml_ast.EnamlModule(p[1], p[2])
 
 
-def p_tml_body2(p):
-    ''' tml_body : tml_element '''
-    p[0] = tml_ast.TML([p[1]])
+def p_enaml_module2(p):
+    ''' enaml_module : enaml_components '''
+    p[0] = enaml_ast.EnamlModule([], p[1])
 
 
-def p_tml_imports1(p):
-    ''' tml_imports : tml_imports tml_import '''
+def p_enaml_imports1(p):
+    ''' enaml_imports : enaml_imports enaml_import '''
     p[0] = p[1] + [p[2]]
 
 
-def p_tml_imports2(p):
-    ''' tml_imports : tml_import '''
+def p_enaml_imports2(p):
+    ''' enaml_imports : enaml_import '''
     p[0] = [p[1]]
 
 
-def p_tml_import(p):
-    ''' tml_import : import_stmt '''
+def p_enaml_import(p):
+    ''' enaml_import : import_stmt '''
     mod = ast.Module(body=[p[1]])
-    tml_imprt = tml_ast.TMLImport(mod)
-    p[0] = tml_imprt
+    enaml_import = enaml_ast.EnamlPyImport(mod)
+    p[0] = enaml_import
 
 
-def p_tml_element1(p):
-    ''' tml_element : NAME COLON tml_suite '''
-    p[0] = tml_ast.TMLElement(p[1], None, p[3])
+def p_enaml_components1(p):
+    ''' enaml_components : enaml_components enaml_component '''
+    p[0] = p[1] + [p[2]]
 
 
-def p_tml_element2(p):
-    ''' tml_element : NAME NAME COLON tml_suite '''
-    p[0] = tml_ast.TMLElement(p[1], p[2], p[4])
+def p_enaml_components2(p):
+    ''' enaml_components : enaml_component '''
+    p[0] = [p[1]]
 
 
-def p_tml_suite(p):
-    ''' tml_suite : NEWLINE INDENT tml_element_body DEDENT '''
+def p_enaml_component1(p):
+    ''' enaml_component : NAME COLON enaml_body '''
+    p[0] = enaml_ast.EnamlComponent(p[1], None, p[3])
+
+
+def p_enaml_component2(p):
+    ''' enaml_component : NAME NAME COLON enaml_body '''
+    p[0] = enaml_ast.EnamlComponent(p[1], p[2], p[4])
+
+
+def p_enaml_body(p):
+    ''' enaml_body : NEWLINE INDENT enaml_component_body DEDENT '''
     p[0] = p[3]
 
 
-def p_tml_element_body1(p):
-    ''' tml_element_body : tml_expressions tml_metas tml_children '''
-    p[0] = tml_ast.TMLElementBody(p[1], p[2], p[3])
+def p_enaml_component_body1(p):
+    ''' enaml_component_body : enaml_expressions enaml_children '''
+    expressions = filter(None, p[1])
+    children =  filter(None, p[2])
+    p[0] = enaml_ast.EnamlComponentBody(expressions, children)
 
 
-def p_tml_element_body2(p):
-    ''' tml_element_body : tml_expressions tml_metas '''
-    p[0] = tml_ast.TMLElementBody(p[1], p[2], [])
+def p_enaml_component_body2(p):
+    ''' enaml_component_body : enaml_expressions '''
+    expressions = filter(None, p[1])
+    children =  []
+    p[0] = enaml_ast.EnamlComponentBody(expressions, children)
 
 
-def p_tml_element_body3(p):
-    ''' tml_element_body : tml_expressions tml_children '''
-    p[0] = tml_ast.TMLElementBody(p[1], [], p[2])
+def p_enaml_component_body3(p):
+    ''' enaml_component_body : enaml_children '''
+    expressions = []
+    children =  filter(None, p[1])
+    p[0] = enaml_ast.EnamlComponentBody(expressions, children)
 
 
-def p_tml_element_body4(p):
-    ''' tml_element_body : tml_expressions '''
-    p[0] = tml_ast.TMLElementBody(p[1], [], [])
-
-
-def p_tml_element_body5(p):
-    ''' tml_element_body : tml_metas tml_children '''
-    p[0] = tml_ast.TMLElementBody([], p[1], p[2])
-
-
-def p_tml_element_body6(p):
-    ''' tml_element_body : tml_metas '''
-    p[0] = tml_ast.TMLElementBody([], p[1], [])
-
-
-def p_tml_element_body7(p):
-    ''' tml_element_body : tml_children '''
-    p[0] = tml_ast.TMLElementBody([], [], p[1])
-
-
-def p_tml_element_body8(p):
-    ''' tml_element_body : PASS NEWLINE '''
-    p[0] = tml_ast.TMLElementBody([], [], [])
-
-
-def p_tml_metas2(p):
-    ''' tml_metas : tml_metas tml_meta '''
+def p_enaml_expressions1(p):
+    ''' enaml_expressions : enaml_expressions enaml_expression '''
     p[0] = p[1] + [p[2]]
 
 
-def p_tml_metas1(p):
-    ''' tml_metas : tml_meta '''
+def p_enaml_expressions2(p):
+    ''' enaml_expressions : enaml_expression '''
     p[0] = [p[1]]
 
 
-def p_tml_meta1(p):
-    ''' tml_meta : AT NAME COLON tml_expression_suite '''
-    p[0] = tml_ast.TMLMeta(p[2], None, p[4])
-
-
-def p_tml_meta2(p):
-    ''' tml_meta : AT NAME NAME COLON tml_expression_suite '''
-    p[0] = tml_ast.TMLMeta(p[2], p[3], p[5])
-
-
-def p_tml_expression_suite(p):
-    ''' tml_expression_suite : NEWLINE INDENT tml_expressions DEDENT '''
-    # Filter out any 'pass' expressions
-    p[0] = filter(None, p[3])
-
-
-def p_tml_expressions1(p):
-    ''' tml_expressions : tml_expressions tml_expression '''
+def p_enaml_children1(p):
+    ''' enaml_children : enaml_children enaml_component '''
     p[0] = p[1] + [p[2]]
 
 
-def p_tml_expressions2(p):
-    ''' tml_expressions : tml_expression '''
+def p_enaml_children2(p):
+    ''' enaml_children : enaml_component '''
     p[0] = [p[1]]
 
 
-def p_tml_expression1(p):
-    ''' tml_expression : tml_default '''
+def p_enaml_expression1(p):
+    ''' enaml_expression : enaml_default '''
     p[0] = p[1]
 
 
-def p_tml_expression2(p):
-    ''' tml_expression : tml_expr_bind '''
+def p_enaml_expression2(p):
+    ''' enaml_expression : enaml_bind '''
     p[0] = p[1]
 
 
-def p_tml_expression3(p):
-    ''' tml_expression : tml_notify '''
+def p_enaml_expression3(p):
+    ''' enaml_expression : enaml_delegate '''
     p[0] = p[1]
 
 
-def p_tml_expression4(p):
-    ''' tml_expression : tml_delegate '''
+def p_enaml_expression4(p):
+    ''' enaml_expression : enaml_notify '''
     p[0] = p[1]
 
 
-def p_tml_expression5(p):
-    ''' tml_expression : PASS NEWLINE '''
+def p_enaml_expression5(p):
+    ''' enaml_expression : PASS NEWLINE '''
     p[0] = None
 
 
-def p_tml_children1(p):
-    ''' tml_children : tml_children tml_element '''
-    p[0] = p[1] + [p[2]]
+def p_enaml_default(p):
+    ''' enaml_default : enaml_name EQUAL enaml_py_expression NEWLINE '''
+    op = enaml_ast.EnamlExpression.DEFAULT
+    p[0] = enaml_ast.EnamlExpression(p[1], op, p[3])
 
 
-def p_tml_children2(p):
-    ''' tml_children : tml_element '''
-    p[0] = [p[1]]
+def p_enaml_bind(p):
+    ''' enaml_bind : enaml_name LEFTSHIFT enaml_py_expression NEWLINE '''
+    op = enaml_ast.EnamlExpression.BIND
+    p[0] = enaml_ast.EnamlExpression(p[1], op, p[3])
 
 
-def p_tml_default(p):
-    ''' tml_default : tml_name EQUAL test NEWLINE '''
-    expr = ast.Expression(body=p[3])
+def p_enaml_delegate(p):
+    ''' enaml_delegate : enaml_name COLONEQUAL enaml_py_expression NEWLINE '''
+    op = enaml_ast.EnamlExpression.DELEGATE
+    p[0] = enaml_ast.EnamlExpression(p[1], op, p[3])
+
+
+def p_enaml_notify(p):
+    ''' enaml_notify : enaml_name RIGHTSHIFT enaml_py_expression NEWLINE '''
+    op = enaml_ast.EnamlExpression.NOTIFY
+    p[0] = enaml_ast.EnamlExpression(p[1], op, p[3])
+
+
+def p_enaml_name1(p):
+    ''' enaml_name : NAME '''
+    p[0] = enaml_ast.EnamlName(p[1], None)
+
+
+def p_enaml_name2(p):
+    ''' enaml_name : NAME DOT NAME '''
+    p[0] = enaml_ast.EnamlName(p[1], p[3])
+
+
+def p_enaml_py_expression(p):
+    ''' enaml_py_expression : test '''
+    expr = ast.Expression(body=p[1])
     set_locations(expr, p.lineno(1), 1)
-    p[0] = tml_ast.TMLDefault(p[1], expr)
-
-
-def p_tml_expr_bind(p):
-    ''' tml_expr_bind : tml_name LEFTSHIFT test NEWLINE '''
-    expr = ast.Expression(body=p[3])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = tml_ast.TMLExprBind(p[1], expr)
-
-
-def p_tml_notify(p):
-    ''' tml_notify : tml_name RIGHTSHIFT test NEWLINE '''
-    expr = ast.Expression(body=p[3])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = tml_ast.TMLNotify(p[1], expr)
-
-
-def p_tml_delegate(p):
-    ''' tml_delegate : tml_name COLONEQUAL test NEWLINE '''
-    expr = ast.Expression(body=p[3])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = tml_ast.TMLDelegate(p[1], expr)
-
-
-def p_tml_name1(p):
-    ''' tml_name : NAME '''
-    p[0] = p[1]
-
-
-def p_tml_name2(p):
-    ''' tml_name : NAME DOT NAME '''
-    p[0] = '%s.%s' % (p[1], p[3])
-
+    p[0] = enaml_ast.EnamlPyExpression(expr)
 
 
 #------------------------------------------------------------------------------
@@ -1791,13 +1758,13 @@ def p_error(t):
     raise_syntax_error('invalid syntax.', t)
 
 
-_parser = yacc.yacc(debug=False, tabmodule='tml_parsetab', outputdir=_tml_dir,
-                    errorlog=yacc.NullLogger())
+_parser = yacc.yacc(debug=False, tabmodule='enaml_parsetab', 
+                    outputdir=_enaml_dir, errorlog=yacc.NullLogger())
 
 
 def parse(tml):
     # Need to create a new lexer each time, or line numbers get screwy.
-    _lexer = TraitsMLLexer()
+    _lexer = EnamlLexer()
     return _parser.parse(tml, lexer=_lexer)
 
 

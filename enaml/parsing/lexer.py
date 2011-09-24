@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
 import tokenize
 
 import ply.lex as lex
@@ -20,7 +19,7 @@ def raise_indentation_error(message, t):
     _raise_error(message, t, IndentationError)
 
 
-class TraitsMLLexer(object):
+class EnamlLexer(object):
 
     #--------------------------------------------------------------------------
     # Token Declarations
@@ -496,7 +495,6 @@ class TraitsMLLexer(object):
         
         self.at_line_start = at_line_start = True
         indent = NO_INDENT
-        saw_colon = False
         
         for token in token_stream:
             token.at_line_start = at_line_start

@@ -63,17 +63,15 @@ class EnamlBase(HasStrictTraits):
         cls.__protected__ = protected
         return cls
 
-    def _set_extended_delegate(self, name, delegate):
-        root, attr = name.split('.')
+    def _set_extended_delegate(self, root, leaf, delegate):
         root_obj = getattr(self, root)
         if isinstance(root_obj, EnamlBase):
-            root_obj.set_attribute_delegate(attr, delegate)
+            root_obj.set_attribute_delegate((leaf, None), delegate)
 
-    def _set_extended_notifier(self, name, notifier):
-        root, attr = name.split('.')
+    def _add_extended_notifier(self, root, leaf, notifier):
         root_obj = getattr(self, root)
         if isinstance(root_obj, EnamlBase):
-            root_obj.add_attribute_notifier(attr, notifier)
+            root_obj.add_attribute_notifier((leaf, None), notifier)
 
     def set_attribute_delegate(self, name, delegate):
         """ Delegates the value of the attribute to the delegate.
@@ -83,16 +81,20 @@ class EnamlBase(HasStrictTraits):
 
         Arguments
         ---------
-        name : string
-            The name of the attribute to delegate.
+        name : 2-tuple
+            The (root, leaf) string name of the attribute to delegate. If 
+            Leaf is not None, it's taken to be an extended attribute name.
 
         delegate : IExpressionDelegate
             An implementor of the IExpressionDelegate interface.
 
         """
-        if '.' in name:
-            self._set_extended_delegate(name, delegate)
+        root, leaf = name
+        if leaf is not None:
+            self._set_extended_delegate(root, leaf, delegate)
             return
+        else:
+            name = root
 
         if name in self.__protected__:
             msg = ('The `%s` attribute of the `%s` object is protected and '
@@ -129,16 +131,20 @@ class EnamlBase(HasStrictTraits):
 
         Arguments
         ---------
-        name : string
-            The name of the attribute to delegate.
+        name : 2-tuple
+            The (root, leaf) string name of the attribute to delegate. If 
+            Leaf is not None, it's taken to be an extended attribute name.
 
         notifier : IExpressionNotifier
             An implementor of the IExpressionNotifer interface.
 
         """
-        if '.' in name:
-            self._set_extended_notifier(name, notifier)
+        root, leaf = name
+        if leaf is not None:
+            self._add_extended_notifier(root, leaf, notifier)
             return
+        else:
+            name = root
 
         trait = self.trait(name)
         if trait is None:

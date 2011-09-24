@@ -2,11 +2,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import itertools
+
 from traits.api import HasStrictTraits, Instance
 
 from .constructors import IToolkitConstructor
 from .toolkit import default_toolkit, Toolkit
-from .parsing import tml_ast, tml_parser
+from .parsing import enaml_ast, parser
 from .util.trait_types import SubClass
 from .expressions import (
     IExpressionDelegateFactory, IExpressionNotifierFactory,
@@ -60,7 +62,7 @@ class EnamlCtorBuilder(HasStrictTraits):
     """
     toolkit = Instance(Toolkit)
 
-    ast = Instance(tml_ast.TML)
+    ast = Instance(enaml_ast.EnamlModule)
 
     default = SubClass(IExpressionDelegateFactory)
 
@@ -126,15 +128,15 @@ class EnamlCtorBuilder(HasStrictTraits):
         for child in node.children():
             self.visit(child)
 
-    def visit_TML(self, node):
-        for item in node.body:
+    def visit_EnamlModule(self, node):
+        for item in itertools.chain(node.imports, node.components):
             self.visit(item)
 
-    def visit_TMLImport(self, node):
+    def visit_EnamlPyImport(self, node):
         code = compile(node.py_ast, 'Enaml', mode='exec')
         exec code in {}, self._imports
 
-    def visit_TMLElement(self, node):
+    def visit_EnamlComponent(self, node):
         ctor = self.toolkit.create_ctor(node.name)
         identifier = node.identifier
         if identifier is not None:
@@ -148,40 +150,28 @@ class EnamlCtorBuilder(HasStrictTraits):
         else:
             self._root = ctor
 
-    def visit_TMLElementBody(self, node):
-        for metas in node.metas:
-            self.visit(metas)
-        for expr in node.exprs:
-            self.visit(expr)
-        for child in node.tml_children:
-            self.visit(child)
+    def visit_EnamlComponentBody(self, node):
+        for item in itertools.chain(node.expressions, node.children):
+            self.visit(item)
 
-    def visit_TMLMeta(self, node):
-        ctor = self.toolkit.create_ctor(node.name)
-        identifier = node.identifier
-        if identifier is not None:
-            ctor.identifier = identifier
-        stack = self._stack
-        stack.append(ctor)
-        self.visit(node.body)
-        stack.pop()
-        stack[-1].metas.append(ctor)
-
-    def visit_TMLDefault(self, node):
-        item = (node.name, self.default(node.py_ast))
-        self._stack[-1].delegates.append(item)
-            
-    def visit_TMLExprBind(self, node):
-        item = (node.name, self.bind(node.py_ast))
-        self._stack[-1].delegates.append(item)
-    
-    def visit_TMLNotify(self, node):
-        item = (node.name, self.notify(node.py_ast))
-        self._stack[-1].notifiers.append(item)
-
-    def visit_TMLDelegate(self, node):
-        item = (node.name, self.delegate(node.py_ast))
-        self._stack[-1].delegates.append(item)
+    def visit_EnamlExpression(self, node):
+        name_node = node.lhs
+        name = (name_node.root, name_node.leaf)
+        op = node.op
+        if op == node.DEFAULT:
+            item = (name, self.default(node.rhs.py_ast))
+            self._stack[-1].delegates.append(item)
+        elif op == node.BIND:
+            item = (name, self.bind(node.rhs.py_ast))
+            self._stack[-1].delegates.append(item)
+        elif op == node.DELEGATE:
+            item = (name, self.delegate(node.rhs.py_ast))
+            self._stack[-1].delegates.append(item)
+        elif op == node.NOTIFY:
+            item = (name, self.notify(node.rhs.py_ast))
+            self._stack[-1].notifiers.append(item)
+        else:
+            raise ValueError('Invalid expression op.')
 
 
 class EnamlFactory(HasStrictTraits):
@@ -192,7 +182,7 @@ class EnamlFactory(HasStrictTraits):
     enaml.view.View objects for the provide Enaml source.
 
     """
-    _ast = Instance(tml_ast.TML)
+    _ast = Instance(enaml_ast.EnamlModule)
 
     _toolkit = Instance(Toolkit)
 
@@ -201,7 +191,7 @@ class EnamlFactory(HasStrictTraits):
     _imports = Instance(dict)
 
     @classmethod
-    def parse_tml(cls, filehandle):
+    def parse_enaml(cls, filehandle):
         """ Parses Enaml source code into an Enaml ast. The source
         can be provided as a file like object or a string path to 
         a file.
@@ -209,10 +199,10 @@ class EnamlFactory(HasStrictTraits):
         """
         if isinstance(filehandle, basestring):
             with open(filehandle) as f:
-                tml_source = f.read()
+                enaml_source = f.read()
         else:
-            tml_source = filehandle.read()
-        return tml_parser.parse(tml_source)
+            enaml_source = filehandle.read()
+        return parser.parse(enaml_source)
     
     def __init__(self, filehandle, toolkit=None):
         """ Initialize an Enaml factory.
@@ -230,7 +220,7 @@ class EnamlFactory(HasStrictTraits):
 
         """
         super(EnamlFactory, self).__init__()
-        self._ast = self.parse_tml(filehandle)
+        self._ast = self.parse_enaml(filehandle)
         self._toolkit = toolkit or default_toolkit()
 
     def expression_factories(self):
@@ -257,5 +247,4 @@ class EnamlFactory(HasStrictTraits):
         view = self._ctor_tree(**ns)
         view.toolkit = self._toolkit
         return view
-
 

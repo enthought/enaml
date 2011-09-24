@@ -2,10 +2,22 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasStrictTraits, List, Instance, Tuple, Str, Interface
+from traits.api import HasStrictTraits, List, Instance, Tuple, Str, Interface, Either
 
 from .widgets.component import Component
 from .expressions import IExpressionDelegateFactory, IExpressionNotifierFactory
+
+
+#-------------------------------------------------------------------------------
+# Convienent Trait Definititions
+#-------------------------------------------------------------------------------
+EnamlName = Tuple(Str, Either(Str, None))
+
+DelegateList = List(Tuple(EnamlName, Instance(IExpressionDelegateFactory)))
+
+NotifierList = List(Tuple(EnamlName, Instance(IExpressionNotifierFactory)))
+
+ToolkitCtorList = List(Instance('IToolkitConstructor'))
 
 
 #------------------------------------------------------------------------------
@@ -30,23 +42,19 @@ class IToolkitConstructor(Interface):
         The type name in use by this component that this constructor
         will create.
 
-    delegates : List(Tuple(Str, Instance(IExpressionDelegateFactory)))
+    delegates : DelegateList
         The list of tuples of info for delegating traits on the toolkit
         widget wrapper. The string is the name of the trait to be
         delegated and the object is an expression delegate factory which
         will create a delegate on demand.
 
-    notifiers : List(Tuple(Str, Instance(IExpressionNotifierFactory)))
+    notifiers : NotifierList
         The list of tuples of info for setting notifiers on the widget
         wrapper. The string is the name of the trait on which we want
         notifications and the object is an expression notifier factory
         which will create a notifier on demand.
 
-    metas : List(Instance(IToolkitConstructor))
-        The list of constructor instances for any meta objects defined
-        for this node of the Enaml tree.
-
-    children : List(Instance(IToolkitConstructor))
+    children : ToolkitCtorList
         The list of constructor instances for any child objects
         defined for this node of the Enaml tree.
 
@@ -64,13 +72,11 @@ class IToolkitConstructor(Interface):
 
     type_name = Str
 
-    delegates = List(Tuple(Str, Instance(IExpressionDelegateFactory)))
+    delegates = DelegateList
 
-    notifiers = List(Tuple(Str, Instance(IExpressionNotifierFactory)))
+    notifiers = NotifierList
 
-    metas = List(Instance('IToolkitConstructor'))
-
-    children = List(Instance('IToolkitConstructor'))
+    children = ToolkitCtorList
 
     def component(self):
         """ Imports, instantiates, and returns the toolkit component.
@@ -140,13 +146,11 @@ class BaseToolkitCtor(HasStrictTraits):
 
     type_name = Str
 
-    delegates = List(Tuple(Str, Instance(IExpressionDelegateFactory)))
+    delegates = DelegateList
 
-    notifiers = List(Tuple(Str, Instance(IExpressionNotifierFactory)))
+    notifiers = NotifierList
 
-    metas = List(Instance(IToolkitConstructor))
-
-    children = List(Instance(IToolkitConstructor))
+    children = ToolkitCtorList
 
     #--------------------------------------------------------------------------
     # Transient traits that are reset in the cleanup method.
@@ -168,9 +172,6 @@ class BaseToolkitCtor(HasStrictTraits):
         """
         self.impl = impl = self.component()
         impl._type = self.type_name
-        for meta in self.metas:
-            meta.construct()
-            impl.add_meta_info(meta.impl)
         for child in self.children:
             child.construct()
             impl.add_child(child.impl)
@@ -190,8 +191,6 @@ class BaseToolkitCtor(HasStrictTraits):
                 raise NameError(msg % identifier)
             else:
                 global_ns[identifier] = impl
-        for meta in self.metas:
-            meta.build_ns(global_ns)
         for child in self.children:
             child.build_ns(global_ns)
         self.global_ns = global_ns
@@ -204,14 +203,12 @@ class BaseToolkitCtor(HasStrictTraits):
         impl = self.impl
         global_ns = self.global_ns
         local_ns = self.local_ns
-        for attr, delegate_factory in self.delegates:
+        for name, delegate_factory in self.delegates:
             delegate = delegate_factory(global_ns, local_ns)
-            impl.set_attribute_delegate(attr, delegate)
-        for attr, notifier_factory in self.notifiers:
+            impl.set_attribute_delegate(name, delegate)
+        for name, notifier_factory in self.notifiers:
             notifier = notifier_factory(global_ns, local_ns)
-            impl.add_attribute_notifier(attr, notifier)
-        for meta in self.metas:
-            meta.hook_expressions()
+            impl.add_attribute_notifier(name, notifier)
         for child in self.children:
             child.hook_expressions()
 
@@ -235,8 +232,6 @@ class BaseToolkitCtor(HasStrictTraits):
         self.impl = None
         self.local_ns = {}
         self.global_ns = {}
-        for meta in self.metas:
-            meta.cleanup()
         for child in self.children:
             child.cleanup()
 
@@ -268,5 +263,4 @@ class BaseToolkitCtor(HasStrictTraits):
 
         """
         raise NotImplementedError
-
 
