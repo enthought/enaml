@@ -5,6 +5,7 @@ from enaml.factory import EnamlFactory
 
 
 class EnamlTestCase(unittest.TestCase):
+    """ Base class for testing Enaml widgets. """
     
     def setUp(self):
         """ Parse Enaml source, stored in `self.enaml`, and store the view. """
