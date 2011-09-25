@@ -24,7 +24,7 @@ Window:
         """
         super(TestLabel, self).setUp()
         component = self.widget_by_id('label')
-        self.widget = component.toolkit_impl.widget
+        self.widget = component.toolkit_widget()
         self.component = component
     
     def test_initial_text(self):

@@ -27,7 +27,7 @@ Window:
         """
         super(TestPushButton, self).setUp()
         component = self.widget_by_id('pb1')
-        self.widget = component.toolkit_impl.widget
+        self.widget = component.toolkit_widget()
         self.component = component
     
     def test_button_pressed(self):
