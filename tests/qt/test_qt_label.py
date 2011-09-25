@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..label import TestLabel
+from ..common.label import TestLabel
 
 class TestQtLabel(TestLabel):
     """ QtLabel tests. """

@@ -6,7 +6,7 @@ import wx
 
 from . import send_wx_event
 
-from ..push_button import TestPushButton
+from ..common.push_button import TestPushButton
 
 
 class TestWxPushButton(TestPushButton):

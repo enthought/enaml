@@ -6,7 +6,7 @@ import wx
 
 from . import send_wx_event
 
-from ..label import TestLabel
+from ..common.label import TestLabel
 
 
 class TestWxLabel(TestLabel):
