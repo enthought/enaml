@@ -20,3 +20,6 @@ class TestQtLabel(TestRadioButton, unittest.TestCase):
         
         """
         return button.text()
+        
+    def process_events(self, widget):
+        pass

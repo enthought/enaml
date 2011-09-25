@@ -25,3 +25,9 @@ class TestWxRadioButton(TestRadioButton, unittest.TestCase):
         
         """
         return button.GetLabel()
+    
+    def process_events(self, widget):
+        """ Process events outside the main event loop.
+
+        """
+        widget.ProcessPendingEvents()
