@@ -8,7 +8,7 @@ from .enaml_test_case import EnamlTestCase
 
         
 class TestLabel(EnamlTestCase):
-    """ Logic for testing push buttons. """
+    """ Logic for testing labels. """
     
     text = 'foo'
     
@@ -21,7 +21,7 @@ Window:
 """ % text
     
     def setUp(self):
-        """ Set up push button tests.
+        """ Set up label tests.
         
         """
         super(TestLabel, self).setUp()
@@ -30,7 +30,7 @@ Window:
         self.component = component
     
     def check_text(self, text):
-        """ React to a push button press event.
+        """ Check label text.
         
         """
         self.assertEqual(self.component.text, text)
