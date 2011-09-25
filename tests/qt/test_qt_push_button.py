@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..test_push_button import TestPushButton
+from ..push_button import TestPushButton
 
 
 class TestQtPushButton(TestPushButton):
