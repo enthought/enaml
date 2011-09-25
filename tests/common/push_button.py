@@ -30,35 +30,56 @@ Window:
         self.widget = component.toolkit_impl.widget
         self.component = component
     
-    def button_pressed(self):
+    def test_button_pressed(self):
         """ React to a push button press event.
         
         """
+        self.button_pressed()
+        
         events = self.events
         self.assertIn('pressed', events)
         self.assertNotIn('released', events)
         self.assertNotIn('clicked', events)
     
-    def button_clicked(self):
+    def test_button_clicked(self):
         """ Test a push button click event.
         
         """
+        self.button_clicked()
+        
         events = self.events
         self.assertIn('clicked', events)
         self.assertNotIn('pressed', events)
         self.assertNotIn('released', events)
     
-    def button_released(self):
+    def test_button_released(self):
         """ Test a push button release event.
         
         """
+        self.button_released()
         self.assertEqual(self.events, [])
 
-    def button_all_events(self):
+    def test_button_all_events(self):
         """ Test press, release, and click events.
         
         """
+        self.button_pressed()
+        self.button_released()
+        self.button_clicked()
+        
         events = self.events
         self.assertEqual(events.count('clicked'), 1)
         self.assertEqual(events.count('pressed'), 1)
         self.assertEqual(events.count('released'), 1)
+        
+    def test_button_down(self):
+        """ Test the button's `down` attribute.
+        
+        """
+        component = self.component
+        
+        self.assertFalse(component.down)
+        self.button_pressed()
+        self.assertTrue(component.down)
+        self.button_released()
+        self.assertFalse(component.down)

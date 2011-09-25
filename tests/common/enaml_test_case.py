@@ -8,7 +8,7 @@ from cStringIO import StringIO
 from enaml.factory import EnamlFactory
 
 
-class EnamlTestCase(unittest.TestCase):
+class EnamlTestCase(object):
     """ Base class for testing Enaml widgets. """
     
     def setUp(self):

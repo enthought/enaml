@@ -2,21 +2,15 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import unittest
+
 from ..common.label import TestLabel
 
-class TestQtLabel(TestLabel):
+class TestQtLabel(TestLabel, unittest.TestCase):
     """ QtLabel tests. """
     
-    def test_initial_text(self):
-        """ Test the initial text of a label.
+    def get_text(self, widget):
+        """ Get a label's text.
         
         """
-        self.check_text(self.text)
-    
-    def test_text_changed(self):
-        """ Change the text of the label.
-        
-        """
-        self.component.text = 'bar'
-        widget_text = self.widget.text()
-        self.check_text(widget_text)
+        return widget.text()

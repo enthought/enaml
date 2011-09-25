@@ -10,15 +10,13 @@ from .enaml_test_case import EnamlTestCase
 class TestLabel(EnamlTestCase):
     """ Logic for testing labels. """
     
-    text = 'foo'
-    
     enaml = """
 Window:
     Panel:
         VGroup:
             Label label:
-                text = '%s'
-""" % text
+                text = 'foo'
+"""
     
     def setUp(self):
         """ Set up label tests.
@@ -29,8 +27,18 @@ Window:
         self.widget = component.toolkit_impl.widget
         self.component = component
     
-    def check_text(self, text):
-        """ Check label text.
+    def test_initial_text(self):
+        """ Test the initial text of a label.
         
         """
-        self.assertEqual(self.component.text, text)
+        self.assertEqual(self.component.text, self.get_text(self.widget))
+    
+    def test_text_changed(self):
+        """ Change the text of the label.
+        
+        """
+        self.component.text = 'bar'
+        widget_text = self.get_text(self.widget)
+        self.assertEqual(self.component.text, widget_text)
+    
+
