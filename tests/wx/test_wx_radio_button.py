@@ -6,7 +6,7 @@ import unittest
 
 import wx
 
-from . import send_wx_event
+from . import process_wx_events
 
 from ..common.radio_button import TestRadioButton
 
@@ -18,6 +18,7 @@ class TestWxRadioButton(TestRadioButton, unittest.TestCase):
         """ Get the checked state of a radio button.
         
         """
+        process_wx_events(self.view.toolkit.app)
         return button.GetValue()
         
     def get_text(self, button):
@@ -26,8 +27,3 @@ class TestWxRadioButton(TestRadioButton, unittest.TestCase):
         """
         return button.GetLabel()
     
-    def process_events(self, widget):
-        """ Process events outside the main event loop.
-
-        """
-        widget.ProcessPendingEvents()

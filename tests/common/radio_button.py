@@ -68,20 +68,19 @@ Window:
         self.assertEqual(radio2.text, widget2_text)
     
     def test_set_checked(self):
+        radio1 = self.widget_by_id('radio1')
         radio2 = self.widget_by_id('radio2')
         widget2 = radio2.toolkit_widget()
 
-        # select second
+        # Select the second button.
         radio2.checked = True
 
         widget2_value = self.get_value(widget2)
         self.assertTrue(widget2_value)
         self.assertEqual(radio2.checked, widget2_value)
 
-        # de-select second
-        radio2.checked = False
-
-        self.process_events(widget2)
+        # Select the first button to deselect second.
+        radio1.checked = True
 
         widget2_value = self.get_value(widget2)
         self.assertFalse(widget2_value)
@@ -98,7 +97,6 @@ Window:
         # select second
         radio2.checked = True
 
-        self.process_events(widget2)
         widget1_value = self.get_value(widget1)
         widget2_value = self.get_value(widget2)
 
@@ -113,3 +111,4 @@ Window:
 
 if __name__ == '__main__':
     unittest.main()
+    
