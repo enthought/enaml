@@ -1,6 +1,6 @@
-===========================================
-Enaml: Enthought's reActive Markup Language
-===========================================
+==============================
+Enaml is not a Markup Language
+==============================
 
 Enaml is a framework for writing declarative user interfaces in Python.
 It provides a Yaml-ish/Pythonic syntax language for declaring a ui

@@ -64,8 +64,8 @@ class ComboBox(Control):
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IComboBoxImpl)
     
-    #def _items_items_changed(self):
-    #    self.toolkit_impl.items_changed()
+    def _items_items_changed(self, items):
+        self.toolkit_impl.parent_items_items_changed(items)
 
 
 ComboBox.protect('selected')

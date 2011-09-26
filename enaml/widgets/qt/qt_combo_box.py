@@ -50,6 +50,13 @@ class QtComboBox(QtControl):
 
         """
         self.items_changed()
+        
+    def parent_items_items_changed(self, items):
+        """ The change handler for the 'items' event of the 'items'
+        attribute on the parent.
+        
+        """
+        self.items_changed()
     
     #---------------------------------------------------------------------------
     # Implementation
@@ -61,6 +68,7 @@ class QtComboBox(QtControl):
         parent = self.parent
         str_items = map(parent.to_string, parent.items)
         self.set_items(str_items)
+        self.set_value(parent.value)
 
     def bind(self):
         """ Binds the event handlers for the combo box.
