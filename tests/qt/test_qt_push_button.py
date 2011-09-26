@@ -2,12 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
-
-from ..common.push_button import TestPushButton
+from ..common import push_button
 
 
-class TestQtPushButton(TestPushButton, unittest.TestCase):
+class TestQtPushButton(push_button.TestPushButton):
     """ QtPushButton tests. """
     
     def button_pressed(self):

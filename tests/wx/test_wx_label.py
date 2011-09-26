@@ -2,16 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
+from ..common import label
 
-import wx
-
-from ..common.label import TestLabel
-
-
-class TestWxLabel(TestLabel, unittest.TestCase):
+class TestWxLabel(label.TestLabel):
     """ WXLabel tests. """
-    
+
+
     def get_text(self, widget):
         """ Get a label's text.
         

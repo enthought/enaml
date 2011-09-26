@@ -2,16 +2,14 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
-
 import wx
 
 from . import send_wx_event
 
-from ..common.push_button import TestPushButton
+from ..common import push_button
 
 
-class TestWxPushButton(TestPushButton, unittest.TestCase):
+class TestWxPushButton(push_button.TestPushButton):
     """ WXPushButton tests. """
     
     def button_pressed(self):

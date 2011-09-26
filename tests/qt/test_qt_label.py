@@ -2,11 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
+from ..common import label
 
-from ..common.label import TestLabel
-
-class TestQtLabel(TestLabel, unittest.TestCase):
+class TestQtLabel(label.TestLabel):
     """ QtLabel tests. """
     
     def get_text(self, widget):

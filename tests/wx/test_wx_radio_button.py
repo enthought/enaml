@@ -2,16 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import unittest
-
-import wx
-
 from . import process_wx_events
 
-from ..common.radio_button import TestRadioButton
+from ..common import radio_button
 
 
-class TestWxRadioButton(TestRadioButton, unittest.TestCase):
+class TestWxRadioButton(radio_button.TestRadioButton):
     """ WXRadioButton tests. """
     
     def get_value(self, button):
