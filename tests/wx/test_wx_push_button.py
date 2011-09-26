@@ -7,11 +7,14 @@ import wx
 from . import send_wx_event
 
 from ..common import push_button
+from enaml.toolkit import wx_toolkit
 
 
 class TestWxPushButton(push_button.TestPushButton):
     """ WXPushButton tests. """
-    
+
+    toolkit = wx_toolkit()
+
     def button_pressed(self):
         """ Press the button programmatically.
         

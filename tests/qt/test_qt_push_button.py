@@ -3,11 +3,13 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from ..common import push_button
+from enaml.toolkit import qt_toolkit
 
 
 class TestQtPushButton(push_button.TestPushButton):
     """ QtPushButton tests. """
-    
+
+    toolkit = qt_toolkit()
     def button_pressed(self):
         """ Press the button programmatically.
         

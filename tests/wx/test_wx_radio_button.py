@@ -5,11 +5,13 @@
 from . import process_wx_events
 
 from ..common import radio_button
+from enaml.toolkit import wx_toolkit
 
 
 class TestWxRadioButton(radio_button.TestRadioButton):
     """ WXRadioButton tests. """
-    
+
+    toolkit = wx_toolkit()
     def get_value(self, button):
         """ Get the checked state of a radio button.
         
