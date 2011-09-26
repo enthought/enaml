@@ -70,3 +70,19 @@ Window:
         self.select_item(self.widget, index)
         value = component.to_string(component.value)
         self.assertEqual(value, component.to_string(component.items[index]))
+
+    def test_append_item(self):
+        """ Add an item on the Enaml side; see if the toolkit widget updates.
+        
+        """
+        component = self.component
+        component.items.append('hello')
+        self.test_items()
+
+    def test_remove_item(self):
+        """ Remove an item on the Enaml side; see if the toolkit widget updates.
+        
+        """
+        component = self.component
+        component.items.pop(0)
+        self.test_items()
