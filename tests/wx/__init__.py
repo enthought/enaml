@@ -5,7 +5,9 @@
 import wx
 
 def process_wx_events(app):
-    app.Dispatch()
+    """ Process posted wxPython events.
+    
+    """
     app.ProcessPendingEvents()
 
 def send_wx_event(widget, event_type):
