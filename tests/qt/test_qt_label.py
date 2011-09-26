@@ -9,8 +9,9 @@ class TestQtLabel(label.TestLabel):
     """ QtLabel tests. """
 
     toolkit = qt_toolkit()
+
     def get_text(self, widget):
         """ Get a label's text.
-        
+
         """
         return widget.text()

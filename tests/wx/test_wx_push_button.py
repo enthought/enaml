@@ -17,13 +17,13 @@ class TestWxPushButton(push_button.TestPushButton):
 
     def button_pressed(self):
         """ Press the button programmatically.
-        
+
         """
         send_wx_event(self.widget, wx.EVT_LEFT_DOWN)
-    
+
     def button_released(self):
         """ Release the button programmatically.
-        
+
         """
         widget = self.widget
         send_wx_event(widget, wx.EVT_LEFT_UP)
@@ -31,7 +31,7 @@ class TestWxPushButton(push_button.TestPushButton):
 
     def button_clicked(self):
         """ Click the button programmatically.
-        
+
         """
         send_wx_event(self.widget, wx.EVT_BUTTON)
 

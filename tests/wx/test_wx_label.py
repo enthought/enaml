@@ -12,6 +12,6 @@ class TestWxLabel(label.TestLabel):
 
     def get_text(self, widget):
         """ Get a label's text.
-        
+
         """
         return widget.GetLabel()
