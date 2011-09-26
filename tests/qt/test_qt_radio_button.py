@@ -5,7 +5,7 @@
 from ..common import radio_button
 from enaml.toolkit import qt_toolkit
 
-class TestQtLabel(radio_button.TestRadioButton):
+class TestQtRadioButton(radio_button.TestRadioButton):
     """ QtRadioButton tests. """
 
     toolkit = qt_toolkit()
