@@ -61,6 +61,7 @@ class QtComboBox(QtControl):
         parent = self.parent
         str_items = map(parent.to_string, parent.items)
         self.set_items(str_items)
+        self.set_value(parent.value)
 
     def bind(self):
         """ Binds the event handlers for the combo box.
