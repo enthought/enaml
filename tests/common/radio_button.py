@@ -43,6 +43,9 @@ Window:
         self.assertEqual(radio2.checked, widget2_value)
 
     def test_initial_labels(self):
+        """ Test that the toolkit widget's label reflects the Enaml text.
+        
+        """
         radio1 = self.widget_by_id('radio1')
         widget1 = radio1.toolkit_widget()
         radio2 = self.widget_by_id('radio2')
@@ -57,6 +60,9 @@ Window:
         self.assertEqual(radio2.text, widget2_label)
         
     def test_change_label(self):
+        """ Change the label of a RadioButton at the Enaml level.
+        
+        """
         radio2 = self.widget_by_id('radio2')
         widget2 = radio2.toolkit_widget()
 
@@ -68,6 +74,9 @@ Window:
         self.assertEqual(radio2.text, widget2_text)
     
     def test_set_checked(self):
+        """ Test setting the value of a radio button in a group.
+        
+        """
         radio1 = self.widget_by_id('radio1')
         radio2 = self.widget_by_id('radio2')
         widget2 = radio2.toolkit_widget()
