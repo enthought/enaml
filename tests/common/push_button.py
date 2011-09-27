@@ -72,8 +72,17 @@ Window:
         """ Test a push button release event.
 
         """
+        events = self.events
+        # Release events are ignored if the button weas not already down
         self.button_released()
-        self.assertEqual(self.events, [])
+        self.assertEqual(events, [])
+
+        # Check when normal sequence of events takes place
+        self.button_pressed()
+        self.button_released()
+        self.assertEqual(events.count('pressed'), 1)
+        self.assertEqual(events.count('released'), 1)
+        self.assertNotIn('clicked', events)
 
     def test_button_all_events(self):
         """ Test press, release, and click events.
