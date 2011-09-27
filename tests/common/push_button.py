@@ -2,10 +2,29 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import abc
+
 from .enaml_test_case import EnamlTestCase
 
 class TestPushButton(EnamlTestCase):
-    """ Logic for testing push buttons. """
+    """ Logic for testing push buttons.
+
+    Tooklit testcases need to provide the following methods
+
+    Abstract Methods
+    ----------------
+    button_pressed(self)
+        Press the button programmatically.
+
+    button_released(self)
+        Release the button programmatically.
+
+    button_clicked(self)
+        Click the button programmatically.
+
+    """
+
+    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -19,7 +38,7 @@ Window:
 """
 
     def setUp(self):
-        """ Set up push button tests.
+        """ Set up before push button tests.
 
         """
         super(TestPushButton, self).setUp()
@@ -80,3 +99,29 @@ Window:
         self.assertTrue(component.down)
         self.button_released()
         self.assertFalse(component.down)
+
+    #--------------------------------------------------------------------------
+    # absrtact methods
+    #--------------------------------------------------------------------------
+
+    @abc.abstractmethod
+    def button_pressed(self):
+        """ Press the button programmatically.
+
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def button_released(self):
+        """ Release the button programmatically.
+
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def button_clicked(self):
+        """ Click the button programmatically.
+
+        """
+        return NotImplemented
+

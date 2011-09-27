@@ -2,11 +2,27 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import abc
+
 from .enaml_test_case import EnamlTestCase
 
 
 class TestRadioButton(EnamlTestCase):
-    """ Logic for testing radio buttons. """
+    """ Logic for testing radio buttons.
+
+    Tooklit testcases need to provide the following methods
+
+    Abstract Methods
+    ----------------
+    get_value(self, button)
+        Get the checked state of a radio button.
+
+    get_text(self, button)
+        Get the label of a button.
+
+    """
+
+    __metaclass__  = abc.ABCMeta
 
     label_1 = 'Label 1'
 
@@ -115,3 +131,20 @@ Window:
         self.assertFalse(widget1_value)
 
         self.assertEqual(radio1.checked, widget1_value)
+    #--------------------------------------------------------------------------
+    # absrtact methods
+    #--------------------------------------------------------------------------
+
+    @abc.abstractmethod
+    def get_value(self, button):
+        """ Get the checked state of a radio button.
+
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def get_text(self, button):
+        """ Get the label of a button.
+
+        """
+        return NotImplemented

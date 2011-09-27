@@ -2,11 +2,24 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import abc
+
 from .enaml_test_case import EnamlTestCase
 
 
 class TestLabel(EnamlTestCase):
-    """ Logic for testing labels. """
+    """ Logic for testing labels.
+
+    Tooklit testcases need to provide the following methods
+
+    Abstract Methods
+    ----------------
+    get_text()
+        Returns the label text from the tookit widget
+
+    """
+
+    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -39,3 +52,14 @@ Window:
         self.component.text = 'bar'
         widget_text = self.get_text(self.widget)
         self.assertEqual(self.component.text, widget_text)
+
+    #--------------------------------------------------------------------------
+    # absrtact methods
+    #--------------------------------------------------------------------------
+
+    @abc.abstractmethod
+    def get_text(self, widget):
+        """ Returns the label text from the tookit widget
+
+        """
+        return NotImplemented

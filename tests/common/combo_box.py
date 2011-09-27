@@ -2,11 +2,30 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import abc
+
 from .enaml_test_case import EnamlTestCase
 
 
 class TestComboBox(EnamlTestCase):
-    """ Logic for testing combo boxes. """
+    """ Logic for testing combo boxes.
+
+    Tooklit testcases need to provide the following methods
+
+    Abstract Methods
+    ----------------
+    get_selected_text(self, widget)
+        Get the current selected text of a combo box.
+
+    get_item_text(self, widget, index)
+        Get the text of a combo box item at a particular index.
+
+    select_item(self, widget, index)
+        Fire an event to simulate the selection of an item.
+
+    """
+
+    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -20,7 +39,7 @@ Window:
 """
 
     def setUp(self):
-        """ Set up combo box tests.
+        """ Setup before the combo box tests.
 
         """
         super(TestComboBox, self).setUp()
@@ -39,7 +58,7 @@ Window:
 
     def test_items(self):
         """ Check that the Enaml combo box items match the toolkit widget.
-        
+
         """
         component = self.component
         for i, item in enumerate(component.items):
@@ -48,7 +67,7 @@ Window:
 
     def test_to_string(self):
         """ Update the ComboBox.to_string callable.
-        
+
         """
         component = self.component
         component.to_string = lambda x: str(x) + '?' if x is not None else ''
@@ -56,14 +75,14 @@ Window:
 
     def test_selected_event(self):
         """ Fire an event for item selection.
-        
+
         """
         self.select_item(self.widget, 2)
         self.assertEqual(self.events, ['selected'])
 
     def test_change_selected_item(self):
         """ Update the visible item when a new one is selected internally.
-        
+
         """
         component = self.component
         index = 2
@@ -73,7 +92,7 @@ Window:
 
     def test_append_item(self):
         """ Add an item on the Enaml side; see if the toolkit widget updates.
-        
+
         """
         component = self.component
         component.items.append('hello')
@@ -81,8 +100,33 @@ Window:
 
     def test_remove_item(self):
         """ Remove an item on the Enaml side; see if the toolkit widget updates.
-        
+
         """
         component = self.component
         component.items.pop(0)
         self.test_items()
+
+    #--------------------------------------------------------------------------
+    # absrtact methods
+    #--------------------------------------------------------------------------
+
+    @abc.abstractmethod
+    def get_selected_text(self, widget):
+        """ Get the current selected text of a combo box.
+
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def get_item_text(self, widget, index):
+        """ Get the text of a combo box item at a particular index.
+
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def select_item(self, widget, index):
+        """ Fire an event to simulate the selection of an item.
+
+        """
+        return NotImplemented
