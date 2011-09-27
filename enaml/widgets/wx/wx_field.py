@@ -398,6 +398,8 @@ class WXField(WXControl):
         else:
             parent.exception = None
             parent.error = False
+            # wx.TextCtrl doesn't seem to accept input unless it has focus.
+            self.widget.SetFocus()
             self.change_text(text)
 
     def change_text(self, text):
