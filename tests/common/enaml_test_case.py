@@ -6,6 +6,7 @@ import unittest
 from cStringIO import StringIO
 
 from enaml.factory import EnamlFactory
+from enaml.toolkit import default_toolkit
 
 class EnamlTestCase(unittest.TestCase):
     """ Base class for testing Enaml widgets. """
