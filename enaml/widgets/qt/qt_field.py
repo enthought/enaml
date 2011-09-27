@@ -99,7 +99,7 @@ class QtField(QtControl):
         end positions, inclusive.
 
         """
-        self.widget.SetSelection(start, end)
+        self.widget.setSelection(start, end - start)
         self.update_parent_selection()
 
     def select_all(self):
