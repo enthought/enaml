@@ -9,20 +9,31 @@ from enaml.factory import EnamlFactory
 from enaml.toolkit import default_toolkit
 
 class EnamlTestCase(unittest.TestCase):
-    """ Base class for testing Enaml widgets. """
+    """ Base class for testing Enaml object widgets.
+
+    The following methods are required to be defined by the user in
+    order to be able to create an object.
+
+    """
+
+    #: toolkit implementation ot use during testing
+    toolkit = default_toolkit()
 
     def setUp(self):
         """ Parse the test enaml source and get ready for the tests.
 
-        The enaml source stored in `self.enaml` is parsed using the
-        desired toolkit `self.toolkit` and store the view.
-
         Test subclasses need to set the self.enaml attribute to a valid
         enaml source and (optional) define the toolkit to use through the
-        self.toolkit attribute.
+        self.toolkit attribute. The enaml source stored in `self.enaml` is
+        parsed using the desired toolkit `self.toolkit` and store the
+        view.
+
+        This class only provides a basic mechanism for these
+        procedures. Additional setUp tasks are ussualy required so derived
+        class  need to overdire the method and call the parent setUp
+        before they continue with the testcase setup.
 
         """
-
         events = []
         fact = EnamlFactory(StringIO(self.enaml), toolkit=self.toolkit)
         view = fact(events=events)
@@ -40,7 +51,8 @@ class EnamlTestCase(unittest.TestCase):
 
         Raises
         ------
-        AttributeError if no such name exists.
+        AttributeError
+            if no there is no object with that id.
 
         """
         return getattr(self.namespace, widget_id)
