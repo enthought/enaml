@@ -23,10 +23,7 @@ class EnamlTestCase(unittest.TestCase):
         """
 
         events = []
-        if hasattr(self, 'toolkit'):
-            fact = EnamlFactory(StringIO(self.enaml), toolkit=self.toolkit)
-        else:
-            fact = EnamlFactory(StringIO(self.enaml))
+        fact = EnamlFactory(StringIO(self.enaml), toolkit=self.toolkit)
         view = fact(events=events)
 
         # Lay widgets out, but don't display them to screen.
