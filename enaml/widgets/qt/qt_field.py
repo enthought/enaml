@@ -169,7 +169,7 @@ class QtField(QtControl):
             end = len(widget.text())
             widget.setSelection(start, end)
         else:
-            widget.end()
+            widget.end(mark)
         self.update_parent_selection()
 
     def home(self, mark=False):
@@ -188,7 +188,7 @@ class QtField(QtControl):
             end = widget.cursorPosition()
             widget.setSelection(start, end)
         else:
-            widget.home()
+            widget.home(mark)
         self.update_parent_selection()
 
     def cut(self):
