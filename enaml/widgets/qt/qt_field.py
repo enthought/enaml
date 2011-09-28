@@ -43,6 +43,10 @@ class QtField(QtControl):
             self.update_text()
         parent._modified = False
         self.set_cursor_position(parent.cursor_position)
+        
+        max_length = parent.max_length
+        if max_length:
+            self.set_max_length(max_length)
         self.bind()
 
     def parent_max_length_changed(self, max_length):
@@ -99,7 +103,7 @@ class QtField(QtControl):
         end positions, inclusive.
 
         """
-        self.widget.SetSelection(start, end)
+        self.widget.setSelection(start, end - start)
         self.update_parent_selection()
 
     def select_all(self):
