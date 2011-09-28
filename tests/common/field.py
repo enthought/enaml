@@ -51,38 +51,39 @@ Window:
         """
         component_string = self.component.to_string(self.component.value)
         self.assertEqual(component_string, self.get_value(self.widget))
+        self.assertEnamlInSync(self.component, 'value', 'abc')
         
     def test_edit_text(self):
         """ Simulate typing into a field.
         
         """
+        self.set_cursor_position(self.widget, 1)
         self.edit_text(self.widget, '!?')
-        component_string = self.component.to_string(self.component.value)
-        self.assertEqual(component_string, self.get_value(self.widget))
+        self.assertEnamlInSync(self.component, 'value', 'a!?bc')
     
     def test_send_twice(self):
         """ Type text, then type more text.
         
         """
+        self.set_cursor_position(self.widget, 1)
+        self.edit_text(self.widget, '!?')
         self.edit_text(self.widget, 'zz')
-        self.test_edit_text()
+        self.assertEnamlInSync(self.component, 'value', 'a!?zzbc')
     
     def test_position_cursor(self):
         """ Position the cursor before typing.
         
         """
-        self.set_cursor(self.widget, 0)
+        self.set_cursor_position(self.widget, 0)
         self.edit_text(self.widget, 'xyz')
         self.assertEqual(self.get_value(self.widget), 'xyzabc')
         
-    
     def test_enaml_text_changed(self):
         """ Check that the widget reflects changes to the Enaml component.
         
         """
-        self.component.value = 10
-        component_string = self.component.to_string(self.component.value)
-        self.assertEqual(self.get_value(self.widget), component_string)
+        self.component.value = 'test'
+        self.assertEnamlInSync(self.component, 'value', 'test')
 
     def test_max_length(self):
         """ Check that the field enforces its maximum length.
@@ -138,12 +139,15 @@ Window:
         """ Test a field with both 'to_string' and 'from_string' callables.
         
         """
-        self.component.to_string = lambda x: str(x) + '!'
-        self.component.from_string = lambda x: x[:-1]
-        self.component.value = '5'
-        self.assertEqual(self.get_value(self.widget), '5!')
-        self.assertEqual(self.component.value, '5')
-        self.test_value()
+        component = self.component
+        component.to_string = lambda x: str(x) + '!'
+        component.from_string = lambda x: x[:-1]
+        component.value = '5'
+        widget_value = self.get_value(self.widget)
+        
+        self.assertEqual(widget_value, '5!')
+        self.assertEqual(component.value, '5')
+        self.assertEqual(component.to_string(component.value), widget_value)
 
     #def test_placeholder_text(self):
     #    """ Remove focus to check a field's placeholder text.
@@ -173,9 +177,7 @@ Window:
         
         """
         self.impl.select_all()
-        selection = self.get_selected_text(self.widget)
-        self.assertEqual(selection, self.get_value(self.widget))
-        self.assertEqual(selection, self.component.selected_text)
+        self.assertEnamlInSync(self.component, 'selected_text', 'abc')
     
     def test_deselect(self):
         """ De-select text in a field.
@@ -183,55 +185,44 @@ Window:
         """
         self.impl.select_all()
         self.impl.deselect()
-        selection = self.get_selected_text(self.widget)
-        self.assertEqual(selection, '')
-        self.assertEqual(selection, self.component.selected_text)
+        self.assertEnamlInSync(self.component, 'selected_text', '')
     
     def test_clear(self):
         """ Clear all text from the field.
         
         """
         self.impl.clear()
-        self.assertEqual(self.component.value, '')
-        self.assertEqual(self.get_value(self.widget), '')
+        self.assertEnamlInSync(self.component, 'value', '')
 
     def test_backspace(self):
         """ Test the field's "backspace" method.
         
         """
-        self.set_cursor(self.widget, 2)
+        self.set_cursor_position(self.widget, 2)
         self.impl.backspace()
-        component_value = self.component.value
-        self.assertEqual(self.get_value(self.widget), component_value)
-        self.assertEqual(component_value, 'ac')
+        self.assertEnamlInSync(self.component, 'value', 'ac')
     
     def test_delete(self):
         """ Test the field's "delete" method.
         
         """
-        self.set_cursor(self.widget, 2)
+        self.set_cursor_position(self.widget, 2)
         self.impl.delete()
-        component_value = self.component.value
-        self.assertEqual(self.get_value(self.widget), component_value)
-        self.assertEqual(component_value, 'ab')
+        self.assertEnamlInSync(self.component, 'value', 'ab')
     
     def test_end(self, mark=False):
         """ Move the cursor to the end of the field.
         
         """
         self.impl.end()
-        component_cursor = self.component.cursor_position
-        self.assertEqual(self.get_cursor(self.widget), component_cursor)
-        self.assertEqual(component_cursor, 3)
+        self.assertEnamlInSync(self.component, 'cursor_position', 3)
     
     def test_home(self, mark=False):
         """ Move the cursor to the beginning of the field.
         
         """
         self.impl.home()
-        component_cursor = self.component.cursor_position
-        self.assertEqual(self.get_cursor(self.widget), component_cursor)
-        self.assertEqual(component_cursor, 0)
+        self.assertEnamlInSync(self.component, 'cursor_position', 0)
     
     def test_cut(self):
         """ Remove selected text and add it to the clipboard.
@@ -239,8 +230,7 @@ Window:
         """
         self.set_selected_text(self.widget, 1, 3)
         self.impl.cut()
-        self.assertEqual(self.get_value(self.widget), 'a')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'a')
     
     def test_copy_paste(self):
         """ Copy text, then paste it at the beginning of the field.
@@ -248,10 +238,9 @@ Window:
         """
         self.set_selected_text(self.widget, 1, 2)
         self.impl.copy()
-        self.set_cursor(self.widget, 0)
+        self.set_cursor_position(self.widget, 0)
         self.impl.paste()
-        self.assertEqual(self.get_value(self.widget), 'babc')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'babc')
     
     def test_cut_paste(self):
         """ Cut text, then paste it at the beginning of the field.
@@ -259,41 +248,37 @@ Window:
         """
         self.set_selected_text(self.widget, 1, 2)
         self.impl.cut()
-        self.set_cursor(self.widget, 0)
+        self.set_cursor_position(self.widget, 0)
         self.impl.paste()
-        self.assertEqual(self.get_value(self.widget), 'bac')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'bac')
     
     def test_insert(self):
         """ Insert text into the field.
         
         """
-        self.set_cursor(self.widget, 2)
+        self.set_cursor_position(self.widget, 2)
         self.impl.insert('foo')
-        self.assertEqual(self.get_value(self.widget), 'abfooc')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'abfooc')
         
     def test_undo_delete(self):
         """ Undo a deletion.
         
         """
-        self.set_cursor(self.widget, 1)
+        self.set_cursor_position(self.widget, 1)
         self.impl.delete()
-        self.assertEqual(self.get_value(self.widget), 'ac')
+        self.assertEnamlInSync(self.component, 'value', 'ac')
         self.impl.undo()
-        self.assertEqual(self.get_value(self.widget), 'abc')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'abc')
         
     def test_undo_insert(self):
         """ Undo text insertion.
         
         """
-        self.set_cursor(self.widget, 1)
+        self.set_cursor_position(self.widget, 1)
         self.impl.insert('bar')
-        self.assertEqual(self.get_value(self.widget), 'abarbc')
+        self.assertEnamlInSync(self.component, 'value', 'abarbc')
         self.impl.undo()
-        self.assertEqual(self.get_value(self.widget), 'abc')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'abc')
     
     def test_redo_delete(self):
         """ Redo, after undoing a deletion.
@@ -301,8 +286,7 @@ Window:
         """
         self.test_undo_delete()
         self.impl.redo()
-        self.assertEqual(self.get_value(self.widget), 'ac')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'ac')
     
     def test_redo_insertion(self):
         """ Redo, after undoing an insertion.
@@ -310,8 +294,7 @@ Window:
         """
         self.test_undo_insert()
         self.impl.redo()
-        self.assertEqual(self.get_value(self.widget), 'abarbc')
-        self.test_value()
+        self.assertEnamlInSync(self.component, 'value', 'abarbc')
     
     def test_clear_with_from_string(self):
         """ Clear a text field that has a 'from_string' callable.
@@ -347,14 +330,14 @@ Window:
         return NotImplemented
 
     @abc.abstractmethod
-    def set_cursor(self, widget, index):
+    def set_cursor_position(self, widget, index):
         """ Set the cursor at a specific position.
         
         """
         return NotImplemented
 
     @abc.abstractmethod
-    def get_cursor(self, widget):
+    def get_cursor_position(self, widget):
         """ Get the cursor position.
         
         """

@@ -28,13 +28,13 @@ class TestQtField(field.TestField):
         """
         widget.setText(text)
 
-    def set_cursor(self, widget, index):
+    def set_cursor_position(self, widget, index):
         """ Set the cursor at a specific position.
         
         """
         widget.setCursorPosition(index)
 
-    def get_cursor(self, widget):
+    def get_cursor_position(self, widget):
         """ Get the cursor position.
         
         """

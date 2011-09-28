@@ -39,13 +39,13 @@ class TestWxField(field.TestField):
         send_wx_event(widget, wx.EVT_TEXT)
         process_wx_events(self.view.toolkit.app)
 
-    def set_cursor(self, widget, index):
+    def set_cursor_position(self, widget, index):
         """ Set the cursor at a specific position.
         
         """
         widget.SetInsertionPoint(index)
         
-    def get_cursor(self, widget):
+    def get_cursor_position(self, widget):
         """ Get the cursor position.
         
         """
