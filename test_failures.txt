@@ -1,4 +1,6 @@
-.FF..............................................FF...................................FF......FF
+.FF................................F..F..F.................FF...................................C:\Users\ionnis\Projects\enaml\enaml\widgets\wx\wx_slider.py:355: UserWarning: Option 0 is incompatible with the horizontal orientation and is ignored
+  format(str(ticks)))
+F.....s...FF......FF
 ======================================================================
 FAIL: test_initial_too_early (tests.qt.test_qt_calendar.TestQtCalendar)
 Check that an invalid date is corrected (value below the minimum).
@@ -18,6 +20,39 @@ Traceback (most recent call last):
 AssertionError: datetime.date(2010, 1, 1) != datetime.date(2000, 1, 1)
 
 ======================================================================
+FAIL: testChangingOrientaionTickPolicy (tests.qt.test_qt_slider.TestQtSlider)
+Test that the ticks follow the orientation changes
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 201, in testChangingOrientaionTickPolicy
+    self.verify_attribute('tick_position', TickPosition.RIGHT, self.component)
+  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 84, in verify_attribute
+    self.assertEqual(value, enaml_value)
+AssertionError: 1 != 3
+
+======================================================================
+FAIL: testIncompatibleTickPosition (tests.qt.test_qt_slider.TestQtSlider)
+Test that changing tick position is ignored if the orientation
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 180, in testIncompatibleTickPosition
+    self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
+  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 84, in verify_attribute
+    self.assertEqual(value, enaml_value)
+AssertionError: 3 != 0
+
+======================================================================
+FAIL: testTickPositionSetting (tests.qt.test_qt_slider.TestQtSlider)
+Test changing the widget tickposition
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 157, in testTickPositionSetting
+    self.verify_attribute('tick_position', TickPosition.LEFT, self.component)
+  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 85, in verify_attribute
+    self.assertEqual(value, widget_value)
+AssertionError: 0 != 2
+
+======================================================================
 FAIL: test_initial_too_early (tests.wx.test_wx_calendar.TestWxCalendar)
 Check that an invalid date is corrected (value below the minimum).
 ----------------------------------------------------------------------
@@ -34,6 +69,17 @@ Traceback (most recent call last):
   File "C:\Users\ionnis\Projects\enaml\tests\common\calendar.py", line 118, in test_initial_too_late
     self.assertEqual(component.date, component.maximum_date)
 AssertionError: datetime.date(2010, 1, 1) != datetime.date(2000, 1, 1)
+
+======================================================================
+FAIL: testIncompatibleTickPosition (tests.wx.test_wx_slider.TestWXSlider)
+Test that changing tick position is ignored if the orientation
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 180, in testIncompatibleTickPosition
+    self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
+  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 84, in verify_attribute
+    self.assertEqual(value, enaml_value)
+AssertionError: 3 != 0
 
 ======================================================================
 FAIL: test_maximum_value (tests.wx.test_wx_spin_box.TestWxSpinBox)
@@ -72,7 +118,7 @@ Traceback (most recent call last):
 AssertionError: -9 != -10
 
 ----------------------------------------------------------------------
-Ran 96 tests in 4.388s
+Ran 116 tests in 5.265s
 
-FAILED (failures=8)
+FAILED (failures=12, skipped=1)
 
