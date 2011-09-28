@@ -19,10 +19,6 @@ class TestField(EnamlTestCase):
 
     __metaclass__  = abc.ABCMeta
 
-    label_1 = 'Label 1'
-
-    label_2 = 'Label 2'
-
     enaml = """
 Window:
     Panel:
@@ -56,11 +52,11 @@ Window:
         component_string = self.component.to_string(self.component.value)
         self.assertEqual(component_string, self.get_value(self.widget))
         
-    def test_send_text(self):
+    def test_edit_text(self):
         """ Simulate typing into a field.
         
         """
-        self.send_text(self.widget, '!?')
+        self.edit_text(self.widget, '!?')
         component_string = self.component.to_string(self.component.value)
         self.assertEqual(component_string, self.get_value(self.widget))
     
@@ -68,15 +64,15 @@ Window:
         """ Type text, then type more text.
         
         """
-        self.send_text(self.widget, 'zz')
-        self.test_send_text()
+        self.edit_text(self.widget, 'zz')
+        self.test_edit_text()
     
     def test_position_cursor(self):
         """ Position the cursor before typing.
         
         """
         self.set_cursor(self.widget, 0)
-        self.send_text(self.widget, 'xyz')
+        self.edit_text(self.widget, 'xyz')
         self.assertEqual(self.get_value(self.widget), 'xyzabc')
         
     
@@ -93,7 +89,7 @@ Window:
         
         """
         max_len = self.component.max_length
-        self.send_text(self.widget, 'a' * (max_len + 1))
+        self.edit_text(self.widget, 'a' * (max_len + 1))
         widget_text = self.get_value(self.widget)
         component_text = self.component.to_string(self.component.value)
         
@@ -111,16 +107,15 @@ Window:
         self.component.set_selection(1, 3)
         self.assertEqual(self.component.selected_text, 'ex')
         
-    
-    ## Note: neither backend (wxPython or Qt) seems to support becoming
-    ## read-only at run time, at least not when setting text programmatically.
+    ## Note: When setting text programmatically, neither backend (wxPython
+    ## or Qt) seems to support becoming read-only at run time.
     #def test_widget_read_only(self):
     #    """ Check that the toolkit widget enforces its read-only flag.
     #    
     #    """
     #    initial = self.get_value(self.widget)
     #    self.component.read_only = True
-    #    self.send_text(self.widget, 'foo')
+    #    self.edit_text(self.widget, 'foo')
     #    #self.component.value = 'foo'
     #    self.assertEqual(self.get_value(self.widget), initial)
     
@@ -155,6 +150,20 @@ Window:
     #    
     #    """
     #    #Not sure how to do this.
+
+    def test_change_text(self):
+        """ Change text programmatically, as opposed to editing it.
+        
+        """
+        self.change_text(self.widget, 'text')
+        self.assertEqual(self.events, ['text_changed'])
+    
+    def test_press_return(self):
+        """ Simulate a press of the 'Return' key.
+        
+        """
+        self.press_return(self.widget)
+        self.assertEqual(self.events, ['return_pressed'])
 
     #--------------------------------------------------------------------------
     # Test toolkit implementation class's methods
@@ -324,9 +333,16 @@ Window:
         return NotImplemented
 
     @abc.abstractmethod
-    def send_text(self, widget, text):
+    def edit_text(self, widget, text):
         """ Simulate typing in a field.
 
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def change_text(self, widget, text):
+        """ Change text programmatically, rather than "edit" it.
+        
         """
         return NotImplemented
 
@@ -354,6 +370,13 @@ Window:
     @abc.abstractmethod
     def get_selected_text(self, widget):
         """ Get the currently-selected text from a field.
+        
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def press_return(self, widget):
+        """ Simulate a press of the 'Return' key.
         
         """
         return NotImplemented

@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from . import process_wx_events
+from . import send_wx_event, process_wx_events
 
 from ..common import field
 from enaml.toolkit import wx_toolkit
@@ -19,15 +19,25 @@ class TestWxField(field.TestField):
         """ Get the visible text of a field.
 
         """
-        process_wx_events(self.view.toolkit.app)
+        
         return widget.GetValue()
 
-    def send_text(self, widget, text):
+    def edit_text(self, widget, text):
         """ Simulate typing in a field.
 
         """
         widget.SetFocus()
         widget.WriteText(text)
+        send_wx_event(widget, wx.EVT_TEXT)
+        process_wx_events(self.view.toolkit.app)
+    
+    def change_text(self, widget, text):
+        """ Change text programmatically, rather than "edit" it.
+        
+        """
+        widget.ChangeValue(text)
+        send_wx_event(widget, wx.EVT_TEXT)
+        process_wx_events(self.view.toolkit.app)
 
     def set_cursor(self, widget, index):
         """ Set the cursor at a specific position.
@@ -52,3 +62,9 @@ class TestWxField(field.TestField):
         
         """
         return widget.GetStringSelection()
+
+    def press_return(self, widget):
+        """ Simulate a press of the 'Return' key.
+        
+        """
+        send_wx_event(widget, wx.EVT_TEXT_ENTER)

@@ -16,11 +16,17 @@ class TestQtField(field.TestField):
         """
         return widget.text()
 
-    def send_text(self, widget, text):
+    def edit_text(self, widget, text):
         """ Simulate typing in a field.
 
         """
         widget.insert(text)
+
+    def change_text(self, widget, text):
+        """ Change text programmatically, rather than "edit" it.
+        
+        """
+        widget.setText(text)
 
     def set_cursor(self, widget, index):
         """ Set the cursor at a specific position.
@@ -45,3 +51,9 @@ class TestQtField(field.TestField):
         
         """
         return widget.selectedText()
+
+    def press_return(self, widget):
+        """ Simulate a press of the 'Return' key.
+        
+        """
+        widget.returnPressed.emit()
