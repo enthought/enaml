@@ -29,6 +29,10 @@ class WXSlider(WXControl):
     """
     implements(ISliderImpl)
 
+    #: A mechanism to prevent update cycles when syncing `parent.value` with
+    #: `parent.slider_pos`.
+    _setting = Bool
+
     #---------------------------------------------------------------------------
     # ISliderImpl interface
     #---------------------------------------------------------------------------
@@ -41,7 +45,7 @@ class WXSlider(WXControl):
         """
         self.widget = widget = wx.Slider(parent=self.parent_widget())
         widget.SetDoubleBuffered(True)
-        
+
     def initialize_widget(self):
         """ Initializes the attributes of the toolkit widget.
 
@@ -96,7 +100,7 @@ class WXSlider(WXControl):
         of range. In that case the last known good value is given back
         to the value attribute.
 
-        """        
+        """
         self.set_position()
 
     def parent_tracking_changed(self, tracking):
@@ -144,7 +148,7 @@ class WXSlider(WXControl):
         """
         self.set_orientation(orientation)
         self.widget.GetParent().Layout()
-        
+
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
@@ -185,7 +189,7 @@ class WXSlider(WXControl):
 
         The slider_pos attribute is updated during a dragging if the
         self.tracking attribute is True. This will also fire a moved
-        event for a very change. The event is not skipped.
+        event for every change. The event is not skipped.
 
         """
         self._on_slider_changed(event)
@@ -200,7 +204,6 @@ class WXSlider(WXControl):
         """
         parent = self.parent
         mouse_position = event.GetPosition()
-        wx_position = self._value_to_position(parent.value)
         if self._is_thumb_hit(mouse_position, wx_position):
             parent._down = True
             parent.pressed = True
@@ -253,42 +256,50 @@ class WXSlider(WXControl):
         """Set the slider position based on the value and to_slider().
 
         Changes the position of the slider in the widget if necessary.
-        We use a larger range in the wx widget for fine-grained control.
+        We use a larger range in the Qt widget for fine-grained control.
+        The value is validated and if there are errors during the validation
+        the slider position reverted.
 
         """
+        if self._setting:
+            return # no need to do anything the values have been already syncronised
+        else:
+            self._setting = True
+
         parent = self.parent
-        try:
-            position = parent.to_slider(parent.value)
-            if not (isinstance(position, float) and 0.0 <= position <= 1.0):
-                raise ValueError('to_slider() must return a float between 0.0 and 1.0, but instead returned %s'
-                        % repr(position))
+
+        position = self._validate(parent.value)
+
+        if position is not None:
             wx_position = position * SLIDER_MAX
             if wx_position != self.widget.GetValue():
                 self.widget.SetValue(wx_position)
-        except Exception, e:
-            parent.exception = e
-            parent.error = True
         else:
-            parent.exception = None
-            parent.error = False
+            self.get_position()
+
+        self._setting = False
 
     def get_position(self):
         """Get the slider position.
 
-        Read the slider position from the widget and convert it to an
-        appropriate value, and set the value trait of the widget.
+        Read the slider position from the widget and convert it to the
+        enaml slider representation.
 
         """
         parent = self.parent
+
         try:
-            position = self.widget.GetValue() / float(SLIDER_MAX)
-        except Exception, e:
-            parent.exception = e
+            wx_position = float(self.widget.GetValue())
+            value = parent.from_slider(wx_position / SLIDER_MAX)
+        except Exception as raised_exception:
+            parent.exception = raised_exception
             parent.error = True
         else:
-            parent.exception = None
-            parent.error = False
-            return position
+            parent.value = value
+            # reset errors only if we are not syncronising
+            if not self._setting:
+                parent.exception = None
+                parent.error = False
 
     def set_tick_position(self, ticks):
         """ Apply the tick position in the widget.
@@ -360,6 +371,7 @@ class WXSlider(WXControl):
         widget = self.widget
         parent = self.parent
 
+
         tick_position = parent.tick_position
         style = widget.GetWindowStyle()
         style &= ~(wx.SL_HORIZONTAL | wx.SL_VERTICAL)
@@ -370,17 +382,14 @@ class WXSlider(WXControl):
 
             if tick_position in (TickPosition.TOP, TickPosition.DEFAULT):
                 parent.tick_position = TickPosition.LEFT
-
             elif tick_position == TickPosition.BOTTOM:
                 parent.tick_position = TickPosition.RIGHT
-
         else:
             style |= wx.SL_HORIZONTAL
             widget.SetWindowStyle(style)
 
             if tick_position in (TickPosition.LEFT, TickPosition.DEFAULT):
                 parent.tick_position = TickPosition.TOP
-
             elif tick_position == TickPosition.RIGHT:
                 parent.tick_position = TickPosition.BOTTOM
 
@@ -427,25 +436,6 @@ class WXSlider(WXControl):
 
         self.widget.SetTickFreq(interval * SLIDER_MAX)
 
-    def _value_to_position(self, value):
-        """ 
-        """
-        parent = self.parent
-        try:
-            position = parent.to_slider(parent.value)
-            if not (isinstance(position, float) and 0.0 <= position <= 1.0):
-                raise ValueError('to_slider() must return a float between 0.0 and 1.0, but instead returned %s'
-                        % repr(position))
-            wx_position = position * SLIDER_MAX
-            parent.exception = None
-            parent.error = False
-        except Exception, e:
-            parent.exception = e
-            parent.error = True
-            wx_position = self.widget.GetValue()
-        return wx_position
-
-
     def _is_thumb_hit(self, point, slider_position):
         """ Is the point in the thumb area.
 
@@ -479,3 +469,32 @@ class WXSlider(WXControl):
         maximum = slider_position + thumb
 
         return minimum <= position <= maximum
+
+    def _validate(self, value):
+        """ Validate the value attribute
+
+        The method checks if the output of the :meth:`to_slider` function
+        returns a value that can be converted to float and is in the range
+        of [0.0, 1.0]. If the validation is not succesful it sets the
+        `error` and `exception` attributes and returns None. It returns the
+        value to be used for the slider widget if the validation passed.
+
+        """
+        parent = self.parent
+
+        parent.error = False
+        parent.exception = None
+
+        try:
+            position = float(parent.to_slider(parent.value))
+
+            if not 0.0 <= position <= 1.0:
+                raise ValueError('to_slider() must return a value '
+                                            'between 0.0 and 1.0, but instead'
+                                            ' returned %s'  % repr(position))
+        except Exception as raised_exception:
+            parent.error = True
+            parent.exception = raised_exception
+            position = None
+
+        return position

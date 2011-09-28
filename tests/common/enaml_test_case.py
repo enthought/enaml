@@ -57,3 +57,31 @@ class EnamlTestCase(unittest.TestCase):
         """
         return getattr(self.namespace, widget_id)
 
+    def verify_attribute(self, attribute_name, value, component):
+        """ Verify that the requested attribute is properly set
+
+        Arguments
+        ---------
+        attribute_name : str
+            The string name of the enaml attribute to check.
+
+        value :
+            The expected value
+
+        enaml :
+            The enaml component to check
+
+        .. note:: It is expected that the user has defined a
+            get_<attribute_name>(widget) method in the current test case.
+            The get methods can themself raise assertion errors when it
+            is not possible to retrieve a sensible value for the attribute.
+
+        """
+        widget = component.toolkit_widget()
+        enaml_value = eval('component.' + attribute_name)
+        widget_value = eval('self.get_' + attribute_name + '(widget)')
+
+        self.assertEqual(value, enaml_value)
+        self.assertEqual(value, widget_value)
+
+
