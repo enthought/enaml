@@ -57,19 +57,19 @@ class EnamlTestCase(unittest.TestCase):
         """
         return getattr(self.namespace, widget_id)
 
-    def verify_attribute(self, attribute_name, value, component):
+    def assertEnamlInSync(self, component, attribute_name, value):
         """ Verify that the requested attribute is properly set
 
         Arguments
         ---------
+        component : enaml.widgets.component.Component
+            The Enaml component to check
+        
         attribute_name : str
-            The string name of the enaml attribute to check.
+            The string name of the Enaml attribute to check.
 
         value :
             The expected value
-
-        enaml :
-            The enaml component to check
 
         .. note:: It is expected that the user has defined a
             get_<attribute_name>(widget) method in the current test case.
@@ -78,8 +78,8 @@ class EnamlTestCase(unittest.TestCase):
 
         """
         widget = component.toolkit_widget()
-        enaml_value = eval('component.' + attribute_name)
-        widget_value = eval('self.get_' + attribute_name + '(widget)')
+        enaml_value = getattr(component, attribute_name)
+        widget_value = getattr(self, 'get_' + attribute_name)(widget)
 
         self.assertEqual(value, enaml_value)
         self.assertEqual(value, widget_value)

@@ -50,14 +50,14 @@ Window:
         self.assertFalse(component.error)
         self.assertIsNone(component.exception)
 
-        self.verify_attribute('value', 0.5, component)
-        self.verify_attribute('tick_interval', 0.1, component)
+        self.assertEnamlInSync(component, 'value', 0.5)
+        self.assertEnamlInSync(component, 'tick_interval', 0.1)
         # while the initial value of the tick position is DEFAULT inside the
         # enaml object is converted to BOTTOM
-        self.verify_attribute('tick_position', TickPosition.BOTTOM, component)
-        self.verify_attribute('orientation', Orientation.HORIZONTAL, component)
-        self.verify_attribute('single_step', 1, component)
-        self.verify_attribute('page_step', 5, component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
+        self.assertEnamlInSync(component, 'orientation', Orientation.HORIZONTAL)
+        self.assertEnamlInSync(component, 'single_step', 1)
+        self.assertEnamlInSync(component, 'page_step', 5)
 
 
     def test_tracking_attribute(self):
@@ -66,10 +66,10 @@ Window:
         """
         component = self.component
 
-        self.verify_attribute('tracking', True, component)
+        self.assertEnamlInSync(component, 'tracking', True)
 
         component.tracking = False
-        self.verify_attribute('tracking', False, component)
+        self.assertEnamlInSync(component, 'tracking', False)
 
 
     def testValueChange(self):
@@ -79,9 +79,9 @@ Window:
         component = self.component
 
         component.value = 1
-        self.verify_attribute('value', 1, component)
+        self.assertEnamlInSync(component, 'value', 1)
         component.value = 0.879
-        self.verify_attribute('value', 0.879, component)
+        self.assertEnamlInSync(component, 'value', 0.879)
 
     def testInvalidValueChange(self):
         """ Test changing the position with the an invalid value
@@ -92,11 +92,11 @@ Window:
         component = self.component
 
         component.value = -0.2
-        self.verify_attribute('value', 0.5, component)
+        self.assertEnamlInSync(component, 'value', 0.5)
 
 
         component.value = 3
-        self.verify_attribute('value', 0.5, component)
+        self.assertEnamlInSync(component, 'value', 0.5)
 
     def testErrorUpdate(self):
         """ Check that errors are assinged
@@ -131,10 +131,10 @@ Window:
         component = self.component
 
         self.component.orientation = Orientation.VERTICAL
-        self.verify_attribute('orientation', Orientation.VERTICAL, component)
+        self.assertEnamlInSync(component, 'orientation', Orientation.VERTICAL)
 
         self.component.orientation = Orientation.HORIZONTAL
-        self.verify_attribute('orientation', Orientation.HORIZONTAL, component)
+        self.assertEnamlInSync(component, 'orientation', Orientation.HORIZONTAL)
 
     def testTickPositionSetting(self):
         """ Test changing the widget tickposition
@@ -143,27 +143,27 @@ Window:
         component = self.component
 
         component.tick_position = TickPosition.BOTTOM
-        self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
 
         component.tick_position = TickPosition.TOP
-        self.verify_attribute('tick_position', TickPosition.TOP, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.TOP)
 
         component.tick_position = TickPosition.BOTH
-        self.verify_attribute('tick_position', TickPosition.BOTH, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTH)
 
         self.component.orientation = Orientation.VERTICAL
 
         component.tick_position = TickPosition.LEFT
-        self.verify_attribute('tick_position', TickPosition.LEFT, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.LEFT)
 
         component.tick_position = TickPosition.RIGHT
-        self.verify_attribute('tick_position', TickPosition.RIGHT, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
 
         component.tick_position = TickPosition.BOTH
-        self.verify_attribute('tick_position', TickPosition.BOTH, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTH)
 
         component.tick_position = TickPosition.NO_TICKS
-        self.verify_attribute('tick_position', TickPosition.NO_TICKS, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.NO_TICKS)
 
     def testIncompatibleTickPosition(self):
         """ Test that changing tick position is ignored if the orientation
@@ -174,21 +174,21 @@ Window:
         component = self.component
 
         component.tick_position = TickPosition.BOTTOM
-        self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
 
         component.tick_position = TickPosition.LEFT
-        self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
 
         component.tick_position = TickPosition.RIGHT
-        self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
 
         self.component.orientation = Orientation.VERTICAL
 
         component.tick_position = TickPosition.BOTTOM
-        self.verify_attribute('tick_position', TickPosition.RIGHT, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
 
         component.tick_position = TickPosition.TOP
-        self.verify_attribute('tick_position', TickPosition.RIGHT, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
 
 
     def testChangingOrientaionTickPolicy(self):
@@ -198,7 +198,7 @@ Window:
         component = self.component
 
         self.component.orientation = Orientation.VERTICAL
-        self.verify_attribute('tick_position', TickPosition.RIGHT, self.component)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
 
     #--------------------------------------------------------------------------
     # absrtact methods
