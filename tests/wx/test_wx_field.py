@@ -28,17 +28,27 @@ class TestWxField(field.TestField):
         """
         widget.SetFocus()
         widget.WriteText(text)
-        
-    def clear_text_and_focus(self, widget):
-        """ Clear the field's text, and remove its focus.
-        
-        """
-        widget.Clear()
-        event = wx.PyCommandEvent(wx.EVT_KILL_FOCUS.typeId, widget.GetId())
-        widget.GetEventHandler().ProcessEvent(event)
 
     def set_cursor(self, widget, index):
         """ Set the cursor at a specific position.
         
         """
         widget.SetInsertionPoint(index)
+        
+    def get_cursor(self, widget):
+        """ Get the cursor position.
+        
+        """
+        return widget.GetInsertionPoint()
+
+    def set_selected_text(self, widget, start, stop):
+        """ Select text in a field.
+        
+        """
+        widget.SetSelection(start, stop)
+
+    def get_selected_text(self, widget):
+        """ Get the currently-selected text from a field.
+        
+        """
+        return widget.GetStringSelection()

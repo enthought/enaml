@@ -47,8 +47,9 @@ Window:
         super(TestField, self).setUp()
         self.component = self.widget_by_id('field')
         self.widget = self.component.toolkit_widget()
+        self.impl = self.component.toolkit_impl
 
-    def test_initial_value(self):
+    def test_value(self):
         """ Test the toolkit widget's initial state.
         
         """
@@ -137,56 +138,180 @@ Window:
         """
         self.component.from_string = lambda x: int(x, 16)
         self.assertEqual(self.component.value, 0xABC)
+    
+    def test_to_string_and_from_string(self):
+        """ Test a field with both 'to_string' and 'from_string' callables.
+        
+        """
+        self.component.to_string = lambda x: str(x) + '!'
+        self.component.from_string = lambda x: x[:-1]
+        self.component.value = '5'
+        self.assertEqual(self.get_value(self.widget), '5!')
+        self.assertEqual(self.component.value, '5')
+        self.test_value()
+
+    #def test_placeholder_text(self):
+    #    """ Remove focus to check a field's placeholder text.
+    #    
+    #    """
+    #    #Not sure how to do this.
 
     #--------------------------------------------------------------------------
     # Test toolkit implementation class's methods
     #--------------------------------------------------------------------------
+    def test_select_all(self):
+        """ Select all text in a field.
+        
+        """
+        self.impl.select_all()
+        selection = self.get_selected_text(self.widget)
+        self.assertEqual(selection, self.get_value(self.widget))
+        self.assertEqual(selection, self.component.selected_text)
+    
+    def test_deselect(self):
+        """ De-select text in a field.
+        
+        """
+        self.impl.select_all()
+        self.impl.deselect()
+        selection = self.get_selected_text(self.widget)
+        self.assertEqual(selection, '')
+        self.assertEqual(selection, self.component.selected_text)
+    
     def test_clear(self):
         """ Clear all text from the field.
         
         """
-        self.clear_text_and_focus(self.widget)
+        self.impl.clear()
         self.assertEqual(self.component.value, '')
+        self.assertEqual(self.get_value(self.widget), '')
 
-    '''def select_all(self):
-        raise NotImplementedError
-
-    def deselect(self):
-        raise NotImplementedError
+    def test_backspace(self):
+        """ Test the field's "backspace" method.
+        
+        """
+        self.set_cursor(self.widget, 2)
+        self.impl.backspace()
+        component_value = self.component.value
+        self.assertEqual(self.get_value(self.widget), component_value)
+        self.assertEqual(component_value, 'ac')
     
-    def clear(self):
-        raise NotImplementedError
-
-    def backspace(self):
-        raise NotImplementedError
+    def test_delete(self):
+        """ Test the field's "delete" method.
+        
+        """
+        self.set_cursor(self.widget, 2)
+        self.impl.delete()
+        component_value = self.component.value
+        self.assertEqual(self.get_value(self.widget), component_value)
+        self.assertEqual(component_value, 'ab')
     
-    def delete(self):
-        raise NotImplementedError
-
-    def end(self, mark=False):
-        raise NotImplementedError
+    def test_end(self, mark=False):
+        """ Move the cursor to the end of the field.
+        
+        """
+        self.impl.end()
+        component_cursor = self.component.cursor_position
+        self.assertEqual(self.get_cursor(self.widget), component_cursor)
+        self.assertEqual(component_cursor, 3)
     
-    def home(self, mark=False):
-        raise NotImplementedError
+    def test_home(self, mark=False):
+        """ Move the cursor to the beginning of the field.
+        
+        """
+        self.impl.home()
+        component_cursor = self.component.cursor_position
+        self.assertEqual(self.get_cursor(self.widget), component_cursor)
+        self.assertEqual(component_cursor, 0)
     
-    def cut(self):
-        raise NotImplementedError
+    def test_cut(self):
+        """ Remove selected text and add it to the clipboard.
+        
+        """
+        self.set_selected_text(self.widget, 1, 3)
+        self.impl.cut()
+        self.assertEqual(self.get_value(self.widget), 'a')
+        self.test_value()
     
-    def copy(self):
-        raise NotImplementedError
-
-    def paste(self):
-        raise NotImplementedError
+    def test_copy_paste(self):
+        """ Copy text, then paste it at the beginning of the field.
+        
+        """
+        self.set_selected_text(self.widget, 1, 2)
+        self.impl.copy()
+        self.set_cursor(self.widget, 0)
+        self.impl.paste()
+        self.assertEqual(self.get_value(self.widget), 'babc')
+        self.test_value()
     
-    def insert(self, text):
-        raise NotImplementedError
-
-    def undo(self):
-        raise NotImplementedError
+    def test_cut_paste(self):
+        """ Cut text, then paste it at the beginning of the field.
+        
+        """
+        self.set_selected_text(self.widget, 1, 2)
+        self.impl.cut()
+        self.set_cursor(self.widget, 0)
+        self.impl.paste()
+        self.assertEqual(self.get_value(self.widget), 'bac')
+        self.test_value()
     
-    def redo(self):
-        raise NotImplementedError'''
-
+    def test_insert(self):
+        """ Insert text into the field.
+        
+        """
+        self.set_cursor(self.widget, 2)
+        self.impl.insert('foo')
+        self.assertEqual(self.get_value(self.widget), 'abfooc')
+        self.test_value()
+        
+    def test_undo_delete(self):
+        """ Undo a deletion.
+        
+        """
+        self.set_cursor(self.widget, 1)
+        self.impl.delete()
+        self.assertEqual(self.get_value(self.widget), 'ac')
+        self.impl.undo()
+        self.assertEqual(self.get_value(self.widget), 'abc')
+        self.test_value()
+        
+    def test_undo_insert(self):
+        """ Undo text insertion.
+        
+        """
+        self.set_cursor(self.widget, 1)
+        self.impl.insert('bar')
+        self.assertEqual(self.get_value(self.widget), 'abarbc')
+        self.impl.undo()
+        self.assertEqual(self.get_value(self.widget), 'abc')
+        self.test_value()
+    
+    def test_redo_delete(self):
+        """ Redo, after undoing a deletion.
+        
+        """
+        self.test_undo_delete()
+        self.impl.redo()
+        self.assertEqual(self.get_value(self.widget), 'ac')
+        self.test_value()
+    
+    def test_redo_insertion(self):
+        """ Redo, after undoing an insertion.
+        
+        """
+        self.test_undo_insert()
+        self.impl.redo()
+        self.assertEqual(self.get_value(self.widget), 'abarbc')
+        self.test_value()
+    
+    def test_clear_with_from_string(self):
+        """ Clear a text field that has a 'from_string' callable.
+        
+        """
+        self.component.from_string = lambda x: int(x) if x != '' else 0
+        self.component.to_string = lambda x: str(x)
+        self.impl.clear()
+        self.assertEqual(self.component.value, 0)
 
     #--------------------------------------------------------------------------
     # Abstract methods
@@ -204,18 +329,31 @@ Window:
 
         """
         return NotImplemented
-        
-    
-    @abc.abstractmethod    
-    def clear_text_and_focus(self, widget):
-        """ Clear the field's text, and remove its focus.
+
+    @abc.abstractmethod
+    def set_cursor(self, widget, index):
+        """ Set the cursor at a specific position.
         
         """
         return NotImplemented
 
     @abc.abstractmethod
-    def set_cursor(self, widget, index):
-        """ Set the cursor at a specific position.
+    def get_cursor(self, widget):
+        """ Get the cursor position.
+        
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def set_selected_text(self, widget, start, stop):
+        """ Select text in a field.
+        
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def get_selected_text(self, widget):
+        """ Get the currently-selected text from a field.
         
         """
         return NotImplemented

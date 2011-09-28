@@ -21,17 +21,27 @@ class TestQtField(field.TestField):
 
         """
         widget.insert(text)
-        
-        
-    def clear_text_and_focus(self, widget):
-        """ Clear the field's text, and remove its focus.
-        
-        """
-        widget.clear()
-        widget.clearFocus()
 
     def set_cursor(self, widget, index):
         """ Set the cursor at a specific position.
         
         """
         widget.setCursorPosition(index)
+
+    def get_cursor(self, widget):
+        """ Get the cursor position.
+        
+        """
+        return widget.cursorPosition()
+
+    def set_selected_text(self, widget, start, stop):
+        """ Select text in a field.
+        
+        """
+        widget.setSelection(start, stop - start)
+
+    def get_selected_text(self, widget):
+        """ Get the currently-selected text from a field.
+        
+        """
+        return widget.selectedText()
