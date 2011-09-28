@@ -153,6 +153,19 @@ class WXField(WXControl):
             self.update_text()
             self.parent._modified = False
 
+    def parent_from_string_changed(self, from_string):
+        """ Handles the from_string callable on the parent changing.
+
+        """
+        event = wx.PyCommandEvent(wx.EVT_TEXT.typeId, self.widget.GetId())
+        self.on_text_updated(event)
+
+    def parent_to_string_changed(self, to_string):
+        """ Handles the to_string callable on the parent changing.
+
+        """
+        self.update_text()
+
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
         end positions, inclusive.
