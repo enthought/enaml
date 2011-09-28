@@ -40,8 +40,8 @@ class QtSlider(QtControl):
     """
     implements(ISliderImpl)
 
-    # A mechanism to prevent update cycles when syncing `parent.value` with
-    # `parent.slider_pos`.
+    #: A mechanism to prevent update cycles when syncing `parent.value` with
+    #: `parent.slider_pos`.
     _setting = Bool
 
     #---------------------------------------------------------------------------
@@ -104,7 +104,7 @@ class QtSlider(QtControl):
         of range. In that case the last known good value is given back
         to the value attribute.
 
-        """        
+        """
         self.set_position()
 
     def parent_tracking_changed(self, tracking):
@@ -164,7 +164,7 @@ class QtSlider(QtControl):
         widget.valueChanged.connect(self._on_slider_changed)
         widget.sliderPressed.connect(self._on_pressed)
         widget.sliderReleased.connect(self._on_released)
-    
+
 
     def _on_slider_changed(self, value):
         """ Respond to a (possible) change in value from the ui.
@@ -233,43 +233,49 @@ class QtSlider(QtControl):
 
         Changes the position of the slider in the widget if necessary.
         We use a larger range in the Qt widget for fine-grained control.
+        The value is validated and if there are errors during the validation
+        the slider position reverted.
 
         """
-        self._setting = True
+        if self._setting:
+            return # no need to do anything the values have been already syncronised
+        else:
+            self._setting = True
+
         parent = self.parent
-        try:
-            position = parent.to_slider(parent.value)
-            if not (isinstance(position, float) and 0.0 <= position <= 1.0):
-                raise ValueError('to_slider() must return a float between 0.0 and 1.0, but instead returned %s'
-                        % repr(position))
+
+        position = self._validate(parent.value)
+
+        if position is not None:
             qt_position = position * SLIDER_MAX
             if qt_position != self.widget.value():
                 self.widget.setValue(qt_position)
-            parent.exception = None
-            parent.error = False
-        except Exception, e:
-            parent.exception = e
-            parent.error = True
-        finally:
-            self._setting = False
+        else:
+            self.get_position()
+
+        self._setting = False
 
     def get_position(self):
         """Get the slider position.
 
-        Read the slider position from the widget and convert it to a
-        float.
+        Read the slider position from the widget and convert it to the
+        enaml slider representation.
 
         """
         parent = self.parent
+
         try:
             qt_position = float(self.widget.value())
             value = parent.from_slider(qt_position / SLIDER_MAX)
-            parent.value = value
-            parent.exception = None
-            parent.error = False
-        except Exception, e:
-            parent.exception = e
+        except Exception as raised_exception:
+            parent.exception = raised_exception
             parent.error = True
+        else:
+            parent.value = value
+            # reset errors only if we are not syncronising
+            if not self._setting:
+                parent.exception = None
+                parent.error = False
 
     def set_tick_position(self, ticks):
         """ Apply the tick position in the widget.
@@ -333,6 +339,35 @@ class QtSlider(QtControl):
         ---------
         interval: float
             The step size for tick marks.
-            
+
         """
         self.widget.setTickInterval(interval * SLIDER_MAX)
+
+    def _validate(self, value):
+        """ Validate the value attribute
+
+        The method checks if the output of the :meth:`to_slider` function
+        returns a value that can be converted to float and is in the range
+        of [0.0, 1.0]. If the validation is not succesful it sets the
+        `error` and `exception` attributes and returns None. It returns the
+        value to be used for the slider widget if the validation passed.
+
+        """
+        parent = self.parent
+
+        parent.error = False
+        parent.exception = None
+
+        try:
+            position = float(parent.to_slider(parent.value))
+
+            if not 0.0 <= position <= 1.0:
+                raise ValueError('to_slider() must return a value '
+                                            'between 0.0 and 1.0, but instead'
+                                            ' returned %s'  % repr(position))
+        except Exception as raised_exception:
+            parent.error = True
+            parent.exception = raised_exception
+            position = None
+
+        return position
