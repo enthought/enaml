@@ -14,11 +14,6 @@ class TestField(EnamlTestCase):
 
     Abstract Methods
     ----------------
-    get_value(self, button)
-        Get the checked state of a field.
-
-    get_text(self, button)
-        Get the label of a button.
 
     """
 
@@ -33,14 +28,11 @@ Window:
     Panel:
         VGroup:
             Field field:
-                max_length = 5
+                max_length = 8
                 cursor_position = 1
                 placeholder_text = 'hold'
 
-                #from_string
-                #to_string
-                #value : Any
-                value = 'b'
+                value = 'abc'
 
                 max_length_reached >> events.append('max_length_reached')
                 text_changed >> events.append('text_changed')
@@ -60,8 +52,40 @@ Window:
         """ Test the toolkit widget's initial state.
         
         """
-        self.assertEqual(self.component.value, self.get_value(self.widget))
+        component_string = self.component.to_string(self.component.value)
+        self.assertEqual(component_string, self.get_value(self.widget))
         
+    def test_send_text(self):
+        """ Simulate typing into a field.
+        
+        """
+        self.send_text(self.widget, '!?')
+        component_string = self.component.to_string(self.component.value)
+        self.assertEqual(component_string, self.get_value(self.widget))
+    
+    def test_send_twice(self):
+        """ Type text, then type more text.
+        
+        """
+        self.send_text(self.widget, 'zz')
+        self.test_send_text()
+    
+    def test_position_cursor(self):
+        """ Position the cursor before typing.
+        
+        """
+        self.set_cursor(self.widget, 0)
+        self.send_text(self.widget, 'xyz')
+        self.assertEqual(self.get_value(self.widget), 'xyzabc')
+        
+    
+    def test_enaml_text_changed(self):
+        """ Check that the widget reflects changes to the Enaml component.
+        
+        """
+        self.component.value = 10
+        component_string = self.component.to_string(self.component.value)
+        self.assertEqual(self.get_value(self.widget), component_string)
 
     def test_max_length(self):
         """ Check that the field enforces its maximum length.
@@ -95,10 +119,28 @@ Window:
         """
         initial = self.get_value(self.widget)
         self.component.read_only = True
-        #self.send_text(self.widget, 'foo')
-        self.component.value = 'foo'
+        self.send_text(self.widget, 'foo')
+        #self.component.value = 'foo'
         self.assertEqual(self.get_value(self.widget), initial)
     
+    def test_to_string(self):
+        """ Test the field's 'to_string' attribute.
+        
+        """
+        self.component.value = 5
+        self.component.to_string = lambda x: str(x) + '!'
+        self.assertEqual(self.get_value(self.widget), '5!')
+    
+    def test_from_string(self):
+        """ Test the field's 'from_string' attribute.
+        
+        """
+        self.component.from_string = lambda x: int(x, 16)
+        self.assertEqual(self.component.value, 0xABC)
+
+    #--------------------------------------------------------------------------
+    # Test toolkit implementation class's methods
+    #--------------------------------------------------------------------------
     def test_clear(self):
         """ Clear all text from the field.
         
@@ -106,8 +148,48 @@ Window:
         self.clear_text_and_focus(self.widget)
         self.assertEqual(self.component.value, '')
 
+    '''def select_all(self):
+        raise NotImplementedError
+
+    def deselect(self):
+        raise NotImplementedError
+    
+    def clear(self):
+        raise NotImplementedError
+
+    def backspace(self):
+        raise NotImplementedError
+    
+    def delete(self):
+        raise NotImplementedError
+
+    def end(self, mark=False):
+        raise NotImplementedError
+    
+    def home(self, mark=False):
+        raise NotImplementedError
+    
+    def cut(self):
+        raise NotImplementedError
+    
+    def copy(self):
+        raise NotImplementedError
+
+    def paste(self):
+        raise NotImplementedError
+    
+    def insert(self, text):
+        raise NotImplementedError
+
+    def undo(self):
+        raise NotImplementedError
+    
+    def redo(self):
+        raise NotImplementedError'''
+
+
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
     @abc.abstractmethod
     def get_value(self, widget):
@@ -127,6 +209,13 @@ Window:
     @abc.abstractmethod    
     def clear_text_and_focus(self, widget):
         """ Clear the field's text, and remove its focus.
+        
+        """
+        return NotImplemented
+
+    @abc.abstractmethod
+    def set_cursor(self, widget, index):
+        """ Set the cursor at a specific position.
         
         """
         return NotImplemented

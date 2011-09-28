@@ -36,3 +36,9 @@ class TestWxField(field.TestField):
         widget.Clear()
         event = wx.PyCommandEvent(wx.EVT_KILL_FOCUS.typeId, widget.GetId())
         widget.GetEventHandler().ProcessEvent(event)
+
+    def set_cursor(self, widget, index):
+        """ Set the cursor at a specific position.
+        
+        """
+        widget.SetInsertionPoint(index)

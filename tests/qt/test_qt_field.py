@@ -29,3 +29,9 @@ class TestQtField(field.TestField):
         """
         widget.clear()
         widget.clearFocus()
+
+    def set_cursor(self, widget, index):
+        """ Set the cursor at a specific position.
+        
+        """
+        widget.setCursorPosition(index)
