@@ -26,13 +26,12 @@ class EnamlASTNode(object):
 
 class EnamlModule(EnamlASTNode):
     
-    def __init__(self, imports, components):
-        self.imports = imports
-        self.components = components
+    def __init__(self, items):
+        self.items = items
 
     @property
     def node_children(self):
-        return self.imports + self.components
+        return self.items
 
 
 class EnamlPyImport(EnamlASTNode):
@@ -40,6 +39,54 @@ class EnamlPyImport(EnamlASTNode):
     def __init__(self, py_ast):
         self.py_ast = py_ast
 
+
+class EnamlDefine(EnamlASTNode):
+
+    def __init__(self, name, arguments, component):
+        self.name = name
+        self.arguments = arguments
+        self.component = component
+
+    @property
+    def node_children(self):
+        return [self.component]
+
+
+class EnamlCall(EnamlASTNode):
+
+    def __init__(self, name, arguments, body):
+        self.name = name
+        self.arguments = arguments
+        self.body = body
+
+    @property
+    def node_children(self):
+        return [self.body]
+
+
+class EnamlArguments(EnamlASTNode):
+
+    def __init__(self, args, kwargs):
+        self.args = args
+        self.kwargs = kwargs
+    
+    @property
+    def node_children(self):
+        return self.args + self.kwargs
+    
+
+class EnamlArgument(EnamlASTNode):
+
+    def __init__(self, name):
+        self.name = name
+    
+
+class EnamlKeyword(EnamlASTNode):
+
+    def __init__(self, name, py_ast):
+        self.name = name
+        self.py_ast = py_ast
+    
 
 class EnamlComponent(EnamlASTNode):
 
@@ -82,13 +129,6 @@ class EnamlExpression(EnamlASTNode):
     @property
     def node_children(self):
         return [self.lhs, self.rhs]
-
-    
-class EnamlName(EnamlASTNode):
-
-    def __init__(self, root, leaf):
-        self.root = root
-        self.leaf = leaf
 
 
 class EnamlPyExpression(EnamlASTNode):

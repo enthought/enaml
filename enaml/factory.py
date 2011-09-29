@@ -2,249 +2,253 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import itertools
+from itertools import chain, izip
 
 from traits.api import HasStrictTraits, Instance
 
-from .constructors import IToolkitConstructor
-from .toolkit import default_toolkit, Toolkit
-from .parsing import enaml_ast, parser
-from .util.trait_types import SubClass
-from .expressions import (
-    IExpressionDelegateFactory, IExpressionNotifierFactory,
-    DefaultExpressionFactory, BindingExpressionFactory, 
-    DelegateExpressionFactory, NotifierExpressionFactory,
-)
+from .constructors import DelegateBinder, NotifierBinder, DefnCallCtorProxy
+from .toolkit import Toolkit, default_toolkit
+from .parsing import enaml_ast, enaml_compiler
+from .view import View, NamespaceProxy
 
 
-class EnamlCtorBuilder(HasStrictTraits):
-    """ An Enaml AST visitor which builds a constructor tree.
+class ExecutionContext(HasStrictTraits):
 
-    A visitor which walks an Enaml AST and converts it into a tree
-    of toolkit constructor instances which we can be called to create
-    a view.
+    toolkit = Instance(Toolkit)
 
-    Attributes
-    ----------
-    toolkit : Instance(dict)
-        A toolkit dictionary which maps string widget names to the toolkit 
-        constructor classes for that widget.
+    module_scope = Instance(dict)
 
-    ast : Instance(tml_ast.TML)
-        A root tml_ast node from which we'll build the tree.
+    base_scope = Instance(dict)
 
-    default : Instance(IExpressionDelegateFactory)
-        An expression delegate factory class for handling default 
-        expressions.
+    id_scope = Instance(dict)
+
+
+class _NullItem(object):
+
+    def __init__(self):
+        self.root = None
     
-    bind : Instance(IExpressionDelegateFactory)
-        An expression delegate factory class for handling binding 
-        expressions.
+    def add_child(self, child):
+        if self.root:
+            raise RuntimeError('Adding multiple children to null item.')
+        self.root = child
 
-    delegate : Instance(IExpressionDelegateFactory)
-        An expression delegate factory class for handling delegate 
-        expressions.
-    
-    notify : Instance(INotifierFactory)
-        An expression notifier factory class for handling notifier 
-        expressions.
-    
-    Methods
-    -------
-    build()
-        After creating the builder, call this method with an enaml ast
-        instance to build the constructor tree.
-    
-    results()
-        After calling visit(...), call this method to retrieve the
-        results.
+
+def _build_component(instructions, ctxt):
+    stack = [_NullItem()]
+    stack_push = stack.append
+    stack_pop = stack.pop
+
+    toolkit = ctxt.toolkit
+    mod_scope = ctxt.module_scope
+    base_scope = ctxt.base_scope
+    id_scope = ctxt.id_scope
+
+    START_COMPONENT = enaml_compiler.START_COMPONENT
+    END_COMPONENT = enaml_compiler.END_COMPONENT
+    DEFAULT_EXPRESSION = enaml_compiler.DEFAULT_EXPRESSION
+    BIND_EXPRESSION = enaml_compiler.BIND_EXPRESSION
+    DELEGATE_EXPRESSION = enaml_compiler.DELEGATE_EXPRESSION
+    NOTIFY_EXPRESSION = enaml_compiler.NOTIFY_EXPRESSION
+    CALL_FACTORY = enaml_compiler.CALL_FACTORY
+
+    for op, var_ctxt in instructions:
+
+        if op == START_COMPONENT:
+            name, identifier = var_ctxt
+            ctor = toolkit.create_constructor(name, identifier)
+            stack_push(ctor)
+        
+        elif op == END_COMPONENT:
+            ctor = stack_pop()
+            stack[-1].add_child(ctor)
+        
+        elif op == DEFAULT_EXPRESSION:
+            name, py_ast = var_ctxt
+            expr = toolkit.default(py_ast)
+            binder = DelegateBinder(expr, name, id_scope, base_scope, mod_scope)
+            stack[-1].add_expression_binder(binder)
+
+        elif op == BIND_EXPRESSION:
+            name, py_ast = var_ctxt
+            expr = toolkit.bind(py_ast)
+            binder = DelegateBinder(expr, name, id_scope, base_scope, mod_scope)
+            stack[-1].add_expression_binder(binder)
+
+        elif op == DELEGATE_EXPRESSION:
+            name, py_ast = var_ctxt
+            expr = toolkit.delegate(py_ast)
+            binder = DelegateBinder(expr, name, id_scope, base_scope, mod_scope)
+            stack[-1].add_expression_binder(binder)
+        
+        elif op == NOTIFY_EXPRESSION:
+            name, py_ast = var_ctxt
+            expr = toolkit.notify(py_ast)
+            binder = NotifierBinder(expr, name, id_scope, base_scope, mod_scope)
+            stack[-1].add_expression_binder(binder)
+        
+        elif op == CALL_FACTORY:
+            factory_name, arguments = var_ctxt
+
+            if factory_name not in mod_scope:
+                raise NameError('Name `%s` is not defined' % name)
+            
+            args = []
+            for arg in arguments.args:
+                name = arg.name
+                if name in base_scope:
+                    args.append(base_scope[name])
+                elif name in mod_scope:
+                    args.append(mod_scope[name])
+                else:
+                    raise NameError('Name `%s` is not defined' % name)
+            
+            kwargs = {}
+            for kwarg in arguments.kwargs:
+                name = kwarg.name
+                code = compile(kwarg.py_ast, 'Enaml', mode='eval')
+                value = eval(code, mod_scope, base_scope)
+                kwargs[name] = value
+            
+            factory = mod_scope[factory_name]
+            component, cmpnt_scope = factory._build_component(args, kwargs)
+            ctor = DefnCallCtorProxy(component, cmpnt_scope)
+            stack[-1].add_child(ctor)
+
+        else:
+            raise RuntimeError('Invalid instruction.')
+
+    ctor = stack[-1].root
+    return ctor(id_scope), id_scope
+
+
+class ComponentFactory(HasStrictTraits):
+    """ A factory which will builds and return an enaml View object.
+
+    ComponentFactorys are created and added to py module objects 
+    by the enaml import hooks. Calling these instances with context
+    objects will created the underlying enaml widget tree which and
+    return a view which wraps the tree.
 
     """
     toolkit = Instance(Toolkit)
-
-    ast = Instance(enaml_ast.EnamlModule)
-
-    default = SubClass(IExpressionDelegateFactory)
-
-    bind = SubClass(IExpressionDelegateFactory)
     
-    delegate = SubClass(IExpressionDelegateFactory)
+    _defn_ast = Instance(enaml_ast.EnamlDefine)
 
-    notify = SubClass(IExpressionNotifierFactory)
+    _instructions = Instance(list)
 
-    _root = Instance(IToolkitConstructor)
+    _module_dict = Instance(dict)
 
-    _imports = Instance(dict, ())
+    _kwarg_defaults = Instance(dict)
 
-    _stack = Instance(list, ())
-
-    def __init__(self, toolkit, ast, default, bind, delegate, notify):
-        super(EnamlCtorBuilder, self).__init__(
-            toolkit=toolkit, ast=ast, default=default, bind=bind,
-            delegate=delegate, notify=notify,
-        )
-
-    def build(self):
-        """ Call this method after instantiating a builder to run the
-        build process.
-        
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
-        """
-        self.visit(self.ast)
-
-    def results(self):
-        """ Call this method after running the build process to retrieve
-        the results.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        tree, imports : IToolkitConstructor, dict
-            The root node of the constructor tree and the dictionary
-            of imports that were executed by the Enaml source.
-
-        """
-        return self._root, self._imports
-    
-    #--------------------------------------------------------------------------
-    # The following methods are for internal use only
-    #--------------------------------------------------------------------------
-    def visit(self, node):
-        name = 'visit_%s' % node.__class__.__name__
-        method = getattr(self, name, self.default_visit)
-        method(node)
-
-    def default_visit(self, node):
-        for child in node.children():
-            self.visit(child)
-
-    def visit_EnamlModule(self, node):
-        for item in itertools.chain(node.imports, node.components):
-            self.visit(item)
-
-    def visit_EnamlPyImport(self, node):
-        code = compile(node.py_ast, 'Enaml', mode='exec')
-        exec code in {}, self._imports
-
-    def visit_EnamlComponent(self, node):
-        ctor = self.toolkit.create_ctor(node.name)
-        identifier = node.identifier
-        if identifier is not None:
-            ctor.identifier = identifier
-        stack = self._stack
-        stack.append(ctor)
-        self.visit(node.body)
-        stack.pop()
-        if stack:
-            stack[-1].children.append(ctor)
-        else:
-            self._root = ctor
-
-    def visit_EnamlComponentBody(self, node):
-        for item in itertools.chain(node.expressions, node.children):
-            self.visit(item)
-
-    def visit_EnamlExpression(self, node):
-        name_node = node.lhs
-        name = (name_node.root, name_node.leaf)
-        op = node.op
-        if op == node.DEFAULT:
-            item = (name, self.default(node.rhs.py_ast))
-            self._stack[-1].delegates.append(item)
-        elif op == node.BIND:
-            item = (name, self.bind(node.rhs.py_ast))
-            self._stack[-1].delegates.append(item)
-        elif op == node.DELEGATE:
-            item = (name, self.delegate(node.rhs.py_ast))
-            self._stack[-1].delegates.append(item)
-        elif op == node.NOTIFY:
-            item = (name, self.notify(node.rhs.py_ast))
-            self._stack[-1].notifiers.append(item)
-        else:
-            raise ValueError('Invalid expression op.')
-
-
-class EnamlFactory(HasStrictTraits):
-    """ The class which will create a factory for generating View 
-    objects from Enaml source code.
-    
-    Instances of this class are callable with **kwargs and return
-    enaml.view.View objects for the provide Enaml source.
-
-    """
-    _ast = Instance(enaml_ast.EnamlModule)
-
-    _toolkit = Instance(Toolkit)
-
-    _ctor_tree = Instance(IToolkitConstructor)
-
-    _imports = Instance(dict)
-
-    @classmethod
-    def parse_enaml(cls, filehandle):
-        """ Parses Enaml source code into an Enaml ast. The source
-        can be provided as a file like object or a string path to 
-        a file.
-
-        """
-        if isinstance(filehandle, basestring):
-            with open(filehandle) as f:
-                enaml_source = f.read()
-        else:
-            enaml_source = filehandle.read()
-        return parser.parse(enaml_source)
-    
-    def __init__(self, filehandle, toolkit=None):
-        """ Initialize an Enaml factory.
+    def __init__(self, ast, module_dict):
+        """ Initialize a component factory.
 
         Parameters
         ----------
-        filehandle : file-like object or string
-            A file-like object containing Enaml source code or the 
-            string path to an Enaml source file.
+        ast : EnamlComponent ast node.
+            The component ast node for the view we want to build.
 
-        toolkit : Toolkit, optional
-            The toolkit to use to create the views. It defaults to 
-            None in which case the default toolkit is determined
-            based on the user's environment variables.
+        module_dict : dict
+            The __dict__ for the module in which we are being created.
+        
+        """
+        super(ComponentFactory, self).__init__()
+        self._defn_ast = ast
+        self._module_dict = module_dict
+        self._kwarg_defaults = self._compute_kwarg_defaults(ast, module_dict)
+        self._instructions = enaml_compiler.EnamlCompiler.compile(ast)
+
+    def __call__(self, *args, **kwargs):
+        """ Create an enaml View for the given component.
+
+        Parameters
+        ----------
+        *args
+
+        **kwargs
+            The objects to add the local namespaces of the expressions
+            in the view.
+        
+        """
+        
+        component, id_scope = self._build_component(args, kwargs)
+        
+        ns = NamespaceProxy(id_scope)
+        view = View(component=component, toolkit=self.toolkit, ns=ns)
+        view.apply_style_sheet()
+        
+        return view
+    
+    def _build_component(self, args, kwargs):
+        ctxt = ExecutionContext(
+            toolkit=self.toolkit,
+            id_scope={},
+            module_scope=self._module_dict,
+            base_scope = self._create_base_scope(self._defn_ast, args, kwargs),
+        )
+        return _build_component(self._instructions, ctxt)
+         
+    def _compute_kwarg_defaults(self, defn_ast, module_dict):
+        res = {}
+        kwargs = defn_ast.arguments.kwargs
+        for kw in kwargs:
+            name = kw.name
+            code = compile(kw.py_ast, 'Enaml', mode='eval')
+            res[name] = eval(code, {}, module_dict)
+        return res
+
+    def _create_base_scope(self, defn_ast, args, kwargs):
+        """ Given a define ast and the args and kwargs with which it
+        was called, this creates an initial scope dictionary for the
+        component, or raises an error if there was an argument 
+        mismatch.
 
         """
-        super(EnamlFactory, self).__init__()
-        self._ast = self.parse_enaml(filehandle)
-        self._toolkit = toolkit or default_toolkit()
+        node = defn_ast
+        arguments = node.arguments
+        defn_args = arguments.args
+        defn_kwargs = arguments.kwargs
 
-    def expression_factories(self):
-        return (DefaultExpressionFactory, BindingExpressionFactory, 
-                DelegateExpressionFactory, NotifierExpressionFactory)
+        if defn_kwargs:
+            min_required = len(defn_args)
+            max_allowed = min_required + len(defn_kwargs)
+            n_supplied = len(args) + len(kwargs)
+            if n_supplied < min_required:
+                msg = '%s() requires at least %s arguments (%s given)'
+                raise TypeError(msg % (node.name, min_required, n_supplied))
+            elif n_supplied > max_allowed:
+                msg = '%s() takes at most %s arguments (%s given)'
+                raise TypeError(msg % (node.name, max_allowed, n_supplied))
+        else:
+            n_required = len(defn_args)
+            n_supplied = len(args) + len(kwargs)
+            if n_supplied != n_required:
+                msg = '%s() takes exactly %s arguments (%s given)'
+                raise TypeError(msg % (node.name, n_required, n_supplied))
+        
+        scope = {}
+        scope.update(self._kwarg_defaults)
+        
+        valid_arg_names = set(arg.name for arg in chain(defn_args, defn_kwargs))
+        for name, value in kwargs.iteritems():
+            if name not in valid_arg_names:
+                msg = '%s() got an unexpected keyword argument `%s`'
+                raise TypeError(msg % (node.name, name))
+            scope[name] = value
 
-    def _build_ctor_tree(self):
-        builder = EnamlCtorBuilder(
-            self._toolkit, self._ast , *self.expression_factories()
-        )
-        builder.build()
-        tree, imports = builder.results()
-        self._ctor_tree = tree
-        self._imports = imports
-
-    def __call__(self, **ctxt_objs):
-        if self._ctor_tree is None:
-            self._build_ctor_tree()
-        ns = {}
-        ns.update(self._imports)
-        ns.update(ctxt_objs)
-        ns.update(__builtins__)
-        self._toolkit.prime_event_loop()
-        view = self._ctor_tree(**ns)
-        view.toolkit = self._toolkit
-        return view
+        for value, arg in izip(args, chain(defn_args, defn_kwargs)):
+            name = arg.name
+            if name in scope:
+                msg = '%s() got multiple values for keyword argument `%s`'
+                raise TypeError(msg % (node.name, name))
+            scope[name] = value
+        
+        return scope
+    
+    #---------------------------------------------------------------------------
+    # Traits Handlers
+    #---------------------------------------------------------------------------
+    def _toolkit_default(self):
+        return default_toolkit()
 

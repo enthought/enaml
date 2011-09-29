@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Interface, Str, WeakRef, Instance, List
+from traits.api import Interface, Str, WeakRef, Instance, List, ReadOnly
 
 from ..enaml_base import EnamlBase
 from ..style_node import EnamlStyleNode
@@ -123,12 +123,11 @@ class Component(EnamlBase):
 
     Attributes
     ----------
-    _id : Str
+    id : ReadOnly
         The identifier assigned to this element in the enaml source code.
-        Note that if you change this, you will likely break things. This
-        is a protected attribute.
+        This is a protected attribute.
 
-    _type : Str
+    type : ReadOnly
         The type name this component is using in the enaml source code.
         This is a protected attribute.
 
@@ -192,9 +191,9 @@ class Component(EnamlBase):
         where necessary.
 
     """
-    _id = Str
+    id = ReadOnly
 
-    _type = Str
+    type = ReadOnly
 
     parent = WeakRef('Component')
 
@@ -206,7 +205,7 @@ class Component(EnamlBase):
     style = ReadOnlyConstruct(lambda self, name: EnamlStyleNode(parent=self))
 
     toolkit_impl = Instance(IComponentImpl)
-
+        
     def add_child(self, child):
         """ Add a child component to this component.
 
@@ -328,6 +327,17 @@ class Component(EnamlBase):
         """
         self.parent = parent
 
+    def set_style_sheet(self, style_sheet):
+        """ Sets the style sheet for this component.
+
+        Arguments
+        ---------
+        style_sheet : StyleSheet
+            The style sheet instance for this component.
+
+        """
+        self.style.style_sheet = style_sheet
+
     def layout(self):
         """ Initialize and layout the component and it's children.
 
@@ -339,15 +349,14 @@ class Component(EnamlBase):
         """
         impl = self.toolkit_impl
         impl.set_parent(self)
-
         impl.create_widget()
+
         for child in self.children:
             child.layout()
-        impl.initialize_widget()
 
+        impl.initialize_widget()
         impl.create_style_handler()
         impl.initialize_style()
-
         impl.layout_child_widgets()
 
         self._hook_impl()
@@ -372,5 +381,5 @@ class Component(EnamlBase):
         self.add_trait_listener(self.toolkit_impl, 'parent')
 
 
-Component.protect('_id', '_type', 'parent', 'children', 'style', 'toolkit_impl')
+Component.protect('id', 'type', 'parent', 'children', 'style', 'toolkit_impl')
 

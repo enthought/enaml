@@ -66,12 +66,12 @@ class EnamlBase(HasStrictTraits):
     def _set_extended_delegate(self, root, leaf, delegate):
         root_obj = getattr(self, root)
         if isinstance(root_obj, EnamlBase):
-            root_obj.set_attribute_delegate((leaf, None), delegate)
+            root_obj.set_attribute_delegate(leaf, delegate)
 
     def _add_extended_notifier(self, root, leaf, notifier):
         root_obj = getattr(self, root)
         if isinstance(root_obj, EnamlBase):
-            root_obj.add_attribute_notifier((leaf, None), notifier)
+            root_obj.add_attribute_notifier(leaf, notifier)
 
     def set_attribute_delegate(self, name, delegate):
         """ Delegates the value of the attribute to the delegate.
@@ -89,12 +89,13 @@ class EnamlBase(HasStrictTraits):
             An implementor of the IExpressionDelegate interface.
 
         """
-        root, leaf = name
+        leaf = None
+        if '.' in name:
+            name, leaf = name.split('.')
+
         if leaf is not None:
-            self._set_extended_delegate(root, leaf, delegate)
+            self._set_extended_delegate(name, leaf, delegate)
             return
-        else:
-            name = root
 
         if name in self.__protected__:
             msg = ('The `%s` attribute of the `%s` object is protected and '
@@ -139,12 +140,13 @@ class EnamlBase(HasStrictTraits):
             An implementor of the IExpressionNotifer interface.
 
         """
-        root, leaf = name
+        leaf = None
+        if '.' in name:
+            name, leaf = name.split('.')
+
         if leaf is not None:
-            self._add_extended_notifier(root, leaf, notifier)
+            self._add_extended_notifier(name, leaf, notifier)
             return
-        else:
-            name = root
 
         trait = self.trait(name)
         if trait is None:

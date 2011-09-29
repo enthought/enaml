@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
-
 def test_collector():
     """Discover and collect tests for the Enaml Package
 
@@ -19,4 +17,15 @@ def test_collector():
     setupDir = os.path.abspath(os.path.dirname(__main__.__file__))
 
     return TestLoader().discover(setupDir)
+
+
+class imports(object):
+
+    def __enter__(self):
+        from .import_hooks import EnamlModuleFinder
+        EnamlModuleFinder.install()
+    
+    def __exit__(self, *args, **kwargs):
+        from .import_hooks import EnamlModuleFinder
+        EnamlModuleFinder.uninstall()
 

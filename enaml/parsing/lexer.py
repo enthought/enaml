@@ -26,7 +26,6 @@ class EnamlLexer(object):
     #--------------------------------------------------------------------------
     tokens = (
         'AMPER',
-        'AT',
         'DOT',
         'CIRCUMFLEX',
         'COLON',
@@ -78,6 +77,7 @@ class EnamlLexer(object):
     reserved = {
         'and': 'AND',
         'as': 'AS',
+        'defn': 'DEFN',
         'else': 'ELSE',
         'from': 'FROM',
         'for': 'FOR',
@@ -107,7 +107,6 @@ class EnamlLexer(object):
     # INITIAL State Rules
     #--------------------------------------------------------------------------
     t_AMPER = r'&'
-    t_AT = r'@'
     t_DOT = r'\.'
     t_CIRCUMFLEX = r'\^'
     t_COLON = r':'
@@ -132,8 +131,6 @@ class EnamlLexer(object):
     t_STAR = r'\*'
     t_TILDE = r'~'
     t_VBAR = r'\|'
-    
-    #t_DELEGATE = r'@'
 
     def t_comment(self, t):
         r'[ ]*\#[^\r\n]*'

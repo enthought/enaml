@@ -8,81 +8,16 @@ from ...constructors import IToolkitConstructor, BaseToolkitCtor
 
 
 #-------------------------------------------------------------------------------
-# Constructor helper mixins
-#-------------------------------------------------------------------------------
-class WrapWindowMixin(object):
-    """ A mixin that wraps a constructor in a WXWindowCtor
-
-    """
-    def __call__(self, **ctxt_objs):
-        # A container is not directly viewable, 
-        # it must first be wrapped in a window.
-        window_ctor = WXWindowCtor(
-            children=[
-                self,
-            ],
-        )
-        return window_ctor(**ctxt_objs)
-
-
-class WrapWindowVGroupMixin(WrapWindowMixin):
-    """ A mixin that wraps a constructor in a WXWindowCtor with
-    a WXVGroupCtor as its container.
-
-    """
-    def __call__(self, **ctxt_objs):
-        # An element is not directly viewable, it must 
-        # first be wrapped in a window and container.
-        window_ctor = WXWindowCtor(
-            children=[
-                WXVGroupCtor(
-                    children=[
-                        self,
-                    ],
-                ),
-            ],
-        )
-        return window_ctor(**ctxt_objs)
-
-
-#-------------------------------------------------------------------------------
 # Base Constructors
 #-------------------------------------------------------------------------------
-class WXBaseWindowCtor(BaseToolkitCtor):
-    pass
-
-
-class WXBasePanelCtor(BaseToolkitCtor, WrapWindowVGroupMixin):
-    pass
-
-
-class WXBaseContainerCtor(BaseToolkitCtor, WrapWindowMixin):
-    
-    def construct(self):
-        # Replace any toplevel windows with panel constructors.
-        # This facilitates composing other toplevel windows into 
-        # another window. Also, the IPanel interface has no 
-        # attributes, so we don't need (or want) to copy over
-        # the exprs from then window constuctor, just the metas
-        # and the children.
-        children = self.children
-        for idx, child in enumerate(children):
-            if isinstance(child, WXBaseWindowCtor):
-                window_children = child.children
-                window_metas = child.metas
-                children[idx] = WXPanelCtor(children=window_children,
-                                            metas=window_metas)
-        super(WXBaseContainerCtor, self).construct()
-
-
-class WXBaseComponentCtor(BaseToolkitCtor, WrapWindowVGroupMixin):
+class WXBaseComponentCtor(BaseToolkitCtor):
     pass
 
 
 #-------------------------------------------------------------------------------
 # Window constructors
 #-------------------------------------------------------------------------------
-class WXWindowCtor(WXBaseWindowCtor):
+class WXWindowCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -93,7 +28,7 @@ class WXWindowCtor(WXBaseWindowCtor):
         return window
 
 
-class WXDialogCtor(WXBaseWindowCtor):
+class WXDialogCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -107,7 +42,7 @@ class WXDialogCtor(WXBaseWindowCtor):
 #-------------------------------------------------------------------------------
 # Panel Constructors
 #-------------------------------------------------------------------------------
-class WXPanelCtor(WXBasePanelCtor):
+class WXPanelCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -121,7 +56,7 @@ class WXPanelCtor(WXBasePanelCtor):
 #-------------------------------------------------------------------------------
 # Container Constructors
 #-------------------------------------------------------------------------------
-class WXFormCtor(WXBaseContainerCtor):
+class WXFormCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -132,7 +67,7 @@ class WXFormCtor(WXBaseContainerCtor):
         return form
 
 
-class WXGroupCtor(WXBaseContainerCtor):
+class WXGroupCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -143,7 +78,7 @@ class WXGroupCtor(WXBaseContainerCtor):
         return group
 
 
-class WXVGroupCtor(WXBaseContainerCtor):
+class WXVGroupCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -154,7 +89,7 @@ class WXVGroupCtor(WXBaseContainerCtor):
         return vgroup
 
 
-class WXHGroupCtor(WXBaseContainerCtor):
+class WXHGroupCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -165,7 +100,7 @@ class WXHGroupCtor(WXBaseContainerCtor):
         return hgroup
 
 
-class WXStackedGroupCtor(WXBaseContainerCtor):
+class WXStackedGroupCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 
@@ -176,7 +111,7 @@ class WXStackedGroupCtor(WXBaseContainerCtor):
         return stacked_group
 
 
-class WXTabGroupCtor(WXBaseContainerCtor):
+class WXTabGroupCtor(WXBaseComponentCtor):
 
     implements(IToolkitConstructor)
 

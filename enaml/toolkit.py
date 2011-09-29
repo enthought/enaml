@@ -6,115 +6,295 @@ import os
 
 from traits.api import HasStrictTraits, Dict, Str, Callable, Any, Instance
 
-from .constructors import IToolkitConstructor
+from .constructors import IToolkitConstructor, BaseToolkitCtor
 from .style_sheet import StyleSheet
 from .util.trait_types import SubClass
+from .expressions import (
+    IExpressionNotifierFactory, IExpressionDelegateFactory,
+    DefaultExpressionFactory, BindingExpressionFactory,
+    DelegateExpressionFactory, NotifierExpressionFactory,
+)
+
+
+def _derived_ctor(name, component_cls, ctor):
+    """ A factory function which creates a derived constructor class.
+
+    Parameters
+    ----------
+    name : string
+        The type name of the derived ctor.
+
+    component_cls : class
+        The component class to use in the ctor.
+    
+    ctor : BaseToolkitCtor subclass
+        The constructor class to use to get the impl class.
+    
+    Returns
+    -------
+    result : BaseToolkCtor subclass
+        A new constructor class.
+    
+    """
+    class DerivedCtor(BaseToolkitCtor):
+
+        @classmethod
+        def component_class(cls):
+            return component_cls
+        
+        @classmethod
+        def impl_class(cls):
+            return ctor.impl_class()
+        
+        @classmethod
+        def type_name(cls):
+            return name
+    
+    return DerivedCtor
+
+
+def _extract_ctors(mod):
+    """ Yields valid ctors from a module. Used by the toolkit factory
+    functions in this module.
+
+    """
+    for name in dir(mod):
+        item = getattr(mod, name)
+        if isinstance(item, type):
+            if issubclass(item, BaseToolkitCtor):
+                try:
+                    item.type_name()
+                except Exception:
+                    pass
+                else:
+                    yield item
 
 
 class Toolkit(HasStrictTraits):
     """ A simple class that handles toolkit related functionality.
 
-    Attributes
-    ----------
-    items : Dict(Str, SubClass(IToolkitConstructor))
-        A dictionary which maps type names in the Enaml source code
-        to toolkit constructor classes for that name. This dict
-        can be modified to make new widgets available to the Enaml
-        source code.
-
-    prime : Callable
-        A callable which initializes the toolkit's event loop. This
-        will be called before any toolkit widgets are created. Most
-        toolkits will create the application object in this function.
-        The return value of this callable is passed to the 'start'
-        callable when the event loop should be started.
-
-    start : Callable
-        This is called at the end of the ui building process, after
-        the 'show' method on the view has been called. This function
-        should make sure the event loop for the toolkit is started.
-        It should take one argument, which is the return value from
-        the 'prime' method.
-
-    app : Any
-        The return value of the 'prime' callable is stored in this
-        attribute. This will usually be the toolkit's application
-        object.
-
-    style_sheet : SubClass(StyleSheet)
-        A default style sheet class for this toolkit.
-
-    utils : Dict(Str, Callable)
-        Callables used to construct simple ui elements in the RHS of a
-        delegate expression. Unlike 'items', these are not independent
-        components in Enaml source code.
-
-    Methods
-    -------
-    create_ctor(name):
-        Creates the constructor instance for the given name, or raises
-        an error if no constructor is defined for that name.
-
-    prime_event_loop()
-        Called before any ui tree building takes place in order to 
-        prime the toolkit's event loop.
-
-    start_event_loop()
-        Called at the end of the View's 'show' method to start the 
-        toolkit's event loop.
-    
-    default_style_sheet()
-        Returns the default style sheet class for this toolkit.
-
     """
-    items = Dict(Str, SubClass(IToolkitConstructor))
+    _constructors = Dict(Str, SubClass(IToolkitConstructor))
 
-    prime = Callable
+    _create_toolkit_app = Callable
 
-    start = Callable
+    _start_toolkit_loop = Callable
 
-    app = Any
+    _utils = Dict(Str, Callable)
 
-    style_sheet = Instance(StyleSheet)
+    _style_sheet = Instance(StyleSheet)
     
-    utils = Dict(Str, Callable)
+    _default_expr = SubClass(IExpressionDelegateFactory)
 
-    def __init__(self, items, prime, start, style_sheet, utils):
-        super(Toolkit, self).__init__(items=items, prime=prime, start=start,
-                                      style_sheet=style_sheet, utils=utils)
+    _bind_expr = SubClass(IExpressionDelegateFactory)
 
-    def create_ctor(self, name):
-        """ Creates the constructor instance for the given name, or 
-        raises an error if no constructor is defined for that name.
+    _delegate_expr = SubClass(IExpressionDelegateFactory)
+
+    _notify_expr = SubClass(IExpressionNotifierFactory)
+
+    _toolkit_app = Any
+
+    def __init__(self, create_app, start_loop, constructors=None, utils=None, 
+                 style_sheet=None, default=None, bind=None, delegate=None, 
+                 notify=None):
+        super(Toolkit, self).__init__()
+        self._create_toolkit_app = create_app
+        self._start_toolkit_loop = start_loop
+        self._utils = utils or {}
+        self._style_sheet = style_sheet or StyleSheet()
+        self._default_expr = default or DefaultExpressionFactory
+        self._bind_expr = bind or BindingExpressionFactory
+        self._delegate_expr = delegate or DelegateExpressionFactory
+        self._notify_expr = notify or NotifierExpressionFactory
+
+        if constructors is not None:
+            for ctor in constructors:
+                self.add_constructor(ctor)
+
+    def create_app(self):
+        """ Call this method to create the underlying toolkit specific 
+        application object.
+
+        """
+        self._toolkit_app = self._create_toolkit_app()
+    
+    def start_loop(self):
+        """ Call this method to start the toolkit specific event loop.
+        This should typically be called only after 'create_app' has
+        been called.
+
+        """
+        self._start_toolkit_loop(self._toolkit_app)
+
+    def get_app(self):
+        """ Call this method to retrieve the toolkit specific application
+        object. This will return None until 'create_app' has been called.
+
+        """
+        return self._toolkit_app
+
+    def add_constructor(self, ctor):
+        """ Add/override a new constructor to the toolkit.
+
+        Parameters
+        ----------
+        ctor : IToolkitConstructor subclass
+            A class which will create instances that implement the
+            IToolkitConstructor interface.
+        
+        """
+        self._constructors[ctor.type_name()] = ctor
+
+    def create_constructor(self, type_name, identifier):
+        """ Instantiate a constructor for the given type_name.
+        
+        Creates and returns a constructor instance for the given type name
+        using the provided identifier. If no constructor is registered with
+        the given type name, then a ValueError will be raised.
+
+        Parameters
+        ----------
+        type_name : string
+            The type names of the widget from the enaml source code for 
+            widget constructor that should be created.
+        
+        identifier : string
+            The identifier of the widget being created in the enaml 
+            source code.
 
         """
         try:
-            ctor_cls = self.items[name]
+            ctor_cls = self._constructors[type_name]
         except KeyError:
-            msg = 'Toolkit does not support the %s item.' % name
+            msg = 'Toolkit does not support the %s item.' % type_name
             raise ValueError(msg)
-        return ctor_cls(type_name=name)
-    
-    def prime_event_loop(self):
-        """ Called before any ui tree building takes place in order to 
-        prime the toolkit's event loop. 
+        return ctor_cls(identifier)
+
+    def add_derived_component(self, component, type_name=None, ctor_name=None):
+        """ Add a derived enaml component widget to the toolkit.
+
+        Add a derived enaml component widget to the toolkit. This method
+        will automatically determine an appropriate constructor to use.
+        For example, if one has a simple subclass of an enaml Field,
+        call this method with that subclass and a new constructor will
+        be created for the subclass using the toolkit implementation 
+        class for Field or another appropriate constructor. If no 
+        appropriate constructor can be determined, a TypeError will be
+        raise.
+
+        Parameters
+        ----------
+        component : enaml.widgets.Component subclass
+            The Component subclass to add to the toolkit.
         
-        """
-        self.app = self.prime()
-    
-    def start_event_loop(self):
-        """ Called at the end of the View's 'show' method to start the 
-        toolkit's event loop.
+        type_name : string, optional
+            If provided, this is the name that will be used for the new
+            component in the enaml source code. If omitted, the class name
+            of the component will be used.
         
-        """
-        self.start(self.app)
-    
-    def default_style_sheet(self):
-        """ Returns the default style sheet class for this toolkit.
+        ctor_name : string, optional
+            If provided, the constructor for this name will be used as
+            the constuctor from which to derived. Otherwise, the mro of
+            the component class will be traversed to try to find a 
+            suitable constructor. In that case, a match will be found
+            if there is a constructor with a type_name that equals the
+            name of a class in the mro *and* the new component class
+            is a subclass of the component class in that constructor.
 
         """
-        return self.style_sheet
+        _constructors = self._constructors
+        if ctor_name is not None:
+            if ctor_name not in _constructors:
+                raise ValueError('No constructor for `%s` name.' % ctor_name)
+            ctor = _constructors[ctor_name]
+        else:
+            for cls in component.mro():
+                name = cls.__name__
+                if name in _constructors:
+                    ctor = _constructors[name]
+                    break
+            else:
+                msg = 'No suitable constructor could be found for `%s`.'
+                raise TypeError(msg % component)
 
+        if type_name is None:
+            type_name = component.__name__
+
+        derived = _derived_ctor(type_name, component, ctor)
+        self.add_constructor(derived)
+
+    def default(self, py_ast):
+        """ Creates and returns an expression factory which uses default
+        value binding semantics.
+
+        Parameters
+        ----------
+        py_ast : ast.Expression
+            A python Expression ast node.
+        
+        Returns
+        -------
+        result : IExpressionDelegate
+            An object which implements the IExpressionDelegate interface.
+
+        """
+        return self._default_expr(py_ast)
+
+    def bind(self, py_ast):
+        """ Creates and returns an expression factory which uses 
+        expression binding semantics.
+
+        Parameters
+        ----------
+        py_ast : ast.Expression
+            A python Expression ast node.
+        
+        Returns
+        -------
+        result : IExpressionDelegate
+            An object which implements the IExpressionDelegate interface.
+
+        """
+        return self._bind_expr(py_ast)
+    
+    def delegate(self, py_ast):
+        """ Creates and returns an expression factory which uses 
+        delegation binding semantics.
+
+        Parameters
+        ----------
+        py_ast : ast.Expression
+            A python Expression ast node.
+        
+        Returns
+        -------
+        result : IExpressionDelegate
+            An object which implements the IExpressionDelegate interface.
+            
+        """
+        return self._delegate_expr(py_ast)
+    
+    def notify(self, py_ast):
+        """ Creates and returns an expression factory which uses
+        notification binding semantics.
+
+        Parameters
+        ----------
+        py_ast : ast.Expression
+            A python Expression ast node.
+        
+        Returns
+        -------
+        result : IExpressionDelegate
+            An object which implements the IExpressionDelegate interface.
+            
+        """
+        return self._notify_expr(py_ast)
+
+    @property
+    def style_sheet(self):
+        return self._style_sheet
+        
 
 def default_toolkit():
     """ Creates an returns the default toolkit object based on
@@ -137,39 +317,9 @@ def wx_toolkit():
 
     """
     from .util.guisupport import get_app_wx, start_event_loop_wx
-    from .widgets.wx import constructors as ctors
+    from .widgets.wx import constructors
     from .widgets.wx import dialogs
     from .widgets.wx.styling import WX_STYLE_SHEET
-
-    items = {
-        'Panel': ctors.WXPanelCtor,
-        'Window': ctors.WXWindowCtor,
-        'Dialog': ctors.WXDialogCtor,
-        'Form': ctors.WXFormCtor,
-        'Group': ctors.WXGroupCtor,
-        'VGroup': ctors.WXVGroupCtor,
-        'HGroup': ctors.WXHGroupCtor,
-        'StackedGroup': ctors.WXStackedGroupCtor,
-        'TabGroup': ctors.WXTabGroupCtor,
-        'GroupBox': ctors.WXGroupBoxCtor,
-        'Calendar': ctors.WXCalendarCtor,
-        'CheckBox': ctors.WXCheckBoxCtor,
-        'ComboBox': ctors.WXComboBoxCtor,
-        'Field': ctors.WXFieldCtor,
-        'Html': ctors.WXHtmlCtor,
-        'Image': ctors.WXImageCtor,
-        'Label': ctors.WXLabelCtor,
-        'PushButton': ctors.WXPushButtonCtor,
-        'RadioButton': ctors.WXRadioButtonCtor,
-        'Slider': ctors.WXSliderCtor,
-        'SpinBox': ctors.WXSpinBoxCtor,
-        'Spacer': ctors.WXSpacerCtor,
-        'EnableCanvas': ctors.WXEnableCanvasCtor,
-        'TraitsUIItem': ctors.WXTraitsUIItemCtor,
-        'TableView': ctors.WXTableViewCtor,
-        'CheckGroup': ctors.WXCheckGroupCtor,
-        'DateEdit': ctors.WXDateEditCtor,
-    }
 
     utils = {
         'error': dialogs.error,
@@ -178,8 +328,12 @@ def wx_toolkit():
         'question': dialogs.question
     }
 
-    return Toolkit(items=items, prime=get_app_wx, start=start_event_loop_wx,
-                   style_sheet=WX_STYLE_SHEET, utils=utils)
+    ctors = _extract_ctors(constructors)
+
+    toolkit = Toolkit(get_app_wx, start_event_loop_wx, constructors=ctors, 
+                      utils=utils, style_sheet=WX_STYLE_SHEET)
+
+    return toolkit
 
 
 def qt_toolkit():
@@ -187,38 +341,15 @@ def qt_toolkit():
 
     """
     from .util.guisupport import get_app_qt4, start_event_loop_qt4
-    from .widgets.qt import constructors as ctors
+    from .widgets.qt import constructors
     from .widgets.qt.styling import QT_STYLE_SHEET
 
-    items = {
-        'Panel': ctors.QtPanelCtor,
-        'Window': ctors.QtWindowCtor,
-        'Dialog': ctors.QtDialogCtor,
-        'Group': ctors.QtGroupCtor,
-        'VGroup': ctors.QtVGroupCtor,
-        'HGroup': ctors.QtHGroupCtor,
-        'Form': ctors.QtFormCtor,
-        'StackedGroup': ctors.QtStackedGroupCtor,
-        'TabGroup': ctors.QtTabGroupCtor,
-        'Field': ctors.QtFieldCtor,
-        'Label': ctors.QtLabelCtor,
-        'TraitsUIItem': ctors.QtTraitsUIItemCtor,
-        'Calendar': ctors.QtCalendarCtor,
-        'CheckBox': ctors.QtCheckBoxCtor,
-        'ComboBox': ctors.QtComboBoxCtor,
-        'Html': ctors.QtHtmlCtor,
-        'PushButton': ctors.QtPushButtonCtor,
-        'RadioButton': ctors.QtRadioButtonCtor,
-        'Slider': ctors.QtSliderCtor,
-        'SpinBox': ctors.QtSpinBoxCtor,
-        'EnableCanvas': ctors.QtEnableCanvasCtor,
-        'TableView': ctors.QtTableViewCtor,
-        'CheckGroup': ctors.QtCheckGroupCtor,
-        'DateEdit': ctors.QtDateEditCtor,
-        'DateTimeEdit': ctors.QtDateTimeEditCtor,
-    }
-    
     utils = {}
 
-    return Toolkit(items=items, prime=get_app_qt4, start=start_event_loop_qt4,
-        style_sheet=QT_STYLE_SHEET, utils=utils)
+    ctors = _extract_ctors(constructors)
+
+    toolkit = Toolkit(get_app_qt4, start_event_loop_qt4, constructors=ctors, 
+                      utils=utils, style_sheet=QT_STYLE_SHEET)
+
+    return toolkit 
+

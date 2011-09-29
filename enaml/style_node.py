@@ -58,7 +58,6 @@ class EnamlStyleNode(EnamlBase, StyleNode):
         super(StyleNode, self).add_trait(name, trait)
         self.on_trait_change(self._style_trait_updated, name)
 
-
 EnamlStyleNode.protect('parent', 'node_data', 'tag_updated')
 
 
@@ -73,12 +72,12 @@ class EnamlStyleNodeData(HasStrictTraits):
     def node_id(self):
         style_node = self.style_node
         if style_node is not None:
-            return style_node.parent._id
+            return style_node.parent.id
 
     def node_type(self):
         style_node = self.style_node
         if style_node is not None:
-            return style_node.parent._type
+            return style_node.parent.type
     
     def node_classes(self):
         style_node = self.style_node

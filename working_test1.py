@@ -11,11 +11,14 @@ import random
 
 from traits.api import HasTraits, Str, Property, cached_property
 
-from enaml.factory import EnamlFactory
+import enaml
 from enaml.color import Color
 from enaml.style_sheet import style
 from enaml.item_models.abstract_item_model import AbstractTableModel
 from enaml.enums import DataRole
+
+with enaml.imports():
+    from working_test1 import MainWindow
 
 
 colors = Color.color_map.keys()
@@ -50,6 +53,7 @@ class Model(HasTraits):
         txt = open('./working_test1.enaml').read() 
         return '<pre>' + cgi.escape(txt) + '</pre>'
 
+
 class TableModel(AbstractTableModel):
         
     def column_count(self, parent=None):
@@ -63,9 +67,7 @@ class TableModel(AbstractTableModel):
             return index.row + index.column
 
 
-fact = EnamlFactory('./working_test1.enaml')
-
-view = fact(model=Model(), table_model=TableModel())
+view = MainWindow(model=Model(), table_model=TableModel())
 
 view.show()
 
