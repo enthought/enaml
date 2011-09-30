@@ -7,17 +7,8 @@ from enaml.widgets.qt.qt import QtGui, QtCore
 from ..common import slider
 from enaml.toolkit import qt_toolkit
 from enaml.enums import TickPosition, Orientation
-from enaml.widgets.qt.qt_slider import SLIDER_MAX
-
-# A map from QSlider TickPosition values to Enaml constants.
-TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
-                QtGui.QSlider.TicksLeft: TickPosition.LEFT,
-                QtGui.QSlider.TicksRight: TickPosition.RIGHT,
-                QtGui.QSlider.TicksAbove: TickPosition.TOP,
-                QtGui.QSlider.TicksBelow: TickPosition.BOTTOM,
-                QtGui.QSlider.TicksBothSides: TickPosition.BOTH,
-                QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
-
+from enaml.widgets.qt.qt_slider import (SLIDER_MAX, HOR_TICK_POS_MAP,
+                                        VERT_TICK_POS_MAP)
 # A map from Qt constants for horizontal or vertical orientation to Enaml enums.
 ORIENTATION_MAP = {QtCore.Qt.Horizontal: Orientation.HORIZONTAL,
                    QtCore.Qt.Vertical: Orientation.VERTICAL}
@@ -59,7 +50,12 @@ class TestQtSlider(slider.TestSlider):
 
         """
         value = widget.tickPosition()
-        return TICK_POS_MAP[value]
+        orientation = self.get_orientation(widget)
+        if orientation == Orientation.VERTICAL:
+            result = VERT_TICK_POS_MAP[value]
+        else:
+            result = HOR_TICK_POS_MAP[value]
+        return result
 
     def get_orientation(self, widget):
         """ Get the Slider's orientation.
