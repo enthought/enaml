@@ -84,4 +84,13 @@ class EnamlTestCase(unittest.TestCase):
         self.assertEqual(value, enaml_value)
         self.assertEqual(value, widget_value)
 
+    def clean_event_queue(self):
+        """ Cleans the event queue
+
+        """
+        events = self.events
+        while len(events):
+            events.pop()
+
+
 
