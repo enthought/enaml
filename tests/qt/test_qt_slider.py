@@ -23,6 +23,18 @@ ORIENTATION_MAP = {QtCore.Qt.Horizontal: Orientation.HORIZONTAL,
                    QtCore.Qt.Vertical: Orientation.VERTICAL}
 
 
+# Map test event actions to the Qt Slider event signals
+EVENT_MAP = {slider.TestEvents.PRESSED: 'sliderPressed',
+             slider.TestEvents.RELEASED: 'sliderReleased'}
+
+# Map test event actions to the Qt Slider actions
+ACTION_MAP ={slider.TestEvents.HOME: QtGui.QAbstractSlider.SliderToMinimum,
+             slider.TestEvents.END: QtGui.QAbstractSlider.SliderToMaximum,
+             slider.TestEvents.STEP_UP: QtGui.QAbstractSlider.SliderSingleStepAdd,
+             slider.TestEvents.STEP_DOWN: QtGui.QAbstractSlider.SliderSingleStepSub,
+             slider.TestEvents.PAGE_UP: QtGui.QAbstractSlider.SliderPageStepAdd,
+             slider.TestEvents.PAGE_DOWN: QtGui.QAbstractSlider.SliderPageStepSub}
+
 class TestQtSlider(slider.TestSlider):
     """ QtLabel tests. """
 
@@ -75,4 +87,23 @@ class TestQtSlider(slider.TestSlider):
 
         """
         return widget.hasTracking()
+
+    def sent_event(self, widget, event):
+        """ Sent an event to the Slider programmatically.
+
+        Arguments
+        ---------
+        widget :
+            The widget to sent the event to.
+
+        event :
+            The desired event to be proccessed.
+
+        """
+        if event in ACTION_MAP:
+            widget.triggerAction(ACTION_MAP[event])
+        elif event in EVENT_MAP:
+            getattr(widget, EVENT_MAP[event]).emit()
+        else:
+            raise NotImplementedError('Test event is not Implemented')
 
