@@ -60,16 +60,19 @@ class EnamlTestCase(unittest.TestCase):
     def assertEnamlInSync(self, component, attribute_name, value):
         """ Verify that the requested attribute is properly set
 
+        The method compares the attribute value in the Enaml object and
+        check if it is syncronized with the toolkit widget.
+
         Arguments
         ---------
         component : enaml.widgets.component.Component
-            The Enaml component to check
-        
+            The Enaml component to check.
+
         attribute_name : str
             The string name of the Enaml attribute to check.
 
         value :
-            The expected value
+            The expected value.
 
         .. note:: It is expected that the user has defined a
             get_<attribute_name>(widget) method in the current test case.
@@ -80,7 +83,6 @@ class EnamlTestCase(unittest.TestCase):
         widget = component.toolkit_widget()
         enaml_value = getattr(component, attribute_name)
         widget_value = getattr(self, 'get_' + attribute_name)(widget)
-
         self.assertEqual(value, enaml_value)
         self.assertEqual(value, widget_value)
 
