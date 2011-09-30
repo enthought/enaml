@@ -129,7 +129,7 @@ class Slider(Control):
 
     tick_position = Enum(TickPosition.BOTTOM, *TickPosition.values())
 
-    orientation = Enum(*Orientation.values())
+    orientation = Enum(Orientation.HORIZONTAL, *Orientation.values())
 
     pressed = Event
 
