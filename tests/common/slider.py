@@ -83,8 +83,8 @@ Window:
         self.assertEnamlInSync(component, 'value', 0.5)
         self.assertEnamlInSync(component, 'tick_interval', 0.1)
         # while the initial value of the tick position is DEFAULT inside the
-        # enaml object is converted to BOTTOM
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
+        # enaml object is converted to NO_TICKS
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.NO_TICKS)
         self.assertEnamlInSync(component, 'orientation', Orientation.HORIZONTAL)
         self.assertEnamlInSync(component, 'single_step', 1)
         self.assertEnamlInSync(component, 'page_step', 2)
@@ -196,18 +196,17 @@ Window:
         self.assertEnamlInSync(component, 'tick_position', TickPosition.NO_TICKS)
 
     def testIncompatibleTickPosition(self):
-        """ Test that changing tick position is ignored if the orientation
+        """ Test that changing tick position is addapted if the orientation
         is not compatible.
+
+        This is in sync with how the QSlider behaves.
 
         """
 
         component = self.component
 
-        component.tick_position = TickPosition.BOTTOM
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
-
         component.tick_position = TickPosition.LEFT
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.TOP)
 
         component.tick_position = TickPosition.RIGHT
         self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
@@ -218,7 +217,7 @@ Window:
         self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
 
         component.tick_position = TickPosition.TOP
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.LEFT)
 
 
     def testChangingOrientaionTickPolicy(self):
@@ -227,8 +226,12 @@ Window:
         """
         component = self.component
 
+        component.tick_position = TickPosition.BOTTOM
         self.component.orientation = Orientation.VERTICAL
         self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
+        component.tick_position = TickPosition.LEFT
+        self.component.orientation = Orientation.HORIZONTAL
+        self.assertEnamlInSync(component, 'tick_position', TickPosition.TOP)
 
 
     def testPressingTheThumb(self):
