@@ -30,6 +30,26 @@ ORIENTATION_MAP = {Orientation.HORIZONTAL: QtCore.Qt.Horizontal,
                    Orientation.VERTICAL: QtCore.Qt.Vertical}
 
 
+# Qt Slider does not return TicksLeft and TicksRight it always
+# converts these to TicksAbove and TicksBelow so we need to check
+# the orientation in order to return the right result
+
+# A map from horizontal QSlider TickPosition values to Enaml constants.
+HOR_TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
+                    QtGui.QSlider.TicksAbove: TickPosition.TOP,
+                    QtGui.QSlider.TicksBelow: TickPosition.BOTTOM,
+                    QtGui.QSlider.TicksBothSides: TickPosition.BOTH,
+                    QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
+
+# A map from vertical QSlider TickPosition values to Enaml constants.
+VERT_TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
+                    QtGui.QSlider.TicksAbove: TickPosition.LEFT,
+                    QtGui.QSlider.TicksBelow: TickPosition.RIGHT,
+                    QtGui.QSlider.TicksBothSides: TickPosition.BOTH,
+                    QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
+
+
+
 class QtSlider(QtControl):
     """ A Qt implementation of Slider.
 
