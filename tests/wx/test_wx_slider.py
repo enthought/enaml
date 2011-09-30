@@ -5,6 +5,7 @@
 import wx
 
 from ..common import slider
+from . import send_wx_event, process_wx_events
 from enaml.toolkit import wx_toolkit
 from enaml.enums import TickPosition, Orientation
 from enaml.widgets.wx.wx_slider import SLIDER_MAX
@@ -21,6 +22,16 @@ TICK_POS_MAP = {wx.SL_BOTTOM: TickPosition.DEFAULT,
 # A map from Wx constants to Enaml enums for horizontal or vertical orientation.
 ORIENTATION_MAP = {wx.SL_HORIZONTAL: Orientation.HORIZONTAL,
                    wx.SL_VERTICAL: Orientation.VERTICAL}
+
+# Map event actions to WX constants
+EVENT_MAP = {slider.TestEvents.PRESSED: wx.EVT_LEFT_DOWN,
+             slider.TestEvents.RELEASED: wx.EVT_LEFT_UP,
+             slider.TestEvents.HOME: wx.EVT_SCROLL_BOTTOM,
+             slider.TestEvents.END: wx.EVT_SCROLL_TOP,
+             slider.TestEvents.STEP_UP: wx.EVT_SCROLL_LINEUP,
+             slider.TestEvents.STEP_DOWN: wx.EVT_SCROLL_LINEDOWN,
+             slider.TestEvents.PAGE_UP: wx.EVT_SCROLL_PAGEUP,
+             slider.TestEvents.PAGE_DOWN: wx.EVT_SCROLL_PAGEDOWN}
 
 
 class TestWXSlider(slider.TestSlider):
@@ -108,6 +119,20 @@ class TestWXSlider(slider.TestSlider):
         """ Get the Slider's tracking status.
 
         """
-        self.skipTest('Getting the tracking statu from the wxSlider is'
+        self.skipTest('Getting the tracking status from the wxSlider is'
                       'not implemented yet')
 
+    def sent_event(self, widget, event):
+        """ Sent an event to the Slider programmatically.
+
+        Arguments
+        ---------
+        widget :
+            The widget to sent the event to.
+
+        event :
+            The desired event to be proccessed.
+
+        """
+        send_wx_event(widget, EVENT_MAP[event])
+        process_wx_events(self.view.toolkit.app)
