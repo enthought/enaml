@@ -16,7 +16,7 @@ class EnamlTestCase(unittest.TestCase):
 
     """
 
-    #: toolkit implementation ot use during testing
+    #: Toolkit implementation to use during testing
     toolkit = default_toolkit()
 
     def setUp(self):
