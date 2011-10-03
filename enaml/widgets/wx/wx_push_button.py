@@ -66,6 +66,7 @@ class WXPushButton(WXControl):
         """
         parent = self.parent
         parent._down = False
+        parent.released = True
         parent.clicked = True
         event.Skip()
 
