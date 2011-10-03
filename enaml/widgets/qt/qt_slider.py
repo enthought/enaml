@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
 
-from traits.api import implements, Bool, TraitError
+from traits.api import implements, Float, Int, Tuple
 
 from .qt_control import QtControl
 
@@ -30,6 +30,26 @@ ORIENTATION_MAP = {Orientation.HORIZONTAL: QtCore.Qt.Horizontal,
                    Orientation.VERTICAL: QtCore.Qt.Vertical}
 
 
+# Qt Slider does not return TicksLeft and TicksRight it always
+# converts these to TicksAbove and TicksBelow so we need to check
+# the orientation in order to return the right result
+
+# A map from horizontal QSlider TickPosition values to Enaml constants.
+HOR_TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
+                    QtGui.QSlider.TicksAbove: TickPosition.TOP,
+                    QtGui.QSlider.TicksBelow: TickPosition.BOTTOM,
+                    QtGui.QSlider.TicksBothSides: TickPosition.BOTH,
+                    QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
+
+# A map from vertical QSlider TickPosition values to Enaml constants.
+VERT_TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
+                    QtGui.QSlider.TicksAbove: TickPosition.LEFT,
+                    QtGui.QSlider.TicksBelow: TickPosition.RIGHT,
+                    QtGui.QSlider.TicksBothSides: TickPosition.BOTH,
+                    QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
+
+
+
 class QtSlider(QtControl):
     """ A Qt implementation of Slider.
 
@@ -40,9 +60,9 @@ class QtSlider(QtControl):
     """
     implements(ISliderImpl)
 
-    # A mechanism to prevent update cycles when syncing `parent.value` with
-    # `parent.slider_pos`.
-    _setting = Bool
+    #: Internal backup valid posistion value used to guard against errors
+    #: with the from_slider and to_slider functions
+    _backup = Float
 
     #---------------------------------------------------------------------------
     # ISliderImpl interface
@@ -63,7 +83,8 @@ class QtSlider(QtControl):
         # We hard-coded range for the widget since we are managing the
         # conversion.
         self.set_range(0, SLIDER_MAX)
-        self.set_position()
+        self._backup = parent.value
+        self.set_value(parent.value)
         self.set_orientation(parent.orientation)
         self.set_tick_position(parent.tick_position)
         self.set_tick_frequency(parent.tick_interval)
@@ -80,10 +101,12 @@ class QtSlider(QtControl):
         ---------
         from_slider : Callable
             A function that takes one argument to convert from the slider
-            postion to the appropriate Python value.
+            position to the appropriate Python value.
 
         """
-        self.get_position()
+        parent = self.parent
+        new_value = self.convert_position()
+        parent.value = new_value
 
     def parent_to_slider_changed(self, to_slider):
         """ Update the slider position with based on the new function
@@ -93,19 +116,18 @@ class QtSlider(QtControl):
         to_slider : Callable
             A function that takes one argument to convert from a Python
             value to the appropriate slider position.
+
         """
-        self.set_position()
+        parent = self.parent
+        position = self.validate(parent.value)
+        self.set_in_widget(position)
 
     def parent_value_changed(self, value):
         """ Update the slider position value
 
-        Update the `slider_pos` to respond to the `value` change. The
-        assignment to the slider_pos might fail because `value` is out
-        of range. In that case the last known good value is given back
-        to the value attribute.
+        """
+        self.set_value(value)
 
-        """        
-        self.set_position()
 
     def parent_tracking_changed(self, tracking):
         """ Set the tracking event in the widget
@@ -164,14 +186,15 @@ class QtSlider(QtControl):
         widget.valueChanged.connect(self._on_slider_changed)
         widget.sliderPressed.connect(self._on_pressed)
         widget.sliderReleased.connect(self._on_released)
-    
+
 
     def _on_slider_changed(self, value):
         """ Respond to a (possible) change in value from the ui.
 
         """
-        if not self._setting:
-            self.get_position()
+        parent = self.parent
+        new_value = self.convert_position()
+        parent.value = new_value
 
     def _on_pressed(self):
         """ Update if the left button was pressed.
@@ -189,14 +212,14 @@ class QtSlider(QtControl):
         """ Update if the left button was released
 
         Checks if the `down` attribute was set. In that case the
-        function calls the `_on_slider_changed` function, fires the
-        release event and sets the `down` attribute to false.
+        function fires the release event and sets the `down` attribute to
+        false.
 
         """
         parent = self.parent
-        ##self._on_slider_changed(event)
-        parent._down = False
-        parent.released = True
+        if parent._down:
+            parent._down = False
+            parent.released = True
 
     def set_single_step(self, step):
         """ Set the single step attribute in the Qt widget.
@@ -228,66 +251,24 @@ class QtSlider(QtControl):
         tick_interval = widget.tickInterval()
         widget.setPageStep(step * tick_interval)
 
-    def set_position(self):
-        """Set the slider position based on the value and to_slider().
-
-        Changes the position of the slider in the widget if necessary.
-        We use a larger range in the Qt widget for fine-grained control.
-
-        """
-        self._setting = True
-        parent = self.parent
-        try:
-            position = parent.to_slider(parent.value)
-            if not (isinstance(position, float) and 0.0 <= position <= 1.0):
-                raise ValueError('to_slider() must return a float between 0.0 and 1.0, but instead returned %s'
-                        % repr(position))
-            qt_position = position * SLIDER_MAX
-            if qt_position != self.widget.value():
-                self.widget.setValue(qt_position)
-            parent.exception = None
-            parent.error = False
-        except Exception, e:
-            parent.exception = e
-            parent.error = True
-        finally:
-            self._setting = False
-
-    def get_position(self):
-        """Get the slider position.
-
-        Read the slider position from the widget and convert it to a
-        float.
-
-        """
-        parent = self.parent
-        try:
-            qt_position = float(self.widget.value())
-            value = parent.from_slider(qt_position / SLIDER_MAX)
-            parent.value = value
-            parent.exception = None
-            parent.error = False
-        except Exception, e:
-            parent.exception = e
-            parent.error = True
-
     def set_tick_position(self, ticks):
         """ Apply the tick position in the widget.
+
+        The tick_position is addapted to reflect the current orientation.
+        This is agrees with how the QSlider is behaving.
 
         Arguments
         ---------
         ticks : TickPosition
-            The tick position
-
-        Returns
-        -------
-        result : boolean
-            True if the new value was valid. False if the value is
-            invalid.
-
+            The tick position.
         """
+        parent = self.parent
+
         constant = TICK_POS_MAP[ticks]
         self.widget.setTickPosition(constant)
+
+        self.sync_tick_position()
+
 
     def set_orientation(self, orientation):
         """ Set the slider orientation
@@ -298,8 +279,14 @@ class QtSlider(QtControl):
             The orientation of the slider.
 
         """
+        widget = self.widget
+        parent = self.parent
+        tick_position = parent.tick_position
+
         constant = ORIENTATION_MAP[orientation]
         self.widget.setOrientation(constant)
+
+        self.sync_tick_position()
 
     def set_tracking(self, tracking):
         """ Receive a 'valueChanged' signal when the slider is dragged.
@@ -333,6 +320,139 @@ class QtSlider(QtControl):
         ---------
         interval: float
             The step size for tick marks.
-            
+
         """
         self.widget.setTickInterval(interval * SLIDER_MAX)
+
+    def set_value(self, value):
+        """ Validate and set the slider widget position to the new value
+
+        The assignment fail because `value` is out of range or the
+        conversion through `to_slider` returns an exception. In that case
+        the last known good value is given back to the parent.value
+        attribute.
+
+        """
+        parent = self.parent
+
+        position = self.validate(value, reset_errors = False)
+        # the `value` and `position` variables will be different if the
+        # validation failed.
+        if value == position:
+            self.set_in_widget(position)
+            if position != self._backup:
+                parent.moved = position
+            self._backup = position
+            self.reset_errors()
+        else:
+            exception = parent.exception
+            parent.value = position
+            parent.error = True
+            parent.exception = exception
+
+    def validate(self, value, reset_errors=True):
+        """ Validate the position value.
+
+        The method checks if the output of the :meth:`to_slider` function
+        returns a value that can be converted to float and is in the range
+        of [0.0, 1.0]. If the validation is not succesful it sets the
+        `error` and `exception` attributes and returns the previous known
+        good value.
+
+        If the :attr:`reset_errors` is False then the method does not
+        reset the error and exception attributes (unless there is an
+        exception ofcourse)
+        """
+        parent = self.parent
+
+        if reset_errors:
+            self.reset_errors()
+
+        try:
+            position = float(parent.to_slider(parent.value))
+
+            if not (0.0 <= position <= 1.0):
+                raise ValueError('to_slider() must return a value '
+                                            'between 0.0 and 1.0, but instead'
+                                            ' returned %s'  % repr(position))
+        except Exception as raised_exception:
+            self.notify(raised_exception)
+            position = self._backup
+
+        return position
+
+    def convert_position(self, reset_errors=True):
+        """ Convert and return the slider position coming from the widget.
+
+        The method checks if the :meth:`from_slider` function
+        does not raise an exception. If the converison is not successful
+        it sets the `error` and `exception` attributes and the current
+        enaml component position.
+
+        If the :attr:`reset_errors` is False then the method does not
+        reset the error and exception attributes (unless there is an
+        exception ofcourse).
+
+        """
+        parent = self.parent
+
+        if reset_errors:
+            self.reset_errors()
+
+        value = self.retrieve_from_widget()
+
+        try:
+            position = parent.from_slider(value)
+        except Exception as raised_exception:
+            self.notify(raised_exception)
+            position = parent.value
+
+        return position
+
+    def retrieve_from_widget(self):
+        """ Get the slider position from the widget and convert to the
+        enaml internal representation.
+
+        """
+        return self.widget.value() / float(SLIDER_MAX)
+
+
+    def set_in_widget(self, value):
+        """ set the slider position to the widget and convert to the
+        enaml internal representation.
+
+        """
+        self.widget.setValue(value * SLIDER_MAX)
+
+    def sync_tick_position(self):
+        """ Syncornize the tick_position with the widget
+
+        The QSlider automaticall updates or addaptes the tick position but
+        we still need to update the enaml component, so that it is in sync.
+
+        """
+        parent = self.parent
+        orientation = parent.orientation
+        tick_pos = self.widget.tickPosition()
+
+        if orientation == Orientation.VERTICAL:
+            parent.tick_position = VERT_TICK_POS_MAP[tick_pos]
+        else:
+            parent.tick_position = HOR_TICK_POS_MAP[tick_pos]
+
+    def reset_errors(self):
+        """ Reset the error attributes of the component.
+
+        """
+        parent = self.parent
+        parent.error = False
+        parent.exception = None
+
+    def notify(self, exception):
+        """ Update the error attributes of the component.
+
+        """
+        parent = self.parent
+        parent.error = True
+        parent.exception = exception
+
