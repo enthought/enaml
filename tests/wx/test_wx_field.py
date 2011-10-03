@@ -6,7 +6,7 @@ import wx
 
 from . import send_wx_event, process_wx_events
 
-from ..common import field
+from .. import field
 from enaml.toolkit import wx_toolkit
 
 

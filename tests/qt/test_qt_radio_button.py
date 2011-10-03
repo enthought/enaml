@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..common import radio_button
+from .. import radio_button
 from enaml.toolkit import qt_toolkit
 
 class TestQtRadioButton(radio_button.TestRadioButton):

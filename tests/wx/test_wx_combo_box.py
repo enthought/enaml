@@ -6,7 +6,7 @@ import wx
 
 from . import send_wx_event
 
-from ..common import combo_box
+from .. import combo_box
 from enaml.toolkit import wx_toolkit
 
 

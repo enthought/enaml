@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..common import combo_box
+from .. import combo_box
 from enaml.toolkit import qt_toolkit
 
 class TestQtComboBox(combo_box.TestComboBox):

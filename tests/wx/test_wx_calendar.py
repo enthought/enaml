@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx.calendar
 
-from ..common import calendar
+from .. import calendar
 from enaml.toolkit import wx_toolkit
 
 

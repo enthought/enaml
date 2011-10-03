@@ -6,7 +6,7 @@ import wx
 
 from . import send_wx_event
 
-from ..common import push_button
+from .. import push_button
 from enaml.toolkit import wx_toolkit
 
 

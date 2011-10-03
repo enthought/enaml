@@ -5,7 +5,7 @@
 import wx
 
 from . import send_wx_event
-from ..common import check_box
+from .. import check_box
 from enaml.toolkit import wx_toolkit
 
 class TestWXCheckBox(check_box.TestCheckBox):

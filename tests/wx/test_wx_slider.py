@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from ..common import slider
+from .. import slider
 from . import send_wx_event, process_wx_events, send_wx_mouse_event
 from enaml.toolkit import wx_toolkit
 from enaml.enums import TickPosition, Orientation

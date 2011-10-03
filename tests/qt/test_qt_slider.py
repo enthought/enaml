@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from enaml.widgets.qt.qt import QtGui, QtCore
 
-from ..common import slider
+from .. import slider
 from enaml.toolkit import qt_toolkit
 from enaml.enums import TickPosition, Orientation
 from enaml.widgets.qt.qt_slider import (SLIDER_MAX, HOR_TICK_POS_MAP,

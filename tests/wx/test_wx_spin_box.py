@@ -6,7 +6,7 @@ import wx
 
 from . import process_wx_events
 
-from ..common import spin_box
+from .. import spin_box
 from enaml.toolkit import wx_toolkit
 
 

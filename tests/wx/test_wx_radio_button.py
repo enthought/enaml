@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from . import process_wx_events
 
-from ..common import radio_button
+from .. import radio_button
 from enaml.toolkit import wx_toolkit
 
 

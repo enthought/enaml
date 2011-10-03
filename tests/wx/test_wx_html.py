@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..common import html
+from .. import html
 from enaml.toolkit import wx_toolkit
 
 
