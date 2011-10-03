@@ -84,13 +84,13 @@ class TestQtSlider(slider.TestSlider):
         """
         return widget.hasTracking()
 
-    def sent_event(self, widget, event):
-        """ Sent an event to the Slider programmatically.
+    def send_event(self, widget, event):
+        """ Send an event to the Slider programmatically.
 
         Arguments
         ---------
         widget :
-            The widget to sent the event to.
+            The widget to send the event to.
 
         event :
             The desired event to be proccessed.
