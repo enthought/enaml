@@ -97,7 +97,8 @@ Window:
 """
         self.setUp()
         component = self.component
-        self.assertEqual(component.date, component.minimum_date)
+        self.assertGreaterEqual(component.date, component.minimum_date)
+        self.assertLessEqual(component.date, component.maximum_date)
 
     def test_initial_too_late(self):
         """ Check that an invalid date is corrected (value above the maximum).
@@ -115,7 +116,8 @@ Window:
 """
         self.setUp()
         component = self.component
-        self.assertEqual(component.date, component.maximum_date)
+        self.assertGreaterEqual(component.date, component.minimum_date)
+        self.assertLessEqual(component.date, component.maximum_date)
 
     #--------------------------------------------------------------------------
     # absrtact methods
