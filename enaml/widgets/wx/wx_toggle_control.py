@@ -69,7 +69,6 @@ class WXToggleControl(WXControl):
         parent = self.parent
         parent.checked = self.widget.GetValue()
         parent._down = False
-        parent.released = True
         parent.toggled = True
         event.Skip()
 

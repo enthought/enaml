@@ -127,17 +127,15 @@ class Slider(Control):
 
     page_step = Int(5)
 
-    tick_position = Enum(TickPosition.BOTTOM, *TickPosition.values())
+    tick_position = Enum(TickPosition.NO_TICKS, *TickPosition.values())
 
-    orientation = Enum(*Orientation.values())
+    orientation = Enum(Orientation.HORIZONTAL, *Orientation.values())
 
     pressed = Event
 
     released = Event
 
     moved = Event
-
-    invalid_value = Event
 
     _down = Bool
 
@@ -152,16 +150,6 @@ class Slider(Control):
         """
         return self._down
 
-    def _validate(self, value):
-        if self.validate_slider is not None:
-            return self.validate_slider(value)
 
-        try:
-            slider = self.to_slider(value)
-            return isinstance(slider, float) and 0.0 <= slider <= 1.0
-        except Exception, e:
-            logging.exception('Slider Validation: to_slider() raised exception:', e)
-            return False
-
-Slider.protect('down', 'pressed', 'released', 'moved', 'invalid_value', '_down')
+Slider.protect('down', 'pressed', 'released', 'moved', '_down')
 

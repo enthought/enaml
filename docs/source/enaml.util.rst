@@ -11,3 +11,8 @@ util Package
 
 .. automodule:: enaml.util.trait_types
 
+:mod:`guisupport` Module
+-------------------------
+
+.. automodule:: enaml.util.guisupport
+

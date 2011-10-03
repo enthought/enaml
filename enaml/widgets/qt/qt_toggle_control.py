@@ -84,10 +84,10 @@ class QtToggleControl(QtControl):
         public consumption.
 
         """
-        
         parent = self.parent
-        parent._down = False
-        parent.released = True
+        if parent._down:
+            parent._down = False
+            parent.released = True
 
     def set_label(self, label):
         """ Sets the widget's label with the provided value. Not 
