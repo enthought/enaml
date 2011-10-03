@@ -241,7 +241,7 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.PRESSED)
+        self.send_event(self.widget, TestEvents.PRESSED)
         self.assertEqual(['pressed'], events)
 
     def testReleasingTheThumb(self):
@@ -253,11 +253,11 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.RELEASED)
+        self.send_event(self.widget, TestEvents.RELEASED)
         self.assertEqual([], events)
 
-        self.sent_event(self.widget, TestEvents.PRESSED)
-        self.sent_event(self.widget, TestEvents.RELEASED)
+        self.send_event(self.widget, TestEvents.PRESSED)
+        self.send_event(self.widget, TestEvents.RELEASED)
         self.assertEqual(['pressed', 'released'], events)
 
     def testMovingTheThumbProgrammaticaly(self):
@@ -277,7 +277,7 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.HOME)
+        self.send_event(self.widget, TestEvents.HOME)
         self.assertEnamlInSync(component, 'value', 0.0)
         self.assertEqual(['moved'], events)
 
@@ -288,7 +288,7 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.END)
+        self.send_event(self.widget, TestEvents.END)
         self.assertEnamlInSync(component, 'value', 1.0)
         self.assertEqual(['moved'], events)
 
@@ -299,7 +299,7 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.STEP_DOWN)
+        self.send_event(self.widget, TestEvents.STEP_DOWN)
         self.assertEnamlInSync(component, 'value', 0.4)
         self.assertEqual(['moved'], events)
 
@@ -310,7 +310,7 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.STEP_UP)
+        self.send_event(self.widget, TestEvents.STEP_UP)
         self.assertEnamlInSync(component, 'value', 0.6)
         self.assertEqual(['moved'], events)
 
@@ -321,7 +321,7 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.PAGE_DOWN)
+        self.send_event(self.widget, TestEvents.PAGE_DOWN)
         self.assertEnamlInSync(component, 'value', 0.3)
         self.assertEqual(['moved'], events)
 
@@ -332,7 +332,7 @@ Window:
         component = self.component
         events = self.events
 
-        self.sent_event(self.widget, TestEvents.PAGE_UP)
+        self.send_event(self.widget, TestEvents.PAGE_UP)
         self.assertEnamlInSync(component, 'value', 0.7)
         self.assertEqual(['moved'], events)
 
@@ -391,13 +391,13 @@ Window:
         return NotImplemented
 
     @abc.abstractmethod
-    def sent_event(self, widget, event):
-        """ Sent an event to the Slider programmatically.
+    def send_event(self, widget, event):
+        """ Send an event to the Slider programmatically.
 
         Arguments
         ---------
         widget :
-            The widget to sent the event to.
+            The widget to send the event to.
 
         event :
             The desired event to be proccessed.
