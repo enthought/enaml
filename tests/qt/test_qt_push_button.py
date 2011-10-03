@@ -25,7 +25,11 @@ class TestQtPushButton(push_button.TestPushButton):
 
     def button_clicked(self):
         """ Click the button programmatically.
+        
+        PySide expects 0 arguments for this signal, but PyQt expects 1.
 
         """
-        self.widget.clicked.emit()
-
+        try:
+            self.widget.clicked.emit(False)
+        except TypeError:
+            self.widget.clicked.emit()
