@@ -1,6 +1,4 @@
-.FF................................F..F..F.................FF...................................C:\Users\ionnis\Projects\enaml\enaml\widgets\wx\wx_slider.py:355: UserWarning: Option 0 is incompatible with the horizontal orientation and is ignored
-  format(str(ticks)))
-F.....s...FF......FF
+.FF..................F..............F...........................................................FF..................F...........................................................s...FF......FF
 ======================================================================
 FAIL: test_initial_too_early (tests.qt.test_qt_calendar.TestQtCalendar)
 Check that an invalid date is corrected (value below the minimum).
@@ -20,37 +18,33 @@ Traceback (most recent call last):
 AssertionError: datetime.date(2010, 1, 1) != datetime.date(2000, 1, 1)
 
 ======================================================================
-FAIL: testChangingOrientaionTickPolicy (tests.qt.test_qt_slider.TestQtSlider)
-Test that the ticks follow the orientation changes
+FAIL: test_change_text (tests.qt.test_qt_field.TestQtField)
+Change text programmatically, as opposed to editing it.
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 201, in testChangingOrientaionTickPolicy
-    self.verify_attribute('tick_position', TickPosition.RIGHT, self.component)
-  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 84, in verify_attribute
-    self.assertEqual(value, enaml_value)
-AssertionError: 1 != 3
+  File "C:\Users\ionnis\Projects\enaml\tests\common\field.py", line 163, in test_change_text
+    self.assertEqual(self.events, ['text_changed'])
+AssertionError: Lists differ: ['text_edited', 'text_changed'... != ['text_changed']
+
+First differing element 0:
+text_edited
+text_changed
+
+First list contains 1 additional elements.
+First extra element 1:
+text_changed
+
+- ['text_edited', 'text_changed']
++ ['text_changed']
 
 ======================================================================
-FAIL: testIncompatibleTickPosition (tests.qt.test_qt_slider.TestQtSlider)
-Test that changing tick position is ignored if the orientation
+FAIL: test_max_length (tests.qt.test_qt_field.TestQtField)
+Check that the field enforces its maximum length.
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 180, in testIncompatibleTickPosition
-    self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
-  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 84, in verify_attribute
-    self.assertEqual(value, enaml_value)
-AssertionError: 3 != 0
-
-======================================================================
-FAIL: testTickPositionSetting (tests.qt.test_qt_slider.TestQtSlider)
-Test changing the widget tickposition
-----------------------------------------------------------------------
-Traceback (most recent call last):
-  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 157, in testTickPositionSetting
-    self.verify_attribute('tick_position', TickPosition.LEFT, self.component)
-  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 85, in verify_attribute
-    self.assertEqual(value, widget_value)
-AssertionError: 0 != 2
+  File "C:\Users\ionnis\Projects\enaml\tests\common\field.py", line 101, in test_max_length
+    self.assertIn('max_length_reached', self.events)
+AssertionError: 'max_length_reached' not found in ['text_edited', 'text_changed']
 
 ======================================================================
 FAIL: test_initial_too_early (tests.wx.test_wx_calendar.TestWxCalendar)
@@ -71,15 +65,24 @@ Traceback (most recent call last):
 AssertionError: datetime.date(2010, 1, 1) != datetime.date(2000, 1, 1)
 
 ======================================================================
-FAIL: testIncompatibleTickPosition (tests.wx.test_wx_slider.TestWXSlider)
-Test that changing tick position is ignored if the orientation
+FAIL: test_change_text (tests.wx.test_wx_field.TestWxField)
+Change text programmatically, as opposed to editing it.
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "C:\Users\ionnis\Projects\enaml\tests\common\slider.py", line 180, in testIncompatibleTickPosition
-    self.verify_attribute('tick_position', TickPosition.BOTTOM, self.component)
-  File "C:\Users\ionnis\Projects\enaml\tests\common\enaml_test_case.py", line 84, in verify_attribute
-    self.assertEqual(value, enaml_value)
-AssertionError: 3 != 0
+  File "C:\Users\ionnis\Projects\enaml\tests\common\field.py", line 163, in test_change_text
+    self.assertEqual(self.events, ['text_changed'])
+AssertionError: Lists differ: ['text_edited', 'text_changed'... != ['text_changed']
+
+First differing element 0:
+text_edited
+text_changed
+
+First list contains 1 additional elements.
+First extra element 1:
+text_changed
+
+- ['text_edited', 'text_changed']
++ ['text_changed']
 
 ======================================================================
 FAIL: test_maximum_value (tests.wx.test_wx_spin_box.TestWxSpinBox)
@@ -118,7 +121,7 @@ Traceback (most recent call last):
 AssertionError: -9 != -10
 
 ----------------------------------------------------------------------
-Ran 116 tests in 5.265s
+Ran 190 tests in 8.541s
 
-FAILED (failures=12, skipped=1)
+FAILED (failures=11, skipped=1)
 
