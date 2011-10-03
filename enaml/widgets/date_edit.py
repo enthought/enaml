@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from datetime import date
+import datetime
 
 from traits.api import Date, Event, Instance, Str
 
@@ -31,13 +31,15 @@ class DateEdit(Control):
     Attributes
     ----------
     date : Date
-        The currently selected date.
+        The currently selected date. Default is the current date.
 
     minimum_date : Date
-        The minimum date available in the date edit.
+        The minimum date available in the date edit. If not defined then
+        the default value is September 14, 1752
 
     maximum_date : Date
-        The maximum date available in the date edit.
+        The maximum date available in the date edit. If not defined then
+        the default value is December 31, 7999
 
     format : Str
         A python date format string to format the date. If none is
@@ -49,11 +51,11 @@ class DateEdit(Control):
         event payload will be the date on the control.
 
     """
-    date = Date(date.today())
+    date = Date(datetime.date.today())
 
-    minimum_date = Date
+    minimum_date = Date(datetime.date(1752, 9, 14))
 
-    maximum_date = Date
+    maximum_date = Date(datetime.date(7999, 12, 31))
 
     format = Str
 
