@@ -51,12 +51,6 @@ class TestWxField(field.TestField):
         """
         return widget.GetInsertionPoint()
 
-    def set_selected_text(self, widget, start, stop):
-        """ Select text in a field.
-        
-        """
-        widget.SetSelection(start, stop)
-
     def get_selected_text(self, widget):
         """ Get the currently-selected text from a field.
         

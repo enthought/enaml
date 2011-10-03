@@ -228,7 +228,7 @@ Window:
         """ Remove selected text and add it to the clipboard.
         
         """
-        self.set_selected_text(self.widget, 1, 3)
+        self.component.set_selection(1, 3)
         self.impl.cut()
         self.assertEnamlInSync(self.component, 'value', 'a')
     
@@ -236,7 +236,7 @@ Window:
         """ Copy text, then paste it at the beginning of the field.
         
         """
-        self.set_selected_text(self.widget, 1, 2)
+        self.component.set_selection(1, 2)
         self.impl.copy()
         self.set_cursor_position(self.widget, 0)
         self.impl.paste()
@@ -246,7 +246,7 @@ Window:
         """ Cut text, then paste it at the beginning of the field.
         
         """
-        self.set_selected_text(self.widget, 1, 2)
+        self.component.set_selection(1, 2)
         self.impl.cut()
         self.set_cursor_position(self.widget, 0)
         self.impl.paste()
@@ -339,13 +339,6 @@ Window:
     @abc.abstractmethod
     def get_cursor_position(self, widget):
         """ Get the cursor position.
-        
-        """
-        return NotImplemented
-
-    @abc.abstractmethod
-    def set_selected_text(self, widget, start, stop):
-        """ Select text in a field.
         
         """
         return NotImplemented
