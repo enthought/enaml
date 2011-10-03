@@ -102,7 +102,7 @@ Window:
         self.assertEnamlInSync(component, 'tracking', False)
 
 
-    def testValueChange(self):
+    def test_value_change(self):
         """Test changing the value programmaticaly.
 
         """
@@ -113,7 +113,7 @@ Window:
         component.value = 0.879
         self.assertEnamlInSync(component, 'value', 0.879)
 
-    def testInvalidValueChange(self):
+    def test_invalid_value_change(self):
         """ Test changing the position with the an invalid value
 
         when invalid, check that it has not changed the values and the
@@ -128,7 +128,7 @@ Window:
         component.value = 3
         self.assertEnamlInSync(component, 'value', 0.5)
 
-    def testErrorUpdate(self):
+    def test_error_update(self):
         """ Check that errors are assinged
 
         """
@@ -142,7 +142,7 @@ Window:
         self.assertTrue(component.error)
         self.assertIsInstance(component.exception, ValueError)
 
-    def testErrorReset(self):
+    def test_error_reset(self):
         """ Check that the error attributes are reset
 
         """
@@ -154,7 +154,7 @@ Window:
         self.assertIsNone(component.exception)
 
 
-    def testOrientationSetting(self):
+    def test_orientation_setting(self):
         """ Test changing the widget orientation
 
         """
@@ -166,7 +166,7 @@ Window:
         self.component.orientation = Orientation.HORIZONTAL
         self.assertEnamlInSync(component, 'orientation', Orientation.HORIZONTAL)
 
-    def testTickPositionSetting(self):
+    def test_tick_position_setting(self):
         """ Test changing the widget tickposition
 
         """
@@ -195,7 +195,7 @@ Window:
         component.tick_position = TickPosition.NO_TICKS
         self.assertEnamlInSync(component, 'tick_position', TickPosition.NO_TICKS)
 
-    def testIncompatibleTickPosition(self):
+    def test_incompatible_tick_position(self):
         """ Test that changing tick position is addapted if the orientation
         is not compatible.
 
@@ -220,7 +220,7 @@ Window:
         self.assertEnamlInSync(component, 'tick_position', TickPosition.LEFT)
 
 
-    def testChangingOrientaionTickPolicy(self):
+    def test_changing_orientaion_tick_policy(self):
         """ Test that the ticks follow the orientation changes
 
         """
@@ -234,23 +234,19 @@ Window:
         self.assertEnamlInSync(component, 'tick_position', TickPosition.TOP)
 
 
-    def testPressingTheThumb(self):
+    def test_pressing_the_thumb(self):
         """ Test firing events when the thumb is pressed down.
 
         """
-        component = self.component
         events = self.events
 
         self.send_event(self.widget, TestEvents.PRESSED)
         self.assertEqual(['pressed'], events)
 
-    def testReleasingTheThumb(self):
+    def test_releasing_the_thumb(self):
         """ Test firing events when the thumb is released.
 
         """
-        self.clean_event_queue()
-
-        component = self.component
         events = self.events
 
         self.send_event(self.widget, TestEvents.RELEASED)
@@ -260,7 +256,7 @@ Window:
         self.send_event(self.widget, TestEvents.RELEASED)
         self.assertEqual(['pressed', 'released'], events)
 
-    def testMovingTheThumbProgrammaticaly(self):
+    def test_moving_the_thumb_programmaticaly(self):
         """ Test firing events when the thumb is moved (programmatically).
 
         """
@@ -270,7 +266,7 @@ Window:
         component.value = 0.3
         self.assertEqual(['moved'], events)
 
-    def testMovingToHome(self):
+    def test_move_to_home(self):
         """ Test firing events and value when the thumb is moved to home.
 
         """
@@ -281,7 +277,7 @@ Window:
         self.assertEnamlInSync(component, 'value', 0.0)
         self.assertEqual(['moved'], events)
 
-    def testMovingToEnd(self):
+    def test_move_to_end(self):
         """ Test firing events and value when the thumb is moved to end.
 
         """
@@ -292,7 +288,7 @@ Window:
         self.assertEnamlInSync(component, 'value', 1.0)
         self.assertEqual(['moved'], events)
 
-    def testMovingDownByOneStep(self):
+    def test_move_down_by_one_step(self):
         """ Test firing events and value when the thumb is moved by one step down.
 
         """
@@ -303,7 +299,7 @@ Window:
         self.assertEnamlInSync(component, 'value', 0.4)
         self.assertEqual(['moved'], events)
 
-    def testMovingUpByOneStep(self):
+    def test_move_up_by_one_step(self):
         """ Test firing events and value when the thumb is moved by one step up.
 
         """
@@ -314,7 +310,7 @@ Window:
         self.assertEnamlInSync(component, 'value', 0.6)
         self.assertEqual(['moved'], events)
 
-    def testMovingDownByOnePage(self):
+    def test_move_down_by_one_page(self):
         """ Test firing events and value when the thumb is moved by one page down.
 
         """
@@ -325,7 +321,7 @@ Window:
         self.assertEnamlInSync(component, 'value', 0.3)
         self.assertEqual(['moved'], events)
 
-    def testMovingUpByOnePage(self):
+    def test_move_up_by_one_page(self):
         """ Test firing events and value when the thumb is moved by one page up.
 
         """
