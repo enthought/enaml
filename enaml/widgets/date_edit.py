@@ -13,10 +13,10 @@ class IDateEditImpl(IControlImpl):
 
     def parent_date_changed(self, date):
         raise NotImplementedError
-    
+
     def parent_minimum_date_changed(self, date):
         raise NotImplementedError
-    
+
     def parent_maximum_date_changed(self, date):
         raise NotImplementedError
 
@@ -25,9 +25,9 @@ class DateEdit(Control):
     """ A date widget.
 
     A DateEdit displays a Python datetime.date using an appropriate
-    toolkit specific control. This is a smaller control than what is 
+    toolkit specific control. This is a smaller control than what is
     provided by Calendar.
-    
+
     Attributes
     ----------
     date : Date
@@ -38,17 +38,17 @@ class DateEdit(Control):
 
     maximum_date : Date
         The maximum date available in the date edit.
-    
+
     format : Str
-        A python date format string to format the date. If none is 
+        A python date format string to format the date. If none is
         supplied (or is invalid) the system locale setting is used.
         This may not be supported by all backends.
 
-    selected : Event
+    activated : Event
         Triggered whenever the user clicks or changes the control. The
         event payload will be the date on the control.
 
-    """    
+    """
     date = Date(date.today())
 
     minimum_date = Date
