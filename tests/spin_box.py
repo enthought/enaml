@@ -104,26 +104,6 @@ Window:
         self.assertEqual(self.get_from_string(widget), component.from_string)
         self.assertEqual(self.get_to_string(widget), component.to_string)
 
-    def test_minimum_value(self):
-        """ Check that the spin box enforces its lower bound.
-
-        """
-        component = self.component
-        component.wrap = False
-        low = component.low
-        component.value = low - 1
-        self.assertTrue(component.value >= low)
-
-    def test_maximum_value(self):
-        """ Check that the spin box enforces its upper bound.
-
-        """
-        component = self.component
-        component.wrap = False
-        high = component.high
-        component.value = high + 1
-        self.assertTrue(component.value <= high)
-
     def test_change_low(self):
         """ Update the spin box's minimum value.
 
