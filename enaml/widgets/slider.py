@@ -127,7 +127,7 @@ class Slider(Control):
 
     page_step = Int(5)
 
-    tick_position = Enum(TickPosition.BOTTOM, *TickPosition.values())
+    tick_position = Enum(TickPosition.NO_TICKS, *TickPosition.values())
 
     orientation = Enum(Orientation.HORIZONTAL, *Orientation.values())
 
