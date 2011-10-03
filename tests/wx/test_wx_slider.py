@@ -5,7 +5,7 @@
 import wx
 
 from ..common import slider
-from . import send_wx_event, process_wx_events
+from . import send_wx_event, process_wx_events, send_wx_mouse_event
 from enaml.toolkit import wx_toolkit
 from enaml.enums import TickPosition, Orientation
 from enaml.widgets.wx.wx_slider import SLIDER_MAX
@@ -33,11 +33,14 @@ EVENT_MAP = {slider.TestEvents.PRESSED: wx.EVT_LEFT_DOWN,
              slider.TestEvents.PAGE_UP: wx.EVT_SCROLL_PAGEUP,
              slider.TestEvents.PAGE_DOWN: wx.EVT_SCROLL_PAGEDOWN}
 
-
 class TestWXSlider(slider.TestSlider):
     """ QtLabel tests. """
 
     toolkit = wx_toolkit()
+
+    def setUp(self):
+        super(TestWXSlider, self).setUp()
+        self.widget.SetSize(wx.Size(200,20))
 
     def get_value(self, widget):
         """ Get a slider's position.
@@ -122,8 +125,8 @@ class TestWXSlider(slider.TestSlider):
         self.skipTest('Getting the tracking status from the wxSlider is'
                       'not implemented yet')
 
-    def sent_event(self, widget, event):
-        """ Sent an event to the Slider programmatically.
+    def send_event(self, widget, event):
+        """ Send an event to the Slider programmatically.
 
         Arguments
         ---------
@@ -134,5 +137,30 @@ class TestWXSlider(slider.TestSlider):
             The desired event to be proccessed.
 
         """
-        send_wx_event(widget, EVENT_MAP[event])
-        process_wx_events(self.view.toolkit.app)
+        event_type = EVENT_MAP[event]
+        if  event_type in (wx.EVT_LEFT_DOWN, wx.EVT_LEFT_UP):
+            position = wx.Point(100,10)
+            send_wx_mouse_event(widget, event_type, position=position)
+        else:
+            value = widget.GetValue()
+            tick_interval = widget.GetTickFreq()
+            if event_type == wx.EVT_SCROLL_BOTTOM:
+                value = widget.GetMin()
+            elif event_type == wx.EVT_SCROLL_TOP:
+                value = widget.GetMax()
+            elif event_type == wx.EVT_SCROLL_LINEUP:
+                value += widget.GetLineSize()
+            elif event_type == wx.EVT_SCROLL_LINEDOWN:
+                value -= widget.GetLineSize()
+            elif event_type == wx.EVT_SCROLL_PAGEUP:
+                value += widget.GetPageSize()
+            elif event_type == wx.EVT_SCROLL_PAGEDOWN:
+                value -= widget.GetPageSize()
+
+            widget.SetValue(value)
+            event = wx.ScrollEvent(event_type.typeId, widget.GetId())
+            widget.GetEventHandler().ProcessEvent(event)
+
+        #process_wx_events(self.view.toolkit.app)
+
+
