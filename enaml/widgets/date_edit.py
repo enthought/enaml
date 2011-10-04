@@ -11,13 +11,16 @@ from .control import Control, IControlImpl
 
 class IDateEditImpl(IControlImpl):
 
-    def parent_date_changed(self, date):
+    def parent_date_changed(self, obj, name, old_date, new_date):
         raise NotImplementedError
 
     def parent_minimum_date_changed(self, date):
         raise NotImplementedError
 
     def parent_maximum_date_changed(self, date):
+        raise NotImplementedError
+
+    def parent_format_changed(self, date_format):
         raise NotImplementedError
 
 
@@ -46,8 +49,8 @@ class DateEdit(Control):
         supplied (or is invalid) the system locale setting is used.
         This may not be supported by all backends.
 
-    activated : Event
-        Triggered whenever the user clicks or changes the control. The
+    date_changed : Event
+        Triggered whenever the user clicks and changes the control. The
         event payload will be the date on the control.
 
     """
@@ -59,7 +62,7 @@ class DateEdit(Control):
 
     format = Str
 
-    activated = Event
+    date_changed = Event
 
     #---------------------------------------------------------------------------
     # Overridden parent traits
@@ -67,5 +70,5 @@ class DateEdit(Control):
     toolkit_impl = Instance(IDateEditImpl)
 
 
-DateEdit.protect('activated')
+DateEdit.protect('date_changed')
 
