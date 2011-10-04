@@ -5,7 +5,7 @@
 import wx
 
 from .. import slider
-from . import send_wx_event, process_wx_events, send_wx_mouse_event
+from . import send_wx_mouse_event
 from enaml.toolkit import wx_toolkit
 from enaml.enums import TickPosition, Orientation
 from enaml.widgets.wx.wx_slider import SLIDER_MAX
@@ -143,7 +143,6 @@ class TestWXSlider(slider.TestSlider):
             send_wx_mouse_event(widget, event_type, position=position)
         else:
             value = widget.GetValue()
-            tick_interval = widget.GetTickFreq()
             if event_type == wx.EVT_SCROLL_BOTTOM:
                 value = widget.GetMin()
             elif event_type == wx.EVT_SCROLL_TOP:
@@ -160,7 +159,5 @@ class TestWXSlider(slider.TestSlider):
             widget.SetValue(value)
             event = wx.ScrollEvent(event_type.typeId, widget.GetId())
             widget.GetEventHandler().ProcessEvent(event)
-
-        #process_wx_events(self.view.toolkit.app)
 
 
