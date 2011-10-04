@@ -24,8 +24,11 @@ class TestDateEdit(EnamlTestCase):
     get_maximum_date(self, widget)
         Get the toolkits widget's maximum date attribute.
 
-    activate_date(self, widget, date)
-        Fire an event to indicate that a date was changed.
+    change_date(self, widget, date)
+        Simulate a change date action at the toolkit widget.
+
+    get_date_as_string(self, widget)
+        Get the toolkits widget's active date as a string.
 
     """
 
@@ -119,6 +122,7 @@ Window:
         component.date = date(2000,1,1)
         self.assertEnamlInSync(component, 'date', min_date)
         self.assertEqual(self.events, ['date_changed'] * 4)
+
 
     def test_set_format(self):
         """ Test setting the output format
