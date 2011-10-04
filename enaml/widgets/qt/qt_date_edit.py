@@ -130,7 +130,7 @@ class QtDateEdit(QtControl):
         self.widget.setMaximumDate(date)
 
     def set_format(self, date_format):
-        """ Sets the maximum date on the widget with the provided value.
+        """ Sets the display format on the widget with the provided value.
 
         """
         self.widget.setDisplayFormat(date_format)
