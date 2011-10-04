@@ -9,21 +9,20 @@ import wx
 from traits.api import implements
 
 from .wx_control import WXControl
-
 from ..date_edit import IDateEditImpl
 
 
-def _to_wx_date(py_date):
+def to_wx_date(py_date):
     day = py_date.day
-    month = py_date.month - 1 # Thank you wx for being moronic!!!
+    month = py_date.month - 1 # wx peculiarity!
     year = py_date.year
     return wx.DateTimeFromDMY(day, month, year)
 
 
-def _from_wx_date(wx_date):
+def from_wx_date(wx_date):
     if wx_date.IsValid():
         day = wx_date.GetDay()
-        month = wx_date.GetMonth() + 1 # Thank you wx for being moronic!!!
+        month = wx_date.GetMonth() + 1 # wx peculiarity!
         year = wx_date.GetYear()
         return datetime.date(year, month, day)
 
@@ -43,24 +42,30 @@ class WXDateEdit(WXControl):
 
         """
         parent = self.parent
+        self.set_minimum_date(parent.minimum_date)
+        self.set_maximum_date(parent.maximum_date)
         self.set_date(parent.date)
-        min_date = parent.minimum_date
-        max_date = parent.maximum_date
-        if min_date is not None:
-            self.set_minimum_date(min_date)
-        if max_date is not None:
-            self.set_maximum_date(max_date)
+##        self.set_format(parent.format)
         self.bind()
 
-    def parent_date_changed(self, date):
+    def parent_date_changed(self, obj, name, old_date, new_date):
         """ The change handler for the 'date' attribute. Not meant for
         public consumption.
 
         """
-        self.set_date(date)
+        parent = self.parent
+
+        self.set_date(new_date)
+        validated_widget_date = self.get_date()
+
+        if validated_widget_date != new_date:
+            self.parent.date = validated_widget_date
+
+        if old_date != validated_widget_date:
+            parent.date_changed = validated_widget_date
 
     def parent_minimum_date_changed(self, date):
-        """ The change handler for the 'minimum_date' attribute. Not 
+        """ The change handler for the 'minimum_date' attribute. Not
         meant for public consumption.
 
         """
@@ -72,6 +77,15 @@ class WXDateEdit(WXControl):
 
         """
         self.set_maximum_date(date)
+
+
+    def parent_format_changed(self, date_format):
+        """ The change handler for the 'format' attribute.
+
+        Not implemented in native wx widget
+
+        """
+        raise NotImplementedError
 
     #---------------------------------------------------------------------------
     # Implementation
@@ -85,34 +99,46 @@ class WXDateEdit(WXControl):
         widget.Bind(wx.EVT_DATE_CHANGED, self.on_date_changed)
 
     def on_date_changed(self, event):
-        """ The event handler for the date's changed event. Not meant 
+        """ The event handler for the date's changed event. Not meant
         for public consumption.
 
         """
-        event.Skip()
-        date = _from_wx_date(self.widget.GetValue())
-        if date:
-            self.parent.date = date
-            self.parent.activated = date
-            
+        parent = self.parent
+        new_date = from_wx_date(event.GetDate())
+        if parent.date != new_date:
+            parent.date = new_date
+
     def set_date(self, date):
         """ Sets the date on the widget with the provided value. Not
         meant for public consumption.
 
         """
-        self.widget.SetValue(_to_wx_date(date))
+        parent = self.parent
+        minimum = parent.minimum_date
+        maximum = parent.maximum_date
+
+        date = max(date, minimum)
+        date = min(date, maximum)
+        self.widget.SetValue(to_wx_date(date))
 
     def set_minimum_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
         Not meant for public consumption.
 
         """
-        self.widget.SetRange(_to_wx_date(date), self.widget.GetUpperLimit())
+        self.widget.SetRange(to_wx_date(date), self.widget.GetUpperLimit())
 
     def set_maximum_date(self, date):
         """ Sets the maximum date on the widget with the provided value.
         Not meant for public consumption.
 
         """
-        self.widget.SetRange(self.widget.GetLowerLimit(), _to_wx_date(date))
+        self.widget.SetRange(self.widget.GetLowerLimit(), to_wx_date(date))
+
+    def get_date(self):
+        """ Get the active widget date.
+
+        """
+        wx_date = self.widget.GetValue()
+        return from_wx_date(wx_date)
 
