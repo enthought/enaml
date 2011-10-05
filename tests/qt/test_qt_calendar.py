@@ -5,6 +5,7 @@
 from .. import calendar
 from enaml.toolkit import qt_toolkit
 
+from enaml.widgets.qt.qt_date_edit import qdate_to_python
 
 class TestQtCalendar(calendar.TestCalendar):
     """ QtCalendar tests. """
@@ -12,29 +13,32 @@ class TestQtCalendar(calendar.TestCalendar):
     toolkit = qt_toolkit()
 
     def get_date(self, widget):
-        """ Get a calendar's active date.
+        """  Get the toolkits widget's active date.
 
         """
-        return widget.selectedDate()
+        date = widget.selectedDate()
+        return qdate_to_python(date)
 
     def get_minimum_date(self, widget):
-        """ Get a calendar's minimum date attribute.
+        """  Get the toolkits widget's maximum date attribute.
 
         """
-        return widget.minimumDate()
+        date = widget.minimumDate()
+        return qdate_to_python(date)
 
     def get_maximum_date(self, widget):
-        """ Get a calendar's maximum date attribute.
-        
+        """ Get the toolkits widget's minimum date attribute.
+
         """
-        return widget.maximumDate()
+        date = widget.maximumDate()
+        return qdate_to_python(date)
 
     def activate_date(self, widget, date):
         """ Fire an event to indicate that a date was activated.
-        
+
         """
         widget.activated.emit(date)
-        
+
     def select_date(self, widget, date):
         """ Fire an event to indicate that a date was selected.
         
