@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 from enaml.enums import TickPosition, Orientation
 from enaml.util.enum import Enum
 
@@ -46,8 +44,6 @@ class TestSlider(EnamlTestCase):
     ----------------
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -337,56 +333,56 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_value(self, widget):
         """ Get the Slider's value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_tick_interval(self, widget):
         """ Get the Slider's tick_interval value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_tick_position(self, widget):
         """ Get the Slider's tick position style.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_orientation(self, widget):
         """ Get the Slider's orientation.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_single_step(self, widget):
         """ Get the Slider's single step value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_page_step(self, widget):
         """ Get the Slider's page step value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_tracking(self, widget):
         """ Get the Slider's tracking status.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def send_event(self, widget, event):
         """ Send an event to the Slider programmatically.
 
@@ -399,4 +395,4 @@ Window:
             The desired event to be proccessed.
 
         """
-        return NotImplemented
+        pass

@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestSpinBox(EnamlTestCase):
@@ -55,8 +53,6 @@ class TestSpinBox(EnamlTestCase):
         Simulate a click on the 'down' spin button.
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -231,93 +227,93 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_value(self, widget):
         """ Get a spin box's value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_low(self, widget):
         """ Get a spin box's minimum value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_high(self, widget):
         """ Get a spin box's maximum value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_step(self, widget):
         """ Get a spin box's step size.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_wrap(self, widget):
         """ Check if a spin box wraps around at the edge values.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_prefix(self, widget):
         """ Get a spin box's text prefix.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_suffix(self, widget):
         """ Get a spin box's text suffix.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_special_value_text(self, widget):
         """ Get a spin box's special value text, displayed at the minimum value.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_to_string(self, widget):
         """ Get a spin box's value-to-display callable.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_from_string(self, widget):
         """ Get a spin box's display-to-value callable.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_text(self, widget):
         """ Get the text displayed in a spin box.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def spin_up_event(self, widget):
         """ Simulate a click on the 'up' spin button.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def spin_down_event(self, widget):
         """ Simulate a click on the 'down' spin button.
 
         """
-        return NotImplemented
+        pass
