@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestRadioButton(EnamlTestCase):
@@ -21,8 +19,6 @@ class TestRadioButton(EnamlTestCase):
         Get the label of a button.
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     label_1 = 'Label 1'
 
@@ -125,16 +121,16 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_value(self, button):
         """ Get the checked state of a radio button.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_text(self, button):
         """ Get the label of a button.
 
         """
-        return NotImplemented
+        pass
