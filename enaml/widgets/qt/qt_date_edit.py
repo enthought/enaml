@@ -42,12 +42,11 @@ class QtDateEdit(QtControl):
         parent = self.parent
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
-        self.set_date(parent.date)
         self.set_format(parent.format)
-
+        self.set_and_validate_date()
         self.connect()
 
-    def parent_date_changed(self, obj, name, old_date, new_date):
+    def parent_date_changed(self, date):
         """ The change handler for the 'date' attribute.
 
         The method assigns the current component date in the toolkit
@@ -55,17 +54,7 @@ class QtDateEdit(QtControl):
         updated to reflect the widget behaviour.
 
         """
-        parent = self.parent
-
-        self.set_date(new_date)
-        validated_widget_date = self.get_date()
-
-        if validated_widget_date != new_date:
-            self.parent.date = validated_widget_date
-
-        if old_date != validated_widget_date:
-            parent.date_changed = validated_widget_date
-
+        self.set_and_validate_date()
 
     def parent_minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute. Not
@@ -105,16 +94,23 @@ class QtDateEdit(QtControl):
 
         """
         parent = self.parent
-        new_date = qdate_to_python(date)
-        if parent.date != new_date:
-            parent.date = new_date
+        new_date = self.get_date()
+        parent.date = new_date
+        parent.date_changed = new_date
 
-    def set_date(self, date):
-        """ Sets the date on the widget with the provided value. Not
-        meant for public consumption.
+    def set_and_validate_date(self):
+        """ Sets and validates the component date on the widget.
 
+        The method sets the date in the toolkit widget and makes sure that
+        if the widget has truncated the enaml component is syncronized
+        without firing trait notification events.
         """
+        parent = self.parent
+        date = parent.date
         self.widget.setDate(date)
+        validated_widget_date = self.get_date()
+        if validated_widget_date != date:
+            self.parent.trait_setq(date=validated_widget_date)
 
     def set_minimum_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
