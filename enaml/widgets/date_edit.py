@@ -11,7 +11,7 @@ from .control import Control, IControlImpl
 
 class IDateEditImpl(IControlImpl):
 
-    def parent_date_changed(self, obj, name, old_date, new_date):
+    def parent_date_changed(self, date):
         raise NotImplementedError
 
     def parent_minimum_date_changed(self, date):
