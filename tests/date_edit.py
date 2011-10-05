@@ -59,6 +59,44 @@ Window:
         self.assertEnamlInSync(component, 'maximum_date', date(7999, 12, 31))
         self.assertEqual(self.events, [])
 
+    def test_initial_too_early(self):
+        """ Check initialization with an invalid early date is corrected.
+
+        """
+        self.enaml = """
+import datetime
+Window:
+    Panel:
+        VGroup:
+            DateEdit test:
+                date = datetime.date(1980, 1, 1)
+                minimum_date = datetime.date(1990, 1, 1)
+                maximum_date = datetime.date(2000, 1, 1)
+"""
+        self.setUp()
+        component = self.component
+        self.assertEnamlInSync(component, 'date', date(1990, 1, 1))
+        self.assertEqual(self.events, [])
+
+    def test_initial_too_late(self):
+        """ Check initialization with an invalid late date is corrected.
+
+        """
+        self.enaml = """
+import datetime
+Window:
+    Panel:
+        VGroup:
+            DateEdit test:
+                date = datetime.date(2010, 1, 1)
+                minimum_date = datetime.date(1990, 1, 1)
+                maximum_date = datetime.date(2000, 1, 1)
+"""
+        self.setUp()
+        component = self.component
+        self.assertEnamlInSync(component, 'date', date(2000, 1, 1))
+        self.assertEqual(self.events, [])
+
     def test_change_minimum_date(self):
         """ Test changing the minimum date.
 
@@ -93,33 +131,40 @@ Window:
         """
         component = self.component
         widget = self.widget
-
         new_date = date(2007,10,9)
         self.change_date(widget, new_date)
-
         self.assertEnamlInSync(component, 'date', new_date)
         self.assertEqual(self.events, ['date_changed'])
 
-    def test_invalid_date(self):
-        """ Test changing to an invalid date.
+    def test_invalid_min_date(self):
+        """ Test changing to an invalid date below the min range.
 
         When an invalid (out of range) date is assinged the widget should
         truncate it in range.
 
         """
         component = self.component
-        max_date = date(2005,2,3)
-        component.maximum_date = max_date
-        component.date = date(2007,10,9)
-        self.assertEnamlInSync(component, 'date', max_date)
-        self.assertEqual(self.events, ['date_changed'] * 2)
-
         min_date = date(2000,2,3)
         component.minimum_date = min_date
         component.date = date(2000,1,1)
         self.assertEnamlInSync(component, 'date', min_date)
-        self.assertEqual(self.events, ['date_changed'] * 4)
+        self.assertEqual(self.events, ['date_changed'])
 
+    def test_invalid_max_date(self):
+        """ Test changing to an invalid date above the max range.
+
+        When an invalid (out of range) date is assinged the widget should
+        truncate it in range.
+
+        """
+        component = self.component
+        component.date = date(2011,10,9)
+        self.assertEqual(self.events, ['date_changed'])
+        max_date = date(2014,2,3)
+        component.maximum_date = max_date
+        component.date = date(2016,10,9)
+        self.assertEnamlInSync(component, 'date', max_date)
+        self.assertEqual(self.events, ['date_changed']*2)
 
     def test_set_format(self):
         """ Test setting the output format
