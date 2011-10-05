@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestHtml(EnamlTestCase):
@@ -19,9 +17,6 @@ class TestHtml(EnamlTestCase):
         Get the source of an Html widget.
 
     """
-
-    __metaclass__  = abc.ABCMeta
-
     text = 'That is a bold claim.'
 
     enaml = """
@@ -62,9 +57,9 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_source(self, widget):
         """ Get the source of an Html widget.
 
         """
-        return NotImplemented
+        pass

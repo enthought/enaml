@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestLabel(EnamlTestCase):
@@ -18,8 +16,6 @@ class TestLabel(EnamlTestCase):
         Returns the label text from the tookit widget
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -57,9 +53,10 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+
+    @required_method
     def get_text(self, widget):
         """ Returns the label text from the tookit widget
 
         """
-        return NotImplemented
+        pass

@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 class TestPushButton(EnamlTestCase):
     """ Logic for testing push buttons.
@@ -23,8 +21,6 @@ class TestPushButton(EnamlTestCase):
         Click the button programmatically.
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -122,24 +118,24 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def button_pressed(self):
         """ Press the button programmatically.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def button_released(self):
         """ Release the button programmatically.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def button_clicked(self):
         """ Click the button programmatically.
 
         """
-        return NotImplemented
+        pass
 

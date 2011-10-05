@@ -2,10 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
 from datetime import date
 
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestDateEdit(EnamlTestCase):
@@ -31,8 +30,6 @@ class TestDateEdit(EnamlTestCase):
         Get the toolkits widget's active date as a string.
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -140,37 +137,37 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_date(self, widget):
         """  Get the toolkits widget's active date.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_minimum_date(self, widget):
         """  Get the toolkits widget's maximum date attribute.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_maximum_date(self, widget):
         """ Get the toolkits widget's minimum date attribute.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def change_date(self, widget, date):
         """ Simulate a change date action at the toolkit widget.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_date_as_string(self, widget):
         """  Get the toolkits widget's active date as a string.
 
         """
-        return NotImplemented
+        pass

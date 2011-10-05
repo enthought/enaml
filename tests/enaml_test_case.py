@@ -8,6 +8,14 @@ from cStringIO import StringIO
 from enaml.factory import EnamlFactory
 from enaml.toolkit import default_toolkit
 
+def required_method(function_object):
+    def proxy_function(self, *args, **kwargs):
+        function_name = function_object.__name__
+        msg = "Function '{0}' needs to be implemented for the '{1}' test case"\
+                .format(function_name, self)
+        raise NotImplementedError(msg)
+    return proxy_function
+
 class EnamlTestCase(unittest.TestCase):
     """ Base class for testing Enaml object widgets.
 

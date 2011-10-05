@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestComboBox(EnamlTestCase):
@@ -24,8 +22,6 @@ class TestComboBox(EnamlTestCase):
         Fire an event to simulate the selection of an item.
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     enaml = """
 Window:
@@ -110,23 +106,23 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_selected_text(self, widget):
         """ Get the current selected text of a combo box.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_item_text(self, widget, index):
         """ Get the text of a combo box item at a particular index.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def select_item(self, widget, index):
         """ Fire an event to simulate the selection of an item.
 
         """
-        return NotImplemented
+        pass

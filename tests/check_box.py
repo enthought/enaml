@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
-
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 class TestCheckBox(EnamlTestCase):
 
@@ -30,8 +28,6 @@ class TestCheckBox(EnamlTestCase):
         Toggle the button programmatically.
 
     """
-
-    __metaclass__ = abc.ABCMeta
 
     check_box_label = 'checkbox label'
 
@@ -176,38 +172,38 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_text(self, widget):
         """ Returns the text from the tookit widget.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def checked_status(self, widget):
         """ Returns the checked status of the toolkit widget.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def checkbox_pressed(self, widget):
         """ Press the checkbox programmatically.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def checkbox_released(self, widget):
         """ Release the button programmatically.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def checkbox_toggle(self, widget):
         """ Toggle the button programmatically.
 
         """
-        return NotImplemented
+        pass
 

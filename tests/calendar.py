@@ -2,10 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import abc
 from datetime import date
 
-from .enaml_test_case import EnamlTestCase
+from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestCalendar(EnamlTestCase):
@@ -31,8 +30,6 @@ class TestCalendar(EnamlTestCase):
         Fire an event to indicate that a date was selected.
 
     """
-
-    __metaclass__  = abc.ABCMeta
 
     enaml = """
 import datetime
@@ -123,37 +120,37 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @abc.abstractmethod
+    @required_method
     def get_date(self, widget):
         """ Get a calendar's active date.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_minimum_date(self, widget):
         """ Get a calendar's minimum date attribute.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def get_maximum_date(self, widget):
         """ Get a calendar's maximum date attribute.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def activate_date(self, widget, date):
         """ Fire an event to indicate that a date was activated.
 
         """
-        return NotImplemented
+        pass
 
-    @abc.abstractmethod
+    @required_method
     def select_date(self, widget, date):
         """ Fire an event to indicate that a date was selected.
 
         """
-        return NotImplemented
+        pass
