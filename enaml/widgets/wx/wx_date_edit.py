@@ -44,36 +44,25 @@ class WXDateEdit(WXControl):
         parent = self.parent
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
-        self.set_date(parent.date)
+        self.set_and_validate_date()
 ##        self.set_format(parent.format)
         self.bind()
 
-    def parent_date_changed(self, obj, name, old_date, new_date):
-        """ The change handler for the 'date' attribute. Not meant for
-        public consumption.
+    def parent_date_changed(self, date):
+        """ The change handler for the 'date' attribute.
 
         """
-        parent = self.parent
-
-        self.set_date(new_date)
-        validated_widget_date = self.get_date()
-
-        if validated_widget_date != new_date:
-            self.parent.date = validated_widget_date
-
-        if old_date != validated_widget_date:
-            parent.date_changed = validated_widget_date
+        self.set_and_validate_date()
+        self.parent.date_changed = self.get_date()
 
     def parent_minimum_date_changed(self, date):
-        """ The change handler for the 'minimum_date' attribute. Not
-        meant for public consumption.
+        """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
 
     def parent_maximum_date_changed(self, date):
-        """ The change handler for the 'maximum_date' attribute. Not
-        meant for public consumption.
+        """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
@@ -82,7 +71,7 @@ class WXDateEdit(WXControl):
     def parent_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
 
-        Not implemented in native wx widget
+        Not implemented in wxPython
 
         """
         raise NotImplementedError
@@ -90,6 +79,7 @@ class WXDateEdit(WXControl):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
+
     def bind(self):
         """ Binds the event handlers for the date widget. Not meant
         for public consumption.
@@ -104,22 +94,25 @@ class WXDateEdit(WXControl):
 
         """
         parent = self.parent
-        new_date = from_wx_date(event.GetDate())
-        if parent.date != new_date:
-            parent.date = new_date
+        parent.date = from_wx_date(event.GetDate())
 
-    def set_date(self, date):
-        """ Sets the date on the widget with the provided value. Not
-        meant for public consumption.
+    def set_and_validate_date(self):
+        """ Sets and validates the component date on the widget.
+
+        The method sets the date in the toolkit widget and makes sure that
+        the enaml component is syncronized without firing trait notification
+        events.It simulates the QtDateEdit behaviour and perfoms the date
+        validation in place to avoid exceptions raised by the wxPython
+        DatePickerCtrl widget.
 
         """
         parent = self.parent
-        minimum = parent.minimum_date
-        maximum = parent.maximum_date
-
-        date = max(date, minimum)
-        date = min(date, maximum)
-        self.widget.SetValue(to_wx_date(date))
+        date = parent.date
+        validated_date = self.fit_to_range(date)
+        if self.get_date != validated_date:
+            self.widget.SetValue(to_wx_date(validated_date))
+        if validated_date != date:
+            self.parent.trait_setq(date=validated_date)
 
     def set_minimum_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
@@ -142,3 +135,14 @@ class WXDateEdit(WXControl):
         wx_date = self.widget.GetValue()
         return from_wx_date(wx_date)
 
+    def fit_to_range(self, date):
+        """ Fit the date to the component range.
+
+        """
+        parent = self.parent
+        minimum = parent.minimum_date
+        maximum = parent.maximum_date
+
+        date = max(date, minimum)
+        date = min(date, maximum)
+        return date
