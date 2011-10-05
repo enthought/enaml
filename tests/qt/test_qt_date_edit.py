@@ -36,9 +36,10 @@ class TestQtDateEdit(date_edit.TestDateEdit):
     def change_date(self, widget, date):
         """ Simulate a change date action at the toolkit widget.
 
+        .. note:: The setDate method in Qt will also signal the dateChanged
+            signal.
         """
         self.widget.setDate(date)
-        self.widget.dateChanged.emit(date)
 
     def get_date_as_string(self, widget):
         """  Get the toolkits widget's active date as a string.
