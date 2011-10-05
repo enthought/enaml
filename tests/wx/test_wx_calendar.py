@@ -46,5 +46,6 @@ class TestWxCalendar(calendar.TestCalendar):
         """
         cal_select_event = wx.calendar.EVT_CALENDAR_SEL_CHANGED
         event = wx.calendar.CalendarEvent(widget, cal_select_event.typeId)
+        widget.PySetDate(date)
         event.PySetDate(date)
         widget.GetEventHandler().ProcessEvent(event)

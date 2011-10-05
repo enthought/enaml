@@ -48,9 +48,8 @@ class TestWXDateEdit(date_edit.TestDateEdit):
 
         """
         wx_date = to_wx_date(date)
-##        widget.SetValue(wx_date)
+        widget.SetValue(wx_date)
         event_type = wx.EVT_DATE_CHANGED
-##        import pdb; pdb.set_trace()
         event = wx.DateEvent(widget, wx_date, event_type.typeId)
         widget.GetEventHandler().ProcessEvent(event)
 
