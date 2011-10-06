@@ -4,11 +4,23 @@ import datetime
 from enaml.enums import Orientation, Direction
 
 
-defn IntField():
+defn IntFieldList():
     Field:
         from_string = lambda val: int(val) if val else 0
         placeholder_text = 'Integers Only!'
-        style.background_color << "error" if self.error else "nocolor"
+        #style.background_color << "error" if self.error else "nocolor"
+    Field:
+        from_string = lambda val: int(val) if val else 0
+        placeholder_text = 'Integers Only!'
+        #style.background_color << "error" if self.error else "nocolor"
+    Field:
+        from_string = lambda val: int(val) if val else 0
+        placeholder_text = 'Integers Only!'
+        #style.background_color << "error" if self.error else "nocolor"
+    Field:
+        from_string = lambda val: int(val) if val else 0
+        placeholder_text = 'Integers Only!'
+        #style.background_color << "error" if self.error else "nocolor"
 
 
 defn MainWindow(model, table_model):
@@ -16,132 +28,140 @@ defn MainWindow(model, table_model):
         title << model.window_title
         Panel:
             HGroup:
-                style.stretch = 1
+                #style.stretch = 1
                 VGroup:
-                    style.size_policy = 'fixed'
+                    #style.size_policy = 'fixed'
                     Panel:
                         HGroup:
                             direction = Direction.RIGHT_TO_LEFT
-                            RadioButton rb1:
-                                style.cls = "stretch"
+                            RadioButton -> rb1:
+                                #style.cls = "stretch"
                                 text = 'rb1'
-                                toggled >> print('rb1:', self.checked)
+                                toggled >> print('rb1:', checked)
                             RadioButton:
-                                style.cls = "stretch"
+                                #style.cls = "stretch"
                                 text = 'rb2'
-                                toggled >> print('rb2:', self.checked)
+                                toggled >> print('rb2:', checked)
                             RadioButton:
-                                style.cls = "stretch"
+                                #style.cls = "stretch"
                                 text = 'rb3'
-                                toggled >> print('rb3:', self.checked)
+                                toggled >> print('rb3:', checked)
                             RadioButton:
-                                style.cls = "stretch"
+                                #style.cls = "stretch"
                                 text = 'rb4'
-                                toggled >> print('rb4:', self.checked)
+                                toggled >> print('rb4:', checked)
                     Panel:
                         HGroup:
                             RadioButton:
-                                style.cls = "stretch"
+                                #style.cls = "stretch"
                                 text = 'rb1'
                             RadioButton:
-                                style.cls = "stretch"
+                                #style.cls = "stretch"
                                 text = 'rb2'
                             RadioButton:
-                                style.cls = "stretch"
+                                #style.cls = "stretch"
                                 text = 'rb3'
                             RadioButton:
-                                style.cls = "stretch"
+                                #style.cls = "stretch"
                                 text = 'rb4'
                     DateEdit:
-                        date := cldr.date
-                    Calendar cldr:
+                        date = cldr.date
+                    Calendar -> cldr:
                         minimum_date = datetime.date(1970, 1, 1)
-                        activated >> print('activated', msg.new)
-                        selected >> print('selected', msg.new)
-                        date >> print('new date', msg.new)
-                    ComboBox cmbx:
-                        style.size_policy = 'expanding'
+                        activated >> print('activated', args.new)
+                        selected >> print('selected', args.new)
+                        date >> print('new date', args.new)
+                    ComboBox -> cmbx:
+                        #style.size_policy = 'expanding'
                         items = range(100)
                         value = 1
-                        selected >> print('selected', msg.new)
+                        selected >> print('selected', args.new)
                     PushButton:
-                        style.size_policy = 'expanding'
+                        #style.size_policy = 'expanding'
                         text = 'Randomize Error Colors'
                         clicked >> model.randomize_error_colors()
                     HGroup:
                         Label:
                             text = 'min:'
                         Label:
-                            text << str(sb.low)
+                            text = str(sb.low)
                         Label:
                             text = 'max:'
                         Label:
-                            text << str(sb.high)
+                            text = str(sb.high)
                         Label:
                             text = 'val:'
                         Label:
                             text << str(sb.value)
                     HGroup:
-                        CheckBox wrap_box:
+                        CheckBox -> wrap_box:
                             text = 'Allow wrap:'
                             toggled >> setattr(cmbx, 'value', 42)
-                        SpinBox sb:
-                            prefix << 'Foo ' if wrap_box.checked else 'Bar '
-                            suffix << ' lb' if wrap_box.checked else ' kg'
-                            wrap := wrap_box.checked
+                        SpinBox -> sb:
+                            prefix = 'Foo ' if wrap_box.checked else 'Bar '
+                            suffix = ' lb' if wrap_box.checked else ' kg'
+                            wrap = wrap_box.checked
                             special_value_text = "Auto"
                             step = 2
-                            low << -20 if not self.wrap else 0
+                            low << -20 if not wrap else 0
                             high = 20
-                    Field line_edit:
+                    Field -> line_edit:
                         value := model.window_title
                     # The wx layout behaves really really badly if the 
                     # slider orientation is vertical in a vgroup layout
                     HGroup:
                         Label:
                             text << "A Slider!" if sldr.value <= 1.0 else '%.2f    ' % sldr.value
-                            style.stretch = 0
-                        Slider sldr:
+                            #style.stretch = 0
+                        Slider -> sldr:
+                            tracking := tracking_box.checked
                             value = 1.0
-                            value >> print(self.value)
+                            value >> print(value)
                             to_slider = lambda val: math.log10(val)
-                            from_slider = lambda val: 10 ** val
+                            from_slider = lambda val: 10**val
                             tick_interval = 0.5
-                            orientation << Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
-                    IntField():
-                        pass
+                            orientation = Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
+                        CheckBox -> tracking_box:
+                            checked = True
+                            text = 'Tracking'
+                    IntFieldList -> int_fields:
+                        placeholder_text = 'foobar'
+                        int_fields[1].placeholder_text = 'eggs'
                     Form:
-                        Field fld:
+                        Field:
                             name = "foo"
-                            style.background_color << self.value
+                            #style.background_color << self.value
                             placeholder_text = "color name or #rrggbb(aa)"
-                            value >> setattr(ofld.style, 'color', 'red')
-                        Field ofld:
+                            #value >> setattr(ofld.style, 'color', 'red')
+                            value >> print(cut)
+                        Field -> ofld:
                             name = "bar"
-                            placeholder_text = self.name + ' field'
-                            style.color = ''
+                            placeholder_text = name + ' field'
+                            #bb1.value = 'this shouldnt happen'
+                            #style.color = ''
                         Field:
                             name = "baz"
-                            placeholder_text = self.name + ' field'
+                            placeholder_text = name + ' field'
                         Field:
                             name = "spam"
-                            placeholder_text = self.name + ' field'
+                            placeholder_text = name + ' field'
                         Field:
                             name = "ham"
-                            placeholder_text = self.name + ' field'
+                            placeholder_text = name + ' field'
                         Field:
                             name = "eggs"
-                            placeholder_text = self.name + ' field'
+                            placeholder_text = name + ' field'
                     # XXX this really shouldn't be necessary, but it is at the
                     # moment because of differences in wx and qt layout behavior
                     Panel:
-                        style.stretch = 1
+                        pass
+                        #style.stretch = 1
                 VGroup:
-                    style.stretch = 1
+                    #style.stretch = 1
                     TableView:
-                        style.stretch = 1
+                        #style.stretch = 1
                         item_model = table_model
                     Html:
-                        style.stretch = 1
+                        #style.stretch = 1
                         source = model.html_source
 

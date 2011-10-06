@@ -18,8 +18,10 @@ from enaml.item_models.abstract_item_model import AbstractTableModel
 from enaml.enums import DataRole
 
 with enaml.imports():
+    import working_test1
     from working_test1 import MainWindow
-
+    #working_test1.log10 = lambda val: val
+    #import pdb; pdb.set_trace()
 
 colors = Color.color_map.keys()
 
@@ -67,7 +69,24 @@ class TableModel(AbstractTableModel):
             return index.row + index.column
 
 
-view = MainWindow(model=Model(), table_model=TableModel())
+if __name__ == '__main__':
+    view = MainWindow(model=Model(), table_model=TableModel())
 
-view.show()
+    from enaml.toolkit import Toolkit
+    tk = Toolkit.active_toolkit()
+
+    tk.create_app()
+    style_sheet = tk.style_sheet
+    window = view[0]
+
+    stack = [window]
+    while stack:
+        component = stack.pop()
+        component.set_style_sheet(style_sheet)
+        stack.extend(component.children)
+
+    window.show()
+
+    tk.start_app()
+
 
