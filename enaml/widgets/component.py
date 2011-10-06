@@ -123,11 +123,11 @@ class Component(EnamlBase):
 
     Attributes
     ----------
-    id : ReadOnly
+    identifier : ReadOnly
         The identifier assigned to this element in the enaml source code.
         This is a protected attribute.
 
-    type : ReadOnly
+    type_name : ReadOnly
         The type name this component is using in the enaml source code.
         This is a protected attribute.
 
@@ -191,9 +191,9 @@ class Component(EnamlBase):
         where necessary.
 
     """
-    id = ReadOnly
+    identifier = ReadOnly
 
-    type = ReadOnly
+    type_name = ReadOnly
 
     parent = WeakRef('Component')
 
@@ -338,7 +338,12 @@ class Component(EnamlBase):
         """
         self.style.style_sheet = style_sheet
 
-    def layout(self):
+    def bind_expressions_tree(self):
+        self.bind_expressions()
+        for child in self.children:
+            child.bind_expressions_tree()
+
+    def layout(self, toplevel=True):
         """ Initialize and layout the component and it's children.
 
         In addition to running the layout process, this method calls
@@ -349,10 +354,16 @@ class Component(EnamlBase):
         """
         impl = self.toolkit_impl
         impl.set_parent(self)
+        
+        # Things that need to be called only once by the toplevel
+        # entry call
+        if toplevel:
+            self.bind_expressions_tree()
+        
         impl.create_widget()
 
         for child in self.children:
-            child.layout()
+            child.layout(toplevel=False)
 
         impl.initialize_widget()
         impl.create_style_handler()

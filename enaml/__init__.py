@@ -20,12 +20,17 @@ def test_collector():
 
 
 class imports(object):
+    """ A context manager that hooks/unhooks the enaml meta path
+    importer for the duration of the block. The helps user avoid
+    unintended consequences of a having a meta path importer slow
+    down all of their other imports.
 
+    """
     def __enter__(self):
         from .import_hooks import EnamlModuleFinder
-        EnamlModuleFinder.install()
+        EnamlModuleFinder.hook()
     
     def __exit__(self, *args, **kwargs):
         from .import_hooks import EnamlModuleFinder
-        EnamlModuleFinder.uninstall()
+        EnamlModuleFinder.unhook()
 

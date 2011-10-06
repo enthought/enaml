@@ -72,12 +72,12 @@ class EnamlStyleNodeData(HasStrictTraits):
     def node_id(self):
         style_node = self.style_node
         if style_node is not None:
-            return style_node.parent.id
+            return style_node.parent.identifier
 
     def node_type(self):
         style_node = self.style_node
         if style_node is not None:
-            return style_node.parent.type
+            return style_node.parent.type_name
     
     def node_classes(self):
         style_node = self.style_node

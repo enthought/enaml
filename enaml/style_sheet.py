@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 import re
 import itertools
-import functools
 
 from traits.api import (HasStrictTraits, HasTraits, Instance, Event, Interface, 
                         Str, Dict, Any, Set, Int, on_trait_change, Property)

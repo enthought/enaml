@@ -3,194 +3,106 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import ast
+import abc
 from collections import namedtuple
 import types
 
-from traits.api import (Any, CTrait, HasStrictTraits, Tuple, HasTraits,
-                        Instance, Property, Str, implements, cached_property,
-                        Interface, WeakRef, List)
+from traits.api import (Any, CTrait, HasStrictTraits, HasTraits, Instance, 
+                        Property, Str, WeakRef, Interface, implements, Callable)
 
 from .parsing.analyzer import AttributeVisitor
 
 
-#-------------------------------------------------------------------------------
-# Interfaces
-#-------------------------------------------------------------------------------
-class IExpressionDelegate(Interface):
-    """ Defines the IExpressionDelegate interface for Enaml.
-
-    An expression delegate can be added to an Enaml ui widget to change
-    the behavior of attributes on the widget. This makes it possible to
-    bind expressions and other dynamic behavior to the widget.
-
-    Attributes
-    ----------
-    value : Property
-        Should get and set the value of the expression.
-
-    validate_trait : Instance(CTrait)
-        The trait to use to validate the expression values.
-
-    global_ns : Instance(dict)
-        The global namespace in which the expression should execute.
-
-    local_ns : Intance(dict)
-        The local namespace in which the expression should execute.
-
-    Methods
-    -------
-    bind(obj, name)
-        Called automatically when the delegate should hook up listeners.
+#------------------------------------------------------------------------------
+# Custom mapping type for namespace type checking
+#------------------------------------------------------------------------------
+class MappingType(object):
+    """ An abstract class used for type checking on instances to ensure
+    that they provide a __getitem__ and __setitem__ method.
 
     """
-    value = Property
+    __metaclass__ = abc.ABCMeta
 
-    validate_trait = Instance(CTrait)
-
-    global_ns = Instance(dict)
-
-    local_ns = Instance(dict)
-
-    def bind(self, obj, name, validate_trait):
-        """ Called automatically when the delegate should bind listeners.
-
-        Arguments
-        ---------
-        obj : Component
-            The enaml component widget.
-
-        name : string
-            The name of the attribute on the component to which we
-            are delegating.
-
-        validate_trait : Instance(CTrait)
-            The trait that should be used to validate expression values.
-
-        Returns
-        -------
-        result : None
-
-        """
-        raise NotImplementedError
+    @classmethod
+    def __subclasshook__(cls, C):
+        if cls is MappingType:
+            if hasattr(C, '__getitem__') and hasattr(C, '__setitem__'):
+                return True
+        return NotImplemented
 
 
-class IExpressionDelegateFactory(Interface):
-    """ Defines the IExpressionDelegateFactory interface for Enaml.
+#-----------------------------------------------------------------------------
+# Express Locals
+#-----------------------------------------------------------------------------
+class ExpressionLocals(object):
+    """ A mapping object that will first look in the provided overrides,
+    then in the given locals mapping, and finally in the attribute space 
+    of the given object.
+    
+    Notes
+    -----
+    Setting items on this object will delegate the operation to the
+    provided locals mapping.
 
-    The IExpressionDelegateFactory defines the interface for creating
-    factories that create IExpressionDelegate objects which bind code
-    and/or expressions to the Enaml object tree.
-
-    Methods
-    -------
-    __call__(global_ns, local_ns)
-        Creates an IExpressionDelegate instance that is ready to be
-        added to an Enaml ui object.
+    Strong references are kept to all objects passed to the constructor,
+    so care should be taken in managing the lifetime of these scope
+    objects since their use is likely to create reference cycles.
+    (It's probably best to create these on-the-fly when needed)
 
     """
-    def __call__(self, global_ns, local_ns):
-        """ Creates an IExpressionDelegate instance.
+    __slots__ = ('local_ns', 'obj', 'overrides')
 
-        Creates an IExpressionDelegate instance that is ready to be
-        added to an Enaml ui object.
+    def __init__(self, local_ns, obj, overrides):
+        """ Initialize an expression locals instance.
 
-        Arguments
-        ---------
-        global_ns : dict
-            The global namespace for the delegate.
-
+        Parameters
+        ----------
         local_ns : dict
-            The local namespace for the delegate.
-
-        Returns
-        -------
-        result : IExpressionDelegate
-            The delegate that will handle this code.
+            The locals dict to check before checking the attribute space
+            of the given object.
+        
+        obj : object
+            The python object on which to attempt the getattr.
+        
+        **overrides
+            Objects that should take complete precedent.
 
         """
-        raise NotImplementedError
+        self.local_ns = local_ns
+        self.obj = obj
+        self.overrides = overrides
+    
+    def __getitem__(self, name):
+        try:
+            res = self.overrides[name]
+        except KeyError:
+            try:
+                res = self.local_ns[name]
+            except KeyError:
+                try:
+                    res = getattr(self.obj, name)
+                except AttributeError:
+                    raise KeyError(name)
+        return res
+
+    def __setitem__(self, name, val):
+        self.local_ns[name] = val
+
+
+#------------------------------------------------------------------------------
+# Expression Interface definitions
+#------------------------------------------------------------------------------
+class IExpressionDelegate(Interface):
+    pass
 
 
 class IExpressionNotifier(Interface):
-    """ The interface to create expression notifiers.
-
-    Attributes
-    ----------
-    global_ns : Instance(dict)
-        The global namespace in which the expression should execute.
-
-    local_ns : Intance(dict)
-        The local namespace in which the expression should execute.
-
-    Methods
-    -------
-    bind(obj, name)
-        Called automatically when the notifier should hook up listeners.
-
-    """
-    global_ns = Instance(dict)
-
-    local_ns = Instance(dict)
-
-    def bind(self, obj, name):
-        """ Called automatically when the notifier should bind listeners.
-
-        This is called automatically by the enaml widget when the notifier
-        should hook up listeners.
-
-        Arguments
-        ---------
-        obj : Component
-            The enaml component widget.
-
-        name : string
-            The name of the attribute on the component to which we are
-            delegating.
-
-        Returns
-        -------
-        result : None
-
-        """
-        raise NotImplementedError
+    pass
 
 
-class IExpressionNotifierFactory(Interface):
-    """ Defines the IExpressionNotifierFactory interface for Enaml.
-
-    An IExpressionNotifierFactory should create and return an
-    IExpressionNotifier that will execute an expression in response
-    to a change on an attribute of an Enaml widget.
-
-    Methods
-    -------
-    __call__()
-        Creates and returns an IExpressionNotifier.
-
-    """
-    def __call__(self, global_ns, local_ns):
-        """ Creates and returns an IExpressionNotifier.
-
-        Arguments
-        ---------
-        global_ns : dict
-            The global namespace for the delegate.
-
-        local_ns : dict
-            The local namespace for the delegate.
-
-        Returns
-        -------
-        result : IExpressionNotifier
-            The expression notifier that will handle the notifications.
-
-        """
-        raise NotImplementedError
-
-
-#-------------------------------------------------------------------------------
-# Expression Implementations
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
+# Default Expression Classes
+#------------------------------------------------------------------------------
 class BaseExpression(HasStrictTraits):
     """ A base class with common traits needed to implement various
     expression delegates and notifiers.
@@ -200,11 +112,13 @@ class BaseExpression(HasStrictTraits):
     code : Instance(types.CodeType)
         The code object that holds the expression
 
-    global_ns : Instance(dict)
-        The global namespace in which the expression should execute.
+    global_ns : Callable
+        A callable which returns the global namespace dictionary
+        for this expression.
 
-    local_ns : Intance(dict)
-        The local namespace in which the expression should execute.
+    local_ns : Callable
+        A callable which returns the local namespace mapping object
+        for this expression.
 
     obj : WeakRef
         The object for which we are providing delegation. We don't
@@ -224,11 +138,13 @@ class BaseExpression(HasStrictTraits):
         The underlying value store.
 
     """
+    global_ns = Callable
+
+    local_ns = Callable
+
+    py_ast = Instance(ast.Expression)
+
     code = Instance(types.CodeType)
-
-    global_ns = Instance(dict)
-
-    local_ns = Instance(dict)
 
     obj = WeakRef
 
@@ -239,6 +155,40 @@ class BaseExpression(HasStrictTraits):
     value = Property(depends_on='_value')
 
     _value = Any
+
+    def __init__(self, py_ast, code, global_ns, local_ns):
+        super(BaseExpression, self).__init__()
+        self.global_ns = global_ns
+        self.local_ns = local_ns
+        self.py_ast = py_ast
+        self.code = code
+
+    def parse_attr_names(self, py_ast, obj):
+        names = set()
+        name_node = ast.Name
+        for node in ast.walk(py_ast):
+            if isinstance(node, name_node):
+                name = node.id
+                if obj.trait(name):
+                    names.add(name)
+        return names
+
+    def get_globals(self):
+        global_ns = self.global_ns()
+        if type(global_ns) is not dict:
+            raise TypeError('The type of the global namespace must be dict')
+        return global_ns
+    
+    def get_locals(self, overrides):
+        local_ns = self.local_ns()
+        if not isinstance(local_ns, MappingType):
+            raise TypeError('The local namespace must be a mapping type')
+        return ExpressionLocals(local_ns, self.obj, overrides)
+
+    def bind(self, obj, name, validate_trait):
+        self.obj = obj
+        self.name = name
+        self.validate_trait = validate_trait
 
 
 class DefaultExpression(BaseExpression):
@@ -252,15 +202,6 @@ class DefaultExpression(BaseExpression):
 
     """
     implements(IExpressionDelegate)
-
-    def bind(self, obj, name, validate_trait):
-        """ The default expression does need to hookup listeners, but
-        it does assign the arguments to the appropriate attributes.
-
-        """
-        self.obj = obj
-        self.name = name
-        self.validate_trait = validate_trait
 
     def _get_value(self):
         """ The getter for the 'value' property. Returns the value in
@@ -283,7 +224,9 @@ class DefaultExpression(BaseExpression):
         with the validate_trait.
 
         """
-        val = eval(self.code, self.global_ns, self.local_ns)
+        f_globals = self.get_globals()
+        f_locals = self.get_locals({'self': self.obj})
+        val = eval(self.code, f_globals, f_locals)
         val = self.validate_trait.validate(self.obj, self.name, val)
         return val
 
@@ -303,32 +246,35 @@ class BindingExpression(DefaultExpression):
         expression such as 'a.b' or 'a.b()' or 'a.b.c()'. Only
         one level of attribute access is tracked.
 
-    See Also
-    --------
-    IExpressionDelegate
-
     """
-    dependencies = List(Tuple(Str, Str))
-
     def bind(self, obj, name, validate_trait):
         """ Binds the expression update method to listeners on the
         dependencies in the expression.
 
         """
         super(BindingExpression, self).bind(obj, name, validate_trait)
-        self.obj = obj
-        self.name = name
-        for dep_name, attr in self.dependencies:
+
+        global_ns = self.get_globals()
+        local_ns = self.get_locals({'self': self.obj})
+        py_ast = self.py_ast
+
+        visitor = AttributeVisitor()
+        visitor.visit(py_ast)
+        
+        refresh_value = self.refresh_value
+        for dep_name, attr in visitor.results():
             try:
-                dep = self.local_ns[dep_name]
+                dep = local_ns[dep_name]
             except KeyError:
                 try:
-                    dep = self.global_ns[dep_name]
+                    dep = global_ns[dep_name]
                 except KeyError:
-                    msg = '`%s` is not defined or accessible in the namespace.'
-                    raise NameError(msg % dep_name)
+                    raise NameError('name `%s` is not defined' % dep_name)
             if isinstance(dep, HasTraits):
-                dep.on_trait_change(self.refresh_value, attr)
+                dep.on_trait_change(refresh_value, attr)
+        
+        for name in self.parse_attr_names(py_ast, obj):
+            obj.on_trait_change(refresh_value, name)
 
     def refresh_value(self):
         """ The refresh function that is called by the dependency
@@ -336,7 +282,9 @@ class BindingExpression(DefaultExpression):
         the value.
 
         """
-        val = eval(self.code, self.global_ns, self.local_ns)
+        f_globals = self.get_globals()
+        f_locals = self.get_locals({'self': self.obj})
+        val = eval(self.code, f_globals, f_locals)
         self.value = val
 
 
@@ -364,8 +312,6 @@ class DelegateExpression(DefaultExpression):
     IExpressionDelegate
 
     """
-    dependencies = List(Tuple(Str, Str), maxlen=1)
-
     delegate_obj = Any
 
     delegate_attr_name = Str
@@ -376,17 +322,30 @@ class DelegateExpression(DefaultExpression):
 
         """
         super(DelegateExpression, self).bind(obj, name, validate_trait)
-        obj_name, attr_name = self.dependencies[0]
+        
+        global_ns = self.get_globals()
+        local_ns = self.get_locals({'self': self.obj})
+        
+        visitor = AttributeVisitor()
+        visitor.visit(self.py_ast)
+        deps = visitor.results()
+
+        if len(deps) > 1:
+            raise TypeError('Invalid expression for delegation.')
+
+        obj_name, attr_name = deps[0]
+
         try:
-            obj = self.local_ns[obj_name]
+            obj = local_ns[obj_name]
         except KeyError:
             try:
-                obj = self.global_ns[obj_name]
+                obj = global_ns[obj_name]
             except KeyError:
-                msg = '`%s` is not defined or accessible in the namespace.'
-                raise NameError(msg % obj_name)
+                raise NameError('name `%s` is not defined' % obj_name)
+
         self.delegate_obj = obj
         self.delegate_attr_name = attr_name
+
         if isinstance(obj, HasTraits):
             obj.on_trait_change(self.refresh_value, attr_name)
 
@@ -428,15 +387,15 @@ class NotifierExpression(BaseExpression):
     """
     implements(IExpressionNotifier)
 
-    message = namedtuple('Message', ('obj', 'name', 'old', 'new'))
+    arguments = namedtuple('Arguments', ('obj', 'name', 'old', 'new'))
 
-    def bind(self, obj, name):
-        """ Binds the expression notify method to a listener on the
-        attribute on the Enaml widget.
+    def bind(self, obj, name, validate_trait=None):
+        """ Overridden from the parent class since we don't recieve
+        (or care about) the validate_trait since a notification is
+        only right associative
 
         """
-        self.obj = obj
-        self.name = name
+        super(NotifierExpression, self).bind(obj, name, validate_trait)
         obj.on_trait_change(self.notify, name)
 
     def notify(self, obj, name, old, new):
@@ -445,108 +404,8 @@ class NotifierExpression(BaseExpression):
         namespaces while adding a message object in the local ns.
 
         """
-        local_ns = self.local_ns
-        local_ns['msg'] = self.message(obj, name, old, new)
-        eval(self.code, self.global_ns, local_ns)
-
-
-#-------------------------------------------------------------------------------
-# Factory implementations
-#-------------------------------------------------------------------------------
-class BaseExpressionFactory(HasStrictTraits):
-    """ A base class for building expression delegate and notifier
-    factories.
-
-    Attributes
-    ----------
-    ast : Instance(ast.Expression)
-        The Python ast.Expression node for this expression.
-
-    code : Property(Instance(types.CodeType))
-        The Python code object generated from the Python ast.
-
-    dependencies : Property(List(Tuple(Str, Str)))
-        The dependencies created by parsing the Python ast.
-
-    """
-    ast = Instance(ast.Expression)
-
-    code = Property(Instance(types.CodeType), depends_on='ast')
-
-    dependencies = Property(List(Tuple(Str, Str)), depends_on='ast')
-
-    def __init__(self, ast):
-        super(BaseExpressionFactory, self).__init__()
-        self.ast = ast
-
-    @cached_property
-    def _get_code(self):
-        """ Compiles the ast into a code object using 'eval' mode.
-
-        """
-        return compile(self.ast, 'Enaml', 'eval')
-
-    @cached_property
-    def _get_dependencies(self):
-        """ Parses the ast for attribute dependencies.
-
-        """
-        visitor = AttributeVisitor()
-        visitor.visit(self.ast)
-        return visitor.results()
-
-
-class DefaultExpressionFactory(BaseExpressionFactory):
-    """ An implementor of IExpressionDelegateFactory that creates
-    a DefaultExpression.
-
-    """
-    implements(IExpressionDelegateFactory)
-
-    def __call__(self, global_ns, local_ns,):
-        return DefaultExpression(code=self.code,
-                                 global_ns=global_ns,
-                                 local_ns=local_ns)
-
-
-class BindingExpressionFactory(BaseExpressionFactory):
-    """ An implementor of IExpressionDelegateFactory that creates
-    a BindingExpression.
-
-    """
-    implements(IExpressionDelegateFactory)
-
-    def __call__(self, global_ns, local_ns):
-        return BindingExpression(code=self.code,
-                                 dependencies=self.dependencies,
-                                 global_ns=global_ns,
-                                 local_ns=local_ns)
-
-
-class DelegateExpressionFactory(BaseExpressionFactory):
-    """ An implementor of IExpressionDelegateFactory that creates
-    a DelegateExpression
-
-    """
-    implements(IExpressionDelegateFactory)
-
-    def __call__(self, global_ns, local_ns):
-        return DelegateExpression(code=self.code,
-                                  dependencies=self.dependencies,
-                                  global_ns=global_ns,
-                                  local_ns=local_ns)
-
-
-class NotifierExpressionFactory(BaseExpressionFactory):
-    """ An implementor of INotifierExpressionFactory that creates
-    a NotifierExpression
-
-    """
-    implements(IExpressionNotifierFactory)
-
-    def __call__(self, global_ns, local_ns):
-        return NotifierExpression(code=self.code,
-                                  global_ns=global_ns,
-                                  local_ns=local_ns)
-
+        args = self.arguments(obj, name, old, new)
+        f_globals = self.get_globals()
+        f_locals = self.get_locals({'self': self.obj, 'args': args})
+        eval(self.code, f_globals, f_locals)
 

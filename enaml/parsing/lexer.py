@@ -6,13 +6,14 @@ import tokenize
 
 import ply.lex as lex
 
+from ..exceptions import EnamlSyntaxError
 
 def _raise_error(message, t, klass):
     raise klass(message + ' - lineno: %s' % t.lineno)
 
 
 def raise_syntax_error(message, t):
-    _raise_error(message, t, SyntaxError)
+    _raise_error(message, t, EnamlSyntaxError)
 
 
 def raise_indentation_error(message, t):
@@ -71,6 +72,7 @@ class EnamlLexer(object):
 
         # TML Specific Tokens
         'COLONEQUAL',
+        'UNPACK',
 
     )
 
@@ -130,6 +132,7 @@ class EnamlLexer(object):
     t_SLASH = r'/'
     t_STAR = r'\*'
     t_TILDE = r'~'
+    t_UNPACK = r'->'
     t_VBAR = r'\|'
 
     def t_comment(self, t):

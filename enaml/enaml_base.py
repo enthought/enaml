@@ -2,9 +2,25 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasStrictTraits, Instance, Dict, Str, Set, DelegatesTo, Any
+import weakref
+
+from traits.api import (HasStrictTraits, Instance, Dict, Str, Set, DelegatesTo, 
+                        Any, List, Callable)
 
 from .expressions import IExpressionDelegate, IExpressionNotifier
+
+
+class WeakDelayedBinder(object):
+
+    def __init__(self, obj, *args, **kwargs):
+        self.wr_obj = weakref.ref(obj)
+        self.args = args
+        self.kwargs = kwargs
+        
+    def __call__(self):
+        obj = self.wr_obj()
+        if obj is not None:
+            obj.bind(*self.args, **self.kwargs)
 
 
 class EnamlBase(HasStrictTraits):
@@ -35,43 +51,16 @@ class EnamlBase(HasStrictTraits):
 
     _notifiers = Set(Instance(IExpressionNotifier))
 
+    _binders = List(Callable)
+
     @classmethod
     def protect(cls, *names):
         protected = set(names)
-        parent_cls = cls.mro()[1]
         try:
-            parent_protected = parent_cls.__protected__
+            protected.update(cls.__protected__)
         except AttributeError:
-            parent_protected = ()
-        protected.update(parent_protected)
+            pass
         cls.__protected__ = protected
-        return cls
-
-    @classmethod
-    def unprotect(cls, *names):
-        try:
-            protected = cls.__protected__
-        except:
-            protected = set()
-        parent_cls = cls.mro()[1]
-        try:
-            parent_protected = parent_cls.__protected__
-        except AttributeError:
-            parent_protected = ()
-        protected.update(parent_protected)
-        protected.difference_update(names)
-        cls.__protected__ = protected
-        return cls
-
-    def _set_extended_delegate(self, root, leaf, delegate):
-        root_obj = getattr(self, root)
-        if isinstance(root_obj, EnamlBase):
-            root_obj.set_attribute_delegate(leaf, delegate)
-
-    def _add_extended_notifier(self, root, leaf, notifier):
-        root_obj = getattr(self, root)
-        if isinstance(root_obj, EnamlBase):
-            root_obj.add_attribute_notifier(leaf, notifier)
 
     def set_attribute_delegate(self, name, delegate):
         """ Delegates the value of the attribute to the delegate.
@@ -89,14 +78,6 @@ class EnamlBase(HasStrictTraits):
             An implementor of the IExpressionDelegate interface.
 
         """
-        leaf = None
-        if '.' in name:
-            name, leaf = name.split('.')
-
-        if leaf is not None:
-            self._set_extended_delegate(name, leaf, delegate)
-            return
-
         if name in self.__protected__:
             msg = ('The `%s` attribute of the `%s` object is protected and '
                    'cannot be used in left associative Enaml expressions.')
@@ -110,12 +91,10 @@ class EnamlBase(HasStrictTraits):
             trait = Any()()
 
         if delegate_name in delegates:
-            msg = 'The `%s` attr on the `%s` object is already associated.'
-            raise ValueError(msg % (name, type(self).__name__))
-        else:
-            delegates[delegate_name] = delegate
+            self.remove_trait(delegate_name)
+            self.remove_trait(name)
 
-        delegate.bind(self, name, trait())
+        delegates[delegate_name] = delegate
 
         self.add_trait(delegate_name, delegate)
         self.add_trait(name, DelegatesTo(delegate_name, 'value'))
@@ -123,6 +102,8 @@ class EnamlBase(HasStrictTraits):
         # Need to fire trait_added or the delegate
         # listeners don't get hooked up properly.
         self.trait_added = name
+        
+        self._binders.append(WeakDelayedBinder(delegate, self, name, trait()))
 
     def add_attribute_notifier(self, name, notifier):
         """ Adds a notifier for the given attribute name.
@@ -140,21 +121,18 @@ class EnamlBase(HasStrictTraits):
             An implementor of the IExpressionNotifer interface.
 
         """
-        leaf = None
-        if '.' in name:
-            name, leaf = name.split('.')
-
-        if leaf is not None:
-            self._add_extended_notifier(name, leaf, notifier)
-            return
-
         trait = self.trait(name)
         if trait is None:
             msg = '`%s` is not a proper attribute on the `%s` object.'
             raise AttributeError(msg % (name, type(self).__name__))
 
         self._notifiers.add(notifier)
-        notifier.bind(self, name)
+        self._binders.append(WeakDelayedBinder(notifier, self, name))
+
+    def bind_expressions(self):
+        for binder in self._binders:
+            binder()
+        self._binders = []            
 
 
 EnamlBase.protect('_delegates', '_notifiers')
