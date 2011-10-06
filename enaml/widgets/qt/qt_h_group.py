@@ -6,7 +6,7 @@ from traits.api import implements
 
 from .qt_group import QtGroup
 
-from ..hgroup import IHGroupImpl
+from ..h_group import IHGroupImpl
 
 
 class QtHGroup(QtGroup):
