@@ -31,7 +31,12 @@ class TestDateEdit(EnamlTestCase):
 
     """
 
-    enaml = """
+    def setUp(self):
+        """ Set up before the date_edit tests
+
+        """
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -39,14 +44,10 @@ Window:
                 date_changed >> events.append('date_changed')
 """
 
-    def setUp(self):
-        """ Set up before the calendar tests
-
-        """
-        super(TestDateEdit, self).setUp()
-        component = self.widget_by_id('test')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.events = []
+        self.view = self.parse_and_create(enaml, events=self.events)
+        self.component = self.component_by_id(self.view, 'test')
+        self.widget = self.component.toolkit_widget()
 
     def test_initialization_values(self):
         """ Test the initial attributes of the date edit component.
@@ -57,44 +58,6 @@ Window:
         self.assertEnamlInSync(component, 'date', date.today())
         self.assertEnamlInSync(component, 'minimum_date', date(1752, 9, 14))
         self.assertEnamlInSync(component, 'maximum_date', date(7999, 12, 31))
-        self.assertEqual(self.events, [])
-
-    def test_initial_too_early(self):
-        """ Check initialization with an invalid early date is corrected.
-
-        """
-        self.enaml = """
-import datetime
-Window:
-    Panel:
-        VGroup:
-            DateEdit test:
-                date = datetime.date(1980, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-"""
-        self.setUp()
-        component = self.component
-        self.assertEnamlInSync(component, 'date', date(1990, 1, 1))
-        self.assertEqual(self.events, [])
-
-    def test_initial_too_late(self):
-        """ Check initialization with an invalid late date is corrected.
-
-        """
-        self.enaml = """
-import datetime
-Window:
-    Panel:
-        VGroup:
-            DateEdit test:
-                date = datetime.date(2010, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-"""
-        self.setUp()
-        component = self.component
-        self.assertEnamlInSync(component, 'date', date(2000, 1, 1))
         self.assertEqual(self.events, [])
 
     def test_change_minimum_date(self):
@@ -177,6 +140,56 @@ Window:
         component.date = date(2007,10,9)
         widget_string = self.get_date_as_string(widget)
         self.assertEqual(widget_string, u'Oct 09 2007')
+
+
+    #--------------------------------------------------------------------------
+    # Special initialization condition tests
+    #--------------------------------------------------------------------------
+
+    def test_initial_too_late(self):
+        """ Check initialization with an invalid late date is corrected.
+
+        """
+        enaml = """
+import datetime
+Window:
+    Panel:
+        VGroup:
+            DateEdit test:
+                date = datetime.date(2010, 1, 1)
+                minimum_date = datetime.date(1990, 1, 1)
+                maximum_date = datetime.date(2000, 1, 1)
+                date_changed >> events.append('date_changed')
+"""
+        events = []
+        view = self.parse_and_create(enaml, events=events)
+        component = self.component_by_id(view, 'test')
+        self.assertEnamlInSync(component, 'date', date(2000, 1, 1))
+        self.assertEqual(self.events, [])
+
+
+    def test_initial_too_early(self):
+        """ Check initialization with an invalid early date is corrected.
+
+        """
+
+        enaml = """
+import datetime
+Window:
+    Panel:
+        VGroup:
+            DateEdit test:
+                date = datetime.date(1980, 1, 1)
+                minimum_date = datetime.date(1990, 1, 1)
+                maximum_date = datetime.date(2000, 1, 1)
+                date_changed >> events.append('date_changed')
+"""
+
+        events = []
+        view = self.parse_and_create(enaml, events=events)
+        component = self.component_by_id(view, 'test')
+        self.assertEnamlInSync(component, 'date', date(1990, 1, 1))
+        self.assertEqual(self.events, [])
 
     #--------------------------------------------------------------------------
     # absrtact methods

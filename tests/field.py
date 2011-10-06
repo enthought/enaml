@@ -15,7 +15,12 @@ class TestField(EnamlTestCase):
 
     """
 
-    enaml = """
+    def setUp(self):
+        """ Set up tests for Enaml's Field widget.
+
+        """
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -32,12 +37,9 @@ Window:
                 return_pressed >> events.append('return_pressed')
 """
 
-    def setUp(self):
-        """ Set up tests for Enaml's Field widget.
-
-        """
-        super(TestField, self).setUp()
-        self.component = self.widget_by_id('field')
+        self.events = []
+        self.view = self.parse_and_create(enaml, events=self.events)
+        self.component = self.component_by_id(self.view, 'field')
         self.widget = self.component.toolkit_widget()
         self.impl = self.component.toolkit_impl
 

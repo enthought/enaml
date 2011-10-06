@@ -17,7 +17,11 @@ class TestLabel(EnamlTestCase):
 
     """
 
-    enaml = """
+    def setUp(self):
+        """ Set up label tests.
+
+        """
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -25,14 +29,9 @@ Window:
                 text = 'foo'
 """
 
-    def setUp(self):
-        """ Set up label tests.
-
-        """
-        super(TestLabel, self).setUp()
-        component = self.widget_by_id('label')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.view = self.parse_and_create(enaml)
+        self.component = self.component_by_id(self.view, 'label')
+        self.widget = self.component.toolkit_widget()
 
     def test_initial_text(self):
         """ Test the initial text of a label.

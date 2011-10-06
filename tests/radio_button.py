@@ -20,11 +20,16 @@ class TestRadioButton(EnamlTestCase):
 
     """
 
-    label_1 = 'Label 1'
 
-    label_2 = 'Label 2'
+    def setUp(self):
+        """ Finalise set up before the Radio button tests
 
-    enaml = """
+        """
+
+        label_1 = 'Label 1'
+        label_2 = 'Label 2'
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -35,14 +40,11 @@ Window:
                 text = '{1}'
 """.format(label_1, label_2)
 
-    def setUp(self):
-        """ Finalise set up before the Radio button tests
-
-        """
-        super(TestRadioButton, self).setUp()
-        self.radio1 = self.widget_by_id('radio1')
+        self.events = []
+        self.view = self.parse_and_create(enaml)
+        self.radio1 = self.component_by_id(self.view, 'radio1')
         self.widget1 = self.radio1.toolkit_widget()
-        self.radio2 = self.widget_by_id('radio2')
+        self.radio2 = self.component_by_id(self.view, 'radio2')
         self.widget2 = self.radio2.toolkit_widget()
 
 
@@ -63,11 +65,11 @@ Window:
 
         """
         widget1_label = self.get_text(self.widget1)
-        self.assertEqual(widget1_label, self.label_1)
+        self.assertEqual(widget1_label, 'Label 1')
         self.assertEqual(self.radio1.text, widget1_label)
 
         widget2_label = self.get_text(self.widget2)
-        self.assertEqual(widget2_label, self.label_2)
+        self.assertEqual(widget2_label, 'Label 2')
         self.assertEqual(self.radio2.text, widget2_label)
 
     def test_change_label(self):

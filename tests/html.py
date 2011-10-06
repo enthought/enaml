@@ -19,22 +19,21 @@ class TestHtml(EnamlTestCase):
     """
     text = 'That is a bold claim.'
 
-    enaml = """
+    def setUp(self):
+        """ Set up before the Html tests.
+
+        """
+        enaml = """
 Window:
     Panel:
         VGroup:
             Html html:
                 source = '<b>{0}</b>'
-""".format(text)
+""".format(self.text)
 
-    def setUp(self):
-        """ Set up before the Html tests.
-
-        """
-        super(TestHtml, self).setUp()
-        component = self.widget_by_id('html')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.view = self.parse_and_create(enaml)
+        self.component = self.component_by_id(self.view, 'html')
+        self.widget = self.component.toolkit_widget()
 
     def test_initial_source(self):
         """ Test the initial source of an Html widget.

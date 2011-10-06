@@ -29,9 +29,15 @@ class TestCheckBox(EnamlTestCase):
 
     """
 
-    check_box_label = 'checkbox label'
 
-    enaml = """
+    def setUp(self):
+        """ Setup enaml component for testing
+
+        """
+
+        self.check_box_label = 'checkbox label'
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -41,16 +47,12 @@ Window:
                 toggled >> events.append('toggled')
                 pressed >> events.append('pressed')
                 released >> events.append('released')
-""".format(check_box_label)
+""".format(self.check_box_label)
 
-    def setUp(self):
-        """ Finalise set up push button tests.
-
-        """
-        super(TestCheckBox, self).setUp()
-        component = self.widget_by_id('checkb1')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.events = []
+        self.view = self.parse_and_create(enaml, events=self.events)
+        self.component = self.component_by_id(self.view, 'checkb1')
+        self.widget = self.component.toolkit_widget()
 
     def test_box_initialization(self):
         """ Test the initialization of the widget

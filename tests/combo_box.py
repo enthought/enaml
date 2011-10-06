@@ -23,7 +23,12 @@ class TestComboBox(EnamlTestCase):
 
     """
 
-    enaml = """
+    def setUp(self):
+        """ Setup before the combo box tests.
+
+        """
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -34,14 +39,10 @@ Window:
                 selected >> events.append('selected')
 """
 
-    def setUp(self):
-        """ Setup before the combo box tests.
-
-        """
-        super(TestComboBox, self).setUp()
-        component = self.widget_by_id('cmb')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.events = []
+        self.view = self.parse_and_create(enaml, events=self.events)
+        self.component = self.component_by_id(self.view, 'cmb')
+        self.widget = self.component.toolkit_widget()
 
     def test_selection(self):
         """ Test the initial checked state of the radio buttons.

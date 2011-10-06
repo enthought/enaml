@@ -10,7 +10,7 @@ from .enaml_test_case import EnamlTestCase, required_method
 class TestCalendar(EnamlTestCase):
     """ Logic for testing calendars.
 
-    Tooklit testcases need to provide the following functions
+    Toolkit testcases need to provide the following functions
 
     Abstract Methods
     ----------------
@@ -31,8 +31,12 @@ class TestCalendar(EnamlTestCase):
 
     """
 
-    enaml = """
-import datetime
+    def setUp(self):
+        """ Set up before the calendar tests
+
+        """
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -41,14 +45,10 @@ Window:
                 activated >> events.append('activated')
 """
 
-    def setUp(self):
-        """ Set up before the calendar tests
-
-        """
-        super(TestCalendar, self).setUp()
-        component = self.widget_by_id('cal')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.events = []
+        self.view = self.parse_and_create(enaml, events=self.events)
+        self.component = self.component_by_id(self.view, 'cal')
+        self.widget = self.component.toolkit_widget()
 
     def test_initial_value(self):
         """ Test the initial attributes of the calendar.
@@ -67,44 +67,6 @@ Window:
         """
         self.activate_date(self.widget, date(1970, 2, 1))
         self.assertEqual(self.events, ['activated'])
-
-    def test_initial_too_early(self):
-        """ Check initialization with an invalid early date is corrected.
-
-        """
-        self.enaml = """
-import datetime
-Window:
-    Panel:
-        VGroup:
-            Calendar cal:
-                date = datetime.date(1980, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-"""
-        self.setUp()
-        component = self.component
-        self.assertEnamlInSync(component, 'date', date(1990, 1, 1))
-        self.assertEqual(self.events, [])
-
-    def test_initial_too_late(self):
-        """ Check initialization with an invalid late date is corrected.
-
-        """
-        self.enaml = """
-import datetime
-Window:
-    Panel:
-        VGroup:
-            Calendar cal:
-                date = datetime.date(2010, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-"""
-        self.setUp()
-        component = self.component
-        self.assertEnamlInSync(component, 'date', date(2000, 1, 1))
-        self.assertEqual(self.events, [])
 
     def test_change_minimum_date(self):
         """ Test changing the minimum date.
@@ -177,6 +139,56 @@ Window:
         self.select_date(widget, new_date)
         self.assertEnamlInSync(component, 'date', new_date)
         self.assertEqual(self.events, ['selected'])
+
+
+    #--------------------------------------------------------------------------
+    # Special initialization tests
+    #--------------------------------------------------------------------------
+
+    def test_initial_too_early(self):
+        """ Check initialization with an invalid early date is corrected.
+
+        """
+        enaml = """
+import datetime
+Window:
+    Panel:
+        VGroup:
+            Calendar cal:
+                date = datetime.date(1980, 1, 1)
+                minimum_date = datetime.date(1990, 1, 1)
+                maximum_date = datetime.date(2000, 1, 1)
+                selected >> events.append('selected')
+                activated >> events.append('activated')
+
+"""
+        events = []
+        view = self.parse_and_create(enaml, events=events)
+        component = self.component_by_id(view, 'cal')
+        self.assertEnamlInSync(component, 'date', date(1990, 1, 1))
+        self.assertEqual(events, [])
+
+    def test_initial_too_late(self):
+        """ Check initialization with an invalid late date is corrected.
+
+        """
+        enaml = """
+import datetime
+Window:
+    Panel:
+        VGroup:
+            Calendar cal:
+                date = datetime.date(2010, 1, 1)
+                minimum_date = datetime.date(1990, 1, 1)
+                maximum_date = datetime.date(2000, 1, 1)
+                selected >> events.append('selected')
+                activated >> events.append('activated')
+"""
+        events = []
+        view = self.parse_and_create(enaml, events=events)
+        component = self.component_by_id(view, 'cal')
+        self.assertEnamlInSync(component, 'date', date(2000, 1, 1))
+        self.assertEqual(events, [])
 
     #--------------------------------------------------------------------------
     # absrtact methods

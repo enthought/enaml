@@ -54,7 +54,12 @@ class TestSpinBox(EnamlTestCase):
 
     """
 
-    enaml = """
+    def setUp(self):
+        """ Set up before the spin box tests.
+
+        """
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -71,14 +76,10 @@ Window:
                 wrap = True
 """
 
-    def setUp(self):
-        """ Set up before the spin box tests.
-
-        """
-        super(TestSpinBox, self).setUp()
-        component = self.widget_by_id('spinbox')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.events = []
+        self.view = self.parse_and_create(enaml, events=self.events)
+        self.component = self.component_by_id(self.view, 'spinbox')
+        self.widget = self.component.toolkit_widget()
 
     def test_initial_attributes(self):
         """ Compare the Enaml SpinBox's attributes with its toolkit widget.

@@ -22,7 +22,12 @@ class TestPushButton(EnamlTestCase):
 
     """
 
-    enaml = """
+    def setUp(self):
+        """ Set up before push button tests.
+
+        """
+
+        enaml = """
 Window:
     Panel:
         VGroup:
@@ -33,14 +38,10 @@ Window:
                 released >> events.append('released')
 """
 
-    def setUp(self):
-        """ Set up before push button tests.
-
-        """
-        super(TestPushButton, self).setUp()
-        component = self.widget_by_id('pb1')
-        self.widget = component.toolkit_widget()
-        self.component = component
+        self.events = []
+        self.view = self.parse_and_create(enaml, events=self.events)
+        self.component = self.component_by_id(self.view, 'pb1')
+        self.widget = self.component.toolkit_widget()
 
     def test_button_pressed(self):
         """ React to a push button press event.
