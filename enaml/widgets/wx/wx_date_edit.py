@@ -109,8 +109,7 @@ class WXDateEdit(WXControl):
         parent = self.parent
         date = parent.date
         validated_date = self.fit_to_range(date)
-        if self.get_date != validated_date:
-            self.widget.SetValue(to_wx_date(validated_date))
+        self.widget.SetValue(to_wx_date(validated_date))
         if validated_date != date:
             self.parent.trait_setq(date=validated_date)
 
