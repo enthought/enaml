@@ -14,7 +14,6 @@ class Color(HasStrictTraits):
     """ Enaml color representation in the RGBA colorspace.
 
     """
-
     #: The red component (0-255)
     r = Range(0, 255)
 
