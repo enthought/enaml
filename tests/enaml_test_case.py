@@ -19,43 +19,24 @@ def required_method(function_object):
 class EnamlTestCase(unittest.TestCase):
     """ Base class for testing Enaml object widgets.
 
-    The following methods are required to be defined by the user in
-    order to be able to create an object.
+    This class provide utility methods and assertion functions to help
+    the testing of enaml components
 
     """
 
-    #: Toolkit implementation to use during testing
+    #: default toolkit to use for the enaml source parsing
     toolkit = default_toolkit()
 
-    def setUp(self):
-        """ Parse the test enaml source and get ready for the tests.
-
-        Test subclasses need to set the self.enaml attribute to a valid
-        enaml source and (optional) define the toolkit to use through the
-        self.toolkit attribute. The enaml source stored in `self.enaml` is
-        parsed using the desired toolkit `self.toolkit` and store the
-        view.
-
-        This class only provides a basic mechanism for these
-        procedures. Additional setUp tasks are ussualy required so derived
-        class  need to overdire the method and call the parent setUp
-        before they continue with the testcase setup.
-
-        """
-        events = []
-        fact = EnamlFactory(StringIO(self.enaml), toolkit=self.toolkit)
-        view = fact(events=events)
-
-        # Lay widgets out, but don't display them to screen.
-        view._apply_style_sheet()
-        view.window.layout()
-
-        self.namespace = view.ns
-        self.view = view
-        self.events = events
-
-    def widget_by_id(self, widget_id):
+    def component_by_id(self, view, component_id):
         """ Find an item in the view's namespace with a given id.
+
+        Arguments
+        ---------
+        view :
+            The enaml based view object
+
+        component_id :
+            The enaml component id.
 
         Raises
         ------
@@ -63,7 +44,31 @@ class EnamlTestCase(unittest.TestCase):
             if no there is no object with that id.
 
         """
-        return getattr(self.namespace, widget_id)
+        return getattr(view.ns, component_id)
+
+    def parse_and_create(self, enaml_source, **kwargs):
+        """ Parse the test enaml source and returns the enaml view object.
+
+        Arguments
+        ---------
+        enaml_source : str
+            The enaml source to use
+
+        kwargs :
+            The models to pass and associate with the view.
+
+        The method parses the enaml_source and creates the enaml view object
+        using the desired toolkit and model
+
+        """
+        fact = EnamlFactory(StringIO(enaml_source), toolkit=self.toolkit)
+        view = fact(**kwargs)
+
+        # Lay widgets out, but don't display them to screen.
+        view._apply_style_sheet()
+        view.window.layout()
+
+        return view
 
     def assertEnamlInSync(self, component, attribute_name, value):
         """ Verify that the requested attribute is properly set
