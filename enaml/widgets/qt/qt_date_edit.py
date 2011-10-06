@@ -49,30 +49,23 @@ class QtDateEdit(QtControl):
     def parent_date_changed(self, date):
         """ The change handler for the 'date' attribute.
 
-        The method assigns the current component date in the toolkit
-        widget. If the widget trancates the value then the components is
-        updated to reflect the widget behaviour.
-
         """
         self.set_and_validate_date()
 
     def parent_minimum_date_changed(self, date):
-        """ The change handler for the 'minimum_date' attribute. Not
-        meant for public consumption.
+        """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
 
     def parent_maximum_date_changed(self, date):
-        """ The change handler for the 'maximum_date' attribute. Not
-        meant for public consumption.
+        """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
 
     def parent_format_changed(self, date_format):
-        """ The change handler for the 'format' attribute. Not
-        meant for public consumption.
+        """ The change handler for the 'format' attribute.
 
         """
         self.set_format(date_format)
@@ -99,10 +92,10 @@ class QtDateEdit(QtControl):
         parent.date_changed = new_date
 
     def set_and_validate_date(self):
-        """ Sets and validates the component date on the widget.
+        """ Sets and validates the date on the widget.
 
         The method sets the date in the toolkit widget and makes sure that
-        if the widget has truncated the enaml component is syncronized
+        if the widget has truncated the value, enaml component is syncronized
         without firing trait notification events.
         """
         parent = self.parent
