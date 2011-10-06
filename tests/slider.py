@@ -42,6 +42,29 @@ class TestSlider(EnamlTestCase):
 
     Abstract Methods
     ----------------
+    get_value(self, widget)
+        Get the Slider's value.
+
+    get_tick_interval(self, widget)
+        Get the Slider's tick_interval value.
+
+    get_tick_position(self, widget)
+        Get the Slider's tick position style.
+
+    get_orientation(self, widget)
+        Get the Slider's orientation.
+
+    get_single_step(self, widget)
+        Get the Slider's single step value.
+
+    get_page_step(self, widget)
+        Get the Slider's page step value.
+
+    get_tracking(self, widget)
+        Get the Slider's tracking status.
+
+    send_event(self, widget, event)
+        Send an event to the Slider programmatically.
 
     """
 
