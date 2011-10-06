@@ -143,7 +143,7 @@ Window:
 
 
     #--------------------------------------------------------------------------
-    # Special initialization condition tests
+    # Special initialization tests
     #--------------------------------------------------------------------------
 
     def test_initial_too_late(self):
