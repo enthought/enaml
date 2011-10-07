@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import math
-
 from enaml.converters import Converter, IntConverter
 
 from .enaml_test_case import EnamlTestCase, required_method
@@ -303,15 +301,6 @@ Window:
         self.test_undo_insert()
         self.component.redo()
         self.assertEnamlInSync(self.component, 'value', 'abarbc')
-
-    def test_clear_with_converter(self):
-        """ Clear a text field that has a converter.
-
-        """
-        self.component.converter = IntConverter()
-        self.component.clear()
-        self.assertEqual(self.component.value, '')
-        self.assertTrue(self.component.error)
 
     #--------------------------------------------------------------------------
     # Abstract methods

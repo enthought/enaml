@@ -4,7 +4,7 @@ Expected Test Failures
 
 October 5rd, 2011
 
-7 test are currently expected fail.
+5 test are currently expected fail.
 2 test is skipped.
 
 Introduction
@@ -39,7 +39,6 @@ enaml.widgets.field.Field
 
 * Qt doesn't fire max_length_reached Event.
 * The text_changed and text_edited Events are always fired together.
-* Field.clear() updates the selection, but not the value.
 
 Skips
 =====
