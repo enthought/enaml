@@ -4,11 +4,13 @@
 #------------------------------------------------------------------------------
 from enaml.widgets.qt.qt import QtGui, QtCore
 
-from .. import slider
-from enaml.toolkit import qt_toolkit
 from enaml.enums import Orientation
 from enaml.widgets.qt.qt_slider import (SLIDER_MAX, HOR_TICK_POS_MAP,
                                         VERT_TICK_POS_MAP)
+
+from .qt_test_assistant import QtTestAssistant
+from .. import slider
+
 # A map from Qt constants for horizontal or vertical orientation to Enaml enums.
 ORIENTATION_MAP = {QtCore.Qt.Horizontal: Orientation.HORIZONTAL,
                    QtCore.Qt.Vertical: Orientation.VERTICAL}
@@ -26,10 +28,8 @@ ACTION_MAP ={slider.TestEvents.HOME: QtGui.QAbstractSlider.SliderToMinimum,
              slider.TestEvents.PAGE_UP: QtGui.QAbstractSlider.SliderPageStepAdd,
              slider.TestEvents.PAGE_DOWN: QtGui.QAbstractSlider.SliderPageStepSub}
 
-class TestQtSlider(slider.TestSlider):
+class TestQtSlider(QtTestAssistant, slider.TestSlider):
     """ QtLabel tests. """
-
-    toolkit = qt_toolkit()
 
     def get_value(self, component, widget):
         """ Get a slider's position.

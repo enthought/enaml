@@ -2,15 +2,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .qt_test_assistant import QtTestAssistant
 from .. import date_edit
-from enaml.toolkit import qt_toolkit
 
 from enaml.widgets.qt.qt_date_edit import qdate_to_python
 
-class TestQtDateEdit(date_edit.TestDateEdit):
+class TestQtDateEdit(QtTestAssistant, date_edit.TestDateEdit):
     """ QtDateEdit tests. """
-
-    toolkit = qt_toolkit()
 
     def get_date(self, widget):
         """  Get the toolkits widget's active date.

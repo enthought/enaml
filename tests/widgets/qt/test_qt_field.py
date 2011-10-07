@@ -2,13 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .qt_test_assistant import QtTestAssistant
 from .. import field
-from enaml.toolkit import qt_toolkit
 
-class TestQtField(field.TestField):
+class TestQtField(QtTestAssistant, field.TestField):
     """ QtField tests. """
-
-    toolkit = qt_toolkit()
 
     def get_value(self, widget):
         """ Get the visible text of a field.
