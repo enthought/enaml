@@ -1,4 +1,4 @@
-from unittest import expectedFailure
+import datetime
 
 from enaml import converters
 
@@ -264,3 +264,45 @@ class TestSliderLogConverter(ConverterTestCase):
         
         """
         self.assertConverterSymmetric(self.converter, 3, 1000)
+
+
+class TestDateConverter(ConverterTestCase):
+    """ Test the date converter.
+    
+    """
+    def test_default_format(self):
+        """ Test a default instance of DateConverter.
+        
+        """
+        converter = converters.DateConverter()
+        self.assertConverterSymmetric(converter, '2002-02-22',
+                                      datetime.date(2002, 2, 22))
+        
+    def test_custom_format(self):
+        """ Test DateConverter with a custom format string.
+        
+        """
+        converter = converters.DateConverter('%B %d, %Y')
+        self.assertConverterSymmetric(converter, 'February 29, 1996',
+                                      datetime.date(1996, 2, 29))
+
+
+class TestDateTimeConverter(ConverterTestCase):
+    """ Test the datetime converter.
+    
+    """
+    def test_default_format(self):
+        """ Test the a default instance of DateTimeConverter
+        
+        """
+        converter = converters.DateTimeConverter()
+        self.assertConverterSymmetric(converter, '1991-08-19T20:02:00',
+                                      datetime.datetime(1991, 8, 19, 20, 2))
+    
+    def test_custom_format(self):
+        """ Test DateTimeConverter with a custom format string.
+        
+        """
+        converter = converters.DateTimeConverter('%I:%M on %m/%d/%Y')
+        self.assertConverterSymmetric(converter, '12:01 on 04/20/1979',
+                                      datetime.datetime(1979, 4, 20, 0, 1))

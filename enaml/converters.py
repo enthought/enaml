@@ -2,8 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import datetime
 import math
+
 from abc import ABCMeta, abstractmethod
+
 
 class Converter(object):
     """ Map values from an Enaml component to a model, and vice versa.
@@ -127,6 +130,7 @@ class FloatConverter(Converter):
     def from_component(self, value):
         return float(value)
 
+
 class SliderRangeConverter(FloatConverter):
     """ Map a slider's value onto an interval other than (0.0, 1.0).
 
@@ -143,8 +147,9 @@ class SliderRangeConverter(FloatConverter):
         low = self.low
         return float(value * (self.high - low) + low)
 
+
 class SliderLogConverter(Converter):
-    """ Map the slider's range to a log scale
+    """ Map the slider's range to a log scale.
 
     """
     def to_component(self, value):
@@ -152,3 +157,55 @@ class SliderLogConverter(Converter):
 
     def from_component(self, value):
         return 10 ** value
+
+
+class DateConverter(Converter):
+    """ Convert between dates and strings.
+    
+    """
+    def __init__(self, format_string='%Y-%m-%d'):
+        """ Default the date format YYYY-MM-DD.
+        
+        """
+        self.format_string = format_string
+    
+    def to_component(self, value):
+        """ Convert from a date to a string.
+        
+        """
+        return value.strftime(self.format_string)
+    
+    def from_component(self, value):
+        """ Convert from a string to a date.
+        
+        """
+        return datetime.datetime.strptime(value, self.format_string).date()
+
+
+class DateTimeConverter(Converter):
+    """ Convert between datetime objects and strings.
+    
+    """
+    def __init__(self, format_string='%Y-%m-%dT%H:%M:%S'):
+        """ Default to the ISO 8601 date and time format.
+        
+        Example
+        -------
+        >>> format_string = '%Y-%m-%dT%H:%M:%S'
+        >>> datetime.datetime(2000, 02, 20, 14, 41).strftime(format_string)
+        '2000-02-20T14:41:00'
+        
+        """
+        self.format_string = format_string
+    
+    def to_component(self, value):
+        """ Convert from a datetime to a string.
+        
+        """
+        return value.strftime(self.format_string)
+    
+    def from_component(self, value):
+        """ Convert from a string to a datetime.
+        
+        """
+        return datetime.datetime.strptime(value, self.format_string)
