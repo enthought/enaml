@@ -39,15 +39,22 @@ class TestWXSlider(slider.TestSlider):
     toolkit = wx_toolkit()
 
     def setUp(self):
+        """ Setup the slider testing based on the wx backend.
+
+        Special care is needed because we need to have a specific size
+        of the wx slider in order to properly check the firing of the
+        pressed thumb event.
+
+        """
         super(TestWXSlider, self).setUp()
         self.widget.SetSize(wx.Size(200,20))
 
-    def get_value(self, widget):
+    def get_value(self, component, widget):
         """ Get a slider's position.
 
         """
         value = float(widget.GetValue())
-        return self.component.from_slider(value / SLIDER_MAX)
+        return component.convert.to_model(value / SLIDER_MAX)
 
     def get_tick_interval(self, widget):
         """ Get the Slider's tick_interval value.
@@ -159,5 +166,3 @@ class TestWXSlider(slider.TestSlider):
             widget.SetValue(value)
             event = wx.ScrollEvent(event_type.typeId, widget.GetId())
             widget.GetEventHandler().ProcessEvent(event)
-
-
