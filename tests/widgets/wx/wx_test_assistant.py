@@ -10,7 +10,7 @@ class WXTestAssistant(object):
 
     This class is to be used as a mixing aling with the base enaml test case
     class for the components tests of the wx backend. It sets the correct
-    toolkit attribute and provides some usefull methods to mock events in
+    toolkit attribute and provides some useful methods to mock events in
     wx.
 
     """
