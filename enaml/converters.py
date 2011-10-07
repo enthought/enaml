@@ -17,13 +17,13 @@ class Converter(object):
     (0.0, 1.0).
 
     Enaml provides several Converters. Subclass a Converter for custom
-    behavior. Subclasses must implement both the 'to_widget' and
-    'to_model' functions.
+    behavior. Subclasses must implement both the 'to_component' and
+    'from_component' functions.
 
-    .. note:: Please ensure that 'to_widget' and 'to_model' are inverse
+    .. note:: Please ensure that 'to_component' and 'from_component' are inverse
        functions. Thus the following experssion should be always valid::
 
-            value == Converter.to_model(Converter.to_widget(value))
+            value == Converter.from_component(Converter.to_component(value))
 
        Failure to follow this advice can result in infinite recursion.
 
@@ -32,7 +32,7 @@ class Converter(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def to_widget(self, value):
+    def to_component(self, value):
         """ Convert to a value that a toolkit widget can understand.
 
         Parameters
@@ -44,7 +44,7 @@ class Converter(object):
         return NotImplemented
 
     @abstractmethod
-    def to_model(self, value):
+    def from_component(self, value):
         """ Convert a widget's value for display or some other use.
 
         Parameters
@@ -62,10 +62,10 @@ class PassThroughConverter(Converter):
     The converter just passes the values throught without acting uppon them
 
     """
-    def to_widget(self, value):
+    def to_component(self, value):
         return value
 
-    def to_model(self,value):
+    def from_component(self,value):
         return value
 
 
@@ -73,10 +73,10 @@ class StringConverter(Converter):
     """ A simple Converter that converts any value to a string.
 
     """
-    def to_widget(self, value):
+    def to_component(self, value):
         return str(value)
 
-    def to_model(self, value):
+    def from_component(self, value):
         return str(value)
 
 
@@ -86,10 +86,10 @@ class IntConverter(Converter):
     This can be used for integer Fields.
 
     """
-    def to_widget(self, value):
+    def to_component(self, value):
         return str(value)
 
-    def to_model(self, value):
+    def from_component(self, value):
         return int(value)
 
 
@@ -97,10 +97,10 @@ class HexConverter(IntConverter):
     """ Convert from a widget to a base-16 integer, and back to a hex string.
 
     """
-    def to_widget(self, value):
+    def to_component(self, value):
         return hex(value)
 
-    def to_model(self, value):
+    def from_component(self, value):
         return int(value, 16)
 
 
@@ -108,10 +108,10 @@ class OctalConverter(IntConverter):
     """ Convert from a widget to a base-8 integer, and back to an octal string.
 
     """
-    def to_widget(self, value):
+    def to_component(self, value):
         return oct(value)
 
-    def to_model(self, value):
+    def from_component(self, value):
         return int(value, 8)
 
 
@@ -121,10 +121,10 @@ class FloatConverter(Converter):
     This can be used for float Fields.
 
     """
-    def to_widget(self, value):
+    def to_component(self, value):
         return str(value)
 
-    def to_model(self, value):
+    def from_component(self, value):
         return float(value)
 
 class SliderRangeConverter(FloatConverter):
@@ -135,11 +135,11 @@ class SliderRangeConverter(FloatConverter):
         self.low = low
         self.high = high
 
-    def to_widget(self, value):
+    def to_component(self, value):
         low = self.low
         return (value - low) / float(self.high - low)
 
-    def to_model(self, value):
+    def from_component(self, value):
         low = self.low
         return float(value * (self.high - low) + low)
 
@@ -147,8 +147,8 @@ class SliderLogConverter(Converter):
     """ Map the slider's range to a log scale
 
     """
-    def to_widget(self, value):
+    def to_component(self, value):
         return math.log10(value)
 
-    def to_model(self, value):
+    def from_component(self, value):
         return 10 ** value
