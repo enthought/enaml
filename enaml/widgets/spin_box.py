@@ -6,6 +6,8 @@ from traits.api import Int, Str, Callable, Bool, Range, Instance, Either
 
 from .control import IControlImpl, Control
 
+from ..converters import Converter, IntConverter
+
 
 class ISpinBoxImpl(IControlImpl):
 
@@ -30,10 +32,7 @@ class ISpinBoxImpl(IControlImpl):
     def parent_special_value_text_changed(self, special_value_text):
         raise NotImplementedError
     
-    def parent_to_string_changed(self, to_string):
-        raise NotImplementedError
-    
-    def parent_from_string_changed(self, from_string):
+    def parent_converter_changed(self, converter):
         raise NotImplementedError
     
     def parent_wrap_changed(self, wrap):
@@ -67,14 +66,9 @@ class SpinBox(Control):
         An optional string to display when the user selects the 
         minimum value in the spin box.
 
-    to_string : Callable
-        An optional callable that takes one argument to convert the 
-        integer value to text to display in the spin box.
-
-    from_string : Callable
-        An optional callable that takes one argument to convert the 
-        user typed string to an integer value.
-    
+    converter : Instance(Converter)
+        A pair of functions for converting values to, and from, a widget.
+        
     validate_string : Callable
         An optional callable that takes a one argument and checks
         if it is a valid text value.  Must return an enums.Validity
@@ -100,9 +94,7 @@ class SpinBox(Control):
 
     special_value_text = Str
 
-    to_string = Callable(str)
-
-    from_string = Callable(int)
+    converter = Instance(Converter, factory=IntConverter, args=())
     
     validate_string = Either(Callable, None)
 

@@ -98,8 +98,7 @@ class QtSpinBox(QtControl):
         self.set_spin_prefix(parent.prefix)
         self.set_spin_suffix(parent.suffix)
         self.set_spin_special_value_text(parent.special_value_text)
-        self.set_spin_to_string(parent.to_string)
-        self.set_spin_from_string(parent.from_string)
+        self.set_spin_converter(parent.converter)
         self.set_spin_validate_string(parent.validate_string)
         self.set_spin_wrap(parent.wrap)
         self.set_spin_value(parent.value)
@@ -154,19 +153,12 @@ class QtSpinBox(QtControl):
         """
         self.set_spin_special_value_text(text)
     
-    def parent_to_string_changed(self, to_string):
-        """ The change handler for the 'to_string' attribute. Not meant
+    def parent_converter_changed(self, converter):
+        """ The change handler for the 'converter' attribute. Not meant
         for public consumption.
         
         """
-        self.set_spin_to_string(to_string)
-    
-    def parent_from_string_changed(self, from_string):
-        """ The change handler for the 'from_string' attribute. Not meant 
-        for public consumption.
-        
-        """
-        self.set_spin_from_string(from_string)
+        self.set_spin_converter(converter)
     
     def parent_validate_string_changed(self, validate_string):
         """ The change handler for the 'validate_string' attribute. Not meant 
@@ -249,20 +241,15 @@ class QtSpinBox(QtControl):
         """
         self.widget.setSpecialValueText(text)
     
-    def set_spin_to_string(self, to_string):
-        """ Updates the to_string function of the spin box. Not meant
-        for public consumption.
+    def set_spin_converter(self, converter):
+        """ Updates the 'to_string' and 'from_string' functions of the
+        spin box. Not meant for public consumption.
 
         """
-        self.widget.to_string = to_string
+        self.widget.from_string = converter.from_component
+        self.widget.to_string = converter.to_component
         self.widget.setValue(self.parent.value)
-    
-    def set_spin_from_string(self, from_string):
-        """ Updates the from_string function of the spin box. Not meant
-        for public consumption.
-
-        """
-        self.widget.from_string = from_string
+        
     
     def set_spin_validate_string(self, validate_string):
         """ Updates the validate_string function of the spin box. Not meant

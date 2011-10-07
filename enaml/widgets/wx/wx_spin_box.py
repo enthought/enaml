@@ -406,8 +406,7 @@ class WXSpinBox(WXControl):
         self.set_spin_prefix(parent.prefix)
         self.set_spin_suffix(parent.suffix)
         self.set_spin_special_value_text(parent.special_value_text)
-        self.set_spin_to_string(parent.to_string)
-        self.set_spin_from_string(parent.from_string)
+        self.set_spin_converter(parent.converter)
         self.set_spin_wrap(parent.wrap)
         self.set_spin_value(parent.value)
         self.bind()
@@ -461,19 +460,12 @@ class WXSpinBox(WXControl):
         """
         self.set_spin_special_value_text(text)
     
-    def parent_to_string_changed(self, to_string):
-        """ The change handler for the 'to_string' attribute. Not meant
+    def parent_converter_changed(self, converter):
+        """ The change handler for the 'converter' attribute. Not meant
         for public consumption.
         
         """
-        self.set_spin_to_string(to_string)
-    
-    def parent_from_string_changed(self, from_string):
-        """ The change handler for the 'from_string' attribute. Not meant 
-        for public consumption.
-        
-        """
-        self.set_spin_from_string(from_string)
+        self.set_spin_converter(converter)
     
     def parent_wrap_changed(self, wrap):
         """ The change handler for the 'wrap' attribute. Not meant for
@@ -548,19 +540,13 @@ class WXSpinBox(WXControl):
         """
         self.widget.SetSpecialValueText(text)
     
-    def set_spin_to_string(self, to_string):
-        """ Updates the to_string function of the spin box. Not meant
-        for public consumption.
+    def set_spin_converter(self, converter):
+        """ Updates the 'to_string' and 'from_string' functions of the
+        spin box. Not meant for public consumption.
 
         """
-        self.widget.SetToString(to_string)
-    
-    def set_spin_from_string(self, from_string):
-        """ Updates the from_string function of the spin box. Not meant
-        for public consumption.
-
-        """
-        self.widget.SetFromString(from_string)
+        self.widget.SetFromString(converter.from_component)
+        self.widget.SetToString(converter.to_component)
     
     def set_spin_wrap(self, wrap):
         """ Updates the wrap value of the spin box. Not meant for public

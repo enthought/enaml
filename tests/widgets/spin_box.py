@@ -37,12 +37,6 @@ class TestSpinBox(EnamlTestCase):
     get_special_value_text(self, widget):
         Get a spin box's special value text, displayed at the minimum value.
 
-    get_to_string(self, widget)
-        Get a spin box's value-to-display callable.
-
-    get_from_string(self, widget)
-        Get a spin box's display-to-value callable.
-
     get_text(self, widget)
         Get the text displayed in a spin box.
 
@@ -60,6 +54,8 @@ class TestSpinBox(EnamlTestCase):
         """
 
         enaml = """
+from enaml.converters import IntConverter
+
 Window:
     Panel:
         VGroup:
@@ -71,8 +67,7 @@ Window:
                 prefix = 'foo'
                 suffix = ' bar'
                 special_value_text = 'Special'
-                to_string = lambda x: str(x) + '!'
-                from_string = lambda x: int(x[:-1], 2)
+                converter = IntConverter()
                 wrap = True
 """
 
@@ -98,8 +93,6 @@ Window:
         self.assertEqual(self.get_suffix(widget), component.suffix)
         self.assertEqual(self.get_special_value_text(widget),
                          component.special_value_text)
-        self.assertEqual(self.get_from_string(widget), component.from_string)
-        self.assertEqual(self.get_to_string(widget), component.to_string)
 
     def test_change_low(self):
         """ Update the spin box's minimum value.
@@ -210,8 +203,9 @@ Window:
 
         """
         component = self.component
-        expected = component.prefix + component.to_string(component.value) + \
-                   component.suffix
+        expected = '{0}{1}{2}'.format(component.prefix,
+                            component.converter.from_component(component.value),
+                            component.suffix)
         self.assertEqual(self.get_text(self.widget), expected)
 
     def test_special_value_text(self):
@@ -280,20 +274,6 @@ Window:
     @required_method
     def get_special_value_text(self, widget):
         """ Get a spin box's special value text, displayed at the minimum value.
-
-        """
-        pass
-
-    @required_method
-    def get_to_string(self, widget):
-        """ Get a spin box's value-to-display callable.
-
-        """
-        pass
-
-    @required_method
-    def get_from_string(self, widget):
-        """ Get a spin box's display-to-value callable.
 
         """
         pass

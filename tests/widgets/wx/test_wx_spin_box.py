@@ -59,18 +59,6 @@ class TestWxSpinBox(spin_box.TestSpinBox, WXTestAssistant):
         """
         return widget.GetSpecialValueText()
 
-    def get_to_string(self, widget):
-        """ Get a spin box's value-to-display callable.
-
-        """
-        return widget.GetToString()
-
-    def get_from_string(self, widget):
-        """ Get a spin box's display-to-value callable.
-
-        """
-        return widget.GetFromString()
-
     def get_text(self, widget):
         """ Get the text displayed in a spin box.
 

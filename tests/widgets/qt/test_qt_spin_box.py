@@ -59,18 +59,6 @@ class TestQtSpinBox(spin_box.TestSpinBox):
         """
         return widget.specialValueText()
 
-    def get_to_string(self, widget):
-        """ Get a spin box's value-to-display callable.
-        
-        """
-        return widget.to_string
-    
-    def get_from_string(self, widget):
-        """ Get a spin box's display-to-value callable.
-        
-        """
-        return widget.from_string
-
     def get_text(self, widget):
         """ Get the text displayed in a spin box.
         
