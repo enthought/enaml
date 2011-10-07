@@ -21,7 +21,6 @@ class TestCustomConverter(ConverterTestCase):
     
     """
 
-    @expectedFailure
     def test_converter_without_from_component(self):
         """ The abstract method 'from_component' must be implemented.
         
@@ -32,9 +31,8 @@ class TestCustomConverter(ConverterTestCase):
                 return value
         
         # This instantiation will fail.
-        NoFromComponent()
+        self.assertRaises(TypeError, NoFromComponent)
 
-    @expectedFailure
     def test_converter_without_to_component(self):
         """ The abstract method 'to_component' must be implemented.
         
@@ -45,7 +43,7 @@ class TestCustomConverter(ConverterTestCase):
                 return value
 
         # This instantiation will fail.
-        NoToComponent()
+        self.assertRaises(TypeError, NoToComponent)
     
     def test_custom_converter(self):
         """ Instantiate a proper custom Converter.
