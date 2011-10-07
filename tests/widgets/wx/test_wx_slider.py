@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .. import slider
-from . import send_wx_mouse_event
-from enaml.toolkit import wx_toolkit
 from enaml.enums import TickPosition, Orientation
 from enaml.widgets.wx.wx_slider import SLIDER_MAX
+
+from .wx_test_assistant import WXTestAssistant
+from .. import slider
+
 
 # A map from wxSlider constants to Enaml TickPosition values.
 TICK_POS_MAP = {wx.SL_BOTTOM: TickPosition.DEFAULT,
@@ -33,10 +34,8 @@ EVENT_MAP = {slider.TestEvents.PRESSED: wx.EVT_LEFT_DOWN,
              slider.TestEvents.PAGE_UP: wx.EVT_SCROLL_PAGEUP,
              slider.TestEvents.PAGE_DOWN: wx.EVT_SCROLL_PAGEDOWN}
 
-class TestWXSlider(slider.TestSlider):
+class TestWXSlider(slider.TestSlider, WXTestAssistant):
     """ QtLabel tests. """
-
-    toolkit = wx_toolkit()
 
     def setUp(self):
         """ Setup the slider testing based on the wx backend.
@@ -147,7 +146,7 @@ class TestWXSlider(slider.TestSlider):
         event_type = EVENT_MAP[event]
         if  event_type in (wx.EVT_LEFT_DOWN, wx.EVT_LEFT_UP):
             position = wx.Point(100,10)
-            send_wx_mouse_event(widget, event_type, position=position)
+            self.send_wx_mouse_event(widget, event_type, position=position)
         else:
             value = widget.GetValue()
             if event_type == wx.EVT_SCROLL_BOTTOM:

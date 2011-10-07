@@ -2,13 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .wx_test_assistant import WXTestAssistant
 from .. import label
-from enaml.toolkit import wx_toolkit
 
-class TestWxLabel(label.TestLabel):
+class TestWxLabel(label.TestLabel, WXTestAssistant):
     """ WXLabel tests. """
-
-    toolkit = wx_toolkit()
 
     def get_text(self, widget):
         """ Get a label's text.

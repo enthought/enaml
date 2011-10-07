@@ -5,15 +5,13 @@
 import wx
 
 from enaml.widgets.wx.wx_date_edit import to_wx_date, from_wx_date
-from enaml.toolkit import wx_toolkit
 
+from .wx_test_assistant import WXTestAssistant
 from .. import date_edit
 
 
-class TestWXDateEdit(date_edit.TestDateEdit):
+class TestWXDateEdit(date_edit.TestDateEdit, WXTestAssistant):
     """ WXDateEdit tests. """
-
-    toolkit = wx_toolkit()
 
     def test_set_format(self):
         """ Test setting the output format

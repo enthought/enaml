@@ -4,14 +4,12 @@
 #------------------------------------------------------------------------------
 import wx.calendar
 
+from .wx_test_assistant import WXTestAssistant
 from .. import calendar
-from enaml.toolkit import wx_toolkit
 
 
-class TestWxCalendar(calendar.TestCalendar):
+class TestWxCalendar(calendar.TestCalendar, WXTestAssistant):
     """ WXCalendar tests. """
-
-    toolkit = wx_toolkit()
 
     def get_date(self, widget):
         """ Get a calendar's active date.

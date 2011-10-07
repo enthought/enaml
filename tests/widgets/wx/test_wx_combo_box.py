@@ -4,16 +4,12 @@
 #------------------------------------------------------------------------------
 import wx
 
-from . import send_wx_event
-
+from .wx_test_assistant import WXTestAssistant
 from .. import combo_box
-from enaml.toolkit import wx_toolkit
 
 
-class TestWxComboBox(combo_box.TestComboBox):
+class TestWxComboBox(combo_box.TestComboBox, WXTestAssistant):
     """ WXComboBox tests. """
-
-    toolkit = wx_toolkit()
 
     def get_selected_text(self, widget):
         """ Get the current selected text of a combo box.
@@ -29,7 +25,7 @@ class TestWxComboBox(combo_box.TestComboBox):
 
     def select_item(self, widget, index):
         """ Fire an event to simulate the selection of an item.
-        
+
         """
         widget.SetSelection(index)
-        send_wx_event(widget, wx.EVT_COMBOBOX)
+        self.send_wx_event(widget, wx.EVT_COMBOBOX)
