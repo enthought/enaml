@@ -6,6 +6,8 @@ from traits.api import Bool, Event, Int, Str, Property, Instance, Callable, Any
 
 from .control import IControlImpl, Control
 
+from ..converters import Converter, StringConverter
+
 
 class IFieldImpl(IControlImpl):
 
@@ -21,10 +23,7 @@ class IFieldImpl(IControlImpl):
     def parent_placeholder_text_changed(self, placeholder_text):
         raise NotImplementedError
     
-    def parent_from_string_changed(self, from_string):
-        raise NotImplementedError
-    
-    def parent_to_string_changed(self, to_string):
+    def parent_converter_changed(self, converter):
         raise NotImplementedError
     
     def parent_value_changed(self, value):
@@ -99,12 +98,8 @@ class Field(Control):
         The grayed-out text to display if 'text' is empty and the
         widget doesn't have focus.
 
-    from_string : Callable
-        A callable to convert the string in the the text box to a
-        Python value.
-
-    to_string : Callable
-        A callable to convert the Python value to a string for display.
+    converter : Instance(Converter)
+        A pair of inverse functions, for converting values to and from a widget.
 
     value : Any
         The Python value to display in the field.
@@ -198,9 +193,7 @@ class Field(Control):
 
     placeholder_text = Str
 
-    from_string = Callable(str)
-    
-    to_string = Callable(str)
+    converter = Instance(Converter, factory=StringConverter, args=())
       
     value = Any
 

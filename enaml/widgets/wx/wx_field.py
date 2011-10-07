@@ -153,18 +153,16 @@ class WXField(WXControl):
             self.update_text()
             self.parent._modified = False
 
-    def parent_from_string_changed(self, from_string):
-        """ Handles the from_string callable on the parent changing.
+    def parent_converter_changed(self, converter):
+        """ Handles the converter object on the parent changing.
 
         """
+        # to_string
+        self.update_text()
+        
+        # from_string
         event = wx.PyCommandEvent(wx.EVT_TEXT.typeId, self.widget.GetId())
         self.on_text_updated(event)
-
-    def parent_to_string_changed(self, to_string):
-        """ Handles the to_string callable on the parent changing.
-
-        """
-        self.update_text()
 
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
@@ -352,7 +350,7 @@ class WXField(WXControl):
         text = widget.GetValue()
         self.setting_value = True
         try:
-            value = parent.from_string(text)
+            value = parent.converter.from_component(text)
         except Exception as e:
             parent.exception = e
             parent.error = True
@@ -404,7 +402,7 @@ class WXField(WXControl):
         """
         parent = self.parent
         try:
-            text = parent.to_string(parent.value)
+            text = parent.converter.to_component(parent.value)
         except Exception as e:
             parent.exception = e
             parent.error = True

@@ -78,17 +78,15 @@ class QtField(QtControl):
         if not self.setting_value:
             self.set_cursor_position(cursor_position)
     
-    def parent_from_string_changed(self, from_string):
-        """ Handles the from_string callable on the parent changing.
+    def parent_converter_changed(self, converter):
+        """ Handles the converter object on the parent changing.
 
         """
-        self.on_text_updated(None)
-
-    def parent_to_string_changed(self, to_string):
-        """ Handles the to_string callable on the parent changing.
-
-        """
+        # to_string
         self.update_text()
+        
+        # from_string
+        self.on_text_updated(None)
     
     def parent_value_changed(self, value):
         """ The change handler for the 'value' attribute on the parent.
@@ -273,7 +271,7 @@ class QtField(QtControl):
         text = widget.text()
         self.setting_value = True
         try:
-            value = parent.from_string(text)
+            value = parent.converter.from_component(text)
         except Exception as e:
             parent.exception = e
             parent.error = True
@@ -324,7 +322,7 @@ class QtField(QtControl):
         """
         parent = self.parent
         try:
-            text = parent.to_string(parent.value)
+            text = parent.converter.to_component(parent.value)
         except Exception as e:
             parent.exception = e
             parent.error = True

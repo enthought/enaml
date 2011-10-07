@@ -2,6 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import math
+
+from enaml.converters import Converter, IntConverter
+
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -41,14 +45,12 @@ Window:
         self.view = self.parse_and_create(enaml, events=self.events)
         self.component = self.component_by_id(self.view, 'field')
         self.widget = self.component.toolkit_widget()
-        self.impl = self.component.toolkit_impl
 
     def test_value(self):
         """ Test the toolkit widget's initial state.
 
         """
-        component_string = self.component.to_string(self.component.value)
-        self.assertEqual(component_string, self.get_value(self.widget))
+        self.assertEqual(self.component.value, self.get_value(self.widget))
         self.assertEnamlInSync(self.component, 'value', 'abc')
 
     def test_edit_text(self):
@@ -90,9 +92,7 @@ Window:
         max_len = self.component.max_length
         self.edit_text(self.widget, 'a' * (max_len + 1))
         widget_text = self.get_value(self.widget)
-        component_text = self.component.to_string(self.component.value)
-
-        self.assertEqual(widget_text, component_text)
+        self.assertEqual(widget_text, self.component.value)
         self.assertEqual(len(widget_text), max_len)
 
         # Qt doesn't automatically fire a relevant signal, so it will fail.
@@ -118,35 +118,43 @@ Window:
     #    #self.component.value = 'foo'
     #    self.assertEqual(self.get_value(self.widget), initial)
 
-    def test_to_string(self):
+    def test_convert_to_component(self):
         """ Test the field's 'to_string' attribute.
 
         """
-        self.component.value = 5
-        self.component.to_string = lambda x: str(x) + '!'
-        self.assertEqual(self.get_value(self.widget), '5!')
+        self.component.value = 64
+        self.component.converter = IntConverter()
+        to_component = self.component.converter.to_component
+        self.assertEqual(to_component(self.get_value(self.widget)), '64')
 
-    def test_from_string(self):
+    def test_convert_from_component(self):
         """ Test the field's 'from_string' attribute.
 
         """
-        self.component.from_string = lambda x: int(x, 16)
-        self.assertEqual(self.component.value, 0xABC)
+        self.change_text(self.widget, '123')
+        self.component.converter = IntConverter()
+        self.assertEqual(self.component.value, 123)
 
-    def test_to_string_and_from_string(self):
+    def test_conversion_to_and_from_widget(self):
         """ Test a field with both 'to_string' and 'from_string' callables.
 
         """
-        component = self.component
-        component.to_string = lambda x: str(x) + '!'
-        component.from_string = lambda x: x[:-1]
-        component.value = '5'
+        self.component.converter = IntConverter()
+        self.component.value = 25
         widget_value = self.get_value(self.widget)
+        convert = self.component.converter
+        self.assertEqual(convert.to_component(convert.from_component(widget_value)),
+                         '25')
 
-        self.assertEqual(widget_value, '5!')
-        self.assertEqual(component.value, '5')
-        self.assertEqual(component.to_string(component.value), widget_value)
-
+    def test_conversion_error(self):
+        """ Check that an error is set on a failed conversion.
+        
+        """
+        self.assertFalse(self.component.error)
+        self.change_text(self.widget, '100.0')
+        self.component.converter = IntConverter()
+        self.assertTrue(self.component.error)
+        
     #def test_placeholder_text(self):
     #    """ Remove focus to check a field's placeholder text.
     #
@@ -174,22 +182,22 @@ Window:
         """ Select all text in a field.
 
         """
-        self.impl.select_all()
+        self.component.select_all()
         self.assertEnamlInSync(self.component, 'selected_text', 'abc')
 
     def test_deselect(self):
         """ De-select text in a field.
 
         """
-        self.impl.select_all()
-        self.impl.deselect()
+        self.component.select_all()
+        self.component.deselect()
         self.assertEnamlInSync(self.component, 'selected_text', '')
 
     def test_clear(self):
         """ Clear all text from the field.
 
         """
-        self.impl.clear()
+        self.component.clear()
         self.assertEnamlInSync(self.component, 'value', '')
 
     def test_backspace(self):
@@ -197,7 +205,7 @@ Window:
 
         """
         self.set_cursor_position(self.widget, 2)
-        self.impl.backspace()
+        self.component.backspace()
         self.assertEnamlInSync(self.component, 'value', 'ac')
 
     def test_delete(self):
@@ -205,21 +213,21 @@ Window:
 
         """
         self.set_cursor_position(self.widget, 2)
-        self.impl.delete()
+        self.component.delete()
         self.assertEnamlInSync(self.component, 'value', 'ab')
 
     def test_end(self, mark=False):
         """ Move the cursor to the end of the field.
 
         """
-        self.impl.end()
+        self.component.end()
         self.assertEnamlInSync(self.component, 'cursor_position', 3)
 
     def test_home(self, mark=False):
         """ Move the cursor to the beginning of the field.
 
         """
-        self.impl.home()
+        self.component.home()
         self.assertEnamlInSync(self.component, 'cursor_position', 0)
 
     # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
@@ -229,7 +237,7 @@ Window:
     #
     #    """
     #    self.component.set_selection(1, 3)
-    #    self.impl.cut()
+    #    self.component.cut()
     #    self.assertEnamlInSync(self.component, 'value', 'a')
 
     #def test_copy_paste(self):
@@ -237,9 +245,9 @@ Window:
     #
     #    """
     #    self.component.set_selection(1, 2)
-    #    self.impl.copy()
+    #    self.component.copy()
     #    self.set_cursor_position(self.widget, 0)
-    #    self.impl.paste()
+    #    self.component.paste()
     #    self.assertEnamlInSync(self.component, 'value', 'babc')
 
     #def test_cut_paste(self):
@@ -247,9 +255,9 @@ Window:
     #
     #    """
     #    self.component.set_selection(1, 2)
-    #    self.impl.cut()
+    #    self.component.cut()
     #    self.set_cursor_position(self.widget, 0)
-    #    self.impl.paste()
+    #    self.component.paste()
     #    self.assertEnamlInSync(self.component, 'value', 'bac')
 
     def test_insert(self):
@@ -257,7 +265,7 @@ Window:
 
         """
         self.set_cursor_position(self.widget, 2)
-        self.impl.insert('foo')
+        self.component.insert('foo')
         self.assertEnamlInSync(self.component, 'value', 'abfooc')
 
     def test_undo_delete(self):
@@ -265,9 +273,9 @@ Window:
 
         """
         self.set_cursor_position(self.widget, 1)
-        self.impl.delete()
+        self.component.delete()
         self.assertEnamlInSync(self.component, 'value', 'ac')
-        self.impl.undo()
+        self.component.undo()
         self.assertEnamlInSync(self.component, 'value', 'abc')
 
     def test_undo_insert(self):
@@ -275,9 +283,9 @@ Window:
 
         """
         self.set_cursor_position(self.widget, 1)
-        self.impl.insert('bar')
+        self.component.insert('bar')
         self.assertEnamlInSync(self.component, 'value', 'abarbc')
-        self.impl.undo()
+        self.component.undo()
         self.assertEnamlInSync(self.component, 'value', 'abc')
 
     def test_redo_delete(self):
@@ -285,7 +293,7 @@ Window:
 
         """
         self.test_undo_delete()
-        self.impl.redo()
+        self.component.redo()
         self.assertEnamlInSync(self.component, 'value', 'ac')
 
     def test_redo_insertion(self):
@@ -293,17 +301,17 @@ Window:
 
         """
         self.test_undo_insert()
-        self.impl.redo()
+        self.component.redo()
         self.assertEnamlInSync(self.component, 'value', 'abarbc')
 
-    def test_clear_with_from_string(self):
-        """ Clear a text field that has a 'from_string' callable.
+    def test_clear_with_converter(self):
+        """ Clear a text field that has a converter.
 
         """
-        self.component.from_string = lambda x: int(x) if x != '' else 0
-        self.component.to_string = lambda x: str(x)
-        self.impl.clear()
-        self.assertEqual(self.component.value, 0)
+        self.component.converter = IntConverter()
+        self.component.clear()
+        self.assertEqual(self.component.value, '')
+        self.assertTrue(self.component.error)
 
     #--------------------------------------------------------------------------
     # Abstract methods
