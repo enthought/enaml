@@ -31,12 +31,12 @@ class TestQtSlider(slider.TestSlider):
 
     toolkit = qt_toolkit()
 
-    def get_value(self, widget):
+    def get_value(self, component, widget):
         """ Get a slider's position.
 
         """
         value = float(widget.value())
-        return self.component.from_slider(value / SLIDER_MAX)
+        return component.convert.to_model(value / SLIDER_MAX)
 
     def get_tick_interval(self, widget):
         """ Get the Slider's tick_interval value.
