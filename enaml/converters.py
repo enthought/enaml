@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import math
 from abc import ABCMeta, abstractmethod
 
 
@@ -128,3 +129,13 @@ class SliderRangeConverter(FloatConverter):
     def to_model(self, value):
         low = self.low
         return float(value * (self.high - low) + low)
+
+class SliderLogConverter(Converter):
+    """ Map the slider's range to a log scale
+
+    """
+    def to_widget(self, value):
+        return math.log10(value)
+
+    def to_model(self, value):
+        return 10 ** value
