@@ -89,7 +89,7 @@ class QtSlider(QtControl):
 
         self.connect()
 
-    def parent_convert_changed(self, converter):
+    def parent_converter_changed(self, converter):
         """ Update the slider when the converter class changes.
 
         """
@@ -321,7 +321,7 @@ class QtSlider(QtControl):
         self.reset_errors()
 
         try:
-            position = parent.convert.to_widget(value)
+            position = parent.converter.to_component(value)
             self.widget.setValue(position * SLIDER_MAX)
             if not (0.0 <= position <= 1.0):
                 raise ValueError('to_widget() must return a value'
@@ -342,7 +342,7 @@ class QtSlider(QtControl):
         value = None
         try:
             position = self.widget.value() / float(SLIDER_MAX)
-            value = parent.convert.to_model(position)
+            value = parent.converter.from_component(position)
         except Exception as raised_exception:
             self.notify(raised_exception)
         return value

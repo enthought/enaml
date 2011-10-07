@@ -12,7 +12,7 @@ from ..enums import Orientation, TickPosition
 
 class ISliderImpl(IControlImpl):
 
-    def parent_convert_changed(self, converter):
+    def parent_converter_changed(self, converter):
         raise NotImplementedError
 
     def parent_value_changed(self, value):
@@ -53,10 +53,10 @@ class Slider(Control):
         to the result of from_slider.  If the value is changed, then the
         result of to_slider is used to position the slider
 
-    convert : Instance(Converter)
-        A converter that will convewrt between the value attribute and a
+    converter : Instance(Converter)
+        A object that converts between the 'value' attribute and a
         floating point number in the interval (0.0, 1.0) that is used
-        internaly by the slider component.
+        internally by the slider component.
 
     down : Property(Bool)
         A read only property which indicates whether or not the slider
@@ -109,7 +109,7 @@ class Slider(Control):
 
     value = Any
 
-    convert = Instance(Converter, factory=PassThroughConverter)
+    converter = Instance(Converter, factory=PassThroughConverter)
 
     tracking = Bool(True)
 

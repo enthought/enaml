@@ -371,7 +371,7 @@ Window:
             Slider slider:
                 tick_interval = 0.1
                 value = 1.0
-                convert = SliderLogConverter()
+                converter = SliderLogConverter()
                 page_step = 2
                 moved >> events.append(('moved', msg.new))
                 pressed >> events.append('pressed')

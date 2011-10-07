@@ -53,7 +53,7 @@ class TestWXSlider(slider.TestSlider, WXTestAssistant):
 
         """
         value = float(widget.GetValue())
-        return component.convert.to_model(value / SLIDER_MAX)
+        return component.converter.from_component(value / SLIDER_MAX)
 
     def get_tick_interval(self, widget):
         """ Get the Slider's tick_interval value.
