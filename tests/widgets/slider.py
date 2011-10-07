@@ -2,7 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .enaml_test_case import EnamlTestCase, required_method
+from .enaml_test_case import (EnamlTestCase, required_method,
+                              required_extended_method)
 from enaml.enums import TickPosition, Orientation
 from enaml.util.enum import Enum
 
@@ -81,7 +82,7 @@ Window:
                 tick_interval = 0.1
                 value = 0.5
                 page_step = 2
-                moved >> events.append('moved')
+                moved >> events.append(('moved', msg.new))
                 pressed >> events.append('pressed')
                 released >> events.append('released')
 """
@@ -100,7 +101,7 @@ Window:
         self.assertFalse(component.error)
         self.assertIsNone(component.exception)
 
-        self.assertEnamlInSync(component, 'value', 0.5)
+        self.assertEnamlInSyncExtended(component, 'value', 0.5)
         self.assertEnamlInSync(component, 'tick_interval', 0.1)
         # while the initial value of the tick position is DEFAULT inside the
         # enaml object is converted to NO_TICKS
@@ -108,6 +109,7 @@ Window:
         self.assertEnamlInSync(component, 'orientation', Orientation.HORIZONTAL)
         self.assertEnamlInSync(component, 'single_step', 1)
         self.assertEnamlInSync(component, 'page_step', 2)
+        self.assertEqual(self.events, [])
 
 
     def test_tracking_attribute(self):
@@ -120,6 +122,7 @@ Window:
 
         component.tracking = False
         self.assertEnamlInSync(component, 'tracking', False)
+        self.assertEqual(self.events, [])
 
 
     def test_value_change(self):
@@ -129,9 +132,10 @@ Window:
         component = self.component
 
         component.value = 1
-        self.assertEnamlInSync(component, 'value', 1)
+        self.assertEnamlInSyncExtended(component, 'value', 1)
         component.value = 0.879
-        self.assertEnamlInSync(component, 'value', 0.879)
+        self.assertEnamlInSyncExtended(component, 'value', 0.879)
+        self.assertEqual(self.events, [('moved',1), ('moved',0.879)])
 
     def test_invalid_value_change(self):
         """ Test changing the position with the an invalid value
@@ -142,11 +146,10 @@ Window:
         component = self.component
 
         component.value = -0.2
-        self.assertEnamlInSync(component, 'value', 0.5)
-
-
+        self.assertEnamlInSyncExtended(component, 'value', 0.0)
         component.value = 3
-        self.assertEnamlInSync(component, 'value', 0.5)
+        self.assertEnamlInSyncExtended(component, 'value', 1)
+
 
     def test_error_update(self):
         """ Check that errors are assinged
@@ -284,7 +287,7 @@ Window:
         events = self.events
 
         component.value = 0.3
-        self.assertEqual(['moved'], events)
+        self.assertEqual(events, [('moved', 0.3)])
 
     def test_move_to_home(self):
         """ Test firing events and value when the thumb is moved to home.
@@ -294,8 +297,8 @@ Window:
         events = self.events
 
         self.send_event(self.widget, TestEvents.HOME)
-        self.assertEnamlInSync(component, 'value', 0.0)
-        self.assertEqual(['moved'], events)
+        self.assertEnamlInSyncExtended(component, 'value', 0.0)
+        self.assertEqual(events, [('moved', 0.0)])
 
     def test_move_to_end(self):
         """ Test firing events and value when the thumb is moved to end.
@@ -305,8 +308,8 @@ Window:
         events = self.events
 
         self.send_event(self.widget, TestEvents.END)
-        self.assertEnamlInSync(component, 'value', 1.0)
-        self.assertEqual(['moved'], events)
+        self.assertEnamlInSyncExtended(component, 'value', 1.0)
+        self.assertEqual(events, [('moved', 1.0)])
 
     def test_move_down_by_one_step(self):
         """ Test firing events and value when the thumb is moved by one step down.
@@ -316,8 +319,8 @@ Window:
         events = self.events
 
         self.send_event(self.widget, TestEvents.STEP_DOWN)
-        self.assertEnamlInSync(component, 'value', 0.4)
-        self.assertEqual(['moved'], events)
+        self.assertEnamlInSyncExtended(component, 'value', 0.4)
+        self.assertEqual(events, [('moved', 0.4)])
 
     def test_move_up_by_one_step(self):
         """ Test firing events and value when the thumb is moved by one step up.
@@ -327,8 +330,8 @@ Window:
         events = self.events
 
         self.send_event(self.widget, TestEvents.STEP_UP)
-        self.assertEnamlInSync(component, 'value', 0.6)
-        self.assertEqual(['moved'], events)
+        self.assertEnamlInSyncExtended(component, 'value', 0.6)
+        self.assertEqual(events, [('moved', 0.6)])
 
     def test_move_down_by_one_page(self):
         """ Test firing events and value when the thumb is moved by one page down.
@@ -338,8 +341,8 @@ Window:
         events = self.events
 
         self.send_event(self.widget, TestEvents.PAGE_DOWN)
-        self.assertEnamlInSync(component, 'value', 0.3)
-        self.assertEqual(['moved'], events)
+        self.assertEnamlInSyncExtended(component, 'value', 0.3)
+        self.assertEqual(events, [('moved', 0.3)])
 
     def test_move_up_by_one_page(self):
         """ Test firing events and value when the thumb is moved by one page up.
@@ -349,18 +352,48 @@ Window:
         events = self.events
 
         self.send_event(self.widget, TestEvents.PAGE_UP)
-        self.assertEnamlInSync(component, 'value', 0.7)
-        self.assertEqual(['moved'], events)
+        self.assertEnamlInSyncExtended(component, 'value', 0.7)
+        self.assertEqual(events, [('moved', 0.7)])
+
+    #--------------------------------------------------------------------------
+    # test special initialization
+    #--------------------------------------------------------------------------
+
+    def test_using_log_converter(self):
+        """ Test slider when using the log converter
+
+        """
+        enaml = """
+from enaml.converters import SliderLogConverter
+Window:
+    Panel:
+        VGroup:
+            Slider slider:
+                tick_interval = 0.1
+                value = 1.0
+                convert = SliderLogConverter()
+                page_step = 2
+                moved >> events.append(('moved', msg.new))
+                pressed >> events.append('pressed')
+                released >> events.append('released')
+"""
+
+        self.events = []
+        view = self.parse_and_create(enaml, events=self.events)
+        component = self.component_by_id(view, 'slider')
+        self.assertEnamlInSyncExtended(component, 'value', 1.0)
 
 
     #--------------------------------------------------------------------------
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @required_method
-    def get_value(self, widget):
+    @required_extended_method
+    def get_value(self, component, widget):
         """ Get the Slider's value.
 
+        .. note:: please note that this attribute requires the extended
+            signature.
         """
         pass
 
