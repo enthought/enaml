@@ -8,7 +8,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import field
 
 
-class TestWxField(field.TestField, WXTestAssistant):
+class TestWxField(WXTestAssistant, field.TestField):
     """ WXField tests. """
 
     def get_value(self, widget):

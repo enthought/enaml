@@ -34,7 +34,7 @@ EVENT_MAP = {slider.TestEvents.PRESSED: wx.EVT_LEFT_DOWN,
              slider.TestEvents.PAGE_UP: wx.EVT_SCROLL_PAGEUP,
              slider.TestEvents.PAGE_DOWN: wx.EVT_SCROLL_PAGEDOWN}
 
-class TestWXSlider(slider.TestSlider, WXTestAssistant):
+class TestWXSlider(WXTestAssistant, slider.TestSlider):
     """ QtLabel tests. """
 
     def setUp(self):

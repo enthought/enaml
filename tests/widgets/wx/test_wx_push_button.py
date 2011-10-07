@@ -8,7 +8,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import push_button
 
 
-class TestWxPushButton(push_button.TestPushButton, WXTestAssistant):
+class TestWxPushButton(WXTestAssistant, push_button.TestPushButton):
     """ WXPushButton tests. """
 
     def button_pressed(self):

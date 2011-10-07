@@ -10,7 +10,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import date_edit
 
 
-class TestWXDateEdit(date_edit.TestDateEdit, WXTestAssistant):
+class TestWXDateEdit(WXTestAssistant, date_edit.TestDateEdit):
     """ WXDateEdit tests. """
 
     def test_set_format(self):

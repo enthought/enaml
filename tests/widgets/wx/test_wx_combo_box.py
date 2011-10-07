@@ -8,7 +8,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import combo_box
 
 
-class TestWxComboBox(combo_box.TestComboBox, WXTestAssistant):
+class TestWxComboBox(WXTestAssistant, combo_box.TestComboBox):
     """ WXComboBox tests. """
 
     def get_selected_text(self, widget):

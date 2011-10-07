@@ -6,7 +6,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import radio_button
 
 
-class TestWxRadioButton(radio_button.TestRadioButton, WXTestAssistant):
+class TestWxRadioButton(WXTestAssistant, radio_button.TestRadioButton):
     """ WXRadioButton tests. """
 
     def get_value(self, button):

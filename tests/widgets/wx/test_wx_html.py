@@ -6,7 +6,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import html
 
 
-class TestWxHtml(html.TestHtml, WXTestAssistant):
+class TestWxHtml(WXTestAssistant, html.TestHtml):
     """ WXHtml tests. """
 
     def get_source(self, widget):

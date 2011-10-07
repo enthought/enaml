@@ -8,7 +8,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import spin_box
 
 
-class TestWxSpinBox(spin_box.TestSpinBox, WXTestAssistant):
+class TestWxSpinBox(WXTestAssistant, spin_box.TestSpinBox):
     """ WXSpinBox tests. """
 
     def get_value(self, widget):

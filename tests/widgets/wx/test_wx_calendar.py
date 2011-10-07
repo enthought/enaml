@@ -8,7 +8,7 @@ from .wx_test_assistant import WXTestAssistant
 from .. import calendar
 
 
-class TestWxCalendar(calendar.TestCalendar, WXTestAssistant):
+class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
     """ WXCalendar tests. """
 
     def get_date(self, widget):

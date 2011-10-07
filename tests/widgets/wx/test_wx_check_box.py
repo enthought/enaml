@@ -7,7 +7,7 @@ import wx
 from .wx_test_assistant import WXTestAssistant
 from .. import check_box
 
-class TestWXCheckBox(check_box.TestCheckBox, WXTestAssistant):
+class TestWXCheckBox(WXTestAssistant, check_box.TestCheckBox):
     """ WXCheckbox tests. """
 
     def get_text(self, widget):

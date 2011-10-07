@@ -5,7 +5,7 @@
 from .wx_test_assistant import WXTestAssistant
 from .. import label
 
-class TestWxLabel(label.TestLabel, WXTestAssistant):
+class TestWxLabel(WXTestAssistant, label.TestLabel):
     """ WXLabel tests. """
 
     def get_text(self, widget):
