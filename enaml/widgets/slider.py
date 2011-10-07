@@ -6,16 +6,13 @@ from traits.api import (Any, Bool, Callable, Enum, Float, Range, Event,
                         Instance, Property, Int, Either)
 
 from .control import IControlImpl, Control
-
+from ..converters import Converter, PassThroughConverter
 from ..enums import Orientation, TickPosition
 
 
 class ISliderImpl(IControlImpl):
 
-    def parent_from_slider_changed(self, from_slider):
-        raise NotImplementedError
-
-    def parent_to_slider_changed(self, to_slider):
+    def parent_convert_changed(self, converter):
         raise NotImplementedError
 
     def parent_value_changed(self, value):
@@ -46,23 +43,20 @@ class Slider(Control):
     A slider can be used to select from a continuous range of values.
     The slider's range is fixed at 0.0 to 1.0. Therefore, the position
     of the slider can be viewed as a percentage. To facilitate various
-    ranges, you can specify from_pos and to_pos callables to convert to
-    and from the position the value.
+    ranges, you can specify a Converter class to convert to and from the
+    position the value.
 
     Attributes
     ----------
-    from_slider : Callable
-        A function that takes one floating point argument in the range 0.0 - 1.0
-        and converts from to the appropriate Python value.
-
-    to_slider : Callable
-        A function that takes one argument to convert from a Python
-        value to the appropriate value in the range 0.0 - 1.0.
-
     value : Any
         The value of the slider.  When the slider is moved, the value is set
         to the result of from_slider.  If the value is changed, then the
         result of to_slider is used to position the slider
+
+    convert : Instance(Converter)
+        A converter that will convewrt between the value attribute and a
+        floating point number in the interval (0.0, 1.0) that is used
+        internaly by the slider component.
 
     down : Property(Bool)
         A read only property which indicates whether or not the slider
@@ -113,11 +107,9 @@ class Slider(Control):
     """
     down = Property(Bool, depends_on='_down')
 
-    from_slider = Callable(lambda pos: pos)
-
-    to_slider = Callable(lambda val: val)
-
     value = Any
+
+    convert = Instance(Converter, factory=PassThroughConverter)
 
     tracking = Bool(True)
 
@@ -140,7 +132,7 @@ class Slider(Control):
     _down = Bool
 
     #---------------------------------------------------------------------------
-    # Overridden parent class traits
+    # Overridden parent class taits
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(ISliderImpl)
 
