@@ -60,10 +60,6 @@ class QtSlider(QtControl):
     """
     implements(ISliderImpl)
 
-    #: Internal backup valid posistion value used to guard against errors
-    #: with the from_slider and to_slider functions
-    _backup = Float
-
     #---------------------------------------------------------------------------
     # ISliderImpl interface
     #---------------------------------------------------------------------------
@@ -83,8 +79,7 @@ class QtSlider(QtControl):
         # We hard-coded range for the widget since we are managing the
         # conversion.
         self.set_range(0, SLIDER_MAX)
-        self._backup = parent.value
-        self.set_value(parent.value)
+        self.set_and_validate_position(parent.value)
         self.set_orientation(parent.orientation)
         self.set_tick_position(parent.tick_position)
         self.set_tick_frequency(parent.tick_interval)
@@ -92,41 +87,30 @@ class QtSlider(QtControl):
         self.set_page_step(parent.page_step)
         self.set_tracking(parent.tracking)
 
-        self.bind()
+        self.connect()
 
-    def parent_from_slider_changed(self, from_slider):
-        """ Update the slider value with based on the new function
-
-        Arguments
-        ---------
-        from_slider : Callable
-            A function that takes one argument to convert from the slider
-            position to the appropriate Python value.
+    def parent_convert_changed(self, converter):
+        """ Update the slider when the converter class changes.
 
         """
-        parent = self.parent
-        new_value = self.convert_position()
-        parent.value = new_value
-
-    def parent_to_slider_changed(self, to_slider):
-        """ Update the slider position with based on the new function
-
-        Arguments
-        ---------
-        to_slider : Callable
-            A function that takes one argument to convert from a Python
-            value to the appropriate slider position.
-
-        """
-        parent = self.parent
-        position = self.validate(parent.value)
-        self.set_in_widget(position)
+        pass
 
     def parent_value_changed(self, value):
-        """ Update the slider position value
+        """ Update the slider position
+
+        The method validates the value before assigment. If it is out of
+        range (0.0, 1.0), truncate the value and updates the component value
+        attribute. No change notification is fired by these actions.
+
+        If other exceptions are fired during the assigments the component
+        value does not change and the widget position is unknown.
 
         """
-        self.set_value(value)
+        parent = self.parent
+        self.set_and_validate_position(value)
+        validated_value = self.get_position()
+        parent.trait_setq(value=validated_value)
+        self.parent.moved = validated_value
 
 
     def parent_tracking_changed(self, tracking):
@@ -178,8 +162,8 @@ class QtSlider(QtControl):
     # Implementation
     #---------------------------------------------------------------------------
 
-    def bind(self):
-        """ Binds the event handlers for the slider widget.
+    def connect(self):
+        """ connect the event handlers for the slider widget signals.
 
         """
         widget = self.widget
@@ -193,7 +177,7 @@ class QtSlider(QtControl):
 
         """
         parent = self.parent
-        new_value = self.convert_position()
+        new_value = self.get_position()
         parent.value = new_value
 
     def _on_pressed(self):
@@ -324,110 +308,49 @@ class QtSlider(QtControl):
         """
         self.widget.setTickInterval(interval * SLIDER_MAX)
 
-    def set_value(self, value):
-        """ Validate and set the slider widget position to the new value
-
-        The assignment fail because `value` is out of range or the
-        conversion through `to_slider` returns an exception. In that case
-        the last known good value is given back to the parent.value
-        attribute.
-
-        """
-        parent = self.parent
-
-        position = self.validate(value, reset_errors = False)
-        # the `value` and `position` variables will be different if the
-        # validation failed.
-        if value == position:
-            self.set_in_widget(position)
-            if position != self._backup:
-                parent.moved = position
-            self._backup = position
-            self.reset_errors()
-        else:
-            exception = parent.exception
-            parent.value = position
-            parent.error = True
-            parent.exception = exception
-
-    def validate(self, value, reset_errors=True):
+    def set_and_validate_position(self, value):
         """ Validate the position value.
 
-        The method checks if the output of the :meth:`to_slider` function
-        returns a value that can be converted to float and is in the range
-        of [0.0, 1.0]. If the validation is not succesful it sets the
-        `error` and `exception` attributes and returns the previous known
-        good value.
+        The method checks if the value that can be converted to float and
+        is in the range of [0.0, 1.0]. If the validation is not succesful
+        it sets the `error` and `exception` attributes and truncates the
+        assing value in range.
 
-        If the :attr:`reset_errors` is False then the method does not
-        reset the error and exception attributes (unless there is an
-        exception ofcourse)
         """
         parent = self.parent
-
-        if reset_errors:
-            self.reset_errors()
+        self.reset_errors()
 
         try:
-            position = float(parent.to_slider(parent.value))
-
+            position = parent.convert.to_widget(value)
+            self.widget.setValue(position * SLIDER_MAX)
             if not (0.0 <= position <= 1.0):
-                raise ValueError('to_slider() must return a value '
-                                            'between 0.0 and 1.0, but instead'
-                                            ' returned %s'  % repr(position))
+                raise ValueError('to_widget() must return a value'
+                                 ' between 0.0 and 1.0, but instead'
+                                 ' returned %s'  % repr(position))
         except Exception as raised_exception:
             self.notify(raised_exception)
-            position = self._backup
 
-        return position
+    def get_position(self):
+        """ Get the slider position from the widget.
 
-    def convert_position(self, reset_errors=True):
-        """ Convert and return the slider position coming from the widget.
-
-        The method checks if the :meth:`from_slider` function
-        does not raise an exception. If the converison is not successful
-        it sets the `error` and `exception` attributes and the current
-        enaml component position.
-
-        If the :attr:`reset_errors` is False then the method does not
-        reset the error and exception attributes (unless there is an
-        exception ofcourse).
+        If error occurs during the conversion it is recorded in the
+        `error` and `exception` attributes. The return value in that case
+        is None since the value is undefined.
 
         """
         parent = self.parent
-
-        if reset_errors:
-            self.reset_errors()
-
-        value = self.retrieve_from_widget()
-
+        value = None
         try:
-            position = parent.from_slider(value)
+            position = self.widget.value() / float(SLIDER_MAX)
+            value = parent.convert.to_model(position)
         except Exception as raised_exception:
             self.notify(raised_exception)
-            position = parent.value
-
-        return position
-
-    def retrieve_from_widget(self):
-        """ Get the slider position from the widget and convert to the
-        enaml internal representation.
-
-        """
-        return self.widget.value() / float(SLIDER_MAX)
-
-
-    def set_in_widget(self, value):
-        """ set the slider position to the widget and convert to the
-        enaml internal representation.
-
-        """
-        self.widget.setValue(value * SLIDER_MAX)
+        return value
 
     def sync_tick_position(self):
         """ Syncornize the tick_position with the widget
 
-        The QSlider automaticall updates or addaptes the tick position but
+        The QSlider automatically updates or adaptes the tick position but
         we still need to update the enaml component, so that it is in sync.
 
         """
