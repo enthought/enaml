@@ -2,7 +2,7 @@ import math
 import random
 import datetime
 from enaml.enums import Orientation, Direction
-
+from enaml.converters import SliderLogConverter
 
 Window:
     title << model.window_title
@@ -88,7 +88,7 @@ Window:
                         high = 20
                 Field line_edit:
                     value := model.window_title
-                # The wx layout behaves really really badly if the 
+                # The wx layout behaves really really badly if the
                 # slider orientation is vertical in a vgroup layout
                 HGroup:
                     Label:
@@ -97,15 +97,14 @@ Window:
                     Slider sldr:
                         value = 1.0
                         value >> print(self.value)
-                        to_slider = lambda val: math.log10(val)
-                        from_slider = lambda val: 10 ** val
+                        convert = SliderLogConverter()
                         tick_interval = 0.5
                         orientation << Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
                 Field mf:
                     to_string = str
                     from_string = lambda val: int(val) if val else 0
                     placeholder_text = 'Integers Only!'
-                    style.background_color << "error" if self.error else "nocolor"  
+                    style.background_color << "error" if self.error else "nocolor"
                 Form:
                     Field fld:
                         name = "foo"
