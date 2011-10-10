@@ -36,7 +36,7 @@ class TestEvents(Enum):
 
 
 class TestSlider(EnamlTestCase):
-    """ Logic for testing spin boxes.
+    """ Logic for testing sliders.
 
 
     Tooklit testcases need to provide the following methods

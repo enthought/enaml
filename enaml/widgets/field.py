@@ -13,22 +13,22 @@ class IFieldImpl(IControlImpl):
 
     def parent_max_length_changed(self, max_length):
         raise NotImplementedError
-    
+
     def parent_read_only_changed(self, read_only):
         raise NotImplementedError
-    
+
     def parent_cursor_position_changed(self, cursor_position):
         raise NotImplementedError
-    
+
     def parent_placeholder_text_changed(self, placeholder_text):
         raise NotImplementedError
-    
+
     def parent_converter_changed(self, converter):
         raise NotImplementedError
-    
+
     def parent_value_changed(self, value):
         raise NotImplementedError
-    
+
     def set_selection(self, start, end):
         raise NotImplementedError
 
@@ -37,37 +37,37 @@ class IFieldImpl(IControlImpl):
 
     def deselect(self):
         raise NotImplementedError
-    
+
     def clear(self):
         raise NotImplementedError
 
     def backspace(self):
         raise NotImplementedError
-    
+
     def delete(self):
         raise NotImplementedError
 
     def end(self, mark=False):
         raise NotImplementedError
-    
+
     def home(self, mark=False):
         raise NotImplementedError
-    
+
     def cut(self):
         raise NotImplementedError
-    
+
     def copy(self):
         raise NotImplementedError
 
     def paste(self):
         raise NotImplementedError
-    
+
     def insert(self, text):
         raise NotImplementedError
 
     def undo(self):
         raise NotImplementedError
-    
+
     def redo(self):
         raise NotImplementedError
 
@@ -79,7 +79,7 @@ class Field(Control):
     ----------
     max_length : Int
         The maximum length of the line edit in characters.
-    
+
     max_length_reached : Event
         An event fired when the max length has been reached.
 
@@ -91,7 +91,7 @@ class Field(Control):
 
     modified : Property(Bool)
         A read only property that is set to True if the user has changed
-        the line edit from the ui, False otherwise. This is reset to 
+        the line edit from the ui, False otherwise. This is reset to
         False if the text is programmatically changed.
 
     placeholder_text : Str
@@ -99,13 +99,13 @@ class Field(Control):
         widget doesn't have focus.
 
     converter : Instance(Converter)
-        A pair of inverse functions, for converting values to and from a widget.
+        A pair of inverse functions, for converting values to and from the component
 
     value : Any
         The Python value to display in the field.
 
     selected_text : Property(Str)
-        A read only property that is updated with the text selected 
+        A read only property that is updated with the text selected
         in the line edit.
 
     text_changed : Event
@@ -119,11 +119,11 @@ class Field(Control):
 
     return_pressed : Event
         Fired when the return/enter key is pressed in the line edit.
-    
+
     _modified : Bool
         A protected attribute that is used by the implementation object
         to update the value of modified.
-    
+
     _selected_text : Str
         A protected attribute that is used by the implementation object
         to update the value of selected_text.
@@ -193,8 +193,8 @@ class Field(Control):
 
     placeholder_text = Str
 
-    converter = Instance(Converter, factory=StringConverter, args=())
-      
+    converter = Instance(Converter, factory=StringConverter)
+
     value = Any
 
     selected_text = Property(Str, depends_on='_selected_text')
@@ -213,7 +213,7 @@ class Field(Control):
     # Overridden parent class traits
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IFieldImpl)
-    
+
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.
 
@@ -265,7 +265,7 @@ class Field(Control):
 
         """
         self.toolkit_impl.deselect()
-    
+
     def clear(self):
         """ Clear the line edit of all text.
 
@@ -296,7 +296,7 @@ class Field(Control):
 
         """
         self.toolkit_impl.backspace()
-    
+
     def delete(self):
         """ Simple delete functionality.
 
@@ -329,7 +329,7 @@ class Field(Control):
 
         """
         self.toolkit_impl.end(mark=mark)
-    
+
     def home(self, mark=False):
         """ Moves the cursor to the beginning of the line.
 
@@ -345,7 +345,7 @@ class Field(Control):
 
         """
         self.toolkit_impl.home(mark=mark)
-    
+
     def cut(self):
         """ Cuts the selected text from the line edit.
 
@@ -362,7 +362,7 @@ class Field(Control):
 
         """
         self.toolkit_impl.cut()
-    
+
     def copy(self):
         """ Copies the selected text to the clipboard.
 
@@ -393,7 +393,7 @@ class Field(Control):
 
         """
         self.toolkit_impl.paste()
-    
+
     def insert(self, text):
         """ Insert the text into the line edit.
 
@@ -425,7 +425,7 @@ class Field(Control):
 
         """
         self.toolkit_impl.undo()
-    
+
     def redo(self):
         """ Redoes the last operation.
 
@@ -445,7 +445,7 @@ class Field(Control):
 
         """
         return self._modified
-    
+
     def _get_selected_text(self):
         """ The property getter for the 'selected' attribute.
 
@@ -453,7 +453,7 @@ class Field(Control):
         return self._selected_text
 
 
-Field.protect('max_length_reached', 'modified', 'selected_text', 
+Field.protect('max_length_reached', 'modified', 'selected_text',
               'text_changed', 'text_edited', 'return_pressed',
               '_modified', '_selected_text')
 
