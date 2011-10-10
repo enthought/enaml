@@ -6,7 +6,7 @@ import re
 import itertools
 import functools
 
-from traits.api import (HasStrictTraits, HasTraits, Instance, Event, Interface, 
+from traits.api import (HasStrictTraits, HasTraits, Instance, Event, Interface,
                         Str, Dict, Any, Set, Int, on_trait_change, Property)
 
 
@@ -52,7 +52,7 @@ class style(object):
         ----------
         *selectors
             A sequence of string following the selector syntax.
-        
+
         **properties
             A sequence of keywords specifiying the styling values.
 
@@ -62,7 +62,7 @@ class style(object):
 
 
 class IStyleNodeData(Interface):
-    """ An interface used by the style sheet selectors to query for 
+    """ An interface used by the style sheet selectors to query for
     the styling information required to perform a match.
 
     """
@@ -71,14 +71,14 @@ class IStyleNodeData(Interface):
 
         """
         raise NotImplementedError
-    
+
     def node_classes(self):
         """ Returns the classes of the element being styled as a space
         separated string.
 
         """
         raise NotImplementedError
-    
+
     def node_type(self):
         """ Returns the type of the element being styled as a string.
 
@@ -91,7 +91,7 @@ class IStyleNodeData(Interface):
 
         """
         raise NotImplementedError
-    
+
 
 class Selector(HasStrictTraits):
     """ A Selector for use in the StyleSheet.
@@ -110,7 +110,7 @@ class Selector(HasStrictTraits):
         information about the order in which selectors appear.
 
     touch : Int
-        A value that is incremented by the style sheet whenever the 
+        A value that is incremented by the style sheet whenever the
         selector is updated. This helps to break ties between selectors
         that match with identical specificity.
 
@@ -130,14 +130,14 @@ class Selector(HasStrictTraits):
         Arguments
         ---------
         node_data : IStyleNodeData
-            An object for the node being styled which implements the 
+            An object for the node being styled which implements the
             IStyleNodeData interface.
-        
+
         Returns
         -------
         result : bool, (int, properties)
-            If first return value is False, the selector does not match 
-            the node. Otherwise, the second return value is a tuple of 
+            If first return value is False, the selector does not match
+            the node. Otherwise, the second return value is a tuple of
             (specificity, order, properties).
 
         """
@@ -233,17 +233,17 @@ class StyleSheet(HasStrictTraits):
     Attributes
     ----------
     updated : Event
-        An event which is fired when the style sheet has changed. The 
-        payload of the event will be a set of property names that have 
-        been updated. This event is not fired when the sheet is first 
+        An event which is fired when the style sheet has changed. The
+        payload of the event will be a set of property names that have
+        been updated. This event is not fired when the sheet is first
         instantiated.
-    
+
     Methods
     -------
     update(*styles)
-        Update the style sheet with the given style objects. This 
+        Update the style sheet with the given style objects. This
         will trigger an 'updated' event.
-    
+
     replace(*styles)
         Replace the style sheet with the give style objects. This
         will trigger an 'updated' event.
@@ -252,7 +252,7 @@ class StyleSheet(HasStrictTraits):
     # Maps the style selector string to the created Selector object.
     _selectors = Dict(Str, Instance(Selector))
 
-    # Maps a property name to the set of Selectors 
+    # Maps a property name to the set of Selectors
     # which contain a property with that name.
     _property_selectors = Dict(Str, Set(Instance(Selector)))
 
@@ -266,7 +266,7 @@ class StyleSheet(HasStrictTraits):
 
         Parameters
         ----------
-        *styles : Sequence of 'style' objects.
+        styles : Sequence of 'style' objects.
             The style objects with which to populate the sheet.
 
         """
@@ -290,7 +290,7 @@ class StyleSheet(HasStrictTraits):
             properties = sty.properties
 
             for selector_str in selector_strings:
-                
+
                 match = TYPE_SELECTOR.match(selector_str)
                 if match:
                     match_str = match.group(1)
@@ -302,7 +302,7 @@ class StyleSheet(HasStrictTraits):
                     selector.order = counter.next()
                     selector.properties.update(properties)
                     updated_selectors.add(selector)
-                    continue  
+                    continue
 
                 match = CLASS_SELECTOR.match(selector_str)
                 if match:
@@ -359,7 +359,7 @@ class StyleSheet(HasStrictTraits):
                     selector.properties.update(properties)
                     updated_selectors.add(selector)
                     continue
-        
+
         property_selectors = self._property_selectors
         updated_properties = set()
         for selector in updated_selectors:
@@ -370,26 +370,26 @@ class StyleSheet(HasStrictTraits):
         return updated_properties
 
     def update(self, *styles):
-        """ Update the style sheet with the given style objects. 
+        """ Update the style sheet with the given style objects.
 
         This will trigger a 'sheet_updated' event.
 
         Parameters
         ----------
-        *styles : Sequence of 'style' objects.
+        styles : Sequence of 'style' objects.
             The style objects with which to update the sheet.
 
         """
         self.updated = self._parse_styles(*styles)
 
     def replace(self, *styles):
-        """ Replace the style sheet with the give style objects. 
+        """ Replace the style sheet with the give style objects.
 
         This will trigger a 'sheet_replaced' event.
 
         Parameters
         ----------
-        *styles : Sequence of 'style' objects.
+        styles : Sequence of 'style' objects.
             The style objects with which to populate the sheet.
 
         """
@@ -408,7 +408,7 @@ class StyleSheet(HasStrictTraits):
         Arguments
         ---------
         node_data : IStyleNodeData
-            An object for the node being styled which implements the 
+            An object for the node being styled which implements the
             IStyleNodeData interface.
 
         Returns
@@ -424,7 +424,7 @@ class StyleSheet(HasStrictTraits):
 
         matches = (selector.match(node_data) for selector in selectors)
         specs = (spec for match, spec in matches if match)
-            
+
         # If there are no matches, max will bail on the empty sequence.
         try:
             res = max(specs)[2][tag]
@@ -453,24 +453,24 @@ class StyleSheet(HasStrictTraits):
 class StyleNode(HasTraits):
     """ A basic style node class meant for subclassing.
 
-    StyleNode provides much of the boiler plate needed to integrate 
-    style sheet support with other objects. It will search for the 
+    StyleNode provides much of the boiler plate needed to integrate
+    style sheet support with other objects. It will search for the
     style object on the class first, then the style sheet. This allows
     for selectively overriding style sheet values without modifying the
-    style sheet itself. A complete solution will use a subclass of 
+    style sheet itself. A complete solution will use a subclass of
     StyleNode along with a subclass of StyleHandler.
 
     Attributes
     ----------
     style_sheet : Instance(StyleSheet)
         The StyleSheet on which this node is operating.
-    
+
     node_data : Property(Instance(IStyleNodeData))
         A property whose getter returns an implementor of IStyleNodeData.
         The getter must be implemented by subclasses.
-    
+
     tag_updated : Event
-        A event fired when a tag in the style sheet is updated. The 
+        A event fired when a tag in the style sheet is updated. The
         event payload is the tag name that was updated.
 
     Methods
@@ -480,7 +480,7 @@ class StyleNode(HasTraits):
 
     get_property(tag)
         Returns the style property for the given tag.
-    
+
     """
     style_sheet = Instance(StyleSheet)
 
@@ -490,7 +490,7 @@ class StyleNode(HasTraits):
 
     def _get_node_data(self):
         """ The propery getter for node_data attribute. This should be
-        implemented by subclasses to return an object that implements 
+        implemented by subclasses to return an object that implements
         IStyleNodeData.
 
         """
@@ -509,7 +509,7 @@ class StyleNode(HasTraits):
 
         """
         self.refresh_tags(self.style_sheet.get_tags())
-    
+
     def refresh_tags(self, tags):
         """ Triggers the 'tag_updated' event for each of the given tags.
 
@@ -548,7 +548,7 @@ class StyleHandler(HasStrictTraits):
     This StyleHandler is meant to be used in conjuction with subclasses
     of StyleNode. It reacts to changes on the events of the StyleNode
     and dispatches to specially named handler methods on the subclass.
-    The dispatching is done efficiently so that the style sheet is 
+    The dispatching is done efficiently so that the style sheet is
     only queried if a handler for the tag exists, and the handler is
     only called if the value has changed.
 
@@ -558,27 +558,27 @@ class StyleHandler(HasStrictTraits):
         The StyleNode instance this object is handling.
 
     tags : dict, optional
-        A dictionary of string tags to arguments to pass to the 
+        A dictionary of string tags to arguments to pass to the
         set_style_value method on subclasses.
 
     Methods
     -------
-    style_*
-        Subclasses should implement a style_* method for every tag for
-        which updates are desired.
-
     set_style_value(self, value, tag, *args)
         A method that can be optionally implemented by subclasses for
-        easier style dispatching. If a tag is defined in the `tags` dict 
-        and the subclass does not define adefault a style_<tag> method, 
-        then set_style_value will be called with the (value, tag, *args) 
-        where the *args are the args that key in the dict. 
+        easier style dispatching. If a tag is defined in the `tags` dict
+        and the subclass does not define adefault a style_<tag> method,
+        then set_style_value will be called with the (value, tag, *args)
+        where the *args are the args that key in the dict.
+
+
+    .. note:: Subclasses should implement a style_<tag> method for every
+        tag for which updates are desired.
 
     """
     node = Instance(StyleNode)
 
     tags = Instance(dict, ())
-    
+
     _style_dict = Instance(dict, ())
 
     @on_trait_change('node:tag_updated')
@@ -587,37 +587,36 @@ class StyleHandler(HasStrictTraits):
 
         """
         self._update_tag(tag)
-        
+
     def set_style_value(self, value, tag, *args):
         """ Set the style given by the tag to the value in a generic way.
-        
+
         This is intended to simplify definition of style handlers for a toolkit
         where a lot of the code is doing the same sort of thing.
-        
+
         Arguments
         ---------
         value : style_value
             The string representation of the style's value.
-        
-        tag : string
+
+        tag : str
             The style tag that is being set.
-        
-        *args
+
+        args : optional
             Additional arguments as needed.  This is likely to include a
             converter function and/or the method name to set.
-        
+
         Returns
         -------
         result : None
 
-        Notes
-        -----
-        This method will only be called if the tag exists in the `tags` 
-        dict and there is no style_<tag> handler defined for it.
+
+        .. note:: This method will only be called if the tag exists in the
+             `tags` dict and here is no style_<tag> handler defined for it.
 
         """
         raise NotImplementedError
-    
+
     def initialize_style(self):
         """ Initialize all style properties handled by methods or tags.
 
@@ -627,13 +626,13 @@ class StyleHandler(HasStrictTraits):
             if name.startswith('style_'):
                 tag_name = name[6:]
                 style_handlers[tag_name] = getattr(self, name)
-        
+
         node = self.node
-        
+
         for tag, handler in style_handlers.iteritems():
             value = node.get_property(tag)
             handler(value)
-        
+
         for tag, args in self.tags.items():
             if tag in style_handlers:
                 continue
@@ -641,7 +640,7 @@ class StyleHandler(HasStrictTraits):
                 args = (args,)
             value = node.get_property(tag)
             self.set_style_value(value, tag, *args)
-        
+
     def _update_tag(self, tag, null=object()):
         """ Dispatches a tag update to specially named methods. Only
         dispatches if a handler exists and the value has changed.
@@ -658,7 +657,7 @@ class StyleHandler(HasStrictTraits):
 
             def handler(value):
                 return self.set_style_value(value, tag, *args)
-        
+
         if handler is not None:
             style_dict = self._style_dict
             old = style_dict.get(tag, null)
