@@ -45,6 +45,8 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.tab_group.TabGroup
     enaml.widgets.stacked_group.StackedGroup
     enaml.widgets.enable_canvas.EnableCanvas
+    enaml.widgets.datetime_edit.DateTimeEdit
+    enaml.widgets.date_edit.DateEdit
     :parts: 1
 
 Implementation
@@ -86,6 +88,8 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.tab_group.ITabGroupImpl
     enaml.widgets.stacked_group.IStackedGroupImpl
     enaml.widgets.enable_canvas.IEnableCanvasImpl
+    enaml.widgets.datetime_edit.IDateTimeEditImpl
+    enaml.widgets.date_edit.IDateEditImpl
     :parts: 1
 
 Standard Widgets
@@ -139,6 +143,8 @@ Basic widgets
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
     enaml.widgets.spacer.Spacer
+    enaml.widgets.datetime_edit.DateTimeEdit
+    enaml.widgets.date_edit.DateEdit
 
 Special widgets
 ^^^^^^^^^^^^^^^
