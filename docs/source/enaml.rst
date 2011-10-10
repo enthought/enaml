@@ -21,6 +21,14 @@ thin layer over backend widgets and produce the traits View objects.
 
 .. automodule:: enaml.enums
 
+:mod:`converters` Module
+------------------------
+
+.. inheritance-diagram:: enaml.converters
+    :parts: 1
+
+.. automodule:: enaml.converters
+
 :mod:`expressions` Module
 -------------------------
 
