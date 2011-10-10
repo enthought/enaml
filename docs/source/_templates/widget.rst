@@ -1,4 +1,4 @@
-{{ Slider }}
+{{ objname }}
 {{ underline }}
 
 .. currentmodule:: {{ module }}
