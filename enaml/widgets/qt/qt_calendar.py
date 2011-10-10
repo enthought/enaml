@@ -12,9 +12,9 @@ from ..calendar import ICalendarImpl
 
 
 # Workaround for an incompatibility between PySide and PyQt
-try:
+try: # pragma: no cover
     qdate_to_python = QtCore.QDate.toPython
-except AttributeError:
+except AttributeError: # pragma: no cover
     qdate_to_python = QtCore.QDate.toPyDate
 
 
