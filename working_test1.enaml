@@ -2,7 +2,7 @@ import math
 import random
 import datetime
 from enaml.enums import Orientation, Direction
-from enaml.converters import SliderLogConverter
+from enaml.converters import SliderLogConverter, IntConverter
 
 Window:
     title << model.window_title
@@ -97,12 +97,11 @@ Window:
                     Slider sldr:
                         value = 1.0
                         value >> print(self.value)
-                        convert = SliderLogConverter()
+                        converter = SliderLogConverter()
                         tick_interval = 0.5
                         orientation << Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
                 Field mf:
-                    to_string = str
-                    from_string = lambda val: int(val) if val else 0
+                    converter = IntConverter()
                     placeholder_text = 'Integers Only!'
                     style.background_color << "error" if self.error else "nocolor"
                 Form:
