@@ -18,6 +18,7 @@ thin layer over backend widgets and produce the traits View objects.
 -------------------
 
 .. inheritance-diagram:: enaml.enums
+    :parts: 1
 
 .. automodule:: enaml.enums
 
