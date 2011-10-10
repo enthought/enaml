@@ -9,26 +9,21 @@ from abc import ABCMeta, abstractmethod
 
 
 class Converter(object):
-    """ Map values from an Enaml component to a model, and vice versa.
+    """ Map values from an Enaml component to userspace models, and vice versa.
 
-    Some Enaml components store a Converter as a public attribute.
-    Converters can be used to translate a value between a toolkit widget
-    and some other form.
+    Converters can be used to translate a values between the userspace models
+    and the Enaml components or toolkit widgets. For example, a Converter can
+    can be used to synchronize a Field's value with an integer attribute.
 
-    For example, use a Converter to synchronize a Field's value with an
-    integer attribute, or to scale a slider's value beyond the interval
-    (0.0, 1.0).
+    Enaml provides several base Converters to be used with components like the
+    Slider and Field. Custom converters can be created by subclassing and
+    implementing the :meth:`to_component` and `from_component` methods.
 
-    Enaml provides several Converters. Subclass a Converter for custom
-    behavior. Subclasses must implement both the 'to_component' and
-    'from_component' functions.
-
-    .. note:: Please ensure that 'to_component' and 'from_component' are inverse
-       functions. Thus the following experssion should be always valid::
+    .. note:: To avoid race conditions and had to find bugs please ensure that
+        'to_component' and 'from_component' are inverse functions. Thus the
+        following expression is always valid::
 
             value == Converter.from_component(Converter.to_component(value))
-
-       Failure to follow this advice can result in infinite recursion.
 
     """
 
@@ -36,33 +31,22 @@ class Converter(object):
 
     @abstractmethod
     def to_component(self, value):
-        """ Convert to a value that a toolkit widget can understand.
-
-        Parameters
-        ----------
-        value
-            A value for use by a toolkit widget.
+        """ Convert a value to be used by the Enaml component.
 
         """
         return NotImplemented
 
     @abstractmethod
     def from_component(self, value):
-        """ Convert a widget's value for display or some other use.
-
-        Parameters
-        ----------
-        value
-            A value from a toolkit widget.
+        """ Convert from the Enaml component to userspace models.
 
         """
         return NotImplemented
 
-
 class PassThroughConverter(Converter):
     """ A simple pass throught converter.
 
-    The converter just passes the values throught without acting uppon them
+    The converter just passes the values throught without acting uppon them.
 
     """
     def to_component(self, value):
@@ -71,33 +55,48 @@ class PassThroughConverter(Converter):
     def from_component(self,value):
         return value
 
+class BaseStringConverter(Converter):
+    """ A simple abstract Converter that converts a userspace value to a string.
 
-class StringConverter(Converter):
-    """ A simple Converter that converts any value to a string.
+    The converter is an abstract class that defines only the to_component
+    method. Subclasses need to implement the from_component method in order
+    to have a fully functional Converter. Converters subclassing the
+    :class:`BaseStringConverter` are suitable for use in Enaml Field
+    components.
 
     """
     def to_component(self, value):
         return str(value)
 
+
+class StringConverter(BaseStringConverter):
+    """ A simple Converter that converts a userspace value to a string and back.
+
+    .. note:: The class methods are only symmetric when the userspace value
+        is a string. For other types a custom `from_component` method is needed.
+
+    """
     def from_component(self, value):
         return str(value)
 
 
-class IntConverter(Converter):
-    """ Convert from a widget to a base-10 integer, and back to a string.
-
-    This can be used for integer Fields.
+class IntConverter(BaseStringConverter):
+    """ Convert an integer value to a string and back.
 
     """
-    def to_component(self, value):
-        return str(value)
-
     def from_component(self, value):
         return int(value)
 
+class FloatConverter(BaseStringConverter):
+    """ Convert a float value to a string and back.
 
-class HexConverter(IntConverter):
-    """ Convert from a widget to a base-16 integer, and back to a hex string.
+    """
+    def from_component(self, value):
+        return float(value)
+
+
+class HexConverter(BaseStringConverter):
+    """ Convert between a string and a base-16 integer.
 
     """
     def to_component(self, value):
@@ -107,7 +106,7 @@ class HexConverter(IntConverter):
         return int(value, 16)
 
 
-class OctalConverter(IntConverter):
+class OctalConverter(BaseStringConverter):
     """ Convert from a widget to a base-8 integer, and back to an octal string.
 
     """
@@ -118,20 +117,7 @@ class OctalConverter(IntConverter):
         return int(value, 8)
 
 
-class FloatConverter(Converter):
-    """ Convert from a widget to a float, and back to a string.
-
-    This can be used for float Fields.
-
-    """
-    def to_component(self, value):
-        return str(value)
-
-    def from_component(self, value):
-        return float(value)
-
-
-class SliderRangeConverter(FloatConverter):
+class SliderRangeConverter(Converter):
     """ Map a slider's value onto an interval other than (0.0, 1.0).
 
     """
@@ -161,51 +147,51 @@ class SliderLogConverter(Converter):
 
 class DateConverter(Converter):
     """ Convert between dates and strings.
-    
+
     """
     def __init__(self, format_string='%Y-%m-%d'):
         """ Default the date format YYYY-MM-DD.
-        
+
         """
         self.format_string = format_string
-    
+
     def to_component(self, value):
         """ Convert from a date to a string.
-        
+
         """
         return value.strftime(self.format_string)
-    
+
     def from_component(self, value):
         """ Convert from a string to a date.
-        
+
         """
         return datetime.datetime.strptime(value, self.format_string).date()
 
 
 class DateTimeConverter(Converter):
     """ Convert between datetime objects and strings.
-    
+
     """
     def __init__(self, format_string='%Y-%m-%dT%H:%M:%S'):
         """ Default to the ISO 8601 date and time format.
-        
+
         Example
         -------
         >>> format_string = '%Y-%m-%dT%H:%M:%S'
         >>> datetime.datetime(2000, 02, 20, 14, 41).strftime(format_string)
         '2000-02-20T14:41:00'
-        
+
         """
         self.format_string = format_string
-    
+
     def to_component(self, value):
         """ Convert from a datetime to a string.
-        
+
         """
         return value.strftime(self.format_string)
-    
+
     def from_component(self, value):
         """ Convert from a string to a datetime.
-        
+
         """
         return datetime.datetime.strptime(value, self.format_string)
