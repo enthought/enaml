@@ -485,7 +485,7 @@ class ClassDocstring(BaseDocString):
 
         if headers is None:
             headers = {'Attributes': 'attributes', 'Methods': 'methods',
-                       'See Also': 'see_also'}
+                       'See Also': 'see_also', 'Abstract Methods': 'methods'}
 
         super(ClassDocstring, self).__init__(lines, headers, verbose)
         return
