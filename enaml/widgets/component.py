@@ -5,8 +5,7 @@
 from traits.api import Interface, Str, WeakRef, Instance, List, ReadOnly
 
 from ..enaml_base import EnamlBase
-from ..style_node import EnamlStyleNode
-from ..util.trait_types import ReadOnlyConstruct
+from ..styling.style_mixin import StyleMixin
 
 
 class IComponentImpl(Interface):
@@ -115,7 +114,7 @@ class IComponentImpl(Interface):
         raise NotImplementedError
 
 
-class Component(EnamlBase):
+class Component(EnamlBase, StyleMixin):
     """ The most base class of the Enaml widgets component heierarchy.
 
     All Enaml  widget classes should inherit from this class. This class
@@ -125,11 +124,11 @@ class Component(EnamlBase):
     ----------
     identifier : ReadOnly
         The identifier assigned to this element in the enaml source code.
-        This is a protected attribute.
+        This is a protected attribute and is set during construction.
 
     type_name : ReadOnly
         The type name this component is using in the enaml source code.
-        This is a protected attribute.
+        This is a protected attribute and is set during construction.
 
     parent : WeakRef(EnamlBase)
         The parent object which is stored as a weakref to mitigate memory
@@ -200,9 +199,6 @@ class Component(EnamlBase):
     children = List(Instance('Component'))
 
     name = Str
-
-    # XXX - I don't like this ReadOnlyConstruct
-    style = ReadOnlyConstruct(lambda self, name: EnamlStyleNode(parent=self))
 
     toolkit_impl = Instance(IComponentImpl)
         
@@ -359,15 +355,15 @@ class Component(EnamlBase):
         # entry call
         if toplevel:
             self.bind_expressions_tree()
-        
+
         impl.create_widget()
 
         for child in self.children:
             child.layout(toplevel=False)
-
+        
         impl.initialize_widget()
-        impl.create_style_handler()
-        impl.initialize_style()
+        #impl.create_style_handler()
+        #impl.initialize_style()
         impl.layout_child_widgets()
 
         self._hook_impl()
@@ -392,5 +388,5 @@ class Component(EnamlBase):
         self.add_trait_listener(self.toolkit_impl, 'parent')
 
 
-Component.protect('id', 'type', 'parent', 'children', 'style', 'toolkit_impl')
+Component.protect('identifier', 'type_name', 'parent', 'children', 'style', 'toolkit_impl')
 

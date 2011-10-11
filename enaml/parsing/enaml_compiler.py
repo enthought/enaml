@@ -481,13 +481,15 @@ class DefnBodyCompiler(object):
         local_names = self.local_names
         code = compile(py_ast, 'Enaml', mode='eval')
 
-        # Load the method object to call to do the binding and the
-        # appropriate binder factory object.
+        # Load the method object to call to do the binding and the name
+        # to which we are binding
+        inst = (LOAD_ATTR, 'add_expression_binder')
+        instructions.append(inst)
+        inst = (LOAD_CONST, attr_name)
+        instructions.append(inst)
+        
+        # Load the appropriate binder class object
         if op == enaml_ast.DEFAULT:
-            inst = (LOAD_ATTR, 'set_attribute_delegate')
-            instructions.append(inst)
-            inst = (LOAD_CONST, attr_name)
-            instructions.append(inst)
             if '__enaml_default__' in local_names:
                 inst = (LOAD_LOCAL, '__enaml_default__')
             else:
@@ -495,10 +497,6 @@ class DefnBodyCompiler(object):
             instructions.append(inst)
         
         elif op == enaml_ast.BIND:
-            inst = (LOAD_ATTR, 'set_attribute_delegate')
-            instructions.append(inst)
-            inst = (LOAD_CONST, attr_name)
-            instructions.append(inst)
             if '__enaml_bind__' in local_names:
                 inst = (LOAD_LOCAL, '__enaml_bind__')
             else:
@@ -506,10 +504,6 @@ class DefnBodyCompiler(object):
             instructions.append(inst)
         
         elif op == enaml_ast.DELEGATE:
-            inst = (LOAD_ATTR, 'set_attribute_delegate')
-            instructions.append(inst)
-            inst = (LOAD_CONST, attr_name)
-            instructions.append(inst)
             if '__enaml_delegate__' in local_names:
                 inst = (LOAD_LOCAL, '__enaml_delegate__')
             else:
@@ -517,10 +511,6 @@ class DefnBodyCompiler(object):
             instructions.append(inst)
         
         elif op == enaml_ast.NOTIFY:
-            inst = (LOAD_ATTR, 'add_attribute_notifier')
-            instructions.append(inst)
-            inst = (LOAD_CONST, attr_name)
-            instructions.append(inst)
             if '__enaml_notify__' in local_names:
                 inst = (LOAD_LOCAL, '__enaml_notify__')
             else:
@@ -544,9 +534,18 @@ class DefnBodyCompiler(object):
         inst = (CALL, (4, 0))
         instructions.append(inst)
 
-        # Call the binder method with (name, delegate)
-        inst = (CALL, (2, 0))
-        instructions.append(inst)
+        # Call the binder method with (name, binder) or for notifier
+        # expressions: (name, binder, eval_default=False)
+        if op == enaml_ast.NOTIFY:
+            inst = (LOAD_CONST, 'eval_default')
+            instructions.append(inst)
+            inst = (LOAD_CONST, False)
+            instructions.append(inst)
+            inst = (CALL, (2, 1))
+            instructions.append(inst)
+        else:
+            inst = (CALL, (2, 0))
+            instructions.append(inst)
 
         # Pop and discard the None result from the expression method
         inst = (POP_TOP, None)
