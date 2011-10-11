@@ -219,6 +219,7 @@ class WXSlider(WXControl):
         if parent._down:
             parent._down = False
             parent.released = True
+            parent.value = self.get_position()
         event.Skip()
 
     def set_single_step(self, step):
