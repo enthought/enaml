@@ -2,8 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import TraitType, Interface
+from traits.api import TraitType, Interface, TraitError
 
+from ..converters import Converter
 
 class SubClass(TraitType):
 
@@ -50,17 +51,17 @@ class NamedLookup(TraitType):
     def __init__(self, lookup_func_name):
         super(NamedLookup, self).__init__()
         self._lookup_func_name = lookup_func_name
-    
+
     def get(self, obj, name):
         return getattr(obj, self._lookup_func_name)(name)
 
 
 class ORStr(TraitType):
-    """ Allows a space-separated string of any combination of the 
+    """ Allows a space-separated string of any combination of the
     constituents of the string passed to the constructor.
-    
+
     i.e. StrFlags("foo bar") will validate only the following strings:
-        
+
         "", "foo", "foo bar", "bar", "bar foo"
 
     """
@@ -76,3 +77,105 @@ class ORStr(TraitType):
         allowed = self.allowed
         return all(component in allowed for component in components)
 
+
+class Bounded(TraitType):
+    """ Generic Bounded Trait class.
+
+    The class defines a generic Trait where the value is validated
+    to be between low and high (static or dynamic) bounds. Where the
+    limits can be any python object that supports comparison. Optionally
+    the validation takes place after the input value has been converted
+    with the converter function. In that case the low and high bounds are
+    relative to the converter(value) result.
+
+    """
+
+    info_text = "Bounded value"
+
+    def __init__(self, value, low=None, high=None, converter=None, **metadata):
+        """
+        Arguments
+        ---------
+        value :
+            The default value.
+
+        low :
+            The lower bound of the Trait
+
+        high :
+            The upper bound of the Trait
+
+        converter : (optional)
+            Function to apply to convert assigned value before validation
+
+
+        .. todo:: Force type on the value attribute
+
+
+        """
+        if value is None:
+            if low is not None:
+                value = low
+            else:
+                value = high
+
+        super(Bounded, self).__init__(value, **metadata)
+
+        if converter is None:
+            converter = lambda val: val
+
+        self.high = high
+        self.low = low
+        self.converter = converter
+
+
+    def validate(self, obj, name, value):
+        """ Validate the trait value.
+
+        """
+        converted_value = self.convert(obj, value)
+        low, high = self.get_bounds(obj)
+
+        if (low <= converted_value <= high):
+            return value
+        else:
+            msg = ('The value (after convertions) must be a bounded value'
+                   ' between {0} and {1}, but instead the converted'
+                   ' result (of input then value {2}) was {3}'.\
+                   format(low, high, value, converted_value))
+            raise TraitError(msg)
+
+    def convert(self, obj, value):
+        """ Convert the input value for validation.
+
+        """
+        convert = self.converter
+
+        if isinstance(convert, basestring):
+            convert = getattr(obj, convert)
+
+        if isinstance(convert, Converter):
+            convert = convert.to_component
+
+        try:
+            converted_value = convert(value)
+        except Exception as raised_exception:
+            msg = ("The convertion failed with the following error: {0}".\
+                   format(raised_exception))
+            raise TraitError(msg)
+        else:
+            return converted_value
+
+    def get_bounds(self, obj):
+        """ Return the low and upper bounds.
+
+        The methods supports dynamic range setting of the bounds through
+        the attributes of the parent class.
+        """
+        low = self.low
+        high = self.high
+        if isinstance(low, basestring):
+            low = getattr(obj, low)
+        if isinstance(high, basestring):
+            high = getattr(obj, high)
+        return low, high
