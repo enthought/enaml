@@ -4,6 +4,8 @@
 #------------------------------------------------------------------------------
 from datetime import date
 
+from traits.api import TraitError
+
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -102,22 +104,17 @@ Window:
     def test_invalid_min_date(self):
         """ Test changing to an invalid date below the min range.
 
-        When an invalid (out of range) date is assinged the widget should
-        truncate it in range.
-
         """
         component = self.component
         min_date = date(2000,2,3)
         component.minimum_date = min_date
-        component.date = date(2000,1,1)
-        self.assertEnamlInSync(component, 'date', min_date)
-        self.assertEqual(self.events, ['date_changed'])
+        with self.assertRaises(TraitError):
+            component.date = date(2000,1,1)
+        self.assertEnamlInSync(component, 'date', date.today())
+        self.assertEqual(self.events, [])
 
     def test_invalid_max_date(self):
         """ Test changing to an invalid date above the max range.
-
-        When an invalid (out of range) date is assinged the widget should
-        truncate it in range.
 
         """
         component = self.component
@@ -125,9 +122,10 @@ Window:
         self.assertEqual(self.events, ['date_changed'])
         max_date = date(2014,2,3)
         component.maximum_date = max_date
-        component.date = date(2016,10,9)
-        self.assertEnamlInSync(component, 'date', max_date)
-        self.assertEqual(self.events, ['date_changed']*2)
+        with self.assertRaises(TraitError):
+            component.date = date(2016,10,9)
+        self.assertEnamlInSync(component, 'date', date(2011,10,9))
+        self.assertEqual(self.events, ['date_changed'])
 
     def test_set_format(self):
         """ Test setting the output format
@@ -162,10 +160,8 @@ Window:
                 date_changed >> events.append('date_changed')
 """
         events = []
-        view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_id(view, 'test')
-        self.assertEnamlInSync(component, 'date', date(2000, 1, 1))
-        self.assertEqual(self.events, [])
+        with self.assertRaises(TraitError):
+            view = self.parse_and_create(enaml, events=events)
 
 
     def test_initial_too_early(self):
@@ -186,10 +182,8 @@ Window:
 """
 
         events = []
-        view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_id(view, 'test')
-        self.assertEnamlInSync(component, 'date', date(1990, 1, 1))
-        self.assertEqual(self.events, [])
+        with self.assertRaises(TraitError):
+            view = self.parse_and_create(enaml, events=events)
 
     #--------------------------------------------------------------------------
     # absrtact methods

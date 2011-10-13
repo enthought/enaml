@@ -43,26 +43,28 @@ class QtDateEdit(QtControl):
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
         self.set_format(parent.format)
-        self.set_and_validate_date()
+        self.set_date(parent.date)
         self.connect()
 
     def parent_date_changed(self, date):
         """ The change handler for the 'date' attribute.
 
         """
-        self.set_and_validate_date()
+        self.set_date(date)
 
     def parent_minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
+        self.fit_to_range()
 
     def parent_maximum_date_changed(self, date):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
+        self.fit_to_range()
 
     def parent_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
@@ -75,15 +77,13 @@ class QtDateEdit(QtControl):
     #---------------------------------------------------------------------------
 
     def connect(self):
-        """ Connects the signal handlers for the date edit widget. Not
-        meant for public consumption.
+        """ Connects the signal handlers for the date edit widget.
 
         """
         self.widget.dateChanged.connect(self.on_date_changed)
 
     def on_date_changed(self, date):
-        """ The signal handler for the controls's changed event. Not
-        meant for public consumption.
+        """ The signal handler for the controls's changed event.
 
         """
         parent = self.parent
@@ -91,19 +91,11 @@ class QtDateEdit(QtControl):
         parent.date = new_date
         parent.date_changed = new_date
 
-    def set_and_validate_date(self):
-        """ Sets and validates the date on the widget.
+    def set_date(self, date):
+        """ Sets the date on the widget.
 
-        The method sets the date in the toolkit widget and makes sure that
-        if the widget has truncated the value, enaml component is syncronized
-        without firing trait notification events.
         """
-        parent = self.parent
-        date = parent.date
         self.widget.setDate(date)
-        validated_widget_date = self.get_date()
-        if validated_widget_date != date:
-            self.parent.trait_setq(date=validated_widget_date)
 
     def set_minimum_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
@@ -131,3 +123,15 @@ class QtDateEdit(QtControl):
         qdate = self.widget.date()
         return qdate_to_python(qdate)
 
+    def fit_to_range(self):
+        """ Fit the compoenent date to range.
+
+        """
+        parent = self.parent
+        minimum = parent.minimum_date
+        maximum = parent.maximum_date
+        date = parent.date
+
+        date = max(date, minimum)
+        date = min(date, maximum)
+        self.parent.date = date

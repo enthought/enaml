@@ -7,7 +7,7 @@ import datetime
 from traits.api import Date, Event, Instance, Str
 
 from .control import Control, IControlImpl
-
+from ..util.trait_types import Bounded
 
 class IDateEditImpl(IControlImpl):
 
@@ -33,12 +33,15 @@ class DateEdit(Control):
 
     Attributes
     ----------
-    date : Date
-        The currently selected date. Default is the current date.
+    date : Bounded
+        The currently selected date. Default is the current date. The
+        value is bounded between :attr:`minimum_date` and
+        :attr:`maximum_date`. Attempts to assign a value outside of this
+        range will result in a TraitError.
 
     minimum_date : Date
         The minimum date available in the date edit. If not defined then
-        the default value is September 14, 1752
+        the default value is September 14, 1752.
 
     maximum_date : Date
         The maximum date available in the date edit. If not defined then
@@ -54,11 +57,11 @@ class DateEdit(Control):
         event payload will be the date on the control.
 
     """
-    date = Date(datetime.date.today())
-
     minimum_date = Date(datetime.date(1752, 9, 14))
 
     maximum_date = Date(datetime.date(7999, 12, 31))
+
+    date = Bounded(datetime.date.today(), low='minimum_date', high='maximum_date')
 
     format = Str
 

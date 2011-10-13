@@ -44,7 +44,7 @@ class WXDateEdit(WXControl):
         parent = self.parent
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
-        self.set_and_validate_date()
+        self.set_date(parent.date)
 ##        self.set_format(parent.format)
         self.bind()
 
@@ -52,21 +52,22 @@ class WXDateEdit(WXControl):
         """ The change handler for the 'date' attribute.
 
         """
-        self.set_and_validate_date()
-        self.parent.date_changed = self.get_date()
+        self.set_date(date)
+        self.parent.date_changed = date
 
     def parent_minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
+        self.fit_to_range()
 
     def parent_maximum_date_changed(self, date):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
-
+        self.fit_to_range()
 
     def parent_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
@@ -96,22 +97,11 @@ class WXDateEdit(WXControl):
         parent = self.parent
         parent.date = from_wx_date(event.GetDate())
 
-    def set_and_validate_date(self):
+    def set_date(self, date):
         """ Sets and validates the component date on the widget.
 
-        The method sets the date in the toolkit widget and makes sure that
-        the enaml component is syncronized without firing trait notification
-        events.It simulates the QtDateEdit behaviour and perfoms the date
-        validation in place to avoid exceptions raised by the wxPython
-        DatePickerCtrl widget.
-
         """
-        parent = self.parent
-        date = parent.date
-        validated_date = self.fit_to_range(date)
-        self.widget.SetValue(to_wx_date(validated_date))
-        if validated_date != date:
-            self.parent.trait_setq(date=validated_date)
+        self.widget.SetValue(to_wx_date(date))
 
     def set_minimum_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
@@ -134,14 +124,15 @@ class WXDateEdit(WXControl):
         wx_date = self.widget.GetValue()
         return from_wx_date(wx_date)
 
-    def fit_to_range(self, date):
-        """ Fit the date to the component range.
+    def fit_to_range(self):
+        """ Fit the compoenent date to range.
 
         """
         parent = self.parent
         minimum = parent.minimum_date
         maximum = parent.maximum_date
+        date = parent.date
 
         date = max(date, minimum)
         date = min(date, maximum)
-        return date
+        self.parent.date = date
