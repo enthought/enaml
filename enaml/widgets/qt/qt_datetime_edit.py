@@ -130,3 +130,16 @@ class QtDateTimeEdit(QtControl):
         """
         qdatetime = self.widget.dateTime()
         return qdatetime_to_python(qdatetime)
+
+    def fit_to_range(self):
+        """ Fit the compoenent date to range.
+
+        """
+        parent = self.parent
+        minimum = parent.minimum_datetime
+        maximum = parent.maximum_datetime
+        datetime = parent.datetime
+
+        datetime = max(datetime, minimum)
+        datetime = min(datetime, maximum)
+        self.parent.date = datetime

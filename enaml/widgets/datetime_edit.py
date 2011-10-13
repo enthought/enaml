@@ -35,7 +35,9 @@ class DateTimeEdit(Control):
     ----------
     datetime : Instance(datetime.datetime)
         The currently selected datetime. Default value is the current
-        time in the machine.
+        time in the machine. The value is bounded between
+        :attr:`minimum_datetime` and :attr:`maximum_date`. Attempts to
+        assign a value outside of this range will result in a TraitError.
 
     minimum_datetime : Instance(datetime.datetime)
         The minimum datetime available in the date edit. By default, this

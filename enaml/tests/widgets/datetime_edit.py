@@ -109,9 +109,6 @@ Window:
     def test_invalid_min_datetime(self):
         """ Test changing to an invalid datetime below the min range.
 
-        When an invalid (out of range) datetime is assinged the widget should
-        truncate it in range.
-
         """
         component = self.component
         min_datetime = python_datetime(2000,2,3)
@@ -122,9 +119,6 @@ Window:
 
     def test_invalid_max_datetime(self):
         """ Test changing to an invalid datetime above the max range.
-
-        When an invalid (out of range) datetime is assinged the widget should
-        truncate it in range.
 
         """
         component = self.component
@@ -159,6 +153,8 @@ Window:
     def test_initial_too_early(self):
         """ Check initialization with an invalid early datetime is corrected.
 
+        .. todo:: avoid using the enaml source
+
         """
         enaml = """
 from datetime import datetime as python_datetime
@@ -180,6 +176,8 @@ Window:
 
     def test_initial_too_late(self):
         """ Check initialization with an invalid late datetime is corrected.
+
+        .. todo:: avoid using the enaml source
 
         """
         enaml = """
