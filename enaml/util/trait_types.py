@@ -139,9 +139,9 @@ class Bounded(TraitType):
         if (low <= converted_value <= high):
             return value
         else:
-            msg = ('The value (after convertions) must be a bounded value'
+            msg = ('The value (after convertion) must be a bounded value'
                    ' between {0} and {1}, but instead the converted'
-                   ' result (of input then value {2}) was {3}'.\
+                   ' result (of the input value {2}) was {3}'.\
                    format(low, high, value, converted_value))
             raise TraitError(msg)
 
