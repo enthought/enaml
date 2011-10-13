@@ -334,8 +334,8 @@ class QtSlider(QtControl):
         """
         parent = self.parent
         value = None
+        position = self.widget.value() / float(SLIDER_MAX)
         try:
-            position = self.widget.value() / float(SLIDER_MAX)
             value = parent.converter.from_component(position)
         except Exception as raised_exception:
             self.notify(raised_exception)
