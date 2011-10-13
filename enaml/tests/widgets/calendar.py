@@ -4,6 +4,8 @@
 #------------------------------------------------------------------------------
 from datetime import date
 
+from traits.api import TraitError
+
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -100,9 +102,6 @@ Window:
     def test_invalid_max_date(self):
         """ Test changing to an invalid date above the max range.
 
-        When an invalid (out of range) date is assinged the widget should
-        truncate it in range.
-
         """
         component = self.component
 
@@ -110,23 +109,22 @@ Window:
         self.assertEqual(self.events, ['selected'])
         max_date = date(2014,2,3)
         component.maximum_date = max_date
-        component.date = date(2016,10,9)
-        self.assertEnamlInSync(component, 'date', max_date)
-        self.assertEqual(self.events, ['selected']*2)
+        with self.assertRaises(TraitError):
+            component.date = date(2016,10,9)
+        self.assertEnamlInSync(component, 'date', date(2011,10,9))
+        self.assertEqual(self.events, ['selected'])
 
     def test_invalid_min_date(self):
         """ Test changing to an invalid date below the min range.
-
-        When an invalid (out of range) date is assinged the widget should
-        truncate it in range.
 
         """
         component = self.component
         min_date = date(2000,2,3)
         component.minimum_date = min_date
-        component.date = date(2000,1,1)
-        self.assertEnamlInSync(component, 'date', min_date)
-        self.assertEqual(self.events, ['selected'])
+        with self.assertRaises(TraitError):
+            component.date = date(2000,1,1)
+        self.assertEnamlInSync(component, 'date', date.today())
+        self.assertEqual(self.events, [])
 
 
     def test_select_date_in_ui(self):
@@ -148,6 +146,8 @@ Window:
     def test_initial_too_early(self):
         """ Check initialization with an invalid early date is corrected.
 
+        .. todo:: avoid using the enaml source
+
         """
         enaml = """
 import datetime
@@ -163,13 +163,13 @@ Window:
 
 """
         events = []
-        view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_id(view, 'cal')
-        self.assertEnamlInSync(component, 'date', date(1990, 1, 1))
-        self.assertEqual(events, [])
+        with self.assertRaises(TraitError):
+            view = self.parse_and_create(enaml, events=events)
 
     def test_initial_too_late(self):
         """ Check initialization with an invalid late date is corrected.
+
+        .. todo:: avoid using the enaml source
 
         """
         enaml = """
@@ -185,10 +185,8 @@ Window:
                 activated >> events.append('activated')
 """
         events = []
-        view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_id(view, 'cal')
-        self.assertEnamlInSync(component, 'date', date(2000, 1, 1))
-        self.assertEqual(events, [])
+        with self.assertRaises(TraitError):
+            view = self.parse_and_create(enaml, events=events)
 
     #--------------------------------------------------------------------------
     # absrtact methods

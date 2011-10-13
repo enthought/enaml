@@ -7,7 +7,7 @@ import datetime
 from traits.api import Date, Event, Instance
 
 from .control import Control, IControlImpl
-
+from ..util.trait_types import Bounded
 
 class ICalendarImpl(IControlImpl):
 
@@ -29,15 +29,20 @@ class Calendar(Control):
 
     Attributes
     ----------
-    date : Date
+    date : Bounded
         The currently selected date. This is only updated when the user
-        *activates* the control via double-click or pressing enter.
+        *activates* the control via double-click or pressing enter. The
+        value is bounded between :attr:`minimum_date` and
+        :attr:`maximum_date`. Attempts to assign a value outside of this
+        range will result in a TraitError.
 
     minimum_date : Date
-        The minimum date available in the calendar.
+        The minimum date available in the calendar. If not defined then
+        the default value is September 14, 1752.
 
     maximum_date : Date
-        The maximum date available in the calendar.
+        The maximum date available in the calendar. If not defined then
+        the default value is December 31, 7999.
 
     selected : Event
         Triggered whenever the user clicks or changes the control. The
@@ -49,11 +54,11 @@ class Calendar(Control):
         on the control.
 
     """
-    date = Date(datetime.date.today())
-
     minimum_date = Date(datetime.date(1752, 9, 14))
 
     maximum_date = Date(datetime.date(7999, 12, 31))
+
+    date = Bounded(datetime.date.today(), low='minimum_date', high='maximum_date')
 
     selected = Event
 

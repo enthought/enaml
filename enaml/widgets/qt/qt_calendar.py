@@ -44,26 +44,28 @@ class QtCalendar(QtControl):
         parent = self.parent
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
-        self.set_and_validate_date()
+        self.set_date()
         self.bind()
 
     def parent_date_changed(self, date):
         """ The change handler for the 'date' attribute.
 
         """
-        self.set_and_validate_date()
+        self.set_date()
 
     def parent_minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
+        self.fit_to_range()
 
     def parent_maximum_date_changed(self, date):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
+        self.fit_to_range()
 
     #---------------------------------------------------------------------------
     # Implementation
@@ -94,19 +96,13 @@ class QtCalendar(QtControl):
         parent.date = widget_date
         parent.selected = parent.date
 
-    def set_and_validate_date(self):
+    def set_date(self):
         """ Sets and validates the component date on the widget.
 
-        The method sets the date in the toolkit widget and makes sure that
-        if the widget has truncated the enaml component is syncronized
-        without firing trait notification events.
         """
         parent = self.parent
         date = parent.date
         self.widget.setSelectedDate(date)
-        validated_widget_date = self.get_date()
-        if validated_widget_date != date:
-            self.parent.trait_setq(date=validated_widget_date)
 
     def set_minimum_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
@@ -126,3 +122,16 @@ class QtCalendar(QtControl):
         """
         qdate = self.widget.selectedDate()
         return qdate_to_python(qdate)
+
+    def fit_to_range(self):
+        """ Fit the compoenent date to range.
+
+        """
+        parent = self.parent
+        minimum = parent.minimum_date
+        maximum = parent.maximum_date
+        date = parent.date
+
+        date = max(date, minimum)
+        date = min(date, maximum)
+        self.parent.date = date
