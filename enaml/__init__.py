@@ -27,10 +27,10 @@ class imports(object):
 
     """
     def __enter__(self):
-        from .import_hooks import EnamlModuleFinder
-        EnamlModuleFinder.hook()
+        from .import_hooks import EnamlImporter
+        EnamlImporter.install()
     
     def __exit__(self, *args, **kwargs):
-        from .import_hooks import EnamlModuleFinder
-        EnamlModuleFinder.unhook()
+        from .import_hooks import EnamlImporter
+        EnamlImporter.uninstall()
 
