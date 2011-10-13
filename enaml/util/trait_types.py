@@ -181,9 +181,9 @@ class Bounded(TraitType):
         """
         low, high = self._low, self._high
         if isinstance(low, basestring):
-            low = eval('obj.' + low)
+            low = reduce(getattr, low.split('.'), obj)
 
         if isinstance(high, basestring):
-            high = eval('obj.' + high)
+            high = reduce(getattr, high.split('.'), obj)
 
         return low, high
