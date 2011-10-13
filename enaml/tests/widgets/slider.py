@@ -2,8 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .enaml_test_case import (EnamlTestCase, required_method,
-                              required_extended_method)
+from traits.api import TraitError
+
+from .enaml_test_case import EnamlTestCase, required_method
 from enaml.enums import TickPosition, Orientation
 from enaml.util.enum import Enum
 
@@ -145,37 +146,10 @@ Window:
         """
         component = self.component
 
-        component.value = -0.2
-        self.assertEnamlInSyncExtended(component, 'value', 0.0)
-        component.value = 3
-        self.assertEnamlInSyncExtended(component, 'value', 1)
-
-
-    def test_error_update(self):
-        """ Check that errors are assinged
-
-        """
-        component = self.component
-
-        component.value = -0.2
-        self.assertTrue(component.error)
-        self.assertIsInstance(component.exception, ValueError)
-
-        component.value = 3
-        self.assertTrue(component.error)
-        self.assertIsInstance(component.exception, ValueError)
-
-    def test_error_reset(self):
-        """ Check that the error attributes are reset
-
-        """
-        component = self.component
-
-        component.value = -0.2
-        component.value = 0.3
-        self.assertFalse(component.error)
-        self.assertIsNone(component.exception)
-
+        with self.assertRaises(TraitError):
+            component.value = -0.2
+        with self.assertRaises(TraitError):
+            component.value = 3
 
     def test_orientation_setting(self):
         """ Test changing the widget orientation
@@ -388,7 +362,7 @@ Window:
     # absrtact methods
     #--------------------------------------------------------------------------
 
-    @required_extended_method
+    @required_method
     def get_value(self, component, widget):
         """ Get the Slider's value.
 

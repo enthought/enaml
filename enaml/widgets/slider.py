@@ -8,7 +8,7 @@ from traits.api import (Any, Bool, Callable, Enum, Float, Range, Event,
 from .control import IControlImpl, Control
 from ..converters import Converter, PassThroughConverter
 from ..enums import Orientation, TickPosition
-
+from ..util.trait_types import Bounded
 
 class ISliderImpl(IControlImpl):
 
@@ -43,20 +43,21 @@ class Slider(Control):
     A slider can be used to select from a continuous range of values.
     The slider's range is fixed at 0.0 to 1.0. Therefore, the position
     of the slider can be viewed as a percentage. To facilitate various
-    ranges, you can specify a Converter class to convert to and from the
-    position the value.
+    ranges, you can specify a Converter class to convert `to` and `from`
+    the slider position.
 
     Attributes
     ----------
-    value : Any
-        The value of the slider.  When the slider is moved, the value is set
-        to the result of from_slider.  If the value is changed, then the
-        result of to_slider is used to position the slider
+    value : Bounded
+        The value of the slider. The value is bounded after conversion
+        (i.e. using the converter attribute) to the interval (0.0, 1.0).
+        Attempts to assign a value that will move the slider out of this
+        range will result in TraitError
 
     converter : Instance(Converter)
-        A object that converts between the 'value' attribute and a
-        floating point number in the interval (0.0, 1.0) that is used
-        internally by the slider component.
+        A object that converts between :attr:`value` and a floating point
+        number in the interval (0.0, 1.0) that is used internally by the
+        slider component.
 
     down : Property(Bool)
         A read only property which indicates whether or not the slider
@@ -107,7 +108,7 @@ class Slider(Control):
     """
     down = Property(Bool, depends_on='_down')
 
-    value = Any
+    value = Bounded(0, 0.0, 1.0, converter='converter')
 
     converter = Instance(Converter, factory=PassThroughConverter)
 

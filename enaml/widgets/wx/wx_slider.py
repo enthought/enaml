@@ -68,7 +68,7 @@ class WXSlider(WXControl):
         # We hard-coded range for the widget since we are managing the
         # conversion.
         self.set_range(0, SLIDER_MAX)
-        self.set_and_validate_position(parent.value)
+        self.set_position(parent.value)
         self.set_orientation(parent.orientation)
         self.set_tick_position(parent.tick_position)
         self.set_tick_frequency(parent.tick_interval)
@@ -82,7 +82,7 @@ class WXSlider(WXControl):
         """ Update the slider when the converter class changes.
 
         """
-        pass
+        self.parent.value = self.get_position()
 
     def parent_value_changed(self, value):
         """ Update the slider position
@@ -96,10 +96,8 @@ class WXSlider(WXControl):
 
         """
         parent = self.parent
-        self.set_and_validate_position(value)
-        validated_value = self.get_position()
-        parent.trait_setq(value=validated_value)
-        self.parent.moved = validated_value
+        self.set_position(value)
+        self.parent.moved = value
 
     def parent_tracking_changed(self, tracking):
         """ Set the tracking event in the widget
@@ -351,8 +349,8 @@ class WXSlider(WXControl):
 
         self.widget.SetTickFreq(interval * SLIDER_MAX)
 
-    def set_and_validate_position(self, value):
-        """ Validate the position value.
+    def set_position(self, value):
+        """ set the position value.
 
         The method checks if the value that can be converted to float and
         is in the range of [0.0, 1.0]. If the validation is not succesful
@@ -362,16 +360,12 @@ class WXSlider(WXControl):
         """
         parent = self.parent
         self.reset_errors()
-
         try:
             position = parent.converter.to_component(value)
-            self.widget.SetValue(position * SLIDER_MAX)
-            if not (0.0 <= position <= 1.0):
-                raise ValueError('to_widget() must return a value'
-                                 ' between 0.0 and 1.0, but instead'
-                                 ' returned %s'  % repr(position))
         except Exception as raised_exception:
             self.notify(raised_exception)
+        else:
+            self.widget.SetValue(position * SLIDER_MAX)
 
     def get_position(self):
         """ Get the slider position from the widget.
