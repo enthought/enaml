@@ -14,8 +14,6 @@ creation of Enaml compoenent test suites
 
 .. autofunction:: enaml.tests.widgets.enaml_test_case.required_method
 
-.. autofunction:: enaml.tests.widgets.enaml_test_case.required_extended_method
-
 TestAssistant classes
 ---------------------
 
