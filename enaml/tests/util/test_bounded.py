@@ -3,10 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import unittest
-import datetime
 
 from traits.api import (HasStrictTraits, TraitError, Float,
-                        Callable, Instance, Date)
+                        Callable, Instance)
 
 from enaml.util.trait_types import Bounded
 from enaml.converters import (Converter, PassThroughConverter,
@@ -177,3 +176,23 @@ class Test_Bounded_Dynamic_Converter(unittest.TestCase):
         self.assertAlmostEqual(instance.value, 0.1)
 
 
+class Test_Bounded_Special(unittest.TestCase):
+    """ Test special use cases for the Bounded trait.
+
+    """
+    def test_inner_bound_class(self):
+        class small_class(HasStrictTraits):
+            low = Float(0)
+            high = Float(2)
+
+        class main_class(HasStrictTraits):
+            bounds = Instance(small_class, ())
+            value = Bounded(0.2, 'bounds.low', 'bounds.high')
+
+        instance = main_class()
+        """ Test dynamic initialization. """
+        instance.value = 0.2
+        self.assertAlmostEqual(instance.value, 0.2)
+
+        with self.assertRaises(TraitError):
+            instance.value = -1

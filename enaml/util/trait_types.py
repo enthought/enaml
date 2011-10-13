@@ -124,9 +124,9 @@ class Bounded(TraitType):
         if converter is None:
             converter = lambda val: val
 
-        self.high = high
-        self.low = low
-        self.converter = converter
+        self._high = high
+        self._low = low
+        self._converter = converter
 
 
     def validate(self, obj, name, value):
@@ -135,6 +135,12 @@ class Bounded(TraitType):
         """
         converted_value = self.convert(obj, value)
         low, high = self.get_bounds(obj)
+
+        if low is None:
+            low = converted_value
+
+        if high is None:
+            high = converted_value
 
         if (low <= converted_value <= high):
             return value
@@ -148,17 +154,18 @@ class Bounded(TraitType):
     def convert(self, obj, value):
         """ Convert the input value for validation.
 
+        .. note:: The method supports dynamic values (class traits).
+
         """
-        convert = self.converter
+        converter = self._converter
+        if isinstance(converter, basestring):
+            converter = eval('obj.' + converter)
 
-        if isinstance(convert, basestring):
-            convert = getattr(obj, convert)
-
-        if isinstance(convert, Converter):
-            convert = convert.to_component
+        if isinstance(converter, Converter):
+            converter = converter.to_component
 
         try:
-            converted_value = convert(value)
+            converted_value = converter(value)
         except Exception as raised_exception:
             msg = ("The convertion failed with the following error: {0}".\
                    format(raised_exception))
@@ -167,15 +174,16 @@ class Bounded(TraitType):
             return converted_value
 
     def get_bounds(self, obj):
-        """ Return the low and upper bounds.
+        """ Get the lower and upper bounds of the Trait
 
-        The methods supports dynamic range setting of the bounds through
-        the attributes of the parent class.
+        .. note:: The method supports dynamic values (class traits).
+
         """
-        low = self.low
-        high = self.high
+        low, high = self._low, self._high
         if isinstance(low, basestring):
-            low = getattr(obj, low)
+            low = eval('obj.' + low)
+
         if isinstance(high, basestring):
-            high = getattr(obj, high)
+            high = eval('obj.' + high)
+
         return low, high
