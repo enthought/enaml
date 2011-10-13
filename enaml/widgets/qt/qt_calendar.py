@@ -44,14 +44,14 @@ class QtCalendar(QtControl):
         parent = self.parent
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
-        self.set_date()
+        self.set_date(parent.date)
         self.bind()
 
     def parent_date_changed(self, date):
         """ The change handler for the 'date' attribute.
 
         """
-        self.set_date()
+        self.set_date(date)
 
     def parent_minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
@@ -78,25 +78,22 @@ class QtCalendar(QtControl):
         widget.activated.connect(self.on_date_activated)
         widget.selectionChanged.connect(self.on_date_selected)
 
-    def on_date_activated(self):
+    def on_date_activated(self, qdate):
         """ The event handler for the calendar's activation event.
 
         """
         parent = self.parent
-        widget_date = self.get_date()
-        parent.date = widget_date
-        parent.activated = widget_date
+        date = qdate_to_python(qdate)
+        parent.date = date
+        parent.activated = date
 
     def on_date_selected(self):
         """ The event handler for the calendar's selection event.
 
         """
-        parent = self.parent
-        widget_date = self.get_date()
-        parent.date = widget_date
-        parent.selected = parent.date
+        self.parent.selected = self.get_date()
 
-    def set_date(self):
+    def set_date(self, date):
         """ Sets and validates the component date on the widget.
 
         """

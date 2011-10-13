@@ -43,8 +43,8 @@ Window:
     Panel:
         VGroup:
             Calendar cal:
-                selected >> events.append('selected')
-                activated >> events.append('activated')
+                selected >> events.append(('selected', msg.new))
+                activated >> events.append(('activated', msg.new))
 """
 
         self.events = []
@@ -62,13 +62,6 @@ Window:
         self.assertEnamlInSync(component, 'minimum_date', date(1752, 9, 14))
         self.assertEnamlInSync(component, 'maximum_date', date(7999, 12, 31))
         self.assertEqual(self.events, [])
-
-    def test_activated_fired(self):
-        """ Test that the 'activated' event fires properly.
-
-        """
-        self.activate_date(self.widget, date(1970, 2, 1))
-        self.assertEqual(self.events, ['activated'])
 
     def test_change_minimum_date(self):
         """ Test changing the minimum date.
@@ -96,7 +89,7 @@ Window:
         new_date = date(2007,10,9)
         component.date = new_date
         self.assertEnamlInSync(component, 'date', new_date)
-        self.assertEqual(self.events, ['selected'])
+        self.assertEqual(self.events, [('selected', new_date)])
 
 
     def test_invalid_max_date(self):
@@ -106,13 +99,13 @@ Window:
         component = self.component
 
         component.date = date(2011,10,9)
-        self.assertEqual(self.events, ['selected'])
+        self.assertEqual(self.events, [('selected', date(2011,10,9))])
         max_date = date(2014,2,3)
         component.maximum_date = max_date
         with self.assertRaises(TraitError):
             component.date = date(2016,10,9)
         self.assertEnamlInSync(component, 'date', date(2011,10,9))
-        self.assertEqual(self.events, ['selected'])
+        self.assertEqual(len(self.events), 1)
 
     def test_invalid_min_date(self):
         """ Test changing to an invalid date below the min range.
@@ -135,8 +128,23 @@ Window:
         widget = self.widget
         new_date = date(2007,10,9)
         self.select_date(widget, new_date)
+        self.assertEqual(self.get_date(widget), new_date)
+        # make sure that the component is not updated when selected is fired
+        self.assertEqual(component.date, date.today())
+        self.assertEqual(self.events, [('selected', new_date)])
+
+    def test_activate_date_in_ui(self):
+        """ Test activating the current date thought the ui
+
+        """
+        component = self.component
+        widget = self.widget
+        new_date = date(2007,10,9)
+        self.select_date(widget, new_date)
+        self.activate_date(self.widget, new_date)
         self.assertEnamlInSync(component, 'date', new_date)
-        self.assertEqual(self.events, ['selected'])
+        self.assertEqual(self.events, [('selected', new_date),
+                                       ('activated', new_date)])
 
 
     #--------------------------------------------------------------------------
@@ -158,8 +166,8 @@ Window:
                 date = datetime.date(1980, 1, 1)
                 minimum_date = datetime.date(1990, 1, 1)
                 maximum_date = datetime.date(2000, 1, 1)
-                selected >> events.append('selected')
-                activated >> events.append('activated')
+                selected >> events.append(('selected', msg.new))
+                activated >> events.append(('activated', msg.new))
 
 """
         events = []
@@ -181,8 +189,8 @@ Window:
                 date = datetime.date(2010, 1, 1)
                 minimum_date = datetime.date(1990, 1, 1)
                 maximum_date = datetime.date(2000, 1, 1)
-                selected >> events.append('selected')
-                activated >> events.append('activated')
+                selected >> events.append(('selected', msg.new))
+                activated >> events.append(('activated', msg.new))
 """
         events = []
         with self.assertRaises(TraitError):
@@ -214,7 +222,7 @@ Window:
         pass
 
     @required_method
-    def activate_date(self, widget, date):
+    def activate_date(self, widget):
         """ Fire an event to indicate that a date was activated.
 
         """

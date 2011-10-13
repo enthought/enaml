@@ -57,8 +57,11 @@ class WXCalendar(WXControl):
         """ The change handler for the 'date' attribute.
 
         """
+        old_widget_date = self.get_date()
         self.set_date(date)
-        self.parent.selected = date
+        if old_widget_date != date:
+            self.parent.selected = date
+
 
     def parent_minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
@@ -97,9 +100,8 @@ class WXCalendar(WXControl):
         """ The event handler for the calendar's selection event.
 
         """
-        parent = self.parent
         date = self.get_date()
-        parent.date = date
+        self.parent.selected = date
 
     def set_date(self, date):
         """ Sets the component date on the widget.

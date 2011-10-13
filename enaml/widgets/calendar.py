@@ -46,7 +46,8 @@ class Calendar(Control):
 
     selected : Event
         Triggered whenever the user clicks or changes the control. The
-        event payload will be the date on the control.
+        event payload will be the date on the control. This is event is
+        also fired when the value of :attr:`date` is set programmatically.
 
     activated : Event
         Triggered whenever the user activates a new date via double
