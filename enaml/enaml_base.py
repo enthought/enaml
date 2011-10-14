@@ -3,37 +3,34 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import (HasStrictTraits, Instance, Dict, Str, List, Any, 
-                        TraitChangeNotifyWrapper)
+                        TraitChangeNotifyWrapper, TraitType)
 
 from .expressions import IExpressionBinder
 
 
-def _set_default_handler(obj, name, binder):
-    """ Sets up a handler that uses an expression binder to compute the
-    default value of a class trait attribute. This is meant for use with 
-    instances of EnamlBase.
-
-    Arguments
-    ---------
-    obj : Instance(EnamlBase)
-        The EnamlBase instance which holds the attribute we're binding.
-    
-    name : string
-        The name of the attribute on the instance for which we want to
-        handle default values.
-    
-    binder : Instance(IExpressionBinder)
-        An instance of an expression binder that will give use the 
-        default value.
-
-    Notes
-    -----
-    This function works by temporarily adding an instance trait to the
-    object which is removed as soon as the default value is computed.
+class BinderDefaultTrait(TraitType):
+    """ A custom trait type that handles initializing a component
+    trait attribute with a value computed from an expression binder.
+    This is meant for use with subclasses of EnamlBase. It should 
+    be added as an instance trait and will remove itself upon the 
+    first call to 'get' or 'set'
 
     """
-    def rebind(rebind_obj, rebind_name, notifier):
-        """ Rebinds a trait notifier by reconstituting the handler and 
+    def __init__(self, binder):
+        """ Initialize a binder default trait.
+
+        Parameters
+        ----------
+        binder : Instance(IExpressionBinder)
+            An instance of an expression binder that will give use the 
+            default value.
+
+        """
+        super(BinderDefaultTrait, self).__init__()
+        self.binder = binder
+
+    def rebind(self, obj, name, notifier):
+        """ Rebinds a trait notifier by reconstructing the handler and 
         calling on_trait_change to create the new notifier. Currently
         only handles TraitChangeNotifyWrappers.
 
@@ -52,42 +49,48 @@ def _set_default_handler(obj, name, binder):
             else:
                 msg = 'unknown call method `%s`' % call_method
                 raise ValueError(msg)
-            rebind_obj.on_trait_change(handler, rebind_name)
+            obj.on_trait_change(handler, name)
 
-    def default_value(default_obj):
-        """ A default value handler closure that removes the instance
-        trait as soon as the default value is computed.
+    def remove(self, obj, name):
+        """ Removes the instance trait 'name' from the given object.
+        Any notifiers on the instance trait will be applied to the
+        class trait via the 'rebind' method.
 
         """
-        # The standard `remove_trait` method of the HasTraits class
-        # doesn't copy over any instance notifiers (as it shouldn't).
-        # But, we need that behavior here since the instance trait is
-        # intended to be transparent.
-        instance_trait = default_obj._instance_traits().get(name)
+        instance_trait = obj._instance_traits().get(name)
         if instance_trait is not None:
-            default_obj.remove_trait(name)
+            obj.remove_trait(name)
             instance_notifiers = instance_trait._notifiers(0)
             if instance_notifiers is not None:
-                class_trait = default_obj.trait(name)
+                class_trait = obj.trait(name)
                 if class_trait is not None:
                     for notifier in instance_notifiers:
-                        rebind(default_obj, name, notifier)
-        
-        # We do a setattr followed by a getattr in case the thing we
-        # are grabbing the default value for is a Property or a delegate.
-        # In effect, we are mimicking the user evaluating the expression 
-        # and setting the value on the attribute.
-        val = binder.eval_expression()
-        setattr(default_obj, name, val)
-        res = getattr(default_obj, name, val)
-        
-        return res
+                        self.rebind(obj, name, notifier)
 
-    # This is the temporary instance trait that is removed by the
-    # `default_value` closure
-    itrait = Any().as_ctrait()
-    itrait.default_value(8, default_value)
-    obj.add_trait(name, itrait)
+    def get(self, obj, name):
+        """ Called to get the value of the trait. 
+
+        Calling this method removes this trait from the object, evaluates 
+        the expression, then performs a setattr followed by a getattr to 
+        mimick a user performing the operation and to ensure safety when
+        operating on delegates or properties.
+
+        """
+        self.remove(obj, name)
+        val = self.binder.eval_expression()
+        setattr(obj, name, val)
+        return getattr(obj, name)
+
+    def set(self, obj, name, val):
+        """ Called to set the value of the trait. 
+
+        Calling this method removes this trait from the object, then
+        performs a setattr with the value. This operations ensures 
+        safety when operating on delegates or properties.
+
+        """
+        self.remove(obj, name)
+        setattr(obj, name, val)
 
 
 class EnamlBase(HasStrictTraits):
@@ -138,21 +141,20 @@ class EnamlBase(HasStrictTraits):
 
         """
         self._expression_binders.setdefault(name, []).append(binder)
-        
+
         # If the trait is in class traits, then we need to add an 
         # instance trait temporarily in order to handle the default
         # value initialization. Unlike the instance trait cases which
         # are handled below, there is some notifier management that 
         # needs to take place here and that's why this case is handled
-        # by an external function, rather than obfuscating the main
-        # idea and readability here.
+        # by a special trait type.
         if name in self.class_traits():
             if eval_default:
-                _set_default_handler(self, name, binder)
+                self.add_trait(name, BinderDefaultTrait(binder))
         
         # Otherwise, the user is defining their own attributes and we 
-        # need to create an instance (if necessary) and then bind the 
-        # default value (also if necessary). Note that the .add_trait
+        # need to create an instance trait (if necessary) and then bind 
+        # the default value (also if necessary). Note that the .add_trait
         # method automatically clones the trait before adding it to 
         # the instance trait dict. This means that the default value
         # handler must be applied *before* the call to .add_trait.

@@ -2,10 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, implements
+from traits.api import implements
 
 from .qt_component import QtComponent
-from .styling import QtStyleHandler, qt_color
+from .styling import set_qwidget_bgcolor, set_qwidget_fgcolor
 
 from ..control import IControlImpl
 
@@ -14,18 +14,9 @@ class QtControl(QtComponent):
 
     implements(IControlImpl)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # IControlImpl interface
-    #---------------------------------------------------------------------------
-    def create_style_handler(self):
-        """ Creates and sets the style handler for the widget. Must
-        be implemented by subclasses.
-
-        """
-        style_handler = QtStyleHandler(widget=self.widget, tags=self.tags)
-        style_handler.node = self.parent.style
-        self.style_handler = style_handler
-
+    #--------------------------------------------------------------------------
     def initialize_style(self):
         """ Initializes the style and style handler of a widget. Must
         be implemented by subclasses.
@@ -41,10 +32,33 @@ class QtControl(QtComponent):
         """
         if list(self.child_widgets()):
             raise ValueError('Standard controls cannot have children.')
+        
+    def parent_bgcolor_changed(self, bgcolor):
+        """ The change handler for the 'bgcolor' attribute. Not meant
+        for public consumption.
 
+        """
+        self.set_bgcolor(bgcolor)
+     
+    def parent_fgcolor_changed(self, fgcolor):
+        """ The change handler for the 'fgcolor' attribute. Not meant
+        for public consumption.
 
-    style_handler = Instance(QtStyleHandler)
-   
-    tags = {
-        'background_color': qt_color,
-    }
+        """
+        self.set_fgcolor(fgcolor)
+    
+    #--------------------------------------------------------------------------
+    # Widget Update 
+    #--------------------------------------------------------------------------
+    def set_bgcolor(self, bgcolor):
+        """ Set the background color of the widget.
+
+        """
+        set_qwidget_bgcolor(self.widget, bgcolor)
+    
+    def set_fgcolor(self, fgcolor):
+        """ Set the foreground color of the widget.
+
+        """
+        set_qwidget_fgcolor(self.widget, fgcolor)
+

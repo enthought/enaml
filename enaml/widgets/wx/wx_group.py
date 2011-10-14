@@ -45,22 +45,9 @@ class WXGroup(WXContainer):
         """ Adds the children of this container to the sizer.
 
         """
-        # XXX - the wx box model is terrible and we have not way of 
-        # specifying inter-item spacing in a group while also specifying
-        # an independent border. So, if we get a spacing value, we just
-        # punt and add it to the border width and set the border to ALL.
-        spacing = self.parent.style.get_property('spacing')
-        if isinstance(spacing, int) and spacing >= 0:
-            pass
-        else:
-            spacing = False
         sizer = self.widget
         for child in self.parent.children:
-            flags = compute_sizer_flags(child.style)
-            if spacing:
-                border = flags.GetBorderInPixels()
-                border += spacing
-                flags.Border(wx.ALL, border)
+            flags = compute_sizer_flags(child)
             sizer.AddF(child.toolkit_impl.widget, flags)
         sizer.Layout()
 

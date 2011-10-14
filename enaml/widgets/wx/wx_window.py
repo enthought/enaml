@@ -48,26 +48,6 @@ class WXWindow(WXComponent):
 
         """
         pass
-    
-    def initialize_style(self):
-        """ Initializes the style for the window.
-
-        """
-        # XXX this is a hack!
-        style = self.parent.style
-        width = style.get_property('min_width')
-        height = style.get_property('min_height')
-        if isinstance(width, int):
-            if width < 0:
-                width = 800
-        else:
-            width = 800
-        if isinstance(height, int):
-            if height < 0:
-                height = 600
-        else:
-            height = 600
-        self.widget.SetSize((width, height))
         
     def layout_child_widgets(self):
         """ Arranges the children of the frame (typically only one) in
@@ -76,7 +56,7 @@ class WXWindow(WXComponent):
         """
         sizer = wx.BoxSizer(wx.VERTICAL)
         for child in self.parent.children:
-            flags = compute_sizer_flags(child.style)
+            flags = compute_sizer_flags(child)
             sizer.AddF(child.toolkit_impl.widget, flags)
         self.widget.SetSizer(sizer)
         sizer.Layout()

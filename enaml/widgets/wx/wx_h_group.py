@@ -6,25 +6,25 @@ from traits.api import implements
 
 from .wx_group import WXGroup
 
-from ..vgroup import IVGroupImpl
+from ..h_group import IHGroupImpl
 
 
-class WXVGroup(WXGroup):
-    """ A wxPython implementation of IVGroup.
+class WXHGroup(WXGroup):
+    """ A wxPython implementation of IHGroup.
 
-    This is a convienence subclass of WXGroup which restricts the 
-    layout direction to vertical.
+    This is a convienence subclass of WXGroup which restricts the
+    layout direction to horizontal.
 
     See Also
     --------
-    IVGroup
+    IHGroup
     
     """ 
-    implements(IVGroupImpl)
+    implements(IHGroupImpl)
 
     #---------------------------------------------------------------------------
-    # IVGroupImpl interface
+    # IHGroupImpl interface
     #---------------------------------------------------------------------------
     
-    # IVGroupImpl interface is empty and fully implemented by WXGroup
+    # IHGroupImpl interface is empty and fully implemented by WXGroup
 

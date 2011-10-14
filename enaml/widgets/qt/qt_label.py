@@ -2,12 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
-
 from traits.api import implements
 
+from .qt import QtGui
 from .qt_control import QtControl
-from .styling import QtStyleHandler, qt_box_model
 
 from ..label import ILabelImpl
 
@@ -56,4 +54,3 @@ class QtLabel(QtControl):
         """
         self.widget.setText(label)
 
-    tags = qt_box_model

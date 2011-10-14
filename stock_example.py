@@ -5,8 +5,8 @@
 import datetime
 
 from traits.api import (HasTraits, List, Str, Date, Enum, Property, Array, Int, 
-                        Tuple, on_trait_change, Instance, ReadOnly, Event, 
-                        cached_property, DelegatesTo, Float)
+                       Tuple, on_trait_change, Instance, ReadOnly, Event, 
+                       cached_property, DelegatesTo, Float)
 
 import enaml
 from enaml.item_models.abstract_item_model import AbstractTableModel
@@ -174,7 +174,10 @@ if __name__ == '__main__':
     adapter = GridDataAdapter(model=model)
     data_table = StockDataTable(adapter)
     
+    import time
+    t1 = time.time()
     view = MainView(model, adapter, plot_driver, stock_data_table=data_table, pb_label='whatd')
-    
-    view.show()
-
+    t2 = time.time()
+    print t2 - t1
+    #view.show()
+    print view

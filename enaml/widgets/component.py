@@ -362,8 +362,6 @@ class Component(EnamlBase, StyleMixin):
             child.layout(toplevel=False)
         
         impl.initialize_widget()
-        #impl.create_style_handler()
-        #impl.initialize_style()
         impl.layout_child_widgets()
 
         self._hook_impl()

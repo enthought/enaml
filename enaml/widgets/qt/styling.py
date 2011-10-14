@@ -2,12 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Instance, Dict
 from .qt import QtCore, QtGui
 
-from ...color import Color
-from ...style_sheet import StyleSheet, StyleHandler, style, NO_STYLE
-from ...style_converters import color_from_color_style
+from ...styling.style_sheet import StyleSheet, style
+from ...styling.layout import SizePolicyFlag, Alignment
+
 
 #-------------------------------------------------------------------------------
 # Default Qt style sheet definition
@@ -39,6 +38,7 @@ QT_STYLE_SHEET = StyleSheet(
     #style("Group", "VGroup", "HGroup",
     #    spacing = 2,
     #),
+
     style("TableView",
         stretch = 1,
     ),
@@ -114,225 +114,160 @@ QT_STYLE_SHEET = StyleSheet(
 
 )
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # qt styling helper and conversion functions
-#-------------------------------------------------------------------------------
-Q_SIZE_POLICIES = {
-    "fixed": QtGui.QSizePolicy.Fixed,
-    "minimum": QtGui.QSizePolicy.Minimum,
-    "maximum": QtGui.QSizePolicy.Maximum,
-    "preferred": QtGui.QSizePolicy.Preferred,
-    "expanding": QtGui.QSizePolicy.Expanding,
-    "minimum_expanding": QtGui.QSizePolicy.MinimumExpanding,
-    "ignored": QtGui.QSizePolicy.Ignored,
+#------------------------------------------------------------------------------
+_Q_SIZE_POLICIES = {
+    SizePolicyFlag().default(): None,
+    SizePolicyFlag().fixed(): QtGui.QSizePolicy.Fixed,
+    SizePolicyFlag().minimum(): QtGui.QSizePolicy.Minimum,
+    SizePolicyFlag().maximum(): QtGui.QSizePolicy.Maximum,
+    SizePolicyFlag().preferred(): QtGui.QSizePolicy.Preferred,
+    SizePolicyFlag().expanding(): QtGui.QSizePolicy.Expanding,
+    SizePolicyFlag().minimum_expanding(): QtGui.QSizePolicy.MinimumExpanding,
+    SizePolicyFlag().ignored(): QtGui.QSizePolicy.Ignored,
 }
 
 
-class QtStyleHandler(StyleHandler):
-    """ StyleHandler subclass that understands how to set styles via Qt style sheets
-    
-    Attributes
-    ----------
-    
-    widget : QWidget
-        The underlying QWidget that we are interacting with.
-    
-    _qt_stylesheet_values : Dict
-        A dictionary holding the current state.
-    """
+def set_widget_sizepolicy(widget, policy):
+    """ Update the size policy of a QWidget.
 
-    widget = Instance(QtGui.QWidget)
-    
-    _qt_stylesheet_values = Dict
-
-    def set_style_value(self, value, tag, converter):
-        """Set the style given by the tag to the value in a generic way for Qt.
-        
-        This uses Qt's style sheet mechanism.
-        
-        Arguments
-        ---------
-        
-        value : style_value
-            The string representation of the style's value.
-        
-        tag : string
-            The style tag that is being set.
-        
-        args : callable
-            Callable that converts Enaml stylesheet value to Qt stylehseet
-            values of the appropriate type for the tag.
-        """
-        qt_value = converter(value)
-        key = tag.replace('_', '-')
-        if qt_value is not None:
-            self._qt_stylesheet_values[key] = qt_value
-        else:
-            self._qt_stylesheet_values.pop(key, None)
-        stylesheet = generate_qt_stylesheet(self.widget.__class__.__name__,
-                                            self._qt_stylesheet_values)         
-        self.widget.setStyleSheet(stylesheet)
-
-    def style_size_policy(self, size_policy):
-        if size_policy is not NO_STYLE:
-            widget = self.widget
-            old = widget.sizePolicy()
-            new = QtGui.QSizePolicy(old.horizontalPolicy(), 
-                                    old.verticalPolicy())
-            
-            if isinstance(size_policy, (list, tuple)):
-                hpolicy, vpolicy = size_policy
-            else:
-                hpolicy = vpolicy = size_policy
-            
-            hpolicy = Q_SIZE_POLICIES.get(hpolicy)
-            vpolicy = Q_SIZE_POLICIES.get(vpolicy)
-            
-            if hpolicy is not None:
-                new.setHorizontalPolicy(hpolicy)
-            if vpolicy is not None:
-                new.setVerticalPolicy(vpolicy)
-
-            widget.setSizePolicy(new)
-
-
-def generate_qt_stylesheet(class_name, values):
-    """ Generate a Qt stylesheet string
-    
     Arguments
     ---------
+    widget : QtGui.QWidget
+        The Qt widget on which we are updating the size policy.
+
+    policy : enaml.styling.layout.SizePolicy
+        An enaml size policy value.
     
-    class_name : string
-        The name of the Qt class that is having its stylesheet set.
+    """
+    horizontal = _Q_SIZE_POLICIES[policy.horizontal]
+    vertical = _Q_SIZE_POLICIES[policy.vertical]
     
-    values : dictionary
-        A dictionary whose keys are Qt stylesheet property names and
-        whose values are the corresponding string values to be used in
-        the stylesheet.
+    if horizontal is None and vertical is None:
+        return
+    
+    current = widget.sizePolicy()
+
+    if horizontal is None:
+        horizontal = current.horizontalPolicy()
+    
+    if vertical is None:
+        vertical = current.verticalPolicy()
+
+    new = QtGui.QSizePolicy(horizontal, vertical)
+
+    widget.setSizePolicy(new)
+
+
+def q_alignment_from_alignment(align):
+    """ Convert an enaml Alignment value into a Qt alignment value.
+
+    Arguments
+    ---------
+    align : enaml.styling.layout.Alignment
+        An alignment value.
+    
+    Returns
+    -------
+    result : int
+        A Qt alignment value.
+
     """
-    templ = '%s { %s }'
-    items = '; '.join(key+': '+value for key, value in values.items())
-    return templ % (class_name, items)
-
-
-ALIGN_MAP = {
-    'top': QtCore.Qt.AlignTop,
-    'right': QtCore.Qt.AlignRight,
-    'bottom': QtCore.Qt.AlignBottom,
-    'left': QtCore.Qt.AlignLeft,
-    'hcenter': QtCore.Qt.AlignHCenter,
-    'vcenter': QtCore.Qt.AlignVCenter,
-    'center': QtCore.Qt.AlignCenter,
-}
-
-
-def qt_color_from_color(color):
-    """ Converts an enaml.color.Color into a qt stylesheet color.
-
-    """
-    if color == Color.no_color:
-        res = None
-    else:
-        res = 'rgb(%s, %s, %s, %s)' % (color.r, color.g, color.b, color.a)
+    Qt = QtCore.Qt
+    res = 0
+    if align & Alignment.LEFT:
+        res |= Qt.AlignLeft
+    if align & Alignment.RIGHT:
+        res |= Qt.AlignRight
+    if align & Alignment.JUSTIFY:
+        res |= Qt.AlignJustify
+    if align & Alignment.BOTTOM:
+        res |= Qt.AlignBottom
+    if align & Alignment.TOP:
+        res |= Qt.AlignTop
+    if align & Alignment.HCENTER:
+        res |= Qt.AlignHCenter
+    if align & Alignment.VCENTER:
+        res |= Qt.AlignVCenter
     return res
 
-def QColor_form_color(color):
-    """ Converts an enaml.color.Color into a qt stylesheet color.
+
+def q_color_from_color(color):
+    """ Converts an enaml Color into a QtGui.QColor instance.
+
+    Arguments
+    ---------
+    color : enaml.styling.color.Color
+        An enaml Color object.
+
+    Returns
+    -------
+    result : QtGui.QColor
+        The coverted Qt color object.
 
     """
-    if color == Color.no_color:
-        res = None
+    if not color:
+        res = QtGui.QColor()
     else:
         res = QtGui.QColor(color.r, color.g, color.b, color.a)
     return res
 
-def qt_color(color_style):
-    color = color_from_color_style(color_style)
-    return qt_color_from_color(color)
 
-def qt_length(length_style):
-    if length_style is NO_STYLE:
-        return None
-    return '%spx' % length_style
+def set_qwidget_bgcolor(widget, bgcolor):
+    """ Set the background color of a QWidget to the color specified by
+    the given enaml color or reset the widgets color to the background
+    role if the enaml color is invalid.
 
-def qt_box_lengths(box_lengths):
-    if box_lengths is NO_STYLE:
-        return None
-    if isinstance(box_lengths, (tuple, list)):
-        return ' '.join(qt_length(x) for x in box_lengths)
-    else:
-        return qt_length(box_lengths)
-
-
-#-------------------------------------------------------------------------------
-# Standard property style models
-#-------------------------------------------------------------------------------
-
-qt_background_model = {
-    'background_color': qt_color
-}
-
-qt_box_model = qt_background_model.copy()
-qt_box_model.update({
-    'padding': qt_box_lengths,
-    'padding_top': qt_length,
-    'padding_bottom': qt_length,
-    'padding_left': qt_length,
-    'padding_right': qt_length,    
-
-    'margin': qt_box_lengths,
-    'margin_top': qt_length,
-    'margin_bottom': qt_length,
-    'margin_left': qt_length,
-    'margin_right': qt_length,    
-
-    'border_width': qt_box_lengths,
-    'border_top_width': qt_length,
-    'border_bottom_width': qt_length,
-    'border_left_width': qt_length,
-    'border_right_width': qt_length,    
-})
-
-'''
-def compute_sizer_flags(style):
-    """ Computes wx sizer flags given a style node.
+    Arguments
+    ---------
+    widget : QtGui.QWidget
+        The widget on which we are changing the background color.
+    
+    bgcolor : enaml.styling.color.Color
+        An enaml Color object.
 
     """
-    get_property = style.get_property
-    padding_style = PaddingStyle.from_style_node(style)
-    order = [wx.TOP, wx.RIGHT, wx.BOTTOM, wx.LEFT]
-    border_flags = 0
-    border_amt = -1
+    role = widget.backgroundRole()
+    if not bgcolor:
+        palette = QtGui.QApplication.instance().palette(widget)
+        qcolor = palette.color(role)
+        # On OSX, the default color is rendered *slightly* off
+        # so a simple workaround is to tell the widget not to
+        # auto fill the background.
+        widget.setAutoFillBackground(False)
+    else:
+        qcolor = q_color_from_color(bgcolor)
+        # When not using qt style sheets to set the background
+        # color, we need to tell the widget to auto fill the 
+        # background or the bgcolor won't render at all.
+        widget.setAutoFillBackground(True)
+    palette = widget.palette()
+    palette.setColor(role, qcolor)
+    widget.setPalette(palette)
 
-    for amt, flag in zip(padding_style.padding, order):
-        if amt >= 0:
-            border_amt = max(border_amt, amt)
-            border_flags |= flag
 
-    sizer_flags = wx.SizerFlags()
+def set_qwidget_fgcolor(widget, fgcolor):
+    """ Set the foreground color of a QWidget to the color specified by
+    the given enaml color or reset the widgets color to the foreground
+    role if the enaml color is invalid.
+
+    Arguments
+    ---------
+    widget : QtGui.QWidget
+        The widget on which we are changing the foreground color.
     
-    if border_amt >= 0:
-        sizer_flags.Border(border_flags, amt)
+    fgcolor : enaml.styling.color.Color
+        An enaml Color object.
 
-    align = get_property("align")
-    if isinstance(align, basestring):
-        align_spec = align.split()
-        align_flags = 0
-        for align in align_spec:
-            align_flags |= ALIGN_MAP.get(align, 0)
-        if align_flags != 0:
-            sizer_flags.Align(align_flags)
-    
-    size_policy = get_property("size_policy")
-    if isinstance(size_policy, basestring):
-        size_policy_spec = size_policy.strip()
-        if size_policy_spec == 'expanding':
-            sizer_flags.Expand()
+    """
+    role = widget.foregroundRole()
+    if not fgcolor:
+        palette = QtGui.QApplication.instance().palette(widget)
+        qcolor = palette.color(role)
+    else:
+        qcolor = q_color_from_color(fgcolor)
+    palette = widget.palette()
+    palette.setColor(role, qcolor)
+    widget.setPalette(palette)
 
-    stretch = get_property("stretch")
-    if isinstance(stretch, int) and stretch >= 0:
-        sizer_flags.Proportion(stretch)
-
-    return sizer_flags
-
-'''

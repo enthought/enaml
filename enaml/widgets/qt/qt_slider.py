@@ -70,7 +70,6 @@ class QtSlider(QtControl):
         self.set_single_step(parent.single_step)
         self.set_page_step(parent.page_step)
         self.set_tracking(parent.tracking)
-
         self.bind()
 
     def parent_from_slider_changed(self, from_slider):

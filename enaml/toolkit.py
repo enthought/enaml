@@ -5,7 +5,7 @@
 from collections import Sequence
 import os
 
-from traits.api import HasStrictTraits, Callable
+from traits.api import HasStrictTraits, Callable, Str
 
 from .expressions import (DefaultExpression, BindingExpression, 
                           DelegateExpression, NotifierExpression)
@@ -16,6 +16,10 @@ class Constructor(HasStrictTraits):
 
     Attributes
     ----------
+    type_name : Str
+        The name of the type, as seen from enaml source code, that this
+        constructor is creating. This is assigned by the toolkit object.
+
     component_loader : Callable
         A callable object which returns the component class to use
         for the widget.
@@ -34,6 +38,8 @@ class Constructor(HasStrictTraits):
         out one of the loaders.
     
     """
+    type_name = Str
+
     component_loader = Callable
 
     impl_loader = Callable
@@ -112,6 +118,10 @@ class Toolkit(dict):
 
     @classmethod
     def active_toolkit(cls):
+        """ A classmethod that returns the currently active toolkit, 
+        or the default toolkit if there is not active toolkit context.
+
+        """
         stack = cls.__stack__
         if not stack:
             tk = cls.default_toolkit()
@@ -121,77 +131,187 @@ class Toolkit(dict):
 
     @classmethod
     def default_toolkit(cls):
+        """ A classmethod that returns the default toolkit, creating one
+        if necessary.
+
+        """
         tk = cls.__default__
         if tk is None:
             tk = cls.__default__ = default_toolkit()
         return tk
 
+    def __init__(self, *args, **kwargs):
+        """ Initialize a toolkit object using the same constructor 
+        signature as dict(). This overridden constructor ensure that 
+        type names are properly assigned to to constructors.
+
+        """
+        super(Toolkit, self).__init__(*args, **kwargs)
+        for key, value in self.iteritems():
+            if isinstance(value, Constructor):
+                value.type_name = key
+    
+    def __setitem__(self, key, value):
+        """ Overridden dict.__setitem__ to apply type name values to 
+        constructors.
+
+        """
+        if isinstance(value, Constructor):
+            value.type_name = key
+        super(Toolkit, self).__setitem__(key, value)
+
+    def update(self, other=None, **kwargs):
+        """ Overridden from dict.update to apply type name values to 
+        constructors.
+
+        """
+        if other is None:
+           pass
+        elif hasattr(other, 'iteritems'):
+            for k, v in other.iteritems():
+                self[k] = v
+        elif hasattr(other, 'keys'):
+            for k in other.keys():
+                self[k] = other[k]
+        else:
+            for k, v in other:
+                self[k] = v
+        if kwargs:
+            self.update(kwargs)
+    
+    def setdefault(self, key, default=None):
+        """ Overridden from dict.setdefault to apply type name values to 
+        constructors.
+        
+        """ 
+        try:
+            return self[key]
+        except KeyError:
+            self[key] = default
+        return default
+
     def __enter__(self):
+        """ A context manager method that pushes this toolkit onto
+        the active toolkit stack.
+
+        """
         self.__stack__.append(self)
     
     def __exit__(self, *args, **kwargs):
+        """ A context manager method that pops this toolkit from the
+        active toolkit stack.
+
+        """
         self.__stack__.pop()
 
     def _get_default(self):
+        """ Returns the default expression handler class for this toolkit.
+
+        """
         return self['__enaml_default__']
     
     def _set_default(self, val):
+        """ Sets the default expression handler class for this toolkit.
+
+        """
         self['__enaml_default__'] = val
     
     default = property(_get_default, _set_default)
 
     def _get_bind(self):
+        """ Returns the binding expression handler class for this toolkit.
+
+        """
         return self['__enaml_bind__']
     
     def _set_bind(self, val):
+        """ Sets the binding expression handler class for this toolkit.
+
+        """
         self['__enaml_bind__'] = val
     
     bind = property(_get_bind, _set_bind)
 
     def _get_delegate(self):
+        """ Returns the delegate expression handler class for this toolkit.
+
+        """
         return self['__enaml_delegate__']
     
     def _set_delegate(self, val):
+        """ Sets the delegate expression handler class for this toolkit.
+
+        """
         self['__enaml_delegate__'] = val
     
     delegate = property(_get_delegate, _set_delegate)
 
     def _get_notify(self):
+        """ Returns the notifier expression handler class for this toolkit.
+
+        """
         return self['__enaml_notify__']
     
     def _set_notify(self, val):
+        """ Sets the notifier expression handler class for this toolkit.
+
+        """
         self['__enaml_notify__'] = val
     
     notify = property(_get_notify, _set_notify)
 
     def _get_style_sheet(self):
+        """ Returns the default style sheet instance for this toolkit.
+
+        """
         return self['__style_sheet__']
     
     def _set_style_sheet(self, val):
+        """ Sets the default style sheet instance for this toolkit.
+
+        """
         self['__style_sheet__'] = val
 
     style_sheet = property(_get_style_sheet, _set_style_sheet)
 
     def _get_create_app(self):
+        """ Returns the app creation function for this toolkit.
+
+        """
         return self['__create_app__']
     
     def _set_create_app(self, val):
+        """ Sets the app creation function for this toolkit.
+
+        """
         self['__create_app__'] = val
     
     create_app = property(_get_create_app, _set_create_app)
 
     def _get_start_app(self):
+        """ Returns the start app function for this toolkit.
+
+        """
         return self['__start_app__']
     
     def _set_start_app(self, val):
+        """ Sets the start app function for this toolkit.
+
+        """
         self['__start_app__'] = val
 
     start_app = property(_get_start_app, _set_start_app)
 
     def _get_app(self):
+        """ Returns the application object for this toolkit.
+
+        """
         return self['__app__']
     
     def _set_app(self, val):
+        """ Sets the application object for this toolkit.
+
+        """
         self['__app__'] = val
     
     app = property(_get_app, _set_app)
@@ -217,24 +337,24 @@ def wx_toolkit():
     """ Creates and return a toolkit object for the Wx backend.
 
     """
-    # from .util.guisupport import get_app_wx, start_event_loop_wx
-    # #from .widgets.wx import constructors as ctors
-    # from .widgets.wx import dialogs
-    # from .widgets.wx.styling import WX_STYLE_SHEET
+    from .widgets.wx.constructors import WX_CONSTRUCTORS
+    from .util.guisupport import get_app_wx, start_event_loop_wx
+    from .widgets.wx.styling import WX_STYLE_SHEET
 
-    # utils = {
-    #     'error': dialogs.error,
-    #     'warning': dialogs.warning,
-    #     'information': dialogs.information,
-    #     'question': dialogs.question
-    # }
+    utils = {}
 
-    # ctors = None
+    toolkit = Toolkit(WX_CONSTRUCTORS)
+    
+    toolkit.create_app = get_app_wx
+    toolkit.start_app = start_event_loop_wx
+    toolkit.style_sheet = WX_STYLE_SHEET
+    toolkit.default = DefaultExpression
+    toolkit.bind = BindingExpression
+    toolkit.delegate = DelegateExpression
+    toolkit.notify = NotifierExpression
+    toolkit.update(utils)
 
-    # toolkit = Toolkit(get_app_wx, start_event_loop_wx, constructors=ctors, 
-    #                   utils=utils, style_sheet=WX_STYLE_SHEET)
-
-    return # toolkit
+    return toolkit
 
 
 def qt_toolkit():

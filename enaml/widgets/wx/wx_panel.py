@@ -60,7 +60,7 @@ class WXPanel(WXComponent):
         """
         sizer = wx.BoxSizer(wx.VERTICAL)
         for child in self.parent.children:
-            flags = compute_sizer_flags(child.style)
+            flags = compute_sizer_flags(child)
             sizer.AddF(child.toolkit_impl.widget, flags)
         self.widget.SetSizer(sizer)
         sizer.Layout()

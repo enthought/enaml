@@ -5,8 +5,8 @@
 import re
 import itertools
 
-from traits.api import (HasStrictTraits, HasTraits, Instance, Event, Interface, 
-                        Str, Dict, Any, Set, Int, on_trait_change, Property)
+from traits.api import (HasStrictTraits, Instance, Event, Interface, Str, Dict,
+                        Any, Set, Int)
 
 
 # Matches the '*' selector
@@ -38,6 +38,26 @@ class NO_STYLE(object):
 NO_STYLE = NO_STYLE()
 
 
+class BoxedValue(object):
+    """ A lightweight object which boxes another object.
+
+    """
+    __slots__ = ('value',)
+
+    def __init__(self, value):
+        self.value = value
+
+
+class StyleValue(BoxedValue):
+    """ A BoxedValue subclass that is used by the style sheet when 
+    returning style matches. This allows other application code to
+    distinguish between values retrieved from the style sheet and
+    values provided by the user.
+
+    """
+    pass
+
+
 class style(object):
     """ An object which represents a style declaration in a style sheet.
 
@@ -50,7 +70,7 @@ class style(object):
         Parameters
         ----------
         *selectors
-            A sequence of string following the selector syntax.
+            A sequence of strings following the selector syntax.
         
         **properties
             A sequence of keywords specifiying the styling values.
@@ -72,8 +92,8 @@ class IStyleNodeData(Interface):
         raise NotImplementedError
     
     def node_classes(self):
-        """ Returns the classes of the element being styled as a space
-        separated string.
+        """ Returns the classes of the element being styled as an
+        iterable of strings.
 
         """
         raise NotImplementedError
@@ -171,7 +191,7 @@ class ClassSelector(Selector):
     def match(self, node_data):
         these_classes = self.node_classes
         specificity = 0
-        for node_class in node_data.node_classes().split():
+        for node_class in node_data.node_classes():
             if node_class in these_classes:
                 specificity += 10
         match = bool(specificity)
@@ -196,7 +216,7 @@ class QualSelector(Selector):
         type_match = node_data.node_type() == self.node_type
         if type_match:
             these_classes = self.node_classes
-            for node_class in node_data.node_classes().split():
+            for node_class in node_data.node_classes():
                 if node_class in these_classes:
                     specificity += 10
             # the type only counts if we have class matches
@@ -384,8 +404,6 @@ class StyleSheet(HasStrictTraits):
     def replace(self, *styles):
         """ Replace the style sheet with the give style objects. 
 
-        This will trigger a 'sheet_replaced' event.
-
         Parameters
         ----------
         *styles : Sequence of 'style' objects.
@@ -426,7 +444,7 @@ class StyleSheet(HasStrictTraits):
             
         # If there are no matches, max will bail on the empty sequence.
         try:
-            res = max(specs)[2][tag]
+            res = StyleValue(max(specs)[2][tag])
         except ValueError:
             res = NO_STYLE
 
@@ -444,225 +462,4 @@ class StyleSheet(HasStrictTraits):
 
         """
         return tag in self._property_selectors
-
-
-#-------------------------------------------------------------------------------
-# Style Node and Handler
-#-------------------------------------------------------------------------------
-class StyleNode(HasTraits):
-    """ A basic style node class meant for subclassing.
-
-    StyleNode provides much of the boiler plate needed to integrate 
-    style sheet support with other objects. It will search for the 
-    style object on the class first, then the style sheet. This allows
-    for selectively overriding style sheet values without modifying the
-    style sheet itself. A complete solution will use a subclass of 
-    StyleNode along with a subclass of StyleHandler.
-
-    Attributes
-    ----------
-    style_sheet : Instance(StyleSheet)
-        The StyleSheet on which this node is operating.
-    
-    node_data : Property(Instance(IStyleNodeData))
-        A property whose getter returns an implementor of IStyleNodeData.
-        The getter must be implemented by subclasses.
-    
-    tag_updated : Event
-        A event fired when a tag in the style sheet is updated. The 
-        event payload is the tag name that was updated.
-
-    Methods
-    -------
-    refresh_tags(tags)
-        Refresh all of the tags in the given sequence of tags.
-
-    get_property(tag)
-        Returns the style property for the given tag.
-    
-    """
-    style_sheet = Instance(StyleSheet)
-
-    node_data = Property(Instance(IStyleNodeData))
-
-    tag_updated = Event
-
-    def _get_node_data(self):
-        """ The propery getter for node_data attribute. This should be
-        implemented by subclasses to return an object that implements 
-        IStyleNodeData.
-
-        """
-        raise NotImplementedError
-
-    @on_trait_change('style_sheet:updated')
-    def _style_sheet_updated(self, updated):
-        """ Refreshes the tags for the sequence of updated tags.
-
-        """
-        self.refresh_tags(updated)
-
-    @on_trait_change('style_sheet')
-    def _style_sheet_swapped(self):
-        """ Refreshes the tags for every tag in the sheet.
-
-        """
-        self.refresh_tags(self.style_sheet.get_tags())
-    
-    def refresh_tags(self, tags):
-        """ Triggers the 'tag_updated' event for each of the given tags.
-
-        """
-        for tag in tags:
-            self.tag_updated = tag
-
-    def get_property(self, tag):
-        """ Returns the style property for the given tag.
-
-        Looks first on self, then queries the style sheet if that lookup
-        fails. This allows subclasses to selectively override the style
-        sheet.
-
-        Parameters
-        ----------
-        tag : string
-            The property tag to lookup.
-
-        Returns
-        -------
-        result : object
-            The style property or NO_STYLE
-
-        """
-        try:
-            res = getattr(self, tag)
-        except AttributeError:
-            res = self.style_sheet.get_property(tag, self.node_data)
-        return res
-
-
-class StyleHandler(HasStrictTraits):
-    """ A handler class that reacts to changes on a StyleNode.
-
-    This StyleHandler is meant to be used in conjuction with subclasses
-    of StyleNode. It reacts to changes on the events of the StyleNode
-    and dispatches to specially named handler methods on the subclass.
-    The dispatching is done efficiently so that the style sheet is 
-    only queried if a handler for the tag exists, and the handler is
-    only called if the value has changed.
-
-    Attributes
-    ----------
-    node : Instance(StyleNode)
-        The StyleNode instance this object is handling.
-
-    tags : dict, optional
-        A dictionary of string tags to arguments to pass to the 
-        set_style_value method on subclasses.
-
-    Methods
-    -------
-    style_*
-        Subclasses should implement a style_* method for every tag for
-        which updates are desired.
-
-    set_style_value(self, value, tag, *args)
-        A method that can be optionally implemented by subclasses for
-        easier style dispatching. If a tag is defined in the `tags` dict 
-        and the subclass does not define adefault a style_<tag> method, 
-        then set_style_value will be called with the (value, tag, *args) 
-        where the *args are the args that key in the dict. 
-
-    """
-    node = Instance(StyleNode)
-
-    tags = Instance(dict, ())
-    
-    _style_dict = Instance(dict, ())
-
-    @on_trait_change('node:tag_updated')
-    def _tag_updated(self, tag):
-        """ Handles the tag_updated event on the style node.
-
-        """
-        self._update_tag(tag)
-        
-    def set_style_value(self, value, tag, *args):
-        """ Set the style given by the tag to the value in a generic way.
-        
-        This is intended to simplify definition of style handlers for a toolkit
-        where a lot of the code is doing the same sort of thing.
-        
-        Arguments
-        ---------
-        value : style_value
-            The string representation of the style's value.
-        
-        tag : string
-            The style tag that is being set.
-        
-        *args
-            Additional arguments as needed.  This is likely to include a
-            converter function and/or the method name to set.
-        
-        Returns
-        -------
-        result : None
-
-        Notes
-        -----
-        This method will only be called if the tag exists in the `tags` 
-        dict and there is no style_<tag> handler defined for it.
-
-        """
-        raise NotImplementedError
-    
-    def initialize_style(self):
-        """ Initialize all style properties handled by methods or tags.
-
-        """
-        style_handlers = {}
-        for name in dir(self):
-            if name.startswith('style_'):
-                tag_name = name[6:]
-                style_handlers[tag_name] = getattr(self, name)
-        
-        node = self.node
-        
-        for tag, handler in style_handlers.iteritems():
-            value = node.get_property(tag)
-            handler(value)
-        
-        for tag, args in self.tags.items():
-            if tag in style_handlers:
-                continue
-            if not isinstance(args, (list, tuple)):
-                args = (args,)
-            value = node.get_property(tag)
-            self.set_style_value(value, tag, *args)
-        
-    def _update_tag(self, tag, null=object()):
-        """ Dispatches a tag update to specially named methods. Only
-        dispatches if a handler exists and the value has changed.
-
-        """
-        name = 'style_' + tag
-        handler = getattr(self, name, None)
-        tags = self.tags
-
-        if handler is None and tag in tags:
-            args = tags[tag]
-            if not isinstance(args, (list, tuple)):
-                args = (args,)
-
-            def handler(value):
-                return self.set_style_value(value, tag, *args)
-        
-        if handler is not None:
-            style_dict = self._style_dict
-            old = style_dict.get(tag, null)
-            new = self.node.get_property(tag)
-            if old != new:
-                style_dict[tag] = new
-                handler(new)
 
