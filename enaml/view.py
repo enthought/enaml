@@ -6,6 +6,7 @@ from traits.api import HasStrictTraits, Instance, Bool
 
 from .toolkit import Toolkit
 from .style_sheet import StyleSheet
+from .widgets.component import Component
 from .widgets.window import Window
 
   
@@ -41,37 +42,26 @@ class View(HasStrictTraits):
         Hide the ui from the screen.
 
     """
-    window = Instance(Window)
+    component = Instance(Component)
 
     ns = Instance(NamespaceProxy)
 
     toolkit = Instance(Toolkit)
 
-    style_sheet = Instance(StyleSheet)
-
-    _style_sheet_applied = Bool(False)
-
-    def show(self):
-        if not self._style_sheet_applied:
-            self._apply_style_sheet()
-        self.window.show()
-        self.toolkit.start_event_loop()
+    def show(self, start_loop=True):
+        component = self.component
+        if not isinstance(component, Window):
+            raise TypeError('Can only show Windows.')
+        self.toolkit.create_app()
+        component.show()
+        if start_loop:
+            self.toolkit.start_loop()
         
-    def hide(self):
-        self.window.hide()
-
-    def set_style_sheet(self, style_sheet):
-        self.style_sheet = style_sheet
-        self._apply_style_sheet()
-
-    def _style_sheet_default(self):
-        return self.toolkit.default_style_sheet()
-        
-    def _apply_style_sheet(self):
-        stack = [self.window]
-        style_sheet = self.style_sheet
+    def apply_style_sheet(self):
+        stack = [self.component]
+        style_sheet = self.toolkit.style_sheet
         while stack:
-            node = stack.pop()
-            node.style.style_sheet = style_sheet
-            stack.extend(node.children)
+            component = stack.pop()
+            component.set_style_sheet(style_sheet)
+            stack.extend(component.children)
 

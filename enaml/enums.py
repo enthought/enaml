@@ -2,14 +2,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" Context-dependent enumerations of constants. """
-
 from .util.enum import Enum
 
 
 class Align(Enum):
-    """ Elements' alignment in a container. """
-    
+    """ Elements' alignment in a container. 
+
+    """
     #: The default alignment.
     DEFAULT = 0x0
 
@@ -33,8 +32,9 @@ class Align(Enum):
 
 
 class Buttons(Enum):
-    """ Predefined text labels for buttons. """
+    """ Predefined text labels for buttons. 
 
+    """
     #: Do not display buttons.
     NO_BUTTONS = 0x0
 
@@ -100,8 +100,9 @@ class Buttons(Enum):
 
 
 class DialogResult(Enum):
-    """ A dialog's result, depending on how it was closed. """
-    
+    """ A dialog's result, depending on how it was closed. 
+
+    """
     #: The user declined -- the default result.
     REJECTED = 0
     
@@ -110,8 +111,9 @@ class DialogResult(Enum):
 
 
 class Direction(Enum):
-    """ A container's layout style, based on the order of insertion. """
-    
+    """ A container's layout style, based on the order of insertion. 
+
+    """
     #: Position children from left to right.
     LEFT_TO_RIGHT = 0
 
@@ -126,8 +128,9 @@ class Direction(Enum):
 
 
 class Modality(Enum):
-    """ A window's modality specifies whether it captures focus. """
+    """ A window's modality specifies whether it captures focus. 
 
+    """
     #: The window is not modal.
     NON_MODAL = 0
 
@@ -139,8 +142,9 @@ class Modality(Enum):
 
 
 class Orientation(Enum):
-    """ An element's layout. """
+    """ An element's layout. 
 
+    """
     #: Positioned from left to right, or right to left.
     HORIZONTAL = 0
     
@@ -149,8 +153,9 @@ class Orientation(Enum):
 
 
 class TabPosition(Enum):
-    """ The position of tabs in a notebook. """
+    """ The position of tabs in a notebook. 
 
+    """
     #: Place tabs to the left of the main content.
     LEFT = 0
 
@@ -165,8 +170,9 @@ class TabPosition(Enum):
 
 
 class TickPosition(Enum):
-    """ The position of ticks for a control. """
+    """ The position of ticks for a control. 
 
+    """
     #: Display ticks to the left of the element.
     LEFT = 0
 
@@ -193,8 +199,9 @@ class TickPosition(Enum):
 
 
 class DataRole(Enum):
-    """ The type or purpose of data in a model. """
-    
+    """ The type or purpose of data in a model. 
+
+    """
     #: Display data prominently, as text.
     DISPLAY = 0
 
@@ -240,8 +247,9 @@ class DataRole(Enum):
 
 
 class ItemFlags(Enum):
-    """ Specify the actions that can be performed on model items. """
+    """ Specify the actions that can be performed on model items. 
 
+    """
     #: The item is not configured for user interaction via a view.
     NO_FLAGS = 0x0
 
@@ -268,8 +276,9 @@ class ItemFlags(Enum):
 
 
 class Match(Enum):
-    """ The type of a text search. """
+    """ The type of a text search. 
 
+    """
     #: An exact match.
     EXACTLY = 0x0
 
@@ -302,17 +311,20 @@ class Match(Enum):
 
 
 class Sorted(Enum):
-    """ The ordering of a sort. """
+    """ The ordering of a sort. 
 
+    """
     #: Elements will be in ascending order.
     ASCENDING = 0
 
     #: Elements will be in descending order.
     DESCENDING = 1
 
+
 class Validity(Enum):
-    """ The result of a validation function. """
-    
+    """ The result of a validation function. 
+
+    """
     #: The input was clearly invalid.
     INVALID = 0x0
     
@@ -321,3 +333,56 @@ class Validity(Enum):
     
     #: The input is valid.
     ACCEPTABLE = 0x2
+
+
+class PolicyFlag(Enum):
+    """ The policy flags used to create the SizePolicy values. This
+    Enum is not meant to be used directly. Use the SizePolicy Enum
+    instead.
+
+    """
+    #: The size_hint is the only acceptable size
+    FIXED = 0x0
+
+    #: The widget can grow beyond the size hint if necessary.
+    GROW = 0x1
+
+    #: The widget should get as much space as possible
+    EXPAND = 0x2
+
+    #: The widget can shrink below its size hint if necessary.
+    SHRINK = 0x4
+
+    #: The size hint is ignored. Widget will get as much space as possible.
+    IGNORE = 0x8
+
+
+class SizePolicy(Enum):
+    """ The size policy for a given widget. The size policy indicates 
+    how the widget should be resized when placed in a layout.
+
+    """
+    #: Use the default size policy of the widget.
+    DEFAULT = -1
+
+    #: The size hint is a minimum. The widget can be expanded if necessary.
+    MINIMUM = PolicyFlag.GROW
+
+    #: The size hint is a maximum. The widget can be shrunk if necessary.
+    MAXIMUM = PolicyFlag.SHRINK
+
+    #: The size hint is best, but the widget can grow or shrink if necessary.
+    PREFERRED = PolicyFlag.GROW | PolicyFlag.SHRINK
+
+    #: The size hint is sensible, but the widget can be shrunk and still 
+    #: be useful. The widget should however get as much space as possible.
+    EXPANDING = PolicyFlag.GROW | PolicyFlag.SHRINK | PolicyFlag.EXPAND
+
+    #: The size hint is a minimum, but the widget can make used of extra
+    #: space and so should get as much space as possible
+    MINIMUM_EXPANDNING = PolicyFlag.GROW | PolicyFlag.EXPAND
+    
+    #: The size hint is ignored, and the widget will get as much space
+    #: as possible.
+    IGNORED = PolicyFlag.SHRINK | PolicyFlag.GROW | PolicyFlag.IGNORE
+

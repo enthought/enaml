@@ -8,6 +8,7 @@ from traits.api import implements, HasStrictTraits, WeakRef, Instance
 
 from ..component import Component, IComponentImpl
 
+
 class QtComponent(HasStrictTraits):
     """ A Qt4 implementation of Component.
 
@@ -82,9 +83,9 @@ class QtComponent(HasStrictTraits):
         """
         pass    
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Implementation
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     widget = Instance(QtCore.QObject)
         
     def parent_widget(self):
@@ -120,6 +121,3 @@ class QtComponent(HasStrictTraits):
         for child in self.parent.children:
             yield child.toolkit_widget()
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------

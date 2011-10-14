@@ -86,14 +86,13 @@ class QtSlider(QtControl):
         self.set_single_step(parent.single_step)
         self.set_page_step(parent.page_step)
         self.set_tracking(parent.tracking)
-
         self.connect()
 
     def parent_converter_changed(self, converter):
         """ Update the slider when the converter class changes.
 
         """
-        self.parent.value = self.get_position
+        self.parent.value = self.get_position()
 
     def parent_value_changed(self, value):
         """ Update the slider position
@@ -106,10 +105,8 @@ class QtSlider(QtControl):
         value does not change and the widget position is unknown.
 
         """
-        parent = self.parent
         self.set_position(value)
         self.parent.moved = value
-
 
     def parent_tracking_changed(self, tracking):
         """ Set the tracking event in the widget
@@ -159,7 +156,6 @@ class QtSlider(QtControl):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-
     def connect(self):
         """ connect the event handlers for the slider widget signals.
 
@@ -168,7 +164,6 @@ class QtSlider(QtControl):
         widget.valueChanged.connect(self._on_slider_changed)
         widget.sliderPressed.connect(self._on_pressed)
         widget.sliderReleased.connect(self._on_released)
-
 
     def _on_slider_changed(self, value):
         """ Respond to a (possible) change in value from the ui.
@@ -244,13 +239,9 @@ class QtSlider(QtControl):
         ticks : TickPosition
             The tick position.
         """
-        parent = self.parent
-
         constant = TICK_POS_MAP[ticks]
         self.widget.setTickPosition(constant)
-
         self.sync_tick_position()
-
 
     def set_orientation(self, orientation):
         """ Set the slider orientation
@@ -261,13 +252,8 @@ class QtSlider(QtControl):
             The orientation of the slider.
 
         """
-        widget = self.widget
-        parent = self.parent
-        tick_position = parent.tick_position
-
         constant = ORIENTATION_MAP[orientation]
         self.widget.setOrientation(constant)
-
         self.sync_tick_position()
 
     def set_tracking(self, tracking):
@@ -312,7 +298,6 @@ class QtSlider(QtControl):
         """
         parent = self.parent
         self.reset_errors()
-
         try:
             position = parent.converter.to_component(value)
             if not (0.0 <= position <= 1.0):
@@ -351,7 +336,6 @@ class QtSlider(QtControl):
         parent = self.parent
         orientation = parent.orientation
         tick_pos = self.widget.tickPosition()
-
         if orientation == Orientation.VERTICAL:
             parent.tick_position = VERT_TICK_POS_MAP[tick_pos]
         else:

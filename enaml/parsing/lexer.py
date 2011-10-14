@@ -2,32 +2,31 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import re
 import tokenize
 
 import ply.lex as lex
 
+from ..exceptions import EnamlSyntaxError
 
 def _raise_error(message, t, klass):
     raise klass(message + ' - lineno: %s' % t.lineno)
 
 
 def raise_syntax_error(message, t):
-    _raise_error(message, t, SyntaxError)
+    _raise_error(message, t, EnamlSyntaxError)
 
 
 def raise_indentation_error(message, t):
     _raise_error(message, t, IndentationError)
 
 
-class TraitsMLLexer(object):
+class EnamlLexer(object):
 
     #--------------------------------------------------------------------------
     # Token Declarations
     #--------------------------------------------------------------------------
     tokens = (
         'AMPER',
-        'AT',
         'DOT',
         'CIRCUMFLEX',
         'COLON',
@@ -73,12 +72,14 @@ class TraitsMLLexer(object):
 
         # TML Specific Tokens
         'COLONEQUAL',
+        'UNPACK',
 
     )
 
     reserved = {
         'and': 'AND',
         'as': 'AS',
+        'defn': 'DEFN',
         'else': 'ELSE',
         'from': 'FROM',
         'for': 'FOR',
@@ -108,7 +109,6 @@ class TraitsMLLexer(object):
     # INITIAL State Rules
     #--------------------------------------------------------------------------
     t_AMPER = r'&'
-    t_AT = r'@'
     t_DOT = r'\.'
     t_CIRCUMFLEX = r'\^'
     t_COLON = r':'
@@ -132,9 +132,8 @@ class TraitsMLLexer(object):
     t_SLASH = r'/'
     t_STAR = r'\*'
     t_TILDE = r'~'
+    t_UNPACK = r'->'
     t_VBAR = r'\|'
-    
-    #t_DELEGATE = r'@'
 
     def t_comment(self, t):
         r'[ ]*\#[^\r\n]*'
@@ -496,7 +495,6 @@ class TraitsMLLexer(object):
         
         self.at_line_start = at_line_start = True
         indent = NO_INDENT
-        saw_colon = False
         
         for token in token_stream:
             token.at_line_start = at_line_start

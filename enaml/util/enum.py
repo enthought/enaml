@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
-
 class EnumMeta(type):
     """ The metaclass for Enum which supplies the class name and 
     attribute name to Constant instances and places them in a dict 
@@ -52,4 +50,4 @@ class Enum(object):
             val = getattr(cls, name)
             if isinstance(val, int):
                 yield name, val
-    
+

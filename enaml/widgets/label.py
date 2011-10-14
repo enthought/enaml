@@ -12,6 +12,9 @@ class ILabelImpl(IControlImpl):
     def parent_text_changed(self, text):
         raise NotImplementedError
 
+    def parent_bgcolor_changed(self, bgcolor):
+        raise NotImplementedError
+        
     
 class Label(Control):
     """ A simple read-only text display.

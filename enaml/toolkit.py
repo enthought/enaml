@@ -2,118 +2,319 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from collections import Sequence
 import os
 
-from traits.api import HasStrictTraits, Dict, Str, Callable, Any, Instance
+from traits.api import HasStrictTraits, Callable, Str
 
-from .constructors import IToolkitConstructor
-from .style_sheet import StyleSheet
-from .util.trait_types import SubClass
+from .expressions import (DefaultExpression, BindingExpression, 
+                          DelegateExpression, NotifierExpression)
 
 
-class Toolkit(HasStrictTraits):
-    """ A simple class that handles toolkit related functionality.
+class Constructor(HasStrictTraits):
+    """ The constructor class to use to populate the toolkit.
 
     Attributes
     ----------
-    items : Dict(Str, SubClass(IToolkitConstructor))
-        A dictionary which maps type names in the Enaml source code
-        to toolkit constructor classes for that name. This dict
-        can be modified to make new widgets available to the Enaml
-        source code.
+    type_name : Str
+        The name of the type, as seen from enaml source code, that this
+        constructor is creating. This is assigned by the toolkit object.
 
-    prime : Callable
-        A callable which initializes the toolkit's event loop. This
-        will be called before any toolkit widgets are created. Most
-        toolkits will create the application object in this function.
-        The return value of this callable is passed to the 'start'
-        callable when the event loop should be started.
-
-    start : Callable
-        This is called at the end of the ui building process, after
-        the 'show' method on the view has been called. This function
-        should make sure the event loop for the toolkit is started.
-        It should take one argument, which is the return value from
-        the 'prime' method.
-
-    app : Any
-        The return value of the 'prime' callable is stored in this
-        attribute. This will usually be the toolkit's application
-        object.
-
-    style_sheet : SubClass(StyleSheet)
-        A default style sheet class for this toolkit.
-
-    utils : Dict(Str, Callable)
-        Callables used to construct simple ui elements in the RHS of a
-        delegate expression. Unlike 'items', these are not independent
-        components in Enaml source code.
-
+    component_loader : Callable
+        A callable object which returns the component class to use
+        for the widget.
+    
+    impl_loader : Callable
+        A callable object which returns the implementation class to 
+        use for the widget.
+    
     Methods
     -------
-    create_ctor(name):
-        Creates the constructor instance for the given name, or raises
-        an error if no constructor is defined for that name.
-
-    prime_event_loop()
-        Called before any ui tree building takes place in order to 
-        prime the toolkit's event loop.
-
-    start_event_loop()
-        Called at the end of the View's 'show' method to start the 
-        toolkit's event loop.
+    build(*arg, **kwargs)
+        Calls the loaders and assembles the component.
     
-    default_style_sheet()
-        Returns the default style sheet class for this toolkit.
-
+    clone(component_loader=None, impl_loader=None)
+        Creates a clone of this constructor, optionally changing
+        out one of the loaders.
+    
     """
-    items = Dict(Str, SubClass(IToolkitConstructor))
+    type_name = Str
 
-    prime = Callable
+    component_loader = Callable
 
-    start = Callable
+    impl_loader = Callable
 
-    app = Any
+    def __init__(self, component_loader, impl_loader):
+        """ Initialize a constructor instance.
 
-    style_sheet = Instance(StyleSheet)
+        Parameters
+        ----------
+        component_loader : Callable
+            A callable object which returns the component class to use
+            for the widget.
     
-    utils = Dict(Str, Callable)
+        impl_loader : Callable
+            A callable object which returns the implementation class to 
+            use for the widget.
+        
+        """
+        super(Constructor, self).__init__()
+        self.component_loader = component_loader
+        self.impl_loader = impl_loader
 
-    def __init__(self, items, prime, start, style_sheet, utils):
-        super(Toolkit, self).__init__(items=items, prime=prime, start=start,
-                                      style_sheet=style_sheet, utils=utils)
-
-    def create_ctor(self, name):
-        """ Creates the constructor instance for the given name, or 
-        raises an error if no constructor is defined for that name.
+    def __call__(self, *args, **kwargs):
+        """ Called by the vm to create the component(s) for this widget.
+        This should not typically be overridden by sublasses. To perform
+        specialized building behavior, override the `build` method.
 
         """
+        result = self.build(*args, **kwargs)
+        if not isinstance(result, Sequence):
+            raise TypeError('Constructor results must be a sequence')
+        return result
+
+    def build(self, *args, **kwargs):
+        """ Calls the loaders and assembles the component.
+
+        Subclasses should override this method to implement custom 
+        construction behavior if the default is not sufficient.
+
+        Parameters
+        ----------
+        *args, **kwargs
+            The args and kwargs with which this constructor was called 
+            from the enaml source code.
+
+        """
+        component_cls = self.component_loader()
+        impl_cls = self.impl_loader()
+        component = component_cls(toolkit_impl=impl_cls())
+        return (component,)
+    
+    def clone(self, component_loader=None, impl_loader=None):
+        """ Creates a clone of this constructor, optionally changing
+        out one or both of the loaders.
+
+        """
+        if component_loader is None:
+            component_loader = self.component_loader
+        if impl_loader is None:
+            impl_loader = self.impl_loader
+        return Constructor(component_loader, impl_loader)
+
+
+class Toolkit(dict):
+    """ The Enaml toolkit object class which facilitates easy gui
+    toolkit independent backend development and use. The Toolkit
+    is a dict subclass which is injected between the module and
+    builtin scopes when executing an Enaml function or expression.
+
+    XXX - more documentation
+    
+    """
+    __stack__ = []
+
+    __default__ = None
+
+    @classmethod
+    def active_toolkit(cls):
+        """ A classmethod that returns the currently active toolkit, 
+        or the default toolkit if there is not active toolkit context.
+
+        """
+        stack = cls.__stack__
+        if not stack:
+            tk = cls.default_toolkit()
+        else:
+            tk = stack[-1]
+        return tk 
+
+    @classmethod
+    def default_toolkit(cls):
+        """ A classmethod that returns the default toolkit, creating one
+        if necessary.
+
+        """
+        tk = cls.__default__
+        if tk is None:
+            tk = cls.__default__ = default_toolkit()
+        return tk
+
+    def __init__(self, *args, **kwargs):
+        """ Initialize a toolkit object using the same constructor 
+        signature as dict(). This overridden constructor ensure that 
+        type names are properly assigned to to constructors.
+
+        """
+        super(Toolkit, self).__init__(*args, **kwargs)
+        for key, value in self.iteritems():
+            if isinstance(value, Constructor):
+                value.type_name = key
+    
+    def __setitem__(self, key, value):
+        """ Overridden dict.__setitem__ to apply type name values to 
+        constructors.
+
+        """
+        if isinstance(value, Constructor):
+            value.type_name = key
+        super(Toolkit, self).__setitem__(key, value)
+
+    def update(self, other=None, **kwargs):
+        """ Overridden from dict.update to apply type name values to 
+        constructors.
+
+        """
+        if other is None:
+           pass
+        elif hasattr(other, 'iteritems'):
+            for k, v in other.iteritems():
+                self[k] = v
+        elif hasattr(other, 'keys'):
+            for k in other.keys():
+                self[k] = other[k]
+        else:
+            for k, v in other:
+                self[k] = v
+        if kwargs:
+            self.update(kwargs)
+    
+    def setdefault(self, key, default=None):
+        """ Overridden from dict.setdefault to apply type name values to 
+        constructors.
+        
+        """ 
         try:
-            ctor_cls = self.items[name]
+            return self[key]
         except KeyError:
-            msg = 'Toolkit does not support the %s item.' % name
-            raise ValueError(msg)
-        return ctor_cls(type_name=name)
-    
-    def prime_event_loop(self):
-        """ Called before any ui tree building takes place in order to 
-        prime the toolkit's event loop. 
-        
-        """
-        self.app = self.prime()
-    
-    def start_event_loop(self):
-        """ Called at the end of the View's 'show' method to start the 
-        toolkit's event loop.
-        
-        """
-        self.start(self.app)
-    
-    def default_style_sheet(self):
-        """ Returns the default style sheet class for this toolkit.
+            self[key] = default
+        return default
+
+    def __enter__(self):
+        """ A context manager method that pushes this toolkit onto
+        the active toolkit stack.
 
         """
-        return self.style_sheet
+        self.__stack__.append(self)
+    
+    def __exit__(self, *args, **kwargs):
+        """ A context manager method that pops this toolkit from the
+        active toolkit stack.
+
+        """
+        self.__stack__.pop()
+
+    def _get_default(self):
+        """ Returns the default expression handler class for this toolkit.
+
+        """
+        return self['__enaml_default__']
+    
+    def _set_default(self, val):
+        """ Sets the default expression handler class for this toolkit.
+
+        """
+        self['__enaml_default__'] = val
+    
+    default = property(_get_default, _set_default)
+
+    def _get_bind(self):
+        """ Returns the binding expression handler class for this toolkit.
+
+        """
+        return self['__enaml_bind__']
+    
+    def _set_bind(self, val):
+        """ Sets the binding expression handler class for this toolkit.
+
+        """
+        self['__enaml_bind__'] = val
+    
+    bind = property(_get_bind, _set_bind)
+
+    def _get_delegate(self):
+        """ Returns the delegate expression handler class for this toolkit.
+
+        """
+        return self['__enaml_delegate__']
+    
+    def _set_delegate(self, val):
+        """ Sets the delegate expression handler class for this toolkit.
+
+        """
+        self['__enaml_delegate__'] = val
+    
+    delegate = property(_get_delegate, _set_delegate)
+
+    def _get_notify(self):
+        """ Returns the notifier expression handler class for this toolkit.
+
+        """
+        return self['__enaml_notify__']
+    
+    def _set_notify(self, val):
+        """ Sets the notifier expression handler class for this toolkit.
+
+        """
+        self['__enaml_notify__'] = val
+    
+    notify = property(_get_notify, _set_notify)
+
+    def _get_style_sheet(self):
+        """ Returns the default style sheet instance for this toolkit.
+
+        """
+        return self['__style_sheet__']
+    
+    def _set_style_sheet(self, val):
+        """ Sets the default style sheet instance for this toolkit.
+
+        """
+        self['__style_sheet__'] = val
+
+    style_sheet = property(_get_style_sheet, _set_style_sheet)
+
+    def _get_create_app(self):
+        """ Returns the app creation function for this toolkit.
+
+        """
+        return self['__create_app__']
+    
+    def _set_create_app(self, val):
+        """ Sets the app creation function for this toolkit.
+
+        """
+        self['__create_app__'] = val
+    
+    create_app = property(_get_create_app, _set_create_app)
+
+    def _get_start_app(self):
+        """ Returns the start app function for this toolkit.
+
+        """
+        return self['__start_app__']
+    
+    def _set_start_app(self, val):
+        """ Sets the start app function for this toolkit.
+
+        """
+        self['__start_app__'] = val
+
+    start_app = property(_get_start_app, _set_start_app)
+
+    def _get_app(self):
+        """ Returns the application object for this toolkit.
+
+        """
+        return self['__app__']
+    
+    def _set_app(self, val):
+        """ Sets the application object for this toolkit.
+
+        """
+        self['__app__'] = val
+    
+    app = property(_get_app, _set_app)
 
 
 def default_toolkit():
@@ -133,92 +334,49 @@ def default_toolkit():
 
 
 def wx_toolkit():
-    """ Creates and return a toolkit object for the wx backend.
+    """ Creates and return a toolkit object for the Wx backend.
 
     """
+    from .widgets.wx.constructors import WX_CONSTRUCTORS
     from .util.guisupport import get_app_wx, start_event_loop_wx
-    from .widgets.wx import constructors as ctors
-    from .widgets.wx import dialogs
     from .widgets.wx.styling import WX_STYLE_SHEET
 
-    items = {
-        'Panel': ctors.WXPanelCtor,
-        'Window': ctors.WXWindowCtor,
-        'Dialog': ctors.WXDialogCtor,
-        'Form': ctors.WXFormCtor,
-        'Group': ctors.WXGroupCtor,
-        'VGroup': ctors.WXVGroupCtor,
-        'HGroup': ctors.WXHGroupCtor,
-        'StackedGroup': ctors.WXStackedGroupCtor,
-        'TabGroup': ctors.WXTabGroupCtor,
-        'GroupBox': ctors.WXGroupBoxCtor,
-        'Calendar': ctors.WXCalendarCtor,
-        'CheckBox': ctors.WXCheckBoxCtor,
-        'ComboBox': ctors.WXComboBoxCtor,
-        'Field': ctors.WXFieldCtor,
-        'Html': ctors.WXHtmlCtor,
-        'Image': ctors.WXImageCtor,
-        'Label': ctors.WXLabelCtor,
-        'PushButton': ctors.WXPushButtonCtor,
-        'RadioButton': ctors.WXRadioButtonCtor,
-        'Slider': ctors.WXSliderCtor,
-        'SpinBox': ctors.WXSpinBoxCtor,
-        'Spacer': ctors.WXSpacerCtor,
-        'EnableCanvas': ctors.WXEnableCanvasCtor,
-        'TraitsUIItem': ctors.WXTraitsUIItemCtor,
-        'TableView': ctors.WXTableViewCtor,
-        'CheckGroup': ctors.WXCheckGroupCtor,
-        'DateEdit': ctors.WXDateEditCtor,
-    }
+    utils = {}
 
-    utils = {
-        'error': dialogs.error,
-        'warning': dialogs.warning,
-        'information': dialogs.information,
-        'question': dialogs.question
-    }
+    toolkit = Toolkit(WX_CONSTRUCTORS)
+    
+    toolkit.create_app = get_app_wx
+    toolkit.start_app = start_event_loop_wx
+    toolkit.style_sheet = WX_STYLE_SHEET
+    toolkit.default = DefaultExpression
+    toolkit.bind = BindingExpression
+    toolkit.delegate = DelegateExpression
+    toolkit.notify = NotifierExpression
+    toolkit.update(utils)
 
-    return Toolkit(items=items, prime=get_app_wx, start=start_event_loop_wx,
-                   style_sheet=WX_STYLE_SHEET, utils=utils)
+    return toolkit
 
 
 def qt_toolkit():
-    """ Creates and return a toolkit object for the PySide Qt backend.
+    """ Creates and return a toolkit object for the Qt backend.
 
     """
+    from .widgets.qt.constructors import QT_CONSTRUCTORS
     from .util.guisupport import get_app_qt4, start_event_loop_qt4
-    from .widgets.qt import constructors as ctors
     from .widgets.qt.styling import QT_STYLE_SHEET
 
-    items = {
-        'Panel': ctors.QtPanelCtor,
-        'Window': ctors.QtWindowCtor,
-        'Dialog': ctors.QtDialogCtor,
-        'Group': ctors.QtGroupCtor,
-        'VGroup': ctors.QtVGroupCtor,
-        'HGroup': ctors.QtHGroupCtor,
-        'Form': ctors.QtFormCtor,
-        'StackedGroup': ctors.QtStackedGroupCtor,
-        'TabGroup': ctors.QtTabGroupCtor,
-        'Field': ctors.QtFieldCtor,
-        'Label': ctors.QtLabelCtor,
-        'TraitsUIItem': ctors.QtTraitsUIItemCtor,
-        'Calendar': ctors.QtCalendarCtor,
-        'CheckBox': ctors.QtCheckBoxCtor,
-        'ComboBox': ctors.QtComboBoxCtor,
-        'Html': ctors.QtHtmlCtor,
-        'PushButton': ctors.QtPushButtonCtor,
-        'RadioButton': ctors.QtRadioButtonCtor,
-        'Slider': ctors.QtSliderCtor,
-        'SpinBox': ctors.QtSpinBoxCtor,
-        'EnableCanvas': ctors.QtEnableCanvasCtor,
-        'TableView': ctors.QtTableViewCtor,
-        'CheckGroup': ctors.QtCheckGroupCtor,
-        'DateEdit': ctors.QtDateEditCtor,
-        'DateTimeEdit': ctors.QtDateTimeEditCtor,
-    }
-    
     utils = {}
 
-    return Toolkit(items=items, prime=get_app_qt4, start=start_event_loop_qt4,
-        style_sheet=QT_STYLE_SHEET, utils=utils)
+    toolkit = Toolkit(QT_CONSTRUCTORS)
+    
+    toolkit.create_app = get_app_qt4
+    toolkit.start_app = start_event_loop_qt4
+    toolkit.style_sheet = QT_STYLE_SHEET
+    toolkit.default = DefaultExpression
+    toolkit.bind = BindingExpression
+    toolkit.delegate = DelegateExpression
+    toolkit.notify = NotifierExpression
+    toolkit.update(utils)
+
+    return toolkit 
+

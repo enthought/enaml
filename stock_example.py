@@ -5,17 +5,19 @@
 import datetime
 
 from traits.api import (HasTraits, List, Str, Date, Enum, Property, Array, Int, 
-                        Tuple, on_trait_change, Instance, ReadOnly, Event, 
-                        cached_property, DelegatesTo)
+                       Tuple, on_trait_change, Instance, ReadOnly, Event, 
+                       cached_property, DelegatesTo, Float)
 
-from enaml.factory import EnamlFactory
+import enaml
 from enaml.item_models.abstract_item_model import AbstractTableModel
-from enaml.style_sheet import style
 from enaml.enums import Orientation, DataRole
 from enaml.color import Color
 
 import stock_data
 from plot_driver import PlotDriver
+
+with enaml.imports():
+    from stock_view import MainView
 
 
 class HistoricData(HasTraits):
@@ -37,6 +39,8 @@ class HistoricData(HasTraits):
     num_points = Int(500)
 
     data = Array
+
+    value = Float(42)
 
     def _available_symbols_default(self):
         return stock_data.get_symbols()
@@ -169,8 +173,11 @@ if __name__ == '__main__':
     plot_driver = PlotDriver(model)
     adapter = GridDataAdapter(model=model)
     data_table = StockDataTable(adapter)
-    factory = EnamlFactory('./stock_view.enaml')
-    view = factory(model=model, plot=plot_driver, adapter=adapter,
-                   stock_data_table=data_table)
-    view.show()
     
+    import time
+    t1 = time.time()
+    view = MainView(model, adapter, plot_driver, stock_data_table=data_table, pb_label='whatd')
+    t2 = time.time()
+    print t2 - t1
+    #view.show()
+    print view

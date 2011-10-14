@@ -55,7 +55,8 @@ class QtGroup(QtContainer):
         layout = self.widget
         for child in self.parent.children:
             child_widget = child.toolkit_widget()
-            stretch = child.style.get_property('stretch') or 0
+            #stretch = child.style.get_property('stretch') or 0
+            stretch = 0
             if isinstance(child_widget, QtGui.QLayout):
                 layout.addLayout(child_widget, stretch)
             else:

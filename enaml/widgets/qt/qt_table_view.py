@@ -7,7 +7,7 @@ from .qt import QtGui, QtCore
 from traits.api import implements, Instance
 
 from .qt_control import QtControl
-from .styling import QColor_form_color
+#from .styling import QColor_form_color
 
 from ..table_view import ITableViewImpl
 
@@ -57,7 +57,7 @@ class AbstractItemModelTable(QtCore.QAbstractTableModel):
         # adapt Enaml data values to Qt data values where appropriate
         if role == QtCore.Qt.BackgroundRole or role == QtCore.Qt.ForegroundRole:
             if data is not None:
-                data = QColor_form_color(data)
+                data = None#QColor_form_color(data)
         return data
 
     def headerData(self, section, orientation, role):

@@ -6,7 +6,7 @@ from traits.api import implements
 
 from .qt_group import QtGroup
 
-from ..vgroup import IVGroupImpl
+from ..v_group import IVGroupImpl
 
 
 class QtVGroup(QtGroup):

@@ -2,11 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Interface, Str, WeakRef, Instance, List
+from traits.api import Interface, Str, WeakRef, Instance, List, ReadOnly
 
 from ..enaml_base import EnamlBase
-from ..style_node import EnamlStyleNode
-from ..util.trait_types import ReadOnlyConstruct
+from ..styling.style_mixin import StyleMixin
 
 
 class IComponentImpl(Interface):
@@ -115,7 +114,7 @@ class IComponentImpl(Interface):
         raise NotImplementedError
 
 
-class Component(EnamlBase):
+class Component(EnamlBase, StyleMixin):
     """ The most base class of the Enaml widgets component heierarchy.
 
     All Enaml  widget classes should inherit from this class. This class
@@ -123,14 +122,13 @@ class Component(EnamlBase):
 
     Attributes
     ----------
-    _id : Str
+    identifier : ReadOnly
         The identifier assigned to this element in the enaml source code.
-        Note that if you change this, you will likely break things. This
-        is a protected attribute.
+        This is a protected attribute and is set during construction.
 
-    _type : Str
+    type_name : ReadOnly
         The type name this component is using in the enaml source code.
-        This is a protected attribute.
+        This is a protected attribute and is set during construction.
 
     parent : WeakRef(EnamlBase)
         The parent object which is stored as a weakref to mitigate memory
@@ -192,9 +190,9 @@ class Component(EnamlBase):
         where necessary.
 
     """
-    _id = Str
+    identifier = ReadOnly
 
-    _type = Str
+    type_name = ReadOnly
 
     parent = WeakRef('Component')
 
@@ -202,11 +200,8 @@ class Component(EnamlBase):
 
     name = Str
 
-    # XXX - I don't like this ReadOnlyConstruct
-    style = ReadOnlyConstruct(lambda self, name: EnamlStyleNode(parent=self))
-
     toolkit_impl = Instance(IComponentImpl)
-
+        
     def add_child(self, child):
         """ Add a child component to this component.
 
@@ -328,7 +323,23 @@ class Component(EnamlBase):
         """
         self.parent = parent
 
-    def layout(self):
+    def set_style_sheet(self, style_sheet):
+        """ Sets the style sheet for this component.
+
+        Arguments
+        ---------
+        style_sheet : StyleSheet
+            The style sheet instance for this component.
+
+        """
+        self.style.style_sheet = style_sheet
+
+    def bind_expressions_tree(self):
+        self.bind_expressions()
+        for child in self.children:
+            child.bind_expressions_tree()
+
+    def layout(self, toplevel=True):
         """ Initialize and layout the component and it's children.
 
         In addition to running the layout process, this method calls
@@ -339,15 +350,18 @@ class Component(EnamlBase):
         """
         impl = self.toolkit_impl
         impl.set_parent(self)
+        
+        # Things that need to be called only once by the toplevel
+        # entry call
+        if toplevel:
+            self.bind_expressions_tree()
 
         impl.create_widget()
+
         for child in self.children:
-            child.layout()
+            child.layout(toplevel=False)
+        
         impl.initialize_widget()
-
-        impl.create_style_handler()
-        impl.initialize_style()
-
         impl.layout_child_widgets()
 
         self._hook_impl()
@@ -372,5 +386,5 @@ class Component(EnamlBase):
         self.add_trait_listener(self.toolkit_impl, 'parent')
 
 
-Component.protect('_id', '_type', 'parent', 'children', 'style', 'toolkit_impl')
+Component.protect('identifier', 'type_name', 'parent', 'children', 'style', 'toolkit_impl')
 
