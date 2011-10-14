@@ -4,6 +4,7 @@ import datetime
 from enaml.enums import Orientation, Direction
 from enaml.converters import SliderLogConverter, IntConverter
 
+
 defn ErrorField:
     Field:
         error_color = '#F9A7A7'
@@ -12,7 +13,7 @@ defn ErrorField:
 
 defn IntField:
     ErrorField:
-        from_string = lambda val: int(val) if val else 0
+        converter = IntConverter()
         placeholder_text = 'Integers Only!'
         
 
@@ -111,8 +112,7 @@ defn MainWindow(model, table_model):
                             tracking := tracking_box.checked
                             value = 1.0
                             value >> setattr(self, 'foo', str(value))
-                            to_slider = lambda val: math.log10(val)
-                            from_slider = lambda val: 10**val
+                            converter = SliderLogConverter()
                             tick_interval = 0.5
                             orientation = Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
                             exception >> print(exception)
