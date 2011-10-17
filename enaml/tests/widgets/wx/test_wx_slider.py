@@ -48,19 +48,29 @@ class TestWXSlider(WXTestAssistant, slider.TestSlider):
         super(TestWXSlider, self).setUp()
         self.widget.SetSize(wx.Size(200,20))
 
-    def get_value(self, component, widget):
+    def get_value(self, widget):
         """ Get a slider's position.
 
         """
-        value = float(widget.GetValue())
-        return component.converter.from_component(value / SLIDER_MAX)
+        return widget.GetValue()
+
+    def get_minimum(self, widget):
+        """ Get the Slider's minimum value.
+
+        """
+        return widget.GetMin()
+
+    def get_maximum(self, widget):
+        """ Get the Slider's maximum value.
+
+        """
+        return widget.GetMax()
 
     def get_tick_interval(self, widget):
         """ Get the Slider's tick_interval value.
 
         """
-        value = float(widget.GetTickFreq())
-        return value / SLIDER_MAX
+        return widget.GetTickFreq()
 
     def get_tick_position(self, widget):
         """ Get the Slider's tick position style.
@@ -114,15 +124,13 @@ class TestWXSlider(WXTestAssistant, slider.TestSlider):
         """ Get the Slider's single step value.
 
         """
-        value = widget.GetLineSize() / widget.GetTickFreq()
-        return value
+        return widget.GetLineSize()
 
     def get_page_step(self, widget):
         """ Get the Slider's page step value.
 
         """
-        value = widget.GetPageSize() / widget.GetTickFreq()
-        return value
+        return widget.GetPageSize()
 
     def get_tracking(self, widget):
         """ Get the Slider's tracking status.

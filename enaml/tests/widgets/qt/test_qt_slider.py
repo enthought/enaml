@@ -31,19 +31,29 @@ ACTION_MAP ={slider.TestEvents.HOME: QtGui.QAbstractSlider.SliderToMinimum,
 class TestQtSlider(QtTestAssistant, slider.TestSlider):
     """ QtLabel tests. """
 
-    def get_value(self, component, widget):
+    def get_value(self, widget):
         """ Get a slider's position.
 
         """
-        value = float(widget.value())
-        return component.converter.from_component(value / SLIDER_MAX)
+        return widget.value()
+
+    def get_minimum(self, widget):
+        """ Get the Slider's minimum value.
+
+        """
+        return widget.minimum()
+
+    def get_maximum(self, widget):
+        """ Get the Slider's maximum value.
+
+        """
+        return widget.maximum()
 
     def get_tick_interval(self, widget):
         """ Get the Slider's tick_interval value.
 
         """
-        value = float(widget.tickInterval())
-        return value / SLIDER_MAX
+        return widget.tickInterval()
 
     def get_tick_position(self, widget):
         """ Get the Slider's tick position style.
@@ -68,15 +78,13 @@ class TestQtSlider(QtTestAssistant, slider.TestSlider):
         """ Get the Slider's single step value.
 
         """
-        value = widget.singleStep() / widget.tickInterval()
-        return value
+        return widget.singleStep()
 
     def get_page_step(self, widget):
         """ Get the Slider's page step value.
 
         """
-        value = widget.pageStep() / widget.tickInterval()
-        return value
+        return widget.pageStep()
 
     def get_tracking(self, widget):
         """ Get the Slider's tracking status.

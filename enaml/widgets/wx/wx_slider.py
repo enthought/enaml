@@ -67,7 +67,7 @@ class WXSlider(WXControl):
 
         # We hard-coded range for the widget since we are managing the
         # conversion.
-        self.set_range(0, SLIDER_MAX)
+        self.set_range(parent.minimum, parent.maximum)
         self.set_position(parent.value)
         self.set_orientation(parent.orientation)
         self.set_tick_position(parent.tick_position)
@@ -78,21 +78,22 @@ class WXSlider(WXControl):
 
         self.bind()
 
-    def parent_converter_changed(self, converter):
+    def parent__minimum_changed(self, minimum):
         """ Update the slider when the converter class changes.
 
         """
-        self.parent.value = self.get_position()
+        parent = self.parent
+        self.set_range(minimum, parent.maximum)
+
+    def parent__maximum_changed(self, maximum):
+        """ Update the slider when the converter class changes.
+
+        """
+        parent = self.parent
+        self.set_range(parent.minimum, maximum)
 
     def parent_value_changed(self, value):
-        """ Update the slider position
-
-        The method validates the value before assigment. If it is out of
-        range (0.0, 1.0), truncate the value and updates the component value
-        attribute. No change notification is fired by these actions.
-
-        If other exceptions are fired during the assigments the component
-        value does not change and the widget position is unknown.
+        """ Update the slider position.
 
         """
         parent = self.parent
@@ -100,7 +101,7 @@ class WXSlider(WXControl):
         self.parent.moved = value
 
     def parent_tracking_changed(self, tracking):
-        """ Set the tracking event in the widget
+        """ Set the tracking event in the widget.
 
         """
         self.set_tracking(tracking)
@@ -168,11 +169,7 @@ class WXSlider(WXControl):
         widget.Bind(wx.EVT_LEFT_UP, self._on_thumb_released)
 
     def _on_slider_changed(self, event):
-        """ Respond to a (possible) change in value from the ui.
-
-        Updated the value of the slider_pos based on the possible change
-        from the wxWidget. The `slider_pos` trait will fire the moved
-        event only if the value has changed.
+        """ Respond to change in value from the ui.
 
         """
         parent = self.parent
@@ -208,10 +205,6 @@ class WXSlider(WXControl):
     def _on_thumb_released(self, event):
         """ Update if the left button was released
 
-        Checks if the `down` attribute was set. In that case the
-        function calls the `_on_slider_changed` function, fires the
-        release event and sets the `down` attribute to false.
-
         """
         parent = self.parent
         if parent._down:
@@ -226,12 +219,11 @@ class WXSlider(WXControl):
         Arguments
         ---------
         step: int
-            the number of steps (in tick intervals) to move the slider
-            when the user uses the arrow keys.
+            the number of steps to move the slider when the user uses the 
+            arrow keys.
 
         """
-        tick_interval = self.widget.GetTickFreq()
-        self.widget.SetLineSize(tick_interval * step)
+        self.widget.SetLineSize(step)
 
     def set_page_step(self, step):
         """ Set the page step attribute in the wx widget.
@@ -239,14 +231,12 @@ class WXSlider(WXControl):
         Arguments
         ---------
         step: int
-            The number of steps (in tick intervals) to move the slider
-            when the user uses the page-up / page-down key. This is also
-            used when the user clicks on the left or the right of the
-            thumb.
+            The number of steps to move the slider when the user uses the 
+            page-up / page-down key. This is also used when the user 
+            clicks on the left or the right of the thumb.
 
         """
-        tick_interval = self.widget.GetTickFreq()
-        self.widget.SetPageSize(tick_interval * step)
+        self.widget.SetPageSize(step)
 
     def set_tick_position(self, ticks):
         """ Apply the tick position in the widget.
@@ -347,25 +337,13 @@ class WXSlider(WXControl):
 
         """
 
-        self.widget.SetTickFreq(interval * SLIDER_MAX)
+        self.widget.SetTickFreq(interval)
 
     def set_position(self, value):
         """ set the position value.
 
-        The method checks if the value that can be converted to float and
-        is in the range of [0.0, 1.0]. If the validation is not succesful
-        it sets the `error` and `exception` attributes and truncates the
-        assing value in range.
-
         """
-        parent = self.parent
-        self.reset_errors()
-        try:
-            position = parent.converter.to_component(value)
-        except Exception as raised_exception:
-            self.notify(raised_exception)
-        else:
-            self.widget.SetValue(position * SLIDER_MAX)
+        self.widget.SetValue(value)
 
     def get_position(self):
         """ Get the slider position from the widget.
@@ -375,14 +353,7 @@ class WXSlider(WXControl):
         is None since the value is undefined.
 
         """
-        parent = self.parent
-        value = None
-        try:
-            position = self.widget.GetValue() / float(SLIDER_MAX)
-            value = parent.converter.from_component(position)
-        except Exception as raised_exception:
-            self.notify(raised_exception)
-        return value
+        return  self.widget.GetValue()
 
     def is_thumb_hit(self, point):
         """ Is the point in the thumb area.
@@ -400,38 +371,19 @@ class WXSlider(WXControl):
         """
         widget = self.widget
 
-        slider_position = self.parent.value
-        thumb = widget.GetThumbLength()
-        width, height = [float(x) for x in widget.GetClientSizeTuple()]
+        thumb = widget.GetThumbLength() / 2.0
+        width, height = widget.GetClientSizeTuple()
 
         if widget.HasFlag(wx.SL_VERTICAL):
-            position = point[1] / height
-            thumb = thumb / height
-
+            position = point[1] / float(height)
         else:
-            position = point[0] / width
-            thumb = thumb / width
+            position = point[0] / float(width)
 
+        slider_position = widget.GetValue() 
+        slider_length = float(widget.GetMax() - widget.GetMin())
+        
+        minimum = (slider_position - thumb) / slider_length
+        maximum = (slider_position + thumb) / slider_length
 
-        minimum = slider_position - thumb
-        maximum = slider_position + thumb
 
         return (minimum <= position <= maximum)
-
-    def reset_errors(self):
-        """ Reset the error attributes of the component.
-
-        """
-        parent = self.parent
-        parent.error = False
-        parent.exception = None
-
-    def notify(self, exception):
-        """ Update the error attributes of the component.
-
-        """
-        warnings.warn("caught exception in slider: {0}".format(exception),
-                      RuntimeWarning)
-        parent = self.parent
-        parent.error = True
-        parent.exception = exception

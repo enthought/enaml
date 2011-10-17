@@ -2,20 +2,21 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import (Any, Bool, Callable, Enum, Float, Range, Event,
-                        Instance, Property, Int, Either)
+from traits.api import (Bool, Enum, Event, Instance, Property, Int,
+                        cached_property, TraitError, Range)
 
 from .control import IControlImpl, Control
-from ..converters import Converter, PassThroughConverter
 from ..enums import Orientation, TickPosition
-from ..util.trait_types import Bounded
 
 class ISliderImpl(IControlImpl):
 
-    def parent_converter_changed(self, converter):
+    def parent_value_changed(self, value):
         raise NotImplementedError
 
-    def parent_value_changed(self, value):
+    def parent__minimum_changed(self, minimum):
+        raise NotImplementedError
+
+    def parent__maximum_changed(self, maximum):
         raise NotImplementedError
 
     def parent_tracking_changed(self, tracking):
@@ -36,28 +37,38 @@ class ISliderImpl(IControlImpl):
     def parent_orientation_changed(self, orientation):
         raise NotImplementedError
 
+#: The maximum slider length
+MAX_SLIDER_LENGHT = 1<<16
 
 class Slider(Control):
     """ A simple slider widget.
 
-    A slider can be used to select from a continuous range of values.
-    The slider's range is fixed at 0.0 to 1.0. Therefore, the position
-    of the slider can be viewed as a percentage. To facilitate various
-    ranges, you can specify a Converter class to convert `to` and `from`
-    the slider position.
+    A slider can be used to select from a range of values.
 
     Attributes
     ----------
-    value : Bounded
-        The value of the slider. The value is bounded after conversion
-        (i.e. using the converter attribute) to the interval (0.0, 1.0).
-        Attempts to assign a value that will move the slider out of this
-        range will result in TraitError
+    value : Range(low='minimum', high='maximum')
+        The position value of the Slider. The bounds are defined by
+        :attr:minimum: and :attr:maximum:.
 
-    converter : Instance(Converter)
-        A object that converts between :attr:`value` and a floating point
-        number in the interval (0.0, 1.0) that is used internally by the
-        slider component.
+    minimum : Property(Int, 0)
+        The minimum value for the index. To avoid issues where
+        :attr:`minimum` is higher than :attr:`maximum`. The value is a 
+        positive integer capped by the :attr:`maximum`. If the new value of
+        :attr:`minimum` make the current position invalid then the current 
+        position is set to :attr:minimum. Default value is 0.
+
+    maximum : Property(Int, 100)
+        The maximum value for the index. As before the value of
+        :attr:`maximum` cannot be lower than :attr:`minimum`. If the new 
+        value of :attr:`maximum` make the current position invalid then 
+        the current position is set to :attr:maximum. The top value is 
+        restricted to 65536, while the default is 100.
+
+    length : Property(Int, depends_on=('minimum', 'maximum'))
+        The length of the slider, a read only property that depends on
+        :attr:`minimum` and :attr:`maximum`. The lenght value is used
+        by a number of properties to adapt the slider appearence
 
     down : Property(Bool)
         A read only property which indicates whether or not the slider
@@ -67,24 +78,23 @@ class Slider(Control):
         If True, the value is updated while sliding. Otherwise, it is
         only updated when the slider is released. Defaults to True.
 
-    single_step : Int
-        Defines the number of ticks that the slider will move when the
-        user presses the arrow keys. Default is 1
+    single_step : Range(low=1, high='length')
+        Defines the number of steps that the slider will move when the
+        user presses the arrow keys. Default is 1.
 
-    page_step : Int
-        Defines the number of ticks that the slider will move when the
-        user presses the page_up/page_down keys. Default is 5
+    page_step : Range(low=1, high='length')
+        Defines the number of steps that the slider will move when the
+        user presses the page_up/page_down keys. Default is 10.
 
-    tick_interval : Range(0.0, 1.0, 0.1, exclude_low=True, exclude_high=True)
+    tick_interval: Range(low=1, high='length', value=10, exclude_high=True)
         The interval to put between tick marks in slider range units.
-        Default value is `0.1` which is 10% of the full slider range.
+        Default value is `10`.
 
     tick_position : TickPosition Enum value
         A TickPosition enum value indicating how to display the tick
         marks. Please note that the orientation takes precedence over
-        the tick mark position and if for example the user sets the tick
-        to an invalid value it is ignored. The ticks option BOTH is not
-        supported yet in the wx backend, and will be also ignored.
+        the tick mark position and an incompatible tick position will
+        be addapted according to the current orientation.
 
     orientation : Orientation Enum value
         The orientation of the slider. The default orientation is
@@ -105,20 +115,31 @@ class Slider(Control):
         A protected attribute used by the implementation object to
         update the value of down.
 
+    _minimum : Int
+        A protected attribute used by the implementation object to
+        hold the validated slider minimum.
+
+    _maximum : Int
+        A protected attribute used by the implementation object to
+        hold the validated slider maximum.
+
     """
-    down = Property(Bool, depends_on='_down')
+    
+    minimum = Property(Int)
 
-    value = Bounded(0, 0.0, 1.0, converter='converter')
+    maximum = Property(Int)
 
-    converter = Instance(Converter, factory=PassThroughConverter)
+    length = Property(Int, depends_on=('minimum', 'maximum'))
+
+    value = Range(low='minimum', high='maximum')
 
     tracking = Bool(True)
 
-    tick_interval = Float(0.1)
+    tick_interval = Range(low=1, high='length', value=10, exclude_high=True)
 
-    single_step = Int(1)
+    single_step = Range(low=1, high='length')
 
-    page_step = Int(5)
+    page_step = Range(low=1, high='length', value=10)
 
     tick_position = Enum(TickPosition.NO_TICKS, *TickPosition.values())
 
@@ -130,7 +151,13 @@ class Slider(Control):
 
     moved = Event
 
+    down = Property(Bool, depends_on='_down')
+
     _down = Bool
+
+    _minimum = Int(0)
+
+    _maximum = Int(100)
 
     #---------------------------------------------------------------------------
     # Overridden parent class taits
@@ -143,6 +170,70 @@ class Slider(Control):
         """
         return self._down
 
+    @cached_property
+    def _get_length(self):
+        """ The property getter for the 'length' attribute.
 
-Slider.protect('down', 'pressed', 'released', 'moved', '_down')
+        """
+        return self._maximum - self._minimum + 1
+
+    def _set_minimum(self, value):
+        """ Validate the assigment of the slider minimum.
+
+        The minimum property should be positive and always smaller
+        than :attr:`maximum`.
+
+        """
+        if  (0 <= value < self._maximum):
+            # FIXME:
+            # Because the Range Trait will not fire the change notifier when
+            # when the dynamic bounds cause a change we will perform the check
+            # our self and make sure the value_changed function is called.
+            position = self.value                    
+            if position < value:
+                self.value = value
+            self._minimum = value
+        else:
+            msg = ("The maximum value of the slider should be positive integer"
+                   " and smaller than the current maximum ({0}), but a value of"
+                   " {1} was given ".format(self._minimum, value))
+            raise TraitError(msg)
+
+    def _set_maximum(self, value):
+        """ Validate the assigment of the slider maximum.
+
+        The maximum property should be positive and always larger
+        than :attr:`minimum`.
+
+        """
+        if  (self._minimum < value <= MAX_SLIDER_LENGHT):
+            # FIXME:
+            # Because the Range Trait will not fire the change notifier when
+            # when the dynamic bounds cause a change we will perform the check
+            # our self and make sure the value_changed function is called.
+            position = self.value                    
+            if position > value:
+                self.value = value
+            self._maximum = value
+        else:
+            msg = ("The minimum value of the slider should be positive integer"
+                   " and larger than the current minimum ({0}), but a value of"
+                   " {1} was given ".format(self._maximum, value))
+            raise TraitError(msg)
+
+    def _get_maximum(self):
+        """ The property getter for the slider maximum.
+
+        """
+        return self._maximum
+
+    def _get_minimum(self):
+        """ The property getter for the slider minimum.
+
+        """
+        return self._minimum
+
+
+Slider.protect('down', 'pressed', 'released', 'moved', '_down', 'length',
+        'minimum', 'maximum', '_minimum', '_maximum')
 

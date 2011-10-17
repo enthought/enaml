@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
 
-from traits.api import implements, Float, Int, Tuple
+from traits.api import implements
 
 from .qt_control import QtControl
 
@@ -78,7 +78,7 @@ class QtSlider(QtControl):
 
         # We hard-coded range for the widget since we are managing the
         # conversion.
-        self.set_range(0, SLIDER_MAX)
+        self.set_range(parent.minimum, parent.maximum)
         self.set_position(parent.value)
         self.set_orientation(parent.orientation)
         self.set_tick_position(parent.tick_position)
@@ -88,11 +88,19 @@ class QtSlider(QtControl):
         self.set_tracking(parent.tracking)
         self.connect()
 
-    def parent_converter_changed(self, converter):
+    def parent__minimum_changed(self, minimum):
         """ Update the slider when the converter class changes.
 
         """
-        self.parent.value = self.get_position()
+        parent = self.parent
+        self.set_range(minimum, parent.maximum)
+
+    def parent__maximum_changed(self, maximum):
+        """ Update the slider when the converter class changes.
+
+        """
+        parent = self.parent
+        self.set_range(parent.minimum, maximum)
 
     def parent_value_changed(self, value):
         """ Update the slider position
@@ -166,7 +174,7 @@ class QtSlider(QtControl):
         widget.sliderReleased.connect(self._on_released)
 
     def _on_slider_changed(self, value):
-        """ Respond to a (possible) change in value from the ui.
+        """ Respond to a change in value of the slider widget.
 
         """
         parent = self.parent
@@ -209,8 +217,7 @@ class QtSlider(QtControl):
 
         """
         widget = self.widget
-        tick_interval = widget.tickInterval()
-        widget.setSingleStep(step * tick_interval)
+        widget.setSingleStep(step)
 
     def set_page_step(self, step):
         """ Set the page step attribute in the Qt widget.
@@ -225,8 +232,7 @@ class QtSlider(QtControl):
 
         """
         widget = self.widget
-        tick_interval = widget.tickInterval()
-        widget.setPageStep(step * tick_interval)
+        widget.setPageStep(step)
 
     def set_tick_position(self, ticks):
         """ Apply the tick position in the widget.
@@ -290,41 +296,18 @@ class QtSlider(QtControl):
             The step size for tick marks.
 
         """
-        self.widget.setTickInterval(interval * SLIDER_MAX)
+        self.widget.setTickInterval(interval)
 
     def set_position(self, value):
         """ Validate the position value.
 
         """
-        parent = self.parent
-        self.reset_errors()
-        try:
-            position = parent.converter.to_component(value)
-            if not (0.0 <= position <= 1.0):
-                raise ValueError('to_widget() must return a value'
-                                 ' between 0.0 and 1.0, but instead'
-                                 ' returned %s'  % repr(position))
-        except Exception as raised_exception:
-            self.notify(raised_exception)
-        else:
-            self.widget.setValue(position * SLIDER_MAX)
-
+        self.widget.setValue(value)
     def get_position(self):
         """ Get the slider position from the widget.
 
-        If error occurs during the conversion it is recorded in the
-        `error` and `exception` attributes. The return value in that case
-        is None since the value is undefined.
-
         """
-        parent = self.parent
-        value = None
-        position = self.widget.value() / float(SLIDER_MAX)
-        try:
-            value = parent.converter.from_component(position)
-        except Exception as raised_exception:
-            self.notify(raised_exception)
-        return value
+        return self.widget.value()
 
     def sync_tick_position(self):
         """ Syncornize the tick_position with the widget
@@ -340,20 +323,3 @@ class QtSlider(QtControl):
             parent.tick_position = VERT_TICK_POS_MAP[tick_pos]
         else:
             parent.tick_position = HOR_TICK_POS_MAP[tick_pos]
-
-    def reset_errors(self):
-        """ Reset the error attributes of the component.
-
-        """
-        parent = self.parent
-        parent.error = False
-        parent.exception = None
-
-    def notify(self, exception):
-        """ Update the error attributes of the component.
-
-        """
-        parent = self.parent
-        parent.error = True
-        parent.exception = exception
-
