@@ -13,7 +13,7 @@ class TestWxRadioButton(WXTestAssistant, radio_button.TestRadioButton):
         """ Get the checked state of a radio button.
 
         """
-        self.process_wx_events(self.view.toolkit.app)
+        self.process_wx_events(self.app)
         return button.GetValue()
 
     def get_text(self, button):
