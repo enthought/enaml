@@ -25,7 +25,7 @@ _stretch_map = {
     'semi_expanded': 112,
     'expanded': 125,
     'extra_expanded': 150,
-    'ulra_expanded': 200,
+    'ultra_expanded': 200,
 }
 
 
