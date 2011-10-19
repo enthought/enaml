@@ -7,7 +7,7 @@ from .. import datetime_edit
 
 from enaml.widgets.qt.qt_datetime_edit import qdatetime_to_python
 
-class TestQtDateTimeEdit(QtTestAssistant, datetime_edit.TestDateTimeEdit):
+class TestQtDatetimeEdit(QtTestAssistant, datetime_edit.TestDatetimeEdit):
     """ QtDateEdit tests. """
 
     def get_datetime(self, widget):

@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 from datetime import datetime as python_datetime
 
+from traits.api import TraitError
+
 from .enaml_test_case import EnamlTestCase, required_method
 
-
-class TestDateTimeEdit(EnamlTestCase):
+class TestDatetimeEdit(EnamlTestCase):
     """ Logic for testing the date time edit components.
 
     Tooklit testcases need to provide the following functions
@@ -48,6 +49,7 @@ defn MainWindow(events):
                     datetime_changed >> events.append(('datetime_changed', args.new))
 """
 
+        self.default_datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
         self.component = self.component_by_name(self.view, 'test')
@@ -87,7 +89,29 @@ defn MainWindow(events):
         self.assertEnamlInSync(component, 'minimum_datetime', new_minimum)
         self.assertEqual(self.events, [])
 
-    def test_change_date_in_enaml(self):
+    def test_change_maximum_and_datetime(self):
+        """ Test setting maximum while the datetime is out of range.
+
+        """
+        component = self.component
+        component.datetime = python_datetime(2007,10,9)
+        component.maximum_datetime = python_datetime(2006,5,9)
+        self.assertEnamlInSync(component, 'datetime', python_datetime(2006,5,9))
+        self.assertEqual(self.events, [('datetime_changed', python_datetime(2007,10,9)),
+                                        ('datetime_changed', python_datetime(2006,5,9))])
+
+    def test_change_minimum_and_datetime(self):
+        """ Test setting minimum while the datetime is out of range.
+
+        """
+        component = self.component
+        component.datetime = python_datetime(2007,10,9)
+        component.minimum_datetime = python_datetime(2010,5,9)
+        self.assertEnamlInSync(component, 'datetime', python_datetime(2010,5,9))
+        self.assertEqual(self.events, [('datetime_changed', python_datetime(2007,10,9)),
+                                        ('datetime_changed', python_datetime(2010,5,9))])
+
+    def test_change_datetime_in_enaml(self):
         """ Test changing the current datetime through the component.
 
         """
@@ -97,7 +121,7 @@ defn MainWindow(events):
         self.assertEnamlInSync(component, 'datetime', new_datetime)
         self.assertEqual(self.events, [('datetime_changed', new_datetime)])
 
-    def test_change_date_in_ui(self):
+    def test_change_datetime_in_ui(self):
         """ Test changing the current datetime thought the ui
 
         """
@@ -115,9 +139,9 @@ defn MainWindow(events):
         component = self.component
         min_datetime = python_datetime(2000,2,3)
         component.minimum_datetime = min_datetime
-        component.datetime = python_datetime(2000,1,1)
-        self.assertEnamlInSync(component, 'datetime', min_datetime)
-        self.assertEqual(self.events, [('datetime_changed', min_datetime)])
+        with self.assertRaises(TraitError):
+            component.datetime = python_datetime(2000,1,1)
+        self.assertEnamlInSync(component, 'datetime', self.default_datetime)
 
     def test_invalid_max_datetime(self):
         """ Test changing to an invalid datetime above the max range.
@@ -129,10 +153,10 @@ defn MainWindow(events):
         self.assertEqual(self.events, [('datetime_changed',init_datetime)])
         max_datetime = python_datetime(2014,2,3)
         component.maximum_datetime = max_datetime
-        component.datetime = python_datetime(2016,10,9)
-        self.assertEnamlInSync(component, 'datetime', max_datetime)
-        self.assertEqual(self.events, [('datetime_changed',init_datetime),
-                                       ('datetime_changed',max_datetime)])
+        with self.assertRaises(TraitError):
+            component.datetime = python_datetime(2016,10,9)
+        self.assertEnamlInSync(component, 'datetime', init_datetime)
+        self.assertEqual(self.events, [('datetime_changed',init_datetime)])
 
     def test_set_format(self):
         """ Test setting the output format
@@ -141,12 +165,25 @@ defn MainWindow(events):
         component = self.component
         widget = self.widget
 
-        component.format = 'MMM dd yyyy hh:mm'
+        component.datetime_format = 'MMM dd yyyy hh:mm'
         datetime = python_datetime(2007,10,9, 2, 34, 12,2000)
         component.datetime = datetime
         widget_string = self.get_datetime_as_string(widget)
         self.assertEqual(widget_string, u'Oct 09 2007 02:34')
         self.assertEqual(self.events, [('datetime_changed',datetime)])
+
+    def test_change_range_invalid(self):
+        """ Test setting minimum > maximum.
+
+        """
+        component = self.component
+        component.minimum_datetime = python_datetime(2010,5,9)
+        with self.assertRaises(TraitError):
+            component.maximum_datetime = python_datetime(2006,5,9)
+
+        component.maximum_datetime = python_datetime(2034,12,10)
+        with self.assertRaises(TraitError):
+            component.minimum_date = python_datetime(2034,12,14)
 
     #--------------------------------------------------------------------------
     # Special initialization tests
@@ -172,11 +209,8 @@ defn MainWindow(events):
                     datetime_changed >> events.append(('datetime_changed', args.new))
 """
         events = []
-        view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_name(view, 'test')
-        self.assertEnamlInSync(component, 'datetime',
-                               python_datetime(1990,1,1,0,0,0,0))
-        self.assertEqual(self.events, [])
+        with self.assertRaises(TraitError):
+            view = self.parse_and_create(enaml, events=events)
 
     def test_initial_too_late(self):
         """ Check initialization with an invalid late datetime is corrected.
@@ -198,11 +232,8 @@ defn MainWindow(events):
                     datetime_changed >> events.append(('datetime_changed', args.new))
 """
         events = []
-        view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_name(view, 'test')
-        self.assertEnamlInSync(component, 'datetime',
-                               python_datetime(2000,1,1,0,0,0,0))
-        self.assertEqual(self.events, [])
+        with self.assertRaises(TraitError):
+            view = self.parse_and_create(enaml, events=events)
 
     #--------------------------------------------------------------------------
     # absrtact methods

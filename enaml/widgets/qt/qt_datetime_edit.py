@@ -44,34 +44,33 @@ class QtDatetimeEdit(QtControl):
         parent = self.parent
         self.set_minimum_datetime(parent.minimum_datetime)
         self.set_maximum_datetime(parent.maximum_datetime)
-        self.set_format(parent.format)
-        self.set_and_validate_date()
+        self.set_format(parent.datetime_format)
+        self.set_datetime(parent.datetime)
         self.connect()
 
     def parent_datetime_changed(self, datetime):
         """ The change handler for the 'date' attribute.
 
         """
-        self.set_and_validate_date()
+        self.set_datetime(datetime)
 
-    def parent_minimum_datetime_changed(self, datetime):
+    def parent__minimum_datetime_changed(self, datetime):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_datetime(datetime)
 
-    def parent_maximum_datetime_changed(self, datetime):
+    def parent__maximum_datetime_changed(self, datetime):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_datetime(datetime)
 
-    def parent_format_changed(self, datetime_format):
+    def parent_datetime_format_changed(self, datetime_format):
         """ The change handler for the 'format' attribute.
 
         """
         self.set_format(datetime_format)
-
 
     #---------------------------------------------------------------------------
     # Implementation
@@ -92,19 +91,11 @@ class QtDatetimeEdit(QtControl):
         parent.datetime = new_datetime
         parent.datetime_changed = new_datetime
 
-    def set_and_validate_date(self):
-        """ Sets and validates the datetime on the widget.
+    def set_datetime(self, datetime):
+        """ Sets and the datetime on the widget.
 
-        The method sets the datetime in the toolkit widget and makes sure
-        that if the widget has truncated the value,  the enaml component
-        is syncronized without firing trait notification events.
         """
-        parent = self.parent
-        datetime = parent.datetime
         self.widget.setDateTime(datetime)
-        validated_widget_datetime = self.get_datetime()
-        if validated_widget_datetime != datetime:
-            self.parent.trait_setq(datetime=validated_widget_datetime)
 
     def set_minimum_datetime(self, datetime):
         """ Sets the minimum datetime on the widget with the provided value.
@@ -130,16 +121,3 @@ class QtDatetimeEdit(QtControl):
         """
         qdatetime = self.widget.dateTime()
         return qdatetime_to_python(qdatetime)
-
-    def fit_to_range(self):
-        """ Fit the compoenent date to range.
-
-        """
-        parent = self.parent
-        minimum = parent.minimum_datetime
-        maximum = parent.maximum_datetime
-        datetime = parent.datetime
-
-        datetime = max(datetime, minimum)
-        datetime = min(datetime, maximum)
-        self.parent.date = datetime
