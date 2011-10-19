@@ -76,18 +76,20 @@ class TestSlider(EnamlTestCase):
         """
 
         enaml = """
-Window:
-    Panel:
-        VGroup:
-            Slider slider:
-                moved >> events.append(('moved', msg.new))
-                pressed >> events.append('pressed')
-                released >> events.append('released')
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                Slider -> slider:
+                    name = 'slider'
+                    moved >> events.append(('moved', args.new))
+                    pressed >> events.append('pressed')
+                    released >> events.append('released')
 """
 
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
-        self.component = self.component_by_id(self.view, 'slider')
+        self.component = self.component_by_name(self.view, 'slider')
         self.widget = self.component.toolkit_widget()
 
     def test_initial_attributes(self):

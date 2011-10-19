@@ -30,21 +30,24 @@ class TestRadioButton(EnamlTestCase):
         label_2 = 'Label 2'
 
         enaml = """
-Window:
-    Panel:
-        VGroup:
-            RadioButton radio1:
-                text = '{0}'
-                checked = True
-            RadioButton radio2:
-                text = '{1}'
+defn MainWindow():
+    Window:
+        Panel:
+            VGroup:
+                RadioButton -> radio1:
+                    name = 'radio1'
+                    text = '{0}'
+                    checked = True
+                RadioButton -> radio2:
+                    name = 'radio2'
+                    text = '{1}'
 """.format(label_1, label_2)
 
         self.events = []
         self.view = self.parse_and_create(enaml)
-        self.radio1 = self.component_by_id(self.view, 'radio1')
+        self.radio1 = self.component_by_name(self.view, 'radio1')
         self.widget1 = self.radio1.toolkit_widget()
-        self.radio2 = self.component_by_id(self.view, 'radio2')
+        self.radio2 = self.component_by_name(self.view, 'radio2')
         self.widget2 = self.radio2.toolkit_widget()
 
 

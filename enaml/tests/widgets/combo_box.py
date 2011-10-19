@@ -29,19 +29,21 @@ class TestComboBox(EnamlTestCase):
         """
 
         enaml = """
-Window:
-    Panel:
-        VGroup:
-            ComboBox cmb:
-                items = [int, float, oct]
-                value = self.items[1]
-                to_string = lambda x: str(x) + '!' if x is not None else ''
-                selected >> events.append('selected')
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                ComboBox -> cmb:
+                    name = 'cmb'
+                    items = [int, float, oct]
+                    value = self.items[1]
+                    to_string = lambda x: str(x) + '!' if x is not None else ''
+                    selected >> events.append('selected')
 """
 
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
-        self.component = self.component_by_id(self.view, 'cmb')
+        self.component = self.component_by_name(self.view, 'cmb')
         self.widget = self.component.toolkit_widget()
 
     def test_selection(self):

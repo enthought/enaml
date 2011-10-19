@@ -21,23 +21,26 @@ class TestLabel(EnamlTestCase):
         """ Set up label tests.
 
         """
-        enaml = """
-Window:
-    Panel:
-        VGroup:
-            Label label:
-                text = 'foo'
+
+        enaml_source = """
+defn MainWindow():
+    Window:
+        Panel:
+            VGroup:
+                Label:
+                    name = 'label'
+                    text = 'foo'
 """
 
-        self.view = self.parse_and_create(enaml)
-        self.component = self.component_by_id(self.view, 'label')
+        self.view = self.parse_and_create(enaml_source)
+        self.component = self.component_by_name(self.view, 'label')
         self.widget = self.component.toolkit_widget()
 
     def test_initial_text(self):
         """ Test the initial text of a label.
 
         """
-        self.assertEqual(self.component.text, self.get_text(self.widget))
+        self.assertEnamlInSync(self.component, 'text', 'foo')
 
     def test_text_changed(self):
         """ Change the text of the label.
@@ -45,8 +48,7 @@ Window:
         """
 
         self.component.text = 'bar'
-        widget_text = self.get_text(self.widget)
-        self.assertEqual(self.component.text, widget_text)
+        self.assertEnamlInSync(self.component, 'text', 'bar')
 
     #--------------------------------------------------------------------------
     # absrtact methods

@@ -38,18 +38,20 @@ class TestCalendar(EnamlTestCase):
 
         """
 
-        enaml = """
-Window:
-    Panel:
-        VGroup:
-            Calendar cal:
-                selected >> events.append(('selected', msg.new))
-                activated >> events.append(('activated', msg.new))
+        source = """
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                Calendar:
+                    name = 'cal'
+                    selected >> events.append(('selected', args.new))
+                    activated >> events.append(('activated', args.new))
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
-        self.component = self.component_by_id(self.view, 'cal')
+        self.view = self.parse_and_create(source, events=self.events)
+        self.component = self.component_by_name(self.view, 'cal')
         self.widget = self.component.toolkit_widget()
 
     def test_initial_value(self):
@@ -159,15 +161,17 @@ Window:
         """
         enaml = """
 import datetime
-Window:
-    Panel:
-        VGroup:
-            Calendar cal:
-                date = datetime.date(1980, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-                selected >> events.append(('selected', msg.new))
-                activated >> events.append(('activated', msg.new))
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                Calendar:
+                    name = 'cal'
+                    date = datetime.date(1980, 1, 1)
+                    minimum_date = datetime.date(1990, 1, 1)
+                    maximum_date = datetime.date(2000, 1, 1)
+                    selected >> events.append(('selected', args.new))
+                    activated >> events.append(('activated', args.new))
 
 """
         events = []
@@ -182,15 +186,17 @@ Window:
         """
         enaml = """
 import datetime
-Window:
-    Panel:
-        VGroup:
-            Calendar cal:
-                date = datetime.date(2010, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-                selected >> events.append(('selected', msg.new))
-                activated >> events.append(('activated', msg.new))
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                Calendar:
+                    name = 'cal'
+                    date = datetime.date(2010, 1, 1)
+                    minimum_date = datetime.date(1990, 1, 1)
+                    maximum_date = datetime.date(2000, 1, 1)
+                    selected >> events.append(('selected', args.new))
+                    activated >> events.append(('activated', args.new))
 """
         events = []
         with self.assertRaises(TraitError):

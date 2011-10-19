@@ -38,17 +38,19 @@ class TestDateTimeEdit(EnamlTestCase):
 
         enaml = """
 from datetime import datetime as python_datetime
-Window:
-    Panel:
-        VGroup:
-            DateTimeEdit test:
-                datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
-                datetime_changed >> events.append(('datetime_changed', msg.new))
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                DatetimeEdit:
+                    name = 'test'
+                    datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
+                    datetime_changed >> events.append(('datetime_changed', args.new))
 """
 
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
-        self.component = self.component_by_id(self.view, 'test')
+        self.component = self.component_by_name(self.view, 'test')
         self.widget = self.component.toolkit_widget()
 
     def test_initialization_values(self):
@@ -158,18 +160,20 @@ Window:
         """
         enaml = """
 from datetime import datetime as python_datetime
-Window:
-    Panel:
-        VGroup:
-            DateTimeEdit test:
-                datetime = python_datetime(1980, 1, 1, 23, 10, 34)
-                minimum_datetime = python_datetime(1990, 1, 1)
-                maximum_datetime = python_datetime(2000, 1, 1)
-                datetime_changed >> events.append(('datetime_changed', msg.new))
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                DatetimeEdit -> test:
+                    name = 'test'
+                    datetime = python_datetime(1980, 1, 1, 23, 10, 34)
+                    minimum_datetime = python_datetime(1990, 1, 1)
+                    maximum_datetime = python_datetime(2000, 1, 1)
+                    datetime_changed >> events.append(('datetime_changed', args.new))
 """
         events = []
         view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_id(view, 'test')
+        component = self.component_by_name(view, 'test')
         self.assertEnamlInSync(component, 'datetime',
                                python_datetime(1990,1,1,0,0,0,0))
         self.assertEqual(self.events, [])
@@ -182,18 +186,20 @@ Window:
         """
         enaml = """
 from datetime import datetime as python_datetime
-Window:
-    Panel:
-        VGroup:
-            DateTimeEdit test:
-                date_time = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
-                minimum_datetime = python_datetime(1990, 1, 1)
-                maximum_datetime = python_datetime(2000, 1, 1)
-                datetime_changed >> events.append(('datetime_changed', msg.new))
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                DatetimeEdit -> test:
+                    name = 'test'
+                    date_time = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
+                    minimum_datetime = python_datetime(1990, 1, 1)
+                    maximum_datetime = python_datetime(2000, 1, 1)
+                    datetime_changed >> events.append(('datetime_changed', args.new))
 """
         events = []
         view = self.parse_and_create(enaml, events=events)
-        component = self.component_by_id(view, 'test')
+        component = self.component_by_name(view, 'test')
         self.assertEnamlInSync(component, 'datetime',
                                python_datetime(2000,1,1,0,0,0,0))
         self.assertEqual(self.events, [])

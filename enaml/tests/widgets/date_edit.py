@@ -39,16 +39,18 @@ class TestDateEdit(EnamlTestCase):
         """
 
         enaml = """
-Window:
-    Panel:
-        VGroup:
-            DateEdit test:
-                date_changed >> events.append('date_changed')
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                DateEdit:
+                    name = 'test'
+                    date_changed >> events.append('date_changed')
 """
 
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
-        self.component = self.component_by_id(self.view, 'test')
+        self.component = self.component_by_name(self.view, 'test')
         self.widget = self.component.toolkit_widget()
 
     def test_initialization_values(self):
@@ -145,43 +147,49 @@ Window:
     #--------------------------------------------------------------------------
 
     def test_initial_too_late(self):
-        """ Check initialization with an invalid late date is corrected.
+        """ Check initialization with an invalid late date.
 
         """
         enaml = """
 import datetime
-Window:
-    Panel:
-        VGroup:
-            DateEdit test:
-                date = datetime.date(2010, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-                date_changed >> events.append('date_changed')
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                DateEdit:
+                    name = 'test'
+                    date = datetime.date(2010, 1, 1)
+                    minimum_date = datetime.date(1990, 1, 1)
+                    maximum_date = datetime.date(2000, 1, 1)
+                    date_changed >> events.append('date_changed')
 """
         events = []
+        # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
             view = self.parse_and_create(enaml, events=events)
 
 
     def test_initial_too_early(self):
-        """ Check initialization with an invalid early date is corrected.
+        """ Check initialization with an invalid early date.
 
         """
 
         enaml = """
 import datetime
-Window:
-    Panel:
-        VGroup:
-            DateEdit test:
-                date = datetime.date(1980, 1, 1)
-                minimum_date = datetime.date(1990, 1, 1)
-                maximum_date = datetime.date(2000, 1, 1)
-                date_changed >> events.append('date_changed')
+defn MainWindow(events):
+    Window:
+        Panel:
+            VGroup:
+                DateEdit:
+                    name = 'test'
+                    date = datetime.date(1980, 1, 1)
+                    minimum_date = datetime.date(1990, 1, 1)
+                    maximum_date = datetime.date(2000, 1, 1)
+                    date_changed >> events.append('date_changed')
 """
 
         events = []
+        # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
             view = self.parse_and_create(enaml, events=events)
 
