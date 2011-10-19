@@ -42,7 +42,7 @@ class QtDateEdit(QtControl):
         parent = self.parent
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
-        self.set_format(parent.format)
+        self.set_format(parent.date_format)
         self.set_date(parent.date)
         self.connect()
 
@@ -52,21 +52,19 @@ class QtDateEdit(QtControl):
         """
         self.set_date(date)
 
-    def parent_minimum_date_changed(self, date):
+    def parent__minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
-        self.fit_to_range()
 
-    def parent_maximum_date_changed(self, date):
+    def parent__maximum_date_changed(self, date):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
-        self.fit_to_range()
 
-    def parent_format_changed(self, date_format):
+    def parent_date_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
 
         """
@@ -87,7 +85,7 @@ class QtDateEdit(QtControl):
 
         """
         parent = self.parent
-        new_date = self.get_date()
+        new_date = self.get_date() # FIXME: Is this necessary? What about 'date'
         parent.date = new_date
         parent.date_changed = new_date
 
@@ -122,16 +120,3 @@ class QtDateEdit(QtControl):
         """
         qdate = self.widget.date()
         return qdate_to_python(qdate)
-
-    def fit_to_range(self):
-        """ Fit the compoenent date to range.
-
-        """
-        parent = self.parent
-        minimum = parent.minimum_date
-        maximum = parent.maximum_date
-        date = parent.date
-
-        date = max(date, minimum)
-        date = min(date, maximum)
-        self.parent.date = date

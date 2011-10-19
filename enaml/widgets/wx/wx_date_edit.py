@@ -55,19 +55,17 @@ class WXDateEdit(WXControl):
         self.set_date(date)
         self.parent.date_changed = date
 
-    def parent_minimum_date_changed(self, date):
+    def parent__minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
-        self.fit_to_range()
 
-    def parent_maximum_date_changed(self, date):
+    def parent__maximum_date_changed(self, date):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
-        self.fit_to_range()
 
     def parent_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
@@ -123,16 +121,3 @@ class WXDateEdit(WXControl):
         """
         wx_date = self.widget.GetValue()
         return from_wx_date(wx_date)
-
-    def fit_to_range(self):
-        """ Fit the compoenent date to range.
-
-        """
-        parent = self.parent
-        minimum = parent.minimum_date
-        maximum = parent.maximum_date
-        date = parent.date
-
-        date = max(date, minimum)
-        date = min(date, maximum)
-        self.parent.date = date
