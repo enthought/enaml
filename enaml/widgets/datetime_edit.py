@@ -9,7 +9,7 @@ from traits.api import Event, Instance, Str
 from .control import Control, IControlImpl
 
 
-class IDateTimeEditImpl(IControlImpl):
+class IDatetimeEditImpl(IControlImpl):
 
     def parent_datetime_changed(self, datetime):
         raise NotImplementedError
@@ -24,7 +24,7 @@ class IDateTimeEditImpl(IControlImpl):
         raise NotImplementedError
 
 
-class DateTimeEdit(Control):
+class DatetimeEdit(Control):
     """ A datetime widget.
 
     A DatetimeEdit displays a Python datetime.datetime using an
@@ -54,7 +54,7 @@ class DateTimeEdit(Control):
         supplied (or is invalid) the system locale setting is used.
         This may not be supported by all backends.
 
-    selected : Event
+    datetime_changed : Event
         Triggered whenever the user clicks or changes the control. The
         event payload will be the datetime on the control.
 
@@ -74,8 +74,8 @@ class DateTimeEdit(Control):
     #---------------------------------------------------------------------------
     # Overridden parent traits
     #---------------------------------------------------------------------------
-    toolkit_impl = Instance(IDateTimeEditImpl)
+    toolkit_impl = Instance(IDatetimeEditImpl)
 
 
-DateTimeEdit.protect('datetime_changed')
+DatetimeEdit.protect('datetime_changed')
 

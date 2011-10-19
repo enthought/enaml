@@ -8,7 +8,7 @@ from traits.api import implements
 
 from .qt_control import QtControl
 
-from ..datetime_edit import IDateTimeEditImpl
+from ..datetime_edit import IDatetimeEditImpl
 
 
 # Workaround for an incompatibility between PySide and PyQt
@@ -18,7 +18,7 @@ except AttributeError:
     qdatetime_to_python = QtCore.QDateTime.toPyDateTime
 
 
-class QtDateTimeEdit(QtControl):
+class QtDatetimeEdit(QtControl):
     """ A Qt implementation of DateTimeEdit.
 
     See Also
@@ -26,7 +26,7 @@ class QtDateTimeEdit(QtControl):
     DateEdit
 
     """
-    implements(IDateTimeEditImpl)
+    implements(IDatetimeEditImpl)
 
     #---------------------------------------------------------------------------
     # IDateEditImpl interface
