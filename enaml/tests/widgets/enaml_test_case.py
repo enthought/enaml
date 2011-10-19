@@ -3,9 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import unittest
-from cStringIO import StringIO
+import os.path
 
-from enaml.factory import EnamlFactory
+from enaml.parsing.parser import parse
+from enaml.parsing.enaml_compiler import EnamlCompiler
 from enaml.toolkit import default_toolkit
 
 def required_method(function_object):
@@ -33,32 +34,59 @@ class EnamlTestCase(unittest.TestCase):
     #: default toolkit to use for the enaml source parsing
     toolkit = default_toolkit()
 
-    def component_by_id(self, view, component_id):
-        """ Find an item in the view's namespace with a given id.
+##    def component_by_id(self, component, component_id):
+##        """ Find an item in the view's namespace with a given id.
+##
+##        Arguments
+##        ---------
+##        view :
+##            The enaml based view object
+##
+##        component_id :
+##            The enaml component id.
+##
+##        Raises
+##        ------
+##        AttributeError :
+##            if there is no object with that id.
+##
+##        """
+##        return getattr(view.ns, component_id)
+
+    def component_by_name(self, component, name):
+        """ Find an item in the view with a given name.
 
         Arguments
         ---------
         view :
             The enaml based view object
 
-        component_id :
-            The enaml component id.
+        name :
+            The enaml component name.
 
-        Raises
-        ------
-        AttributeError :
-            if there is no object with that id.
+        Returns
+        -------
+            The coresponding component or None.
 
         """
-        return getattr(view.ns, component_id)
+        if component.name == name:
+            result = component
+        else:
+            result = None
+            for child in component.children:
+                 result = self.component_by_name(child, name)
+                 if result is not None:
+                    break
 
-    def parse_and_create(self, enaml_source, **kwargs):
-        """ Parse the test enaml source and returns the enaml view object.
+        return result
+
+    def parse_and_create(self, source, **kwargs):
+        """ parses and compiles the source and returns the enaml view object.
 
         Arguments
         ---------
         enaml_source : str
-            The enaml source to use
+            The enaml source file
 
         kwargs :
             The models to pass and associate with the view.
@@ -67,14 +95,19 @@ class EnamlTestCase(unittest.TestCase):
         using the desired toolkit and model
 
         """
-        fact = EnamlFactory(StringIO(enaml_source), toolkit=self.toolkit)
-        view = fact(**kwargs)
+        enaml_ast = parse(source)
+        enaml_module = {}
+        EnamlCompiler.compile(enaml_ast, enaml_module)
 
-        # Lay widgets out, but don't display them to screen.
-        view._apply_style_sheet()
-        view.window.layout()
+        toolkit = self.toolkit
 
+        with toolkit:
+            view = enaml_module['MainWindow'](**kwargs)[0]
+
+        self.app = toolkit.create_app()
+        view.layout()
         return view
+
 
     def assertEnamlInSync(self, component, attribute_name, value):
         """ Verify that the requested attribute is properly set
