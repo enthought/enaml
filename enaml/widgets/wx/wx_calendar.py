@@ -63,19 +63,17 @@ class WXCalendar(WXControl):
             self.parent.selected = date
 
 
-    def parent_minimum_date_changed(self, date):
+    def parent__minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
-        self.fit_to_range()
 
-    def parent_maximum_date_changed(self, date):
+    def parent__maximum_date_changed(self, date):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
-        self.fit_to_range()
 
     #---------------------------------------------------------------------------
     # Implementation
@@ -128,16 +126,3 @@ class WXCalendar(WXControl):
 
         """
         return self.widget.PyGetDate()
-
-    def fit_to_range(self):
-        """ Fit the compoenent date to range.
-
-        """
-        parent = self.parent
-        minimum = parent.minimum_date
-        maximum = parent.maximum_date
-        date = parent.date
-
-        date = max(date, minimum)
-        date = min(date, maximum)
-        self.parent.date = date

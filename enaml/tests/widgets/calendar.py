@@ -94,21 +94,6 @@ defn MainWindow(events):
         self.assertEqual(self.events, [('selected', new_date)])
 
 
-    def test_invalid_max_date(self):
-        """ Test changing to an invalid date above the max range.
-
-        """
-        component = self.component
-
-        component.date = date(2011,10,9)
-        self.assertEqual(self.events, [('selected', date(2011,10,9))])
-        max_date = date(2014,2,3)
-        component.maximum_date = max_date
-        with self.assertRaises(TraitError):
-            component.date = date(2016,10,9)
-        self.assertEnamlInSync(component, 'date', date(2011,10,9))
-        self.assertEqual(len(self.events), 1)
-
     def test_invalid_min_date(self):
         """ Test changing to an invalid date below the min range.
 
@@ -120,6 +105,20 @@ defn MainWindow(events):
             component.date = date(2000,1,1)
         self.assertEnamlInSync(component, 'date', date.today())
         self.assertEqual(self.events, [])
+
+    def test_invalid_max_date(self):
+        """ Test changing to an invalid date above the max range.
+
+        """
+        component = self.component
+        component.date = date(2011,10,9)
+        self.assertEqual(self.events, [('selected', date(2011,10,9))])
+        max_date = date(2014,2,3)
+        component.maximum_date = max_date
+        with self.assertRaises(TraitError):
+            component.date = date(2016,10,9)
+        self.assertEnamlInSync(component, 'date', date(2011,10,9))
+        self.assertEqual(self.events, [('selected', date(2011,10,9))])
 
 
     def test_select_date_in_ui(self):
@@ -148,6 +147,40 @@ defn MainWindow(events):
         self.assertEqual(self.events, [('selected', new_date),
                                        ('activated', new_date)])
 
+    def test_change_maximum_and_date(self):
+        """ Test setting maximum while the date is out of range.
+
+        """
+        component = self.component
+        component.date = date(2007,10,9)
+        component.maximum_date = date(2006,5,9)
+        self.assertEnamlInSync(component, 'date', date(2006,5,9))
+        self.assertEqual(self.events, [('selected', date(2007,10,9)),
+                                        ('selected', date(2006,5,9))])
+
+    def test_change_minimum_and_date(self):
+        """ Test setting minimum while the date is out of range.
+
+        """
+        component = self.component
+        component.date = date(2007,10,9)
+        component.minimum_date = date(2010,5,9)
+        self.assertEnamlInSync(component, 'date', date(2010,5,9))
+        self.assertEqual(self.events, [('selected', date(2007,10,9)),
+                                        ('selected', date(2010,5,9))])
+
+    def test_change_range_invalid(self):
+        """ Test setting minimum > maximum.
+
+        """
+        component = self.component
+        component.minimum_date = date(2010,5,9)
+        with self.assertRaises(TraitError):
+            component.maximum_date = date(2006,5,9)
+
+        component.maximum_date = date(2034,12,10)
+        with self.assertRaises(TraitError):
+            component.minimum_date = date(2034,12,14)
 
     #--------------------------------------------------------------------------
     # Special initialization tests

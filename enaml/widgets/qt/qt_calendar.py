@@ -45,7 +45,7 @@ class QtCalendar(QtControl):
         self.set_minimum_date(parent.minimum_date)
         self.set_maximum_date(parent.maximum_date)
         self.set_date(parent.date)
-        self.bind()
+        self.connect()
 
     def parent_date_changed(self, date):
         """ The change handler for the 'date' attribute.
@@ -53,24 +53,22 @@ class QtCalendar(QtControl):
         """
         self.set_date(date)
 
-    def parent_minimum_date_changed(self, date):
+    def parent__minimum_date_changed(self, date):
         """ The change handler for the 'minimum_date' attribute.
 
         """
         self.set_minimum_date(date)
-        self.fit_to_range()
 
-    def parent_maximum_date_changed(self, date):
+    def parent__maximum_date_changed(self, date):
         """ The change handler for the 'maximum_date' attribute.
 
         """
         self.set_maximum_date(date)
-        self.fit_to_range()
 
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-    def bind(self):
+    def connect(self):
         """ Binds the event handlers for the calendar widget.
 
         """
@@ -97,8 +95,6 @@ class QtCalendar(QtControl):
         """ Sets and validates the component date on the widget.
 
         """
-        parent = self.parent
-        date = parent.date
         self.widget.setSelectedDate(date)
 
     def set_minimum_date(self, date):
@@ -119,16 +115,3 @@ class QtCalendar(QtControl):
         """
         qdate = self.widget.selectedDate()
         return qdate_to_python(qdate)
-
-    def fit_to_range(self):
-        """ Fit the compoenent date to range.
-
-        """
-        parent = self.parent
-        minimum = parent.minimum_date
-        maximum = parent.maximum_date
-        date = parent.date
-
-        date = max(date, minimum)
-        date = min(date, maximum)
-        self.parent.date = date
