@@ -60,10 +60,10 @@ class Calendar(Control):
         on the control.
 
     """
-    minimum_date = Property(Date)
+    minimum_date = Property(Date, depends_on ='_minimum_date')
     _minimum_date = Date(datetime.date(1752, 9, 14))
 
-    maximum_date = Property(Date)
+    maximum_date = Property(Date, depends_on ='_maximum_date')
     _maximum_date = Date(max(datetime.date(7999, 12, 31),
                             datetime.date.today()))
 

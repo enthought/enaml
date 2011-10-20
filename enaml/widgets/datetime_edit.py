@@ -71,10 +71,10 @@ class DatetimeEdit(Control):
     datetime = Bounded(Datetime(python_datetime.now()), low='minimum_datetime',
                         high='maximum_datetime')
 
-    minimum_datetime = Property(Datetime)
+    minimum_datetime = Property(Datetime, depends_on='_minimum_datetime')
     _minimum_datetime = Datetime(python_datetime(1752,9,14, 0, 0, 0, 0))
 
-    maximum_datetime = Property(Datetime)
+    maximum_datetime = Property(Datetime, depends_on='_maximum_datetime')
     _maximum_datetime = Datetime(python_datetime(7999, 12, 31, 23, 59, 59, 999000))
 
     datetime_format = Str

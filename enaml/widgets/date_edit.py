@@ -63,19 +63,20 @@ class DateEdit(Control):
         event payload will be the date on the control.
 
     """
-    minimum_date = Property(Date)
+    minimum_date = Property(Date, depends_on ='_minimum_date')
+    _minimum_date = Date(datetime.date(1752, 9, 14))
 
-    maximum_date = Property(Date)
+    maximum_date = Property(Date, depends_on ='_maximum_date')
+    _maximum_date = Date(max(datetime.date(7999, 12, 31),
+                            datetime.date.today()))
 
-    date = Bounded(Date(datetime.date.today()), low='minimum_date',
+    date = Bounded(Date(datetime.date.today()),
+                    low='minimum_date',
                     high='maximum_date')
 
     date_format = Str
 
     date_changed = Event
-
-    _minimum_date = Date(datetime.date(1752, 9, 14))
-    _maximum_date = Date(max(datetime.date(7999, 12, 31),datetime.date.today()))
 
     #---------------------------------------------------------------------------
     # Overridden parent traits
