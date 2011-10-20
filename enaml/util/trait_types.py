@@ -87,7 +87,7 @@ class Bounded(TraitType):
     """
     info_text = "Bounded value"
 
-    def __init__(self, value=Any, low=None, high=None, **metadata):
+    def __init__(self, value=None, low=None, high=None, **metadata):
         """
         Arguments
         ---------
