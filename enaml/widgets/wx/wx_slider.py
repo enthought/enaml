@@ -144,6 +144,8 @@ class WXSlider(WXControl):
 
         """
         self.set_orientation(orientation)
+        # FIXME: we need to relayout the widget in order to make space for the
+        # ticks.
         self.widget.GetParent().Layout()
 
     #---------------------------------------------------------------------------
@@ -219,7 +221,7 @@ class WXSlider(WXControl):
         Arguments
         ---------
         step: int
-            the number of steps to move the slider when the user uses the 
+            the number of steps to move the slider when the user uses the
             arrow keys.
 
         """
@@ -231,8 +233,8 @@ class WXSlider(WXControl):
         Arguments
         ---------
         step: int
-            The number of steps to move the slider when the user uses the 
-            page-up / page-down key. This is also used when the user 
+            The number of steps to move the slider when the user uses the
+            page-up / page-down key. This is also used when the user
             clicks on the left or the right of the thumb.
 
         """
@@ -332,14 +334,10 @@ class WXSlider(WXControl):
 
         Arguments
         ---------
-        minimum : int
-            The minimum value
-
-        maximum : int
-            The maximum value
+        interval : int
+            The interval in slider units between ticks.
 
         """
-
         self.widget.SetTickFreq(interval)
 
     def set_position(self, value):
@@ -371,10 +369,15 @@ class WXSlider(WXControl):
         result : boolean
             True if the point is inside the thumb area.
 
+        .. note:: The current implementation is not very accurate. The native
+            slider widget that is wrapped by wxWidgets places a default border
+            between the edges. Thus the thumb hit is out by a few pixels.
+
         """
         widget = self.widget
 
         thumb = widget.GetThumbLength() / 2.0
+        # FIXME: get e better estimate of the actual size of the slider
         width, height = widget.GetClientSizeTuple()
 
         if widget.HasFlag(wx.SL_VERTICAL):
@@ -385,6 +388,7 @@ class WXSlider(WXControl):
         slider_position = widget.GetValue() 
         slider_length = float(widget.GetMax() - widget.GetMin())
         
+
         minimum = (slider_position - thumb) / slider_length
         maximum = (slider_position + thumb) / slider_length
 
