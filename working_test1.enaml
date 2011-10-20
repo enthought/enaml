@@ -15,7 +15,7 @@ defn IntField:
     ErrorField:
         converter = IntConverter()
         placeholder_text = 'Integers Only!'
-        
+
 
 defn IntFieldsPlusOne(other_elem):
     IntField:
@@ -27,6 +27,12 @@ defn IntFieldsPlusOne(other_elem):
     other_elem:
         pass
 
+defn LogSlider(default):
+    # A log slider 1-10
+    Slider:
+        maximum = 1000
+        log_value << 10 ** (value/1000.0)
+        value = math.log10(default)
 
 defn MainWindow(model, table_model):
     Window:
@@ -101,28 +107,25 @@ defn MainWindow(model, table_model):
                             high = 20
                     Field -> line_edit:
                         value := model.window_title
-                    # The wx layout behaves really really badly if the 
+                    # The wx layout behaves really really badly if the
                     # slider orientation is vertical in a vgroup layout
                     HGroup:
                         Label:
-                            text << "A Slider!" if sldr.value <= 1.0 else '%.2f    ' % sldr.value
+                            text << "A Slider!" if sldr.log_value <= 2.0 else '%.2f    ' % sldr.log_value
                             bgcolor << color_field.value
                             fgcolor << 'black' if not bgcolor else 'green'
-                        Slider -> sldr:
+                        LogSlider(5.0) -> sldr:
                             tracking := tracking_box.checked
-                            value = 1.0
-                            value >> setattr(self, 'foo', str(value))
-                            converter = SliderLogConverter()
-                            tick_interval = 0.5
+                            log_value >> setattr(self, 'foo', str(log_value))
+                            tick_interval = 50
                             orientation = Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
-                            exception >> print(exception)
-                            
+
                             # Here, we define our own `foo` attribute which
-                            # can be used like any other predefined attribute. 
+                            # can be used like any other predefined attribute.
                             # Here, we delegate to the window title, and set
                             # the value of foo from the `value` notifier above.
-                            # This `foo` could have been defined before the 
-                            # the `value` handler, and things would still 
+                            # This `foo` could have been defined before the
+                            # the `value` handler, and things would still
                             # work properly.
                             foo := model.window_title
                             foo >> print('foo changed', foo)

@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 """ A working example that tracks the development of the widgets
-on the wx branch and can be executed via python working_wx_test.py 
+on the wx branch and can be executed via python working_wx_test.py
 from the current directory.
 
 """
@@ -15,6 +15,7 @@ import enaml
 from enaml.styling.color import Color
 from enaml.item_models.abstract_item_model import AbstractTableModel
 from enaml.enums import DataRole
+from enaml.toolkit import default_toolkit
 
 with enaml.imports():
     from working_test1 import MainWindow
@@ -42,20 +43,20 @@ class Model(HasTraits):
     @cached_property
     def _get_html_source(self):
         import cgi
-        txt = open('./working_test1.enaml').read() 
+        txt = open('./working_test1.enaml').read()
         return '<pre>' + cgi.escape(txt) + '</pre>'
 
     def pdb(self, obj):
         import pdb; pdb.set_trace()
-    
+
     def randomize_error_colors(*args):
         pass
-        
+
 class TableModel(AbstractTableModel):
-        
+
     def column_count(self, parent=None):
         return 1500000
-    
+
     def row_count(self, parent=None):
         return 5000000
 
@@ -65,13 +66,14 @@ class TableModel(AbstractTableModel):
 
 
 if __name__ == '__main__':
-    view = MainWindow(model=Model(), table_model=TableModel())
+    toolkit = default_toolkit()
 
-    from enaml.toolkit import Toolkit
-    tk = Toolkit.active_toolkit()
-    tk.app = tk.create_app()
+    with toolkit:
+        view = MainWindow(model=Model(), table_model=TableModel())
+
+    app = toolkit.create_app()
     window = view[0]
     window.show()
-    tk.start_app()
+    toolkit.start_app()
 
 
