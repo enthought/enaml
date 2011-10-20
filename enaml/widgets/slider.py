@@ -139,7 +139,7 @@ class Slider(Control):
 
     single_step = Range(low=1, high='length', value=1)
 
-    page_step = Range(low=1, high='length', value=50)
+    page_step = Range(low=1, high='length', value=10)
 
     tick_position = Enum(TickPosition.NO_TICKS, *TickPosition.values())
 
