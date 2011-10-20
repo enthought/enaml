@@ -1,7 +1,7 @@
 HGroup
 ===========================
 
-.. currentmodule:: enaml.widgets.hgroup
+.. currentmodule:: enaml.widgets.h_group
 
 .. autoclass:: HGroup
 
@@ -20,10 +20,10 @@ Qt
 --
 
 .. inheritance-diagram::
-    enaml.widgets.qt.qt_hgroup.QtHGroup
+    enaml.widgets.qt.qt_h_group.QtHGroup
     :parts: 1
 
-.. autoclass:: enaml.widgets.qt.qt_hgroup.QtHGroup
+.. autoclass:: enaml.widgets.qt.qt_h_group.QtHGroup
 
 Wx
 --
@@ -32,4 +32,4 @@ Wx
     enaml.widgets.wx.wx_hgroup.WXHGroup
     :parts: 1
 
-.. autoclass:: enaml.widgets.wx.wx_hgroup.WXHGroup
+.. autoclass:: enaml.widgets.wx.wx_h_group.WXHGroup

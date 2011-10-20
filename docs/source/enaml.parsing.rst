@@ -6,21 +6,30 @@ parsing Package
 
 .. automodule:: enaml.parsing.analyzer
 
-:mod:`tml_ast` Module
----------------------
-
-.. automodule:: enaml.parsing.tml_ast
-
-:mod:`tml_lexer` Module
+:mod:`enaml_ast` Module
 -----------------------
 
-.. inheritance-diagram:: enaml.parsing.tml_ast
+.. inheritance-diagram:: enaml.parsing.enaml_ast
     :parts: 1
 
-.. automodule:: enaml.parsing.tml_lexer
+.. automodule:: enaml.parsing.enaml_ast
 
-:mod:`tml_parser` Module
-------------------------
+:mod:`lexer` Module
+-------------------
 
-.. automodule:: enaml.parsing.tml_parser
+.. automodule:: enaml.parsing.lexer
 
+:mod:`parser` Module
+--------------------
+
+.. automodule:: enaml.parsing.parser
+
+:mod:`enaml_compiler` Module
+----------------------------
+
+.. automodule:: enaml.parsing.enaml_compiler
+
+:mod:`virtual_machine` Module
+-----------------------------
+
+.. automodule:: enaml.parsing.virtual_machine

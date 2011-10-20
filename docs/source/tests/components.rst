@@ -52,5 +52,5 @@ Widget testing classes
     enaml.tests.widgets.slider.TestSlider
     enaml.tests.widgets.spin_box.TestSpinBox
     enaml.tests.widgets.html.TestHtml
-    enaml.tests.widgets.datetime_edit.TestDateTimeEdit
+    enaml.tests.widgets.datetime_edit.TestDatetimeEdit
     enaml.tests.widgets.date_edit.TestDateEdit

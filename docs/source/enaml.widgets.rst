@@ -30,11 +30,11 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.form.Form
     enaml.widgets.group.Group
     enaml.widgets.group_box.GroupBox
-    enaml.widgets.hgroup.HGroup
+    enaml.widgets.h_group.HGroup
     enaml.widgets.html.Html
     enaml.widgets.window.Window
     enaml.widgets.panel.Panel
-    enaml.widgets.vgroup.VGroup
+    enaml.widgets.v_group.VGroup
     enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.image.Image
     enaml.widgets.label.Label
@@ -45,7 +45,7 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.tab_group.TabGroup
     enaml.widgets.stacked_group.StackedGroup
     enaml.widgets.enable_canvas.EnableCanvas
-    enaml.widgets.datetime_edit.DateTimeEdit
+    enaml.widgets.datetime_edit.DatetimeEdit
     enaml.widgets.date_edit.DateEdit
     :parts: 1
 
@@ -73,11 +73,11 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.form.IFormImpl
     enaml.widgets.group.IGroupImpl
     enaml.widgets.group_box.IGroupBoxImpl
-    enaml.widgets.hgroup.IHGroupImpl
+    enaml.widgets.h_group.IHGroupImpl
     enaml.widgets.html.IHtmlImpl
     enaml.widgets.window.IWindowImpl
     enaml.widgets.panel.IPanelImpl
-    enaml.widgets.vgroup.IVGroupImpl
+    enaml.widgets.v_group.IVGroupImpl
     enaml.widgets.traitsui_item.ITraitsUIItemImpl
     enaml.widgets.image.IImageImpl
     enaml.widgets.label.ILabelImpl
@@ -88,7 +88,7 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.tab_group.ITabGroupImpl
     enaml.widgets.stacked_group.IStackedGroupImpl
     enaml.widgets.enable_canvas.IEnableCanvasImpl
-    enaml.widgets.datetime_edit.IDateTimeEditImpl
+    enaml.widgets.datetime_edit.IDatetimeEditImpl
     enaml.widgets.date_edit.IDateEditImpl
     :parts: 1
 
@@ -116,8 +116,8 @@ Container widgets
     :template: widget.rst
 
     enaml.widgets.group.Group
-    enaml.widgets.vgroup.VGroup
-    enaml.widgets.hgroup.HGroup
+    enaml.widgets.v_group.VGroup
+    enaml.widgets.h_group.HGroup
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
     enaml.widgets.panel.Panel
@@ -143,7 +143,7 @@ Basic widgets
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
     enaml.widgets.spacer.Spacer
-    enaml.widgets.datetime_edit.DateTimeEdit
+    enaml.widgets.datetime_edit.DatetimeEdit
     enaml.widgets.date_edit.DateEdit
 
 Special widgets

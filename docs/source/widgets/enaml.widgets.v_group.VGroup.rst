@@ -1,7 +1,7 @@
 VGroup
 ===========================
 
-.. currentmodule:: enaml.widgets.vgroup
+.. currentmodule:: enaml.widgets.v_group
 
 .. autoclass:: VGroup
 
@@ -20,16 +20,16 @@ Qt
 --
 
 .. inheritance-diagram::
-    enaml.widgets.qt.qt_vgroup.QtVGroup
+    enaml.widgets.qt.qt_v_group.QtVGroup
     :parts: 1
 
-.. autoclass:: enaml.widgets.qt.qt_vgroup.QtVGroup
+.. autoclass:: enaml.widgets.qt.qt_v_group.QtVGroup
 
 Wx
 --
 
 .. inheritance-diagram::
-    enaml.widgets.wx.wx_vgroup.WXVGroup
+    enaml.widgets.wx.wx_v_group.WXVGroup
     :parts: 1
 
-.. autoclass:: enaml.widgets.wx.wx_vgroup.WXVGroup
+.. autoclass:: enaml.widgets.wx.wx_v_group.WXVGroup

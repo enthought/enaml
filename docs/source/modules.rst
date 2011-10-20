@@ -10,6 +10,7 @@ Enaml Reference
 
     Core <enaml>
     Parsing <enaml.parsing>
+    Styling <enaml.styling>
     Widgets <enaml.widgets>
     Item Models <enaml.item_models>
     Utility <enaml.util>

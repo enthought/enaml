@@ -21,6 +21,6 @@ However, it is not tied to a single widget toolkit.
     architecture
     Examples <example>
     Library Reference <modules>
-    Testing <enaml_tests>
+    Testing <enaml.tests>
     developers_corner
 

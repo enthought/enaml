@@ -9,11 +9,6 @@ thin layer over backend widgets and produce the traits View objects.
 
 .. automodule:: enaml.enaml_base
 
-:mod:`constructors` Module
---------------------------
-
-.. automodule:: enaml.constructors
-
 :mod:`enums` Module
 -------------------
 
@@ -38,50 +33,25 @@ thin layer over backend widgets and produce the traits View objects.
 
 .. automodule:: enaml.expressions
 
-:mod:`color` Module
--------------------
-
-.. automodule:: enaml.color
-    :no-undoc-members:
-
-:mod:`factory` Module
----------------------
-
-.. automodule:: enaml.factory
-
-:mod:`style_converters` Module
-------------------------------
-
-.. automodule:: enaml.style_converters
-
-:mod:`style_node` Module
-------------------------
-
-.. inheritance-diagram:: enaml.style_node
-    :parts: 1
-
-.. automodule:: enaml.style_node
-
-:mod:`style_sheet` Module
+:mod:`exceptions` Module
 -------------------------
 
-.. inheritance-diagram:: enaml.style_sheet
+.. inheritance-diagram:: enaml.exceptions
     :parts: 1
 
-.. automodule:: enaml.style_sheet
+.. automodule:: enaml.exceptions
 
 :mod:`toolkit` Module
 ---------------------
 
 .. automodule:: enaml.toolkit
 
+:mod:`import_hooks` Module
+--------------------------
+
+.. automodule:: enaml.import_hooks
+
 :mod:`view` Module
 ------------------
 
 .. automodule:: enaml.view
-
-:mod:`dialogs` Module
----------------------
-
-.. automodule:: enaml.dialogs
-
