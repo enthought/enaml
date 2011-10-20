@@ -385,9 +385,8 @@ class WXSlider(WXControl):
         else:
             position = point[0] / float(width)
 
-        slider_position = widget.GetValue() 
-        slider_length = float(widget.GetMax() - widget.GetMin())
-        
+        slider_position = widget.GetValue()
+        slider_length = float(widget.GetMax() - widget.GetMin()) + 1.0
 
         minimum = (slider_position - thumb) / slider_length
         maximum = (slider_position + thumb) / slider_length
