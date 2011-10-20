@@ -67,8 +67,8 @@ class DateEdit(Control):
 
     maximum_date = Property(Date)
 
-    date = Bounded(trait=Date, low='minimum_date', high='maximum_date',
-                    value=datetime.date.today())
+    date = Bounded(Date(datetime.date.today()), low='minimum_date',
+                    high='maximum_date')
 
     date_format = Str
 

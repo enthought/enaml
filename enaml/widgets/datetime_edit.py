@@ -68,8 +68,8 @@ class DatetimeEdit(Control):
         event payload will be the datetime on the control.
 
     """
-    datetime = Bounded(trait=Datetime, low='minimum_datetime',
-                        high='maximum_datetime', value=python_datetime.now())
+    datetime = Bounded(Datetime(python_datetime.now()), low='minimum_datetime',
+                        high='maximum_datetime')
 
     minimum_datetime = Property(Datetime)
     _minimum_datetime = Datetime(python_datetime(1752,9,14, 0, 0, 0, 0))

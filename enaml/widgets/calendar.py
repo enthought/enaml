@@ -64,10 +64,12 @@ class Calendar(Control):
     _minimum_date = Date(datetime.date(1752, 9, 14))
 
     maximum_date = Property(Date)
-    _maximum_date = Date(max(datetime.date(7999, 12, 31), datetime.date.today()))
+    _maximum_date = Date(max(datetime.date(7999, 12, 31),
+                            datetime.date.today()))
 
-    date = Bounded(trait=Date, low='minimum_date', high='maximum_date',
-                    value=datetime.date.today())
+    date = Bounded(Date(datetime.date.today()),
+                    low='minimum_date',
+                    high='maximum_date')
 
     selected = Event
 
