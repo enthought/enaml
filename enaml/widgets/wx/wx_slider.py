@@ -270,6 +270,9 @@ class WXSlider(WXControl):
                 style |= HOR_TICK_POS_MAP[ticks] | wx.SL_AUTOTICKS
 
         widget.SetWindowStyle(style)
+        # FIXME: there is a problem with the wxSlider where some times the tick
+        # interval needs to be applied again for it to appear properly
+        widget.SetTickFreq(parent.tick_interval)
 
     def set_orientation(self, orientation):
         """ Set the slider orientation
