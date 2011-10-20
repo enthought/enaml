@@ -2,9 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import TraitType, Interface, TraitError
+from traits.api import TraitType, Interface, TraitError, Any
+from traits.traits import CTrait
 
-from ..converters import Converter
 
 class SubClass(TraitType):
 
@@ -82,99 +82,85 @@ class Bounded(TraitType):
     """ Generic Bounded Trait class.
 
     The class defines a generic Trait where the value is validated
-    to be between low and high (static or dynamic) bounds. Where the
-    limits can be any python object that supports comparison. Optionally
-    the validation takes place after the input value has been converted
-    with the converter function. In that case the low and high bounds are
-    relative to the converter(value) result.
+    on assigment to fall between low and high (static or dynamic) bounds.
 
     """
-
     info_text = "Bounded value"
 
-    def __init__(self, value, low=None, high=None, converter=None, **metadata):
+    def __init__(self, value=Any, low=None, high=None, **metadata):
         """
         Arguments
         ---------
         value :
-            The default value.
+            The default value. It can be a python object or a Trait.
 
         low :
-            The lower bound of the Trait
+            The lower bound of the Trait.
 
         high :
-            The upper bound of the Trait
-
-        converter : (optional)
-            Function to apply to convert assigned value before validation
-
-
-        .. todo:: Force type on the value attribute
-
+            The upper bound of the Trait.
 
         """
-        if value is None:
-            if low is not None:
-                value = low
-            else:
-                value = high
+        if isinstance(value, CTrait):
+            default_value = value.default
+        else:
+            default_value = value
 
-        super(Bounded, self).__init__(value, **metadata)
-
-        if converter is None:
-            converter = lambda val: val
+        super(Bounded, self).__init__(default_value, **metadata)
 
         self._high = high
         self._low = low
-        self._converter = converter
 
+        if (isinstance(value, CTrait)) and (value is not Any):
+            self._value_type = value
+            self.validate = self.validate_with_trait
+        else:
+            self.validate = self.validate_bounds
 
-    def validate(self, obj, name, value):
+    def validate_with_trait(self, obj, name, value):
         """ Validate the trait value.
 
+        Validation takes place in two steps:
+        #. The input value is validated based on the expected Trait type.
+        #. The value it is between the static (or dynamic) bounds.
+
         """
-        converted_value = self.convert(obj, value)
+        value_type = self._value_type
+        value = value_type.validate(obj, name, value)
+        return self.validate_bounds(obj, name, value)
+
+    def validate_bounds(self, obj, name, value):
+        """ Validate that the value is in range.
+
+        .. note:: Any exceptions that may take place are converted to
+            TraitErrors.
+
+        """
         low, high = self.get_bounds(obj)
-
         if low is None:
-            low = converted_value
-
+            low = value
         if high is None:
-            high = converted_value
-
-        if (low <= converted_value <= high):
-            return value
-        else:
-            msg = ('The value (after convertion) must be a bounded value'
-                   ' between {0} and {1}, but instead the converted'
-                   ' result (of the input value {2}) was {3}'.\
-                   format(low, high, value, converted_value))
-            raise TraitError(msg)
-
-    def convert(self, obj, value):
-        """ Convert the input value for validation.
-
-        .. note:: The method supports dynamic values (class traits).
-
-        """
-        converter = self._converter
-        if isinstance(converter, basestring):
-            converter = eval('obj.' + converter)
-
-        if isinstance(converter, Converter):
-            converter = converter.to_component
-
+            high = value
+        is_inside_bounds = False
         try:
-            converted_value = converter(value)
+            is_inside_bounds = (low <= value <= high)
         except Exception as raised_exception:
-            msg = ("The convertion failed with the following error: {0}".\
-                   format(raised_exception))
+            if isinstance(raised_exception, TraitError):
+                raise raised_exception
+            else:
+                msg = ("Bound checking of {0} caused a the following Python "
+                       "Exception: {1}").format(value, raised_exception)
+                raise TraitError(msg)
+        if not is_inside_bounds:
+            msg = ('The assigned date value of must be bounded between {0} '
+                   ' and {1}, the input value was {2}'.\
+                   format(low, high, value))
             raise TraitError(msg)
-        else:
-            return converted_value
+
+        return value
 
     def get_bounds(self, obj):
-        """ Get the lower and upper bounds of the Trait
+        """ Get the lower and upper bounds of the Trait.
 
         .. note:: The method supports dynamic values (class traits).
 
