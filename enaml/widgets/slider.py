@@ -53,22 +53,22 @@ class Slider(Control):
 
     minimum : Property(Int, 0)
         The minimum value for the index. To avoid issues where
-        :attr:`minimum` is higher than :attr:`maximum`. The value is a 
+        :attr:`minimum` is higher than :attr:`maximum`. The value is a
         positive integer capped by the :attr:`maximum`. If the new value of
-        :attr:`minimum` make the current position invalid then the current 
+        :attr:`minimum` make the current position invalid then the current
         position is set to :attr:minimum. Default value is 0.
 
     maximum : Property(Int, 100)
         The maximum value for the index. As before the value of
-        :attr:`maximum` cannot be lower than :attr:`minimum`. If the new 
-        value of :attr:`maximum` make the current position invalid then 
-        the current position is set to :attr:maximum. The top value is 
+        :attr:`maximum` cannot be lower than :attr:`minimum`. If the new
+        value of :attr:`maximum` make the current position invalid then
+        the current position is set to :attr:maximum. The top value is
         restricted to 65536, while the default is 100.
 
     length : Property(Int, depends_on=('minimum', 'maximum'))
         The length of the slider, a read only property that depends on
-        :attr:`minimum` and :attr:`maximum`. The lenght value is used
-        by a number of properties to adapt the slider appearence
+        :attr:`minimum` and :attr:`maximum`. The length value is used
+        by a number of properties that adapt the slider's appearence.
 
     down : Property(Bool)
         A read only property which indicates whether or not the slider
@@ -124,26 +124,28 @@ class Slider(Control):
         hold the validated slider maximum.
 
     """
-    
-    minimum = Property(Int)
 
-    maximum = Property(Int)
+    minimum = Property(Int, depends_on ='_minimum')
+    _minimum = Int(0)
 
-    length = Property(Int, depends_on=('minimum', 'maximum'))
+    maximum = Property(Int, depends_on ='_maximum')
+    _maximum = Int(100)
+
+    length = Property(Int, depends_on=('_minimum', '_maximum'))
 
     value = Range(low='minimum', high='maximum')
 
-    tracking = Bool(True)
-
     tick_interval = Range(low=1, high='length', value=10, exclude_high=True)
 
-    single_step = Range(low=1, high='length')
+    single_step = Range(low=1, high='length', value=1)
 
-    page_step = Range(low=1, high='length', value=10)
+    page_step = Range(low=1, high='length', value=50)
 
     tick_position = Enum(TickPosition.NO_TICKS, *TickPosition.values())
 
     orientation = Enum(Orientation.HORIZONTAL, *Orientation.values())
+
+    tracking = Bool(True)
 
     pressed = Event
 
@@ -152,12 +154,7 @@ class Slider(Control):
     moved = Event
 
     down = Property(Bool, depends_on='_down')
-
     _down = Bool
-
-    _minimum = Int(0)
-
-    _maximum = Int(100)
 
     #---------------------------------------------------------------------------
     # Overridden parent class taits
@@ -175,7 +172,7 @@ class Slider(Control):
         """ The property getter for the 'length' attribute.
 
         """
-        return self._maximum - self._minimum + 1
+        return (self._maximum - self._minimum) + 1
 
     def _set_minimum(self, value):
         """ Validate the assigment of the slider minimum.
@@ -184,20 +181,20 @@ class Slider(Control):
         than :attr:`maximum`.
 
         """
-        if  (0 <= value < self._maximum):
-            # FIXME:
-            # Because the Range Trait will not fire the change notifier when
-            # when the dynamic bounds cause a change we will perform the check
-            # our self and make sure the value_changed function is called.
-            position = self.value                    
-            if position < value:
-                self.value = value
-            self._minimum = value
-        else:
+        if  (0 > value) or  (value > self._maximum):
             msg = ("The maximum value of the slider should be positive integer"
                    " and smaller than the current maximum ({0}), but a value of"
                    " {1} was given ".format(self._minimum, value))
             raise TraitError(msg)
+
+        # FIXME:
+        # Because the Range Trait will not fire the change notifier when
+        # the dynamic bounds cause a change we will perform the check
+        # and make sure the value_changed function is called.
+        position = self.value
+        if position < value:
+            self.value = value
+        self._minimum = value
 
     def _set_maximum(self, value):
         """ Validate the assigment of the slider maximum.
@@ -206,20 +203,20 @@ class Slider(Control):
         than :attr:`minimum`.
 
         """
-        if  (self._minimum < value <= MAX_SLIDER_LENGHT):
-            # FIXME:
-            # Because the Range Trait will not fire the change notifier when
-            # when the dynamic bounds cause a change we will perform the check
-            # our self and make sure the value_changed function is called.
-            position = self.value                    
-            if position > value:
-                self.value = value
-            self._maximum = value
-        else:
+        if  (self._minimum > value) or (value > MAX_SLIDER_LENGHT):
             msg = ("The minimum value of the slider should be positive integer"
                    " and larger than the current minimum ({0}), but a value of"
                    " {1} was given ".format(self._maximum, value))
             raise TraitError(msg)
+
+        # FIXME:
+        # Because the Range Trait will not fire the change notifier when
+        # the dynamic bounds cause a change we will perform the check
+        # and make sure the value_changed function is called.
+        position = self.value
+        if position > value:
+            self.value = value
+        self._maximum = value
 
     def _get_maximum(self):
         """ The property getter for the slider maximum.
@@ -236,4 +233,3 @@ class Slider(Control):
 
 Slider.protect('down', 'pressed', 'released', 'moved', '_down', 'length',
         'minimum', 'maximum', '_minimum', '_maximum')
-
