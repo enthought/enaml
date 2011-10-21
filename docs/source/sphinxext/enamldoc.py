@@ -67,9 +67,6 @@ class BaseDocString(object):
             method = getattr(self, method_name)
             method(header)
 
-        finally:
-            return
-
         return
 
     def parse(self):
