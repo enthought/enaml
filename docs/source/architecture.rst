@@ -1,7 +1,7 @@
 Design and Architecture
 =======================
 
-.. warning:: This sections is outdated and needs to be updated.
+.. warning:: This sections is outdated
 
 Enaml is designed with a flexible, open architecture.  It is designed to be
 able to adapt to different UI toolkit backends beyond the currently supported
