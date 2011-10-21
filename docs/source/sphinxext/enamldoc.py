@@ -30,6 +30,7 @@ from docscrape import Reader
 # TODO: Make the parameter parsing more robust
 # TODO: Clean up code
 
+indent_regex = re.compile(r'\s+')
 
 class BaseDocString(object):
     """Base abstract docstring refactoring class"""
@@ -47,7 +48,7 @@ class BaseDocString(object):
             print 'INPUT DOCSTRING'
             print '\n'.join(lines)
 
-        return
+        self.parse()
 
     def _refactor(self, header):
         """Heading refactor"""
@@ -57,15 +58,16 @@ class BaseDocString(object):
             print 'Line is', self._doc._l
 
         try:
-            parser = self.headers[header]
+            parser_postfix = self.headers[header]
         except KeyError:
             # No need to do anything since shpinx will flag the heading as
             # an error
             pass
         else:
-            method_name = ''.join(('_refactor_', parser))
+            method_name = ''.join(('_refactor_', parser_postfix))
             method = getattr(self, method_name)
             method(header)
+
 
         return
 
@@ -82,6 +84,9 @@ class BaseDocString(object):
             header = self._is_section()
             if header:
                 self._refactor(header)
+                if self.verbose:
+                   print 'current docstring is', '\n'.join(self._doc._str)
+
             else:
                 self._doc.read()
 
@@ -92,8 +97,10 @@ class BaseDocString(object):
         return
 
     def is_field(self, line, indent=''):
+        regex = indent + r'\w+\s:\s*'
         if self.verbose:
             print "Checking if '{0}' is a parameter field".format(line)
+            print "the regex is", regex
         match = re.match(indent + r'\w+\s:\s*', line)
         if self.verbose:
             print "Check is", bool(match)
@@ -102,6 +109,7 @@ class BaseDocString(object):
     def is_method(self, line, indent=''):
         if self.verbose:
             print "Checking if '{0}' is a method field".format(line)
+            print "indent is", indent
         match = re.match(indent + r'\w+\(.*\)\s*', line)
         if self.verbose:
             print "Check is", bool(match)
@@ -221,7 +229,7 @@ class BaseDocString(object):
         else:
             return arg_name.strip(), arg_type.strip(), ' '
 
-    def _indent(self, lines, indent=4):
+    def indent(self, lines, indent=4):
         """ Indent list of lines
 
         .. info:: Code adapted from numpydoc/docscrape.py
@@ -285,11 +293,33 @@ class BaseDocString(object):
         lines = self._doc._str
         for line in reversed(new_lines):
             lines.insert(index, line)
-        return
 
     def get_indent(self, line):
-        return re.split(r'\w', line)[0]
+        """ Return the indent portion of the line.
 
+        """
+        indent = indent_regex.match(line)
+        if indent is None:
+            return ''
+        else:
+            return indent.group()
+
+    def get_next_paragraph(self):
+        """ Get the next paragraph designated by an empty line
+
+        """
+        return self._doc.read_to_next_empty_line()
+
+    def remove_next_paragraph(self):
+        """ Get the next paragraph designated by an empty line
+
+        """
+        start = self.index
+        paragraph = self.get_next_paragraph()
+        stop = self.index
+        self.remove_lines(start, (stop - start + 1))
+        self.index = start
+        return paragraph
 
     def move_forward(self, lines):
         """ Move forward by the specified number of lines
@@ -297,6 +327,37 @@ class BaseDocString(object):
         """
         for x in range(lines):
             self._doc.read()
+
+    def clear_header(self, index):
+        """ Clears the header lines at index.
+
+        """
+        self.remove_lines(index, 2)
+
+    def remove_lines(self, index, count=1):
+        """ Removes the lines for the docstring
+
+        """
+        lines = self.lines
+        del lines[index:(index + count)]
+
+    @property
+    def index(self):
+        """ Get the current index.
+
+        """
+        return self._doc._l
+
+    @index.setter
+    def index(self, value):
+        self._doc._l = value
+
+    @property
+    def lines(self):
+        """ Get the docstring lines.
+
+        """
+        return self._doc._str
 
 
 class FunctionDocstring(BaseDocString):
@@ -307,7 +368,7 @@ class FunctionDocstring(BaseDocString):
         if headers is None:
             headers = {'Returns': 'returns', 'Arguments': 'arguments',
                        'Parameters': 'arguments', 'Raises': 'raises',
-                       'Yields': 'returns'}
+                       'Yields': 'returns', 'Notes':'notes'}
 
         super(FunctionDocstring, self).__init__(lines, headers, verbose)
         return
@@ -347,7 +408,7 @@ class FunctionDocstring(BaseDocString):
         for arg_name, arg_type, desc in parameters:
 
             # get description indent
-            description_indent = re.split(r'\w', desc[0])[0]
+            description_indent = self.get_indent(desc[0])
 
             # setup name
             arg_name = description_indent + name_format.format(arg_name)
@@ -412,7 +473,7 @@ class FunctionDocstring(BaseDocString):
         for arg_name, arg_type, desc in parameters:
 
             # get description indent
-            description_indent = re.split(r'\w', desc[0])[0]
+            description_indent = self.get_indent(desc[0])
 
             # setup name
             arg_name = description_indent + name_format.format(arg_name)
@@ -436,7 +497,7 @@ class FunctionDocstring(BaseDocString):
             print "END"
 
         self.insert_lines(descriptions, index)
-        self.move_forward(len(description))
+        self.move_forward(len(descriptions))
         return
 
     def _refactor_arguments(self, header):
@@ -450,7 +511,7 @@ class FunctionDocstring(BaseDocString):
         del lines[index]
 
         # get the global indent of the section
-        indent = re.split(r'\w', self._doc.peek())[0]
+        indent = self.get_indent(self._doc.peek())
 
         # parse parameters
         parameters = self._extract_parameters(indent)
@@ -474,6 +535,27 @@ class FunctionDocstring(BaseDocString):
         self.move_forward(len(descriptions))
         return
 
+    def _refactor_notes(self, header):
+        """Refactor the argument section to sphinx friendly format"""
+
+        if self.verbose:
+            print 'Refactoring Notes'
+
+        descriptions = []
+        index = self.index
+
+        self.clear_header(index)
+        indent = self.get_indent(self._doc.peek())
+
+        paragraph = self.remove_next_paragraph()
+        descriptions.append(indent + '.. note::')
+        descriptions += self.indent(paragraph)
+        descriptions.append('')
+
+        self.insert_lines(descriptions, index)
+        self.move_forward(len(descriptions))
+        return descriptions
+
 
 class ClassDocstring(BaseDocString):
     """Docstring refactoring for classes"""
@@ -482,7 +564,8 @@ class ClassDocstring(BaseDocString):
 
         if headers is None:
             headers = {'Attributes': 'attributes', 'Methods': 'methods',
-                       'See Also': 'see_also', 'Abstract Methods': 'methods'}
+                       'See Also': 'see_also', 'Abstract Methods': 'methods',
+                       'Notes':'notes'}
 
         super(ClassDocstring, self).__init__(lines, headers, verbose)
         return
@@ -519,7 +602,7 @@ class ClassDocstring(BaseDocString):
             descriptions.append(' ')
 
             # get description indent
-            description_indent = re.split(r'\w', desc[0])[0]
+            description_indent = self.get_indent(desc[0])
 
             # setup attribute type string
             if arg_type != '':
@@ -558,51 +641,51 @@ class ClassDocstring(BaseDocString):
         # generate sphinx friendly rst
         descriptions = []
 
-
         # prepare table lines
-        max_name_length, max_method_length, max_desc_length = \
-                                                self.max_lengths(parameters)
-        max_method_length += 11 + max_name_length  # to account for the
-                                                   # additional rst directives
-        first_column = len(indent)
-        second_column = first_column + max_method_length + 1
+        if len(parameters) > 0 :
+            max_name_length, max_method_length, max_desc_length = \
+                                                    self.max_lengths(parameters)
+            max_method_length += 11 + max_name_length  # to account for the
+                                                       # additional rst directives
+            first_column = len(indent)
+            second_column = first_column + max_method_length + 1
 
-        table_line = '{0}{1} {2}'.format(indent, '=' * max_method_length,
-                                         '=' * max_desc_length)
-        empty_line = table_line.replace('=', ' ')
-        headings_line = empty_line[:]
-        headings_line = self.replace_at('Methods', headings_line,
-                                        first_column)
-        headings_line = self.replace_at('Description', headings_line,
-                                        second_column)
+            table_line = '{0}{1} {2}'.format(indent, '=' * max_method_length,
+                                             '=' * max_desc_length)
+            empty_line = table_line.replace('=', ' ')
+            headings_line = empty_line[:]
+            headings_line = self.replace_at('Methods', headings_line,
+                                            first_column)
+            headings_line = self.replace_at('Description', headings_line,
+                                            second_column)
 
-        # draw table
-        descriptions.append(table_line)
-        descriptions.append(headings_line)
-        descriptions.append(table_line)
+            # draw table
+            descriptions.append(table_line)
+            descriptions.append(headings_line)
+            descriptions.append(table_line)
 
-        # attribute formating
-        for arg_name, arg_type, desc in parameters:
+            # attribute formating
+            for arg_name, arg_type, desc in parameters:
 
-            #separate function name from signature
-            split_result = re.split('\((.*)\)', arg_name)
-            name = split_result[0]
+                #separate function name from signature
+                split_result = re.split('\((.*)\)', arg_name)
+                name = split_result[0]
 
-            # and recombine them with the signature in italics
-            method_text = ':meth:`{0} <{1}>`'.format(arg_name, name)
+                # and recombine them with the signature in italics
+                method_text = ':meth:`{0} <{1}>`'.format(arg_name, name)
 
-            summary = ' '.join(desc)
-            # create line
-            line = empty_line[:]
-            line = self.replace_at(method_text, line, first_column)
-            line = self.replace_at(summary, line, second_column)
+                summary = ' '.join(desc)
+                # create line
+                line = empty_line[:]
+                line = self.replace_at(method_text, line, first_column)
+                line = self.replace_at(summary, line, second_column)
 
-            descriptions.append(line)
+                descriptions.append(line)
 
-        descriptions.append(table_line)
-        descriptions.append('')
-        descriptions.append('|')
-        descriptions.append('')
+            descriptions.append(table_line)
+            descriptions.append('')
+            descriptions.append('|')
+            descriptions.append('')
 
 
         self.insert_lines(descriptions, index)
@@ -670,7 +753,7 @@ class ClassDocstring(BaseDocString):
         del lines[index]
 
         # get the global indent of the section
-        indent = re.split(r'\w', self._doc.peek())[0]
+        indent = self.get_indent(self._doc.peek())
 
         if self.verbose:
             print 'Refactoring See Also'
@@ -683,3 +766,24 @@ class ClassDocstring(BaseDocString):
         self.insert_lines(descriptions, index)
         self.move_forward(len(descriptions))
         return
+
+    def _refactor_notes(self, header):
+        """Refactor the argument section to sphinx friendly format"""
+
+        if self.verbose:
+            print 'Refactoring Notes'
+
+        descriptions = []
+        index = self.index
+
+        self.clear_header(index)
+        indent = self.get_indent(self._doc.peek())
+
+        paragraph = self.remove_next_paragraph()
+        descriptions.append(indent + '.. note::')
+        descriptions += self.indent(paragraph)
+        descriptions.append('')
+
+        self.insert_lines(descriptions, index)
+        self.move_forward(len(descriptions))
+        return descriptions
