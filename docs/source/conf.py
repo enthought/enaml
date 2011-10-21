@@ -300,12 +300,10 @@ def new_docstring(app, what, name, obj, options, lines):
         # verbose = True
 
     if ('class' in what):
-        new_doc = ClassDocstring(lines, verbose=verbose)
-        new_doc.parse()
+        ClassDocstring(lines, verbose=verbose)
 
     elif ('function' in what) or ('method' in what):
-        new_doc = FunctionDocstring(lines, verbose=verbose)
-        new_doc.parse()
+        FunctionDocstring(lines, verbose=verbose)
 
 
 def setup(app):
