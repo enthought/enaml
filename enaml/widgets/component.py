@@ -196,7 +196,8 @@ class Component(EnamlBase, StyleMixin):
 
     parent = WeakRef('Component')
 
-    children = List(Instance('Component'))
+    # The default component does not accept children
+    children = List(Instance('Component'), maxlen=0)
 
     name = Str
 
@@ -214,14 +215,7 @@ class Component(EnamlBase, StyleMixin):
             already be in the component.
 
         """
-        # XXX this is O(n) but n should be small so I'm not
-        # worrying about it at the moment
-        children = self.children
-        if child in children:
-            raise ValueError('Child %s already in children.' % child)
-        child.set_parent(self)
-        self.children.append(child)
-        self.refresh()
+        raise NotImplementedError
 
     def remove_child(self, child):
         """ Remove the child from this container.
@@ -236,14 +230,7 @@ class Component(EnamlBase, StyleMixin):
             must be contained in the container.
 
         """
-        # XXX this is O(n) but n should be small so I'm not
-        # worrying about it at the moment
-        try:
-            self.children.remove(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-        child.set_parent(None)
-        self.refresh()
+        raise NotImplementedError
 
     def replace_child(self, child, other_child):
         """ Replace child with other_child.
@@ -262,19 +249,7 @@ class Component(EnamlBase, StyleMixin):
             contained in the container.
 
         """
-        # XXX this is O(n) but n should be small so I'm not
-        # worrying about it at the moment
-        children = self.children
-        try:
-            idx = children.index(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-        if other_child in children:
-            raise ValueError('Child %s already in children.' % child)
-        child.set_parent(None)
-        other_child.set_parent(self)
-        children[idx] = other_child
-        self.refresh()
+        raise NotImplementedError
 
     def swap_children(self, child, other_child):
         """ Swap the position of two children.
@@ -293,20 +268,7 @@ class Component(EnamlBase, StyleMixin):
             in the container.
 
         """
-        # XXX this is O(n) but n should be small so I'm not
-        # worrying about it at the moment
-        children = self.children
-        try:
-            idx = children.index(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-        try:
-            other_idx = children.index(other_child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % other_child)
-        children[idx] = other_child
-        children[other_idx] = child
-        self.refresh()
+        raise NotImplementedError
 
     def set_parent(self, parent):
         """ Set the parent of this component to parent.
@@ -334,13 +296,8 @@ class Component(EnamlBase, StyleMixin):
         """
         self.style.style_sheet = style_sheet
 
-    def bind_expressions_tree(self):
-        self.bind_expressions()
-        for child in self.children:
-            child.bind_expressions_tree()
-
-    def layout(self, toplevel=True):
-        """ Initialize and layout the component and it's children.
+    def setup(self):
+        """ Initialize and arrange the component and it's children.
 
         In addition to running the layout process, this method calls
         hook_impl() which will add the implementation as a virtual
@@ -348,23 +305,61 @@ class Component(EnamlBase, StyleMixin):
         called by user code.
 
         """
-        impl = self.toolkit_impl
-        impl.set_parent(self)
-        
-        # Things that need to be called only once by the toplevel
-        # entry call
-        if toplevel:
-            self.bind_expressions_tree()
+        self._set_toolkit_parent_impl()
+        self._bind_expressions_impl()
+        self._create_widget_impl()
+        self._initialize_widget_impl()
+        self._initialize_layout_impl()        
+        self._hook_listeners_impl()
 
-        impl.create_widget()
+    def set_toolkit_parent(self):
+        self.toolkit_impl.set_parent(self)
+    
+    def create_widget(self):
+        self.toolkit_impl.create_widget()
+    
+    def initialize_widget(self):
+        self.toolkit_impl.initialize_widget()
 
+    def initialize_layout(self):
+        self.toolkit_impl.initialize_layout()
+
+    def hook_listeners(self):
+        """ Adds the implementation object as a listener via the
+        'add_trait' method.
+
+        """
+        self.add_trait_listener(self.toolkit_impl, 'parent')
+
+    def _set_toolkit_parent_impl(self):
+        self.set_toolkit_parent()
         for child in self.children:
-            child.layout(toplevel=False)
-        
-        impl.initialize_widget()
-        impl.layout_child_widgets()
+            child._set_toolkit_parent_impl()
+    
+    def _bind_expressions_impl(self):
+        self.bind_expressions()
+        for child in self.children:
+            child._bind_expressions_impl()
 
-        self._hook_impl()
+    def _create_widget_impl(self):
+        self.create_widget()
+        for child in self.children:
+            child._create_widget_impl()
+    
+    def _initialize_widget_impl(self):
+        self.initialize_widget()
+        for child in self.children:
+            child._initialize_widget_impl()
+
+    def _initialize_layout_impl(self):
+        self.initialize_layout()
+        for child in self.children:
+            child._initialize_layout_impl()
+    
+    def _hook_listeners_impl(self):
+        self.hook_listeners()
+        for child in self.children:
+            child._hook_listeners_impl()
 
     def toolkit_widget(self):
         """ Returns the toolkit specific widget for this component.
@@ -377,13 +372,6 @@ class Component(EnamlBase, StyleMixin):
 
         """
         pass
-
-    def _hook_impl(self):
-        """ Adds the implementation object as a listener via the
-        'add_trait' method.
-
-        """
-        self.add_trait_listener(self.toolkit_impl, 'parent')
 
 
 Component.protect('identifier', 'type_name', 'parent', 'children', 'style', 'toolkit_impl')

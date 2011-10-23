@@ -18,7 +18,7 @@ from enaml.enums import DataRole
 from enaml.toolkit import default_toolkit
 
 with enaml.imports():
-    from working_test1 import MainWindow
+    from working_test1 import MainWindow, TestView
 
 
 colors = Color.color_map.keys()
@@ -66,14 +66,13 @@ class TableModel(AbstractTableModel):
 
 
 if __name__ == '__main__':
-    toolkit = default_toolkit()
+    from enaml.toolkit import Toolkit
 
-    with toolkit:
-        view = MainWindow(model=Model(), table_model=TableModel())
-
-    app = toolkit.create_app()
+    view = TestView()
+    tk = Toolkit.active_toolkit()
+    tk.app = tk.create_app()
     window = view[0]
     window.show()
-    toolkit.start_app()
+    tk.start_app()
 
 

@@ -38,8 +38,8 @@ class StyleMixin(HasTraits):
     #: The margins to place around a layout.
     margins = DelegatesTo('style_node')
 
-    #: The suggested (w, h) size of the widget.
-    size_hint = DelegatesTo('style_node')
+    ##: The suggested (w, h) size of the widget.
+    #size_hint = DelegatesTo('style_node')
 
     #: How the widget should be resized when placed in a layout.
     size_policy = DelegatesTo('style_node')

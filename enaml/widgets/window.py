@@ -5,7 +5,7 @@
 from traits.api import Str, Enum, List, Instance
 
 from .component import Component, IComponentImpl
-from .panel import Panel
+from .container import Container
 
 from ..enums import Modality
 
@@ -59,7 +59,11 @@ class Window(Component):
     #---------------------------------------------------------------------------
     toolkit_impl = Instance(IWindowImpl)
 
-    children = List(Instance(Panel), maxlen=1)
+    children = List(Instance(Container), maxlen=1)
+
+    def add_child(self, child):
+        child.set_parent(self)
+        self.children.append(child)
 
     def show(self):
         """ Make the window visible on the screen.
@@ -77,7 +81,8 @@ class Window(Component):
         result : None
 
         """
-        self.layout()
+        self.setup()
+        self.toolkit_impl.widget.resize(640, 480)
         self.toolkit_impl.show()
 
     def hide(self):

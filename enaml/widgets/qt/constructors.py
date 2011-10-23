@@ -40,6 +40,7 @@ def constructor(base_path):
 
 QT_CONSTRUCTORS = dict((
     constructor('window'),
+    constructor('container'),
     constructor('dialog'),
     constructor('panel'),
     constructor('group'),
