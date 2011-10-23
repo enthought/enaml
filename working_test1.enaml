@@ -28,6 +28,115 @@ defn IntFieldsPlusOne(other_elem):
         pass
 
 
+defn TestSplit:
+    Window:
+        Splitter:
+            Container:
+                Container:
+                    layout = Form()
+                    RadioButton:
+                        pass
+                    RadioButton:
+                        pass
+                    RadioButton:
+                        pass
+                Container:
+                    layout = Form()
+                    PushButton:
+                        pass
+                    PushButton:
+                        pass
+                    PushButton:
+                        pass
+            Container:
+                pass
+                    
+
+defn TestView:
+    Window:
+        Container:
+            PushButton -> keybutton:
+                text = 'foo'
+                constraints << [
+                    left == parent.left,
+                    top == parent.top,
+                    width == size_hint()[0],
+                    height == size_hint()[1],
+                ]
+            PushButton:
+                text = 'foo'
+                constraints = [
+                    left == parent.left,
+                    v_center == parent.v_center,
+                    width == 100,
+                    height == 30,
+                    top >= keybutton.bottom,
+                ]
+            PushButton:
+                text = 'foo'
+                constraints = [
+                    left == parent.left,
+                    bottom == parent.bottom,
+                    width == 100,
+                    height == 30,
+                ]
+            PushButton:
+                text = 'foo'
+                constraints = [
+                    h_center == parent.h_center,
+                    top == parent.top,
+                    width == 100,
+                    height == 30,
+                    left >= keybutton.right
+                ]
+            PushButton:
+                text = 'foo'
+                constraints = [
+                    h_center == parent.h_center,
+                    v_center == parent.v_center,
+                    width == 100,
+                    height == 30,
+                ]
+            PushButton:
+                text = 'foo'
+                constraints = [
+                    h_center == parent.h_center,
+                    bottom == parent.bottom,
+                    width == 100,
+                    height == 30,
+                ]
+            
+            PushButton:
+                text = 'foo'
+                constraints = [
+                    right == parent.right,
+                    top == parent.top,
+                    width == 100,
+                    height == 30,
+                ]
+            PushButton:
+                text = 'foo'
+                constraints = [
+                    right == parent.right,
+                    v_center == parent.v_center,
+                    width == 100,
+                    height == 30,
+                ]
+            Container:
+                constraints = [
+                    left == (3. / 4.) * parent.width,
+                    top == parent.v_center,
+                    right == parent.right,
+                    bottom == parent.bottom,
+                ]
+                size_hint = lambda: (100, 100)
+                PushButton:
+                    text = 'bar'
+                    constraints = [
+                        h_center == parent.h_center,
+                        v_center == parent.v_center,
+                    ]
+
 defn MainWindow(model, table_model):
     Window:
         title << model.window_title

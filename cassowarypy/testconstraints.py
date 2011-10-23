@@ -26,6 +26,57 @@
 #
 #
 
+if __name__ == '__main__':
+    from PySide import QtGui, QtCore
+    import csw
+
+    app = QtGui.QApplication([])
+    
+    class ResizingFrame(QtGui.QWidget):
+        resized = QtCore.Signal()
+
+        def resizeEvent(self, event):
+            self.resized.emit()
+        
+    f = ResizingFrame()
+    b = QtGui.QPushButton(f)
+    b.setText('Foo')
+    b.resize(50, 50)
+    fw = csw.Variable('fw')
+    fh = csw.Variable('fh')
+
+    bx = csw.Variable('bx')
+    by = csw.Variable('by')
+    #bw = csw.Variable('bw')
+    #bh = csw.Variable('bh')
+
+    solver = csw.SimplexSolver()
+    solver.AddConstraint(csw.LinearEquation(bx, fw / 2.0))
+    solver.AddConstraint(csw.LinearEquation(by, fh / 2.0))
+    solver.AddConstraint(csw.LinearInequality(bx, csw.cnGEQ, 0.0))
+    solver.AddConstraint(csw.LinearInequality(by, csw.cnGEQ, 0.0))
+
+    def resolve():
+        w, h = f.width(), f.height()
+        solver.AddEditVar(fw)
+        solver.AddEditVar(fh)
+        solver.BeginEdit()
+        solver.SuggestValue(fw, w)
+        solver.SuggestValue(fh, h)
+        solver.Resolve()
+        x = bx.Value()
+        y = by.Value()
+        b.move(x, y)
+        solver.EndEdit()
+        
+
+    f.resized.connect(resolve)
+
+    f.show()
+    app.exec_()
+    import sys
+    sys.exit()
+
 from scipy.optimize import fmin_slsqp
 import numpy as np
 

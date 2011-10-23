@@ -17,7 +17,7 @@ from enaml.item_models.abstract_item_model import AbstractTableModel
 from enaml.enums import DataRole
 
 with enaml.imports():
-    from working_test1 import MainWindow
+    from working_test1 import MainWindow, TestView
 
 
 colors = Color.color_map.keys()
@@ -65,12 +65,24 @@ class TableModel(AbstractTableModel):
 
 
 if __name__ == '__main__':
-    view = MainWindow(model=Model(), table_model=TableModel())
-
+    #view = MainWindow(model=Model(), table_model=TableModel())
+    view = TestView()
     from enaml.toolkit import Toolkit
     tk = Toolkit.active_toolkit()
     tk.app = tk.create_app()
     window = view[0]
+    
+    container = window.children[0]
+    controls = list(container.children)
+    # first = controls.pop(0)
+    # first.constrain_eq(first.top, container.top)
+    # stack = [first]
+    # while controls:
+    #     child = controls.pop(0)
+    #     above = stack[-1]
+    #     child.constrain_eq(above.bottom, child.top)
+    #     stack.append(child)
+    
     window.show()
     tk.start_app()
 

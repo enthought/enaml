@@ -14,10 +14,29 @@ def almost_equal(a, b):
         res = abs(a - b) < (abs(a) * EPS)
     return res
 
-         
+
+_calls = []
+def wrap_all(cls):
+    import types
+    def wrapper(f):
+        def caller(*args, **kwargs):
+            res = f(*args, **kwargs)
+            call = '%s::%s' % (cls.__name__, f.__name__)
+            if call not in _calls:
+                _calls.append(call)
+            return res
+        return caller
+    
+    for key, value in cls.__dict__.items():
+        if isinstance(value, types.FunctionType):
+            setattr(cls, key, wrapper(value))
+
+    return cls
+
 #------------------------------------------------------------------------------
 # Variables
 #------------------------------------------------------------------------------
+@wrap_all
 class AbstractVariable(object):
 
     iVariableNumber = 0
@@ -62,7 +81,7 @@ class AbstractVariable(object):
     def toString(self):
         return 'ABSTRACT[%s]' % self._name
          
-    
+@wrap_all
 class Variable(AbstractVariable):
 
     _ourVarMap = {}
@@ -74,16 +93,6 @@ class Variable(AbstractVariable):
     @classmethod
     def setVarMap(cls, mapping):
         cls._ourVarMap = mapping
-
-    @classmethod
-    def fromValue(cls, value):
-        return cls(None, value)
-    
-    @classmethod
-    def fromVarNumberPrefixAndValue(cls, varnumber, prefix, value):
-        obj = cls.fromVarNumberAndPrefix(varnumber, prefix)
-        obj._value = value
-        return obj
 
     def __init__(self, name_or_val=None, value=None):
         if isinstance(name_or_val, basestring):
@@ -137,7 +146,7 @@ class Variable(AbstractVariable):
     def getAttachedObject(self, obj):
         self._attachedObject = obj
 
-
+@wrap_all
 class DummyVariable(AbstractVariable):
 
     def isDummy(self):
@@ -155,7 +164,7 @@ class DummyVariable(AbstractVariable):
     def toString(self):
         return '[%s:dummy]' % self.name()
 
-
+@wrap_all
 class ObjectiveVariable(AbstractVariable):
 
     def isExternal(self):
@@ -170,7 +179,7 @@ class ObjectiveVariable(AbstractVariable):
     def toString(self):
         return '%s:obj:%s]' % (self.name(), self.hashCode())
 
-
+@wrap_all
 class SlackVariable(AbstractVariable):
 
     def isExternal(self):
@@ -180,7 +189,7 @@ class SlackVariable(AbstractVariable):
         return True
     
     def isRestricted(self):
-        return False
+        return True
 
     def toString(self):
         return '[%s:slack]' % self.name()
@@ -189,6 +198,7 @@ class SlackVariable(AbstractVariable):
 #------------------------------------------------------------------------------
 # Point
 #------------------------------------------------------------------------------
+@wrap_all
 class Point(object):
 
     def __init__(self, x, y, suffix=None):
@@ -238,6 +248,7 @@ class Point(object):
 #------------------------------------------------------------------------------
 # Weights
 #------------------------------------------------------------------------------
+@wrap_all
 class SymbolicWeight(object):
 
     def __init__(self, w1, w2, w3):
@@ -290,7 +301,7 @@ class SymbolicWeight(object):
         return sum(val * 1000**idx for idx, val in enumerate(reversed(self._values)))
 
     def toString(self):
-        return '[%s]' % ', '.join(self._values)
+        return '[%s]' % ', '.join(str(val) for val in self._values)
     
     def cLevels(self):
         return len(self._values)
@@ -301,6 +312,7 @@ SymbolicWeight.clsZero = SymbolicWeight(0.0, 0.0, 0.0)
 #------------------------------------------------------------------------------
 # Strength
 #------------------------------------------------------------------------------
+@wrap_all
 class Strength(object):
 
     def __init__(self, name, symbolicWeight, w2=None, w3=None):
@@ -346,6 +358,7 @@ Strength.weak = Strength('<weak>', 0.0, 0.0, 1.0)
 #------------------------------------------------------------------------------
 # Constraints
 #------------------------------------------------------------------------------
+@wrap_all
 class Constraint(object):
 
     iConstraintNumber = 0
@@ -412,7 +425,7 @@ class Constraint(object):
     def setWeight(self, weight):
         self._weight = weight
 
-
+@wrap_all
 class EditOrStayConstraint(Constraint):
 
     def __init__(self, clv, strength=Strength.required, weight=1.0):
@@ -429,7 +442,7 @@ class EditOrStayConstraint(Constraint):
     def setVariable(self, var):
         self._variable = var
 
-
+@wrap_all
 class EditConstraint(EditOrStayConstraint):
 
     def isEditConstraint(self):
@@ -438,7 +451,7 @@ class EditConstraint(EditOrStayConstraint):
     def toString(self):
         return '%s %s' % ('edit', super(EditConstraint, self).toString())
     
-
+@wrap_all
 class StayConstraint(EditOrStayConstraint):
 
     def __init__(self, clv, strength=Strength.weak, weight=1.0):
@@ -450,7 +463,7 @@ class StayConstraint(EditOrStayConstraint):
     def toString(self):
         return '%s %s' % ('stay', super(StayConstraint, self).toString())
 
-    
+@wrap_all
 class LinearConstraint(Constraint):
 
     def __init__(self, expression, strength=Strength.required, weight=1.0):
@@ -463,11 +476,11 @@ class LinearConstraint(Constraint):
     def setExpression(self, expr):
         self._expression = expr
 
-
+@wrap_all
 class LinearInequality(LinearConstraint):
 
     def __init__(self, a1, a2=None, a3=None, a4=Strength.required, a5=1.0):
-        if isinstance(a1, LinearExpression) and isinstance(a2, AbstractVariable):
+        if isinstance(a1, LinearExpression) and isinstance(a3, AbstractVariable):
             cle = a1
             op = a2
             clv = a3
@@ -501,7 +514,7 @@ class LinearInequality(LinearConstraint):
     def toString(self):
         return '%s >= 0 )' % super(LinearInequality, self).toString()
 
-
+@wrap_all
 class LinearEquation(LinearConstraint):
 
     def __init__(self, a1, a2=None, a3=None, a4=None):
@@ -554,14 +567,8 @@ class LinearEquation(LinearConstraint):
 #------------------------------------------------------------------------------
 # Linear Expression
 #------------------------------------------------------------------------------
+@wrap_all
 class LinearExpression(object):
-    
-    @classmethod
-    def fromHash(cls, constant, terms):
-        obj = object.__new__(cls)
-        obj._constant = constant
-        obj._terms = terms.copy()
-        return obj
             
     def __init__(self, clv=None,  value=1.0, constant=0.0):
         self._constant = constant
@@ -577,6 +584,11 @@ class LinearExpression(object):
     def __str__(self):
         return self.toString()
 
+    def initializeFromHash(self, constant, terms):
+        self._constant = constant
+        self._terms = terms.copy()
+        return self
+
     def multiplyMe(self, n):
         self._constant *= n
         for var, coeff in self._terms.iteritems():
@@ -584,7 +596,7 @@ class LinearExpression(object):
         return self
 
     def clone(self):
-        return LinearExpression.fromHash(self._constant, self._terms)
+        return LinearExpression().initializeFromHash(self._constant, self._terms)
     
     def times(self, expr):
         if isinstance(expr, (float, int)):
@@ -638,18 +650,19 @@ class LinearExpression(object):
     def subtractFrom(self, expr):
         return expr.minus(self)
     
-    def addExpression(self, expr, n=1.0, subject=None, solver=None):
+    def addExpression(self, expr, n=0.0, subject=None, solver=None):
         if isinstance(expr, AbstractVariable):
             expr = LinearExpression(expr)
             print 'casted var to expression'
         self.incrementConstant(n * expr.constant())
+        n = n or 1.0
         for var, coeff in expr.terms().iteritems():
             self.addVariable(var, coeff * n, subject, solver)
         return self
     
     def addVariable(self, var, c=1.0, subject=None, solver=None):
         coeff = self._terms.get(var)
-        if coeff:
+        if coeff is not None:
             new_coeff = coeff + c
             if almost_equal(new_coeff, 0.0):
                 if solver is not None:
@@ -660,7 +673,7 @@ class LinearExpression(object):
         else:
             if not almost_equal(c, 0.0):
                 self._terms[var] = c
-                if solver:
+                if solver is not None:
                     solver.noteAddedVariable(var, subject)
         return self
 
@@ -680,7 +693,7 @@ class LinearExpression(object):
         self.incrementConstant(multiplier * expr.constant())
         for var, coeff in expr.terms().iteritems():
             old_coeff = self._terms.get(var)
-            if old_coeff:
+            if old_coeff is not None:
                 newCoeff = old_coeff + multiplier * coeff
                 if almost_equal(newCoeff, 0.0):
                     solver.noteRemovedVariable(var, subject)
@@ -753,6 +766,7 @@ class LinearExpression(object):
 #------------------------------------------------------------------------------
 # CL
 #------------------------------------------------------------------------------
+@wrap_all
 class CL(object):
     
     GEQ = 1
@@ -817,6 +831,7 @@ class CL(object):
 #------------------------------------------------------------------------------
 # Tableau
 #------------------------------------------------------------------------------
+@wrap_all
 class Tableau(object):
 
     def __init__(self):
@@ -860,7 +875,7 @@ class Tableau(object):
 
         row_parts = ['%s <==> %s\n' % item for item in self._rows.iteritems()]
         rows = ''.join(row_parts)
-
+        return 'tableau'
         return templ % (rows, self._columns, self._infeasibleRows,
                         self._externalRows, self._externalParametricVars)
     
@@ -928,6 +943,9 @@ class Tableau(object):
 #------------------------------------------------------------------------------
 # Simplex Solver
 #------------------------------------------------------------------------------
+
+
+@wrap_all
 class SimplexSolver(Tableau):
 
     def __init__(self):
@@ -963,6 +981,7 @@ class SimplexSolver(Tableau):
         return self
     
     def addConstraint(self, cn):
+        print '->>>>>>>> adding', cn
         eplus_eminus = [None, None]
         prevEConstant = [None]
         expr = self.newExpression(cn, eplus_eminus, prevEConstant)
@@ -1183,7 +1202,7 @@ class SimplexSolver(Tableau):
         self.deltaEditConstant(delta, clvEditPlus, clvEditMinus)
         return self
     
-    def setAutsolve(self, f):
+    def setAutosolve(self, f):
         self._fOptimizeAutomatically = f
         return self
     
@@ -1430,7 +1449,6 @@ class SimplexSolver(Tableau):
         return expr
 
     def optimize(self, zVar):
-        print 'optimizing'
         zRow = self.rowExpression(zVar)
         assert zRow is not None, 'zRow is not None'
         
@@ -1459,7 +1477,7 @@ class SimplexSolver(Tableau):
                     expr = self.rowExpression(v)
                     coeff = expr.coefficientFor(entryVar)
                     if coeff < 0.0:
-                        r = -expr.constant() / coeff
+                        r = -expr.constant() / float(coeff)
                         if r < minRatio or (almost_equal(r, minRatio) and v.hashCode() < exitVar.hashCode()):
                             minRatio = r
                             exitVar = v
@@ -1470,7 +1488,6 @@ class SimplexSolver(Tableau):
             self.pivot(entryVar, exitVar)
                    
     def pivot(self, entryVar, exitVar):
-        print 'pivoting'
         if entryVar is None:
             raise ValueError('entry var is None')
         if exitVar is None:
@@ -1506,6 +1523,7 @@ class SimplexSolver(Tableau):
 #------------------------------------------------------------------------------
 # Edit Info
 #------------------------------------------------------------------------------
+@wrap_all
 class EditInfo(object):
     
     def __init__(self, cn_, eplus_, eminus_, prevEditConstant_, i_):
@@ -1550,10 +1568,11 @@ if __name__ == '__main__':
     y = Variable('y')
     solver = SimplexSolver()
     solver.addConstraint(LinearInequality(x, CL.LEQ, y))
-    expr = CL.Plus(x, 3.0)
     solver.addConstraint(LinearEquation(y, CL.Plus(x, 3.0)))
     solver.addConstraint(LinearEquation(x, 10.0, Strength.weak))
     solver.addConstraint(LinearEquation(y, 10.0, Strength.weak))
+    import pprint
+    pprint.pprint(_calls)
     print x.value()
     print y.value()
 
