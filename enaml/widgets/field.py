@@ -228,10 +228,6 @@ class Field(Control):
         end : Int
             The end selection index, zero based.
 
-        Returns
-        -------
-        result : None
-
         """
         self.toolkit_impl.set_selection(start, end)
 
@@ -241,41 +237,17 @@ class Field(Control):
         If there is no text in the line edit, the selection will be
         empty.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
         self.toolkit_impl.select_all()
 
     def deselect(self):
         """ Deselect any selected text.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
         self.toolkit_impl.deselect()
 
     def clear(self):
         """ Clear the line edit of all text.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
 
         """
         self.toolkit_impl.clear()
@@ -286,14 +258,6 @@ class Field(Control):
         If no text is selected, deletes the character to the left
         of the cursor. Otherwise, it deletes the selected text.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
         self.toolkit_impl.backspace()
 
@@ -302,14 +266,6 @@ class Field(Control):
 
         If no text is selected, deletes the character to the right
         of the cursor. Otherwise, it deletes the selected text.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
 
         """
         self.toolkit_impl.delete()
@@ -323,10 +279,6 @@ class Field(Control):
             If True, select the text from the current position to
             the end of the line edit. Defaults to False.
 
-        Returns
-        -------
-        results : None
-
         """
         self.toolkit_impl.end(mark=mark)
 
@@ -339,10 +291,6 @@ class Field(Control):
             If True, select the text from the current position to
             the beginning of the line edit. Defaults to False.
 
-        Returns
-        -------
-        results : None
-
         """
         self.toolkit_impl.home(mark=mark)
 
@@ -352,27 +300,11 @@ class Field(Control):
         Copies the selected text to the clipthen deletes the selected
         text from the line edit.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
         self.toolkit_impl.cut()
 
     def copy(self):
         """ Copies the selected text to the clipboard.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
 
         """
         self.toolkit_impl.copy()
@@ -382,14 +314,6 @@ class Field(Control):
 
         Inserts the contents of the clipboard into the line edit at
         the current cursor position, replacing any selected text.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
 
         """
         self.toolkit_impl.paste()
@@ -404,10 +328,6 @@ class Field(Control):
         ---------
         text : str
             The text to insert into the line edit.
-
-        Returns
-        -------
-        result : None
 
         """
         self.toolkit_impl.insert(text)
@@ -428,14 +348,6 @@ class Field(Control):
 
     def redo(self):
         """ Redoes the last operation.
-
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
 
         """
         self.toolkit_impl.redo()
