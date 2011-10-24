@@ -45,44 +45,128 @@ class TestBaseDocString(unittest.TestCase):
 class TestFunctionDocstring(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.maxDiff = None
 
     def tearDown(self):
         pass
 
     def test_refactor_returns(self):
-        self.fail()
+        docstring =\
+    """ This is a sample function docstring.
+
+    Returns
+    -------
+    myvalue : list
+        A list of important values.
+        But we need to say more things about it.
+
+    """
+
+        rst = \
+    """ This is a sample function docstring.
+
+    :returns:
+        **myvalue** (list) - A list of important values. But we need to say more things about it.
+
+    """
+
+        docstring_lines = docstring.splitlines()
+        FunctionDocstring(docstring_lines)
+        output = '\n'.join(docstring_lines)
+        self.assertMultiLineEqual(rst, output)
 
     def test_refactor_raises(self):
-        self.fail()
+        docstring =\
+    """ This is a sample function docstring.
+
+    Raises
+    ------
+    TypeError :
+        This is the first paragraph of the description.
+        More description.
+
+    ValueError :
+        Description of another case where errors are raised.
+
+    """
+
+        rst = \
+    """ This is a sample function docstring.
+
+    :raises:
+        - **TypeError** - This is the first paragraph of the description. More description.
+        - **ValueError** - Description of another case where errors are raised.
+
+    """
+
+        docstring_lines = docstring.splitlines()
+        FunctionDocstring(docstring_lines)
+        output = '\n'.join(docstring_lines)
+        self.assertMultiLineEqual(rst, output)
 
     def test_refactor_arguments(self):
-        self.fail()
+        docstring =\
+    """ This is a sample function docstring
+
+    Arguments
+    ---------
+    inputa : str
+        The first argument holds the first input!.
+
+        This is the second paragraph.
+
+    inputb : float
+        The second argument is a float.
+        the default value is 0.
+
+        .. note:: this is an optional value.
+
+    """
+
+        rst = \
+    """ This is a sample function docstring
+
+    :param inputa: The first argument holds the first input!.
+
+            This is the second paragraph.
+    :type inputa: str
+    :param inputb: The second argument is a float.
+            the default value is 0.
+
+            .. note:: this is an optional value.
+    :type inputb: float
+
+    """
+
+        docstring_lines = docstring.splitlines()
+        FunctionDocstring(docstring_lines)
+        output = '\n'.join(docstring_lines)
+        self.assertMultiLineEqual(rst, output)
 
     def test_refactor_notes(self):
         docstring =\
-    """ This is a sample function docstring
+    """ This is a sample function docstring.
 
     Notes
     -----
     This is the test.
     Wait we have not finished.
 
-    I have no clue why am I doing this.
+    This should not be included.
     """
 
         rst = \
-    """ This is a sample function docstring
+    """ This is a sample function docstring.
 
     .. note::
         This is the test.
         Wait we have not finished.
 
-    I have no clue why am I doing this.
+    This should not be included.
     """
 
         docstring_lines = docstring.splitlines()
-        FunctionDocstring(docstring_lines, verbose=True)
+        FunctionDocstring(docstring_lines)
         output = '\n'.join(docstring_lines)
         self.assertMultiLineEqual(rst, output)
 
