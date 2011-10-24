@@ -1,0 +1,61 @@
+# "Realistic" demo of how the constraint-based layout engine can be used to
+# create fluid, adaptable layouts.
+#
+# At the top, we have the "Frame" PushButton that is just a dummy standin for
+# a larger, expandable widget, like a table. Below the Frame are four
+# PushButtons. On the left are the Add and Remove buttons, which hug the left
+# and bottom sides of their container and stay close to each other. Hugging the
+# bottom right corner is the Share PushButton. Centered is the Change Mode
+# PushButton. However, as the window gets resized, the Change Mode button may
+# not be able to be centered, but it will always leave a gap between it and its
+# two neighbors.
+
+defn MainWindow:
+   Window:
+       Container:
+           PushButton -> frame:
+               text = 'Frame'
+               constraints = [
+                   left == parent.left,
+                   right == parent.right,
+                   top == parent.top,
+                   height >= 100,
+                   width >= 200,
+               ]
+           PushButton -> add_button:
+               text = 'Add'
+               constraints = [
+                   left == parent.left,
+                   bottom == parent.bottom,
+                   top == frame.bottom + 8,
+                   width == size_hint()[0],
+                   height == size_hint()[1],
+               ]
+           PushButton -> remove_button:
+               text = 'Remove'
+               constraints = [
+                   left == add_button.right+8,
+                   bottom == add_button.bottom,
+                   width == size_hint()[0],
+                   height == size_hint()[1],
+               ]
+           PushButton -> change_mode_button:
+               text = 'Change Mode'
+               constraints = [
+                   left >= remove_button.right+8,
+                   bottom == add_button.bottom,
+                   width == size_hint()[0],
+                   height == size_hint()[1],
+                   (h_center == parent.h_center) | 'weak',
+               ]
+           PushButton -> share_button:
+               text = 'Share...'
+               constraints = [
+                   right == frame.right,
+                   bottom == add_button.bottom,
+                   width == size_hint()[0],
+                   height == size_hint()[1],
+                   left >= change_mode_button.right+8,
+               ]
+
+
