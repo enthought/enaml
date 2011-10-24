@@ -36,10 +36,9 @@ class EnamlModule(EnamlASTNode):
     def __init__(self, body):
         self.body = body
 
-
 class EnamlImport(EnamlASTNode):
 
-    __slots__ = ('py_ast')
+    __slots__ = ('py_ast',)
 
     def __init__(self, py_ast):
         self.py_ast = py_ast
@@ -76,7 +75,7 @@ class EnamlParameters(EnamlASTNode):
 
 class EnamlArgument(EnamlASTNode):    
 
-    __slots__ = ('py_ast')
+    __slots__ = ('py_ast',)
 
     def __init__(self, py_ast):
         self.py_ast = py_ast
