@@ -170,6 +170,46 @@ class TestFunctionDocstring(unittest.TestCase):
         output = '\n'.join(docstring_lines)
         self.assertMultiLineEqual(rst, output)
 
+    def test_docstring_cases_1(self):
+        docstring =""" Sets the selection to the bounds of start and end.
+
+        If the indices are invalid, no selection will be made,
+        and any current selection will be cleared.
+
+        Arguments
+        ---------
+        start : Int
+            The start selection index, zero based.
+
+        end : Int
+            The end selection index, zero based.
+
+        Returns
+        -------
+        result : None
+
+        """
+
+        rst =""" Sets the selection to the bounds of start and end.
+
+        If the indices are invalid, no selection will be made,
+        and any current selection will be cleared.
+
+        :param start: The start selection index, zero based.
+        :type start: Int
+        :param end: The end selection index, zero based.
+        :type end: Int
+
+        :returns:
+            **result** (None)
+
+        """
+
+        docstring_lines = docstring.splitlines()
+        FunctionDocstring(docstring_lines)
+        output = '\n'.join(docstring_lines)
+        self.assertMultiLineEqual(rst, output)
+
 
 class TestClassDocstring(unittest.TestCase):
 

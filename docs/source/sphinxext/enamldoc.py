@@ -212,7 +212,7 @@ class BaseDocString(object):
             lines = [line.rstrip() for line in lines]
             return arg_name.strip(), arg_type.strip(), lines[1:]
         else:
-            return arg_name.strip(), arg_type.strip(), ''
+            return arg_name.strip(), arg_type.strip(), ['']
 
     def get_field(self):
         """ Get the field description.
@@ -449,13 +449,13 @@ class FunctionDocstring(BaseDocString):
             name_format = '- **{0}** '
 
         for arg_name, arg_type, desc in fields:
-
-            description_indent = self.get_indent(desc[0])
-            arg_name = description_indent + name_format.format(arg_name)
+            arg_name = indent + '    ' + name_format.format(arg_name)
             if arg_type != '':
-                arg_type = '({0}) - '.format(arg_type)
+                arg_type = '({0})'.format(arg_type)
             else:
-                arg_type = ' - '
+                arg_type = ''
+            if not self.is_empty(desc[0]):
+                arg_type = arg_type + ' - '
             paragraph = ' '.join(self.remove_indent(desc))
             descriptions.append(arg_name + arg_type + paragraph)
 
@@ -485,11 +485,14 @@ class FunctionDocstring(BaseDocString):
         if len(fields) == 1:
             name_format = '**{0}** '
         else:
-            name_format = '- **{0}** - '
+            name_format = '- **{0}** '
 
         for arg_name, arg_type, desc in fields:
-            description_indent = self.get_indent(desc[0])
-            arg_name = description_indent + name_format.format(arg_name)
+            if not self.is_empty(desc[0]):
+                arg_name = name_format.format(arg_name) + '- '
+            else:
+                arg_name = name_format.format(arg_name)
+            arg_name = indent + '    ' + arg_name
             paragraph = ' '.join(self.remove_indent(desc))
             descriptions.append(arg_name + paragraph)
         descriptions.append('')
