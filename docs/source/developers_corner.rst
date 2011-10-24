@@ -46,7 +46,7 @@ Source Code
 
 The coding style follows the `PEP 8 <http://www.python.org/dev/peps/pep-0008/>`_
 guidelines and uses 4 spaces for indention. The maximum line length is 80
-characters; however, the documentation is preferred to be between 72-74 
+characters; however, the documentation is preferred to be between 72-74
 characters.
 
 Preamble
@@ -78,7 +78,7 @@ from `traits.HasTraits`, please consider the following:
     - Document the class attributes using one or multiple lines commented
       with ``#:`` before (i.e. above) the attribute definition. These will
       be picked up by the autodoc commands and used as the docstring for
-      the following vavlue::
+      the following value::
 
         <other code>
 
@@ -90,11 +90,14 @@ from `traits.HasTraits`, please consider the following:
       the Attribute heading. The current autodoc extension supports
       the following headings for classes:
 
-      ========== =========================================
+      ========== ==========================================================
       Heading    Description
-      ========== =========================================
-      Attributes Set of class attributes and their usage
-      ========== =========================================
+      ========== ==========================================================
+      Methods    Class methods
+      Attributes Set of attributes
+      Notes      Useful notes (one paragraph)
+      See Also   References
+      ========== ==========================================================
 
 For example, the Python code
 
@@ -107,7 +110,6 @@ leads to this Sphinx output (using ``..autoclass::``):
 
 .. autoclass:: Myclass
     :members:
-
 
 .. autoclass:: Otherclass
     :members:
@@ -156,21 +158,48 @@ the following:
 
 .. note:: The use of the headings is optional. The developer can use
     directly the rst role directives to format the docstrings. However,
-    using the headings allows the dosctring to be readable in interactive
+    using the headings, the dosctring is also readable in interactive
     python sessions.
 
 
-example:
+Example
+~~~~~~~
+
+::
+
+    """Extract the fields from the docstring
+
+        Parse the fields into tuples of name, type and description in a
+        list of strings. The strings are also removed from the list.
+
+        Arguments
+        ---------
+        indent : str, optional
+            the indent argument is used to make sure that only the lines
+            with the same indent are considered when checking for a
+            field header line. The value is used to define the field
+            checking function.
+
+        field_check : function
+            Optional function to use for checking if the next line is a
+            field. The signature of the function is ``foo(line)`` and it
+            should return ``True`` if the line contains a valid field
+            The default function is checking for fields of the following
+            formats::
+
+                <name> : <type>
+                <name> :
+
+            Where the name has to be one word.
+
+        Returns
+        -------
+        parameters : list of tuples
+            list of parsed parameter tuples as returned from the
+            :meth:`~FunctionDocString.get_next_field` function.
+
+        """
 
 .. currentmodule:: enamldoc
 
-.. automethod:: FunctionDocstring._extract_parameters
-
-
-
-
-
-
-
-
-
+.. automethod:: FunctionDocstring.extract_fields
