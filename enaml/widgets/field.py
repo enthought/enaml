@@ -335,14 +335,6 @@ class Field(Control):
     def undo(self):
         """ Undoes the last operation.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
         self.toolkit_impl.undo()
 
