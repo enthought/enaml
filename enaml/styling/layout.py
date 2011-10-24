@@ -98,6 +98,9 @@ class Alignment(int):
     def center(self):
         return Alignment(self.CENTER)
 
+    def justify(self):
+        return Alignment(self.JUSTIFY)
+
 
 class AlignmentTrait(StyleTrait):
 
