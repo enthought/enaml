@@ -7,6 +7,8 @@ import wx
 from traits.api import implements
 
 from .wx_container import WXContainer
+from .wx_panel import WXPanel
+
 from ..stacked_group import IStackedGroupImpl
 
 
@@ -27,6 +29,8 @@ class wxStackedGroup(wx.Choicebook):
                                                 size, style, name)
         self.choice_ctrl = self.GetChoiceCtrl()
         self.choice_ctrl.Hide()
+
+
 
 
 class WXStackedGroup(WXContainer):
@@ -53,16 +57,17 @@ class WXStackedGroup(WXContainer):
         """ Initialize the StackedGroup widget.
 
         """
-        widget = self.widget
-        for child in self.parent.children:
-            widget.AddPage(child.toolkit_impl.widget, child.name)
-
-        self.set_page(self.parent.current_index)
+        pass
 
     def layout_child_widgets(self):
         """ Layout the contained pages.
 
         """
+        widget = self.widget
+        for child in self.parent.children:
+            widget.AddPage(child.toolkit_impl.widget, child.name)
+
+        self.set_page(self.parent.current_index)
         self.widget.Layout()
 
     def parent_current_index_changed(self, current_index):
@@ -80,18 +85,18 @@ class WXStackedGroup(WXContainer):
     #---------------------------------------------------------------------------
 
     def child_at(self, idx):
-        """ Returns the child container at the given index.
+        """ Returns the child panel at the given index.
 
         Arguments
         ---------
         idx : int
-            The zero based index to use to lookup the child container.
+            The zero based index to use to lookup the child panel.
             It may be negative, in which case the lookup will be
             from the end of the stack.
 
         Returns
         -------
-        result : WXContainer
+        result : WXPanel
             The child container at the given index.
 
         Raises
@@ -103,14 +108,14 @@ class WXStackedGroup(WXContainer):
             No child corresponds to the given index.
 
         """
-        return self.children[idx]
+        return self.parent.children[idx]
 
     def index_of(self, child):
         """ Returns the index corresponding to the given child container.
 
         Arguments
         ---------
-        child : WXContainer
+        child : WXPanel
             The child container to lookup.
 
         Returns
@@ -121,19 +126,19 @@ class WXStackedGroup(WXContainer):
         Raises
         ------
         TypeError :
-            The child is not a Container.
+            The child is not a WXPanel.
 
         IndexError :
             The child does not exist in the group.
 
         """
-        if not isinstance(child, WXContainer):
-            message = ('Input argument child is not a WXContainer '
+        if not isinstance(child, WXPanel):
+            message = ('Input argument child is not a WXPanel '
                       'type but a {0}'.format(type(child)))
             raise TypeError(message)
 
         try:
-            index = self.children.index(child)
+            index = self.parent.children.index(child)
         except ValueError:
             message = 'The child {0} was not found'.format(child)
             raise IndexError(message)

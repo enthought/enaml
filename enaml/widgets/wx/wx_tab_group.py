@@ -43,14 +43,7 @@ class WXTabGroup(WXStackedGroup):
         """ Initialize the StackedGroup widget.
 
         """
-        super(WXTabGroup, self).initialize_widget()
         self.set_movable_flag(self.parent.movable)
-
-    def layout_child_widgets(self):
-        """ Layout the contained pages.
-
-        """
-        self.widget.Layout()
 
     def parent_movable_changed(self, movable):
         """ Update the movable style in the tab
