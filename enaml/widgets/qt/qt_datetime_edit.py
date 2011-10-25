@@ -4,11 +4,9 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
 
-from traits.api import implements
+from .qt_bounded_datetime import QtBoundedDatetime
 
-from .qt_control import QtControl
-
-from ..datetime_edit import IDatetimeEditImpl
+from ..datetime_edit import AbstractTkDatetimeEdit
 
 
 # Workaround for an incompatibility between PySide and PyQt
@@ -18,19 +16,13 @@ except AttributeError:
     qdatetime_to_python = QtCore.QDateTime.toPyDateTime
 
 
-class QtDatetimeEdit(QtControl):
+class QtDatetimeEdit(QtBoundedDatetime, AbstractTkDatetimeEdit):
     """ A Qt implementation of DateTimeEdit.
 
-    See Also
-    --------
-    DateEdit
-
     """
-    implements(IDatetimeEditImpl)
-
-    #---------------------------------------------------------------------------
-    # IDateEditImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying QtCalendarWidget.
 
@@ -41,55 +33,36 @@ class QtDatetimeEdit(QtControl):
         """ Initializes the attributes of the control.
 
         """
-        parent = self.parent
-        self.set_minimum_datetime(parent.minimum_datetime)
-        self.set_maximum_datetime(parent.maximum_datetime)
-        self.set_format(parent.datetime_format)
-        self.set_datetime(parent.datetime)
-        self.connect()
+        super(QtDatetimeEdit, self).initialize_widget()
+        self.set_format(self.shell_widget.datetime_format)
 
-    def parent_datetime_changed(self, datetime):
-        """ The change handler for the 'date' attribute.
-
-        """
-        self.set_datetime(datetime)
-
-    def parent__minimum_datetime_changed(self, datetime):
-        """ The change handler for the 'minimum_date' attribute.
-
-        """
-        self.set_minimum_datetime(datetime)
-
-    def parent__maximum_datetime_changed(self, datetime):
-        """ The change handler for the 'maximum_date' attribute.
-
-        """
-        self.set_maximum_datetime(datetime)
-
-    def parent_datetime_format_changed(self, datetime_format):
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell_datetime_format_changed(self, datetime_format):
         """ The change handler for the 'format' attribute.
 
         """
         self.set_format(datetime_format)
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
     def connect(self):
         """ Connects the signal handlers for the date edit widget. Not
         meant for public consumption.
 
         """
+        super(QtDatetimeEdit, self).connect()
         self.widget.dateTimeChanged.connect(self.on_datetime_changed)
 
     def on_datetime_changed(self):
         """ The signal handler for the controls's changed event. Not
         meant for public consumption.
+
         """
-        parent = self.parent
-        new_datetime = self.get_datetime()
-        parent.datetime = new_datetime
-        parent.datetime_changed = new_datetime
+        shell = self.shell_widget
+        qdatetime = self.widget.dateTime()
+        new_datetime = qdatetime_to_python(qdatetime)
+        shell.datetime = new_datetime
+        shell.datetime_changed = new_datetime
 
     def set_datetime(self, datetime):
         """ Sets and the datetime on the widget.
@@ -97,13 +70,13 @@ class QtDatetimeEdit(QtControl):
         """
         self.widget.setDateTime(datetime)
 
-    def set_minimum_datetime(self, datetime):
+    def set_min_datetime(self, datetime):
         """ Sets the minimum datetime on the widget with the provided value.
 
         """
         self.widget.setMinimumDateTime(datetime)
 
-    def set_maximum_datetime(self, datetime):
+    def set_max_datetime(self, datetime):
         """ Sets the maximum datetime on the widget with the provided value.
 
         """
@@ -115,9 +88,3 @@ class QtDatetimeEdit(QtControl):
         """
         self.widget.setDisplayFormat(datetime_format)
 
-    def get_datetime(self):
-        """ Get the active widget date.
-
-        """
-        qdatetime = self.widget.dateTime()
-        return qdatetime_to_python(qdatetime)

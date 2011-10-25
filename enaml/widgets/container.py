@@ -4,15 +4,15 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance, List, Either
 
-from .component import Component, IComponentImpl
+from .component import Component, AbstractTkComponent
 from .control import Control
+from .layout_item import LayoutItem, AbstractTkLayoutItem
 
 from ..layout.layout_manager import AbstractLayoutManager
 from ..layout.constraints_layout import ConstraintsLayout
-from ..layout.layout_item import LayoutItem, ILayoutItemImpl
 
 
-class IContainerImpl(IComponentImpl, ILayoutItemImpl):
+class AbstractTkContainer(AbstractTkComponent, AbstractTkLayoutItem):
     pass
 
 
@@ -28,13 +28,25 @@ class Container(Component, LayoutItem):
     #--------------------------------------------------------------------------
     # Overridden parent class traits
     #--------------------------------------------------------------------------
-    toolkit_impl = Instance(IContainerImpl)
+    abstract_widget = Instance(AbstractTkContainer)
 
     children = List(Either(Instance(Control), Instance('Container')))
 
     def add_child(self, child):
-        child.set_parent(self)
+        # XXX make me dynamic
         self.children.append(child)
+
+    def remove_child(self, child):
+        # XXX implement me
+        raise NotImplementedError
+
+    def replace_child(self, child, other_child):
+        # XXX implement me
+        raise NotImplementedError
+       
+    def swap_children(self, child, other_child):
+        # XXX implement me
+        raise NotImplementedError
 
     def initialize_layout(self):
         super(Container, self).initialize_layout()

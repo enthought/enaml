@@ -4,36 +4,13 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Instance
 
-from .component import Component, IComponentImpl
+from .component import Component, AbstractTkComponent
 
-from ..layout.layout_item import LayoutItem
+from .layout_item import LayoutItem, AbstractTkLayoutItem
 
 
-class IControlImpl(IComponentImpl):
-    
-    def size(self):
-        raise NotImplementedError
-
-    def position(self):
-        raise NotImplementedError
-
-    def geometry(self):
-        raise NotImplementedError
-    
-    def set_size(self, size):
-        raise NotImplementedError
-
-    def set_position(self, position):
-        raise NotImplementedError
-
-    def set_geometry(self, x, y, width, height):
-        raise NotImplementedError
-
-    def preferred_size(self):
-        raise NotImplementedError
-    
-    def set_preferred_size(self):
-        raise NotImplementedError
+class AbstractTkControl(AbstractTkComponent, AbstractTkLayoutItem):
+    pass
 
 
 class Control(Component, LayoutItem):
@@ -41,7 +18,6 @@ class Control(Component, LayoutItem):
 
     Attributes
     ----------
-
     error : Bool
         A read only property which indicates whether an exception was raised
         through user interaction or setting a value trait on the Control.
@@ -55,21 +31,24 @@ class Control(Component, LayoutItem):
 
     exception = Instance(Exception)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    toolkit_impl = Instance(IControlImpl)
+    #--------------------------------------------------------------------------
+    abstract_widget = Instance(AbstractTkControl)
 
-    def initialize_layout(self):
-        pass
+    def relayout(self):
+        self.parent.relayout()
+    
+    def reconstrain(self):
+        self.parent.reconstrain()
 
     #--------------------------------------------------------------------------
     # Change Handlers 
     #--------------------------------------------------------------------------
     def _constraints_changed(self):
-        self.parent.reconstrain()
-        self.parent.relayout()
-
-
-Control.protect('error', 'exception')
+        # 'constraints' is an attribute on LayoutItem. When a new list 
+        # of constraints is applied, we need to ask our parent (a Container)
+        # to reconstrain everything
+        self.reconstrain()
+        self.relayout()
 

@@ -2,108 +2,123 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
+import weakref
 
-from traits.api import implements, HasStrictTraits, WeakRef, Instance
+from .qt.QtGui import QWidget
 
-from ..component import Component, IComponentImpl
+from ..component import AbstractTkComponent
 
 
-class QtComponent(HasStrictTraits):
+class QtComponent(AbstractTkComponent):
     """ A Qt4 implementation of Component.
 
     A QtComponent is not meant to be used directly. It provides some 
     common functionality that is useful to all widgets and should 
-    serve as the base class for all other classes.
-
-    See Also
-    --------
-    Component
+    serve as the base class for all other classes. Note that this 
+    is not a HasTraits class.
 
     """
-    implements(IComponentImpl)
+    widget = None
 
-    #---------------------------------------------------------------------------
-    # IComponentImpl interface
-    #---------------------------------------------------------------------------
-    parent = WeakRef(Component)
+    _shell_widget = lambda: None
 
-    def set_parent(self, parent):
-        """ Sets the parent component to the given parent.
-
-        """
-        self.parent = parent
-        
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying Qt widget. Must be implemented by 
         subclasses.
 
         """
         raise NotImplementedError
-    
+
     def initialize_widget(self):
-        """ Initializes the attribtues of a wiget. Must be implemented
-        by subclasses.
+        """ Initializes the attribtues of a wiget. Subclasses should 
+        implement if they need to do widget initialization.
 
         """
-        raise NotImplementedError
+        pass
 
     def initialize_layout(self):
-        """ Arranges the children of this component. Must be implemented
-        by subclasses.
+        """ Arranges the children of this component. Subclasses should 
+        implement if they need to do widget layout initialization.
 
         """
-        raise NotImplementedError
+        pass
+        
+    def initialize_event_handlers(self):
+        """ After the ui tree is fully initialized, this method
+        is called to allow the widgets to bind their event handlers.
+
+        """
+        self.connect()
+
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def connect(self):
+        """ Implement this method in subclasses to connect to any necessary
+        signals on the created widgets.
+
+        """
+        pass
+
+    def _get_shell_widget(self):
+        """ The shell_widget property getter which returns a strongref
+        to the the shell widget.
+
+        """
+        return self._shell_widget()
     
+    def _set_shell_widget(self, shell):
+        """ The shell_widget property setter which stores a weakref
+        to the shell widget.
+
+        """
+        self._shell_widget = weakref.ref(shell)
+
+    shell_widget = property(_get_shell_widget, _set_shell_widget)
+    
+    @property
     def toolkit_widget(self):
-        """ Returns the toolkit specific widget for this component.
+        """ A property that returns the toolkit specific widget for this
+        component.
 
         """
         return self.widget
     
-    def parent_name_changed(self, name):
+    def shell_name_changed(self, name):
         """ The change handler for the 'name' attribute on the parent.
         QtComponent doesn't care about the name. Subclasses should
         reimplement if they need that info.
 
         """
         pass    
-
-    #--------------------------------------------------------------------------
-    # Implementation
-    #--------------------------------------------------------------------------
-    widget = Instance(QtCore.QObject)
         
     def parent_widget(self):
         """ Returns the logical QWidget parent for this component. 
 
         Since some parents may wrap non-Widget objects, this method will
-        walk up the tree of parent components until a QWindow is found
-        or None if no QWindow is found.
-
-        Arguments
-        ---------
-        None
+        walk up the tree of components until a QWidget is found or None 
+        if no QWidget is found.
 
         Returns
         -------
         result : QWidget or None
 
         """
-        # Our parent is a Component, and the parent of 
-        # a Component is also a Component
-        parent = self.parent
-        while parent:
-            widget = parent.toolkit_widget()
-            if isinstance(widget, QtGui.QWidget):
+        shell_parent = self.shell_widget.parent
+        while shell_parent:
+            widget = shell_parent.toolkit_widget
+            if isinstance(widget, QWidget):
                 return widget
-            parent = parent.parent
+            shell_parent = shell_parent.parent
         
     def child_widgets(self):
-        """ Iterates over the parent's children and yields the 
+        """ Iterates over the shell widget's children and yields the 
         toolkit widgets for those children.
 
         """
-        for child in self.parent.children:
-            yield child.toolkit_widget()
+        for child in self.shell_widget.children:
+            yield child.toolkit_widget
 

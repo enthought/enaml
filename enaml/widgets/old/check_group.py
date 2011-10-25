@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance, List, Any, Int, Callable
 
-from .control import Control, IControlImpl
+from .control import Control, AbstractTkControl
 
 
-class ICheckGroupImpl(IControlImpl):
+# XXX check group needs to become a container subclass
+class AbstractTkCheckGroup(AbstractTkControl):
     
     def parent_rows_changed(self, rows):
         """ Called when the number of rows changes. Will relayout the

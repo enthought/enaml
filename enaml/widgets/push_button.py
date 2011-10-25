@@ -2,66 +2,52 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import abstractmethod
+
 from traits.api import Bool, Event, Str, Instance, Property
 
-from .control import Control, IControlImpl
+from .control import Control, AbstractTkControl
 
 
-class IPushButtonImpl(IControlImpl):
+class AbstractTkPushButton(AbstractTkControl):
 
-    def parent_text_changed(self):
+    @abstractmethod
+    def shell_text_changed(self):
         raise NotImplementedError
     
 
 class PushButton(Control):
     """ A push button widget.
 
-    Attributes
-    ----------
-    down : Property(Bool)
-        A read only property which indicates whether or not the button 
-        is currently pressed.
-
-    text : Str
-        The text to use as the button's label.
-
-    clicked : Event
-        Fired when the button is clicked.
-
-    pressed : Event
-        Fired when the button is pressed.
-
-    released: Event
-        Fired when the button is released.
-
-    _down : Bool
-        A protected attribute that is used by the implementation object
-        to set the value of down.
-
     """
+    #: A read only property which indicates whether or not the button 
+    #: is currently pressed.
     down = Property(Bool, depends_on='_down')
 
+    #: The text to use as the button's label.
     text = Str
     
+    #: Fired when the button is pressed and released.
     clicked = Event
     
+    #: Fired when the button is pressed.
     pressed = Event
 
+    #: Fired when the button is released.
     released = Event
 
+    #: An internal attribute that is used by the implementation object
+    #: to set the value of down.
     _down = Bool
 
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    toolkit_impl = Instance(IPushButtonImpl)
+    abstract_widget = Instance(AbstractTkPushButton)
 
     def _get_down(self):
         """ The property getter for the 'down' attribute.
 
         """
         return self._down
-
-
-PushButton.protect('_down', 'clicked', 'pressed', 'released')
 

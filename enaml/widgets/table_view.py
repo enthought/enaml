@@ -2,16 +2,19 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import abstractmethod
+
 from traits.api import Instance, Event
 
-from .control import Control, IControlImpl
+from .control import Control, AbstractTkControl
 
 from ..item_models.abstract_item_model import AbstractItemModel, ModelIndex
 
 
-class ITableViewImpl(IControlImpl):
+class AbstractTkTableView(AbstractTkControl):
     
-    def parent_item_model_changed(self, item_model):
+    @abstractmethod
+    def shell_item_model_changed(self, item_model):
         raise NotImplementedError
 
 
@@ -28,10 +31,8 @@ class TableView(Control):
     #: Fired after the left button is double-clicked.
     left_dclick = Event
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    toolkit_impl = Instance(ITableViewImpl)
-
-TableView.protect('selected', 'left_dclick')
+    #--------------------------------------------------------------------------
+    abstract_widget = Instance(AbstractTkTableView)
 

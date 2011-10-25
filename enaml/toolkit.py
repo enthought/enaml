@@ -7,9 +7,6 @@ import os
 
 from traits.api import HasStrictTraits, Callable, Str
 
-from .expressions import (DefaultExpression, BindingExpression, 
-                          DelegateExpression, NotifierExpression)
-
 
 class Constructor(HasStrictTraits):
     """ The constructor class to use to populate the toolkit.
@@ -88,7 +85,7 @@ class Constructor(HasStrictTraits):
         """
         component_cls = self.component_loader()
         impl_cls = self.impl_loader()
-        component = component_cls(toolkit_impl=impl_cls())
+        component = component_cls(abstract_widget=impl_cls())
         return (component,)
     
     def clone(self, component_loader=None, impl_loader=None):
@@ -204,62 +201,6 @@ class Toolkit(dict):
         """
         self.__stack__.pop()
 
-    def _get_default(self):
-        """ Returns the default expression handler class for this toolkit.
-
-        """
-        return self['__enaml_default__']
-    
-    def _set_default(self, val):
-        """ Sets the default expression handler class for this toolkit.
-
-        """
-        self['__enaml_default__'] = val
-    
-    default = property(_get_default, _set_default)
-
-    def _get_bind(self):
-        """ Returns the binding expression handler class for this toolkit.
-
-        """
-        return self['__enaml_bind__']
-    
-    def _set_bind(self, val):
-        """ Sets the binding expression handler class for this toolkit.
-
-        """
-        self['__enaml_bind__'] = val
-    
-    bind = property(_get_bind, _set_bind)
-
-    def _get_delegate(self):
-        """ Returns the delegate expression handler class for this toolkit.
-
-        """
-        return self['__enaml_delegate__']
-    
-    def _set_delegate(self, val):
-        """ Sets the delegate expression handler class for this toolkit.
-
-        """
-        self['__enaml_delegate__'] = val
-    
-    delegate = property(_get_delegate, _set_delegate)
-
-    def _get_notify(self):
-        """ Returns the notifier expression handler class for this toolkit.
-
-        """
-        return self['__enaml_notify__']
-    
-    def _set_notify(self, val):
-        """ Sets the notifier expression handler class for this toolkit.
-
-        """
-        self['__enaml_notify__'] = val
-    
-    notify = property(_get_notify, _set_notify)
-
     def _get_style_sheet(self):
         """ Returns the default style sheet instance for this toolkit.
 
@@ -348,10 +289,6 @@ def wx_toolkit():
     toolkit.create_app = get_app_wx
     toolkit.start_app = start_event_loop_wx
     toolkit.style_sheet = WX_STYLE_SHEET
-    toolkit.default = DefaultExpression
-    toolkit.bind = BindingExpression
-    toolkit.delegate = DelegateExpression
-    toolkit.notify = NotifierExpression
     toolkit.update(utils)
 
     return toolkit
@@ -361,6 +298,7 @@ def qt_toolkit():
     """ Creates and return a toolkit object for the Qt backend.
 
     """
+    from .operators import OPERATORS
     from .widgets.qt.constructors import QT_CONSTRUCTORS
     from .util.guisupport import get_app_qt4, start_event_loop_qt4
     from .widgets.qt.styling import QT_STYLE_SHEET
@@ -372,11 +310,8 @@ def qt_toolkit():
     toolkit.create_app = get_app_qt4
     toolkit.start_app = start_event_loop_qt4
     toolkit.style_sheet = QT_STYLE_SHEET
-    toolkit.default = DefaultExpression
-    toolkit.bind = BindingExpression
-    toolkit.delegate = DelegateExpression
-    toolkit.notify = NotifierExpression
     toolkit.update(utils)
+    toolkit.update(OPERATORS)
 
     return toolkit 
 

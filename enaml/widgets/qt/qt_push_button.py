@@ -4,26 +4,18 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui
 
-from traits.api import implements
-
 from .qt_control import QtControl
 
-from ..push_button import IPushButtonImpl
+from ..push_button import AbstractTkPushButton
 
 
-class QtPushButton(QtControl):
+class QtPushButton(QtControl, AbstractTkPushButton):
     """ A Qt implementation of PushButton.
 
-    See Also
-    --------
-    PushButton
-
     """
-    implements(IPushButtonImpl)
-
-    #---------------------------------------------------------------------------
-    # IPushButtonImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying QPushButton control.
 
@@ -34,23 +26,24 @@ class QtPushButton(QtControl):
         """ Intializes the widget with the attributes of this instance.
 
         """
-        self.set_label(self.parent.text)
-        self.bind()
+        super(QtPushButton, self).initialize_widget()
+        self.set_label(self.shell_widget.text)
 
-    def parent_text_changed(self, text):
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant for
         public consumption.
 
         """
         self.set_label(text)
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    def bind(self):
-        """ Binds the event handlers for the push button.
+    def connect(self):
+        """ Connects the event handlers for the push button.
 
         """
+        super(QtPushButton, self).connect()
         widget = self.widget
         widget.clicked.connect(self.on_clicked)
         widget.pressed.connect(self.on_pressed)
@@ -61,28 +54,28 @@ class QtPushButton(QtControl):
         for public consumption.
 
         """
-        parent = self.parent
-        parent._down = False
-        parent.clicked = True
+        shell = self.shell_widget
+        shell._down = False
+        shell.clicked = True
 
     def on_pressed(self):
         """ The event handlers for the button's pressed event. Not meant
         for public consumption.
 
         """
-        parent = self.parent
-        parent._down = True
-        parent.pressed = True
+        shell = self.shell_widget
+        shell._down = True
+        shell.pressed = True
 
     def on_released(self):
         """ The event handler for the button's released event. Not
         meant for public consumption.
 
         """
-        parent = self.parent
-        if parent._down:
-            parent._down = False
-            parent.released = True
+        shell = self.shell_widget
+        if shell._down:
+            shell._down = False
+            shell.released = True
 
     def set_label(self, label):
         """ Sets the label on the button control. Not meant for public
@@ -90,3 +83,4 @@ class QtPushButton(QtControl):
 
         """
         self.widget.setText(label)
+

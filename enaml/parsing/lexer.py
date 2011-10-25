@@ -25,43 +25,49 @@ class EnamlLexer(object):
     #--------------------------------------------------------------------------
     # Token Declarations
     #--------------------------------------------------------------------------
+    operators = {
+        '&': (r'&', 'AMPER'),
+        '^': (r'\^', 'CIRCUMFLEX'),
+        ':': (r':', 'COLON'),
+        '.': (r'\.', 'DOT'),
+        '//': (r'//', 'DOUBLESLASH'),
+        '**': (r'\*\*', 'DOUBLESTAR'),
+        '==': (r'==', 'EQEQUAL'),
+        '=': (r'=', 'EQUAL'),
+        '>': (r'>', 'GREATER'),
+        '>=': (r'>=', 'GREATEREQUAL'),
+        '<<': (r'<<', 'LEFTSHIFT'),
+        '<': (r'<', 'LESS'),
+        '<=': (r'<=', 'LESSEQUAL'),
+        '-': (r'-', 'MINUS'),
+        '!=': (r'!=', 'NOTEQUAL'),
+        '%': (r'%', 'PERCENT'),
+        '+': (r'\+', 'PLUS'),
+        '>>': (r'>>', 'RIGHTSHIFT'),
+        '/': (r'/', 'SLASH'),
+        '*': (r'\*', 'STAR'),
+        '~': (r'~', 'TILDE'),
+        '|': (r'\|', 'VBAR'),
+
+        # Enaml operator
+        '->': (r'->', 'UNPACK'),
+    }
+
     tokens = (
-        'AMPER',
-        'DOT',
-        'CIRCUMFLEX',
-        'COLON',
         'COMMA',
         'DEDENT',
-        'DOUBLESLASH',
-        'DOUBLESTAR',
         'ENDMARKER',
-        'EQEQUAL', 
-        'EQUAL',
-        'GREATER',
-        'GREATEREQUAL',
         'INDENT',
         'LBRACE',
-        'LEFTSHIFT',
-        'LESS',
-        'LESSEQUAL',
         'LPAR',
         'LSQB',
-        'MINUS',
         'NAME',
         'NEWLINE',
-        'NOTEQUAL',
         'NUMBER',
-        'PERCENT',
-        'PLUS',
         'RBRACE',
-        'RIGHTSHIFT',
         'RPAR',
         'RSQB',
-        'SLASH',
-        'STAR',
         'STRING',
-        'TILDE',
-        'VBAR',
         'WS',
 
         # string token sentinels
@@ -70,16 +76,14 @@ class EnamlLexer(object):
         'STRING_CONTINUE',
         'STRING_END',
 
-        # TML Specific Tokens
-        'COLONEQUAL',
-        'UNPACK',
+        # Enaml tokens
+        'OPERATOR',
 
     )
 
     reserved = {
         'and': 'AND',
         'as': 'AS',
-        'defn': 'DEFN',
         'else': 'ELSE',
         'from': 'FROM',
         'for': 'FOR',
@@ -90,10 +94,15 @@ class EnamlLexer(object):
         'lambda': 'LAMBDA',
         'not': 'NOT',
         'or': 'OR',
-        'pass': 'PASS'
+        'pass': 'PASS',
+
+        # Enaml reserved
+        'defn': 'DEFN',
     }
 
-    tokens = tokens + tuple(reserved.values())
+    tokens = (tokens + 
+              tuple(val[1] for val in operators.values()) + 
+              tuple(reserved.values()))
 
     #--------------------------------------------------------------------------
     # Lexer States
@@ -108,33 +117,14 @@ class EnamlLexer(object):
     #--------------------------------------------------------------------------
     # INITIAL State Rules
     #--------------------------------------------------------------------------
-    t_AMPER = r'&'
-    t_DOT = r'\.'
-    t_CIRCUMFLEX = r'\^'
-    t_COLON = r':'
-    t_COLONEQUAL = r':='
     t_COMMA = r','
-    t_DOUBLESLASH = r'//'
-    t_DOUBLESTAR = r'\*\*'
-    t_EQEQUAL = r'==' 
-    t_EQUAL = r'='
-    t_GREATER = r'>'
-    t_GREATEREQUAL = r'>='
-    t_LEFTSHIFT = r'<<'
-    t_LESS = r'<'
-    t_LESSEQUAL = r'<='
-    t_MINUS = r'-'
-    t_NOTEQUAL = r'!='
     t_NUMBER = tokenize.Number
-    t_PERCENT = r'\%'
-    t_PLUS = r'\+'
-    t_RIGHTSHIFT = r'>>'
-    t_SLASH = r'/'
-    t_STAR = r'\*'
-    t_TILDE = r'~'
-    t_UNPACK = r'->'
-    t_VBAR = r'\|'
 
+    for key, value in operators.iteritems():
+        tok_pattern = value[0]
+        tok_name = 't_' + value[1]
+        locals()[tok_name] = tok_pattern
+    
     def t_comment(self, t):
         r'[ ]*\#[^\r\n]*'
         pass
@@ -363,7 +353,18 @@ class EnamlLexer(object):
         r'[a-zA-Z_][a-zA-Z0-9_]*'
         t.type = self.reserved.get(t.value, "NAME")
         return t
-    
+
+    # A custom operator can be composed of: ~!@%^&-+=/<>:$*?|.
+    def t_OPERATOR(self, t):
+        r'[~!@%&-+=/<>:\^\$\*\?\|\.]+'
+        # Since this longer operator definition will be matched before
+        # any of the other standard operators, we need to check if 
+        # we're a standard operator and change the token type appropriately
+        info = self.operators.get(t.value)
+        if info is not None:
+            t.type = info[1]
+        return t
+
     def t_error(self, t):
         raise_syntax_error('Invalid Syntax', t)
         

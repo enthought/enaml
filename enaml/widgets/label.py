@@ -2,33 +2,29 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import abstractmethod
+
 from traits.api import Str, Instance
 
-from .control import Control, IControlImpl
+from .control import Control, AbstractTkControl
 
 
-class ILabelImpl(IControlImpl):
+class AbstractTkLabel(AbstractTkControl):
     
-    def parent_text_changed(self, text):
-        raise NotImplementedError
-
-    def parent_bgcolor_changed(self, bgcolor):
+    @abstractmethod
+    def shell_text_changed(self, text):
         raise NotImplementedError
         
     
 class Label(Control):
     """ A simple read-only text display.
 
-    Attributes
-    ----------
-    text : Str
-        The text in the label.
-
     """
+    #: The text in the label.
     text = Str
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    toolkit_impl = Instance(ILabelImpl)
+    #--------------------------------------------------------------------------
+    abstract_widget = Instance(AbstractTkLabel)
 

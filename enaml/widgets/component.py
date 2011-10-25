@@ -2,288 +2,234 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Interface, Str, WeakRef, Instance, List, ReadOnly
+from abc import ABCMeta, abstractmethod, abstractproperty
+from functools import wraps
 
-from ..enaml_base import EnamlBase
-from ..styling.style_mixin import StyleMixin
+from traits.api import HasStrictTraits, Str, WeakRef, Instance, List, ReadOnly, Property
+
+from .setup_hooks import AbstractSetupHook
 
 
-class IComponentImpl(Interface):
-    """ The base Component implementation interface.
+class AbstractTkComponent(object):
+    """ The abstract toolkit Component interface.
 
-    A component implementation is responsible for listening to attributes
-    on the parent and doing conversions to and from those attributes
-    and values on the widget. The implementation is added as a virtual
-    listener on the component with a prefix of 'parent', so any
-    parent_*_changed methods will be called in response to a trait
-    change on the parent. The implementation should set the traits
-    on the parent (including events) when appropriate according to
-    their documentation.
-
-    Attributes
-    ----------
-    parent : WeakRef(Component)
-        A weak referent to the parent component.
-
-    Methods
-    -------
-    set_parent(parent)
-        Sets the parent to the parent component. This will be called by
-        the framework before the widget is to be created.
-
-    create_widget()
-        Creates the underlying toolkit widget.
-
-    initialize_widget()
-        Initializes the widget with attributes from the parent.
-
-    layout_child_widgets()
-        Add the child widgets of this component to any sizers or
-        layout objects necessary to lay out the ui.
-
-    toolkit_widget()
-        Returns the toolkit specific widget.
-
-    parent_name_changed(name)
-        Called when the name trait on the parent changes.
+    A toolkit component is responsible for handling changes on a shell 
+    widtget and doing conversions to and from those attributes and values 
+    on a toolkit widget.
 
     """
-    parent = WeakRef('Component')
+    __metaclass__ = ABCMeta
 
-    def set_parent(self, parent):
-        """ Sets the parent to the parent component.
+    @abstractproperty
+    def shell_widget(self):
+        """ An abstract property that should *get* and *set* a reference
+        to the shell widget (an instance of Component). 
 
-        This will be called by the framework before the widget is to be
-        created. Typical implementations will just assign it to the
-        parent weakref. This is the first method called in the layout
-        process.
-
-        """
-        raise NotImplementedError
-
-    def create_widget(self):
-        """ Creates the underlying toolkit widget. At the time this is
-        called by the frameworks, the 'set_parent' method will have
-        already been called. This is the second method called in the
-        layout process.
+        It is suggested that the implementation maintain only a weakref
+        to the shell widget in order to avoid reference cycles. This 
+        value will be set by the framework before any other widget 
+        creation or layout methods are called. It is performed in depth
+        first order
 
         """
         raise NotImplementedError
-
-    def initialize_widget(self):
-        """ Initializes the widget with attributes from the parent. This
-        is the third method called in the layout process.
-
-        """
-        raise NotImplementedError
-
-    def create_style_handler(self):
-        """ Creates and assigns the style handler for this toolkit
-        specific widget. This is the fourth method called in the layout
-        process.
-
-        """
-        raise NotImplementedError
-
-    def initialize_style(self):
-        """ Initializes the style and style handler for the widget. This
-        is the fifth method called in the layout proces.
-
-        """
-        raise NotImplementedError
-
-    def layout_child_widgets(self):
-        """ Adds the child widgets (if any) to any necessary layout
-        components in the ui. This is the sixth and final method called
-        in the layout process.
-
-        """
-        raise NotImplementedError
-
+    
+    @abstractproperty
     def toolkit_widget(self):
-        """ Returns the toolkit specific widget being mangaged by this
-        implementation object.
+        """ An abstract property that should return the gui toolkit 
+        widget being managed by the instance.
 
         """
         raise NotImplementedError
 
-    def parent_name_changed(self, name):
-        """ Called when the name on the component changes.
+    @abstractmethod
+    def create_widget(self):
+        """ Create the underlying toolkit widget. 
+
+        This method is called after the reference to the shell widget 
+        has been set and is called in depth-first order. This means
+        that by the time this method is called, the logical parent
+        of widget of this instance has already been created.
+
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def initialize_widget(self):
+        """ Initializes the widget with attributes from the parent.
+
+        This method is called after 'create_widget' in depth-first
+        order.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def initialize_layout(self):
+        """ Initializes any required layout information for the widget
+        and/or its children.
+
+        This method is called after 'initialize_widget' in depth-first
+        order.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def initialize_event_handlers(self):
+        """ After the ui tree is fully initialized, this method
+        is called to allow the widgets to bind their event handlers.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_name_changed(self, name):
+        """ Called when the name attribute of the shell widget changes.
+
+        The value of the name attribute can be used for various things
+        in a ui, such as the names of the tabs in a notebook, or the
+        values of the labels in a form layout.
 
         """
         raise NotImplementedError
 
 
-class Component(EnamlBase, StyleMixin):
+def setup_method(func):
+    """ A decorator for methods involved in the setup process of a 
+    component tree. It handles the depth first dispatching and 
+    calling of the setup hooks.
+
+    """
+    method_name = func.__name__
+    
+    @wraps(func)
+    def closure(self):
+        # Call the pre-process hooks
+        gens = [getattr(hook, method_name)(self) for hook in self.setup_hooks]
+        for gen in gens:
+            gen.next()
+        
+        # Perform the setup operation
+        func(self)
+
+        # Run the same process for the children, the insures that
+        # func(self) is called for every item in the tree before 
+        # the first post-process hook is run.
+        for child in self.children:
+            getattr(child, method_name)()
+
+        # Call the post-process hooks
+        for gen in gens:
+            try:
+                gen.next()
+            except StopIteration:
+                pass
+
+    return closure
+
+
+class Component(HasStrictTraits):
     """ The most base class of the Enaml widgets component heierarchy.
 
     All Enaml  widget classes should inherit from this class. This class
-    is not meant to be instantiated.
-
-    Attributes
-    ----------
-    identifier : ReadOnly
-        The identifier assigned to this element in the enaml source code.
-        This is a protected attribute and is set during construction.
-
-    type_name : ReadOnly
-        The type name this component is using in the enaml source code.
-        This is a protected attribute and is set during construction.
-
-    parent : WeakRef(EnamlBase)
-        The parent object which is stored as a weakref to mitigate memory
-        leak issues from reference cycles. This is a protected attribute.
-
-    children : List(Instance(EnamlBase))
-        The list of children components for this component. Subclasses
-        may redefine this trait to restrict which types of children
-        they allow. This list should not be manipulated outside of
-        the ``*_child(...)`` methods. This is a protected attribute.
-
-    name : Str
-        The name of this element which may be used as metainfo by other
-        components. Note that this is not the same as the identifier
-        that can be assigned to a component as part of the enaml grammar.
-
-    style : Instance(StyleNode)
-        A protected read-only attribute that holds the component's style
-        node.
-
-    toolkit_impl : Instance(ComponentImpl)
-        The toolkit specific object that implements the behavior of
-        this component. This implementation object is added as a virtual
-        listener for this component and maintains a weak reference to
-        this component. The listeners are set up and torn down with the
-        'hook_impl' and 'unhook_impl' methods. This is a protected
-        attribute.
-
-    Methods
-    -------
-    add_child(child)
-        Add a child component to this component. This will reparent
-        the child.
-
-    remove_child(child)
-        Remove a child component from this component. This will
-        unparent the child,
-
-    replace_child(child, other_child)
-        Replace child in this component with a different one. This
-        will unparent the first child and reparent the second child.
-
-    swap_children(child, other_child)
-        Swap the positions of the two children.
-
-    set_parent(self, parent)
-        Set the parent for this component to parent.
-
-    layout()
-        Lay out and create the widgets for this component and it's
-        children. This builds the widget tree.
-
-    toolkit_widget()
-        Returns the underlying gui toolkit widget which is being
-        managed by the implemention object.
-
-    refresh(force=False)
-        Refreshes the ui tree from this point down, rebuilding children
-        where necessary.
+    is not meant to be used directly.
 
     """
-    identifier = ReadOnly
-
-    type_name = ReadOnly
-
+    #: The parent component of this component. It is stored as a weakref
+    #: to mitigate issues with reference cycles. A top-level component's
+    #: parent is None.
     parent = WeakRef('Component')
 
-    # The default component does not accept children
-    children = List(Instance('Component'), maxlen=0)
+    #: The identifier assigned to this element in the enaml source code.
+    identifier = ReadOnly
 
+    # XXX handle this better than being set by the toolkit
+    type_name = ReadOnly
+
+    #: The name of this element which may be used as metainfo by other
+    #: components. Note that this is not the same as the identifier
+    #: that can be assigned to a component as part of the enaml grammar.
     name = Str
 
-    toolkit_impl = Instance(IComponentImpl)
-        
-    def add_child(self, child):
-        """ Add a child component to this component.
+    #: The list of children components for this component. Subclasses
+    #: should redefine this trait to restrict which types of children
+    #: they allow. This list should not be manipulated outside of
+    #: the ``*_child(...)`` methods so that the ui may be properly 
+    #: updated when the children change. Note that a Component does
+    #: not accept children, but the attribute and methods are defined
+    #: on the component to formalize the interface for subclasses.
+    children = List(Instance('Component'), maxlen=0)
 
-        Call this method when a child should be added to the component.
+    #: The toolkit specific object that implements the behavior of
+    #: this component and manages the gui toolkit widget. Subclasses
+    #: should redefine this trait to specify the specialized type of
+    #: abstract_widget that is accepted.
+    abstract_widget = Instance(AbstractTkComponent) 
+    
+    #: A list of hooks that are called during the setup process
+    #: that can modify the behavior of the component such as installing
+    #: listeners at the appropriate times. Hooks should normally be
+    #: appended to this list instead of it being assigned atomically
+    setup_hooks = List(Instance(AbstractSetupHook))
+
+    #: A read-only property that returns the gui toolkit widget
+    #: being managed by the abstract widget.
+    toolkit_widget = Property
+
+    def add_child(self, child):
+        """ Add the child to this component. Subclasses that support
+        children *must* implement this method.
 
         Arguments
         ---------
         child : Instance(Component)
-            The child to add to the component. The child must not
-            already be in the component.
+            The child to add to the component.
 
         """
         raise NotImplementedError
 
     def remove_child(self, child):
-        """ Remove the child from this container.
-
-        Call this method when a child should be removed from the
-        container.
+        """ Remove the child from this component. Subclasses that support
+        children *should* implement this method.
 
         Arguments
         ---------
         child : Instance(Component)
-            The child to remove from the container. The child
-            must be contained in the container.
+            The child to remove from the container.
 
         """
         raise NotImplementedError
 
     def replace_child(self, child, other_child):
-        """ Replace child with other_child.
-
-        Call this method when the child should be replaced by the
-        other_child.
+        """ Replace a child with another child. Subclasses that support
+        children *should* implement this method.
 
         Arguments
         ---------
         child : Instance(Component)
-            The child being replaced. The child must be contained in
-            the container.
+            The child being replaced.
 
         other_child : Instance(Component)
-            The child taking the new place. The child must not be
-            contained in the container.
+            The child taking the place of the removed child.
 
         """
         raise NotImplementedError
 
     def swap_children(self, child, other_child):
-        """ Swap the position of two children.
-
-        Call this method when their are two children in the container
-        whose positions should be swapped.
+        """ Swap the position of the two children. Subclasses that 
+        support children *should* implement this method.
 
         Arguments
         ---------
         child : Instance(Component)
-            The first child in the swap. The child must be contained
-            in the container.
+            The first child in the swap.
 
         other_child : Instance(Component)
-            The second child in the swap. The child must be contained
-            in the container.
+            The second child in the swap.
 
         """
         raise NotImplementedError
-
-    def set_parent(self, parent):
-        """ Set the parent of this component to parent.
-
-        The default implementation of this method simply assigns the
-        parent to the .parent attribute. Subclasses may override this
-        method to do any custom process before the parent is set.
-
-        Arguments
-        ---------
-        parent : Component or None
-            The parent Component of this component or None.
-
-        """
-        self.parent = parent
 
     def set_style_sheet(self, style_sheet):
         """ Sets the style sheet for this component.
@@ -299,80 +245,82 @@ class Component(EnamlBase, StyleMixin):
     def setup(self):
         """ Initialize and arrange the component and it's children.
 
-        In addition to running the layout process, this method calls
-        hook_impl() which will add the implementation as a virtual
-        listen on this instance. This method should not typically be
-        called by user code.
+        This method dispatches the setup process into several passes 
+        across the ui tree.
 
         """
-        self._set_toolkit_parent_impl()
-        self._bind_expressions_impl()
-        self._create_widget_impl()
-        self._initialize_widget_impl()
-        self._initialize_layout_impl()        
-        self._hook_listeners_impl()
-
-    def set_toolkit_parent(self):
-        self.toolkit_impl.set_parent(self)
-    
-    def create_widget(self):
-        self.toolkit_impl.create_widget()
-    
-    def initialize_widget(self):
-        self.toolkit_impl.initialize_widget()
-
-    def initialize_layout(self):
-        self.toolkit_impl.initialize_layout()
-
-    def hook_listeners(self):
-        """ Adds the implementation object as a listener via the
-        'add_trait' method.
-
-        """
-        self.add_trait_listener(self.toolkit_impl, 'parent')
-
-    def _set_toolkit_parent_impl(self):
-        self.set_toolkit_parent()
-        for child in self.children:
-            child._set_toolkit_parent_impl()
-    
-    def _bind_expressions_impl(self):
-        self.bind_expressions()
-        for child in self.children:
-            child._bind_expressions_impl()
-
-    def _create_widget_impl(self):
+        self.parent_children()
+        self.set_shell_widget()
         self.create_widget()
-        for child in self.children:
-            child._create_widget_impl()
-    
-    def _initialize_widget_impl(self):
         self.initialize_widget()
-        for child in self.children:
-            child._initialize_widget_impl()
+        self.initialize_layout()  
+        self.initialize_event_handlers()
+        self.set_abstract_widget_listeners()
 
-    def _initialize_layout_impl(self):
-        self.initialize_layout()
+    @setup_method
+    def parent_children(self):
+        """ A setup method that sets the parent attribute of the children
+        of this component. This should not normally be called by user
+        code.
+
+        """
         for child in self.children:
-            child._initialize_layout_impl()
+            child.parent = self
+
+    @setup_method
+    def set_shell_widget(self):
+        """ A setup method that sets the shell widget attribute of the
+        abstract widget. This should not normally be called by user
+        code.
+
+        """
+        self.abstract_widget.shell_widget = self
+        
+    @setup_method
+    def create_widget(self):
+        """ A setup method that tells the abstract widget to create its
+        gui toolkit widget. This should not normally be called by user
+        code.
+
+        """
+        self.abstract_widget.create_widget()
     
-    def _hook_listeners_impl(self):
-        self.hook_listeners()
-        for child in self.children:
-            child._hook_listeners_impl()
-
-    def toolkit_widget(self):
-        """ Returns the toolkit specific widget for this component.
+    @setup_method
+    def initialize_widget(self):
+        """ A setup method that tells the abstract widget to initialize
+        its gui toolkit widget. This should not normally be called by 
+        user code.
 
         """
-        return self.toolkit_impl.toolkit_widget()
+        self.abstract_widget.initialize_widget()
 
-    def refresh(self, force=False):
-        """ Refreshes the layout.
+    @setup_method
+    def initialize_layout(self):
+        """ A setup method that tells the abstract widget to initialize
+        its layout. This should not normally be called by user code.
 
         """
-        pass
+        self.abstract_widget.initialize_layout()
 
+    @setup_method
+    def initialize_event_handlers(self):
+        """ After the ui tree is fully initialized, this method
+        is called to allow the widgets to bind their event handlers.
 
-Component.protect('identifier', 'type_name', 'parent', 'children', 'style', 'toolkit_impl')
+        """
+        self.abstract_widget.initialize_event_handlers()
+
+    @setup_method
+    def set_abstract_widget_listeners(self):
+        """ Sets the abstract_widget as a traits listener for this
+        component with a prefix of 'shell'.
+
+        """
+        self.add_trait_listener(self.abstract_widget, 'shell')
+
+    def _get_toolkit_widget(self):
+        """ The getter for the toolkit_widget property.
+
+        """
+        return self.abstract_widget.toolkit_widget
 

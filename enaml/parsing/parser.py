@@ -25,6 +25,40 @@ except OSError:
 tokens = EnamlLexer.tokens
 
 
+# The translation table for expression operators
+operator_table = {
+    '~': 'Tilde',
+    '!': 'Bang',
+    '@': 'At',
+    '%': 'Percent',
+    '^': 'Caret',
+    '&': 'Amper',
+    '-': 'Minus',
+    '+': 'Plus',
+    '=': 'Equal',
+    '/': 'Slash',
+    '<': 'Less',
+    '>': 'Greater',
+    ':': 'Colon',
+    '$': 'Dollar',
+    '*': 'Star',
+    '?': 'Question',
+    '|': 'Bar',
+    '.': 'Dot',
+}
+
+
+def translate_operator(op):
+    """ Converts a symbolic operator into a string of the form
+    __operator_<name>__ where <name> is result of translating the 
+    symbolic operator using the operator_table.
+
+    """
+    op_table = operator_table
+    name = ''.join(op_table[char] for char in op)
+    return '__operator_%s__' % name
+
+
 def raise_enaml_syntax_error(msg, lineno):
     """ Our own syntax error to punt on parsing since raising a regular
     SytaxError is special cased by ply.
@@ -435,32 +469,42 @@ def p_enaml_index2(p):
     p[0] = enaml_ast.EnamlIndex(p[1], -idx)
 
 
-def p_enaml_assignment_pair1(p):
-    ''' enaml_assignment_pair : EQUAL test '''
+def p_enaml_assignment_pair(p):
+    ''' enaml_assignment_pair : enaml_operator test '''
+    operator = translate_operator(p[1])
     expr = ast.Expression(body=p[2])
     set_locations(expr, p.lineno(1), 1)
-    p[0] = (enaml_ast.DEFAULT, enaml_ast.EnamlExpression(expr))
+    p[0] = (operator, enaml_ast.EnamlExpression(expr))
 
 
-def p_enaml_assignment_pair2(p):
-    ''' enaml_assignment_pair : LEFTSHIFT test '''
-    expr = ast.Expression(body=p[2])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = (enaml_ast.BIND, enaml_ast.EnamlExpression(expr))
-
-
-def p_enaml_assignment_pair3(p):
-    ''' enaml_assignment_pair : COLONEQUAL test '''
-    expr = ast.Expression(body=p[2])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = (enaml_ast.DELEGATE, enaml_ast.EnamlExpression(expr))
-
-
-def p_enaml_assignment_pair4(p):
-    ''' enaml_assignment_pair : RIGHTSHIFT test '''
-    expr = ast.Expression(body=p[2])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = (enaml_ast.NOTIFY, enaml_ast.EnamlExpression(expr))
+def p_enaml_operator(p):
+    ''' enaml_operator : AMPER
+                       | CIRCUMFLEX
+                       | COLON
+                       | DOT
+                       | DOUBLESLASH
+                       | DOUBLESTAR
+                       | EQEQUAL
+                       | EQUAL
+                       | GREATER
+                       | GREATEREQUAL
+                       | LEFTSHIFT
+                       | LESS
+                       | LESSEQUAL
+                       | MINUS
+                       | NOTEQUAL
+                       | PERCENT
+                       | PLUS
+                       | RIGHTSHIFT
+                       | SLASH
+                       | STAR
+                       | TILDE
+                       | VBAR
+                       | UNPACK
+                       | OPERATOR '''
+    # A custom operator can be any of the standard operators (overloaded)
+    # as well as one that is custom defined.
+    p[0] = p[1]
 
 
 #==============================================================================

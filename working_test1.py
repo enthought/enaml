@@ -15,10 +15,10 @@ import enaml
 from enaml.styling.color import Color
 from enaml.item_models.abstract_item_model import AbstractTableModel
 from enaml.enums import DataRole
-from enaml.toolkit import default_toolkit
 
 with enaml.imports():
-    from working_test1 import MainWindow, TestView
+    from working_test1 import TestView
+
 
 
 colors = Color.color_map.keys()

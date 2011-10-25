@@ -3,11 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from . import enaml_ast
-from .virtual_machine import (LOAD_GLOBAL, LOAD_LOCAL, LOAD_CONST, LOAD_ATTR,
+from .virtual_machine import (LOAD_GLOBAL, LOAD_LOCAL, LOAD_CONST,
                               LOAD_GLOBALS_CLOSURE, LOAD_LOCALS_CLOSURE, 
                               LOAD_IDX, STORE_LOCAL, EVAL, CALL, DUP_TOP,
                               POP_TOP, UNPACK_SEQUENCE, RETURN_RESULTS, 
-                              GET_ITER, FOR_ITER, JUMP_ABSOLUTE, evalcode)
+                              GET_ITER, FOR_ITER, JUMP_ABSOLUTE, ROT_TWO,
+                              evalcode)
 
 from ..exceptions import EnamlSyntaxError
 
@@ -458,69 +459,44 @@ class DefnBodyCompiler(object):
         """
         # The top of the stack will be the enaml widget object which 
         # has the attribute to which we want to bind. It is assumed
-        # the tos is appropriate duplicated and we are free to consume
+        # the tos is appropriately duplicated and we are free to consume
         # the top of the stack.
         #
         # The semantics here are:
-        # 2) Load the attr which is the method we will call on the
-        #    object to add the expression.
-        # 3) Load the name of the attribute for the binding.
-        # 4) Load the appropriate binder object.
-        # 5) Load the args for the binder call (ast, code_obj, globals, locals)
-        # 6) Call the binder.
-        # 7) Call the binder method with the results of the binder call
-        #    and the name of the attribue we're binding.
-        # 8) Pop the top of the stack since the binder method returns None.
+        # 1) Load the operator that will handle the expression binding.
+        # 2) Rotate the top 2 items so that the operator is under the object.
+        # 3) Load the remaining args for the operator call 
+        #    (attribute_name, ast, code_obj, globals, locals)
+        # 4) Call the operator.
+        # 5) Pop the top of the stack since the operator returns None.
         #
-        # The binders are looked up as specially named objects which 
+        # The operators are looked up as specially named objects which 
         # are provided by the toolkit and can therefore be looked up 
         # by default in the global namespace. It also means that they
         # can be overridden through dependency inject via function
         # arguments or as members of the module's dict.
-        instructions = []
         local_names = self.local_names
+        instructions = []
+
+        # The ast is compiled into a code object now, instead of allowing
+        # the operators to do it because then it would be compiled every
+        # time the defn is called, instead of just once as it needs to be.
         code = compile(py_ast, 'Enaml', mode='eval')
 
-        # Load the method object to call to do the binding and the name
-        # to which we are binding
-        inst = (LOAD_ATTR, 'add_expression_binder')
+        # Load the operator
+        if op in local_names:
+            inst = (LOAD_LOCAL, op)
+        else:
+            inst = (LOAD_GLOBAL, op)
         instructions.append(inst)
+        
+        # ROT_TWO items to put the operator under its first argument.
+        inst = (ROT_TWO, None)
+        instructions.append(inst)
+        
+        # Load the rest of the arguments for the operator call
         inst = (LOAD_CONST, attr_name)
         instructions.append(inst)
-        
-        # Load the appropriate binder class object
-        if op == enaml_ast.DEFAULT:
-            if '__enaml_default__' in local_names:
-                inst = (LOAD_LOCAL, '__enaml_default__')
-            else:
-                inst = (LOAD_GLOBAL, '__enaml_default__')
-            instructions.append(inst)
-        
-        elif op == enaml_ast.BIND:
-            if '__enaml_bind__' in local_names:
-                inst = (LOAD_LOCAL, '__enaml_bind__')
-            else:
-                inst = (LOAD_GLOBAL, '__enaml_bind__')
-            instructions.append(inst)
-        
-        elif op == enaml_ast.DELEGATE:
-            if '__enaml_delegate__' in local_names:
-                inst = (LOAD_LOCAL, '__enaml_delegate__')
-            else:
-                inst = (LOAD_GLOBAL, '__enaml_delegate__')
-            instructions.append(inst)
-        
-        elif op == enaml_ast.NOTIFY:
-            if '__enaml_notify__' in local_names:
-                inst = (LOAD_LOCAL, '__enaml_notify__')
-            else:
-                inst = (LOAD_GLOBAL, '__enaml_notify__')
-            instructions.append(inst)
-        
-        else:
-            raise ValueError('Invalid assignment op')
-        
-        # Load the arguments for the binder factory call
         inst = (LOAD_CONST, py_ast)
         instructions.append(inst)
         inst = (LOAD_CONST, code)
@@ -530,24 +506,12 @@ class DefnBodyCompiler(object):
         inst = (LOAD_LOCALS_CLOSURE, None)
         instructions.append(inst)
 
-        # Call the binder factory with (py_ast, code, globals, locals)
-        inst = (CALL, (4, 0))
+        # Call the operator with 
+        # (obj, name, py_ast, code, globals_closure, locals_closure)
+        inst = (CALL, (6, 0))
         instructions.append(inst)
 
-        # Call the binder method with (name, binder) or for notifier
-        # expressions: (name, binder, eval_default=False)
-        if op == enaml_ast.NOTIFY:
-            inst = (LOAD_CONST, 'eval_default')
-            instructions.append(inst)
-            inst = (LOAD_CONST, False)
-            instructions.append(inst)
-            inst = (CALL, (2, 1))
-            instructions.append(inst)
-        else:
-            inst = (CALL, (2, 0))
-            instructions.append(inst)
-
-        # Pop and discard the None result from the expression method
+        # Pop and discard the None result from the operator
         inst = (POP_TOP, None)
         instructions.append(inst)
 

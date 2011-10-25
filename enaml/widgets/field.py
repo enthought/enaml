@@ -2,72 +2,94 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Event, Int, Str, Property, Instance, Callable, Any
+from abc import abstractmethod
 
-from .control import IControlImpl, Control
+from traits.api import Bool, Event, Int, Str, Property, Instance, Any
+
+from .control import Control, AbstractTkControl
 
 from ..converters import Converter, StringConverter
 
 
-class IFieldImpl(IControlImpl):
+class AbstractTkField(AbstractTkControl):
 
-    def parent_max_length_changed(self, max_length):
+    @abstractmethod
+    def shell_max_length_changed(self, max_length):
         raise NotImplementedError
 
-    def parent_read_only_changed(self, read_only):
+    @abstractmethod
+    def shell_read_only_changed(self, read_only):
         raise NotImplementedError
 
-    def parent_cursor_position_changed(self, cursor_position):
+    @abstractmethod
+    def shell_cursor_position_changed(self, cursor_position):
         raise NotImplementedError
 
-    def parent_placeholder_text_changed(self, placeholder_text):
+    @abstractmethod
+    def shell_placeholder_text_changed(self, placeholder_text):
         raise NotImplementedError
 
-    def parent_converter_changed(self, converter):
+    @abstractmethod
+    def shell_converter_changed(self, converter):
         raise NotImplementedError
 
-    def parent_value_changed(self, value):
+    @abstractmethod
+    def shell_value_changed(self, value):
         raise NotImplementedError
 
+    @abstractmethod
     def set_selection(self, start, end):
         raise NotImplementedError
 
+    @abstractmethod
     def select_all(self):
         raise NotImplementedError
 
+    @abstractmethod
     def deselect(self):
         raise NotImplementedError
 
+    @abstractmethod
     def clear(self):
         raise NotImplementedError
 
+    @abstractmethod
     def backspace(self):
         raise NotImplementedError
 
+    @abstractmethod
     def delete(self):
         raise NotImplementedError
 
+    @abstractmethod
     def end(self, mark=False):
         raise NotImplementedError
 
+    @abstractmethod
     def home(self, mark=False):
         raise NotImplementedError
 
+    @abstractmethod
     def cut(self):
         raise NotImplementedError
 
+    @abstractmethod
     def copy(self):
         raise NotImplementedError
 
+    @abstractmethod
     def paste(self):
         raise NotImplementedError
 
+    @abstractmethod
     def insert(self, text):
         raise NotImplementedError
 
+    @abstractmethod
     def undo(self):
         raise NotImplementedError
 
+    @abstractmethod
     def redo(self):
         raise NotImplementedError
 
@@ -75,144 +97,67 @@ class IFieldImpl(IControlImpl):
 class Field(Control):
     """ A single-line editable text widget.
 
-    Attributes
-    ----------
-    max_length : Int
-        The maximum length of the line edit in characters.
-
-    max_length_reached : Event
-        An event fired when the max length has been reached.
-
-    read_only : Bool
-        Whether or not the line edit is read only.
-
-    cursor_position : Int
-        The position of the cursor in the line edit.
-
-    modified : Property(Bool)
-        A read only property that is set to True if the user has changed
-        the line edit from the ui, False otherwise. This is reset to
-        False if the text is programmatically changed.
-
-    placeholder_text : Str
-        The grayed-out text to display if 'text' is empty and the
-        widget doesn't have focus.
-
-    converter : Instance(Converter)
-        A pair of inverse functions, for converting values to and from the component
-
-    value : Any
-        The Python value to display in the field.
-
-    selected_text : Property(Str)
-        A read only property that is updated with the text selected
-        in the line edit.
-
-    text_changed : Event
-        Fired when the text is changed programmatically, or by the
-        user via the ui. The args object will contain the text.
-
-    text_edited : Event
-        Fired when the text is changed by the user explicitly through
-        the ui and not programmatically. The args object will contain
-        the text.
-
-    return_pressed : Event
-        Fired when the return/enter key is pressed in the line edit.
-
-    _modified : Bool
-        A protected attribute that is used by the implementation object
-        to update the value of modified.
-
-    _selected_text : Str
-        A protected attribute that is used by the implementation object
-        to update the value of selected_text.
-
-    Methods
-    -------
-    set_selection(start, end)
-        Sets the selection to the bounds of start and end.
-
-    select_all()
-        Select all the text in the line edit.
-
-    deselect()
-        Deselect any selected text.
-
-    clear()
-        Clear the line edit of all text.
-
-    backspace()
-        If no text is selected, deletes the character to the left
-        of the cursor. Otherwise, it deletes the selected text.
-
-    delete()
-        If no text is selected, deletes the character to the right
-        of the cursor. Otherwise, it deletes the selected text.
-
-    end(mark=False)
-        Moves the cursor to the end of the line. If 'mark' is True,
-        also selects the text from the current position to the end.
-
-    home(mark=False)
-        Moves the cursor to the beginning of the line. If 'mark'
-        is True, also selects the text from the current position
-        to the beginning.
-
-    cut()
-        Copies the selected text to the clipboard, then deletes
-        the selected text from the line edit.
-
-    copy()
-        Copies the selected text to the clipboard.
-
-    paste()
-        Inserts the contents of the clipboard into the line edit,
-        replacing any selected text.
-
-    insert(text)
-        Inserts the given text at the current cursor position,
-        replacing any selected text.
-
-    undo()
-        Undoes the last operation.
-
-    redo()
-        Redoes the last operation.
+    Among many other attributes, a Field accepts a converter object
+    which allows any arbitrary python object to be displayed and edited
+    by the Field.
 
     """
+    #: The maximum length of the field in characters.
     max_length = Int
 
+    #: An event fired when the max length has been reached.
     max_length_reached = Event
 
+    #: Whether or not the field is read only.
     read_only = Bool
 
+    #: The position of the cursor in the field.
     cursor_position = Int
 
+    #: A read only property that is set to True if the user has changed
+    #: the line edit from the ui, False otherwise. This is reset to
+    #: False if the text is programmatically changed.
     modified = Property(Bool, depends_on='_modified')
 
+    #: The grayed-out text to display if 'value' is empty and the
+    #: widget doesn't have focus.
     placeholder_text = Str
 
+    #: A converter object for converting values to and from the component
+    #: The default is basic str(...) conversion.
     converter = Instance(Converter, factory=StringConverter)
 
+    #: The Python value to display in the field.
     value = Any
 
+    #: A read only property that is updated with the text selected
+    #: in the field.
     selected_text = Property(Str, depends_on='_selected_text')
 
+    #: Fired when the text is changed programmatically, or by the
+    #: user via the ui. The args object will contain the text.
     text_changed = Event
 
+    #: Fired when the text is changed by the user explicitly through
+    #: the ui and not programmatically. The args object will contain
+    #: the text.
     text_edited = Event
 
+    #: Fired when the return/enter key is pressed in the line edit.
     return_pressed = Event
 
+    #: An internal attribute that is used by the implementation object
+    #: to update the value of 'modified'.
     _modified = Bool(False)
 
+    #: An internal attribute that is used by the implementation object
+    #: to update the value of 'selected_text'.
     _selected_text = Str
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    toolkit_impl = Instance(IFieldImpl)
+    #--------------------------------------------------------------------------
+    abstract_widget = Instance(AbstractTkField)
 
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.
@@ -228,12 +173,8 @@ class Field(Control):
         end : Int
             The end selection index, zero based.
 
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.set_selection(start, end)
+        self.abstract_widget.set_selection(start, end)
 
     def select_all(self):
         """ Select all the text in the line edit.
@@ -241,44 +182,20 @@ class Field(Control):
         If there is no text in the line edit, the selection will be
         empty.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.select_all()
+        self.abstract_widget.select_all()
 
     def deselect(self):
         """ Deselect any selected text.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.deselect()
+        self.abstract_widget.deselect()
 
     def clear(self):
         """ Clear the line edit of all text.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.clear()
+        self.abstract_widget.clear()
 
     def backspace(self):
         """ Simple backspace functionality.
@@ -286,16 +203,8 @@ class Field(Control):
         If no text is selected, deletes the character to the left
         of the cursor. Otherwise, it deletes the selected text.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.backspace()
+        self.abstract_widget.backspace()
 
     def delete(self):
         """ Simple delete functionality.
@@ -303,16 +212,8 @@ class Field(Control):
         If no text is selected, deletes the character to the right
         of the cursor. Otherwise, it deletes the selected text.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.delete()
+        self.abstract_widget.delete()
 
     def end(self, mark=False):
         """ Moves the cursor to the end of the line.
@@ -323,12 +224,8 @@ class Field(Control):
             If True, select the text from the current position to
             the end of the line edit. Defaults to False.
 
-        Returns
-        -------
-        results : None
-
         """
-        self.toolkit_impl.end(mark=mark)
+        self.abstract_widget.end(mark=mark)
 
     def home(self, mark=False):
         """ Moves the cursor to the beginning of the line.
@@ -339,12 +236,8 @@ class Field(Control):
             If True, select the text from the current position to
             the beginning of the line edit. Defaults to False.
 
-        Returns
-        -------
-        results : None
-
         """
-        self.toolkit_impl.home(mark=mark)
+        self.abstract_widget.home(mark=mark)
 
     def cut(self):
         """ Cuts the selected text from the line edit.
@@ -352,30 +245,14 @@ class Field(Control):
         Copies the selected text to the clipthen deletes the selected
         text from the line edit.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.cut()
+        self.abstract_widget.cut()
 
     def copy(self):
         """ Copies the selected text to the clipboard.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.copy()
+        self.abstract_widget.copy()
 
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
@@ -383,16 +260,8 @@ class Field(Control):
         Inserts the contents of the clipboard into the line edit at
         the current cursor position, replacing any selected text.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.paste()
+        self.abstract_widget.paste()
 
     def insert(self, text):
         """ Insert the text into the line edit.
@@ -405,41 +274,24 @@ class Field(Control):
         text : str
             The text to insert into the line edit.
 
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.insert(text)
+        self.abstract_widget.insert(text)
 
     def undo(self):
         """ Undoes the last operation.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.undo()
+        self.abstract_widget.undo()
 
     def redo(self):
         """ Redoes the last operation.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.redo()
+        self.abstract_widget.redo()
 
+    #--------------------------------------------------------------------------
+    # Property methods 
+    #--------------------------------------------------------------------------
     def _get_modified(self):
         """ The property getter for the 'modified' attribute.
 
@@ -451,9 +303,4 @@ class Field(Control):
 
         """
         return self._selected_text
-
-
-Field.protect('max_length_reached', 'modified', 'selected_text',
-              'text_changed', 'text_edited', 'return_pressed',
-              '_modified', '_selected_text')
 

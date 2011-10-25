@@ -1,20 +1,20 @@
-from traits.api import HasTraits, implements
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from ..layout_item import AbstractTkLayoutItem
 
-from ...layout.layout_item import ILayoutItemImpl
 
-
-class QtLayoutItem(HasTraits):
+class QtLayoutItem(AbstractTkLayoutItem):
     """ A mixin class for Qt components that implements the proper
     methods for a layout item.
 
     """
-    implements(ILayoutItemImpl)
-    
     def size(self):
         return (self.widget.width(), self.widget.height())
     
     def resize(self, width, height):
-        self.resize(width, height)
+        self.widget.resize(width, height)
     
     def pos(self):
         return (self.widget.x(), self.widget.y())

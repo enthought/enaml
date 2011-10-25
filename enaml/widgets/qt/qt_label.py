@@ -2,29 +2,21 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import implements
-
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..label import ILabelImpl
+from ..label import AbstractTkLabel
 
 
-class QtLabel(QtControl):
+class QtLabel(QtControl, AbstractTkLabel):
     """ A Qt implementation of Label.
 
     A QtLabel displays static text using a QLabel control.
 
-    See Also
-    --------
-    Label
-
     """
-    implements(ILabelImpl)
-
-    #---------------------------------------------------------------------------
-    # ILabelImpl interface 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying text control.
 
@@ -35,18 +27,23 @@ class QtLabel(QtControl):
         """ Initializes the attributes on the underlying control.
 
         """
-        self.set_label(self.parent.text) 
+        super(QtLabel, self).initialize_widget()
+        self.set_label(self.shell_widget.text)
 
-    def parent_text_changed(self, text):
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant for
         public consumption.
 
         """
         self.set_label(text)
+        # XXX we might need a relayout call here when the text changes
+        # since it's width may have changed and the size hint may 
+        # now be different. We probably want to make it configurable
+        # though since fixed width labels don't need a relayout
 
-    #---------------------------------------------------------------------------
-    # Widget update
-    #---------------------------------------------------------------------------
     def set_label(self, label):
         """ Sets the label on the underlying control. Not meant for
         public consumption.

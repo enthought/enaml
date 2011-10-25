@@ -69,7 +69,10 @@ from ..exceptions import EnamlRuntimeError
     # jump to the op_arg instruction index
     JUMP_ABSOLUTE,
 
-) = range(17)
+    # rotate the top two items in the stack
+    ROT_TWO,
+
+) = range(18)
 
 
 class _NullComponent(object):
@@ -152,7 +155,7 @@ def evalcode(instructions, global_ns, local_ns):
 
         op, op_arg = instructions[idx]
 
-        # Push globals()[op_arg]
+        # Push globals_closure()[op_arg]
         if op == LOAD_GLOBAL:
             try:
                 obj = global_ns[op_arg]
@@ -166,7 +169,7 @@ def evalcode(instructions, global_ns, local_ns):
                         raise NameError('name `%s` is not defined' % op_arg)
             push(obj)
             
-        # Push locals()[op_arg]
+        # Push locals_closure()[op_arg]
         elif op == LOAD_LOCAL:
             try:
                 obj = local_ns[op_arg]
@@ -253,7 +256,10 @@ def evalcode(instructions, global_ns, local_ns):
 
         # Return values should always be iterable and the element
         # to which we are returning should be a single element
-        # sequence
+        # sequence.
+        #
+        # XXX - I'm not sure I like the fact we're directly calling
+        # the 'add_child' method here on the element.
         elif op == RETURN_RESULTS:
             results = pop()
             element = pop()
@@ -294,6 +300,13 @@ def evalcode(instructions, global_ns, local_ns):
         elif op == JUMP_ABSOLUTE:
             idx = op_arg
             continue
+
+        # Rotate the top two items in the stack
+        elif op == ROT_TWO:
+            first = pop()
+            second = pop()
+            push(first)
+            push(second)
 
         else:
             raise ValueError('Invalid VM op')

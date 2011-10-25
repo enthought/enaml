@@ -2,14 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import implements
-
 from .qt_control import QtControl
 
-from ..toggle_control import IToggleControlImpl
+from ..toggle_control import AbstractTkToggleControl
 
 
-class QtToggleControl(QtControl):
+class QtToggleControl(QtControl, AbstractTkToggleControl):
     """ A base class for Qt toggle widgets.
 
     This class can serve as a base class for widgets that implement
@@ -17,77 +15,64 @@ class QtToggleControl(QtControl):
     to be used directly. Subclasses should implement the 'create_widget'
     method.
 
-    See Also
-    --------
-    IToggleElement
-
     """
-    implements(IToggleControlImpl)
-
-    #---------------------------------------------------------------------------
-    # IToggleControlImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def initialize_widget(self):
         """ Initializes the attributes of the underlying control. Not
         meant for public consumption.
 
         """
-        parent = self.parent
-        self.set_label(parent.text)
-        self.set_checked(parent.checked)
-        self.bind()
-
-    def parent_checked_changed(self, checked):
+        super(QtToggleControl, self).initialize_widget()
+        shell = self.shell_widget
+        self.set_label(shell.text)
+        self.set_checked(shell.checked)
+    
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell_checked_changed(self, checked):
         """ The change handler for the 'checked' attribute. Not meant
         for public consumption.
 
         """
         self.set_checked(checked)
 
-    def parent_text_changed(self, text):
+    def shell_text_changed(self, text):
         """ The change handler for the 'text' attribute. Not meant
         for public consumption.
 
         """
         self.set_label(text)
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    def bind(self):
-        """ Binds the event handlers of the control. Must be implemented
-        by subclasses.
-
-        """
-        raise NotImplementedError
-
     def on_toggled(self):
         """ The event handler for the toggled event. Not meant for
         public consumption.
 
         """
-        parent = self.parent
-        parent.checked = self.widget.isChecked()
-        parent.toggled = True
+        shell = self.shell_widget
+        shell.checked = self.widget.isChecked()
+        shell.toggled = True
 
     def on_pressed(self):
         """ The event handler for the pressed event. Not meant for
         public consumption.
 
         """
-        parent = self.parent
-        parent._down = True
-        parent.pressed = True
+        shell = self.shell_widget
+        shell._down = True
+        shell.pressed = True
 
     def on_released(self):
         """ The event handler for the released event. Not meant for
         public consumption.
 
         """
-        parent = self.parent
-        if parent._down:
-            parent._down = False
-            parent.released = True
+        shell = self.shell_widget
+        if shell._down:
+            shell._down = False
+            shell.released = True
 
     def set_label(self, label):
         """ Sets the widget's label with the provided value. Not 

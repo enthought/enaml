@@ -3,12 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
+from .qt_bounded_date import QtBoundedDate
 
-from traits.api import implements
-
-from .qt_control import QtControl
-
-from ..calendar import ICalendarImpl
+from ..calendar import AbstractTkCalendar
 
 
 # Workaround for an incompatibility between PySide and PyQt
@@ -18,60 +15,27 @@ except AttributeError: # pragma: no cover
     qdate_to_python = QtCore.QDate.toPyDate
 
 
-class QtCalendar(QtControl):
+class QtCalendar(QtBoundedDate, AbstractTkCalendar):
     """ A Qt implementation of Calendar.
 
-    See Also
-    --------
-    Calendar
-
     """
-    implements(ICalendarImpl)
-
-    #---------------------------------------------------------------------------
-    # ICalendarImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying QtCalendarWidget.
 
         """
         self.widget = QtGui.QCalendarWidget(self.parent_widget())
 
-    def initialize_widget(self):
-        """ Initializes the attributes of the control.
-
-        """
-        parent = self.parent
-        self.set_minimum_date(parent.minimum_date)
-        self.set_maximum_date(parent.maximum_date)
-        self.set_date(parent.date)
-        self.connect()
-
-    def parent_date_changed(self, date):
-        """ The change handler for the 'date' attribute.
-
-        """
-        self.set_date(date)
-
-    def parent__minimum_date_changed(self, date):
-        """ The change handler for the 'minimum_date' attribute.
-
-        """
-        self.set_minimum_date(date)
-
-    def parent__maximum_date_changed(self, date):
-        """ The change handler for the 'maximum_date' attribute.
-
-        """
-        self.set_maximum_date(date)
-
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Implementation
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def connect(self):
         """ Binds the event handlers for the calendar widget.
 
         """
+        super(QtCalendar, self).connect()
         widget = self.widget
         widget.activated.connect(self.on_date_activated)
         widget.selectionChanged.connect(self.on_date_selected)
@@ -80,16 +44,17 @@ class QtCalendar(QtControl):
         """ The event handler for the calendar's activation event.
 
         """
-        parent = self.parent
+        shell = self.shell_widget
         date = qdate_to_python(qdate)
-        parent.date = date
-        parent.activated = date
+        shell.date = date
+        shell.activated = date
 
     def on_date_selected(self):
         """ The event handler for the calendar's selection event.
 
         """
-        self.parent.selected = self.get_date()
+        date = qdate_to_python(self.widget.selectedDate())
+        self.shell_widget.selected = date
 
     def set_date(self, date):
         """ Sets and validates the component date on the widget.
@@ -97,21 +62,15 @@ class QtCalendar(QtControl):
         """
         self.widget.setSelectedDate(date)
 
-    def set_minimum_date(self, date):
+    def set_min_date(self, min_date):
         """ Sets the minimum date on the widget with the provided value.
 
         """
-        self.widget.setMinimumDate(date)
+        self.widget.setMinimumDate(min_date)
 
-    def set_maximum_date(self, date):
+    def set_max_date(self, max_date):
         """ Sets the maximum date on the widget with the provided value.
 
         """
-        self.widget.setMaximumDate(date)
+        self.widget.setMaximumDate(max_date)
 
-    def get_date(self):
-        """ Get the active widget date.
-
-        """
-        qdate = self.widget.selectedDate()
-        return qdate_to_python(qdate)

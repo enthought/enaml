@@ -1,29 +1,43 @@
-from traits.api import HasTraits, Instance, Property, List, Interface
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from abc import ABCMeta, abstractmethod
+from traits.api import HasTraits, Instance, Property, List
 
-from .box_model import BoxModel
-from .symbolics import LinearConstraint
+from ..layout.box_model import BoxModel
+from ..layout.symbolics import LinearConstraint
 
 
-class ILayoutItemImpl(Interface):
+class AbstractTkLayoutItem(object):
 
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
     def size(self):
         raise NotImplementedError
     
+    @abstractmethod
     def resize(self, width, height):
         raise NotImplementedError
     
+    @abstractmethod
     def pos(self):
         raise NotImplementedError
     
+    @abstractmethod
     def move(self, x, y):
         raise NotImplementedError
     
+    @abstractmethod
     def geometry(self):
         raise NotImplementedError
     
+    @abstractmethod
     def set_geometry(self, x, y, width, height):
         raise NotImplementedError
 
+    @abstractmethod
     def size_hint(self):
         raise NotImplementedError
 
@@ -79,23 +93,23 @@ class LayoutItem(HasTraits):
         return self._box_model.h_center
     
     def size(self):
-        return self.toolkit_impl.size()
+        return self.abstract_widget.size()
     
     def resize(self, width, height):
-        self.toolkit_impl.resize(width, height)
+        self.abstract_widget.resize(width, height)
     
     def pos(self):
-        return self.toolkit_impl.pos()
+        return self.abstract_widget.pos()
     
     def move(self, x, y):
-        self.toolkit_impl.move(x, y)
+        self.abstract_widget.move(x, y)
     
     def geometry(self):
-        return self.toolkit_impl.geometry()
+        return self.abstract_widget.geometry()
     
     def set_geometry(self, x, y, width, height):
-        self.toolkit_impl.set_geometry(x, y, width, height)
+        self.abstract_widget.set_geometry(x, y, width, height)
 
     def size_hint(self):
-        return self.toolkit_impl.size_hint()
+        return self.abstract_widget.size_hint()
 

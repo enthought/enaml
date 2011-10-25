@@ -2,23 +2,29 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import abstractmethod
+
 from traits.api import List, Any, Event, Callable, Instance
 
-from .control import Control, IControlImpl
+from .control import Control, AbstractTkControl
 
 
-class IComboBoxImpl(IControlImpl):
+class AbstractTkComboBox(AbstractTkControl):
 
-    def parent_items_changed(self, items):
+    @abstractmethod
+    def shell_items_changed(self, items):
         raise NotImplementedError
-    
-    def parent_value_changed(self, value):
+
+    @abstractmethod
+    def shell_items_items_changed(self, items):
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_value_changed(self, value):
         raise NotImplementedError
         
-    def parent_items_items_changed(self, items_event):
-        raise NotImplementedError
-
-    def parent_to_string_changed(self, to_string):
+    @abstractmethod
+    def shell_to_string_changed(self, to_string):
         raise NotImplementedError
     
 
@@ -62,11 +68,11 @@ class ComboBox(Control):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    toolkit_impl = Instance(IComboBoxImpl)
+    abstract_widget = Instance(AbstractTkComboBox)
     
+    # XXX we need to have the items handler here because the 
+    # .add_trait_listener call does not add items event handlers
+    # properly
     def _items_items_changed(self, items):
-        self.toolkit_impl.parent_items_items_changed(items)
-
-
-ComboBox.protect('selected')
+        self.abstract_widget.shell_items_items_changed(items)
 

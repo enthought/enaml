@@ -4,28 +4,24 @@
 #------------------------------------------------------------------------------
 from qt import QtGui
 
-from traits.api import implements, Bool
-
 from .qt_control import QtControl
-from ..field import IFieldImpl
+
+from ..field import AbstractTkField
 
 
-class QtField(QtControl):
-    """ A Qt implementation of a LineEdit.
+class QtField(QtControl, AbstractTkField):
+    """ A Qt implementation of a Field.
 
-    The LineEdit uses a QLineEdit and provides a single line of
-    editable text.
-
-    See Also
-    --------
-    LineEdit
+    QtField uses a QLineEdit to provides a single line of editable text.
 
     """
-    implements(IFieldImpl)
+    # A flag which set to True when we're applying updates to the 
+    # model. Allows us to avoid unnecessary notification recursion.
+    setting_value = False
 
-    #---------------------------------------------------------------------------
-    # ILineEditImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # SetupMethods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying QLineEdit.
 
@@ -36,65 +32,65 @@ class QtField(QtControl):
         """ Initializes the attributes of the Qt widget.
 
         """
-        parent = self.parent
-        self.set_read_only(parent.read_only)
-        self.set_placeholder_text(parent.placeholder_text)
-        if parent.value:
+        super(QtField, self).initialize_widget()
+        shell = self.shell_widget
+        self.set_read_only(shell.read_only)
+        self.set_placeholder_text(shell.placeholder_text)
+        if shell.value:
             self.update_text()
-        parent._modified = False
-        self.set_cursor_position(parent.cursor_position)
+        shell._modified = False
+        self.set_cursor_position(shell.cursor_position)
         
-        max_length = parent.max_length
+        max_length = shell.max_length
         if max_length:
             self.set_max_length(max_length)
-        self.bind()
 
-    def parent_max_length_changed(self, max_length):
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell_max_length_changed(self, max_length):
         """ The change handler for the 'max_length' attribute on the 
         parent.
 
         """
         self.set_max_length(max_length)
 
-    def parent_read_only_changed(self, read_only):
+    def shell_read_only_changed(self, read_only):
         """ The change handler for the 'read_only' attribute on the
         parent.
 
         """
         self.set_read_only(read_only)
 
-    def parent_placeholder_text_changed(self, placeholder_text):
-        """ The change handler for the 'placeholder_text' attribute
-        on the parent.
-
-        """
-        self.set_placeholder_text(placeholder_text)
-
-    def parent_cursor_position_changed(self, cursor_position):
+    def shell_cursor_position_changed(self, cursor_position):
         """ The change handler for the 'cursor_position' attribute on 
         the parent.
 
         """
         if not self.setting_value:
             self.set_cursor_position(cursor_position)
-    
-    def parent_converter_changed(self, converter):
+
+    def shell_placeholder_text_changed(self, placeholder_text):
+        """ The change handler for the 'placeholder_text' attribute
+        on the parent.
+
+        """
+        self.set_placeholder_text(placeholder_text)
+
+    def shell_converter_changed(self, converter):
         """ Handles the converter object on the parent changing.
 
         """
-        # to_string
         self.update_text()
-        
-        # from_string
-        self.on_text_updated(None)
+        self.on_text_updated(None) # XXX - this is a bit smelly
     
-    def parent_value_changed(self, value):
+    def shell_value_changed(self, value):
         """ The change handler for the 'value' attribute on the parent.
 
         """
         if not self.setting_value:
             self.update_text()
-            self.parent._modified = False
+            self.shell_widget._modified = False
 
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
@@ -102,7 +98,7 @@ class QtField(QtControl):
 
         """
         self.widget.setSelection(start, end - start)
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def select_all(self):
         """ Select all the text in the line edit.
@@ -112,7 +108,7 @@ class QtField(QtControl):
 
         """
         self.widget.selectAll()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def deselect(self):
         """ Deselect any selected text.
@@ -122,14 +118,14 @@ class QtField(QtControl):
 
         """
         self.widget.deselect()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def clear(self):
         """ Clear the line edit of all text.
 
         """
         self.widget.clear()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def backspace(self):
         """ Simple backspace functionality.
@@ -139,7 +135,7 @@ class QtField(QtControl):
 
         """
         self.widget.backspace()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def delete(self):
         """ Simple delete functionality.
@@ -149,7 +145,7 @@ class QtField(QtControl):
 
         """
         self.widget.del_()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def end(self, mark=False):
         """ Moves the cursor to the end of the line.
@@ -168,7 +164,7 @@ class QtField(QtControl):
             widget.setSelection(start, end)
         else:
             widget.end(mark)
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def home(self, mark=False):
         """ Moves the cursor to the beginning of the line.
@@ -187,7 +183,7 @@ class QtField(QtControl):
             widget.setSelection(start, end)
         else:
             widget.home(mark)
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def cut(self):
         """ Cuts the selected text from the line edit.
@@ -197,14 +193,14 @@ class QtField(QtControl):
 
         """
         self.widget.cut()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def copy(self):
         """ Copies the selected text to the clipboard.
 
         """
         self.widget.copy()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
@@ -214,7 +210,7 @@ class QtField(QtControl):
 
         """
         self.widget.paste()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def insert(self, text):
         """ Insert the text into the line edit.
@@ -229,35 +225,28 @@ class QtField(QtControl):
 
         """
         self.widget.insert(text)
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def undo(self):
         """ Undoes the last operation.
 
         """
         self.widget.undo()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
     def redo(self):
         """ Redoes the last operation
 
         """
         self.widget.redo()
-        self.update_parent_selection()
+        self.update_shell_selection()
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    # A flag which set to True when we're applying updates to the 
-    # model. Allows us to avoid unnecessary notification recursion.
-    setting_value = Bool(False)
-
-    def bind(self):
+    def connect(self):
         """ Binds the event handlers for the QLineEdit.
 
         """
+        super(QtField, self).connect()
         widget = self.widget
-        #widget.Bind(wx.EVT_TEXT_MAXLEN, self.on_max_length)
         widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
         widget.returnPressed.connect(self.on_text_enter)
         widget.selectionChanged.connect(self.on_selection)
@@ -267,52 +256,52 @@ class QtField(QtControl):
 
         """
         widget = self.widget
-        parent = self.parent
+        shell = self.shell_widget
         text = widget.text()
         self.setting_value = True
         try:
-            value = parent.converter.from_component(text)
+            value = shell.converter.from_component(text)
         except Exception as e:
-            parent.exception = e
-            parent.error = True
+            shell.exception = e
+            shell.error = True
         else:
-            parent.exception = None
-            parent.error = False
-            parent.value = value
+            shell.exception = None
+            shell.error = False
+            shell.value = value
         self.setting_value = False
-        self.update_parent_selection()
-        parent.text_edited = text
-        parent._modified = True
-        parent.text_changed = text
+        self.update_shell_selection()
+        shell.text_edited = text
+        shell._modified = True
+        shell.text_changed = text
 
     def on_text_enter(self):
         """ The event handler for the return pressed event.
 
         """
-        self.parent.return_pressed = True
+        self.shell_widget.return_pressed = True
 
     def on_max_length(self, event):
         """ The event handler for the max length event.
 
         """
-        self.parent.max_length_reached = True
+        self.shell_widget.max_length_reached = True
 
     def on_selection(self):
         """ The event handler for a selection (really a left up) event.
 
         """
-        self.update_parent_selection()
+        self.update_shell_selection()
 
-    def update_parent_selection(self):
+    def update_shell_selection(self):
         """ Updates the selection and cursor position of the parent
         to reflect the current state of the widget.
 
         """
-        parent = self.parent
+        shell = self.shell_widget
         widget = self.widget
-        parent._selected_text = widget.selectedText()
+        shell._selected_text = widget.selectedText()
         self.setting_value = True
-        parent.cursor_position = widget.cursorPosition()
+        shell.cursor_position = widget.cursorPosition()
         self.setting_value = False
 
     def update_text(self):
@@ -320,15 +309,15 @@ class QtField(QtControl):
         sets the error state on the parent if the conversion fails.
 
         """
-        parent = self.parent
+        shell = self.shell_widget
         try:
-            text = parent.converter.to_component(parent.value)
+            text = shell.converter.to_component(shell.value)
         except Exception as e:
-            parent.exception = e
-            parent.error = True
+            shell.exception = e
+            shell.error = True
         else:
-            parent.exception = None
-            parent.error = False
+            shell.exception = None
+            shell.error = False
             self.change_text(text)
 
     def change_text(self, text):
@@ -352,6 +341,9 @@ class QtField(QtControl):
         self.widget.setReadOnly(read_only)
 
     def set_placeholder_text(self, placeholder_text):
+        """ Sets the placeholder text in the widget.
+
+        """
         self.widget.setPlaceholderText(placeholder_text)
 
     def set_cursor_position(self, cursor_position):

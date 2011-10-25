@@ -2,27 +2,31 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import abstractmethod
+
 from traits.api import Instance
 from enable.component import Component as EnableComponent
 
-from .control import Control, IControlImpl
+from .control import Control, AbstractTkControl
 
 
-class IEnableCanvasImpl(IControlImpl):
+class AbstractTkEnableCanvas(AbstractTkControl):
 
-    def parent_component_changed(self, component):
+    @abstractmethod
+    def shell_component_changed(self, component):
         raise NotImplementedError
 
 
 class EnableCanvas(Control):
-    """ An Enable widget.
+    """ An Enable canvas widget that will draw any Enable Component
+    object.
     
     """
-    # An enable component
+    #: The enable.component.Component instance to draw.
     component = Instance(EnableComponent)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    toolkit_impl = Instance(IEnableCanvasImpl)
+    #--------------------------------------------------------------------------
+    abstract_widget = Instance(AbstractTkEnableCanvas)
 

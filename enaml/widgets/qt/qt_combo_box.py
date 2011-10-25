@@ -4,28 +4,20 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui
 
-from traits.api import implements
-
 from .qt_control import QtControl
 
-from ..combo_box import IComboBoxImpl
+from ..combo_box import AbstractTkComboBox
 
 
-class QtComboBox(QtControl):
+class QtComboBox(QtControl, AbstractTkComboBox):
     """ A Qt implementation of ComboBox.
 
     Use a combo box to select a single item from a collection of items. 
-    
-    See Also
-    --------
-    ComboBox
 
     """
-    implements(IComboBoxImpl)
-
-    #---------------------------------------------------------------------------
-    # IComboBoxImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates a QComboBox.
 
@@ -36,55 +28,65 @@ class QtComboBox(QtControl):
         """ Intializes the widget with the attributes of this instance.
 
         """
-        self.items_changed()
-        self.bind()
+        super(QtComboBox, self).initialize_widget()
+        self.update_items()
     
-    def parent_value_changed(self, value):
-        """ The change handler for the 'value' attribute on the parent.
-
-        """
-        self.set_value(value)
-
-    def parent_to_string_changed(self, value):
-        """ The change handler for the 'string' attribute on the parent.
-
-        """
-        self.items_changed()
-        
-    def parent_items_items_changed(self, items):
-        """ The change handler for the 'items' event of the 'items'
-        attribute on the parent.
-        
-        """
-        self.items_changed()
-    
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Implementation
-    #---------------------------------------------------------------------------
-    def items_changed(self):
-        """ Update the QComboBox with items from `parent`.
+    #--------------------------------------------------------------------------
+    def shell_value_changed(self, value):
+        """ The change handler for the 'value' attribute on the 
+        shell widget.
+
+        """
+        self.set_value(self.shell_widget.to_string(value))
+
+    def shell_to_string_changed(self, value):
+        """ The change handler for the 'string' attribute on the 
+        shell widget.
+
+        """
+        self.update_items()
+    
+    def shell_items_changed(self, items):
+        """ The change handler of the 'items' attribute on the shell
+        widget.
+
+        """
+        self.update_items()
+
+    def shell_items_items_changed(self, items):
+        """ The change handler for the 'items' event of the 'items'
+        attribute on the shell widget.
         
         """
-        parent = self.parent
-        str_items = map(parent.to_string, parent.items)
-        self.set_items(str_items)
-        self.set_value(parent.value)
-
-    def bind(self):
-        """ Binds the event handlers for the combo box.
+        self.update_items()
+    
+    def connect(self):
+        """ Connects the event handlers for the combo box.
 
         """
+        super(QtComboBox, self).connect()
         self.widget.currentIndexChanged.connect(self.on_selected)
+
+    def update_items(self):
+        """ Update the QComboBox with items from the shell widget.
+        
+        """
+        shell = self.shell_widget
+        str_items = map(shell.to_string, shell.items)
+        self.set_items(str_items)
+        self.set_value(shell.to_string(shell.value))
 
     def on_selected(self):
         """ The event handler for a combo box selection event.
 
         """
-        parent = self.parent
+        shell = self.shell_widget
         idx = self.widget.currentIndex()
-        value = parent.items[idx]
-        parent.value = value
-        parent.selected = value
+        value = shell.items[idx]
+        shell.value = value
+        shell.selected = value
 
     def set_items(self, str_items):
         """ Sets the items in the combo box.
@@ -94,13 +96,12 @@ class QtComboBox(QtControl):
         widget.clear()
         widget.addItems(str_items)
 
-    def set_value(self, value):
+    def set_value(self, str_value):
         """ Sets the value in the combo box, or resets the combo box
         if the value is not in the list of items.
 
         """
         widget = self.widget
-        str_value = self.parent.to_string(value)
         index = widget.findText(str_value)
         widget.setCurrentIndex(index)
 

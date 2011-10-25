@@ -6,7 +6,7 @@ from traits.api import Bool, Event, Instance
 
 from .stacked_group import IStackedGroupImpl, StackedGroup
 
-
+# XXX - punt on this for now
 class ITabGroupImpl(IStackedGroupImpl):
 
     def parent_movable_changed(self, movable):

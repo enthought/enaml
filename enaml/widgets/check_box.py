@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance
 
-from .toggle_control import ToggleControl, IToggleControlImpl
+from .toggle_control import ToggleControl, AbstractTkToggleControl
 
 
-class ICheckBoxImpl(IToggleControlImpl):
+class AbstractTkCheckBox(AbstractTkToggleControl):
     pass
 
 
@@ -27,5 +27,5 @@ class CheckBox(ToggleControl):
     #---------------------------------------------------------------------------
     # Overridden parent class traits
     #---------------------------------------------------------------------------
-    toolkit_impl = Instance(ICheckBoxImpl)
+    abstract_widget = Instance(AbstractTkCheckBox)
 

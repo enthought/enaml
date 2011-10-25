@@ -6,7 +6,7 @@ from traits.api import Int, Property, Instance, List
 
 from .container import IContainerImpl, Container
 
-
+# XXX - punt on this for now
 class IStackedGroupImpl(IContainerImpl):
 
     def parent_current_index_changed(self, current_index):

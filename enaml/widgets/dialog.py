@@ -8,6 +8,7 @@ from .window import IWindowImpl, Window
 
 from ..enums import DialogResult
 
+# XXX punting for now
 
 class IDialogImpl(IWindowImpl):
 

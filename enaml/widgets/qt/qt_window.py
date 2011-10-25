@@ -4,31 +4,23 @@
 #------------------------------------------------------------------------------
 from .qt import QtCore, QtGui
 
-from traits.api import implements, Instance
-
 from .qt_component import QtComponent
 
-from ..window import IWindowImpl
+from ..window import AbstractTkWindow
 
 from ...enums import Modality
 
 
-class QtWindow(QtComponent):
+class QtWindow(QtComponent, AbstractTkWindow):
     """ A Qt implementation of a Window.
 
     QtWindow uses a QFrame to create a simple top level window which
     contains other child widgets and layouts.
 
-    See Also
-    --------
-    Window
-
     """
-    implements(IWindowImpl)
-
-    #---------------------------------------------------------------------------
-    # IWindowImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying QWindow control.
 
@@ -39,10 +31,13 @@ class QtWindow(QtComponent):
         """ Intializes the attributes on the QWindow.
 
         """
-        self.set_title(self.parent.title)
-        self.set_modality(self.parent.modality)
+        super(QtWindow, self).initialize_widget()
+        shell = self.shell_widget
+        self.set_title(shell.title)
+        self.set_modality(shell.modality)
 
     def initialize_layout(self):
+        super(QtWindow, self).initialize_layout()
         layout = QtGui.QVBoxLayout()
         for child in self.child_widgets():
             if isinstance(child, QtGui.QLayout):
@@ -51,6 +46,9 @@ class QtWindow(QtComponent):
                 layout.addWidget(child, 1)
         self.widget.setLayout(layout)
 
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
     def show(self):
         """ Displays the window to the screen.
         
@@ -65,23 +63,20 @@ class QtWindow(QtComponent):
         if self.widget:
             self.widget.hide()
 
-    def parent_title_changed(self, title):
+    def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute. Not meant for 
         public consumption.
 
         """
         self.set_title(title)
     
-    def parent_modality_changed(self, modality):
+    def shell_modality_changed(self, modality):
         """ The change handler for the 'modality' attribute. Not meant 
         for public consumption.
 
         """
         self.set_modality(modality)
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
     def set_title(self, title):
         """ Sets the title of the QFrame. Not meant for public 
         consumption.
