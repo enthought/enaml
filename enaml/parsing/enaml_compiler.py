@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from . import enaml_ast
+from . import enaml_ast, imports
 from .virtual_machine import (LOAD_GLOBAL, LOAD_LOCAL, LOAD_CONST,
                               LOAD_GLOBALS_CLOSURE, LOAD_LOCALS_CLOSURE, 
                               GET_ITEM, STORE_LOCAL, EVAL, CALL, DUP_TOP,
@@ -652,8 +652,11 @@ class EnamlCompiler(object):
         # it's a mapping type and not a real dictionary.
         # The effect is the same.
         code = compile(node.py_ast, 'Enaml', mode='exec')
-        exec(code, self.global_ns)
-    
+        # Enable the Enaml import hook to allow inter-enaml imports if they have
+        # not been already.
+        with imports():
+            exec(code, self.global_ns)
+
     def visit_EnamlDefine(self, node):
         """ The definition node visitory. Used internally by the 
         compiler.
@@ -696,4 +699,4 @@ class EnamlCompiler(object):
         # add to the global_ns and is thus an importable object
         self.global_ns[name] = definition
 
-        
+
