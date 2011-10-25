@@ -14,11 +14,17 @@ class EnamlImporter(object):
     the import of enaml files using the normal Python import machinery.
 
     """
+
+    # Count the number of times this importer has been installed. Only uninstall
+    # it when this count hits 0 again. This permits nesting.
+    install_count = 0
+
     @classmethod
     def install(cls):
         """ Appends this importer into sys.meta_path.
 
         """
+        cls.install_count += 1
         if cls not in sys.meta_path:
             sys.meta_path.append(cls)
     
@@ -27,7 +33,8 @@ class EnamlImporter(object):
         """ Removes this importer from sys.meta_path.
 
         """
-        if cls in sys.meta_path:
+        cls.install_count -= 1
+        if cls.install_count <= 0 and cls in sys.meta_path:
             sys.meta_path.remove(cls)
 
     @classmethod
