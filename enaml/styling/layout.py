@@ -29,7 +29,7 @@ class Alignment(int):
     VCENTER = 0x40
 
     CENTER = VCENTER | HCENTER
-    
+
     HORIZONTAL_MASK = LEFT | RIGHT | HCENTER | JUSTIFY
 
     VERTICAL_MASK = TOP | BOTTOM | VCENTER
@@ -50,19 +50,19 @@ class Alignment(int):
                 parts.append('right')
             elif self & self.JUSTIFY:
                 parts.append('justify')
-            
+
             if self & self.BOTTOM:
                 parts.append('bottom')
             elif self & self.TOP:
                 parts.append('top')
-            
+
             if self & self.HCENTER and self & self.VCENTER:
                 parts.append('center')
             elif self & self.HCENTER:
                 parts.append('hcenter')
             elif self & self.VCENTER:
                 parts.append('vcenter')
-            
+
         return 'Alignment(%s)' % ' | '.join(parts)
 
     def __str__(self):
@@ -70,27 +70,31 @@ class Alignment(int):
 
     def default(self):
         return Alignment()
-    
+
     def left(self):
         val = (self & ~self.HORIZONTAL_MASK) | self.LEFT
         return Alignment(val)
 
     def right(self):
-        val = (self & ~self.HORIZONTAL_MASK) | self.RIGHT 
+        val = (self & ~self.HORIZONTAL_MASK) | self.RIGHT
         return Alignment(val)
-    
+
     def hcenter(self):
         val = (self & ~self.HORIZONTAL_MASK) | self.HCENTER
         return Alignment(val)
 
-    def top(self):
-        val = (self & ~self.VERTICAL_MASK) | self.TOP 
+    def justify(self):
+        val = (self & ~self.HORIZONTAL_MASK) | self.JUSTIFY
         return Alignment(val)
-     
+
+    def top(self):
+        val = (self & ~self.VERTICAL_MASK) | self.TOP
+        return Alignment(val)
+
     def bottom(self):
         val = (self & ~self.VERTICAL_MASK) | self.BOTTOM
         return Alignment(val)
-    
+
     def vcenter(self):
         val = (self & ~self.VERTICAL_MASK) | self.VCENTER
         return Alignment(val)
@@ -99,11 +103,12 @@ class Alignment(int):
         return Alignment(self.CENTER)
 
 
+
 class AlignmentTrait(StyleTrait):
 
     def create_default(self, obj, name):
         return Alignment()
-    
+
     def convert(self, obj, name, value):
         if isinstance(value, basestring):
             align = Alignment()
@@ -147,18 +152,18 @@ class Margins(tuple):
 
     def clone(self, top=None, right=None, bottom=None, left=None):
         these = (top, right, bottom, left)
-        vals = ((this if this is not None else other) 
+        vals = ((this if this is not None else other)
                 for (this, other) in zip(these, self))
         return Margins(*vals)
-            
+
     @property
     def top(self):
         return self[0]
-    
+
     @property
     def right(self):
         return self[1]
-    
+
     @property
     def bottom(self):
         return self[2]
@@ -169,10 +174,10 @@ class Margins(tuple):
 
 
 class MarginsTrait(StyleTrait):
-    
+
     def create_default(self, obj, name):
         return Margins()
-    
+
     def convert(self, obj, name, value):
         if isinstance(value, (tuple, list)):
             try:
@@ -218,11 +223,11 @@ class Size(tuple):
                 msg = 'Invalid size value: %s=%s' % (name, val)
                 raise ValueError(msg)
         return tuple.__new__(cls, vals)
-    
+
     def __repr__(self):
         templ = 'Size(width=%s, height=%s)'
         return templ % self
-    
+
     def __str__(self):
         return self.__repr__()
 
@@ -230,21 +235,21 @@ class Size(tuple):
         width = width if width is not None else self.width
         height = height if height is not None else self.height
         return Size(width, height)
-    
+
     @property
     def width(self):
         return self[0]
-    
+
     @property
     def height(self):
         return self[1]
 
 
 class SizeTrait(StyleTrait):
-    
+
     def create_default(self, obj, name):
         return Size()
-    
+
     def convert(self, obj, name, value):
         if isinstance(value, (tuple, list)):
             try:
@@ -273,7 +278,7 @@ class SizeTrait(StyleTrait):
 class SizePolicyFlag(int):
 
     __slots__ = ()
-    
+
     DEFAULT = -1
 
     FIXED = 0
@@ -290,7 +295,7 @@ class SizePolicyFlag(int):
 
     IGNORED = 6
 
-    __allowed__ = frozenset((DEFAULT, FIXED, MINIMUM, MAXIMUM, PREFERRED, 
+    __allowed__ = frozenset((DEFAULT, FIXED, MINIMUM, MAXIMUM, PREFERRED,
                              EXPANDING, MINIMUM_EXPANDING, IGNORED))
 
     def __new__(cls, value=-1):
@@ -299,7 +304,7 @@ class SizePolicyFlag(int):
         if value not in cls.__allowed__:
             raise ValueError('Invalid policy flag: `%s`' % value)
         return int.__new__(cls, value)
-    
+
     def __repr__(self):
         if self == self.DEFAULT:
             inner = 'default'
@@ -325,22 +330,22 @@ class SizePolicyFlag(int):
 
     def fixed(self):
         return SizePolicyFlag(self.FIXED)
-    
+
     def minimum(self):
         return SizePolicyFlag(self.MINIMUM)
-    
+
     def maximum(self):
         return SizePolicyFlag(self.MAXIMUM)
-    
+
     def preferred(self):
         return SizePolicyFlag(self.PREFERRED)
-    
+
     def expanding(self):
         return SizePolicyFlag(self.EXPANDING)
-    
+
     def minimum_expanding(self):
         return SizePolicyFlag(self.MINIMUM_EXPANDING)
-    
+
     def ignored(self):
         return SizePolicyFlag(self.IGNORED)
 
@@ -363,7 +368,7 @@ class SizePolicy(tuple):
 
     def __repr__(self):
         return 'SizePolicy(%s, %s)' % (self[0], self[1])
-    
+
     def __str__(self):
         return self.__repr__()
 
@@ -375,7 +380,7 @@ class SizePolicy(tuple):
     @property
     def horizontal(self):
         return self[0]
-    
+
     @property
     def vertical(self):
         return self[1]
@@ -387,7 +392,7 @@ class SizePolicyTrait(StyleTrait):
         return SizePolicy()
 
     def convert(self, obj, name, value):
-        
+
         def get_flag(val):
             if isinstance(val, basestring):
                 val = val.lower()
@@ -427,10 +432,10 @@ class SizePolicyTrait(StyleTrait):
 # Spacing
 #------------------------------------------------------------------------------
 class SpacingTrait(StyleTrait):
-     
+
      def create_default(self, obj, name):
         return -1
-    
+
      def convert(self, obj, name, value):
          if not isinstance(value, int) or value < -1:
              spacing = self.create_default(obj, name)
@@ -442,10 +447,10 @@ class SpacingTrait(StyleTrait):
 # Stretch
 #------------------------------------------------------------------------------
 class StretchTrait(StyleTrait):
-     
+
      def create_default(self, obj, name):
         return -1
-    
+
      def convert(self, obj, name, value):
          if not isinstance(value, int) or value < -1:
              spacing = self.create_default(obj, name)

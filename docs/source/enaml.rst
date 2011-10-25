@@ -50,8 +50,3 @@ thin layer over backend widgets and produce the traits View objects.
 --------------------------
 
 .. automodule:: enaml.import_hooks
-
-:mod:`view` Module
-------------------
-
-.. automodule:: enaml.view
