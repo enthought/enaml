@@ -93,21 +93,21 @@ class QtSlider(QtControl, AbstractTkSlider):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def parent__minimum_changed(self, minimum):
+    def shell_minimum_changed(self, minimum):
         """ Update the slider when the converter class changes.
 
         """
-        parent = self.parent
-        self.set_range(minimum, parent.maximum)
+        shell = self.shell_obj
+        self.set_range(minimum, shell.maximum)
 
-    def parent__maximum_changed(self, maximum):
+    def shell_maximum_changed(self, maximum):
         """ Update the slider when the converter class changes.
 
         """
-        parent = self.parent
-        self.set_range(parent.minimum, maximum)
+        shell = self.shell_obj
+        self.set_range(shell.minimum, maximum)
 
-    def parent_value_changed(self, value):
+    def shell_value_changed(self, value):
         """ Update the slider position
 
         The method validates the value before assigment. If it is out of
@@ -119,36 +119,36 @@ class QtSlider(QtControl, AbstractTkSlider):
 
         """
         self.set_position(value)
-        self.parent.moved = value
+        self.shell_obj.moved = value
 
-    def parent_tracking_changed(self, tracking):
+    def shell_tracking_changed(self, tracking):
         """ Set the tracking event in the widget
 
         """
         self.set_tracking(tracking)
 
-    def parent_single_step_changed(self, single_step):
+    def shell_single_step_changed(self, single_step):
         """ Update the the line step in the widget.
 
         """
         self.set_single_step(single_step)
 
-    def parent_page_step_changed(self, page_step):
+    def shell_page_step_changed(self, page_step):
         """ Update the widget due to change in the line step.
 
         """
         self.set_page_step(page_step)
 
-    def parent_tick_interval_changed(self, tick_interval):
+    def shell_tick_interval_changed(self, tick_interval):
         """ Update the tick marks interval.
 
         """
-        parent = self.parent
+        shell = self.shell
         self.set_tick_frequency(tick_interval)
-        self.set_single_step(parent.single_step)
-        self.set_page_step(parent.page_step)
+        self.set_single_step(shell.single_step)
+        self.set_page_step(shell.page_step)
 
-    def parent_tick_position_changed(self, tick_position):
+    def shell_tick_position_changed(self, tick_position):
         """ Update the widget due to change in the tick position
 
         The method ensures that the tick position style can be applied
@@ -157,7 +157,7 @@ class QtSlider(QtControl, AbstractTkSlider):
         """
         self.set_tick_position(tick_position)
 
-    def parent_orientation_changed(self, orientation):
+    def shell_orientation_changed(self, orientation):
         """ Update the widget due to change in the orientation attribute
 
         The method applies the orientation style and fixes the tick position
@@ -170,9 +170,9 @@ class QtSlider(QtControl, AbstractTkSlider):
         """ Respond to a change in value of the slider widget.
 
         """
-        parent = self.parent
+        shell = self.shell_obj
         new_value = self.get_position()
-        parent.value = new_value
+        shell.value = new_value
 
     def _on_pressed(self):
         """ Update if the left button was pressed.
@@ -182,9 +182,9 @@ class QtSlider(QtControl, AbstractTkSlider):
         `down` attribute.
 
         """
-        parent = self.parent
-        parent._down = True
-        parent.pressed = True
+        shell = self.shell_obj
+        shell._down = True
+        shell.pressed = True
 
     def _on_released(self):
         """ Update if the left button was released
@@ -194,10 +194,10 @@ class QtSlider(QtControl, AbstractTkSlider):
         false.
 
         """
-        parent = self.parent
-        if parent._down:
-            parent._down = False
-            parent.released = True
+        shell = self.shell_obj
+        if shell._down:
+            shell._down = False
+            shell.released = True
 
     def set_single_step(self, step):
         """ Set the single step attribute in the Qt widget.
@@ -309,10 +309,10 @@ class QtSlider(QtControl, AbstractTkSlider):
         we still need to update the enaml component, so that it is in sync.
 
         """
-        parent = self.parent
-        orientation = parent.orientation
+        shell = self.shell_obj
+        orientation = shell.orientation
         tick_pos = self.widget.tickPosition()
         if orientation == Orientation.VERTICAL:
-            parent.tick_position = VERT_TICK_POS_MAP[tick_pos]
+            shell.tick_position = VERT_TICK_POS_MAP[tick_pos]
         else:
-            parent.tick_position = HOR_TICK_POS_MAP[tick_pos]
+            shell.tick_position = HOR_TICK_POS_MAP[tick_pos]
