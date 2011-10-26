@@ -4,12 +4,12 @@
 #------------------------------------------------------------------------------
 from .qt_control import QtControl
 
-from ..bounded_date import AbstractTkBoundedDate
+from ..bounded_datetime import AbstractTkBoundedDatetime
 
 
-class QtBoundedDate(QtControl, AbstractTkBoundedDate):
+class QtBoundedDatetime(QtControl, AbstractTkBoundedDatetime):
     """ A base class for use with widgets implementing behavior
-    for subclasses of BoundedDate.
+    for subclasses of BoundedDatetime.
 
     """
     #--------------------------------------------------------------------------
