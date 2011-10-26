@@ -17,17 +17,17 @@ class IDialogImpl(IWindowImpl):
 
     def accept(self):
         raise NotImplementedError
-    
+
     def reject(self):
         raise NotImplementedError
 
 
 class Dialog(Window):
-    """ A basic dialog widget whose contents are user defined. 
+    """ A basic dialog widget whose contents are user defined.
 
-    The basic dialog has no buttons, but provides methods for the 
+    The basic dialog has no buttons, but provides methods for the
     accept and reject behavior for the dialog.
-    
+
     Attributes
     ----------
     active : Property(Bool)
@@ -41,16 +41,16 @@ class Dialog(Window):
         Fired when the dialog is closed. The event payload will be the
         dialog result.
 
-    result : Property(Enum(*DialogResult.values())).
-        A read only property which is set to the result of the dialog; 
-        REJECTED if rejected() was called or the window was closed via 
-        the 'x' window button, ACCEPTED if accept() was called. The 
+    result : Property(DialogResult).
+        A read only property which is set to the result of the dialog;
+        'rejected' if rejected() was called or the window was closed via
+        the 'x' window button, 'accepted' if accept() was called. The
         result is set before the 'closed' event is fired.
-    
+
     _shadow : Bool
         A protected attribute used by the implementation object to
         set the value of the active attribute.
-    
+
     _shadow : Enum(*Dialog.values())
         A protected attribute used by the implementation object to
         set the value of the result attribute.
@@ -61,10 +61,10 @@ class Dialog(Window):
         Open and display the dialog.
 
     accept()
-        Close the dialog and set the result to DialogResult.ACCEPTED.
+        Close the dialog and set the result to `accepted`.
 
     reject()
-        Close the dialog and set the result to DialogResult.REJECTED.
+        Close the dialog and set the result to `rejected`.
 
     """
     active = Property(Bool, depends_on='_active')
@@ -73,15 +73,15 @@ class Dialog(Window):
 
     closed = Event
 
-    result = Property(Enum(*DialogResult.values()), depends_on='_result')
+    result = Property(DialogResult, depends_on='_result')
 
     _active = Bool
 
-    _result = Enum(*DialogResult.values())
+    _result = DialogResult
 
     #: Overridden parent class trait
     toolkit_impl = Instance(IDialogImpl)
-    
+
     def open(self):
         """ Open and display the dialog.
 
@@ -99,9 +99,9 @@ class Dialog(Window):
         self.toolkit_impl.open()
 
     def accept(self):
-        """ Close the dialog and set the result to DialogResult.ACCEPTED.
+        """ Close the dialog and set the result to `accepted`.
 
-        Call this method to trigger the same behavior as clicking 
+        Call this method to trigger the same behavior as clicking
         on the Ok button.
 
         Arguments
@@ -116,7 +116,7 @@ class Dialog(Window):
         self.toolkit_impl.accept()
 
     def reject(self):
-        """ Close the dialog and set the result to DialogResult.REJECTED.
+        """ Close the dialog and set the result to `rejected`.
 
         Call this method to trigger the same behavior as clicking
         on the Cancel button.
@@ -134,7 +134,7 @@ class Dialog(Window):
 
     def _get_active(self):
         return self._active
-    
+
     def _get_result(self):
         return self._result
 

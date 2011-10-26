@@ -10,8 +10,6 @@ from .wx_window import WXWindow
 
 from ..dialog import IDialogImpl
 
-from ...enums import DialogResult
-
 
 class WXDialog(WXWindow):
     """ A wxPython implementation of a Dialog.
@@ -36,16 +34,16 @@ class WXDialog(WXWindow):
 
     def initialize_widget(self):
         """ Intializes the attributes on the wx.Dialog.
-        
+
         """
         super(WXDialog, self).initialize_widget()
         self.widget.Bind(wx.EVT_CLOSE, self._on_close)
 
     def show(self):
         """ Displays this dialog to the screen.
-        
+
         If the dialog is modal, disable all other windows in the application.
-        
+
         """
         widget = self.widget
         if widget:
@@ -57,22 +55,22 @@ class WXDialog(WXWindow):
 
     def open(self):
         """ Display the dialog.
-        
+
         """
         self.show()
 
     def accept(self):
-        """ Close the dialog and set the result to DialogResult.ACCEPTED.
-        
+        """ Close the dialog and set the result to 'accepted'.
+
         """
-        self.parent._result = DialogResult.ACCEPTED
+        self.parent._result = 'accepted'
         self.close_dialog()
-    
+
     def reject(self):
-        """ Close the dialog and set the result to DialogResult.REJECTED.
-        
+        """ Close the dialog and set the result to 'rejected'.
+
         """
-        self.parent._result = DialogResult.REJECTED
+        self.parent._result = 'rejected'
         self.close_dialog()
 
     #---------------------------------------------------------------------------
@@ -80,20 +78,20 @@ class WXDialog(WXWindow):
     #---------------------------------------------------------------------------
     def _on_close(self, event):
         """ Destroy the dialog to handle the EVT_CLOSE event.
-        
+
         """
         self.close_dialog()
         event.Skip()
-    
+
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
     def close_dialog(self):
         """ Destroy the dialog, fire events, and set status attributes.
-        
+
         """
         self.widget.Destroy()
         parent = self.parent
         parent.closed = parent.result
         parent._active = False
-                
+
