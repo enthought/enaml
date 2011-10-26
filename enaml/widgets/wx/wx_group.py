@@ -11,9 +11,7 @@ from .styling import compute_sizer_flags
 
 from ..group import IGroupImpl
 
-from ...enums import Direction
 
-            
 class WXGroup(WXContainer):
     """ A wxPython implementation of IGroup.
 
@@ -30,11 +28,11 @@ class WXGroup(WXContainer):
     # IGroupImpl interface
     #---------------------------------------------------------------------------
     def create_widget(self):
-        """ Creates the underlying sizer for the group. 
+        """ Creates the underlying sizer for the group.
 
         """
         self.widget = self.make_sizer(self.parent.direction)
-        
+
     def initialize_widget(self):
         """ Nothing to initialize on a group.
 
@@ -52,12 +50,12 @@ class WXGroup(WXContainer):
         sizer.Layout()
 
     def parent_direction_changed(self, direction):
-        """ The change handler for the 'direction' attribute on the 
+        """ The change handler for the 'direction' attribute on the
         parent.
 
         """
         pass
-    
+
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
@@ -66,18 +64,18 @@ class WXGroup(WXContainer):
         meant for public consumption.
 
         """
-        dirs = (Direction.LEFT_TO_RIGHT, Direction.RIGHT_TO_LEFT)
+        dirs = ('left_to_right', 'right_to_left')
         if direction in dirs:
             sizer = wx.BoxSizer(wx.HORIZONTAL)
         else:
             sizer = wx.BoxSizer(wx.VERTICAL)
         return sizer
-        
+
     def is_reverse_direction(self, direction):
         """ Returns True or False depending on if the given direction
         is reversed from normal. Not meant for public consumption.
 
         """
-        dirs = (Direction.RIGHT_TO_LEFT, Direction.BOTTOM_TO_TOP)
+        dirs = ('right_to_left', 'bottom_to_top')
         return direction in dirs
 

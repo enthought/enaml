@@ -5,8 +5,6 @@
 import math
 import random
 import datetime
-from enaml.enums import Direction
-
 Window:
 
     title << model.window_title
@@ -17,7 +15,7 @@ Window:
             style.cls = "stretch"
 
             Group my_group:
-                direction = Direction.TOP_TO_BOTTOM
+                direction = 'top_to_bottom'
                 PushButton:
                     style.cls = "expanding"
                     text << "clickme!" if not self.down else "I'm down!"
@@ -47,7 +45,7 @@ Window:
                 style.cls = "fixed"
                 Panel:
                     HGroup:
-                        direction = Direction.RIGHT_TO_LEFT
+                        direction = 'right_to_left'
                         RadioButton rb1:
                             style.cls = "stretch"
                             text = 'rb1'

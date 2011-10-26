@@ -1,8 +1,7 @@
 import math
 import random
 import datetime
-from enaml.enums import Direction
-from enaml.converters import SliderLogConverter, IntConverter
+from enaml.converters import IntConverter
 
 
 defn ErrorField:
@@ -157,7 +156,7 @@ defn MainWindow(model, table_model):
                 VGroup:
                     Panel:
                         HGroup:
-                            direction = Direction.RIGHT_TO_LEFT
+                            direction = 'right_to_left'
                             RadioButton -> rb1:
                                 text = 'rb1'
                                 toggled >> print('rb1:', checked)

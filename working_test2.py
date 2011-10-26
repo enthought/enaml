@@ -19,9 +19,6 @@ import math
 import random
 import datetime
 
-from enaml.enums import Direction
-
-
 Window:
 
     title << model.window_title
@@ -68,8 +65,8 @@ morestuff = """
         HGroup:
             Group my_group:
 
-                direction << (random.choice([Direction.TOP_TO_BOTTOM,
-                                             Direction.BOTTOM_TO_TOP])
+                direction << (random.choice(['top_to_bottom',
+                                             'bottom_to_top'])
                               or pb2.clicked)
 
                 PushButton:
@@ -98,7 +95,7 @@ morestuff = """
             VGroup:
                 Panel:
                     HGroup:
-                        direction = Direction.RIGHT_TO_LEFT
+                        direction = 'right_to_left'
                         RadioButton rb1:
                             text = 'rb1'
                             toggled >> print('rb1:', self.checked)
