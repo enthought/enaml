@@ -18,10 +18,10 @@ class TestDatetimeEdit(EnamlTestCase):
     get_datetime(self, widget)
         Get the toolkits widget's active datetime.
 
-    get_minimum_datetime(self, widget)
+    get_min_datetime(self, widget)
         Get the toolkits widget's maximum datetime attribute.
 
-    get_maximum_datetime(self, widget)
+    get_max_datetime(self, widget)
         Get the toolkits widget's minimum datetime attribute.
 
     change_datetime(self, widget, date)
@@ -41,19 +41,16 @@ class TestDatetimeEdit(EnamlTestCase):
 from datetime import datetime as python_datetime
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                DatetimeEdit:
-                    name = 'test'
-                    datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
-                    datetime_changed >> events.append(('datetime_changed', args.new))
+        DatetimeEdit -> test:
+            datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
+            datetime_changed >> events.append(('datetime_changed', args.new))
 """
 
         self.default_datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
         self.component = self.component_by_name(self.view, 'test')
-        self.widget = self.component.toolkit_widget()
+        self.widget = self.component.toolkit_widget
 
     def test_initialization_values(self):
         """ Test the initial attributes of the date edit component.
@@ -63,30 +60,30 @@ defn MainWindow(events):
 
         self.assertEnamlInSync(component, 'datetime',
                                python_datetime(2001, 4, 3, 8, 45, 32, 23000))
-        self.assertEnamlInSync(component, 'minimum_datetime',
+        self.assertEnamlInSync(component, 'min_datetime',
                                python_datetime(1752,9,14,0,0,0,0))
-        self.assertEnamlInSync(component, 'maximum_datetime',
+        self.assertEnamlInSync(component, 'max_datetime',
                                python_datetime(7999, 12, 31, 23, 59, 59, 999000))
         self.assertEqual(self.events, [])
 
-    def test_change_maximum_datetime(self):
+    def test_change_max_datetime(self):
         """ Test changing the maximum datetime.
 
         """
         component = self.component
         new_maximum = python_datetime(2005,1,1)
-        component.maximum_datetime = new_maximum
-        self.assertEnamlInSync(component, 'maximum_datetime', new_maximum)
+        component.max_datetime = new_maximum
+        self.assertEnamlInSync(component, 'max_datetime', new_maximum)
         self.assertEqual(self.events, [])
 
-    def test_change_minimum_datetime(self):
+    def test_change_min_datetime(self):
         """ Test changing the minimum datetime.
 
         """
         component = self.component
         new_minimum = python_datetime(2000,1,1)
-        component.minimum_datetime = new_minimum
-        self.assertEnamlInSync(component, 'minimum_datetime', new_minimum)
+        component.min_datetime = new_minimum
+        self.assertEnamlInSync(component, 'min_datetime', new_minimum)
         self.assertEqual(self.events, [])
 
     def test_change_maximum_and_datetime(self):
@@ -95,7 +92,7 @@ defn MainWindow(events):
         """
         component = self.component
         component.datetime = python_datetime(2007,10,9)
-        component.maximum_datetime = python_datetime(2006,5,9)
+        component.max_datetime = python_datetime(2006,5,9)
         self.assertEnamlInSync(component, 'datetime', python_datetime(2006,5,9))
         self.assertEqual(self.events, [('datetime_changed', python_datetime(2007,10,9)),
                                         ('datetime_changed', python_datetime(2006,5,9))])
@@ -106,7 +103,7 @@ defn MainWindow(events):
         """
         component = self.component
         component.datetime = python_datetime(2007,10,9)
-        component.minimum_datetime = python_datetime(2010,5,9)
+        component.min_datetime = python_datetime(2010,5,9)
         self.assertEnamlInSync(component, 'datetime', python_datetime(2010,5,9))
         self.assertEqual(self.events, [('datetime_changed', python_datetime(2007,10,9)),
                                         ('datetime_changed', python_datetime(2010,5,9))])
@@ -138,7 +135,7 @@ defn MainWindow(events):
         """
         component = self.component
         min_datetime = python_datetime(2000,2,3)
-        component.minimum_datetime = min_datetime
+        component.min_datetime = min_datetime
         with self.assertRaises(TraitError):
             component.datetime = python_datetime(2000,1,1)
         self.assertEnamlInSync(component, 'datetime', self.default_datetime)
@@ -152,7 +149,7 @@ defn MainWindow(events):
         component.datetime = init_datetime
         self.assertEqual(self.events, [('datetime_changed',init_datetime)])
         max_datetime = python_datetime(2014,2,3)
-        component.maximum_datetime = max_datetime
+        component.max_datetime = max_datetime
         with self.assertRaises(TraitError):
             component.datetime = python_datetime(2016,10,9)
         self.assertEnamlInSync(component, 'datetime', init_datetime)
@@ -177,13 +174,13 @@ defn MainWindow(events):
 
         """
         component = self.component
-        component.minimum_datetime = python_datetime(2010,5,9)
+        component.min_datetime = python_datetime(2010,5,9)
         with self.assertRaises(TraitError):
-            component.maximum_datetime = python_datetime(2006,5,9)
+            component.max_datetime = python_datetime(2006,5,9)
 
-        component.maximum_datetime = python_datetime(2034,12,10)
+        component.max_datetime = python_datetime(2034,12,10)
         with self.assertRaises(TraitError):
-            component.minimum_date = python_datetime(2034,12,14)
+            component.min_date = python_datetime(2034,12,14)
 
     #--------------------------------------------------------------------------
     # Special initialization tests
@@ -199,14 +196,11 @@ defn MainWindow(events):
 from datetime import datetime as python_datetime
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                DatetimeEdit -> test:
-                    name = 'test'
-                    datetime = python_datetime(1980, 1, 1, 23, 10, 34)
-                    minimum_datetime = python_datetime(1990, 1, 1)
-                    maximum_datetime = python_datetime(2000, 1, 1)
-                    datetime_changed >> events.append(('datetime_changed', args.new))
+        DatetimeEdit -> test:
+            datetime = python_datetime(1980, 1, 1, 23, 10, 34)
+            min_datetime = python_datetime(1990, 1, 1)
+            max_datetime = python_datetime(2000, 1, 1)
+            datetime_changed >> events.append(('datetime_changed', args.new))
 """
         events = []
         with self.assertRaises(TraitError):
@@ -222,14 +216,11 @@ defn MainWindow(events):
 from datetime import datetime as python_datetime
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                DatetimeEdit -> test:
-                    name = 'test'
-                    date_time = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
-                    minimum_datetime = python_datetime(1990, 1, 1)
-                    maximum_datetime = python_datetime(2000, 1, 1)
-                    datetime_changed >> events.append(('datetime_changed', args.new))
+        DatetimeEdit -> test:
+            date_time = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
+            min_datetime = python_datetime(1990, 1, 1)
+            max_datetime = python_datetime(2000, 1, 1)
+            datetime_changed >> events.append(('datetime_changed', args.new))
 """
         events = []
         with self.assertRaises(TraitError):
@@ -247,14 +238,14 @@ defn MainWindow(events):
         pass
 
     @required_method
-    def get_minimum_datetime(self, widget):
+    def get_min_datetime(self, widget):
         """  Get the toolkits widget's maximum datetime attribute.
 
         """
         pass
 
     @required_method
-    def get_maximum_datetime(self, widget):
+    def get_max_datetime(self, widget):
         """ Get the toolkits widget's minimum datetime attribute.
 
         """

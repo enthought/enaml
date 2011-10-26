@@ -17,14 +17,14 @@ class TestQtDatetimeEdit(QtTestAssistant, datetime_edit.TestDatetimeEdit):
         datetime = widget.dateTime()
         return qdatetime_to_python(datetime)
 
-    def get_minimum_datetime(self, widget):
+    def get_min_datetime(self, widget):
         """  Get the toolkits widget's maximum datetime attribute.
 
         """
         datetime = widget.minimumDateTime()
         return qdatetime_to_python(datetime)
 
-    def get_maximum_datetime(self, widget):
+    def get_max_datetime(self, widget):
         """ Get the toolkits widget's minimum datetime attribute.
 
         """

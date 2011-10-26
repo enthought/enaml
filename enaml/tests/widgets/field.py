@@ -25,26 +25,23 @@ class TestField(EnamlTestCase):
         enaml = """
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                Field -> field:
-                    name = 'field'
-                    max_length = 8
-                    cursor_position = 1
-                    placeholder_text = 'hold'
+        Field -> field:
+            max_length = 8
+            cursor_position = 1
+            placeholder_text = 'hold'
 
-                    value = 'abc'
+            value = 'abc'
 
-                    max_length_reached >> events.append('max_length_reached')
-                    text_changed >> events.append('text_changed')
-                    text_edited >> events.append('text_edited')
-                    return_pressed >> events.append('return_pressed')
+            max_length_reached >> events.append('max_length_reached')
+            text_changed >> events.append('text_changed')
+            text_edited >> events.append('text_edited')
+            return_pressed >> events.append('return_pressed')
 """
 
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
         self.component = self.component_by_name(self.view, 'field')
-        self.widget = self.component.toolkit_widget()
+        self.widget = self.component.toolkit_widget
 
     def test_value(self):
         """ Test the toolkit widget's initial state.

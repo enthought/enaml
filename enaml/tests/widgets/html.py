@@ -26,16 +26,13 @@ class TestHtml(EnamlTestCase):
         enaml = """
 defn MainWindow():
     Window:
-        Panel:
-            VGroup:
-                Html -> html:
-                    name = 'html'
-                    source = '<b>{0}</b>'
+        Html -> html:
+            source = '<b>{0}</b>'
 """.format(self.text)
 
         self.view = self.parse_and_create(enaml)
         self.component = self.component_by_name(self.view, 'html')
-        self.widget = self.component.toolkit_widget()
+        self.widget = self.component.toolkit_widget
 
     def test_initial_source(self):
         """ Test the initial source of an Html widget.

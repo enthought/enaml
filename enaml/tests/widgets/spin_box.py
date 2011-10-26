@@ -57,25 +57,22 @@ class TestSpinBox(EnamlTestCase):
 from enaml.converters import IntConverter
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                SpinBox -> spinbox:
-                    name = 'spinbox'
-                    low = -10
-                    high = 21
-                    step = 2
-                    value = -4
-                    prefix = 'foo'
-                    suffix = ' bar'
-                    special_value_text = 'Special'
-                    converter = IntConverter()
-                    wrap = True
+        SpinBox -> spinbox:
+            low = -10
+            high = 21
+            step = 2
+            value = -4
+            prefix = 'foo'
+            suffix = ' bar'
+            special_value_text = 'Special'
+            converter = IntConverter()
+            wrap = True
 """
 
         self.events = []
         self.view = self.parse_and_create(enaml, events=self.events)
         self.component = self.component_by_name(self.view, 'spinbox')
-        self.widget = self.component.toolkit_widget()
+        self.widget = self.component.toolkit_widget
 
     def test_initial_attributes(self):
         """ Compare the Enaml SpinBox's attributes with its toolkit widget.
