@@ -32,8 +32,6 @@ class DatetimeEdit(BoundedDatetime):
     #: The event payload will be the datetime on the control.
     datetime_changed = Event
 
-    #---------------------------------------------------------------------------
-    # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkDatetimeEdit)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkDatetimeEdit)
 

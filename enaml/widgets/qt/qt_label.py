@@ -17,18 +17,18 @@ class QtLabel(QtControl, AbstractTkLabel):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying text control.
 
         """
         self.widget = QtGui.QLabel(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes on the underlying control.
 
         """
-        super(QtLabel, self).initialize_widget()
-        self.set_label(self.shell_widget.text)
+        super(QtLabel, self).initialize()
+        self.set_label(self.shell_obj.text)
 
     #--------------------------------------------------------------------------
     # Implementation

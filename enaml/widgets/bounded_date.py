@@ -58,10 +58,8 @@ class BoundedDate(Control):
     #: outside of these bounds will result in a TraitError.
     date = Bounded(Date(date.today()), low='min_date', high='max_date')
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkBoundedDate)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkBoundedDate)
 
     #--------------------------------------------------------------------------
     # Property methods

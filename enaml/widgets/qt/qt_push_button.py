@@ -16,18 +16,28 @@ class QtPushButton(QtControl, AbstractTkPushButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying QPushButton control.
 
         """
         self.widget = QtGui.QPushButton(self.parent_widget())
         
-    def initialize_widget(self):
+    def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
-        super(QtPushButton, self).initialize_widget()
-        self.set_label(self.shell_widget.text)
+        super(QtPushButton, self).initialize()
+        self.set_label(self.shell_obj.text)
+
+    def bind(self):
+        """ Connects the event handlers for the push button.
+
+        """
+        super(QtPushButton, self).bind()
+        widget = self.widget
+        widget.clicked.connect(self.on_clicked)
+        widget.pressed.connect(self.on_pressed)
+        widget.released.connect(self.on_released)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -39,22 +49,12 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         """
         self.set_label(text)
 
-    def connect(self):
-        """ Connects the event handlers for the push button.
-
-        """
-        super(QtPushButton, self).connect()
-        widget = self.widget
-        widget.clicked.connect(self.on_clicked)
-        widget.pressed.connect(self.on_pressed)
-        widget.released.connect(self.on_released)
-
     def on_clicked(self):
         """ The event handler for the button's clicked event. Not meant
         for public consumption.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         shell._down = False
         shell.clicked = True
 
@@ -63,7 +63,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         for public consumption.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         shell._down = True
         shell.pressed = True
 
@@ -72,7 +72,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         meant for public consumption.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         if shell._down:
             shell._down = False
             shell.released = True

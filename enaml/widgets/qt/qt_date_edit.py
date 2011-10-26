@@ -22,19 +22,26 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying QtCalendarWidget.
 
         """
         self.widget = QtGui.QDateEdit(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes of the control.
 
         """
-        super(QtDateEdit, self).initialize_widget()
-        self.set_format(self.shell_widget.date_format)
+        super(QtDateEdit, self).initialize()
+        self.set_format(self.shell_obj.date_format)
+    
+    def bind(self):
+        """ Connects the signal handlers for the date edit widget.
 
+        """
+        super(QtDateEdit, self).bind()
+        self.widget.dateChanged.connect(self.on_date_changed)
+        
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -44,18 +51,11 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         """
         self.set_format(date_format)
 
-    def connect(self):
-        """ Connects the signal handlers for the date edit widget.
-
-        """
-        super(QtDateEdit, self).connect()
-        self.widget.dateChanged.connect(self.on_date_changed)
-
     def on_date_changed(self, qdate):
         """ The signal handler for the controls's changed event.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         new_date = qdate_to_python(qdate)
         shell.date = new_date
         shell.date_changed = new_date

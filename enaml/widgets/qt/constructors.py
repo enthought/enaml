@@ -40,19 +40,11 @@ def constructor(base_path):
 
 QT_CONSTRUCTORS = dict((
     constructor('window'),
-    constructor('container'),
+    constructor('component'),
     constructor('dialog'),
-    constructor('panel'),
-    constructor('group'),
-    constructor('v_group'),
-    constructor('h_group'),
-    constructor('stacked_group'),
-    constructor('tab_group'),
-    constructor('group_box'),
     constructor('calendar'),
     constructor('check_box'),
     constructor('combo_box'),
-    constructor('form'),
     constructor('field'),
     constructor('html'),
     constructor('image'),
@@ -64,7 +56,6 @@ QT_CONSTRUCTORS = dict((
     constructor('traitsui_item'),
     constructor('enable_canvas'),
     constructor('table_view'),
-    constructor('check_group'),
     constructor('date_edit'),
     constructor('datetime_edit'),
 ))

@@ -14,68 +14,39 @@ class AbstractSetupHook(object):
     __metaclass__ = ABCMeta
 
     __slots__ = ()
-
+    
     @abstractmethod
-    def parent_children(self, component):
+    def create(self, component):
         raise NotImplementedError
     
     @abstractmethod
-    def set_shell_widget(self, component):
-        raise NotImplementedError
-    
-    @abstractmethod
-    def create_widget(self, component):
-        raise NotImplementedError
-    
-    @abstractmethod
-    def initialize_widget(self, component):
-        raise NotImplementedError
-    
-    @abstractmethod
-    def initialize_layout(self, component):
+    def initialize(self, component):
         raise NotImplementedError
 
     @abstractmethod
-    def initialize_event_handlers(self, component):
-        raise NotImplementedError
-    
-    @abstractmethod
-    def set_abstract_widget_listeners(self, component):
+    def bind(self, component):
         raise NotImplementedError
 
 
-class DefaultSetupHook(AbstractSetupHook):
+class NullSetupHook(AbstractSetupHook):
     """ An AbstractSetupHook implementation that does nothing. This 
     makes is easy for hooks that only need to implement a few methods 
     to subclass from this and implement only what is needed.
 
     """
     __slots__ = ()
-
-    def parent_children(self, component):
-        yield
     
-    def set_shell_widget(self, component):
+    def create(self, component):
         yield
 
-    def create_widget(self, component):
+    def initialize(self, component):
         yield
 
-    def initialize_widget(self, component):
-        yield
-    
-    def initialize_layout(self, component):
-        yield
-
-    def initialize_event_handlers(self, component):
-        yield
-
-    def set_abstract_widget_listeners(self, component):
+    def bind(self, component):
         yield
 
 
-
-class ExpressionSetupHook(DefaultSetupHook):
+class ExpressionSetupHook(NullSetupHook):
 
     __slots__ = ('name', 'expression', 'eval_default')
 
@@ -84,7 +55,7 @@ class ExpressionSetupHook(DefaultSetupHook):
         self.expression = expression
         self.eval_default = eval_default
 
-    def create_widget(self, component):
+    def create(self, component):
         # We want to setup the expressions before we create and
         # initialize the widgets so that default value computations
         # will work properly. However, we don't want to bind to 

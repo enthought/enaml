@@ -25,8 +25,6 @@ class RadioButton(ToggleControl):
     ToggleControl
     
     """
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkRadioButton)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkRadioButton)
 

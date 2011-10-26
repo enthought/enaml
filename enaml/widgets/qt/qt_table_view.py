@@ -3,16 +3,13 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
-
-from traits.api import implements, Instance
-
 from .qt_control import QtControl
-#from .styling import QColor_form_color
 
-from ..table_view import ITableViewImpl
+from ..table_view import AbstractTkTableView
 
 from ...item_models.abstract_item_model import AbstractItemModel, ModelIndex
-from .enums import QtDataRole, QtOrientation, EnamlOrientation, EnamlDataRole
+from .enums import QtOrientation, EnamlOrientation, EnamlDataRole
+
 
 # XXX we need to add more handler support for the different modes of 
 # resetting the grid.
@@ -35,8 +32,8 @@ class AbstractItemModelTable(QtCore.QAbstractTableModel):
         self.modelReset.emit()
 
     def _data_changed(self, event):
-        top_left = QModelIndex(*event)
-        bottom_right = QModelIndex(*event)
+        top_left = QtCore.QModelIndex(*event)
+        bottom_right = QtCore.QModelIndex(*event)
         self.dataChanged(top_left, bottom_right)
 
     def _header_data_changed(self, event):
@@ -65,7 +62,7 @@ class AbstractItemModelTable(QtCore.QAbstractTableModel):
         return model.header_data(section, EnamlOrientation[orientation], EnamlDataRole[role])
 
 
-class QtTableView(QtControl):
+class QtTableView(QtControl, AbstractTkTableView):
     """ A Qt implementation of TableView.
     
     See Also
@@ -73,26 +70,28 @@ class QtTableView(QtControl):
     TableView
     
     """
-    implements(ITableViewImpl)
-
     #: The underlying model.
-    model_wrapper = Instance(AbstractItemModelTable)
+    model_wrapper = None
 
-    #---------------------------------------------------------------------------
-    # ITableViewImpl interface
-    #---------------------------------------------------------------------------
-    def create_widget(self):
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
+    def create(self):
         """ Create the underlying QTableView control.
         
         """
         self.widget = QtGui.QTableView()
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initialize the widget with the attributes of this instance.
         
         """
-        self.set_table_model(self.parent.item_model)
+        super(QtTableView, self).initialize()
+        self.set_table_model(self.shell_obj.item_model)
 
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
     def parent_item_model_changed(self, item_model):
         """ The change handler for the 'item_model' attribute. Not meant
         for public consumption.
@@ -100,9 +99,6 @@ class QtTableView(QtControl):
         """
         self.set_table_model(item_model)
         
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
     def set_table_model(self, model):
         """ Set the table view's model.  Not meant for public
         consumption.

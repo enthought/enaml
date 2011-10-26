@@ -24,8 +24,6 @@ class CheckBox(ToggleControl):
     ToggleControl
 
     """
-    #---------------------------------------------------------------------------
-    # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkCheckBox)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkCheckBox)
 

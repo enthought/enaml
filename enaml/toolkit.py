@@ -85,7 +85,7 @@ class Constructor(HasStrictTraits):
         """
         component_cls = self.component_loader()
         impl_cls = self.impl_loader()
-        component = component_cls(abstract_widget=impl_cls())
+        component = component_cls(abstract_obj=impl_cls())
         return (component,)
     
     def clone(self, component_loader=None, impl_loader=None):

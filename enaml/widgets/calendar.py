@@ -28,8 +28,6 @@ class Calendar(BoundedDate):
     #: on the control.
     activated = Event
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkCalendar)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkCalendar)
 

@@ -22,28 +22,40 @@ class QtField(QtControl, AbstractTkField):
     #--------------------------------------------------------------------------
     # SetupMethods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying QLineEdit.
 
         """
         self.widget = QtGui.QLineEdit(parent=self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes of the Qt widget.
 
         """
-        super(QtField, self).initialize_widget()
-        shell = self.shell_widget
+        super(QtField, self).initialize()
+        shell = self.shell_obj
         self.set_read_only(shell.read_only)
         self.set_placeholder_text(shell.placeholder_text)
+        
         if shell.value:
             self.update_text()
+        
         shell._modified = False
         self.set_cursor_position(shell.cursor_position)
         
         max_length = shell.max_length
         if max_length:
             self.set_max_length(max_length)
+
+    def bind(self):
+        """ Binds the event handlers for the QLineEdit.
+
+        """
+        super(QtField, self).bind()
+        widget = self.widget
+        widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
+        widget.returnPressed.connect(self.on_text_enter)
+        widget.selectionChanged.connect(self.on_selection)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -90,7 +102,7 @@ class QtField(QtControl, AbstractTkField):
         """
         if not self.setting_value:
             self.update_text()
-            self.shell_widget._modified = False
+            self.shell_obj._modified = False
 
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
@@ -241,22 +253,12 @@ class QtField(QtControl, AbstractTkField):
         self.widget.redo()
         self.update_shell_selection()
 
-    def connect(self):
-        """ Binds the event handlers for the QLineEdit.
-
-        """
-        super(QtField, self).connect()
-        widget = self.widget
-        widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
-        widget.returnPressed.connect(self.on_text_enter)
-        widget.selectionChanged.connect(self.on_selection)
-
     def on_text_updated(self, event):
         """ The event handler for the text update event.
 
         """
         widget = self.widget
-        shell = self.shell_widget
+        shell = self.shell_obj
         text = widget.text()
         self.setting_value = True
         try:
@@ -278,13 +280,13 @@ class QtField(QtControl, AbstractTkField):
         """ The event handler for the return pressed event.
 
         """
-        self.shell_widget.return_pressed = True
+        self.shell_obj.return_pressed = True
 
     def on_max_length(self, event):
         """ The event handler for the max length event.
 
         """
-        self.shell_widget.max_length_reached = True
+        self.shell_obj.max_length_reached = True
 
     def on_selection(self):
         """ The event handler for a selection (really a left up) event.
@@ -297,7 +299,7 @@ class QtField(QtControl, AbstractTkField):
         to reflect the current state of the widget.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         widget = self.widget
         shell._selected_text = widget.selectedText()
         self.setting_value = True
@@ -309,7 +311,7 @@ class QtField(QtControl, AbstractTkField):
         sets the error state on the parent if the conversion fails.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         try:
             text = shell.converter.to_component(shell.value)
         except Exception as e:

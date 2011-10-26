@@ -3,15 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-
-from traits.api import implements
-
 from .qt_control import QtControl
 
-from ..html import IHtmlImpl
+from ..html import AbstractTkHtml
 
 
-class QtHtml(QtControl):
+class QtHtml(QtControl, AbstractTkHtml):
     """ A Qt implementation of Html.
 
     See Also
@@ -19,34 +16,33 @@ class QtHtml(QtControl):
     Html
     
     """
-    implements(IHtmlImpl)
-
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # IHtmlImpl interface
-    #---------------------------------------------------------------------------
-    def create_widget(self):
+    #--------------------------------------------------------------------------
+    def create(self):
         """ Creates the underlying widget to display HTML.
 
         """
         self.widget = QtGui.QTextEdit(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes of the control.
 
         """
+        super(QtHtml, self).initialize()
         self.widget.setReadOnly(True)
-        self.set_page_source(self.parent.source)
+        self.set_page_source(self.shell_obj.source)
 
-    def parent_source_changed(self, source):
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell_source_changed(self, source):
         """ The change handler for the 'source' attribute. Not meant for
         public consumption.
 
         """
         self.set_page_source(source)
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
     def set_page_source(self, source):
         """ Sets the page source for the underlying control. Not meant 
         for public consumption.

@@ -12,6 +12,7 @@ from ..dialog import IDialogImpl
 
 from ...enums import DialogResult
 
+# XXX punting on dialog for now
 
 class QtDialog(QtWindow):
     """ A Qt implementation of a Dialog.
@@ -25,9 +26,9 @@ class QtDialog(QtWindow):
     """
     implements(IDialogImpl)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # IDialogImpl interface
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def create_widget(self):
         """ Creates the underlying QDialog control.
 

@@ -25,8 +25,6 @@ class EnableCanvas(Control):
     #: The enable.component.Component instance to draw.
     component = Instance(EnableComponent)
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkEnableCanvas)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkEnableCanvas)
 

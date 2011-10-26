@@ -154,10 +154,8 @@ class Field(Control):
     #: to update the value of 'selected_text'.
     _selected_text = Str
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkField)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkField)
 
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.
@@ -174,7 +172,7 @@ class Field(Control):
             The end selection index, zero based.
 
         """
-        self.abstract_widget.set_selection(start, end)
+        self.abstract_obj.set_selection(start, end)
 
     def select_all(self):
         """ Select all the text in the line edit.
@@ -183,19 +181,19 @@ class Field(Control):
         empty.
 
         """
-        self.abstract_widget.select_all()
+        self.abstract_obj.select_all()
 
     def deselect(self):
         """ Deselect any selected text.
 
         """
-        self.abstract_widget.deselect()
+        self.abstract_obj.deselect()
 
     def clear(self):
         """ Clear the line edit of all text.
 
         """
-        self.abstract_widget.clear()
+        self.abstract_obj.clear()
 
     def backspace(self):
         """ Simple backspace functionality.
@@ -204,7 +202,7 @@ class Field(Control):
         of the cursor. Otherwise, it deletes the selected text.
 
         """
-        self.abstract_widget.backspace()
+        self.abstract_obj.backspace()
 
     def delete(self):
         """ Simple delete functionality.
@@ -213,7 +211,7 @@ class Field(Control):
         of the cursor. Otherwise, it deletes the selected text.
 
         """
-        self.abstract_widget.delete()
+        self.abstract_obj.delete()
 
     def end(self, mark=False):
         """ Moves the cursor to the end of the line.
@@ -225,7 +223,7 @@ class Field(Control):
             the end of the line edit. Defaults to False.
 
         """
-        self.abstract_widget.end(mark=mark)
+        self.abstract_obj.end(mark=mark)
 
     def home(self, mark=False):
         """ Moves the cursor to the beginning of the line.
@@ -237,7 +235,7 @@ class Field(Control):
             the beginning of the line edit. Defaults to False.
 
         """
-        self.abstract_widget.home(mark=mark)
+        self.abstract_obj.home(mark=mark)
 
     def cut(self):
         """ Cuts the selected text from the line edit.
@@ -246,13 +244,13 @@ class Field(Control):
         text from the line edit.
 
         """
-        self.abstract_widget.cut()
+        self.abstract_obj.cut()
 
     def copy(self):
         """ Copies the selected text to the clipboard.
 
         """
-        self.abstract_widget.copy()
+        self.abstract_obj.copy()
 
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
@@ -261,7 +259,7 @@ class Field(Control):
         the current cursor position, replacing any selected text.
 
         """
-        self.abstract_widget.paste()
+        self.abstract_obj.paste()
 
     def insert(self, text):
         """ Insert the text into the line edit.
@@ -275,19 +273,19 @@ class Field(Control):
             The text to insert into the line edit.
 
         """
-        self.abstract_widget.insert(text)
+        self.abstract_obj.insert(text)
 
     def undo(self):
         """ Undoes the last operation.
 
         """
-        self.abstract_widget.undo()
+        self.abstract_obj.undo()
 
     def redo(self):
         """ Redoes the last operation.
 
         """
-        self.abstract_widget.redo()
+        self.abstract_obj.redo()
 
     #--------------------------------------------------------------------------
     # Property methods 

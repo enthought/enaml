@@ -31,8 +31,6 @@ class TableView(Control):
     #: Fired after the left button is double-clicked.
     left_dclick = Event
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkTableView)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkTableView)
 

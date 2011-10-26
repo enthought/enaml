@@ -65,10 +65,8 @@ class BoundedDatetime(Control):
     #: The internal max datetime storage
     _max_datetime = Datetime(py_datetime(7999, 12, 31, 23, 59, 59, 999000))
 
-    #--------------------------------------------------------------------------
-    # Overridden parent traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkBoundedDatetime)
+    #: Overridden parent trait
+    abstract_obj = Instance(AbstractTkBoundedDatetime)
 
     #--------------------------------------------------------------------------
     # Properties methods

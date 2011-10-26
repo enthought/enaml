@@ -40,10 +40,8 @@ class PushButton(Control):
     #: to set the value of down.
     _down = Bool
 
-    #---------------------------------------------------------------------------
-    # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkPushButton)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkPushButton)
 
     def _get_down(self):
         """ The property getter for the 'down' attribute.

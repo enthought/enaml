@@ -22,29 +22,29 @@ class QtCalendar(QtBoundedDate, AbstractTkCalendar):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying QtCalendarWidget.
 
         """
         self.widget = QtGui.QCalendarWidget(self.parent_widget())
 
-    #--------------------------------------------------------------------------
-    # Implementation
-    #--------------------------------------------------------------------------
-    def connect(self):
+    def bind(self):
         """ Binds the event handlers for the calendar widget.
 
         """
-        super(QtCalendar, self).connect()
+        super(QtCalendar, self).bind()
         widget = self.widget
         widget.activated.connect(self.on_date_activated)
         widget.selectionChanged.connect(self.on_date_selected)
 
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
     def on_date_activated(self, qdate):
         """ The event handler for the calendar's activation event.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         date = qdate_to_python(qdate)
         shell.date = date
         shell.activated = date
@@ -54,7 +54,7 @@ class QtCalendar(QtBoundedDate, AbstractTkCalendar):
 
         """
         date = qdate_to_python(self.widget.selectedDate())
-        self.shell_widget.selected = date
+        self.shell_obj.selected = date
 
     def set_date(self, date):
         """ Sets and validates the component date on the widget.

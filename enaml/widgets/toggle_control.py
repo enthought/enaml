@@ -50,10 +50,8 @@ class ToggleControl(Control):
     #: Internal storage for the down attribute
     _down = Bool
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkToggleControl)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkToggleControl)
 
     #--------------------------------------------------------------------------
     # Property methods 

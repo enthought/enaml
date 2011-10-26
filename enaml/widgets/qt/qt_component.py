@@ -2,14 +2,24 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import weakref
-
-from .qt.QtGui import QWidget
+from .qt import QtCore, QtGui
+from .qt_base_component import QtBaseComponent
 
 from ..component import AbstractTkComponent
 
+class QResizingFrame(QtGui.QFrame):
+    """ A QFrame subclass that converts a resize event into a signal
+    that can be connected to a slot. This allows the widget to notify
+    Enaml that it has been resized and the layout needs to be recomputed.
 
-class QtComponent(AbstractTkComponent):
+    """
+    resized = QtCore.Signal()
+
+    def resizeEvent(self, event):
+        self.resized.emit()
+
+
+class QtComponent(QtBaseComponent, AbstractTkComponent):
     """ A Qt4 implementation of Component.
 
     A QtComponent is not meant to be used directly. It provides some 
@@ -18,67 +28,25 @@ class QtComponent(AbstractTkComponent):
     is not a HasTraits class.
 
     """
+    #: The Qt widget created by the component
     widget = None
 
-    _shell_widget = lambda: None
-
     #--------------------------------------------------------------------------
-    # Setup methods
+    # Setup Methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
-        """ Creates the underlying Qt widget. Must be implemented by 
-        subclasses.
-
-        """
-        raise NotImplementedError
-
-    def initialize_widget(self):
-        """ Initializes the attribtues of a wiget. Subclasses should 
-        implement if they need to do widget initialization.
-
-        """
-        pass
-
-    def initialize_layout(self):
-        """ Arranges the children of this component. Subclasses should 
-        implement if they need to do widget layout initialization.
-
-        """
-        pass
+    def create(self):
+        self.widget = QResizingFrame(self.parent_widget())
+    
+    def bind(self):
+        super(QtComponent, self).bind()
         
-    def initialize_event_handlers(self):
-        """ After the ui tree is fully initialized, this method
-        is called to allow the widgets to bind their event handlers.
-
-        """
-        self.connect()
+        # This is a hack at the moment
+        if hasattr(self.widget, 'resized'):
+            self.widget.resized.connect(self.on_resize)
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def connect(self):
-        """ Implement this method in subclasses to connect to any necessary
-        signals on the created widgets.
-
-        """
-        pass
-
-    def _get_shell_widget(self):
-        """ The shell_widget property getter which returns a strongref
-        to the the shell widget.
-
-        """
-        return self._shell_widget()
-    
-    def _set_shell_widget(self, shell):
-        """ The shell_widget property setter which stores a weakref
-        to the shell widget.
-
-        """
-        self._shell_widget = weakref.ref(shell)
-
-    shell_widget = property(_get_shell_widget, _set_shell_widget)
-    
     @property
     def toolkit_widget(self):
         """ A property that returns the toolkit specific widget for this
@@ -87,14 +55,74 @@ class QtComponent(AbstractTkComponent):
         """
         return self.widget
     
-    def shell_name_changed(self, name):
-        """ The change handler for the 'name' attribute on the parent.
-        QtComponent doesn't care about the name. Subclasses should
-        reimplement if they need that info.
+    def size(self):
+        """ Return the size of the internal toolkit widget as a 
+        (width, height) tuple of integers.
 
         """
-        pass    
-        
+        widget = self.widget
+        return (widget.width(), widget.height())
+    
+    def size_hint(self):
+        """ Returns a (width, height) tuple of integers which represent
+        the suggested size of the widget for its current state. This 
+        value is used by the layout manager to determine how much 
+        space to allocate the widget.
+
+        """
+        size_hint = self.widget.sizeHint()
+        return (size_hint.width(), size_hint.height())
+
+    def resize(self, width, height):
+        """ Resizes the internal toolkit widget according the given
+        width and height integers.
+
+        """
+        self.widget.resize(width, height)
+    
+    def pos(self):
+        """ Returns the position of the internal toolkit widget as an 
+        (x, y) tuple of integers. The coordinates should be relative to
+        the origin of the widget's parent.
+
+        """
+        widget = self.widget
+        return (widget.x(), widget.y())
+    
+    def move(self, x, y):
+        """ Moves the internal toolkit widget according to the given
+        x and y integers which are relative to the origin of the
+        widget's parent.
+
+        """
+        self.widget.move(x, y)
+    
+    def geometry(self):
+        """ Returns an (x, y, width, height) tuple of geometry info
+        for the internal toolkit widget. The semantic meaning of the
+        values are the same as for the 'size' and 'pos' methods.
+
+        """
+        x, y = self.pos()
+        width, height = self.size()
+        return (x, y, width, height)
+    
+    def set_geometry(self, x, y, width, height):
+        """ Sets the geometry of the internal widget to the given 
+        x, y, width, and height values. The semantic meaning of the
+        values is the same as for the 'resize' and 'move' methods.
+
+        """
+        self.widget.setGeometry(x, y, width, height)
+    
+    def on_resize(self):
+        # should handle the widget resizing by telling something
+        # that things need to be relayed out
+        pass
+
+    #--------------------------------------------------------------------------
+    # Convienence methods
+    #--------------------------------------------------------------------------
     def parent_widget(self):
         """ Returns the logical QWidget parent for this component. 
 
@@ -107,10 +135,12 @@ class QtComponent(AbstractTkComponent):
         result : QWidget or None
 
         """
-        shell_parent = self.shell_widget.parent
+        # XXX do we need to do this still? i.e. can we now have a parent
+        # that doesn't create a widget???
+        shell_parent = self.shell_obj.parent
         while shell_parent:
             widget = shell_parent.toolkit_widget
-            if isinstance(widget, QWidget):
+            if isinstance(widget, QtGui.QWidget):
                 return widget
             shell_parent = shell_parent.parent
         
@@ -119,6 +149,6 @@ class QtComponent(AbstractTkComponent):
         toolkit widgets for those children.
 
         """
-        for child in self.shell_widget.children:
+        for child in self.shell_obj.children:
             yield child.toolkit_widget
 

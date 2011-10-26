@@ -16,8 +16,8 @@ class QtEnableCanvas(QtControl, AbstractTkEnableCanvas):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
-        component = self.shell_widget.component
+    def create(self):
+        component = self.shell_obj.component
         self.window = EnableWindow(self.parent_widget(), component=component)
         self.widget = self.window.control
         

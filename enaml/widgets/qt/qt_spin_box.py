@@ -6,13 +6,11 @@ from logging import exception
 
 from .qt import QtGui
 
-from traits.api import implements
-
 from .qt_control import QtControl
 
 from ...enums import Validity
 
-from ..spin_box import ISpinBoxImpl
+from ..spin_box import AbstractTkSpinBox
 
 _QtValidate = {
     Validity.INVALID: QtGui.QValidator.Invalid,
@@ -71,7 +69,7 @@ class EnamlQSpinBox(QtGui.QSpinBox):
             return QtGui.QValidator.Intermediate
 
 
-class QtSpinBox(QtControl):
+class QtSpinBox(QtControl, AbstractTkSpinBox):
     """ A Qt implementation of SpinBox.
 
     See Also
@@ -79,18 +77,20 @@ class QtSpinBox(QtControl):
     SpinBox
 
     """
-    implements(ISpinBoxImpl)
-
-    def create_widget(self):
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
+    def create(self):
         """ Creates the underlying custom spin control.
 
         """
         self.widget = EnamlQSpinBox(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
+        super(QtSpinBox, self).initialize()
         parent = self.parent
         self.set_spin_low(parent.low)
         self.set_spin_high(parent.high)
@@ -104,6 +104,16 @@ class QtSpinBox(QtControl):
         self.set_spin_value(parent.value)
         self.bind()
 
+    def bind(self):
+        """ Binds the event handlers for the spin control.
+
+        """
+        super(QtSpinBox, self).bind()
+        self.widget.valueChanged.connect(self.on_value_changed)
+
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
     def parent_value_changed(self, value):
         """ The change handler for the 'value' attribute. Not meant
         for public consumption.
@@ -174,15 +184,6 @@ class QtSpinBox(QtControl):
         """
         self.set_spin_wrap(wrap)
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    def bind(self):
-        """ Binds the event handlers for the spin control.
-
-        """
-        self.widget.valueChanged.connect(self.on_value_changed)
-
     def on_value_changed(self):
         """ The event handler for the widget's spin event. Not meant
         for public consumption.
@@ -249,7 +250,6 @@ class QtSpinBox(QtControl):
         self.widget.from_string = converter.from_component
         self.widget.to_string = converter.to_component
         self.widget.setValue(self.parent.value)
-        
     
     def set_spin_validate_string(self, validate_string):
         """ Updates the validate_string function of the spin box. Not meant

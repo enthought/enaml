@@ -23,8 +23,6 @@ class Label(Control):
     #: The text in the label.
     text = Str
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkLabel)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkLabel)
 

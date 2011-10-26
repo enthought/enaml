@@ -33,8 +33,6 @@ class DateEdit(BoundedDate):
     #: The event payload will be the date on the control.
     date_changed = Event
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkDateEdit)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkDateEdit)
 

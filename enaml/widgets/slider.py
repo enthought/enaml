@@ -134,10 +134,8 @@ class Slider(Control):
     #: The internal down storage
     _down = Bool
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class taits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkSlider)
+    #: Overridden parent class tait
+    abstract_obj = Instance(AbstractTkSlider)
 
     #--------------------------------------------------------------------------
     # Property methods

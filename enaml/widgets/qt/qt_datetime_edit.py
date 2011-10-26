@@ -23,18 +23,26 @@ class QtDatetimeEdit(QtBoundedDatetime, AbstractTkDatetimeEdit):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying QtCalendarWidget.
 
         """
         self.widget = QtGui.QDateTimeEdit(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes of the control.
 
         """
-        super(QtDatetimeEdit, self).initialize_widget()
-        self.set_format(self.shell_widget.datetime_format)
+        super(QtDatetimeEdit, self).initialize()
+        self.set_format(self.shell_obj.datetime_format)
+    
+    def bind(self):
+        """ Connects the signal handlers for the date edit widget. Not
+        meant for public consumption.
+
+        """
+        super(QtDatetimeEdit, self).bind()
+        self.widget.dateTimeChanged.connect(self.on_datetime_changed)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -45,20 +53,12 @@ class QtDatetimeEdit(QtBoundedDatetime, AbstractTkDatetimeEdit):
         """
         self.set_format(datetime_format)
 
-    def connect(self):
-        """ Connects the signal handlers for the date edit widget. Not
-        meant for public consumption.
-
-        """
-        super(QtDatetimeEdit, self).connect()
-        self.widget.dateTimeChanged.connect(self.on_datetime_changed)
-
     def on_datetime_changed(self):
         """ The signal handler for the controls's changed event. Not
         meant for public consumption.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         qdatetime = self.widget.dateTime()
         new_datetime = qdatetime_to_python(qdatetime)
         shell.datetime = new_datetime

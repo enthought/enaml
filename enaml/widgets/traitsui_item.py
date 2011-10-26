@@ -42,8 +42,6 @@ class TraitsUIItem(Control):
     #: The optional handler to use for the model and view.
     handler = Instance(Handler)
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkTraitsUIItem)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkTraitsUIItem)
 

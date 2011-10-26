@@ -3,12 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
-
-from traits.api import implements
-
 from .qt_control import QtControl
 
-from ..slider import ISliderImpl
+from ..slider import AbstractTkSlider
 
 from ...enums import Orientation, TickPosition
 
@@ -49,8 +46,7 @@ VERT_TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
                     QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
 
 
-
-class QtSlider(QtControl):
+class QtSlider(QtControl, AbstractTkSlider):
     """ A Qt implementation of Slider.
 
     See Also
@@ -58,36 +54,45 @@ class QtSlider(QtControl):
     Slider
 
     """
-    implements(ISliderImpl)
-
-    #---------------------------------------------------------------------------
-    # ISliderImpl interface
-    #---------------------------------------------------------------------------
-    def create_widget(self):
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create(self):
         """ Creates the underlying QSlider widget.
 
         """
         self.widget = QtGui.QSlider(parent=self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes of the toolkit widget.
 
         """
-        parent = self.parent
-        parent._down = False
+        super(QtSlider, self).initialize()
+        shell = self.shell_obj
+        shell._down = False
 
-        # We hard-coded range for the widget since we are managing the
-        # conversion.
-        self.set_range(parent.minimum, parent.maximum)
-        self.set_position(parent.value)
-        self.set_orientation(parent.orientation)
-        self.set_tick_position(parent.tick_position)
-        self.set_tick_frequency(parent.tick_interval)
-        self.set_single_step(parent.single_step)
-        self.set_page_step(parent.page_step)
-        self.set_tracking(parent.tracking)
-        self.connect()
+        self.set_range(shell.minimum, shell.maximum)
+        self.set_position(shell.value)
+        self.set_orientation(shell.orientation)
+        self.set_tick_position(shell.tick_position)
+        self.set_tick_frequency(shell.tick_interval)
+        self.set_single_step(shell.single_step)
+        self.set_page_step(shell.page_step)
+        self.set_tracking(shell.tracking)
 
+    def bind(self):
+        """ connect the event handlers for the slider widget signals.
+
+        """
+        super(QtSlider, self).bind()
+        widget = self.widget
+        widget.valueChanged.connect(self._on_slider_changed)
+        widget.sliderPressed.connect(self._on_pressed)
+        widget.sliderReleased.connect(self._on_released)
+
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
     def parent__minimum_changed(self, minimum):
         """ Update the slider when the converter class changes.
 
@@ -160,18 +165,6 @@ class QtSlider(QtControl):
 
         """
         self.set_orientation(orientation)
-
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    def connect(self):
-        """ connect the event handlers for the slider widget signals.
-
-        """
-        widget = self.widget
-        widget.valueChanged.connect(self._on_slider_changed)
-        widget.sliderPressed.connect(self._on_pressed)
-        widget.sliderReleased.connect(self._on_released)
 
     def _on_slider_changed(self, value):
         """ Respond to a change in value of the slider widget.

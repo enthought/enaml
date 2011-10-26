@@ -16,21 +16,18 @@ class QtCheckBox(QtToggleControl, AbstractTkCheckBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying QCheckBox widget.
 
         """
         self.widget = QtGui.QCheckBox(self.parent_widget())
         
-    #--------------------------------------------------------------------------
-    # Implementation
-    #--------------------------------------------------------------------------
-    def connect(self):
+    def bind(self):
         """ Connects the event handlers for the check box. Not meant for
         public consumption.
 
         """
-        super(QtCheckBox, self).connect()
+        super(QtCheckBox, self).bind()
         widget = self.widget
         widget.toggled.connect(self.on_toggled)
         widget.pressed.connect(self.on_pressed)

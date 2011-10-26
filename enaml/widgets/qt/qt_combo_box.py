@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-
 from .qt_control import QtControl
 
 from ..combo_box import AbstractTkComboBox
@@ -18,19 +17,26 @@ class QtComboBox(QtControl, AbstractTkComboBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates a QComboBox.
 
         """
         self.widget = QtGui.QComboBox(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
-        super(QtComboBox, self).initialize_widget()
+        super(QtComboBox, self).initialize()
         self.update_items()
-    
+
+    def bind(self):
+        """ Connects the event handlers for the combo box.
+
+        """
+        super(QtComboBox, self).bind()
+        self.widget.currentIndexChanged.connect(self.on_selected)
+        
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -39,7 +45,7 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         shell widget.
 
         """
-        self.set_value(self.shell_widget.to_string(value))
+        self.set_value(self.shell_obj.to_string(value))
 
     def shell_to_string_changed(self, value):
         """ The change handler for the 'string' attribute on the 
@@ -61,19 +67,12 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         
         """
         self.update_items()
-    
-    def connect(self):
-        """ Connects the event handlers for the combo box.
-
-        """
-        super(QtComboBox, self).connect()
-        self.widget.currentIndexChanged.connect(self.on_selected)
 
     def update_items(self):
         """ Update the QComboBox with items from the shell widget.
         
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         str_items = map(shell.to_string, shell.items)
         self.set_items(str_items)
         self.set_value(shell.to_string(shell.value))
@@ -82,7 +81,7 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """ The event handler for a combo box selection event.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         idx = self.widget.currentIndex()
         value = shell.items[idx]
         shell.value = value

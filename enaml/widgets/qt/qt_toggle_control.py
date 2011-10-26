@@ -19,13 +19,13 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes of the underlying control. Not
         meant for public consumption.
 
         """
-        super(QtToggleControl, self).initialize_widget()
-        shell = self.shell_widget
+        super(QtToggleControl, self).initialize()
+        shell = self.shell_obj
         self.set_label(shell.text)
         self.set_checked(shell.checked)
     
@@ -51,7 +51,7 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         public consumption.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         shell.checked = self.widget.isChecked()
         shell.toggled = True
 
@@ -60,7 +60,7 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         public consumption.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         shell._down = True
         shell.pressed = True
 
@@ -69,7 +69,7 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         public consumption.
 
         """
-        shell = self.shell_widget
+        shell = self.shell_obj
         if shell._down:
             shell._down = False
             shell.released = True

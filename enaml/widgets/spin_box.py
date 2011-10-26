@@ -91,8 +91,6 @@ class SpinBox(Control):
     #: If True, the spin box will wrap around at its extremes.
     wrap = Bool
 
-    #--------------------------------------------------------------------------
-    # Overridden parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkSpinBox)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkSpinBox)
 

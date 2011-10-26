@@ -3,7 +3,7 @@ import random
 import datetime
 from enaml.enums import Orientation, Direction
 from enaml.converters import SliderLogConverter, IntConverter
-
+            
 
 defn ErrorField:
     Field:
@@ -60,7 +60,7 @@ defn TestSplit:
 
 defn TestView:
     Window:
-        Container:
+        Component:
             PushButton -> keybutton:
                 text = 'foo'
                 constraints << [
@@ -128,7 +128,7 @@ defn TestView:
                     width == 100,
                     height == 30,
                 ]
-            Container:
+            Component:
                 size_hint = lambda: (100, 100)
                 constraints = [
                     left == (3. / 4.) * parent.width,

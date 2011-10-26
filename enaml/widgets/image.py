@@ -49,9 +49,7 @@ class Image(Control):
     #: this height. This is not necessarily the height of the widget.
     img_height = Int
 
-    #--------------------------------------------------------------------------
-    # Overriddent parent class traits
-    #--------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkImage)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkImage)
 
     

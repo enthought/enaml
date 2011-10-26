@@ -23,8 +23,6 @@ class Html(Control):
     #: The Html source code to be rendered.
     source = Str
 
-    #---------------------------------------------------------------------------
-    # Overridden parent class traits
-    #---------------------------------------------------------------------------
-    abstract_widget = Instance(AbstractTkHtml)
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkHtml)
 

@@ -15,9 +15,9 @@ class QtBoundedDate(QtControl, AbstractTkBoundedDate):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def initialize_widget(self):
-        super(QtControl, self).initialize_widget()
-        shell = self.shell_widget
+    def initialize(self):
+        super(QtControl, self).initialize()
+        shell = self.shell_obj
         self.set_min_date(shell.min_date)
         self.set_max_date(shell.max_date)
         self.set_date(shell.date)
