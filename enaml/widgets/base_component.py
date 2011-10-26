@@ -301,4 +301,6 @@ class BaseComponent(HasStrictTraits):
 
         """
         self.add_trait_listener(self.abstract_obj, 'shell')
+        for child in self.children:
+            child.set_listeners()
 
