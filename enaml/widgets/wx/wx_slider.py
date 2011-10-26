@@ -12,7 +12,7 @@ from .wx_control import WXControl
 
 from ..slider import ISliderImpl
 
-from ...enums import Orientation, TickPosition
+from ...enums import TickPosition
 
 SLIDER_MAX = 10000
 
@@ -256,7 +256,7 @@ class WXSlider(WXControl):
                    wx.SL_RIGHT | wx.SL_BOTH | wx.SL_AUTOTICKS |
                    wx.SL_TICKS)
 
-        if parent.orientation == Orientation.VERTICAL:
+        if parent.orientation == 'vertical':
             if ticks in ADAPT_VERT_TICK:
                 parent.tick_position = ADAPT_VERT_TICK[ticks]
                 return
@@ -281,8 +281,8 @@ class WXSlider(WXControl):
 
         Arguments
         ---------
-        orientation : Orientation
-            The orientation of the slider.
+        orientation : str
+            The orientation of the slider, ``vertical`` or ``horizontal``.
 
         """
         widget = self.widget
@@ -293,7 +293,7 @@ class WXSlider(WXControl):
         style = widget.GetWindowStyle()
         style &= ~(wx.SL_HORIZONTAL | wx.SL_VERTICAL)
 
-        if orientation == Orientation.VERTICAL:
+        if orientation == 'vertical':
             style |= wx.SL_VERTICAL
         else:
             style |= wx.SL_HORIZONTAL

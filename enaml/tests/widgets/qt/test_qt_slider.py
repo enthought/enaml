@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from enaml.widgets.qt.qt import QtGui, QtCore
 
-from enaml.enums import Orientation
 from enaml.widgets.qt.qt_slider import (SLIDER_MAX, HOR_TICK_POS_MAP,
                                         VERT_TICK_POS_MAP)
 
@@ -12,8 +11,8 @@ from .qt_test_assistant import QtTestAssistant
 from .. import slider
 
 # A map from Qt constants for horizontal or vertical orientation to Enaml enums.
-ORIENTATION_MAP = {QtCore.Qt.Horizontal: Orientation.HORIZONTAL,
-                   QtCore.Qt.Vertical: Orientation.VERTICAL}
+ORIENTATION_MAP = {QtCore.Qt.Horizontal: 'horizontal',
+                   QtCore.Qt.Vertical: 'vertical'}
 
 
 # Map test event actions to the Qt Slider event signals
@@ -61,7 +60,7 @@ class TestQtSlider(QtTestAssistant, slider.TestSlider):
         """
         value = widget.tickPosition()
         orientation = self.get_orientation(widget)
-        if orientation == Orientation.VERTICAL:
+        if orientation == 'vertical':
             result = VERT_TICK_POS_MAP[value]
         else:
             result = HOR_TICK_POS_MAP[value]

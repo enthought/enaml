@@ -12,10 +12,10 @@ from .styling import wx_color_from_color
 from ..table_view import ITableViewImpl
 
 from ...item_models.abstract_item_model import AbstractItemModel, ModelIndex
-from ...enums import DataRole, Orientation
+from ...enums import DataRole
 
 
-# XXX we need to add more handler support for the different modes of 
+# XXX we need to add more handler support for the different modes of
 # resetting the grid.
 class AbstractItemModelTable(wx.grid.PyGridTableBase):
 
@@ -41,10 +41,10 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
 
     def GetNumberRows(self):
         return self._item_model.row_count()
-    
+
     def GetNumberCols(self):
         return self._item_model.column_count()
-    
+
     def GetValue(self, row, col, parent_index=ModelIndex()):
         model = self._item_model
         index = model.index(row, col, parent_index)
@@ -68,20 +68,20 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
 
     def GetRowLabelValue(self, row):
         model = self._item_model
-        return model.header_data(row, Orientation.VERTICAL, DataRole.DISPLAY)
+        return model.header_data(row, 'vertical', DataRole.DISPLAY)
 
     def GetColLabelValue(self, col):
         model = self._item_model
-        return model.header_data(col, Orientation.HORIZONTAL, DataRole.DISPLAY)
+        return model.header_data(col, 'horizontal', DataRole.DISPLAY)
 
 
 class WXTableView(WXControl):
     """ A wxPython implementation of TableView.
-    
+
     See Also
     --------
     TableView
-    
+
     """
     implements(ITableViewImpl)
 
@@ -93,27 +93,27 @@ class WXTableView(WXControl):
     #---------------------------------------------------------------------------
     def create_widget(self):
         """ Create the underlying wx.grid.Grid control.
-        
+
         """
         self.widget = widget = wx.grid.Grid(self.parent_widget())
         widget.SetDoubleBuffered(True)
 
     def initialize_widget(self):
         """ Intialize the widget with the attributes of this instance.
-        
+
         """
         self.set_table_model(self.parent.item_model)
         self.bind()
 
     def create_style_handler(self):
         """ Initialize a style handler.
-        
+
         """
         pass
-    
+
     def initialize_style(self):
         """ Configure the widget's minimum width and height.
-        
+
         """
         style = self.parent.style
         min_width = style.get_property("min_width")
@@ -134,10 +134,10 @@ class WXTableView(WXControl):
     def parent_item_model_changed(self, item_model):
         """ The change handler for the 'item_model' attribute. Not meant
         for public consumption.
-        
+
         """
         self.set_table_model(item_model)
-        
+
     #---------------------------------------------------------------------------
     # implementation
     #---------------------------------------------------------------------------
@@ -149,7 +149,7 @@ class WXTableView(WXControl):
         widget = self.widget
         widget.Bind(wx.grid.EVT_GRID_SELECT_CELL, self.on_select_cell)
         widget.Bind(wx.grid.EVT_GRID_CELL_LEFT_DCLICK, self.on_left_dclick)
-    
+
     def on_select_cell(self, event):
         """ The event handler for the cell selection event.  Not meant
         for public consumption.
@@ -162,7 +162,7 @@ class WXTableView(WXControl):
         col = event.GetCol()
         index = parent.item_model.index(row, col, parent_index)
         parent.selected = index
-        
+
 
     def on_left_dclick(self, event):
         """ The event handler for the double-click event.  Not meant
@@ -171,7 +171,7 @@ class WXTableView(WXControl):
         """
         event.Skip()
         self.parent.left_dclick = self.parent.selected
-        
+
     def set_table_model(self, model):
         """ Set the table view's model.  Not meant for public
         consumption.

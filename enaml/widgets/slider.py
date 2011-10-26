@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import (Bool, Enum, Event, Instance, Property, Int, 
+from traits.api import (Bool, Enum, Event, Instance, Property, Int,
                         TraitError, Range)
 
 from .control import Control, AbstractTkControl
@@ -17,23 +17,23 @@ class AbstractTkSlider(AbstractTkControl):
     @abstractmethod
     def shell_value_changed(self, value):
         raise NotImplementedError
-    
+
     @abstractmethod
     def shell_minimum_changed(self, minimum):
         raise NotImplementedError
-    
+
     @abstractmethod
     def shell_maximum_changed(self, maximum):
         raise NotImplementedError
-    
+
     @abstractmethod
     def shell_tracking_changed(self, tracking):
         raise NotImplementedError
-    
+
     @abstractmethod
     def shell_single_step_changed(self, single_step):
         raise NotImplementedError
-    
+
     @abstractmethod
     def shell_page_step_changed(self, page_step):
         raise NotImplementedError
@@ -62,9 +62,9 @@ class Slider(Control):
 
     """
     #: The minimum value for the index. To avoid issues where
-    #: :attr:`minimum` is higher than :attr:`maximum`. The value is 
-    #: a positive integer capped by the :attr:`maximum`. If the new 
-    #: value of :attr:`minimum` make the current position invalid then 
+    #: :attr:`minimum` is higher than :attr:`maximum`. The value is
+    #: a positive integer capped by the :attr:`maximum`. If the new
+    #: value of :attr:`minimum` make the current position invalid then
     #: the current position is set to :attr:minimum. Default value is 0.
     minimum = Property(Int, depends_on ='_minimum')
 
@@ -72,9 +72,9 @@ class Slider(Control):
     _minimum = Int(0)
 
     #: The maximum value for the index. Checks make sure that
-    #: :attr:`maximum` cannot be lower than :attr:`minimum`. If the 
-    #: new value of :attr:`maximum` make the current position invalid 
-    #: then the current position is set to :attr:maximum. The max value 
+    #: :attr:`maximum` cannot be lower than :attr:`minimum`. If the
+    #: new value of :attr:`maximum` make the current position invalid
+    #: then the current position is set to :attr:maximum. The max value
     #: is restricted to 65535, while the default is 100.
     maximum = Property(Int, depends_on ='_maximum')
 
@@ -112,7 +112,7 @@ class Slider(Control):
     #: horizontal. When the orientation is flipped the tick positions
     #: (if set) also adapt to reflect the changes  (e.g. the LEFT
     #: becomes TOP when the orientation becomes horizontal).
-    orientation = Enum(Orientation.HORIZONTAL, *Orientation.values())
+    orientation = Orientation
 
     #: If True, the value is updated while sliding. Otherwise, it is
     #: only updated when the slider is released. Defaults to True.

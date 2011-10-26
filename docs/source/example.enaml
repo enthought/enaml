@@ -5,7 +5,7 @@
 import math
 import random
 import datetime
-from enaml.enums import Orientation, Direction
+from enaml.enums import Direction
 
 Window:
 
@@ -132,9 +132,9 @@ Window:
                         to_slider = lambda val: math.log10(val)
                         from_slider = lambda val: 10 ** val
                         tick_interval = 0.5
-                        orientation << (Orientation.VERTICAL
+                        orientation << ('vertical'
                                         if wrap_box.checked else
-                                        Orientation.HORIZONTAL)
+                                        'horizontal')
 
                 Field mf:
                     to_string = str

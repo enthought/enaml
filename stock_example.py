@@ -4,13 +4,13 @@
 #------------------------------------------------------------------------------
 import datetime
 
-from traits.api import (HasTraits, List, Str, Date, Enum, Property, Array, Int, 
-                       Tuple, on_trait_change, Instance, ReadOnly, Event, 
+from traits.api import (HasTraits, List, Str, Date, Enum, Property, Array, Int,
+                       Tuple, on_trait_change, Instance, ReadOnly, Event,
                        cached_property, DelegatesTo, Float)
 
 import enaml
 from enaml.item_models.abstract_item_model import AbstractTableModel
-from enaml.enums import Orientation, DataRole
+from enaml.enums import DataRole
 from enaml.color import Color
 
 import stock_data
@@ -25,9 +25,9 @@ class HistoricData(HasTraits):
     available_symbols = List(Str)
 
     symbol = Enum(values='available_symbols')
-    
+
     date_range = Tuple(Date, Date)
-    
+
     end_date = Date
 
     days_of_history_choices = Property(depends_on='date_range')
@@ -54,17 +54,17 @@ class HistoricData(HasTraits):
     def _get_days_of_history_choices(self):
         start, end = self.date_range
         return range(100, (end - start).days, 100)
-    
+
     def _get_start_date(self):
         return self.end_date - datetime.timedelta(days=self.days_of_history)
-        
+
     def _compute_data(self):
         symbol = self.symbol
         start = self.start_date
         end = self.end_date
         num_points = self.num_points
         return stock_data.get_data(symbol, start, end, num_points)
-    
+
     def _data_default(self):
         return self._compute_data()
 
@@ -84,7 +84,7 @@ class GridDataAdapter(HasTraits):
     data = DelegatesTo('model')
 
     available_columns = List(Str)
-    
+
     grid_columns = List(Str)
 
     highlight = ReadOnly(Color.from_string('lightskyblue'))
@@ -99,7 +99,7 @@ class GridDataAdapter(HasTraits):
 
     def _available_columns_default(self):
         return ['open', 'close', 'low', 'high', 'volume']
-    
+
     def _grid_columns_default(self):
         return ['open', 'close', 'low', 'high', 'volume']
 
@@ -135,7 +135,7 @@ class StockDataTable(AbstractTableModel):
 
     def row_count(self, parent=None):
         return self.adapter.grid_size[0]
-    
+
     def data(self, index, role):
         adapter = self.adapter
         data = adapter.data
@@ -161,7 +161,7 @@ class StockDataTable(AbstractTableModel):
     def header_data(self, section, orientation, role):
         data = self.adapter.data
         if role == DataRole.DISPLAY:
-            if orientation == Orientation.VERTICAL:
+            if orientation == 'horizontal':
                 ts = data['dates'][section]
                 return str(datetime.date.fromtimestamp(ts))
             else:
@@ -173,7 +173,7 @@ if __name__ == '__main__':
     plot_driver = PlotDriver(model)
     adapter = GridDataAdapter(model=model)
     data_table = StockDataTable(adapter)
-    
+
     import time
     t1 = time.time()
     view = MainView(model, adapter, plot_driver, stock_data_table=data_table, pb_label='whatd')

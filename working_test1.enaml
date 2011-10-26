@@ -1,9 +1,9 @@
 import math
 import random
 import datetime
-from enaml.enums import Orientation, Direction
+from enaml.enums import Direction
 from enaml.converters import SliderLogConverter, IntConverter
-            
+
 
 defn ErrorField:
     Field:
@@ -233,7 +233,7 @@ defn MainWindow(model, table_model):
                             tracking := tracking_box.checked
                             log_value >> setattr(self, 'foo', str(log_value))
                             tick_interval = 50
-                            orientation = Orientation.VERTICAL if wrap_box.checked else Orientation.HORIZONTAL
+                            orientation = 'vertical' if wrap_box.checked else 'horizontal'
 
                             # Here, we define our own `foo` attribute which
                             # can be used like any other predefined attribute.

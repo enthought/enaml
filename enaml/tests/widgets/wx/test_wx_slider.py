@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from enaml.enums import TickPosition, Orientation
+from enaml.enums import TickPosition
 from enaml.widgets.wx.wx_slider import SLIDER_MAX
 
 from .wx_test_assistant import WXTestAssistant
@@ -21,8 +21,8 @@ TICK_POS_MAP = {wx.SL_BOTTOM: TickPosition.DEFAULT,
                 wx.SL_TICKS: 'Ticks'}
 
 # A map from Wx constants to Enaml enums for horizontal or vertical orientation.
-ORIENTATION_MAP = {wx.SL_HORIZONTAL: Orientation.HORIZONTAL,
-                   wx.SL_VERTICAL: Orientation.VERTICAL}
+ORIENTATION_MAP = {wx.SL_HORIZONTAL: 'horizontal',
+                   wx.SL_VERTICAL: 'vertical'}
 
 # Map event actions to WX constants
 EVENT_MAP = {slider.TestEvents.PRESSED: wx.EVT_LEFT_DOWN,

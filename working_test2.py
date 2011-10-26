@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 """ A working example that tracks the development of the widgets
-on the pyside branch and can be executed via python working_pyside_test.py 
+on the pyside branch and can be executed via python working_pyside_test.py
 from the current directory.
 
 """
@@ -19,7 +19,7 @@ import math
 import random
 import datetime
 
-from enaml.enums import Direction, Orientation
+from enaml.enums import Direction
 
 
 Window:
@@ -54,7 +54,7 @@ Window:
                     from_slider = lambda pos: int(pos*float(M.value))
                     value := sb.value
                     value >> print(self.value)
-                    orientation = Orientation.HORIZONTAL
+                    orientation = 'horizontal'
                     style.background_color << 'pink' if self.error else 'nocolor'
                 Field M:
                     value = '255'
@@ -63,15 +63,15 @@ Window:
                 model = model
 """
 morestuff = """
-    
+
     Panel:
         HGroup:
             Group my_group:
 
-                direction << (random.choice([Direction.TOP_TO_BOTTOM, 
-                                             Direction.BOTTOM_TO_TOP]) 
+                direction << (random.choice([Direction.TOP_TO_BOTTOM,
+                                             Direction.BOTTOM_TO_TOP])
                               or pb2.clicked)
-            
+
                 PushButton:
                     text << "clickme!" if not self.down else "I'm down!"
 
@@ -85,14 +85,14 @@ morestuff = """
                 PushButton static:
                     text = "static"
                     clicked >> model.print_msg(msg)
-                
+
                 CheckBox cb1:
                     text = "A simple text box"
                     toggled >> setattr(self, 'text', model.randomize(self.text))
-                
+
             Html:
-                source << ("<center><h1>Hello Enaml!</h1></center><br>" * cmbx.value 
-                           if not static.down else 
+                source << ("<center><h1>Hello Enaml!</h1></center><br>" * cmbx.value
+                           if not static.down else
                            "<center><h1>Static Down!</h1></center>")
 
             VGroup:
@@ -127,7 +127,7 @@ morestuff = """
                     activated >> print('activated', msg.new)
                     selected >> print('selected', msg.new)
                     date >> print('new date', msg.new)
-                
+
                 ComboBox cmbx:
                     items = range(100)
                     value = 1

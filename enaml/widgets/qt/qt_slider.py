@@ -7,7 +7,7 @@ from .qt_control import QtControl
 
 from ..slider import AbstractTkSlider
 
-from ...enums import Orientation, TickPosition
+from ...enums import TickPosition
 
 
 # Constant value for conversion between Range(0, 1.0) and integers.
@@ -23,8 +23,8 @@ TICK_POS_MAP = {TickPosition.DEFAULT: QtGui.QSlider.NoTicks,
                 TickPosition.NO_TICKS: QtGui.QSlider.NoTicks}
 
 # A map from Enaml enums to Qt constants for horizontal or vertical orientation.
-ORIENTATION_MAP = {Orientation.HORIZONTAL: QtCore.Qt.Horizontal,
-                   Orientation.VERTICAL: QtCore.Qt.Vertical}
+ORIENTATION_MAP = {'horizontal': QtCore.Qt.Horizontal,
+                   'vertical': QtCore.Qt.Vertical}
 
 
 # Qt Slider does not return TicksLeft and TicksRight it always
@@ -247,8 +247,8 @@ class QtSlider(QtControl, AbstractTkSlider):
 
         Arguments
         ---------
-        orientation : Orientation
-            The orientation of the slider.
+        orientation : str
+            The orientation of the slider, ``vertical`` or ``horizontal``.
 
         """
         constant = ORIENTATION_MAP[orientation]
@@ -312,7 +312,7 @@ class QtSlider(QtControl, AbstractTkSlider):
         shell = self.shell_obj
         orientation = shell.orientation
         tick_pos = self.widget.tickPosition()
-        if orientation == Orientation.VERTICAL:
+        if orientation == 'vertical':
             shell.tick_position = VERT_TICK_POS_MAP[tick_pos]
         else:
             shell.tick_position = HOR_TICK_POS_MAP[tick_pos]
