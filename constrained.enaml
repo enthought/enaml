@@ -12,50 +12,49 @@
 
 defn MainWindow:
    Window:
-       Container:
-           PushButton -> frame:
-               text = 'Frame'
-               constraints = [
-                   left == parent.left,
-                   right == parent.right,
-                   top == parent.top,
-                   height >= 100,
-                   width >= 200,
-               ]
-           PushButton -> add_button:
-               text = 'Add'
-               constraints = [
-                   left == parent.left,
-                   bottom == parent.bottom,
-                   top == frame.bottom + 8,
-                   width == size_hint()[0],
-                   height == size_hint()[1],
-               ]
-           PushButton -> remove_button:
-               text = 'Remove'
-               constraints = [
-                   left == add_button.right+8,
-                   bottom == add_button.bottom,
-                   width == size_hint()[0],
-                   height == size_hint()[1],
-               ]
-           PushButton -> change_mode_button:
-               text = 'Change Mode'
-               constraints = [
-                   left >= remove_button.right+8,
-                   bottom == add_button.bottom,
-                   width == size_hint()[0],
-                   height == size_hint()[1],
-                   (h_center == parent.h_center) | 'weak',
-               ]
-           PushButton -> share_button:
-               text = 'Share...'
-               constraints = [
-                   right == frame.right,
-                   bottom == add_button.bottom,
-                   width == size_hint()[0],
-                   height == size_hint()[1],
-                   left >= change_mode_button.right+8,
-               ]
+       PushButton -> frame:
+           text = 'Frame'
+           constraints = [
+               left == parent.left,
+               right == parent.right,
+               top == parent.top,
+               height >= 100,
+               width >= 200,
+           ]
+       PushButton -> add_button:
+           text = 'Add'
+           constraints = [
+               left == parent.left,
+               bottom == parent.bottom,
+               top == frame.bottom + 8,
+               width == size_hint()[0],
+               height == size_hint()[1],
+           ]
+       PushButton -> remove_button:
+           text = 'Remove'
+           constraints = [
+               left == add_button.right+8,
+               bottom == add_button.bottom,
+               width == size_hint()[0],
+               height == size_hint()[1],
+           ]
+       PushButton -> change_mode_button:
+           text = 'Change Mode'
+           constraints = [
+               left >= remove_button.right+8,
+               bottom == add_button.bottom,
+               width == size_hint()[0],
+               height == size_hint()[1],
+               (h_center == parent.h_center) | 'weak',
+           ]
+       PushButton -> share_button:
+           text = 'Share...'
+           constraints = [
+               right == frame.right,
+               bottom == add_button.bottom,
+               width == size_hint()[0],
+               height == size_hint()[1],
+               left >= change_mode_button.right+8,
+           ]
 
 
