@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 import wx
 
-from enaml.enums import TickPosition
 from enaml.widgets.wx.wx_slider import SLIDER_MAX
 
 from .wx_test_assistant import WXTestAssistant
@@ -12,12 +11,12 @@ from .. import slider
 
 
 # A map from wxSlider constants to Enaml TickPosition values.
-TICK_POS_MAP = {wx.SL_BOTTOM: TickPosition.DEFAULT,
-                wx.SL_LEFT: TickPosition.LEFT ,
-                wx.SL_RIGHT: TickPosition.RIGHT,
-                wx.SL_TOP: TickPosition.TOP,
-                wx.SL_BOTTOM: TickPosition.BOTTOM,
-                wx.SL_BOTH: TickPosition.BOTH,
+TICK_POS_MAP = {wx.SL_BOTTOM: 'bottom',
+                wx.SL_LEFT: 'left' ,
+                wx.SL_RIGHT: 'right',
+                wx.SL_TOP: 'top',
+                wx.SL_BOTTOM: 'bottom',
+                wx.SL_BOTH: 'both',
                 wx.SL_TICKS: 'Ticks'}
 
 # A map from Wx constants to Enaml enums for horizontal or vertical orientation.
@@ -87,14 +86,14 @@ class TestWXSlider(WXTestAssistant, slider.TestSlider):
 
         number_of_flags = len(flags)
         if number_of_flags == 0:
-            return TickPosition.NO_TICKS
+            return 'no_ticks'
         elif number_of_flags == 1:
-            self.fail('The tick position style is expected to have a least'
+            self.fail('The tick position style is expected to have at least'
                       ' two style bits set when the ticks are visible')
         elif number_of_flags == 2:
             self.assertIn('Ticks', flags, 'When the ticks are visible'
                       ' the position style is expected to have the wx.SL_TICKS'
-                      ' bits set')
+                      ' bit set')
             flags.pop(flags.index('Ticks'))
         else:
             self.fail('More than two tick position style flags are set')

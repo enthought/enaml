@@ -12,25 +12,14 @@ from .wx_control import WXControl
 
 from ..slider import ISliderImpl
 
-from ...enums import TickPosition
-
-SLIDER_MAX = 10000
-
 # A map from Enaml constants to wxSlider TickPosition values to simulate
 # the behaviour of QSlider
-HOR_TICK_POS_MAP = {TickPosition.TOP: wx.SL_TOP,
-                     TickPosition.BOTTOM: wx.SL_BOTTOM,
-                     TickPosition.BOTH: wx.SL_BOTH}
-
-VERT_TICK_POS_MAP = {TickPosition.LEFT: wx.SL_LEFT,
-                    TickPosition.RIGHT: wx.SL_RIGHT,
-                    TickPosition.BOTH: wx.SL_BOTH}
-
-ADAPT_HOR_TICK = {TickPosition.LEFT: TickPosition.TOP,
-                  TickPosition.RIGHT: TickPosition.BOTTOM}
-
-ADAPT_VERT_TICK = {TickPosition.TOP: TickPosition.LEFT,
-                  TickPosition.BOTTOM: TickPosition.RIGHT}
+HOR_TICK_POS_MAP = {'top': wx.SL_TOP, 'bottom': wx.SL_BOTTOM,
+                    'both': wx.SL_BOTH}
+VERT_TICK_POS_MAP = {'left': wx.SL_LEFT, 'right': wx.SL_RIGHT,
+                     'both': wx.SL_BOTH}
+ADAPT_HOR_TICK = {'left': 'top', 'right': 'bottom'}
+ADAPT_VERT_TICK = {'top': 'left', 'bottom': 'right'}
 
 
 class WXSlider(WXControl):
@@ -245,8 +234,8 @@ class WXSlider(WXControl):
 
         Arguments
         ---------
-        ticks : TickPosition
-            The tick position
+        ticks : str
+            The :attr:`~enaml.enums.TickPosition` value.
 
         """
         parent = self.parent
@@ -369,9 +358,10 @@ class WXSlider(WXControl):
         result : boolean
             True if the point is inside the thumb area.
 
-        .. note:: The current implementation is not very accurate. The native
-            slider widget that is wrapped by wxWidgets places a default border
-            between the edges. Thus the thumb hit is out by a few pixels.
+        .. note:: The current implementation is not very accurate. The
+            native slider widget that is wrapped by wxWidgets places a
+            default border between the edges. Thus the thumb hit is out
+            by a few pixels.
 
         """
         widget = self.widget

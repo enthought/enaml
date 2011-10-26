@@ -7,8 +7,6 @@ from cStringIO import StringIO
 from enaml.factory import EnamlFactory
 
 enml = """
-from enaml.enums import TickPosition
-
 Window:
     title = "SpinBox example"
     Panel:

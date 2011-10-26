@@ -7,8 +7,6 @@ from cStringIO import StringIO
 from enaml.factory import EnamlFactory
 
 enml = """
-from enaml.enums import TickPosition
-
 Window:
     title = "Slider example"
     Panel:
@@ -16,7 +14,7 @@ Window:
             Slider:
                 value = 0.5
                 tick_interval = 0.05
-                tick_position = TickPosition.BOTTOM
+                tick_position = 'bottom'
 """
 
 fact = EnamlFactory(StringIO(enml))

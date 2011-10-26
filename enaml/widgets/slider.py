@@ -106,7 +106,7 @@ class Slider(Control):
     #: marks. Please note that the orientation takes precedence over
     #: the tick mark position and an incompatible tick position will
     #: be addapted according to the current orientation.
-    tick_position = Enum(TickPosition.NO_TICKS, *TickPosition.values())
+    tick_position = TickPosition
 
     #: The orientation of the slider. The default orientation is
     #: horizontal. When the orientation is flipped the tick positions

@@ -5,10 +5,9 @@
 from traits.api import TraitError
 
 from .enaml_test_case import EnamlTestCase, required_method
-from enaml.enums import TickPosition
 from enaml.util.enum import Enum
 
-class TestEvents(Enum):
+class TestEvents(object):
     """ Events required by the testcase. """
 
     #: The left button is pressed
@@ -102,10 +101,8 @@ defn MainWindow(events):
         self.assertEnamlInSync(component, 'minimum', 0)
         self.assertEnamlInSync(component, 'maximum', 100)
         self.assertEnamlInSync(component, 'tick_interval', 10)
-        # while the initial value of the tick position is DEFAULT inside the
-        # enaml object is converted to NO_TICKS
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.NO_TICKS)
-        self.assertEnamlInSync(component, 'orientation', 'vertical')
+        self.assertEnamlInSync(component, 'tick_position', 'no_ticks')
+        self.assertEnamlInSync(component, 'orientation', 'horizontal')
         self.assertEnamlInSync(component, 'single_step', 1)
         self.assertEnamlInSync(component, 'page_step', 10)
         self.assertEqual(self.events, [])
@@ -229,28 +226,28 @@ defn MainWindow(events):
         """
         component = self.component
 
-        component.tick_position = TickPosition.BOTTOM
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
+        component.tick_position = 'bottom'
+        self.assertEnamlInSync(component, 'tick_position', 'bottom')
 
-        component.tick_position = TickPosition.TOP
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.TOP)
+        component.tick_position = 'top'
+        self.assertEnamlInSync(component, 'tick_position', 'top')
 
-        component.tick_position = TickPosition.BOTH
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTH)
+        component.tick_position = 'both'
+        self.assertEnamlInSync(component, 'tick_position', 'both')
 
         self.component.orientation = 'vertical'
 
-        component.tick_position = TickPosition.LEFT
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.LEFT)
+        component.tick_position = 'left'
+        self.assertEnamlInSync(component, 'tick_position', 'left')
 
-        component.tick_position = TickPosition.RIGHT
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
+        component.tick_position = 'right'
+        self.assertEnamlInSync(component, 'tick_position', 'right')
 
-        component.tick_position = TickPosition.BOTH
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTH)
+        component.tick_position = 'both'
+        self.assertEnamlInSync(component, 'tick_position', 'both')
 
-        component.tick_position = TickPosition.NO_TICKS
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.NO_TICKS)
+        component.tick_position = 'no_ticks'
+        self.assertEnamlInSync(component, 'tick_position', 'no_ticks')
 
     def test_incompatible_tick_position(self):
         """ Test that changing tick position is addapted if the orientation
@@ -262,19 +259,19 @@ defn MainWindow(events):
 
         component = self.component
 
-        component.tick_position = TickPosition.LEFT
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.TOP)
+        component.tick_position = 'left'
+        self.assertEnamlInSync(component, 'tick_position', 'top')
 
-        component.tick_position = TickPosition.RIGHT
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.BOTTOM)
+        component.tick_position = 'right'
+        self.assertEnamlInSync(component, 'tick_position', 'bottom')
 
         self.component.orientation = 'vertical'
 
-        component.tick_position = TickPosition.BOTTOM
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
+        component.tick_position = 'bottom'
+        self.assertEnamlInSync(component, 'tick_position', 'right')
 
-        component.tick_position = TickPosition.TOP
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.LEFT)
+        component.tick_position = 'top'
+        self.assertEnamlInSync(component, 'tick_position', 'left')
 
 
     def test_changing_orientaion_tick_policy(self):
@@ -283,12 +280,12 @@ defn MainWindow(events):
         """
         component = self.component
 
-        component.tick_position = TickPosition.BOTTOM
+        component.tick_position = 'bottom'
         self.component.orientation = 'vertical'
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.RIGHT)
-        component.tick_position = TickPosition.LEFT
+        self.assertEnamlInSync(component, 'tick_position', 'right')
+        component.tick_position = 'left'
         self.component.orientation = 'horizontal'
-        self.assertEnamlInSync(component, 'tick_position', TickPosition.TOP)
+        self.assertEnamlInSync(component, 'tick_position', 'top')
 
 
     def test_pressing_the_thumb(self):

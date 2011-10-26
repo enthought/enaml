@@ -1,5 +1,3 @@
-from enaml.enums import TickPosition
-
 Window:
     title = "SpinBox example"
     Panel:

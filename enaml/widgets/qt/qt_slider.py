@@ -7,20 +7,17 @@ from .qt_control import QtControl
 
 from ..slider import AbstractTkSlider
 
-from ...enums import TickPosition
-
 
 # Constant value for conversion between Range(0, 1.0) and integers.
 SLIDER_MAX = 10000
 
 # A map from Enaml constants to QSlider TickPosition values.
-TICK_POS_MAP = {TickPosition.DEFAULT: QtGui.QSlider.NoTicks,
-                TickPosition.LEFT: QtGui.QSlider.TicksLeft,
-                TickPosition.RIGHT: QtGui.QSlider.TicksRight,
-                TickPosition.TOP: QtGui.QSlider.TicksAbove,
-                TickPosition.BOTTOM: QtGui.QSlider.TicksBelow,
-                TickPosition.BOTH: QtGui.QSlider.TicksBothSides,
-                TickPosition.NO_TICKS: QtGui.QSlider.NoTicks}
+TICK_POS_MAP = {'no_ticks': QtGui.QSlider.NoTicks,
+                'left': QtGui.QSlider.TicksLeft,
+                'right': QtGui.QSlider.TicksRight,
+                'top': QtGui.QSlider.TicksAbove,
+                'bottom': QtGui.QSlider.TicksBelow,
+                'both': QtGui.QSlider.TicksBothSides}
 
 # A map from Enaml enums to Qt constants for horizontal or vertical orientation.
 ORIENTATION_MAP = {'horizontal': QtCore.Qt.Horizontal,
@@ -32,18 +29,16 @@ ORIENTATION_MAP = {'horizontal': QtCore.Qt.Horizontal,
 # the orientation in order to return the right result
 
 # A map from horizontal QSlider TickPosition values to Enaml constants.
-HOR_TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
-                    QtGui.QSlider.TicksAbove: TickPosition.TOP,
-                    QtGui.QSlider.TicksBelow: TickPosition.BOTTOM,
-                    QtGui.QSlider.TicksBothSides: TickPosition.BOTH,
-                    QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
+HOR_TICK_POS_MAP = {QtGui.QSlider.NoTicks: 'no_ticks',
+                    QtGui.QSlider.TicksAbove: 'top',
+                    QtGui.QSlider.TicksBelow: 'bottom',
+                    QtGui.QSlider.TicksBothSides: 'both'}
 
 # A map from vertical QSlider TickPosition values to Enaml constants.
-VERT_TICK_POS_MAP = {QtGui.QSlider.NoTicks: TickPosition.DEFAULT,
-                    QtGui.QSlider.TicksAbove: TickPosition.LEFT,
-                    QtGui.QSlider.TicksBelow: TickPosition.RIGHT,
-                    QtGui.QSlider.TicksBothSides: TickPosition.BOTH,
-                    QtGui.QSlider.NoTicks: TickPosition.NO_TICKS}
+VERT_TICK_POS_MAP = {QtGui.QSlider.NoTicks: 'no_ticks',
+                    QtGui.QSlider.TicksAbove: 'left',
+                    QtGui.QSlider.TicksBelow: 'right',
+                    QtGui.QSlider.TicksBothSides: 'both'}
 
 
 class QtSlider(QtControl, AbstractTkSlider):
@@ -235,8 +230,8 @@ class QtSlider(QtControl, AbstractTkSlider):
 
         Arguments
         ---------
-        ticks : TickPosition
-            The tick position.
+        ticks : str
+            The :class:`~enaml.enums.TickPosition` value.
         """
         constant = TICK_POS_MAP[ticks]
         self.widget.setTickPosition(constant)
