@@ -19,10 +19,10 @@ class TestCalendar(EnamlTestCase):
     get_date(self, widget)
         Get a calendar's active date.
 
-    get_minimum_date(self, widget)
+    get_min_date(self, widget)
         Get a calendar's minimum date attribute.
 
-    get_maximum_date(self, widget)
+    get_max_date(self, widget)
         Get a calendar's maximum date attribute.
 
     activate_date(self, widget, date)
@@ -41,18 +41,15 @@ class TestCalendar(EnamlTestCase):
         source = """
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                Calendar:
-                    name = 'cal'
-                    selected >> events.append(('selected', args.new))
-                    activated >> events.append(('activated', args.new))
+        Calendar -> cal:
+            selected >> events.append(('selected', args.new))
+            activated >> events.append(('activated', args.new))
 """
 
         self.events = []
         self.view = self.parse_and_create(source, events=self.events)
         self.component = self.component_by_name(self.view, 'cal')
-        self.widget = self.component.toolkit_widget()
+        self.widget = self.component.toolkit_widget
 
     def test_initial_value(self):
         """ Test the initial attributes of the calendar.
@@ -61,27 +58,27 @@ defn MainWindow(events):
         component = self.component
 
         self.assertEnamlInSync(component, 'date', date.today())
-        self.assertEnamlInSync(component, 'minimum_date', date(1752, 9, 14))
-        self.assertEnamlInSync(component, 'maximum_date', date(7999, 12, 31))
+        self.assertEnamlInSync(component, 'min_date', date(1752, 9, 14))
+        self.assertEnamlInSync(component, 'max_date', date(7999, 12, 31))
         self.assertEqual(self.events, [])
 
-    def test_change_minimum_date(self):
+    def test_change_min_date(self):
         """ Test changing the minimum date.
 
         """
         component = self.component
         new_minimum = date(2000,1,1)
-        component.minimum_date = new_minimum
-        self.assertEnamlInSync(component, 'minimum_date', new_minimum)
+        component.min_date = new_minimum
+        self.assertEnamlInSync(component, 'min_date', new_minimum)
 
-    def test_change_maximum_date(self):
+    def test_change_max_date(self):
         """ Test changing the maximum date.
 
         """
         component = self.component
         new_maximum = date(2005,1,1)
-        component.maximum_date = new_maximum
-        self.assertEnamlInSync(component, 'maximum_date', new_maximum)
+        component.max_date = new_maximum
+        self.assertEnamlInSync(component, 'max_date', new_maximum)
 
     def test_change_date_in_enaml(self):
         """ Test changing the current date through the component.
@@ -100,7 +97,7 @@ defn MainWindow(events):
         """
         component = self.component
         min_date = date(2000,2,3)
-        component.minimum_date = min_date
+        component.min_date = min_date
         with self.assertRaises(TraitError):
             component.date = date(2000,1,1)
         self.assertEnamlInSync(component, 'date', date.today())
@@ -114,7 +111,7 @@ defn MainWindow(events):
         component.date = date(2011,10,9)
         self.assertEqual(self.events, [('selected', date(2011,10,9))])
         max_date = date(2014,2,3)
-        component.maximum_date = max_date
+        component.max_date = max_date
         with self.assertRaises(TraitError):
             component.date = date(2016,10,9)
         self.assertEnamlInSync(component, 'date', date(2011,10,9))
@@ -153,7 +150,7 @@ defn MainWindow(events):
         """
         component = self.component
         component.date = date(2007,10,9)
-        component.maximum_date = date(2006,5,9)
+        component.max_date = date(2006,5,9)
         self.assertEnamlInSync(component, 'date', date(2006,5,9))
         self.assertEqual(self.events, [('selected', date(2007,10,9)),
                                         ('selected', date(2006,5,9))])
@@ -164,7 +161,7 @@ defn MainWindow(events):
         """
         component = self.component
         component.date = date(2007,10,9)
-        component.minimum_date = date(2010,5,9)
+        component.min_date = date(2010,5,9)
         self.assertEnamlInSync(component, 'date', date(2010,5,9))
         self.assertEqual(self.events, [('selected', date(2007,10,9)),
                                         ('selected', date(2010,5,9))])
@@ -174,13 +171,13 @@ defn MainWindow(events):
 
         """
         component = self.component
-        component.minimum_date = date(2010,5,9)
+        component.min_date = date(2010,5,9)
         with self.assertRaises(TraitError):
-            component.maximum_date = date(2006,5,9)
+            component.max_date = date(2006,5,9)
 
-        component.maximum_date = date(2034,12,10)
+        component.max_date = date(2034,12,10)
         with self.assertRaises(TraitError):
-            component.minimum_date = date(2034,12,14)
+            component.min_date = date(2034,12,14)
 
     #--------------------------------------------------------------------------
     # Special initialization tests
@@ -196,15 +193,12 @@ defn MainWindow(events):
 import datetime
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                Calendar:
-                    name = 'cal'
-                    date = datetime.date(1980, 1, 1)
-                    minimum_date = datetime.date(1990, 1, 1)
-                    maximum_date = datetime.date(2000, 1, 1)
-                    selected >> events.append(('selected', args.new))
-                    activated >> events.append(('activated', args.new))
+        Calendar -> cal:
+            date = datetime.date(1980, 1, 1)
+            min_date = datetime.date(1990, 1, 1)
+            max_date = datetime.date(2000, 1, 1)
+            selected >> events.append(('selected', args.new))
+            activated >> events.append(('activated', args.new))
 
 """
         events = []
@@ -221,15 +215,12 @@ defn MainWindow(events):
 import datetime
 defn MainWindow(events):
     Window:
-        Panel:
-            VGroup:
-                Calendar:
-                    name = 'cal'
-                    date = datetime.date(2010, 1, 1)
-                    minimum_date = datetime.date(1990, 1, 1)
-                    maximum_date = datetime.date(2000, 1, 1)
-                    selected >> events.append(('selected', args.new))
-                    activated >> events.append(('activated', args.new))
+        Calendar -> cal:
+            date = datetime.date(2010, 1, 1)
+            min_date = datetime.date(1990, 1, 1)
+            max_date = datetime.date(2000, 1, 1)
+            selected >> events.append(('selected', args.new))
+            activated >> events.append(('activated', args.new))
 """
         events = []
         with self.assertRaises(TraitError):
@@ -247,14 +238,14 @@ defn MainWindow(events):
         pass
 
     @required_method
-    def get_minimum_date(self, widget):
+    def get_min_date(self, widget):
         """ Get a calendar's minimum date attribute.
 
         """
         pass
 
     @required_method
-    def get_maximum_date(self, widget):
+    def get_max_date(self, widget):
         """ Get a calendar's maximum date attribute.
 
         """
