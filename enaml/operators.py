@@ -7,38 +7,38 @@ from .expressions import (SimpleExpression, UpdatingExpression,
 from .widgets.setup_hooks import ExpressionSetupHook
 
 
-def op_Equal(component, attr_name, py_ast, code, globals_f, locals_f):
-    expression = SimpleExpression(component, attr_name, py_ast, code,
-                                  globals_f, locals_f)
-    hook = ExpressionSetupHook(attr_name, expression)
-    component.setup_hooks.append(hook)
+def operator_factory(expression_class):
+    """ A factory function which creates an Enaml operator function 
+    for an implementor of enaml.expresssions.AbstractExpression. The
+    created operator will setup an appropriate SetupHook for the 
+    component so that the expression is properly bound at run time.
 
+    """
+    def operator(component, attr_name, py_ast, code, globals_f, locals_f):
+        """ The default Enaml expression operator. It uses an implementor
+        of AbstractExpression to bind a python expression to a component
+        at run time.
 
-def op_LessLess(component, attr_name, py_ast, code, globals_f, locals_f):
-    expression = UpdatingExpression(component, attr_name, py_ast, code,
-                                    globals_f, locals_f)
-    hook = ExpressionSetupHook(attr_name, expression)
-    component.setup_hooks.append(hook)
-
-
-def op_ColonEqual(component, attr_name, py_ast, code, globals_f, locals_f):
-    expression = DelegatingExpression(component, attr_name, py_ast, code,
+        """
+        expression = expression_class(component, attr_name, py_ast, code,
                                       globals_f, locals_f)
-    hook = ExpressionSetupHook(attr_name, expression)
-    component.setup_hooks.append(hook)
+        hook = ExpressionSetupHook(attr_name, expression)
+        component.setup_hooks.append(hook)
+    
+    return operator
 
 
-def op_GreaterGreater(component, attr_name, py_ast, code, globals_f, locals_f):
-    expression = NotifyingExpression(component, attr_name, py_ast, code,
-                                     globals_f, locals_f)
-    hook = ExpressionSetupHook(attr_name, expression, eval_default=False)
-    component.setup_hooks.append(hook)
-
-
+#: The builtin Enaml expression operators
+#: 
+#:     '=' : A simple assignment expression
+#:    '<<' : A dynamically updating expression
+#:    ':=' : A dynamically delegating expression
+#:    '>>' : A dynamically notifying expression
+#:
 OPERATORS = {
-    '__operator_Equal__': op_Equal,
-    '__operator_LessLess__': op_LessLess,
-    '__operator_ColonEqual__': op_ColonEqual,
-    '__operator_GreaterGreater__': op_GreaterGreater,
+    '__operator_Equal__': operator_factory(SimpleExpression),
+    '__operator_LessLess__': operator_factory(UpdatingExpression),
+    '__operator_ColonEqual__': operator_factory(DelegatingExpression),
+    '__operator_GreaterGreater__': operator_factory(NotifyingExpression),
 }
 

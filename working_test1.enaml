@@ -56,94 +56,91 @@ defn TestSplit:
                         pass
             Container:
                 pass
-                    
+           
+            
+
+defn ButtonList:
+    PushButton -> keybutton:
+        text = 'foo'
+        constraints = [
+            left == parent.left,
+            top == parent.top,
+            width == 100,
+            height == 30,
+        ]
+        clicked >> print('clicked')
+    PushButton:
+        text = 'foo'
+        constraints = [
+            left == parent.left,
+            v_center == parent.v_center,
+            width == 100,
+            height == 30,
+            top >= keybutton.bottom,
+        ]
+    PushButton:
+        text = 'foo'
+        constraints = [
+            left == parent.left,
+            bottom == parent.bottom,
+            width == 100,
+            height == 30,
+        ]
+    PushButton:
+        text = 'foo'
+        constraints = [
+            h_center == parent.h_center,
+            top == parent.top,
+            width == 100,
+            height == 30,
+            left >= keybutton.right
+        ]
+    PushButton:
+        text = 'foo'
+        constraints = [
+            h_center == parent.h_center,
+            v_center == parent.v_center,
+            width == 100,
+            height == 30,
+        ]
+    Field -> text_field:
+        value = 'foo'
+        constraints = [
+            h_center == parent.h_center,
+            bottom == parent.bottom,
+            width == 100,
+            height == 30,
+        ]
+    PushButton:
+        text = 'foo'
+        constraints = [
+            right == parent.right,
+            top == parent.top,
+            width == 100,
+            height == 30,
+        ]
+    PushButton:
+        text = 'foo'
+        constraints = [
+            right == parent.right,
+            v_center == parent.v_center,
+            width == 100,
+            height == 30,
+        ]
+        clicked >> print(toolkit)
+    Component:
+        PushButton -> nested_pb:
+            text = 'bar'
+
 
 defn TestView:
     Window:
         Component:
-            PushButton -> keybutton:
-                text = 'foo'
-                constraints << [
-                    left == parent.left,
-                    top == parent.top,
-                    width == 100,
-                    height == 30,
-                ]
-                clicked >> print('clicked')
-            PushButton:
-                text = 'foo'
-                constraints = [
-                    left == parent.left,
-                    v_center == parent.v_center,
-                    width == 100,
-                    height == 30,
-                    top >= keybutton.bottom,
-                ]
-            PushButton:
-                text = 'foo'
-                constraints = [
-                    left == parent.left,
-                    bottom == parent.bottom,
-                    width == 100,
-                    height == 30,
-                ]
-            PushButton:
-                text = 'foo'
-                constraints = [
-                    h_center == parent.h_center,
-                    top == parent.top,
-                    width == 100,
-                    height == 30,
-                    left >= keybutton.right
-                ]
-            PushButton:
-                text = 'foo'
-                constraints = [
-                    h_center == parent.h_center,
-                    v_center == parent.v_center,
-                    width == 100,
-                    height == 30,
-                ]
-            Field -> text_field:
-                value = 'foo'
-                constraints = [
-                    h_center == parent.h_center,
-                    bottom == parent.bottom,
-                    width == 100,
-                    height == 30,
-                ]
-            PushButton:
-                text = 'foo'
-                constraints = [
-                    right == parent.right,
-                    top == parent.top,
-                    width == 100,
-                    height == 30,
-                ]
-            PushButton:
-                text = 'foo'
-                constraints = [
-                    right == parent.right,
-                    v_center == parent.v_center,
-                    width == 100,
-                    height == 30,
-                ]
-            Component:
-                size_hint = lambda: (100, 100)
-                constraints = [
-                    left == (3. / 4.) * parent.width,
-                    top == parent.v_center,
-                    right == parent.right,
-                    bottom == parent.bottom,
-                ]
-                Label:
-                    text << text_field.value
-                    constraints = [
-                        h_center == parent.h_center,
-                        v_center == parent.v_center,
-                        width >= 50,
-                        height == 30,
-                    ]
+            ButtonList -> buttonlist, nested_pb as nested:
+                # notice here we are reaching into the namespace 
+                # of the defn we just called, and changing the value
+                # of the text on the nested push button.
+                nested.text = 'foo bar'
 
 
 defn MainWindow(model, table_model):

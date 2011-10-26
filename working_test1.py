@@ -66,13 +66,7 @@ class TableModel(AbstractTableModel):
 
 
 if __name__ == '__main__':
-    from enaml.toolkit import Toolkit
-
     view = TestView()
-    tk = Toolkit.active_toolkit()
-    tk.app = tk.create_app()
-    window = view[0]
-    window.show()
-    tk.start_app()
-
+    view.show()
+    print view.ns.nested
 

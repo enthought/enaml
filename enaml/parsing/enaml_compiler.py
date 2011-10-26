@@ -5,12 +5,13 @@
 from . import enaml_ast
 from .virtual_machine import (LOAD_GLOBAL, LOAD_LOCAL, LOAD_CONST,
                               LOAD_GLOBALS_CLOSURE, LOAD_LOCALS_CLOSURE, 
-                              LOAD_IDX, STORE_LOCAL, EVAL, CALL, DUP_TOP,
-                              POP_TOP, UNPACK_SEQUENCE, RETURN_RESULTS, 
+                              GET_ITEM, STORE_LOCAL, EVAL, CALL, DUP_TOP,
+                              POP_TOP, UNPACK_SEQUENCE, ENAML_ADD_CHILDREN, 
                               GET_ITER, FOR_ITER, JUMP_ABSOLUTE, ROT_TWO,
-                              evalcode)
+                              ENAML_CALL, evalcode)
 
 from ..exceptions import EnamlSyntaxError
+from ..view import View
 
 
 #------------------------------------------------------------------------------
@@ -24,9 +25,6 @@ class EnamlDefinition(object):
     Enaml virtual machine for executing the function body.
 
     """
-    __slots__ = ('__name__', '__code__', '__args__', 
-                 '__defaults__', '__globals__')
-                  
     def __init__(self, name, code, args, defaults, global_ns):
         """ Initialize an EnamlDefinition.
 
@@ -58,6 +56,15 @@ class EnamlDefinition(object):
         self.__globals__ = global_ns
 
     def __call__(self, *args, **kwargs):
+        """ Returns a view object created by the call to the defn 
+        function.
+
+        """
+        components, ns = self.__enaml_call__(*args, **kwargs)
+        view = View(components=components, ns=ns)
+        return view
+
+    def __enaml_call__(self, *args, **kwargs):
         """ Execute the instruction code in the Enaml virtual machine.
 
         Paramters
@@ -68,8 +75,9 @@ class EnamlDefinition(object):
         
         Returns
         -------
-        results : sequence
-            The sequence of components created by the call
+        results : (widgets, ns)
+            The sequence of widgets and the local namespace created
+            by the call.
         
         """
         f_locals = self._build_locals(args, kwargs)
@@ -244,10 +252,10 @@ class DefnBodyCompiler(object):
         local_names = self.local_names
         instructions = self.instructions
 
-        # In enaml, all calls that create widgets return a sequence (for 
-        # consistency and speed of the vm) even if it's of length-1. 
+        # In enaml, all calls that create widgets return two items: 
+        # a sequence of components (even if only 1), and a namespace dict.
         # The current top of the stack is the sequence that was returned
-        # by the last call. In order to return values to it, and also let
+        # by the last call. In order to use it as a parent, and also let
         # it be returned to its caller, we need to duplicate it.
         inst = (DUP_TOP, None)
         instructions.append(inst)
@@ -273,19 +281,61 @@ class DefnBodyCompiler(object):
                 n_kwargs += 1
             self.visit(arg)
         
-        # Execute the call operation. The sequence that is returned by
-        # the call is pushed onto the stack.
-        inst = (CALL, (n_args, n_kwargs))
+        # Execute the call operation. The sequence and the dict that is 
+        # returned by the call are each pushed onto the stack separately.
+        inst = (ENAML_CALL, (n_args, n_kwargs))
         instructions.append(inst)
 
-        # In order to unpack the return values into local variable, and
-        # still have values to return, we need to duplicate the top.
+        # At this point, the top two items in the stack are
+        # | ... | sequence | namespace dict
+        # We need to handle any namespace captures from this namespace.
+        assignable_names = set()
+        for capture in node.captures:
+            ns_name = capture.ns_name
+            store_name = capture.name
+
+            # Duplicate the TOS so we can consume a reference to the
+            # namespace object.
+            inst = (DUP_TOP, None)
+            instructions.append(inst)
+
+            # If the name to lookup in the namespace is not '*',
+            # This indicates we should capture that item out of the ns.
+            if ns_name != '*':
+                inst = (GET_ITEM, ns_name)
+                instructions.append(inst)
+                
+                # XXX since we're looking up an item out of the namespace
+                # we can be reasonably confident that the item will be a 
+                # component, so we add it to the list of assignable targets.
+                # The user could get crafty and lookup another namespace 
+                # contained within this namespace, which will break things.
+                # But, I'm not too worried about that at the moment.
+                # Besides, the Enaml grammar is very restricted as to 
+                # what is allowed on the lhs of an expression, so having
+                # a reference to the namespace is fairly useless at the
+                # moment.
+                assignable_names.add(store_name)
+                
+            # Finally we store away the item. If the ns_name was '*'
+            # then we are storing away the entire namespace
+            inst = (STORE_LOCAL, store_name)
+            instructions.append(inst)
+            
+
+        # After we're done with the captures, we can discard the namespace.
+        inst = (POP_TOP, None)
+        instructions.append(inst)
+
+        # In order to unpack the return sequence values into local 
+        # variables, and still have values to add as children to the
+        # parent, we need to duplicate the top.
         inst = (DUP_TOP, None)
         instructions.append(inst)
 
-        # Unpack the results into local variables. If not unpack name
-        # is provided (an anonymous call) we generate a mangled name
-        # into which we do the assigment. This provides two things:
+        # Unpack the TOS sequence into local variables. If no unpack 
+        # name is provided (an anonymous call) we generate a mangled 
+        # name into which we do the assigment. This provides two things:
         # 1) consistency of handling return values
         # 2) the ability to refer to `anonymous` results if one knows
         #    the mangling semantics.
@@ -312,7 +362,8 @@ class DefnBodyCompiler(object):
         # values that have been unpacked at the immediate call
         # rather than in all of the locals. This is mostly to 
         # enforce good style.
-        self.unpack_stack.append(set(unpack))
+        assignable_names.update(unpack)
+        self.unpack_stack.append(assignable_names)
 
         # Visit the body of the call node. This is a list comprised of
         # (at most) two types of nodes: assignment nodes, call nodes.
@@ -321,14 +372,13 @@ class DefnBodyCompiler(object):
         
         self.unpack_stack.pop()
 
-        # Finally return the results. In enaml, return values means add 
-        # the values as children of the parent. At this point, the top
-        # of the stack is the sequence of values we want to return, and
-        # the next item is the parent to which we want to return. This
-        # parent must be a sequence of length-1. If it's not, the vm
-        # will raise a runtime error, since it makes no sense to add
-        # a child to a proper sequence.
-        inst = (RETURN_RESULTS, None)
+        # Finally 'return' from the call by adding the children to their
+        # parent. At this point, the top of the stack is the sequence of 
+        # children we want to add, and the next item is the parent to which
+        # we want to add them. This parent must be a sequence of length-1.
+        # If it's not, the vm will raise a runtime error, since it makes no 
+        # sense to add to multiple things.
+        inst = (ENAML_ADD_CHILDREN, None)
         instructions.append(inst)
 
     def visit_EnamlArgument(self, node):
@@ -378,21 +428,21 @@ class DefnBodyCompiler(object):
         # There are two cases for an assignment that need to be handled:
         # 1) The assignment is being done to a name, which implicitly
         #    means that the assignment should be performed to that attr
-        #    on every element in the sequence on tos.
+        #    on every element in the sequence on TOS.
         # 2) The assignment is being done to a getattr-style expression
         #    which means that the assignment is being explicity performed
-        #    on single one of the return sequence objects.
+        #    on a single one of the return sequence objects.
 
         # Case 1) Mapping onto each item in the sequence
         if isinstance(lhs, enaml_ast.EnamlName):
             # Create an iterator from the tos over which we will loop
-            # and perform the binding operations
+            # and perform the assignment operations
             inst = (DUP_TOP, None)
             instructions.append(inst)
             inst = (GET_ITER, None)
             instructions.append(inst)
             
-            # Create the list of binding instructions that from the inner 
+            # Create the list of binding instructions that form the inner 
             # body of the loop.
             bind_insts = self.create_binding_insts(op, lhs.name, py_ast)
 
@@ -438,7 +488,7 @@ class DefnBodyCompiler(object):
             elif isinstance(root, enaml_ast.EnamlIndex):
                 inst = (LOAD_LOCAL, root_name)
                 instructions.append(inst)
-                inst = (LOAD_IDX, root.idx)
+                inst = (GET_ITEM, root.idx)
                 instructions.append(inst)
                 insts = self.create_binding_insts(op, attr_name, py_ast)
                 instructions.extend(insts)
@@ -480,7 +530,9 @@ class DefnBodyCompiler(object):
 
         # The ast is compiled into a code object now, instead of allowing
         # the operators to do it because then it would be compiled every
-        # time the defn is called, instead of just once as it needs to be.
+        # time the defn is called, instead of just once as it needs to be
+        # since an expression code object is reusable across mutliple
+        # independent namespaces.
         code = compile(py_ast, 'Enaml', mode='eval')
 
         # Load the operator
@@ -490,7 +542,7 @@ class DefnBodyCompiler(object):
             inst = (LOAD_GLOBAL, op)
         instructions.append(inst)
         
-        # ROT_TWO items to put the operator under its first argument.
+        # ROT_TWO to put the operator under its first argument.
         inst = (ROT_TWO, None)
         instructions.append(inst)
         

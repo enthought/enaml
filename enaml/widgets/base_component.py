@@ -5,9 +5,11 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 from functools import wraps
 
-from traits.api import HasStrictTraits, WeakRef, Instance, List, ReadOnly
+from traits.api import HasStrictTraits, WeakRef, Instance, List, Str
 
 from .setup_hooks import AbstractSetupHook
+
+from ..toolkit import Toolkit
 
 
 class AbstractTkBaseComponent(object):
@@ -110,14 +112,6 @@ class BaseComponent(HasStrictTraits):
     meant to be used directly.
 
     """
-    #: The identifier name assigned to this component in the enaml file.
-    #: This is set by the enaml vm.
-    __id__ = ReadOnly
-
-    #: The type name for this component in the enaml file.
-    #: This is set by the enaml vm.
-    __type__ = ReadOnly
-
     #: The parent component of this component. It is stored as a weakref
     #: to mitigate issues with reference cycles. A top-level component's
     #: parent is None.
@@ -141,6 +135,21 @@ class BaseComponent(HasStrictTraits):
     #: listeners at the appropriate times. Hooks should normally be
     #: appended to this list instead of a list being assigned atomically.
     setup_hooks = List(Instance(AbstractSetupHook))
+
+    #: The toolkit that created this object. This does not need to 
+    #: be stored weakly because the toolkit does not maintain refs
+    #: to the compoents that its constructors create.
+    toolkit = Instance(Toolkit)
+
+    #: The optional style identifier for the StyleSheet system.
+    style_id = Str
+
+    #: The optional style type for the StyleSheet system. This
+    #: is set by default by the constructor object.
+    style_type = Str
+
+    #: The optional style class for the StyleSheet system.
+    style_class = Str
 
     def add_child(self, child):
         """ Add the child to this component.

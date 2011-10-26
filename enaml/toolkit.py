@@ -2,73 +2,59 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import Sequence
 import os
 
-from traits.api import HasStrictTraits, Callable, Str
+from traits.api import HasStrictTraits, Callable, Str, WeakRef
 
 
 class Constructor(HasStrictTraits):
     """ The constructor class to use to populate the toolkit.
-
-    Attributes
-    ----------
-    type_name : Str
-        The name of the type, as seen from enaml source code, that this
-        constructor is creating. This is assigned by the toolkit object.
-
-    component_loader : Callable
-        A callable object which returns the component class to use
-        for the widget.
-    
-    impl_loader : Callable
-        A callable object which returns the implementation class to 
-        use for the widget.
-    
-    Methods
-    -------
-    build(*arg, **kwargs)
-        Calls the loaders and assembles the component.
-    
-    clone(component_loader=None, impl_loader=None)
-        Creates a clone of this constructor, optionally changing
-        out one of the loaders.
     
     """
-    type_name = Str
+    #: A callable object which returns the shell class to use
+    #: for the widget.
+    shell_loader = Callable
 
-    component_loader = Callable
+    #: A callable object which returns the abstract implementation class 
+    #: to use for the widget.
+    abstract_loader = Callable
 
-    impl_loader = Callable
+    #: The key with which this constructor was added to the toolkit.
+    #: It is set by the toolkit and used as the type name of the 
+    #: instantiated component.
+    style_type = Str
 
-    def __init__(self, component_loader, impl_loader):
+    #: A reference (stored weakly) to the toolkit in which this
+    #: constructor is contained. It is used to set the toolkit
+    #: attribute on the components as they are created.
+    toolkit = WeakRef('Toolkit')
+
+    def __init__(self, shell_loader, abstract_loader):
         """ Initialize a constructor instance.
 
         Parameters
         ----------
-        component_loader : Callable
-            A callable object which returns the component class to use
+        shell_loader : Callable
+            A callable object which returns the shell class to use
             for the widget.
     
-        impl_loader : Callable
-            A callable object which returns the implementation class to 
-            use for the widget.
+        abstract_loader : Callable
+            A callable object which returns the abstract implementation 
+            class to use for the widget.
         
         """
         super(Constructor, self).__init__()
-        self.component_loader = component_loader
-        self.impl_loader = impl_loader
+        self.shell_loader = shell_loader
+        self.abstract_loader = abstract_loader
 
-    def __call__(self, *args, **kwargs):
+    def __enaml_call__(self, *args, **kwargs):
         """ Called by the vm to create the component(s) for this widget.
         This should not typically be overridden by sublasses. To perform
         specialized building behavior, override the `build` method.
 
         """
-        result = self.build(*args, **kwargs)
-        if not isinstance(result, Sequence):
-            raise TypeError('Constructor results must be a sequence')
-        return result
+        component = self.build(*args, **kwargs)
+        return ((component,), {})
 
     def build(self, *args, **kwargs):
         """ Calls the loaders and assembles the component.
@@ -83,21 +69,23 @@ class Constructor(HasStrictTraits):
             from the enaml source code.
 
         """
-        component_cls = self.component_loader()
-        impl_cls = self.impl_loader()
-        component = component_cls(abstract_obj=impl_cls())
-        return (component,)
+        shell_cls = self.shell_loader()
+        abstract_cls = self.abstract_loader()
+        component = shell_cls(style_type=self.style_type,
+                              toolkit=self.toolkit,
+                              abstract_obj=abstract_cls())
+        return component
     
-    def clone(self, component_loader=None, impl_loader=None):
+    def clone(self, shell_loader=None, abstract_loader=None):
         """ Creates a clone of this constructor, optionally changing
         out one or both of the loaders.
 
         """
-        if component_loader is None:
-            component_loader = self.component_loader
-        if impl_loader is None:
-            impl_loader = self.impl_loader
-        return Constructor(component_loader, impl_loader)
+        if shell_loader is None:
+            shell_loader = self.shell_loader
+        if abstract_loader is None:
+            abstract_loader = self.abstract_loader
+        return Constructor(shell_loader, abstract_loader)
 
 
 class Toolkit(dict):
@@ -139,26 +127,30 @@ class Toolkit(dict):
 
     def __init__(self, *args, **kwargs):
         """ Initialize a toolkit object using the same constructor 
-        signature as dict(). This overridden constructor ensure that 
-        type names are properly assigned to to constructors.
+        signature as dict(). This overridden constructor ensures that 
+        the style types are properly assigned to the constructors.
 
         """
         super(Toolkit, self).__init__(*args, **kwargs)
         for key, value in self.iteritems():
-            if isinstance(value, Constructor):
-                value.type_name = key
-    
+            self[key] = value
+                
     def __setitem__(self, key, value):
-        """ Overridden dict.__setitem__ to apply type name values to 
+        """ Overridden dict.__setitem__ to apply style types to the
         constructors.
 
         """
         if isinstance(value, Constructor):
-            value.type_name = key
+            # Clone the constructor so we don't risk the same constructor
+            # being used by more than one toolkit and then having the
+            # toolkit refs become out of sync.
+            value = value.clone()
+            value.style_type = key
+            value.toolkit = self
         super(Toolkit, self).__setitem__(key, value)
-
+        
     def update(self, other=None, **kwargs):
-        """ Overridden from dict.update to apply type name values to 
+        """ Overridden from dict.update to apply style types to the
         constructors.
 
         """
@@ -177,7 +169,7 @@ class Toolkit(dict):
             self.update(kwargs)
     
     def setdefault(self, key, default=None):
-        """ Overridden from dict.setdefault to apply type name values to 
+        """ Overridden from dict.setdefault to apply style types to the
         constructors.
         
         """ 
@@ -247,7 +239,7 @@ class Toolkit(dict):
         """ Returns the application object for this toolkit.
 
         """
-        return self['__app__']
+        return self.get('__app__')
     
     def _set_app(self, val):
         """ Sets the application object for this toolkit.
@@ -263,35 +255,15 @@ def default_toolkit():
     the user's current ETS_TOOLKIT environment variables.
 
     """
-    toolkit = os.environ.get('ETS_TOOLKIT', 'wx').lower()
+    toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower()
     
+    if toolkit == 'qt' or toolkit == 'qt4':
+        return qt_toolkit()
+
     if toolkit == 'wx':
         return wx_toolkit()
         
-    if toolkit == 'qt' or toolkit == 'qt4':
-        return qt_toolkit()
-    
     raise ValueError('Invalid Toolkit: %s' % toolkit)
-
-
-def wx_toolkit():
-    """ Creates and return a toolkit object for the Wx backend.
-
-    """
-    from .widgets.wx.constructors import WX_CONSTRUCTORS
-    from .util.guisupport import get_app_wx, start_event_loop_wx
-    from .widgets.wx.styling import WX_STYLE_SHEET
-
-    utils = {}
-
-    toolkit = Toolkit(WX_CONSTRUCTORS)
-    
-    toolkit.create_app = get_app_wx
-    toolkit.start_app = start_event_loop_wx
-    toolkit.style_sheet = WX_STYLE_SHEET
-    toolkit.update(utils)
-
-    return toolkit
 
 
 def qt_toolkit():
@@ -314,4 +286,24 @@ def qt_toolkit():
     toolkit.update(OPERATORS)
 
     return toolkit 
+
+
+def wx_toolkit():
+    """ Creates and return a toolkit object for the Wx backend.
+
+    """
+    from .widgets.wx.constructors import WX_CONSTRUCTORS
+    from .util.guisupport import get_app_wx, start_event_loop_wx
+    from .widgets.wx.styling import WX_STYLE_SHEET
+
+    utils = {}
+
+    toolkit = Toolkit(WX_CONSTRUCTORS)
+    
+    toolkit.create_app = get_app_wx
+    toolkit.start_app = start_event_loop_wx
+    toolkit.style_sheet = WX_STYLE_SHEET
+    toolkit.update(utils)
+
+    return toolkit
 

@@ -23,8 +23,8 @@ from ..exceptions import EnamlRuntimeError
     # Replace the top of the stack with getattr(tos, op_arg)
     LOAD_ATTR,
 
-    # Replace the top of the stack with the tos[idx]
-    LOAD_IDX,
+    # Replace the top of the stack with the tos[op_arg]
+    GET_ITEM,
 
     # Load the globals closure onto the stack
     LOAD_GLOBALS_CLOSURE,
@@ -44,13 +44,19 @@ from ..exceptions import EnamlRuntimeError
     # | callable | arg_1 | arg_n | name_1 | kwarg_1 | name_n | kwarg_n
     CALL,
 
+    # op_arg in the same as for CALL but ENAML_CALL is a special
+    # op code for handling calls that will create Enaml widgets
+    # the return value of this call is a tuple of (widgets, ns)
+    # where widgets is a sequence and ns is a dict.
+    ENAML_CALL,
+
     # Unpack top of stack into *count* individual values placed on the 
     # stack right-to-left
     UNPACK_SEQUENCE,
 
     # Pop the top two elements of the stack. The first pop are the 
     # children to add to the parent. The second pop is the parent.
-    RETURN_RESULTS,
+    ENAML_ADD_CHILDREN,
 
     # Duplicate the top of the stack
     DUP_TOP,
@@ -72,7 +78,7 @@ from ..exceptions import EnamlRuntimeError
     # rotate the top two items in the stack
     ROT_TWO,
 
-) = range(18)
+) = range(19)
 
 
 class _NullComponent(object):
@@ -187,7 +193,7 @@ def evalcode(instructions, global_ns, local_ns):
             push(getattr(obj, op_arg))
         
         # Replace TOS with TOS[idx]
-        elif op == LOAD_IDX:
+        elif op == GET_ITEM:
             obj = pop()
             push(obj[op_arg])
 
@@ -195,11 +201,11 @@ def evalcode(instructions, global_ns, local_ns):
         elif op == LOAD_GLOBALS_CLOSURE:
             push(globals_closure)
         
-        # Push locals()
+        # Push locals_closure
         elif op == LOAD_LOCALS_CLOSURE:
             push(locals_closure)
 
-        # Store TOS as locals()[op_arg] = TOS
+        # Store TOS as locals_ns[op_arg] = TOS
         elif op == STORE_LOCAL:
             obj = pop()
             local_ns[op_arg] = obj
@@ -213,6 +219,7 @@ def evalcode(instructions, global_ns, local_ns):
         
         # op_arg is (n_args, n_kwargs)
         # stack order is | ... | obj | args... | kwargs... |(TOS)
+        # Replace TOS with obj(*args, **kwargs)
         elif op == CALL:
             n_args, n_kwargs = op_arg
             kwargs = {}
@@ -228,6 +235,25 @@ def evalcode(instructions, global_ns, local_ns):
             obj = pop()
             results = obj(*args, **kwargs)
             push(results)
+
+        # stack state here is the same as CALL, but,
+        # we do obj.__enaml_call__(*args, **kwargs) which 
+        # returns two items. We push each item individually.
+        # We could do this with an additional UNPACK_SEQUENCE
+        # operation, but this is a simple performance tweak.
+        elif op == ENAML_CALL:
+            n_args, n_kwargs = op_arg
+            kwargs = {}
+            for _ in range(n_kwargs):
+                value = pop()
+                key = pop()
+                kwargs[key] = value
+            args = [pop() for _ in range(n_args)]
+            args.reverse()
+            obj = pop()
+            sequence, ns = obj.__enaml_call__(*args, **kwargs)
+            push(sequence)
+            push(ns)
 
         # Replace TOS with unpacked items
         elif op == UNPACK_SEQUENCE:
@@ -254,20 +280,19 @@ def evalcode(instructions, global_ns, local_ns):
                 else:
                     push(sequence)
 
-        # Return values should always be iterable and the element
-        # to which we are returning should be a single element
-        # sequence.
-        #
-        # XXX - I'm not sure I like the fact we're directly calling
-        # the 'add_child' method here on the element.
-        elif op == RETURN_RESULTS:
-            results = pop()
-            element = pop()
-            if len(element) > 1:
+        # Add the children to the their parent.
+        # The parent item is the sequence of widgets created by the
+        # previous __enaml_call__. If that sequence has a length
+        # greater than 1, we don't know to which item we should add
+        # the children.
+        elif op == ENAML_ADD_CHILDREN:
+            children = pop()
+            parent = pop()
+            if len(parent) > 1:
                 raise EnamlRuntimeError('Cannot add children to a sequence')
-            element = element[0]
-            for item in results:
-                element.add_child(item)
+            parent = parent[0]
+            for child in children:
+                parent.add_child(child)
 
         # Duplicate the TOS
         elif op == DUP_TOP:
@@ -315,5 +340,5 @@ def evalcode(instructions, global_ns, local_ns):
     
     # Convert the child of the null component to a tuple for
     # processing by our caller.
-    return tuple(pop()[0].children)
+    return tuple(pop()[0].children), local_ns
 

@@ -20,6 +20,7 @@ class EnamlModule(EnamlASTNode):
     def __init__(self, body):
         self.body = body
 
+
 class EnamlImport(EnamlASTNode):
 
     __slots__ = ('py_ast',)
@@ -40,11 +41,13 @@ class EnamlDefine(EnamlASTNode):
 
 class EnamlCall(EnamlASTNode):
 
-    __slots__ = ('name', 'arguments', 'unpack', 'body')
-    def __init__(self, name, arguments, unpack, body):
+    __slots__ = ('name', 'arguments', 'unpack', 'captures', 'body')
+
+    def __init__(self, name, arguments, unpack, captures, body):
         self.name = name
         self.arguments = arguments
         self.unpack = unpack
+        self.captures = captures
         self.body = body
 
 
@@ -73,6 +76,15 @@ class EnamlKeywordArgument(EnamlASTNode):
         self.name = name
         self.py_ast = py_ast
     
+
+class EnamlCapture(EnamlASTNode):
+
+    __slots__ = ('ns_name', 'name')
+
+    def __init__(self, ns_name, name):
+        self.ns_name = ns_name
+        self.name = name
+
 
 class EnamlAssignment(EnamlASTNode):
 

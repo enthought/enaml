@@ -249,22 +249,24 @@ def p_enaml_calls2(p):
 #------------------------------------------------------------------------------
 def p_enaml_call1(p):
     ''' enaml_call : NAME COLON enaml_call_body '''
-    p[0] = enaml_ast.EnamlCall(p[1], [], [], p[3])
+    p[0] = enaml_ast.EnamlCall(p[1], [], [], [], p[3])
 
 
 def p_enaml_call2(p):
     ''' enaml_call : NAME enaml_arguments COLON enaml_call_body '''
-    p[0] = enaml_ast.EnamlCall(p[1], p[2], [], p[4])
+    p[0] = enaml_ast.EnamlCall(p[1], p[2], [], [], p[4])
 
 
 def p_enaml_call3(p):
-    ''' enaml_call : NAME UNPACK enaml_unpack COLON enaml_call_body '''
-    p[0] = enaml_ast.EnamlCall(p[1], [], p[3], p[5])
+    ''' enaml_call : NAME UNPACK enaml_unpack_items COLON enaml_call_body '''
+    unpacks, captures = p[3]
+    p[0] = enaml_ast.EnamlCall(p[1], [], unpacks, captures, p[5])
 
 
 def p_enaml_call4(p):
-    ''' enaml_call : NAME enaml_arguments UNPACK enaml_unpack COLON enaml_call_body '''
-    p[0] = enaml_ast.EnamlCall(p[1], p[2], p[4], p[6])
+    ''' enaml_call : NAME enaml_arguments UNPACK enaml_unpack_items COLON enaml_call_body '''
+    unpacks, captures = p[4]
+    p[0] = enaml_ast.EnamlCall(p[1], p[2], unpacks, captures, p[6])
 
 
 #------------------------------------------------------------------------------
@@ -344,45 +346,62 @@ def p_enaml_argument2(p):
 
 
 #------------------------------------------------------------------------------
-# Enaml Unpack
+# Enaml Unpack Items
 #------------------------------------------------------------------------------
-def p_enaml_unpack(p):
-    ''' enaml_unpack : enaml_unpack_names '''
+def p_enaml_upack_items(p):
+    ''' enaml_unpack_items : enaml_unpack_items_list '''
+    unpack_items = p[1]
+    unpacks = []
+    captures = []
+    for item in unpack_items:
+        if isinstance(item, enaml_ast.EnamlCapture):
+            captures.append(item)
+        else:
+            if captures:
+                msg = 'unpack name `%s` after namespace capture' % item
+                raise_enaml_syntax_error(msg, -1) # XXX fix this lineno
+            unpacks.append(item)
+    p[0] = (unpacks, captures)  
+    
+    
+def p_enaml_unpack_items_list1(p):
+    ''' enaml_unpack_items_list : enaml_unpack_item '''
+    p[0] = [p[1]]
+
+
+def p_enaml_unpack_items_list2(p):
+    ''' enaml_unpack_items_list : enaml_unpack_item COMMA '''
+    p[0] = [p[1]]
+
+def p_enaml_upack_items_list3(p):
+    ''' enaml_unpack_items_list : enaml_unpack_items_list_list enaml_unpack_item '''
+    p[0] = p[1] + [p[2]]
+                
+
+def p_enaml_unpack_items_list4(p):
+    ''' enaml_unpack_items_list : enaml_unpack_items_list_list enaml_unpack_item COMMA '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_enaml_unpack_items_list_list1(p):
+    ''' enaml_unpack_items_list_list : enaml_unpack_item COMMA '''
+    p[0] = [p[1]]
+
+
+def p_enaml_unpack_items_list_list2(p):
+    ''' enaml_unpack_items_list_list : enaml_unpack_items_list_list enaml_unpack_item COMMA '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_enaml_unpack_item1(p):
+    ''' enaml_unpack_item : NAME '''
     p[0] = p[1]
 
 
-def p_enaml_unpack_names1(p):
-    ''' enaml_unpack_names : enaml_unpack_name '''
-    p[0] = [p[1]]
-
-
-def p_enaml_unpack_names2(p):
-    ''' enaml_unpack_names : enaml_unpack_name COMMA '''
-    p[0] = [p[1]]
-
-def p_enaml_unpack_names3(p):
-    ''' enaml_unpack_names : enaml_unpack_names_list enaml_unpack_name '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_enaml_unpack_names4(p):
-    ''' enaml_unpack_names : enaml_unpack_names_list enaml_unpack_name COMMA '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_enaml_unpack_names_list1(p):
-    ''' enaml_unpack_names_list : enaml_unpack_name COMMA '''
-    p[0] = [p[1]]
-
-
-def p_enaml_unpack_names_list2(p):
-    ''' enaml_unpack_names_list : enaml_unpack_names_list enaml_unpack_name COMMA '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_enaml_unpack_name(p):
-    ''' enaml_unpack_name : NAME '''
-    p[0] = p[1]
+def p_enaml_unpack_item2(p):
+    ''' enaml_unpack_item : NAME AS NAME 
+                          | STAR AS NAME '''
+    p[0] = enaml_ast.EnamlCapture(p[1], p[3])
 
 
 #------------------------------------------------------------------------------
@@ -422,6 +441,9 @@ def p_enaml_call_body_item3(p):
 #------------------------------------------------------------------------------
 # Enaml Assignment
 #------------------------------------------------------------------------------
+# XXX we need to make this lhs grammar more robust and allow more things
+# we could just make it a python ast node and eval it in the VM to 
+# get the object to which it refers...
 def p_enaml_assignment(p):
     ''' enaml_assignment : enaml_assignment_lhs enaml_assignment_pair '''
     op, expr = p[2]
@@ -434,23 +456,17 @@ def p_enaml_assignment_lhs1(p):
 
 
 def p_enaml_assignment_lhs2(p):
-    ''' enaml_assignment_lhs : enaml_lhs_getattr '''
-    p[0] = p[1]
+    ''' enaml_assignment_lhs : NAME DOT NAME '''
+    name = enaml_ast.EnamlName(p[1])
+    get_attr = enaml_ast.EnamlGetattr(name, p[3])
+    p[0] = get_attr
 
 
-def p_enaml_lhs_getattr(p):
-    ''' enaml_lhs_getattr : enaml_lhs_getattr_root DOT NAME '''
-    p[0] = enaml_ast.EnamlGetattr(p[1], p[3])
-
-
-def p_enaml_lhs_getattr_root1(p):
-    ''' enaml_lhs_getattr_root : NAME '''
-    p[0] = enaml_ast.EnamlName(p[1])
-
-
-def p_enaml_lhs_getattr_root2(p):
-    ''' enaml_lhs_getattr_root : enaml_index '''
-    p[0] = p[1]
+def p_enaml_assignment_lhs3(p):
+    ''' enaml_assignment_lhs : enaml_index DOT NAME '''
+    idx = p[1]
+    get_attr = enaml_ast.EnamlGetattr(idx, p[3])
+    p[0] = get_attr
 
 
 def p_enaml_index1(p):

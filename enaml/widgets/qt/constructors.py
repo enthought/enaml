@@ -30,10 +30,10 @@ def constructor(base_path):
     t_module_path = 'enaml.widgets.qt.' + 'qt_' + base_path
     t_name = 'Qt' + c_name
     
-    component_loader = importer(c_module_path, c_name)
-    impl_loader = importer(t_module_path, t_name)
+    shell_loader = importer(c_module_path, c_name)
+    abstract_loader = importer(t_module_path, t_name)
 
-    ctor = Constructor(component_loader, impl_loader)
+    ctor = Constructor(shell_loader, abstract_loader)
 
     return c_name, ctor
 
