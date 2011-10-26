@@ -91,17 +91,17 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
 
         """
         super(QtSpinBox, self).initialize()
-        parent = self.parent
-        self.set_spin_low(parent.low)
-        self.set_spin_high(parent.high)
-        self.set_spin_step(parent.step)
-        self.set_spin_prefix(parent.prefix)
-        self.set_spin_suffix(parent.suffix)
-        self.set_spin_special_value_text(parent.special_value_text)
-        self.set_spin_converter(parent.converter)
-        self.set_spin_validate_string(parent.validate_string)
-        self.set_spin_wrap(parent.wrap)
-        self.set_spin_value(parent.value)
+        shell = self.shell_obj
+        self.set_spin_low(shell.low)
+        self.set_spin_high(shell.high)
+        self.set_spin_step(shell.step)
+        self.set_spin_prefix(shell.prefix)
+        self.set_spin_suffix(shell.suffix)
+        self.set_spin_special_value_text(shell.special_value_text)
+        self.set_spin_converter(shell.converter)
+        self.set_spin_validate_string(shell.validate_string)
+        self.set_spin_wrap(shell.wrap)
+        self.set_spin_value(shell.value)
         self.bind()
 
     def bind(self):
@@ -114,70 +114,70 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def parent_value_changed(self, value):
+    def shell_value_changed(self, value):
         """ The change handler for the 'value' attribute. Not meant
         for public consumption.
 
         """
         self.set_spin_value(value)
 
-    def parent_low_changed(self, low):
+    def shell_low_changed(self, low):
         """ The change handler for the 'low' attribute. Not meant
         for public consumption.
 
         """
         self.set_spin_low(low)
 
-    def parent_high_changed(self, high):
+    def shell_high_changed(self, high):
         """ The change handler for the 'high' attribute. Not meant
         for public consumption.
         
         """
         self.set_spin_high(high)
     
-    def parent_step_changed(self, step):
+    def shell_step_changed(self, step):
         """ The change handler for the 'step' attribute. Not meant
         for public consumption.
         
         """
         self.set_spin_step(step)
     
-    def parent_prefix_changed(self, prefix):
+    def shell_prefix_changed(self, prefix):
         """ The change handler for the 'prefix' attribute. Not meant
         for public consumption.
         
         """
         self.set_spin_prefix(prefix)
     
-    def parent_suffix_changed(self, suffix):
+    def shell_suffix_changed(self, suffix):
         """ The change handler for the 'suffix' attribute. Not meant
         for public consumption.
 
         """
         self.set_spin_suffix(suffix)
     
-    def parent_special_value_text_changed(self, text):
+    def shell_special_value_text_changed(self, text):
         """ The change handler for the 'special_value_text' attribute.
         Not meant for public consumption.
         
         """
         self.set_spin_special_value_text(text)
     
-    def parent_converter_changed(self, converter):
+    def shell_converter_changed(self, converter):
         """ The change handler for the 'converter' attribute. Not meant
         for public consumption.
         
         """
         self.set_spin_converter(converter)
     
-    def parent_validate_string_changed(self, validate_string):
+    def shell_validate_string_changed(self, validate_string):
         """ The change handler for the 'validate_string' attribute. Not meant 
         for public consumption.
         
         """
         self.set_spin_validate_string(validate_string)
     
-    def parent_wrap_changed(self, wrap):
+    def shell_wrap_changed(self, wrap):
         """ The change handler for the 'wrap' attribute. Not meant for
         public consumption.
         
@@ -189,7 +189,7 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
         for public consumption.
 
         """
-        self.parent.value = self.widget.value()
+        self.shell_obj.value = self.widget.value()
 
     def set_spin_value(self, value):
         """ Updates the widget with the given value. Not meant for 
@@ -225,7 +225,7 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
 
         """
         self.widget.setPrefix(prefix)
-        self.widget.setValue(self.parent.value)
+        self.widget.setValue(self.shell_obj.value)
 
     def set_spin_suffix(self, suffix):
         """ Updates the suffix of the spin box. Not meant for public
@@ -233,7 +233,7 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
 
         """
         self.widget.setSuffix(suffix)
-        self.widget.setValue(self.parent.value)
+        self.widget.setValue(self.shell_obj.value)
 
     def set_spin_special_value_text(self, text):
         """ Updates the special value text of the spin box. Not meant
@@ -249,7 +249,7 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
         """
         self.widget.from_string = converter.from_component
         self.widget.to_string = converter.to_component
-        self.widget.setValue(self.parent.value)
+        self.widget.setValue(self.shell_obj.value)
     
     def set_spin_validate_string(self, validate_string):
         """ Updates the validate_string function of the spin box. Not meant
