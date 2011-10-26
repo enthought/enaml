@@ -154,7 +154,7 @@ new widget types in custom applications.  To create a new widget, you need to:
 
         as well as any other methods.
 
-.. warning:: These methods are outdated
+        .. warning:: These methods are outdated
 
         To handle styling
 
@@ -242,11 +242,11 @@ new widget types in custom applications.  To create a new widget, you need to:
                 the standard Qt toolkit, but also includes yours.  Code can then
                 choose whether to use the standard Qt toolkit or your new toolkit
                 as appropriate.
-        
-.. warning:: These sections are outdated
 
 Implementing A New Toolkit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. warning:: This section is outdated
 
 Currently Enaml supports the Qt toolkit and the Wx toolkit (on Windows only).
 The architecture is designed to be as toolkit-independent as possible.  To
@@ -333,41 +333,50 @@ other simple way that these model instances can be distinguished from regular
 Python or Traits instances.
 
 You may then need to implement subclasses of
-:py:class:`enaml.expressions.DefaultExpression`,
-:py:class:`enaml.expressions.BindingExpression`,
-:py:class:`enaml.expressions.DelegateExpression`,  and
-:py:class:`enaml.expressions.NotifierExpression` that correctly handle these
-interactions.  When implementing overriden methods, all of these subclasses
-must check to see whether the model object is of the new model type, and if
-it is not then they need to use the standard superclass implementation of the
-method.  If this is not done then expressions involving widget traits will
-fail to work correctly.
+:py:class:`enaml.expressions.AbstractExpression` that correctly handle the
+interactions that your notification system supports for its models.  These
+subclasses will need to implement appropriate versions of the :py:meth:`bind`
+and :py:meth:`eval_expression` methods.
 
-    :py:class:`~enaml.expressions.DefaultExpression`
+For the four basic expression bindings, you will most likely need to create
+subclasses of  :py:class:`enaml.expressions.SimpleExpression`,
+:py:class:`enaml.expressions.UpdatingExpression`,
+:py:class:`enaml.expressions.DelegatingExpression`, and
+:py:class:`enaml.expressions.NotifyingExpression`.
+When implementing overriden methods, all of these subclasses
+must check to see whether the model object is of the new model type, and if
+it is not then they need to fall back to using the standard superclass
+implementation of the method.  If this is not done then expressions involving
+widget traits will fail to work correctly.
+
+    :py:class:`~enaml.expressions.SimpleExpression`
         This class needs to be able to provide a default value for the
         expression, but does not need to react to changes in the model object
         or in the Enaml namespace.
 
-        You may need to override the :py:meth:`__value_default()` handler
+        You may need to override the :py:meth:`eval_expression` handler
         to compute the default value from the model, but ideally you should
         be able to use this class unmodified.
 
-    :py:class:`~enaml.expressions.BindingExpression`
+    :py:class:`~enaml.expressions.UpdatingExpression`
         This class needs to provide a default value for the expression, but
         also needs to analyze the expression for dependencies and react to
-        changes in the dependency values.
+        changes in the dependency values on the model objects.
 
-        You may need to override the :py:meth:`__value_default()` handler
-        to as in the :py:class:`~enaml.expressions.DefaultExpression` case.
+        You may need to override the :py:meth:`eval_expression` handler
+        to as in the :py:class:`~enaml.expressions.DefaultExpression` case,
+        but again hopefully the default will be sufficient.
 
-        You will also need to override the :py:meth:`bind()` method to correctly
+        You will also need to override the :py:meth:`bind` method to correctly
         hook up the expression to its dependencies in your model's notification
-        model.  For example, you may have to register a callback with an
-        appropriate object.  This callback will probably look something
-        like the :py:meth:`refresh_value()` method, but may need to perform
+        model.  This is likely to require walking the provided expression AST
+        to determine dependencies (the AttributeVisitor class may be useful
+        for this) and register you may have to register callbacks
+        on an appropriate object.  This callback will probably look something
+        like the :py:meth:`update_object()` method, but may need to perform
         additional steps depending on your model.
 
-    :py:class:`~enaml.expressions.NotifierExpression`
+    :py:class:`~enaml.expressions.NotifyingExpression`
         This class requires the ability to execute a code expression whenever
         an Enaml attribute changes.
 
@@ -375,7 +384,7 @@ fail to work correctly.
         expression correctly, but ideally you should be able to use this
         class unmodified.
 
-    :py:class:`~enaml.expressions.DelegateExpression`
+    :py:class:`~enaml.expressions.DelegatingExpression`
         This class requires both the ability to analyze and react to changes
         in expression dependencies, but also push changes from the Enaml
         trait which it is connected to onto the designated object.
@@ -383,16 +392,31 @@ fail to work correctly.
         This will require an appropriate :py:meth:`bind()` method similar to
         the one that the :py:class:`~enaml.expressions.BindingExpression` uses,
         although the allowable expressions are much simpler for
-        :py:class:`~enaml.expressions.DelegateExpression`.
+        :py:class:`~enaml.expressions.DelegatingExpression`.
 
         You will also need to override the implementations of
-        :py:meth:`_get_value()` and :py:meth:`_set_value()` to appropriately
-        change the value on the underlying model.
+        :py:meth:`update_object()` and :py:meth:`update_delegate()` to
+        appropriately change the value on the underlying model.
 
-Having written these classes, you will need to define
-:py:class:`BaseExpressionFactory` subclasses for each class and have the
-:py:meth:`__call__` methods construct the appropriate expression instance.
+Having written these classes, you will need to define operator factories for
+each of them and override your toolkit's ``OPERATORS``, for example::
 
-Finally you will need to subclass :py:class:`EnamlFactory` and override the
-:py:meth:`expression_factories` method to return the new expression factory
-classes.
+    from enaml.operators import operator_factory, OPERATORS
+    
+    OPERATORS['__operator_LessLess__'] = operator_factory(MyUpdatingExpression)
+
+If it makes sense for your new expression to use a different operator than the
+standard four, you can define a different name and then the corresponding
+operator will be available, for example to enable ``<<<`` as an operator::
+    
+    OPERATORS['__operator_LessLessLess__'] = operator_factory(MyUpdatingExpression)
+
+The above changes will be global in nature.  If you want to restrict the modified
+operators to a subset of code, you can create an instance of at Toolkit object
+and override the operators in just that instance::
+
+    from enaml.operators import operator_factory
+    from enaml.toolkit import qt_toolkit
+    
+    my_toolkit = qt_toolkit()
+    my_toolkit['__operator_LessLess__'] = operator_factory(MyUpdatingExpression)
