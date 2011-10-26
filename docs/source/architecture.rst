@@ -1,8 +1,6 @@
 Design and Architecture
 =======================
 
-.. warning:: This sections is outdated
-
 Enaml is designed with a flexible, open architecture.  It is designed to be
 able to adapt to different UI toolkit backends beyond the currently supported
 Qt and Wx backends, as well as allowing other key parts of the infrastructure
@@ -14,13 +12,34 @@ Construction of a View
 When building a view, you typically will create it via a sequence of commands
 like::
 
-    factory = EnamlFactory('my_view.enaml')
-    view = factory(model=my_model, table_model=my_table)
+    import enaml
+    
+    with enaml.imports():
+        from my_view.enaml import MyView
+    
+    view = MyView(model)
     view.show()
 
-These steps create a view factory, prime its namespace with model objects from
-your application that correspond to the unspecified names in the .enaml file,
-and the display the window.
+The import step parses and compiles the Enaml file, creating a Python module
+containing view factories that can be used by importing code.  When called,
+these views factories expect model objects to be passed via arguments and then
+use the UI toolkit to construct the actual UI components that will be used in
+the view.  Finally the show() method starts the application mainloop if needed
+and makes the UI components visible.
+
+The enaml.imports() context manager provides an import hook that detects when an
+``.enaml`` file is being imported parses it into an Enaml AST and uses
+:py:class:`~enaml.enaml_compiler.EnamlCompiler` to compile it.  From the users
+point of view it creates a standard Python module which has one or more
+:py:class:`EnamlDefinition` objects which are used to create re-usable sections
+of UI.  The :py:class:`EnamlDefinition` objects can be used by other Enaml modules
+which import them, or directly by Python code.  Each :py:class:`EnamlDefinition`
+instance is a namespace which can have additional variable values supplied as
+arguments to when it is called.
+
+
+.. warning:: These sections are outdated
+
 
 The first call, to :py:class:`~enaml.factory.EnamlFactory(file, toolkit)`,
 loads the ``.enaml`` file and parses it into an abstract syntax tree (AST).
