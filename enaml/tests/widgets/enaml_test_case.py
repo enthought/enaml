@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import unittest
-import os.path
 
 from enaml.parsing.parser import parse
-from enaml.parsing.enaml_compiler import EnamlCompiler
+from enaml.parsing.enaml_compiler import EnamlCompiler, evalcode
+from enaml.widgets.component import Component
 from enaml.toolkit import default_toolkit
 
 def required_method(function_object):
@@ -69,7 +69,9 @@ class EnamlTestCase(unittest.TestCase):
             The coresponding component or None.
 
         """
-        if component.name == name:
+        # FIXME: This is really an ID, not a name, but the tests currently use
+        # component_by_name().
+        if getattr(component, '__id__', None) == name:
             result = component
         else:
             result = None
@@ -102,10 +104,17 @@ class EnamlTestCase(unittest.TestCase):
         toolkit = self.toolkit
 
         with toolkit:
-            view = enaml_module['MainWindow'](**kwargs)[0]
+            defn = enaml_module['MainWindow']
+            f_locals = defn._build_locals((), kwargs)
+            view = evalcode(defn.__code__, defn.__globals__, f_locals)[0]
+            # Assign the computed IDs to the objects.
+            # FIXME: This should be done in the VM.
+            for enaml_id, obj in f_locals.iteritems():
+                if isinstance(obj, Component):
+                    obj.__id__ = enaml_id
 
         self.app = toolkit.create_app()
-        view.layout()
+        view.setup()
         return view
 
 
@@ -134,7 +143,7 @@ class EnamlTestCase(unittest.TestCase):
             not possible to retrieve a sensible value for the attribute.
 
         """
-        widget = component.toolkit_widget()
+        widget = component.toolkit_widget
         enaml_value = getattr(component, attribute_name)
         widget_value = getattr(self, 'get_' + attribute_name)(widget)
 
@@ -170,7 +179,7 @@ class EnamlTestCase(unittest.TestCase):
             value for the attribute.
 
         """
-        widget = component.toolkit_widget()
+        widget = component.toolkit_widget
         enaml_value = getattr(component, attribute_name)
         widget_value = getattr(self, 'get_' + attribute_name)(component, widget)
 
