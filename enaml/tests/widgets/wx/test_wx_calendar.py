@@ -17,13 +17,13 @@ class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
         """
         return widget.PyGetDate()
 
-    def get_minimum_date(self, widget):
+    def get_min_date(self, widget):
         """ Get a calendar's minimum date attribute.
 
         """
         return widget.PyGetLowerDateLimit()
 
-    def get_maximum_date(self, widget):
+    def get_max_date(self, widget):
         """ Get a calendar's maximum date attribute.
 
         """
