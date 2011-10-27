@@ -11,50 +11,35 @@
 # two neighbors.
 
 defn MainWindow:
-   Window:
-       PushButton -> frame:
-           text = 'Frame'
-           constraints = [
-               left == parent.left,
-               right == parent.right,
-               top == parent.top,
-               height >= 100,
-               width >= 200,
-           ]
-       PushButton -> add_button:
-           text = 'Add'
-           constraints = [
-               left == parent.left,
-               bottom == parent.bottom,
-               top == frame.bottom + 8,
-               width == size_hint()[0],
-               height == size_hint()[1],
-           ]
-       PushButton -> remove_button:
-           text = 'Remove'
-           constraints = [
-               left == add_button.right+8,
-               bottom == add_button.bottom,
-               width == size_hint()[0],
-               height == size_hint()[1],
-           ]
-       PushButton -> change_mode_button:
-           text = 'Change Mode'
-           constraints = [
-               left >= remove_button.right+8,
-               bottom == add_button.bottom,
-               width == size_hint()[0],
-               height == size_hint()[1],
-               (h_center == parent.h_center) | 'weak',
-           ]
-       PushButton -> share_button:
-           text = 'Share...'
-           constraints = [
-               right == frame.right,
-               bottom == add_button.bottom,
-               width == size_hint()[0],
-               height == size_hint()[1],
-               left >= change_mode_button.right+8,
-           ]
+    Window:
+        PushButton -> frame:
+            text = 'Frame'
+            constraints = [
+                # FIXME: these really ought to be somewhere on the Window, but
+                # the .constraints attribute is used *by* the parent to lay out
+                # its children, not for the component to lay out *its* children.
+                L.V(L.I, L._, frame, L._, add_button, L._, L.I),
+                L.H(L.I, L._, frame, L._, L.I),
+                L.H(L.I, L._, add_button, L._, remove_button, L.spring(), change_mode_button, L.spring(), share_button, L._, L.I),
+                height >= 100,
+                width >= 200,
+            ]
+        PushButton -> add_button:
+            text = 'Add'
+            # FIXME: these size hints ought to be defaults, but we haven't made
+            # a convenient syntax to override such defaults.
+            constraints = [L.size_hint(self)]
+        PushButton -> remove_button:
+            text = 'Remove'
+            constraints = [L.size_hint(self)]
+        PushButton -> change_mode_button:
+            text = 'Change Mode'
+            constraints = [
+                L.size_hint(self),
+                (h_center == parent.h_center) | 'weak',
+            ]
+        PushButton -> share_button:
+            text = 'Share...'
+            constraints = [L.size_hint(self)]
 
 

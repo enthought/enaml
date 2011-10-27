@@ -8,7 +8,8 @@ from traits.api import Instance, List, Property
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
-from .layout.symbolics import LinearConstraint
+from .layout.symbolics import BaseConstraint
+from .layout.layout_ns import LayoutNS
 from .layout.layout_manager import AbstractLayoutManager
 from .layout.constraints_layout import ConstraintsLayout
 
@@ -107,7 +108,7 @@ class Component(BaseComponent):
     layout = Instance(AbstractLayoutManager)
 
     #: A list of linear constraints defined for this object.
-    constraints = List(Instance(LinearConstraint))
+    constraints = List(Instance(BaseConstraint))
 
     #: A read-only symbolic object that represents the left 
     #: boundary of the component
@@ -141,9 +142,16 @@ class Component(BaseComponent):
     #: center of the component
     h_center = Property
 
+    #: A read-only object providing a convenient entry point for
+    #: constraint-related layout functions.
+    # FIXME: This is a dumb hack to be removed when there is better support in
+    # the Enaml syntax.
+    L = Property
+
     #: A read-only property that returns the toolkit specific widget
     #: being managed by the abstract widget.
     toolkit_widget = Property
+
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkComponent)
@@ -201,6 +209,12 @@ class Component(BaseComponent):
 
         """
         return ConstraintsLayout(self)
+
+    def _get_L(self):
+        """ Property getter for the 'L' property.
+
+        """
+        return LayoutNS()
 
     def size(self):
         """ Returns the size tuple as given by the abstract widget.
