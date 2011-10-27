@@ -249,6 +249,18 @@ class Toolkit(dict):
     
     app = property(_get_app, _set_app)
 
+    def _get_invoke_later(self):
+        """ Returns the function for invoking a function later in the event
+        loop.
+
+        """
+        return self.get('__invoke_later__')
+
+    def _set_invoke_later(self, val):
+        self['__invoke_later__'] = val
+
+    invoke_later = property(_get_invoke_later, _set_invoke_later)
+
 
 def default_toolkit():
     """ Creates an returns the default toolkit object based on
@@ -274,6 +286,7 @@ def qt_toolkit():
     from .widgets.qt.constructors import QT_CONSTRUCTORS
     from .util.guisupport import get_app_qt4, start_event_loop_qt4
     from .widgets.qt.styling import QT_STYLE_SHEET
+    from .widgets.qt.utils import invoke_later
 
     utils = {}
 
@@ -282,6 +295,7 @@ def qt_toolkit():
     toolkit.create_app = get_app_qt4
     toolkit.start_app = start_event_loop_qt4
     toolkit.style_sheet = QT_STYLE_SHEET
+    toolkit.invoke_later = invoke_later
     toolkit.update(utils)
     toolkit.update(OPERATORS)
 
@@ -295,6 +309,7 @@ def wx_toolkit():
     from .widgets.wx.constructors import WX_CONSTRUCTORS
     from .util.guisupport import get_app_wx, start_event_loop_wx
     from .widgets.wx.styling import WX_STYLE_SHEET
+    from .widgets.qt.utils import invoke_later
 
     utils = {}
 
@@ -303,6 +318,7 @@ def wx_toolkit():
     toolkit.create_app = get_app_wx
     toolkit.start_app = start_event_loop_wx
     toolkit.style_sheet = WX_STYLE_SHEET
+    toolkit.invoke_later = invoke_later
     toolkit.update(utils)
 
     return toolkit
