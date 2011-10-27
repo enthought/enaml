@@ -139,7 +139,8 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         if not changes:
             solver.Resolve()
-            self.update_children(container)
+            container.toolkit.invoke_later(self.set_solved_geometry_with_children,
+                container)
             return
         
         for var, val_func, strength in changes:
