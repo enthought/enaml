@@ -5,7 +5,6 @@ version of the argument-less MainWindow component inside of it.
 """
 
 import enaml
-from enaml.toolkit import default_toolkit
 from enaml.parsing.parser import parse
 from enaml.parsing.enaml_compiler import EnamlCompiler
 
