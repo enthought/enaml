@@ -30,12 +30,8 @@ def main():
     with enaml.imports():
         EnamlCompiler.compile(ast, ns)
     component = ns[args.component]
-    toolkit = default_toolkit()
-    with toolkit:
-        window = component()[0]
-    app = toolkit.create_app()
+    window = component()
     window.show()
-    toolkit.start_app()
 
 if __name__ == '__main__':
     main()
