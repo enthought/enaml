@@ -104,7 +104,7 @@ class Component(BaseComponent):
 
     #: An object that manages the layout of this component and its 
     #: direct children. The default is simple constraints based
-    layout = Instance(AbstractLayoutManager, factory=ConstraintsLayout)
+    layout = Instance(AbstractLayoutManager)
 
     #: A list of linear constraints defined for this object.
     constraints = List(Instance(LinearConstraint))
@@ -196,6 +196,12 @@ class Component(BaseComponent):
         """
         return self._box_model.h_center
     
+    def _layout_default(self):
+        """ Default value for the layout manager.
+
+        """
+        return ConstraintsLayout(self)
+
     def size(self):
         """ Returns the size tuple as given by the abstract widget.
 
@@ -249,25 +255,52 @@ class Component(BaseComponent):
         """
         return self.abstract_obj.toolkit_widget
 
-    def update_contraints_if_needed(self):
+    def setup(self):
+        """ Run the setup process for the ui tree.
+
+        This is overridden to add the layout set up.
+
+        """
+        super(Component, self).setup()
+
+        if len(self.children) > 0:
+            self.initialize_layout()
+
+    def initialize_layout(self):
+        """ Initialize the layout for the first time.
+
+        """
+        if len(self.children) > 0:
+            self.layout.initialize()
+            for child in self.children:
+                child.initialize_layout()
+
+    def update_constraints_if_needed(self):
         """ Update the constraints of this component if necessary. This 
         is typically the case when a constraint has been changed.
 
         """
-        self.layout.update_constraints_if_needed()
+        if len(self.children) > 0:
+            self.layout.update_constraints_if_needed()
+            for child in self.children:
+                child.update_constraints_if_needed()
 
-    def set_needs_update_constraints(self):
+    def set_needs_update_constraints(self, needs=True):
         """ Indicate that the constraints for this component should be
         updated some time later.
 
         """
-        self.layout.set_needs_update_constraints()
+        if len(self.children) > 0:
+            self.layout.set_needs_update_constraints(needs=needs)
 
     def update_constraints(self):
         """ Update the constraints for this component.
 
         """
-        self.layout.update_constraints()
+        if len(self.children) > 0:
+            self.layout.update_constraints()
+            for child in self.children:
+                child.update_constraints()
     
     def layout_if_needed(self):
         """ Refreshes the layout of this component if necessary. This 
@@ -275,18 +308,27 @@ class Component(BaseComponent):
         the sizes of any of its children have been changed.
 
         """
-        self.layout.layout_if_needed()
+        if len(self.children) > 0:
+            # FIXME: Not sure if this should be bottom-up or top-down.
+            self.layout.layout_if_needed()
+            for child in self.children:
+                child.layout_if_needed()
 
-    def set_needs_layout(self):
+    def set_needs_layout(self, needs=True):
         """ Indicate that the layout should be refreshed some time 
         later.
 
         """
-        self.layout.set_needs_layout()
+        if len(self.children) > 0:
+            self.layout.set_needs_layout(needs=needs)
         
     def do_layout(self):
         """ Updates the layout of this component.
 
         """
-        self.layout.layout()
+        if len(self.children) > 0:
+            # FIXME: Not sure if this should be bottom-up or top-down.
+            self.layout.layout()
+            for child in self.children:
+                child.do_layout()
 

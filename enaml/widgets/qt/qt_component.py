@@ -118,7 +118,10 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     def on_resize(self):
         # should handle the widget resizing by telling something
         # that things need to be relayed out
-        pass
+        if self.widget is not None and len(self.shell_obj.children) > 0:
+            self.shell_obj.set_needs_layout(True)
+            self.shell_obj.toolkit.invoke_later(self.shell_obj.layout_if_needed)
+
 
     #--------------------------------------------------------------------------
     # Convienence methods

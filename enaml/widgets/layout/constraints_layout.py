@@ -1,3 +1,5 @@
+import weakref
+
 from .layout_manager import AbstractLayoutManager
 
 import csw
@@ -5,40 +7,53 @@ import csw
 
 class ConstraintsLayout(AbstractLayoutManager):
 
+    def __init__(self, container):
+        self.container = weakref.ref(container)
+
+        # Flag to note that we are currently in the initialize() method and
+        # should not re-enter.
+        self._is_initializing = False
+
+        self.needs_layout = False
+        self.needs_update_constraints = False
+
     def update_constraints_if_needed(self):
-        raise NotImplementedError
+        if self.needs_update_constraints:
+            self.update_constraints()
     
-    def set_needs_update_constraints(self):
-        raise NotImplementedError
+    def set_needs_update_constraints(self, needs=True):
+        self.needs_update_constraints = needs
     
     def update_constraints(self):
-        raise NotImplementedError
+        # FIXME: we should be able to do less than a full initialization.
+        self.initialize()
+        self.set_needs_update_constraints(False)
     
     def layout_if_needed(self):
-        raise NotImplementedError
-    
-    def set_needs_layout(self):
-        raise NotImplementedError
-    
-    def layout(self):
-        raise NotImplementedError
+        if self.needs_layout:
+            self.layout()
 
-    def initialize(self, container):
-        if getattr(self, '_is_initializing', False):
-            return
-        self._is_initializing = True
-        # FIXME: Make sure all child constraint lists have been created to avoid
-        # weird reentry. We should figure out why *getting* the .constraints
-        # trait triggers the _constraints_changed() trait handler. But for now,
-        # just trigger them early before we modify any state and rely on the
-        # _is_initializing guards to avoid executing any real code.
-        for child in container.children:
-            child.constraints
-
+    def set_needs_layout(self, needs=True):
+        self.needs_layout = needs
+    
+    def initialize(self):
         # Rather than do intialization in the __init__ method, which
         # in Python has the context of only happening once, we use
         # this method since the manager will be re-initialized whenever
         # any of the constraints of the containers children change.
+        container = self.container()
+        if container is None:
+            raise RuntimeError("container weakly referenced by %r disappeared" % self)
+
+        if getattr(self, '_is_initializing', False):
+            return
+        self._is_initializing = True
+        # FIXME: Make sure all child constraint lists have been created to avoid
+        # weird reentry. For now, just trigger them early before we modify any
+        # state and rely on the _is_initializing guards to avoid executing any
+        # real code.
+        for child in container.children:
+            child.constraints
 
         # (Enaml LinearConstraint -> csw.Constraint)
         self.constraints = []
@@ -113,7 +128,11 @@ class ConstraintsLayout(AbstractLayoutManager):
         self.constraints.append((constraint, csw_constraint))
         self.solver.AddConstraint(csw_constraint)
 
-    def layout(self, container):
+    def layout(self):
+        container = self.container()
+        if container is None:
+            raise RuntimeError("container weakly referenced by %r disappeared" % self)
+
         if getattr(self, '_is_initializing', False):
             return
         solver = self.solver
@@ -142,6 +161,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         # height.
 
         solver.EndEdit()
+
+        self.set_needs_layout(False)
 
     def update_children(self, container):
         for child in container.children:
