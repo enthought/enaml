@@ -20,12 +20,7 @@ class QtWindow(QtComponent, AbstractTkWindow):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ Creates the underlying QWindow control.
 
-        """
-        self.widget = QtGui.QFrame(self.parent_widget())
-    
     def initialize(self):
         """ Intializes the attributes on the QWindow.
 
@@ -34,15 +29,6 @@ class QtWindow(QtComponent, AbstractTkWindow):
         shell = self.shell_obj
         self.set_title(shell.title)
         self.set_modality(shell.modality)
-
-        # XXX not sure the right place for this
-        layout = QtGui.QVBoxLayout()
-        for child in self.child_widgets():
-            if isinstance(child, QtGui.QLayout):
-                layout.addLayout(child, 1)
-            else:
-                layout.addWidget(child, 1)
-        self.widget.setLayout(layout)
 
     #--------------------------------------------------------------------------
     # Implementation
