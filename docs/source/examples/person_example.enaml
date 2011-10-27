@@ -3,23 +3,24 @@ from enaml.converters import IntConverter
 defn PersonWindow(model):
     Window -> main_window:
         title << model.name
-        constraints = [height == 160, width == 205]
-        Label -> name_label:
-            text = 'Name:'
-            constraints = [top == 10, left == 10, height == 30, width == 75]
-        Field -> name_field:
-            value := model.name
-            constraints = [top == 10, left == 95, height == 30, width == 100]
-        Label -> age_label:
-            text = 'Age:'
-            constraints = [top == 50, left == 10, height == 30, width == 75]
-        Field -> age_field:
-            value := model.age
-            converter = IntConverter()
-            constraints = [top == 50, left == 95, height == 30, width == 100]
-        Label -> address_label:
-            text = 'Address:'
-            constraints = [top == 90, left == 10, height == 30, width == 75]
-        Field:
-            value := model.address
-            constraints = [top == 90, left == 95, height == 60, width == 100]
+        Component:
+            constraints = [width==parent.width, height==parent.height]
+            Label -> name_label:
+                text = 'Name:'
+                constraints = [top == 10, left == 10, height == 30, width == 75]
+            Field -> name_field:
+                value := model.name
+                constraints = [top == 10, left == 95, height == 30, width == 200]
+            Label -> age_label:
+                text = 'Age:'
+                constraints = [top == 50, left == 10, height == 30, width == 75]
+            Field -> age_field:
+                value := model.age
+                converter = IntConverter()
+                constraints = [top == 50, left == 95, height == 30, width == 200]
+            Label -> address_label:
+                text = 'Address:'
+                constraints = [top == 90, left == 10, height == 30, width == 75]
+            Field:
+                value := model.address
+                constraints = [top == 90, left == 95, height == 60, width == 200]
