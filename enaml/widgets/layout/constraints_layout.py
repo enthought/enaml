@@ -160,12 +160,16 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         self.set_needs_layout(False)
 
-    def set_solved_geometry(self, component):
+    def set_solved_geometry(self, component, leave_xy_alone=False):
         """ Set the geometry of a Component to its solved geometry.
 
         """
-        x = component.left.csw_var.Value()
-        y = component.top.csw_var.Value()
+        if leave_xy_alone:
+            old_geometry = component.geometry()
+            x, y = old_geometry[:2]
+        else:
+            x = component.left.csw_var.Value()
+            y = component.top.csw_var.Value()
         width = component.width.csw_var.Value()
         height = component.height.csw_var.Value()
         args = [int(round(z)) for z in [x,y,width,height]]
@@ -175,7 +179,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         """ Set the solved geometry for the component and its children
 
         """
-        self.set_solved_geometry(component)
+        # Do not move the origin of the container, just resize it.
+        self.set_solved_geometry(component, leave_xy_alone=True)
         for child in component.children:
             self.set_solved_geometry(child)
 
