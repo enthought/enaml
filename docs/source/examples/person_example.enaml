@@ -3,73 +3,23 @@ from enaml.converters import IntConverter
 defn PersonWindow(model):
     Window -> main_window:
         title << model.name
-        
-        # constraint variables
-        row_height = 30
-        label_width = 75
-        min_field_width = 100
-        
-        label_left << left+10
-        field_left << name_label.right+10
-        field_right << right-10
-        row1_top << top+10
-        row2_top << row1_top+row_height+10
-        row3_top << row2_top+row_height+10
-        row3_bottom << bottom-10
-        
-        label_constraints = lambda obj, form: [
-            obj.left == form.label_left,
-            obj.width == form.label_width,
-        ]
-        field_constraints = lambda obj, form: [
-            obj.left == form.field_left,
-            obj.right == form.field_right,
-            obj.width >= form.min_field_width,
-        ]
-        row1_constraints = lambda obj, form: [
-            obj.top == form.row1_top,
-            obj.height == form.row_height,
-        ]
-        
+        constraints = [height == 160, width == 205]
         Label -> name_label:
             text = 'Name:'
-            constraints = parent.label_constraints(self, parent) + parent.row1_constraints(self, parent)
+            constraints = [top == 10, left == 10, height == 30, width == 75]
         Field -> name_field:
             value := model.name
-            constraints = parent.field_constraints(self, parent) + parent.row1_constraints(self, parent)
+            constraints = [top == 10, left == 95, height == 30, width == 100]
         Label -> age_label:
             text = 'Age:'
-            constraints = [
-                left == parent.label_left,
-                top == parent.row2_top,
-                width == parent.label_width,
-                height == parent.row_height,
-            ]
+            constraints = [top == 50, left == 10, height == 30, width == 75]
         Field -> age_field:
             value := model.age
             converter = IntConverter()
-            constraints = [
-                left == parent.field_left,
-                top == parent.row2_top,
-                right == parent.field_right,
-                width >= parent.min_field_width,
-                height == parent.row_height,
-            ]
+            constraints = [top == 50, left == 95, height == 30, width == 100]
         Label -> address_label:
             text = 'Address:'
-            constraints = [
-                left == parent.label_left,
-                top == parent.row3_top,
-                width == parent.label_width,
-                height == parent.row_height,
-            ]
+            constraints = [top == 90, left == 10, height == 30, width == 75]
         Field:
             value := model.address
-            constraints = [
-                left == parent.field_left,
-                top == parent.row3_top,
-                right == parent.field_right,
-                width >= parent.min_field_width,
-                height >= parent.row_height,
-                bottom == parent.row3_bottom,
-            ]
+            constraints = [top == 90, left == 95, height == 60, width == 100]

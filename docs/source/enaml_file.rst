@@ -7,10 +7,12 @@ and dynamically binding and computing values based on user interaction.
 A simple example of an Enaml file might look something like this:
 
 .. literalinclude:: examples/person_example.enaml
+    :language: enaml
 
 We could then use this with a Traits model as follows:
 
 .. literalinclude:: examples/person_example.py
+    :language: python
 
 
 Binding Operators
