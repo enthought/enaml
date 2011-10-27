@@ -37,6 +37,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         self.needs_layout = needs
     
     def initialize(self):
+        if getattr(self, '_is_initializing', False):
+            return
+        self._is_initializing = True
+
         # Rather than do intialization in the __init__ method, which
         # in Python has the context of only happening once, we use
         # this method since the manager will be re-initialized whenever
@@ -45,17 +49,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         if container is None:
             raise RuntimeError("container weakly referenced by %r disappeared" % self)
 
-        if getattr(self, '_is_initializing', False):
-            return
-        self._is_initializing = True
-        # FIXME: Make sure all child constraint lists have been created to avoid
-        # weird reentry. For now, just trigger them early before we modify any
-        # state and rely on the _is_initializing guards to avoid executing any
-        # real code.
-        for child in container.children:
-            child.constraints
-
-        # (Enaml LinearConstraint -> csw.Constraint)
+        # (LinearConstraint, csw.Constraint)
         self.constraints = []
 
         solver = self.solver = csw.SimplexSolver()
@@ -75,7 +69,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         for child in container.children:
             for constraint in child.constraints:
                 self.add_constraint(constraint)
-        
+
         # Compute the hint variables for solver iteration. Some are stronger
         # than others.
         self.changes = changes = []
@@ -101,11 +95,11 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         w_var = container.width.csw_var
         if solver_contains(w_var):
-            changes.append((w_var, width_getter(container), csw.sStrong()))
+            changes.append((w_var, width_getter(container), csw.sMedium()))
         
         h_var = container.height.csw_var
         if solver_contains(h_var):
-            changes.append((h_var, height_getter(container), csw.sStrong()))
+            changes.append((h_var, height_getter(container), csw.sMedium()))
         
         for child in container.children:
             w_var = child.width.csw_var
@@ -115,18 +109,23 @@ class ConstraintsLayout(AbstractLayoutManager):
             h_var = child.height.csw_var
             if solver_contains(h_var):
                 changes.append((h_var, height_hint_getter(child), csw.sWeak()))
-        
+
         solver.SetAutosolve(True)
         self._is_initializing = False
 
     def add_constraint(self, constraint):
-        """ Add a constraint to the solver, and keep a reference to it for
-        further examination.
+        """ Add a LinearConstraint or MultiConstraint to the solver, and keep
+        a reference to it for further examination.
 
         """
-        csw_constraint = constraint.convert_to_csw()
-        self.constraints.append((constraint, csw_constraint))
-        self.solver.AddConstraint(csw_constraint)
+        if hasattr(constraint, 'constraints'):
+            # This object actually holds multiple constraints.
+            for sub_constraint in constraint.constraints:
+                self.add_constraint(sub_constraint)
+        else:
+            csw_constraint = constraint.convert_to_csw()
+            self.constraints.append((constraint, csw_constraint))
+            self.solver.AddConstraint(csw_constraint)
 
     def layout(self):
         container = self.container()
@@ -153,22 +152,29 @@ class ConstraintsLayout(AbstractLayoutManager):
             
         solver.Resolve()
 
-        self.update_children(container)
-
-        # XXX handle the case where the suggested width and height
-        # led to an unsolvable system and so the computed width and
-        # height are now different from the actual widget width and 
-        # height.
+        container.toolkit.invoke_later(self.set_solved_geometry_with_children,
+            container)
 
         solver.EndEdit()
 
         self.set_needs_layout(False)
 
-    def update_children(self, container):
-        for child in container.children:
-            x = child.left.csw_var.Value()
-            y = child.top.csw_var.Value()
-            width = child.width.csw_var.Value()
-            height = child.height.csw_var.Value()
-            child.set_geometry(int(x), int(y), int(width), int(height))
+    def set_solved_geometry(self, component):
+        """ Set the geometry of a Component to its solved geometry.
+
+        """
+        x = component.left.csw_var.Value()
+        y = component.top.csw_var.Value()
+        width = component.width.csw_var.Value()
+        height = component.height.csw_var.Value()
+        args = [int(round(z)) for z in [x,y,width,height]]
+        component.set_geometry(*args)
+
+    def set_solved_geometry_with_children(self, component):
+        """ Set the solved geometry for the component and its children
+
+        """
+        self.set_solved_geometry(component)
+        for child in component.children:
+            self.set_solved_geometry(child)
 
