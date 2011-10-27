@@ -1,11 +1,17 @@
-Window:
-    title = "Field example"
-    Panel:
-        VGroup:
-            Label:
-                text = "This is an integer field"
-            Field mf:
-                to_string = str
-                from_string = lambda val: int(val) if val else 0
-                value = 0
-                style.background_color << "error" if self.error else "nocolor"
+from enaml.converters import IntConverter
+
+defn FieldExample:
+    Window:
+        title = "Field example"
+        Label:
+            text = "This is an integer field"
+            constraints = [top == 10, left == 10, height == 30, width == 150,
+                parent.width >= 305,
+                parent.height >= 50,
+            ]
+        Field -> mf:
+            converter = IntConverter()
+            value = 0
+            #style.background_color << "error" if self.error else "nocolor"
+            value >> print(value)
+            constraints = [top == 10, left == 170, height == 30, width == 125]
