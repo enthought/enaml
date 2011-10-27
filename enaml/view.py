@@ -44,7 +44,7 @@ class View(object):
             raise TypeError(msg)
 
         tk = component.toolkit
-        tk.create_app()
+        tk.app = tk.create_app()
 
         component.show()
 
