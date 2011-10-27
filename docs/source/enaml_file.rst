@@ -1,6 +1,18 @@
 Writing .enaml Files
 ====================
 
+Enaml files contain a domain-specific language for specifying a user-interface
+and dynamically binding and computing values based on user interaction.
+
+A simple example of an Enaml file might look something like this:
+
+.. literalinclude:: examples/person_example.enaml
+
+We could then use this with a Traits model as follows:
+
+.. literalinclude:: examples/person_example.py
+
+
 Binding Operators
 -----------------
 
