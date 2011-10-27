@@ -447,7 +447,6 @@ class DelegatingExpression(SimpleExpression):
 
         """
         super(DelegatingExpression, self).bind()
-        import pdb; pdb.set_trace()
         obj = self.obj
         global_ns = self.get_globals()
         local_ns = self.get_locals({'self': obj})
