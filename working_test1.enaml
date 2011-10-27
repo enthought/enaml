@@ -141,6 +141,12 @@ defn TestView:
                 # of the defn we just called, and changing the value
                 # of the text on the nested push button.
                 nested.text = 'foo bar'
+            constraints = [
+                left == parent.left,
+                right == parent.right,
+                top == parent.top,
+                bottom == parent.bottom,
+            ]
 
 
 defn MainWindow(model, table_model):
