@@ -1,81 +1,87 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ Qt-specific utilities.
+
 """
+from .qt.QtCore import QMutex, QEvent, QObject, QTimer
+from .qt.QtGui import QApplication
 
-from .qt import QtCore, QtGui
 
-
-class _FutureCall(QtCore.QObject):
-    """ This is a helper class that is similar to the wx FutureCall class. """
-
-    # Keep a list of references so that they don't get garbage collected.
+class _FutureCall(QObject):
+    """ This is a helper class that is similar to the wx FutureCall class. 
+    
+    """
+    # Keep a list of instances so that they don't get garbage collected.
     _calls = []
 
     # Manage access to the list of instances.
-    _calls_mutex = QtCore.QMutex()
+    _calls_mutex = QMutex()
 
     # A new Qt event type for _FutureCalls
-    _pyface_event = QtCore.QEvent.Type(QtCore.QEvent.registerEventType())
+    _call_event = QEvent.Type(QEvent.registerEventType())
 
     def __init__(self, ms, callable, *args, **kw):
         super(_FutureCall, self).__init__()
-
-        # Save the arguments.
         self._ms = ms
         self._callable = callable
         self._args = args
         self._kw = kw
 
-        # Save the instance.
-        self._calls_mutex.lock()
+        # Save the instance while protecting access to the list 
+        # since there may be multiple threads using invoke_later.
+        mutex = self._calls_mutex
+        mutex.lock()
         self._calls.append(self)
-        self._calls_mutex.unlock()
+        mutex.unlock()
 
-        # Move to the main GUI thread.
-        self.moveToThread(QtGui.QApplication.instance().thread())
+        # Move to the main GUI thread in order to post the event.
+        self.moveToThread(QApplication.instance().thread())
 
-        # Post an event to be dispatched on the main GUI thread. Note that
-        # we do not call QTimer.singleShot here, which would be simpler, because
-        # that only works on QThreads. We want regular Python threads to work.
-        event = QtCore.QEvent(self._pyface_event)
-        QtGui.QApplication.postEvent(self, event)
-        QtGui.QApplication.sendPostedEvents()
+        # Post an event to be dispatched on the main GUI thread. Note 
+        # that we do not call QTimer.singleShot here, which would be 
+        # simpler, because that only works on QThreads. We want regular 
+        # Python threads to work.
+        event = QEvent(self._call_event)
+        QApplication.postEvent(self, event)
+        QApplication.sendPostedEvents()
 
     def event(self, event):
-        """ QObject event handler.
+        """ QObject event handler. Dispatches to the callable immediately
+        or via a Timer if the callable should happen some milliseconds
+        later.
+
         """
-        if event.type() == self._pyface_event:
-            # Invoke the callable
-            if self._ms:
-                QtCore.QTimer.singleShot(self._ms, self._dispatch)
+        # This must be '==', 'is' does not work here.
+        if event.type() == self._call_event:
+            if self._ms > 0:
+                QTimer.singleShot(self._ms, self._dispatch)
             else:
-                self._callable(*self._args, **self._kw)
-                # We cannot remove from self._calls here. QObjects don't like
-                # being garbage collected during event handlers.
-                QtCore.QTimer.singleShot(0, self._finished)
+                self._dispatch()
             return True
 
         return super(_FutureCall, self).event(event)
 
     def _dispatch(self):
-        """ Invoke the callable.
+        """ Invokes the callable and removes the instance from the
+        list of calls so that it can be garbage collected.
+
         """
         try:
             self._callable(*self._args, **self._kw)
         finally:
-            self._finished()
+            mutex = self._calls_mutex
+            mutex.lock()
+            try:
+                self._calls.remove(self)
+            finally:
+                mutex.unlock()
 
-    def _finished(self):
-        """ Remove the call from the list, so it can be garbage collected.
-        """
-        self._calls_mutex.lock()
-        try:
-            self._calls.remove(self)
-        finally:
-            self._calls_mutex.unlock()
 
 def invoke_later(callable, *args, **kwds):
-    """ Invoke a function later in the event loop.
+    """ Invoke a function at some point later in the event loop.
 
     """
     _FutureCall(0, callable, *args, **kwds)
-
+    
