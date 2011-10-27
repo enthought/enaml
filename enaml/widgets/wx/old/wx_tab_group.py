@@ -52,7 +52,7 @@ class WXTabGroup(WXStackedGroup):
         """
         self.widget.Layout()
 
-    def parent_movable_changed(self, movable):
+    def shell_movable_changed(self, movable):
         """ Update the movable style in the tab
 
         Arguments

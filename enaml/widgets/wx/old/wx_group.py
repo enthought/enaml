@@ -49,7 +49,7 @@ class WXGroup(WXContainer):
             sizer.AddF(child.toolkit_impl.widget, flags)
         sizer.Layout()
 
-    def parent_direction_changed(self, direction):
+    def shell_direction_changed(self, direction):
         """ The change handler for the 'direction' attribute on the
         parent.
 

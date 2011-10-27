@@ -65,7 +65,7 @@ class WXStackedGroup(WXContainer):
         """
         self.widget.Layout()
 
-    def parent_current_index_changed(self, current_index):
+    def shell_current_index_changed(self, current_index):
         """ Update the visible page
 
         Arguments
