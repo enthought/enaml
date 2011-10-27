@@ -1,8 +1,16 @@
+from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 import operator
 
 import csw
 
+
+STRENGTH_MAP = {
+    'weak': csw.sWeak(),
+    'medium': csw.sMedium(),
+    'strong': csw.sStrong(),
+    'required': csw.sRequired(),
+}
 
 class LinearSymbolic(object):
 
@@ -307,16 +315,23 @@ class ConstraintVariable(LinearSymbolic):
         return self.csw_var
 
 
-class LinearConstraint(object):
+class BaseConstraint(object):
+    """ ABC for constraints.
 
-    op = '<abtract>'
+    """
 
-    strength_map = {
-        'weak': csw.sWeak(),
-        'medium': csw.sMedium(),
-        'strong': csw.sStrong(),
-        'required': csw.sRequired(),
-    }
+    __metaclass__ = ABCMeta
+
+    @abstractmethod
+    def convert_to_csw(self):
+        """ Convert this constraint to the appropriate solver-specific representation.
+
+        """
+
+
+class LinearConstraint(BaseConstraint):
+
+    op = '<abstract>'
 
     def __init__(self, lhs, rhs, strength='required'):
         self.lhs = lhs
@@ -324,14 +339,14 @@ class LinearConstraint(object):
         self.strength = strength
 
     def __repr__(self):
-        return '%s %s %s' % (self.lhs, self.op, self.rhs)
-    
+        return '<%s: (%s %s %s) | %r>' % (type(self).__name__, self.lhs, self.op, self.rhs, self.strength)
+
     def __str__(self):
-        return self.__repr__()
+        return '%s %s %s' % (self.lhs, self.op, self.rhs)
 
     def __or__(self, other):
         if isinstance(other, basestring):
-            mapping = self.strength_map
+            mapping = STRENGTH_MAP
             if other not in mapping:
                 raise ValueError('Invalid strength `%s`' % other)
             self.strength = other
@@ -342,6 +357,18 @@ class LinearConstraint(object):
         
     def __ror__(self, other):
         return self.__or__(other)
+
+    def __and__(self, other):
+        if isinstance(other, LinearConstraint):
+            return MultiConstraint([self, other])
+        elif isinstance(other, MultiConstraint):
+            return other.__and__(self)
+        else:
+            msg = 'Can only combine other LinearConstraints and MultiConstraints. Got %s instead.' % type(other)
+            raise TypeError(msg)
+
+    def __rand__(self, other):
+        return self.__and__(other)
 
     def convert_to_csw(self):
         raise NotImplementedError
@@ -354,7 +381,7 @@ class LEConstraint(LinearConstraint):
     def convert_to_csw(self):
         lhs = self.lhs.convert_to_csw()
         rhs = self.rhs.convert_to_csw()
-        strength = self.strength_map[self.strength]
+        strength = STRENGTH_MAP[self.strength]
         return csw.LinearInequality(lhs, csw.cnLEQ, rhs, strength)
 
 
@@ -365,7 +392,7 @@ class GEConstraint(LinearConstraint):
     def convert_to_csw(self):
         lhs = self.lhs.convert_to_csw()
         rhs = self.rhs.convert_to_csw()
-        strength = self.strength_map[self.strength]
+        strength = STRENGTH_MAP[self.strength]
         return csw.LinearInequality(lhs, csw.cnGEQ, rhs, strength)
 
 
@@ -376,6 +403,73 @@ class EQConstraint(LinearConstraint):
     def convert_to_csw(self):
         lhs = self.lhs.convert_to_csw()
         rhs = self.rhs.convert_to_csw()
-        strength = self.strength_map[self.strength]
+        strength = STRENGTH_MAP[self.strength]
         return csw.LinearEquation(lhs, rhs, strength)
+
+
+class MultiConstraint(BaseConstraint):
+    """ A combination of LinearConstraints.
+
+    """
+
+    def __init__(self, constraints):
+        self.constraints = constraints
+
+    def __repr__(self):
+        lines = ['<%s:' % type(self).__name__]
+        for constraint in self.constraints:
+            lines.append('    %s | %r' % (constraint, constraint.strength))
+        lines.append('  >')
+        return '\n'.join(lines)
+
+    def __str__(self):
+        lines = [str(c) for c in self.constraints]
+        lines[0] = '(' + lines[0]
+        for i, line in enumerate(lines[1:], 1):
+            lines[i] = ' ' + line
+        lines[-1] += ')'
+        return '\n'.join(lines)
+
+    def __and__(self, other):
+        if isinstance(other, LinearConstraint):
+            if other not in self.constraints:
+                return MultiConstraint(self.constraints + [other])
+            else:
+                return self
+        elif isinstance(other, MultiConstraint):
+            return MultiConstraint(self.constraints + other.constraints)
+        else:
+            msg = 'Can only combine other LinearConstraints and MultiConstraints. Got %s instead.' % type(other)
+            raise TypeError(msg)
+
+    def __rand__(self, other):
+        return self.__and__(other)
+
+    def __or__(self, other):
+        """ Set the strength of all of the constraints to a common strength.
+
+        """
+        if isinstance(other, basestring):
+            mapping = STRENGTH_MAP
+            if other not in mapping:
+                raise ValueError('Invalid strength `%s`' % other)
+            constraints = []
+            for constraint in self.constraints:
+                constraints.append(constraint | other)
+            return MultiConstraint(constraints)
+        else:
+            msg = 'Strength must be a string. Got %s instead.' % type(other)
+            raise TypeError(msg)
+
+    def __ror__(self, other):
+        return self.__or__(other)
+
+    def convert_to_csw(self):
+        """ Return a list of CSW constraints.
+
+        """
+        return [c.convert_to_csw() for c in self.constraints]
+
+
+
 
