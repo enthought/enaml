@@ -246,41 +246,29 @@ new widget types in custom applications.  To create a new widget, you need to:
 Implementing A New Toolkit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. warning:: This section is outdated
-
 Currently Enaml supports the Qt toolkit and the Wx toolkit (on Windows only).
 The architecture is designed to be as toolkit-independent as possible.  To
-implement a new architecture, you will need to perform the following steps:
+implement a new toolkit, you will need to perform the following steps:
 
-    1)  Create a constructor objects for the standard Enaml widgets for your
-        toolkit.  Look at the Wx and Qt toolkit's constructor modules to see
-        how to go about this in detail, but you will need to implement subclasses
-        of :py:class:`enaml.constructor.BaseToolkitCtor` for each of the widget
-        types.  You will probably want to define base constructors for
-        simple :py:class:`Component`, :py:class:`Window`, :py:class:`Panel`,
-        and :py:class:`Container` instances.
-
-        The :py:class:`Container` base constructor should define a
-        :py:meth:`construct()` method which should call the constructor of all
-        of the children of the container.  Other classes may want to handle
-        embedding the widget in a top-level Window, or ensuring that children
-        are embedded in a panel.
-
-        All of the non-base constructors should implement a :py:meth:`component()`
-        method that imports the Enaml widget class and the toolkit implementation
-        class and creates the objects as described in the previous section's
-        discussion of toolkit constructors.
-
+    1)  Create a constructor dictionary for your toolkit.  You should be able
+        to take the ``constructor.py`` module from either the Qt or Wx backends
+        and modify the constructor factory function to import from the correct
+        packages and mangle the class names appropriately.
+    
     2)  Create a default stylesheet for your toolkit.  Initially it may be
         sufficient to copy the stylesheet for an existing backend, since the
         stylesheet definitions are toolkit-independent.
 
     3)  Create a new toolkit factory for your new backend.  This should look
         something like the current :py:class:`enaml.toolkit.wx_toolkit` or
-        :py:class:`enaml.toolkit.qt_toolkit` factories.  This toolkit object
-        needs to be supplied with:
+        :py:class:`enaml.toolkit.qt_toolkit` factories.  This factory should
+        create a Toolkit instance, which is a dictionary subclass whose keys
+        are the available Enaml entity names.  Usually this will consist of the
+        toolkit's constructor dictionary from (1) together with the standard
+        ``OPERATORS`` from :py:mod:`enaml.toolkit` and a ``utils`` dictionary.
+        In additon the following attributes need to be supplied with callables::
 
-            :py:func:`prime()`
+            :py:attr:`create_app`
                 A function that is responsible for obtaining (or creating, if it
                 doesn't yet exist) the main toolkit application object, or
                 otherwise performing whatever initialization is needed to allow
@@ -289,21 +277,12 @@ implement a new architecture, you will need to perform the following steps:
 
                 This should return the application object, if appropriate.
 
-            :py:func:`start(app)`
+            :py:attr:`start_app`
                 A function that takes an application object returned by
-                :py:func:`prime()` and starts the main event loop.
-
-            :py:attr:`items`
-                A dictionary mapping Enaml entity names to toolkit constructors
-                classes for each available widget type.
+                :py:attr:`create_app` and starts the main event loop.
 
             :py:attr:`style_sheet`
                 The default stylesheet for your toolkit.
-
-            :py:attr:`utils`
-                A dictionary of utility functions to be addd to the Enaml
-                namspace.  This will eventually include the standard toolkit
-                dialog implementations.
 
     4)  Write toolkit-specific implementations of each Enaml widget.  See the
         previous section for discussion for the methods that you will need to
