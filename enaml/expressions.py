@@ -536,7 +536,7 @@ class NotifyingExpression(SimpleExpression):
 
         """
         obj = self.obj
-        name = self.name
+        name = self.attr_name
         val = getattr(obj, name)
         args = self.arguments(obj, name, None, val)
         f_globals = self.get_globals()
