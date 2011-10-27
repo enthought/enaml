@@ -7,7 +7,7 @@ import weakref
 from ..base_component import AbstractTkBaseComponent
 
 
-class WxBaseComponent(AbstractTkBaseComponent):
+class WXBaseComponent(AbstractTkBaseComponent):
     """ Base component object for the WxPython based backend.
 
     """
