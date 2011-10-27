@@ -53,37 +53,26 @@ class EnamlTestCase(unittest.TestCase):
 ##        """
 ##        return getattr(view.ns, component_id)
 
-    def component_by_name(self, component, name):
+    def component_by_name(self, view, name):
         """ Find an item in the view with a given name.
 
         Arguments
         ---------
         view :
-            The enaml based view object
+            The enaml based View object
 
         name :
             The enaml component name.
 
         Returns
         -------
-            The coresponding component or None.
+            The corresponding component or None.
 
         """
-        # FIXME: This is really an ID, not a name, but the tests currently use
-        # component_by_name().
-        if getattr(component, '__id__', None) == name:
-            result = component
-        else:
-            result = None
-            for child in component.children:
-                 result = self.component_by_name(child, name)
-                 if result is not None:
-                    break
-
-        return result
+        return view.ns[name]
 
     def parse_and_create(self, source, **kwargs):
-        """ parses and compiles the source and returns the enaml view object.
+        """ Parses and compiles the source and returns the enaml View object.
 
         Arguments
         ---------
@@ -93,7 +82,7 @@ class EnamlTestCase(unittest.TestCase):
         kwargs :
             The models to pass and associate with the view.
 
-        The method parses the enaml_source and creates the enaml view object
+        The method parses the enaml_source and creates the enaml View object
         using the desired toolkit and model
 
         """
@@ -105,16 +94,10 @@ class EnamlTestCase(unittest.TestCase):
 
         with toolkit:
             defn = enaml_module['MainWindow']
-            f_locals = defn._build_locals((), kwargs)
-            view = evalcode(defn.__code__, defn.__globals__, f_locals)[0]
-            # Assign the computed IDs to the objects.
-            # FIXME: This should be done in the VM.
-            for enaml_id, obj in f_locals.iteritems():
-                if isinstance(obj, Component):
-                    obj.__id__ = enaml_id
+            view = defn(**kwargs)
 
         self.app = toolkit.create_app()
-        view.setup()
+        view.root.setup()
         return view
 
 
