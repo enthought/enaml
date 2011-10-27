@@ -4,95 +4,120 @@
 #------------------------------------------------------------------------------
 import wx
 
-from traits.api import implements, HasStrictTraits, WeakRef, Instance
+from .wx_base_component import WXBaseComponent
+from ..component import AbstractTkComponent
 
-from ..component import Component, IComponentImpl
-
-
-class WXComponent(HasStrictTraits):
+class WXComponent(WXBaseComponent, AbstractTkComponent):
     """ A wxPython implementation of Component.
 
-    A WXComponent is not meant to be used directly. It provides some 
-    common functionality that is useful to all widgets and should 
+    A WXComponent is not meant to be used directly. It provides some
+    common functionality that is useful to all widgets and should
     serve as the base class for all other classes.
 
-    See Also
-    --------
-    Component
+    .. note:: This is not a HasTraits class.
 
     """
-    implements(IComponentImpl)
+    #: The WX widget created by the component
+    widget = None
 
-    #---------------------------------------------------------------------------
-    # IComponentImpl interface
-    #---------------------------------------------------------------------------
-    parent = WeakRef(Component)
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create(self):
+        self.widget = wx.Window(self.parent_widget())
 
-    def set_parent(self, parent):
-        """ Sets the parent component to the given parent.
+    def bind(self):
+        super(WXComponent, self).bind()
+        # FIXME: I am not sure if we should always bind to EVT_SIZE
+        widget = self.widget
+        widget.Bind(wx.EVT_SIZE, self.on_resize)
 
-        """
-        self.parent = parent
-
-    def create_widget(self):
-        """ Creates the underlying wx widget. Must be implemented by 
-        subclasses.
-
-        """
-        raise NotImplementedError
-    
-    def initialize_widget(self):
-        """ Initializes the attribtues of a wiget. Must be implemented
-        by subclasses.
-
-        """
-        raise NotImplementedError
-    
-    def create_style_handler(self):
-        """ Creates and sets the style handler for the widget. Must
-        be implemented by subclasses.
-
-        """
-        raise NotImplementedError
-
-    def initialize_style(self):
-        """ Initializes the style and style handler of a widget. Must
-        be implemented by subclasses.
-
-        """
-        raise NotImplementedError
-
-    def layout_child_widgets(self):
-        """ Arranges the children of this component. Must be implemented
-        by subclasses.
-
-        """
-        raise NotImplementedError
-    
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    @property
     def toolkit_widget(self):
-        """ Returns the toolkit specific widget for this component.
+        """ A property that returns the toolkit specific widget for this
+        component.
 
         """
         return self.widget
-    
-    def parent_name_changed(self, name):
-        """ The change handler for the 'name' attribute on the parent.
-        WXComponent doesn't care about the name. Subclasses should
-        reimplement if they need that info.
+
+    def size(self):
+        """ Return the size of the internal toolkit widget as a
+        (width, height) tuple of integers.
 
         """
-        pass    
+        widget = self.widget
+        return widget.GetSizeTuple()
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    widget = Instance(wx.Object)
-        
+    def size_hint(self):
+        """ Returns a (width, height) tuple of integers which represent
+        the suggested size of the widget for its current state. This
+        value is used by the layout manager to determine how much
+        space to allocate the widget.
+
+        """
+        widget = self.widget
+        size_hint = widget.GetBestSize()
+        return (size_hint.width, size_hint.height)
+
+    def resize(self, width, height):
+        """ Resizes the internal toolkit widget according the given
+        width and height integers.
+
+        """
+        widget = self.widget
+        new_size = wx.Size(width, height)
+        widget.SetSize(new_size)
+
+    def pos(self):
+        """ Returns the position of the internal toolkit widget as an
+        (x, y) tuple of integers. The coordinates should be relative to
+        the origin of the widget's parent.
+
+        """
+        widget = self.widget
+        return widget.GetPositionTuple()
+
+    def move(self, x, y):
+        """ Moves the internal toolkit widget according to the given
+        x and y integers which are relative to the origin of the
+        widget's parent.
+
+        """
+        widget = self.widget
+        widget.MoveXY(x, y)
+
+    def geometry(self):
+        """ Returns an (x, y, width, height) tuple of geometry info
+        for the internal toolkit widget. The semantic meaning of the
+        values are the same as for the 'size' and 'pos' methods.
+
+        """
+        widget = self.widget
+        rectangle = widget.GetRect()
+        return rectangle.asTuple()
+
+    def set_geometry(self, x, y, width, height):
+        """ Sets the geometry of the internal widget to the given
+        x, y, width, and height values. The semantic meaning of the
+        values is the same as for the 'resize' and 'move' methods.
+
+        """
+        widget = self.widget
+        widget.SetDimensions(x, y, width, height)
+
+    def on_resize(self, event):
+        # should handle the widget resizing by telling something
+        # that things need to be relayed out
+        event.Skip()
+
     def parent_widget(self):
-        """ Returns the logical wx.Window parent for this component. 
+        """ Returns the logical wx.Window parent for this component.
 
-        Since some parents may wrap non-Window objects (like sizers), 
-        this method will walk up the tree of parent components until a 
+        Since some parents may wrap non-Window objects (like sizers),
+        this method will walk up the tree of parent components until a
         wx.Window is found or None if no wx.Window is found.
 
         Arguments
@@ -104,17 +129,16 @@ class WXComponent(HasStrictTraits):
         result : wx.Window or None
 
         """
-        # Our parent is a Compent, and the parent of 
-        # a Component is also a Component
-        parent = self.parent.parent
-        while parent:
-            widget = parent.toolkit_widget()
+        # FIXME: is this still necessary?
+        shell_parent = self.self_obj.parent
+        while shell_parent:
+            widget = shell_parent.toolkit_widget()
             if isinstance(widget, wx.Window):
                 return widget
-            parent = parent.parent
-        
+            shell_parent = shell_parent.parent
+
     def child_widgets(self):
-        """ Iterates over the parent's children and yields the 
+        """ Iterates over the parent's children and yields the
         toolkit widgets for those children.
 
         """
