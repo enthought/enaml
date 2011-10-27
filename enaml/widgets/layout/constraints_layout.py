@@ -122,8 +122,7 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         if not changes:
             solver.Resolve()
-            container.toolkit.invoke_later(self.set_solved_geometry_with_children,
-                container)
+            self.set_solved_geometry_with_children(container)
             return
         
         for var, val_func, strength in changes:
@@ -136,8 +135,7 @@ class ConstraintsLayout(AbstractLayoutManager):
             
         solver.Resolve()
 
-        container.toolkit.invoke_later(self.set_solved_geometry_with_children,
-            container)
+        self.set_solved_geometry_with_children(container)
 
         solver.EndEdit()
 
