@@ -22,10 +22,11 @@ class QResizingFrame(QtGui.QFrame):
 class QtComponent(QtBaseComponent, AbstractTkComponent):
     """ A Qt4 implementation of Component.
 
-    A QtComponent is not meant to be used directly. It provides some 
-    common functionality that is useful to all widgets and should 
-    serve as the base class for all other classes. Note that this 
-    is not a HasTraits class.
+    A QtComponent is not meant to be used directly. It provides some
+    common functionality that is useful to all widgets and should
+    serve as the base class for all other classes.
+
+    .. note:: This is not a HasTraits class.
 
     """
     #: The Qt widget created by the component
