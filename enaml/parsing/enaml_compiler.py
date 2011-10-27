@@ -2,7 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from . import enaml_ast, imports
+from . import enaml_ast
+from .. import imports
 from .virtual_machine import (LOAD_GLOBAL, LOAD_LOCAL, LOAD_CONST,
                               LOAD_GLOBALS_CLOSURE, LOAD_LOCALS_CLOSURE, 
                               GET_ITEM, STORE_LOCAL, EVAL, CALL, DUP_TOP,
