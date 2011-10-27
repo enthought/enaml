@@ -69,12 +69,6 @@ class ConstraintsLayout(AbstractLayoutManager):
         
         def height_hint_getter(obj):
             return lambda: obj.size_hint()[1]
-        
-        def x_hint_getter(obj):
-            return lambda: obj.pos_hint()[0]
-        
-        def y_hint_getter(obj):
-            return lambda: obj.pos_hint()[1]
 
         w_var = container.width.csw_var
         if solver_contains(w_var):
@@ -151,7 +145,7 @@ class ConstraintsLayout(AbstractLayoutManager):
             y = component.top.csw_var.Value()
         width = component.width.csw_var.Value()
         height = component.height.csw_var.Value()
-        args = [int(round(z)) for z in [x,y,width,height]]
+        args = (int(round(z)) for z in (x, y, width, height))
         component.set_geometry(*args)
 
     def set_solved_geometry_with_children(self, component):
