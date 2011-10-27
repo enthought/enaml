@@ -160,7 +160,6 @@ class Component(BaseComponent):
     #: being managed by the abstract widget.
     toolkit_widget = Property
 
-
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkComponent)
 
@@ -345,11 +344,8 @@ class Component(BaseComponent):
         """ Updates the layout of this component.
 
         """
-        # FIXME: Not sure if this should be bottom-up or top-down.
         self.layout.layout()
-        #for child in self.children:
-        #    child.set_needs_layout()
         self._needs_layout = False
-
-
+        for child in self.children:
+            child.set_needs_layout()
 
