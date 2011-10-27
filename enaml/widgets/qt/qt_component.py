@@ -7,6 +7,7 @@ from .qt_base_component import QtBaseComponent
 
 from ..component import AbstractTkComponent
 
+
 class QResizingFrame(QtGui.QFrame):
     """ A QFrame subclass that converts a resize event into a signal
     that can be connected to a slot. This allows the widget to notify
@@ -41,8 +42,10 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     def bind(self):
         super(QtComponent, self).bind()
         
-        # This is a hack at the moment
-        if hasattr(self.widget, 'resized'):
+        # This is a hack at the moment because subclasses of component
+        # won't be creating a QResizingFrame and so can't connect to
+        # it's signal
+        if isinstance(self.widget, QResizingFrame):
             self.widget.resized.connect(self.on_resize)
 
     #--------------------------------------------------------------------------
@@ -119,10 +122,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     def on_resize(self):
         # should handle the widget resizing by telling something
         # that things need to be relayed out
-        if self.widget is not None and len(self.shell_obj.children) > 0:
+        if self.widget is not None:
             self.shell_obj.set_needs_layout(True)
-            self.shell_obj.toolkit.invoke_later(self.shell_obj.layout_if_needed)
-
 
     #--------------------------------------------------------------------------
     # Convienence methods

@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod, abstractproperty
 
-from traits.api import Instance, List, Property
+from traits.api import Instance, List, Property, Bool
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
@@ -102,6 +102,14 @@ class Component(BaseComponent):
     #: A private attribute that holds the box model instance
     #: for this component. 
     _box_model = Instance(BoxModel, ())
+
+    #: A private boolean indicating if the contraints have changed
+    #: and need to be updated on the next pass.
+    _needs_update_contraints = Bool(True)
+
+    #: A private boolean indicating if the component needs to relayout
+    #: its children
+    _needs_layout = Bool(True)
 
     #: An object that manages the layout of this component and its 
     #: direct children. The default is simple constraints based
@@ -294,55 +302,54 @@ class Component(BaseComponent):
         is typically the case when a constraint has been changed.
 
         """
-        if len(self.children) > 0:
-            self.layout.update_constraints_if_needed()
-            for child in self.children:
-                child.update_constraints_if_needed()
+        if self._needs_update_constraints and len(self.children) > 0:
+            self.toolkit.invoke_later(self.update_constraints)
 
     def set_needs_update_constraints(self, needs=True):
         """ Indicate that the constraints for this component should be
         updated some time later.
 
         """
-        if len(self.children) > 0:
-            self.layout.set_needs_update_constraints(needs=needs)
+        self._needs_update_constraints = needs
+        if needs and len(self.children) > 0:
+            self.toolkit.invoke_later(self.update_constraints)
 
     def update_constraints(self):
         """ Update the constraints for this component.
 
         """
-        if len(self.children) > 0:
-            self.layout.update_constraints()
-            for child in self.children:
-                child.update_constraints()
-    
+        self.layout.update_constraints()
+        for child in self.children:
+            child.update_constraints()
+        self._needs_update_constraints = False
+
     def layout_if_needed(self):
         """ Refreshes the layout of this component if necessary. This 
         will typically be needed if this component has been resized or 
         the sizes of any of its children have been changed.
 
         """
-        if len(self.children) > 0:
-            # FIXME: Not sure if this should be bottom-up or top-down.
-            self.layout.layout_if_needed()
-            for child in self.children:
-                child.layout_if_needed()
+        if self._needs_layout and len(self.children) > 0:
+            self.toolkit.invoke_later(self.do_layout)
 
     def set_needs_layout(self, needs=True):
         """ Indicate that the layout should be refreshed some time 
         later.
 
         """
-        if len(self.children) > 0:
-            self.layout.set_needs_layout(needs=needs)
-        
+        self._needs_layout = needs
+        if needs and len(self.children) > 0:
+            self.toolkit.invoke_later(self.do_layout)
+                    
     def do_layout(self):
         """ Updates the layout of this component.
 
         """
-        if len(self.children) > 0:
-            # FIXME: Not sure if this should be bottom-up or top-down.
-            self.layout.layout()
-            for child in self.children:
-                child.do_layout()
+        # FIXME: Not sure if this should be bottom-up or top-down.
+        self.layout.layout()
+        #for child in self.children:
+        #    child.set_needs_layout()
+        self._needs_layout = False
+
+
 

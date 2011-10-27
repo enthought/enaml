@@ -9,32 +9,15 @@ class ConstraintsLayout(AbstractLayoutManager):
 
     def __init__(self, container):
         self.container = weakref.ref(container)
+        self.solver = None
 
         # Flag to note that we are currently in the initialize() method and
         # should not re-enter.
         self._is_initializing = False
-
-        self.needs_layout = False
-        self.needs_update_constraints = False
-
-    def update_constraints_if_needed(self):
-        if self.needs_update_constraints:
-            self.update_constraints()
-    
-    def set_needs_update_constraints(self, needs=True):
-        self.needs_update_constraints = needs
     
     def update_constraints(self):
         # FIXME: we should be able to do less than a full initialization.
         self.initialize()
-        self.set_needs_update_constraints(False)
-    
-    def layout_if_needed(self):
-        if self.needs_layout:
-            self.layout()
-
-    def set_needs_layout(self, needs=True):
-        self.needs_layout = needs
     
     def initialize(self):
         if getattr(self, '_is_initializing', False):
@@ -157,8 +140,6 @@ class ConstraintsLayout(AbstractLayoutManager):
             container)
 
         solver.EndEdit()
-
-        self.set_needs_layout(False)
 
     def set_solved_geometry(self, component, leave_xy_alone=False):
         """ Set the geometry of a Component to its solved geometry.
