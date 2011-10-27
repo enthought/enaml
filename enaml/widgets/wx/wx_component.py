@@ -130,9 +130,9 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
 
         """
         # FIXME: is this still necessary?
-        shell_parent = self.self_obj.parent
+        shell_parent = self.shell_obj.parent
         while shell_parent:
-            widget = shell_parent.toolkit_widget()
+            widget = shell_parent.toolkit_widget
             if isinstance(widget, wx.Window):
                 return widget
             shell_parent = shell_parent.parent
