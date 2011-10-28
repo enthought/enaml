@@ -20,7 +20,7 @@ class WXBoundedDate(WXControl, AbstractTkBoundedDate):
         shell = self.shell_obj
         self.set_min_date(shell.min_date)
         self.set_max_date(shell.max_date)
-        self.set_date(shell.date)
+        self.set_date(shell.date, events=False)
 
     #--------------------------------------------------------------------------
     # Abstract implementation methods
@@ -37,7 +37,7 @@ class WXBoundedDate(WXControl, AbstractTkBoundedDate):
     #--------------------------------------------------------------------------
     # Widget modification methods
     #--------------------------------------------------------------------------
-    def set_date(self, date):
+    def set_date(self, date, event=True):
         raise NotImplementedError
 
     def set_min_date(self, min_date):
