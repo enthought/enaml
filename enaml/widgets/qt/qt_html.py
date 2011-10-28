@@ -11,13 +11,9 @@ from ..html import AbstractTkHtml
 class QtHtml(QtControl, AbstractTkHtml):
     """ A Qt implementation of Html.
 
-    See Also
-    --------
-    Html
-    
     """
     #--------------------------------------------------------------------------
-    # IHtmlImpl interface
+    # Setup methods
     #--------------------------------------------------------------------------
     def create(self):
         """ Creates the underlying widget to display HTML.
@@ -37,15 +33,13 @@ class QtHtml(QtControl, AbstractTkHtml):
     # Implementation
     #--------------------------------------------------------------------------
     def shell_source_changed(self, source):
-        """ The change handler for the 'source' attribute. Not meant for
-        public consumption.
+        """ The change handler for the 'source' attribute.
 
         """
         self.set_page_source(source)
 
     def set_page_source(self, source):
-        """ Sets the page source for the underlying control. Not meant 
-        for public consumption.
+        """ Sets the page source for the underlying control.
 
         """
         self.widget.setHtml(source)
