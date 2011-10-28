@@ -51,6 +51,12 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         # Setup the child constraints in the solver's table
         for child in component.children:
+            # A the default constraints for width and height
+            # this means that width and height will exist in the
+            # solver and so size_hint will take effect in the absense
+            # of any other constraints
+            self.add_constraint(child.width >= 0)
+            self.add_constraint(child.height >= 0)
             for constraint in child.constraints:
                 self.add_constraint(constraint)
 
