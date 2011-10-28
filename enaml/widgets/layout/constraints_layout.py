@@ -7,8 +7,8 @@ import csw
 
 class ConstraintsLayout(AbstractLayoutManager):
 
-    def __init__(self, container):
-        self.container = weakref.ref(container)
+    def __init__(self, component):
+        self.component = weakref.ref(component)
         self.solver = None
 
         # Flag to note that we are currently in the initialize() method and
@@ -20,17 +20,18 @@ class ConstraintsLayout(AbstractLayoutManager):
         self.initialize()
     
     def initialize(self):
-        if getattr(self, '_is_initializing', False):
+        if self._is_initializing:
             return
         self._is_initializing = True
 
         # Rather than do intialization in the __init__ method, which
         # in Python has the context of only happening once, we use
         # this method since the manager will be re-initialized whenever
-        # any of the constraints of the containers children change.
-        container = self.container()
-        if container is None:
-            raise RuntimeError("container weakly referenced by %r disappeared" % self)
+        # any of the constraints of the components children change.
+        component = self.component()
+        if component is None:
+            msg = 'Component weakly referenced by %r disappeared' % self
+            raise RuntimeError(msg)
 
         # (LinearConstraint, csw.Constraint)
         self.constraints = []
@@ -38,23 +39,23 @@ class ConstraintsLayout(AbstractLayoutManager):
         solver = self.solver = csw.SimplexSolver()
         solver.SetAutosolve(False)
 
-        # Setup the containers constraints in the solver's table.
-        # Since the children are laid out relative to the container,
-        # the container's origin is set to (0, 0) for this solver.
-        # Even though this container may be used in a parent solver
+        # Setup the components constraints in the solver's table.
+        # Since the children are laid out relative to the component,
+        # the component's origin is set to (0, 0) for this solver.
+        # Even though this component may be used in a parent solver
         # where it's origin is other than (0, 0)
-        x = (container.left == 0.0)
-        y = (container.top == 0.0)
+        x = (component.left == 0.0)
+        y = (component.top == 0.0)
         self.add_constraint(x)
         self.add_constraint(y)
 
         # Setup the child constraints in the solver's table
-        for child in container.children:
+        for child in component.children:
             for constraint in child.constraints:
                 self.add_constraint(constraint)
 
-        # Compute the hint variables for solver iteration. Some are stronger
-        # than others.
+        # Compute the hint variables for solver iteration. 
+        # Some are stronger than others.
         self.changes = changes = []
         solver_contains = solver.FContainsVariable
 
@@ -70,15 +71,17 @@ class ConstraintsLayout(AbstractLayoutManager):
         def height_hint_getter(obj):
             return lambda: obj.size_hint()[1]
 
-        w_var = container.width.csw_var
+        w_var = component.width.csw_var
         if solver_contains(w_var):
-            changes.append((w_var, width_getter(container), csw.sMedium()))
+            changes.append((w_var, width_getter(component), csw.sMedium()))
         
-        h_var = container.height.csw_var
+        h_var = component.height.csw_var
         if solver_contains(h_var):
-            changes.append((h_var, height_getter(container), csw.sMedium()))
+            changes.append((h_var, height_getter(component), csw.sMedium()))
         
-        for child in container.children:
+        for child in component.children:
+            if child.style_id == 'pb':
+                print width_hint_getter(child)(), height_hint_getter(child)()
             w_var = child.width.csw_var
             if solver_contains(w_var):
                 changes.append((w_var, width_hint_getter(child), csw.sWeak()))
@@ -88,11 +91,12 @@ class ConstraintsLayout(AbstractLayoutManager):
                 changes.append((h_var, height_hint_getter(child), csw.sWeak()))
 
         solver.SetAutosolve(True)
+
         self._is_initializing = False
 
     def add_constraint(self, constraint):
-        """ Add a LinearConstraint or MultiConstraint to the solver, and keep
-        a reference to it for further examination.
+        """ Add a LinearConstraint or MultiConstraint to the solver, 
+        and keep a reference to it for further examination.
 
         """
         if hasattr(constraint, 'constraints'):
@@ -105,18 +109,22 @@ class ConstraintsLayout(AbstractLayoutManager):
             self.solver.AddConstraint(csw_constraint)
 
     def layout(self):
-        container = self.container()
-        if container is None:
-            raise RuntimeError("container weakly referenced by %r disappeared" % self)
+        component = self.component()
+        if component is None:
+            msg = 'Component weakly referenced by %r disappeared' % self
+            raise RuntimeError(msg)
 
-        if getattr(self, '_is_initializing', False):
+        if self._is_initializing:
             return
+
         solver = self.solver
         changes = self.changes
 
         if not changes:
             solver.Resolve()
-            self.set_solved_geometry_with_children(container)
+            set_solved_geometry = self.set_solved_geometry
+            for child in component.children:
+                set_solved_geometry(child)
             return
         
         for var, val_func, strength in changes:
@@ -129,31 +137,20 @@ class ConstraintsLayout(AbstractLayoutManager):
             
         solver.Resolve()
 
-        self.set_solved_geometry_with_children(container)
+        set_solved_geometry = self.set_solved_geometry
+        for child in component.children:
+            set_solved_geometry(child)
 
         solver.EndEdit()
 
-    def set_solved_geometry(self, component, leave_xy_alone=False):
+    def set_solved_geometry(self, component):
         """ Set the geometry of a Component to its solved geometry.
 
         """
-        if leave_xy_alone:
-            old_geometry = component.geometry()
-            x, y = old_geometry[:2]
-        else:
-            x = component.left.csw_var.Value()
-            y = component.top.csw_var.Value()
+        x = component.left.csw_var.Value()
+        y = component.top.csw_var.Value()
         width = component.width.csw_var.Value()
         height = component.height.csw_var.Value()
         args = (int(round(z)) for z in (x, y, width, height))
         component.set_geometry(*args)
-
-    def set_solved_geometry_with_children(self, component):
-        """ Set the solved geometry for the component and its children
-
-        """
-        # Do not move the origin of the container, just resize it.
-        self.set_solved_geometry(component, leave_xy_alone=True)
-        for child in component.children:
-            self.set_solved_geometry(child)
 
