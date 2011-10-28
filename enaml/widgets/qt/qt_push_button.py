@@ -5,7 +5,6 @@
 from .qt import QtGui
 
 from .qt_control import QtControl
-
 from ..push_button import AbstractTkPushButton
 
 
@@ -21,7 +20,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
 
         """
         self.widget = QtGui.QPushButton(self.parent_widget())
-        
+
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
@@ -43,15 +42,13 @@ class QtPushButton(QtControl, AbstractTkPushButton):
     # Implementation
     #--------------------------------------------------------------------------
     def shell_text_changed(self, text):
-        """ The change handler for the 'text' attribute. Not meant for
-        public consumption.
+        """ The change handler for the 'text' attribute.
 
         """
         self.set_label(text)
 
     def on_clicked(self):
-        """ The event handler for the button's clicked event. Not meant
-        for public consumption.
+        """ The event handler for the button's clicked event.
 
         """
         shell = self.shell_obj
@@ -59,8 +56,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         shell.clicked = True
 
     def on_pressed(self):
-        """ The event handlers for the button's pressed event. Not meant
-        for public consumption.
+        """ The event handlers for the button's pressed event.
 
         """
         shell = self.shell_obj
@@ -68,8 +64,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         shell.pressed = True
 
     def on_released(self):
-        """ The event handler for the button's released event. Not
-        meant for public consumption.
+        """ The event handler for the button's released event.
 
         """
         shell = self.shell_obj
@@ -78,8 +73,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
             shell.released = True
 
     def set_label(self, label):
-        """ Sets the label on the button control. Not meant for public
-        consumption.
+        """ Sets the label on the button control.
 
         """
         self.widget.setText(label)
