@@ -101,6 +101,7 @@ class WXField(WXControl, AbstractTkField):
         """ Initializes the attributes of the wx.CustomTextCtrl.
 
         """
+        super(WXField, self).initialize()
         shell = self.shell_obj
         self.set_max_length(shell.max_length)
         self.set_read_only(shell.read_only)
@@ -114,6 +115,7 @@ class WXField(WXControl, AbstractTkField):
         """ Binds the event handlers for the wx.TextCtrl.
 
         """
+        super(WXField, self).bind()
         widget = self.widget
         widget.Bind(wx.EVT_TEXT_MAXLEN, self.on_max_length)
         widget.Bind(wx.EVT_TEXT, self.on_text_updated)
