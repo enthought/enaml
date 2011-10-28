@@ -20,8 +20,7 @@ class QtEnableCanvas(QtControl, AbstractTkEnableCanvas):
         component = self.shell_obj.component
         self.window = EnableWindow(self.parent_widget(), component=component)
         self.widget = self.window.control
-        
+
     def shell_component_changed(self, component):
-        # XXX implement me
-        print 'changing components not yet supported'
+        raise NotImplementedError('changing components not yet supported')
 
