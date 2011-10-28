@@ -15,7 +15,7 @@ class TestWxComboBox(WXTestAssistant, combo_box.TestComboBox):
         """ Get the current selected text of a combo box.
 
         """
-        return widget.GetValue()
+        return widget.GetStringSelection()
 
     def get_item_text(self, widget, index):
         """ Get the text of a combo box item at a particular index.
