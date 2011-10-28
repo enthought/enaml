@@ -4,99 +4,89 @@
 #------------------------------------------------------------------------------
 import wx
 
-from traits.api import implements
-
 from .wx_control import WXControl
+from ..push_button import AbstractTkPushButton
 
-from ..push_button import IPushButtonImpl
 
-
-class WXPushButton(WXControl):
+class WXPushButton(WXControl, AbstractTkPushButton):
     """ A wxPython implementation of PushButton.
 
     WXPushButton uses a wx.Button control.
 
-    See Also
-    --------
-    PushButton
-
     """
-    implements(IPushButtonImpl)
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
 
-    #---------------------------------------------------------------------------
-    # IPushButtonImpl interface
-    #---------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying wx.Button control.
 
         """
-        self.widget = widget = wx.Button(self.parent_widget())
-        widget.SetDoubleBuffered(True)
-        
-    def initialize_widget(self):
+        self.widget = wx.Button(self.parent_widget())
+
+    def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
-        self.set_label(self.parent.text)
-        self.bind()
+        super(WXPushButton, self).initialize()
+        self.set_label(self.shell_obj.text)
 
-    def parent_text_changed(self, text):
-        """ The change handler for the 'text' attribute. Not meant for
-        public consumption.
-
-        """
-        self.set_label(text)
-
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
     def bind(self):
         """ Binds the event handlers for the push button.
 
         """
+        super(WXPushButton, self).bind()
         widget = self.widget
         widget.Bind(wx.EVT_BUTTON, self.on_clicked)
         widget.Bind(wx.EVT_LEFT_DOWN, self.on_pressed)
-        widget.Bind(wx.EVT_LEAVE_WINDOW, self.on_leave_window)
-
-    def on_clicked(self, event):
-        """ The event handler for the button's clicked event. Not meant
-        for public consumption.
+        # The wx buttons don't emit an EVT_LEFT_UP even though they
+        # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down
+        # flag when the mouse leaves the button and then releases,
+        # we need to hook the EVT_LEAVE_WINDOW
+        widget.Bind(wx.EVT_LEAVE_WINDOW, self.on_released)
+    #---------------------------------------------------------------------------
+    # Implementation
+    #---------------------------------------------------------------------------
+    def shell_text_changed(self, text):
+        """ The change handler for the 'text' attribute.
 
         """
-        parent = self.parent
-        parent._down = False
-        parent.clicked = True
+        self.set_label(text)
+
+    def on_clicked(self, event):
+        """ The event handler for the button's clicked event.
+
+        """
+        shell = self.shell_obj
+        shell._down = False
+        shell.clicked = True
         event.Skip()
 
     def on_pressed(self, event):
-        """ The event handlers for the button's pressed event. Not meant
-        for public consumption.
+        """ The event handlers for the button's pressed event.
 
         """
-        parent = self.parent
-        parent._down = True
-        parent.pressed = True
+        shell = self.shell_obj
+        shell._down = True
+        shell.pressed = True
         event.Skip()
 
-    def on_leave_window(self, event):
-        """ The event handler for the button's leave window event. Not
-        meant for public consumption.
+    def on_released(self, event):
+        """ The event handler for the button's leave window event.
 
         """
-        # The wxButton doesn't emit an EVT_LEFT_UP even though it 
-        # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down 
+        # The wxButton doesn't emit an EVT_LEFT_UP even though it
+        # emits an EVT_LEFT_DOWN. So in order to reset the down
         # flag when the mouse leaves the button and then releases,
-        # we need to hook the EVT_LEAVE_WINDOW 
-        parent = self.parent
-        if parent._down:
-            parent._down = False
-            parent.released = True
+        # we need to hook the EVT_LEAVE_WINDOW
+        shell = self.shell_obj
+        if shell._down:
+            shell._down = False
+            shell.released = True
         event.Skip()
 
     def set_label(self, label):
-        """ Sets the label on the button control. Not meant for public
-        consumption.
+        """ Sets the label on the button control.
 
         """
         self.widget.SetLabel(label)
