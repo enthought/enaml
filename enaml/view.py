@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .widgets.window import Window
 
-  
+
 class NamespaceProxy(object):
     """ A simple proxy object that converts a namespace dictionary
     into an object with attribute-like access.
@@ -15,7 +15,7 @@ class NamespaceProxy(object):
 
     def __getitem__(self, key):
         return getattr(self, key)
-      
+
 
 class View(object):
     """ The View object provides a simple shell around an Enaml ui tree.
@@ -44,7 +44,7 @@ class View(object):
             raise TypeError(msg)
 
         tk = component.toolkit
-        tk.create_app()
+        self.app = tk.create_app()
 
         component.show()
 
