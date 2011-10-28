@@ -11,7 +11,7 @@ from ..combo_box import AbstractTkComboBox
 class QtComboBox(QtControl, AbstractTkComboBox):
     """ A Qt implementation of ComboBox.
 
-    Use a combo box to select a single item from a collection of items. 
+    Use a combo box to select a single item from a collection of items.
 
     """
     #--------------------------------------------------------------------------
@@ -36,7 +36,7 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """
         super(QtComboBox, self).bind()
         self.widget.currentIndexChanged.connect(self.on_selected)
-        
+
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -46,31 +46,31 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """
         shell = self.shell_obj
         self.set_selection(index)
+        shell.selected = shell.value
 
     def shell_to_string_changed(self, value):
-        """ The change handler for the 'string' attribute on the 
-        shell widget.
+        """ The change handler for the 'string' attribute on the enaml
+        shell.
 
         """
         self.update_items()
-    
+
     def shell_items_changed(self, items):
-        """ The change handler of the 'items' attribute on the shell
-        widget.
+        """ The change handler of 'items' attribute on the enaml shell.
 
         """
         self.update_items()
 
     def shell_items_items_changed(self, items):
         """ The change handler for the 'items' event of the 'items'
-        attribute on the shell widget.
-        
+        attribute on the enaml shell.
+
         """
         self.update_items()
 
     def update_items(self):
-        """ Update the QComboBox with items from the shell widget.
-        
+        """ Update the QComboBox with items from the enaml shell.
+
         """
         shell = self.shell_obj
         self.set_items(shell._labels)
