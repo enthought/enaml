@@ -228,7 +228,6 @@ class DefnBodyCompiler(object):
         self.mangle = _Mangler()
         self.local_names = local_names
         self.instructions = []
-        self.unpack_stack = []
 
     def visit(self, node):
         """  The main visitor dispatch method. Used internally by the
@@ -290,7 +289,6 @@ class DefnBodyCompiler(object):
         # At this point, the top two items in the stack are
         # | ... | sequence | namespace dict
         # We need to handle any namespace captures from this namespace.
-        assignable_names = set()
         for capture in node.captures:
             ns_name = capture.ns_name
             store_name = capture.name
@@ -306,23 +304,10 @@ class DefnBodyCompiler(object):
                 inst = (GET_ITEM, ns_name)
                 instructions.append(inst)
                 
-                # XXX since we're looking up an item out of the namespace
-                # we can be reasonably confident that the item will be a 
-                # component, so we add it to the list of assignable targets.
-                # The user could get crafty and lookup another namespace 
-                # contained within this namespace, which will break things.
-                # But, I'm not too worried about that at the moment.
-                # Besides, the Enaml grammar is very restricted as to 
-                # what is allowed on the lhs of an expression, so having
-                # a reference to the namespace is fairly useless at the
-                # moment.
-                assignable_names.add(store_name)
-                
             # Finally we store away the item. If the ns_name was '*'
             # then we are storing away the entire namespace
             inst = (STORE_LOCAL, store_name)
             instructions.append(inst)
-            
 
         # After we're done with the captures, we can discard the namespace.
         inst = (POP_TOP, None)
@@ -359,20 +344,11 @@ class DefnBodyCompiler(object):
             instructions.append(inst)
             local_names.add(unpack_name)
 
-        # The assignment visitors ensure that we only assign to 
-        # values that have been unpacked at the immediate call
-        # rather than in all of the locals. This is mostly to 
-        # enforce good style.
-        assignable_names.update(unpack)
-        self.unpack_stack.append(assignable_names)
-
         # Visit the body of the call node. This is a list comprised of
         # (at most) two types of nodes: assignment nodes, call nodes.
         for item in node.body:
             self.visit(item)
         
-        self.unpack_stack.pop()
-
         # Finally 'return' from the call by adding the children to their
         # parent. At this point, the top of the stack is the sequence of 
         # children we want to add, and the next item is the parent to which
@@ -473,10 +449,6 @@ class DefnBodyCompiler(object):
             root = lhs.root
             attr_name = lhs.attr
             root_name = root.name
-            
-            if root_name not in self.unpack_stack[-1]:
-                msg = '`%s` is not a valid assignment target' % root_name
-                raise EnamlSyntaxError(msg)
 
             # Case 1) `foo.bar` style getattr
             if isinstance(root, enaml_ast.EnamlName):
