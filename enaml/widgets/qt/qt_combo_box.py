@@ -40,12 +40,12 @@ class QtComboBox(QtControl, AbstractTkComboBox):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell_value_changed(self, value):
-        """ The change handler for the 'value' attribute on the 
-        shell widget.
+    def shell__index_changed(self, index):
+        """ The change handler for the _index attribute on the enaml shell.
 
         """
-        self.set_value(self.shell_obj.to_string(value))
+        shell = self.shell_obj
+        self.set_selection(index)
 
     def shell_to_string_changed(self, value):
         """ The change handler for the 'string' attribute on the 
