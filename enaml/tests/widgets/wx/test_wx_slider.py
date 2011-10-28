@@ -4,8 +4,6 @@
 #------------------------------------------------------------------------------
 import wx
 
-from enaml.widgets.wx.wx_slider import SLIDER_MAX
-
 from .wx_test_assistant import WXTestAssistant
 from .. import slider
 
