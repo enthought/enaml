@@ -4,54 +4,44 @@
 #------------------------------------------------------------------------------
 import wx
 
-from traits.api import implements
-
 from .wx_control import WXControl
+from ..label import AbstractTkLabel
 
-from ..label import ILabelImpl
 
-
-class WXLabel(WXControl):
+class WXLabel(WXControl, AbstractTkLabel):
     """ A wxPython implementation of Label.
 
     A WXLabel displays static text using a wx.StaticText control.
 
-    See Also
-    --------
-    Label
-
     """
-    implements(ILabelImpl)
-
-    #---------------------------------------------------------------------------
-    # ILabelImpl interface 
-    #---------------------------------------------------------------------------
-    def create_widget(self):
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
+    def create(self):
         """ Creates the underlying text control.
 
         """
         self.widget = widget = wx.StaticText(self.parent_widget())
-        widget.SetDoubleBuffered(True)
-        
-    def initialize_widget(self):
+
+    def initialize(self):
         """ Initializes the attributes on the underlying control.
 
         """
-        self.set_label(self.parent.text)
+        super(WXLabel, self).initialize()
+        shell = self.shell_obj
+        self.set_label(shell.text)
 
-    def parent_text_changed(self, text):
-        """ The change handler for the 'text' attribute. Not meant for
-        public consumption.
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell_text_changed(self, text):
+        """ The change handler for the 'text' attribute.
 
         """
         self.set_label(text)
 
-    #---------------------------------------------------------------------------
-    # Widget update
-    #---------------------------------------------------------------------------
     def set_label(self, label):
-        """ Sets the label on the underlying control. Not meant for
-        public consumption.
+        """ Sets the label on the underlying control.
 
         """
         self.widget.SetLabel(label)
