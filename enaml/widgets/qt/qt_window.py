@@ -7,8 +7,6 @@ from .qt_component import QtComponent
 
 from ..window import AbstractTkWindow
 
-from ...enums import Modality
-
 
 class QtWindow(QtComponent, AbstractTkWindow):
     """ A Qt implementation of a Window.
@@ -47,7 +45,7 @@ class QtWindow(QtComponent, AbstractTkWindow):
 
     def show(self):
         """ Displays the window to the screen.
-        
+
         """
         if self.widget:
             self.widget.show()
@@ -60,36 +58,36 @@ class QtWindow(QtComponent, AbstractTkWindow):
             self.widget.hide()
 
     def shell_title_changed(self, title):
-        """ The change handler for the 'title' attribute. Not meant for 
+        """ The change handler for the 'title' attribute. Not meant for
         public consumption.
 
         """
         self.set_title(title)
-    
+
     def shell_modality_changed(self, modality):
-        """ The change handler for the 'modality' attribute. Not meant 
+        """ The change handler for the 'modality' attribute. Not meant
         for public consumption.
 
         """
         self.set_modality(modality)
 
     def set_title(self, title):
-        """ Sets the title of the QFrame. Not meant for public 
+        """ Sets the title of the QFrame. Not meant for public
         consumption.
 
         """
         if self.widget:
             self.widget.setWindowTitle(title)
-    
+
     def set_modality(self, modality):
         """ Sets the modality of the QMainWindow. Not meant for public
         consumption.
 
         """
         if self.widget:
-            if modality == Modality.APPLICATION_MODAL:
+            if modality == 'application_modal':
                 self.widget.setWindowModality(QtCore.Qt.ApplicationModal)
-            elif modality == Modality.WINDOW_MODAL:
+            elif modality == 'window_modal':
                 self.widget.setWindowModality(QtCore.Qt.WindowModal)
             else:
                 self.widget.setWindowModality(QtCore.Qt.NonModal)
