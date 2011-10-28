@@ -73,19 +73,17 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         
         """
         shell = self.shell_obj
-        str_items = map(shell.to_string, shell.items)
-        self.set_items(str_items)
-        self.set_value(shell.to_string(shell.value))
+        self.set_items(shell._labels)
+        self.set_selection(shell._index)
 
-    def on_selected(self):
+    def on_selected(self, index):
         """ The event handler for a combo box selection event.
 
         """
         shell = self.shell_obj
-        idx = self.widget.currentIndex()
-        value = shell.items[idx]
-        shell.value = value
-        shell.selected = value
+        value = shell.items[index]
+        if value != shell.value:
+            shell._index = index
 
     def set_items(self, str_items):
         """ Sets the items in the combo box.
@@ -95,12 +93,11 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         widget.clear()
         widget.addItems(str_items)
 
-    def set_value(self, str_value):
+    def set_selection(self, index):
         """ Sets the value in the combo box, or resets the combo box
         if the value is not in the list of items.
 
         """
         widget = self.widget
-        index = widget.findText(str_value)
         widget.setCurrentIndex(index)
 
