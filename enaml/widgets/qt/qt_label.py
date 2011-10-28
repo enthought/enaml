@@ -34,19 +34,17 @@ class QtLabel(QtControl, AbstractTkLabel):
     # Implementation
     #--------------------------------------------------------------------------
     def shell_text_changed(self, text):
-        """ The change handler for the 'text' attribute. Not meant for
-        public consumption.
+        """ The change handler for the 'text' attribute.
 
         """
         self.set_label(text)
         # XXX we might need a relayout call here when the text changes
-        # since it's width may have changed and the size hint may 
+        # since it's width may have changed and the size hint may
         # now be different. We probably want to make it configurable
         # though since fixed width labels don't need a relayout
 
     def set_label(self, label):
-        """ Sets the label on the underlying control. Not meant for
-        public consumption.
+        """ Sets the label on the underlying control.
 
         """
         self.widget.setText(label)
