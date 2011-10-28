@@ -13,40 +13,32 @@ An Enaml widget's interface describes the attributes and events that the
 widget exposes as its API. Enaml orchestrates communication between
 user-facing views and the underlying graphical toolkits.
 
-
 *Standard interfaces*
 
 .. inheritance-diagram::
+    enaml.widgets.base_component.BaseComponent
+    enaml.widgets.bounded_date.BoundedDate
+    enaml.widgets.bounded_datetime.BoundedDatetime
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
-    enaml.widgets.push_button.PushButton
-    enaml.widgets.radio_button.RadioButton
     enaml.widgets.component.Component
-    enaml.widgets.container.Container
     enaml.widgets.control.Control
-    enaml.widgets.dialog.Dialog
+    enaml.widgets.date_edit.DateEdit
+    enaml.widgets.datetime_edit.DatetimeEdit
+    enaml.widgets.enable_canvas.EnableCanvas
     enaml.widgets.field.Field
-    enaml.widgets.form.Form
-    enaml.widgets.group.Group
-    enaml.widgets.group_box.GroupBox
-    enaml.widgets.h_group.HGroup
     enaml.widgets.html.Html
-    enaml.widgets.window.Window
-    enaml.widgets.panel.Panel
-    enaml.widgets.v_group.VGroup
-    enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.image.Image
     enaml.widgets.label.Label
-    enaml.widgets.toggle_control.ToggleControl
+    enaml.widgets.push_button.PushButton
+    enaml.widgets.radio_button.RadioButton
     enaml.widgets.slider.Slider
-    enaml.widgets.spacer.Spacer
     enaml.widgets.spin_box.SpinBox
-    enaml.widgets.tab_group.TabGroup
-    enaml.widgets.stacked_group.StackedGroup
-    enaml.widgets.enable_canvas.EnableCanvas
-    enaml.widgets.datetime_edit.DatetimeEdit
-    enaml.widgets.date_edit.DateEdit
+    enaml.widgets.table_view.TableView
+    enaml.widgets.toggle_control.ToggleControl
+    enaml.widgets.traitsui_item.TraitsUIItem
+    enaml.widgets.window.Window
     :parts: 1
 
 Implementation
@@ -60,36 +52,29 @@ class, which wraps an actual toolkit widget.
 *Standard Implementations*
 
 .. inheritance-diagram::
-    enaml.widgets.calendar.ICalendarImpl
-    enaml.widgets.check_box.ICheckBoxImpl
-    enaml.widgets.combo_box.IComboBoxImpl
-    enaml.widgets.component.IComponentImpl
-    enaml.widgets.container.IContainerImpl
-    enaml.widgets.push_button.IPushButtonImpl
-    enaml.widgets.radio_button.IRadioButtonImpl
-    enaml.widgets.control.IControlImpl
-    enaml.widgets.dialog.IDialogImpl
-    enaml.widgets.field.IFieldImpl
-    enaml.widgets.form.IFormImpl
-    enaml.widgets.group.IGroupImpl
-    enaml.widgets.group_box.IGroupBoxImpl
-    enaml.widgets.h_group.IHGroupImpl
-    enaml.widgets.html.IHtmlImpl
-    enaml.widgets.window.IWindowImpl
-    enaml.widgets.panel.IPanelImpl
-    enaml.widgets.v_group.IVGroupImpl
-    enaml.widgets.traitsui_item.ITraitsUIItemImpl
-    enaml.widgets.image.IImageImpl
-    enaml.widgets.label.ILabelImpl
-    enaml.widgets.toggle_control.IToggleControlImpl
-    enaml.widgets.slider.ISliderImpl
-    enaml.widgets.spacer.ISpacerImpl
-    enaml.widgets.spin_box.ISpinBoxImpl
-    enaml.widgets.tab_group.ITabGroupImpl
-    enaml.widgets.stacked_group.IStackedGroupImpl
-    enaml.widgets.enable_canvas.IEnableCanvasImpl
-    enaml.widgets.datetime_edit.IDatetimeEditImpl
-    enaml.widgets.date_edit.IDateEditImpl
+    enaml.widgets.base_component.AbstractTkBaseComponent
+    enaml.widgets.bounded_date.AbstractTkBoundedDate
+    enaml.widgets.bounded_datetime.AbstractTkBoundedDatetime
+    enaml.widgets.calendar.AbstractTkCalendar
+    enaml.widgets.check_box.AbstractTkCheckBox
+    enaml.widgets.combo_box.AbstractTkComboBox
+    enaml.widgets.component.AbstractTkComponent
+    enaml.widgets.control.AbstractTkControl
+    enaml.widgets.date_edit.AbstractTkDateEdit
+    enaml.widgets.datetime_edit.AbstractTkDatetimeEdit
+    enaml.widgets.enable_canvas.AbstractTkEnableCanvas
+    enaml.widgets.field.AbstractTkField
+    enaml.widgets.html.AbstractTkHtml
+    enaml.widgets.image.AbstractTkImage
+    enaml.widgets.label.AbstractTkLabel
+    enaml.widgets.push_button.AbstractTkPushButton
+    enaml.widgets.radio_button.AbstractTkRadioButton
+    enaml.widgets.slider.AbstractTkSlider
+    enaml.widgets.spin_box.AbstractTkSpinBox
+    enaml.widgets.table_view.AbstractTkTableView
+    enaml.widgets.toggle_control.AbstractTkToggleControl
+    enaml.widgets.traitsui_item.AbstractTkTraitsUIItem
+    enaml.widgets.window.AbstractTkWindow
     :parts: 1
 
 Standard Widgets
