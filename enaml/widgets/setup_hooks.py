@@ -66,6 +66,11 @@ class ExpressionSetupHook(NullSetupHook):
         # the tree.
         yield
 
+        # Evaluate the expression to make sure Traits gets a chance to validate
+        # it, pass it through Properties, etc. before continuing on.
+        if self.eval_default:
+            getattr(component, self.name)
+
         # No that the widgets are created, but not initialized, we
         # bind the expression so that changes to the widget during
         # its initialization is reflected in the shell widget
