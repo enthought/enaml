@@ -61,18 +61,18 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
     # Implementation
     #---------------------------------------------------------------------------
 
-    def set_date(self, date):
+    def set_date(self, date, events=True):
         """ Sets the component date on the widget.
 
         wxCalendar will not fire an EVT_CALENDAR_SEL_CHANGED event when
         the value is programmatically set, so the method fires the
         `selected` event manually after setting the value in the widget.
+
         """
-        shell = self.shell_obj
         widget = self.widget
-        old_widget_date = widget.PyGetDate()
         widget.PySetDate(date)
-        if old_widget_date != date:
+        if events:
+            shell = self.shell_obj
             shell.selected = date
 
 
