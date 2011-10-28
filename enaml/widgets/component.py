@@ -346,6 +346,4 @@ class Component(BaseComponent):
         """
         self.layout.layout()
         self._needs_layout = False
-        for child in self.children:
-            child.set_needs_layout()
 
