@@ -128,8 +128,14 @@ defn ButtonList:
         ]
         clicked >> print(toolkit)
     Component:
+        constraints = [
+            right == parent.right,
+            bottom == parent.bottom,
+            height == parent.height / 3,
+            width == parent.width / 3,
+        ]
         PushButton -> nested_pb:
-            text = 'bar'
+            text = 'nested button'
 
 
 defn TestView:
@@ -139,7 +145,14 @@ defn TestView:
                 # notice here we are reaching into the namespace 
                 # of the defn we just called, and changing the value
                 # of the text on the nested push button.
-                nested.text = 'foo bar'
+                nested.text = 'nested renamed'
+                nested.constraints = [
+                    width >= 0, 
+                    height >= 0,
+                    v_center == parent.v_center,
+                    h_center == parent.h_center,
+                ]
+
             constraints = [
                 left == parent.left,
                 right == parent.right,
