@@ -8,14 +8,12 @@ from .qt import QtGui
 
 from .qt_control import QtControl
 
-from ...enums import Validity
-
 from ..spin_box import AbstractTkSpinBox
 
 _QtValidate = {
-    Validity.INVALID: QtGui.QValidator.Invalid,
-    Validity.INTERMEDIATE: QtGui.QValidator.Intermediate,
-    Validity.ACCEPTABLE: QtGui.QValidator.Acceptable
+    'invalid': QtGui.QValidator.Invalid,
+    'intermediate': QtGui.QValidator.Intermediate,
+    'acceptable': QtGui.QValidator.Acceptable
 }
 
 
