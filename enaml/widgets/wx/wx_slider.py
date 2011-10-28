@@ -44,11 +44,9 @@ class WXSlider(WXControl, AbstractTkSlider):
         """ Initializes the attributes of the toolkit widget.
 
         """
+        super(WXSlider, self).initialize()
         shell = self.shell_obj
         shell._down = False
-
-        # We hard-coded range for the widget since we are managing the
-        # conversion.
         self.set_range(shell.minimum, shell.maximum)
         self.set_position(shell.value)
         self.set_orientation(shell.orientation)
@@ -67,6 +65,7 @@ class WXSlider(WXControl, AbstractTkSlider):
         the behaviour of the widget.
 
         """
+        super(WXSlider, self).bind()
         widget = self.widget
         widget.Bind(wx.EVT_SCROLL_TOP, self._on_slider_changed)
         widget.Bind(wx.EVT_SCROLL_BOTTOM, self._on_slider_changed)
