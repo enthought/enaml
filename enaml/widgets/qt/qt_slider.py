@@ -6,10 +6,6 @@ from .qt import QtGui, QtCore
 from .qt_control import QtControl
 from ..slider import AbstractTkSlider
 
-
-# Constant value for conversion between Range(0, 1.0) and integers.
-SLIDER_MAX = 10000
-
 # A map from Enaml constants to QSlider TickPosition values.
 TICK_POS_MAP = {'no_ticks': QtGui.QSlider.NoTicks,
                 'left': QtGui.QSlider.TicksLeft,
@@ -103,13 +99,6 @@ class QtSlider(QtControl, AbstractTkSlider):
 
     def shell_value_changed(self, value):
         """ Update the slider position
-
-        The method validates the value before assigment. If it is out of
-        range (0.0, 1.0), truncate the value and updates the component value
-        attribute. No change notification is fired by these actions.
-
-        If other exceptions are fired during the assigments the component
-        value does not change and the widget position is unknown.
 
         """
         self.set_position(value)
