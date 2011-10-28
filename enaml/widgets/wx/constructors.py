@@ -26,32 +26,25 @@ def constructor(base_path):
     """
     c_module_path = 'enaml.widgets.' + base_path
     c_name = ''.join(part.capitalize() for part in base_path.split('_'))
-    
+
     t_module_path = 'enaml.widgets.wx.' + 'wx_' + base_path
     t_name = 'WX' + c_name
-    
-    component_loader = importer(c_module_path, c_name)
-    impl_loader = importer(t_module_path, t_name)
 
-    ctor = Constructor(component_loader, impl_loader)
+    component_loader = importer(c_module_path, c_name)
+    abstract_loader = importer(t_module_path, t_name)
+
+    ctor = Constructor(component_loader, abstract_loader)
 
     return c_name, ctor
 
 
 WX_CONSTRUCTORS = dict((
     constructor('window'),
+    constructor('component'),
     constructor('dialog'),
-    constructor('panel'),
-    constructor('group'),
-    constructor('v_group'),
-    constructor('h_group'),
-    constructor('stacked_group'),
-    constructor('tab_group'),
-    constructor('group_box'),
     constructor('calendar'),
     constructor('check_box'),
     constructor('combo_box'),
-    constructor('form'),
     constructor('field'),
     constructor('html'),
     constructor('image'),
@@ -63,7 +56,6 @@ WX_CONSTRUCTORS = dict((
     constructor('traitsui_item'),
     constructor('enable_canvas'),
     constructor('table_view'),
-    constructor('check_group'),
     constructor('date_edit'),
     constructor('datetime_edit'),
 ))
