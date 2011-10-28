@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
 from .qt_control import QtControl
-
 from ..slider import AbstractTkSlider
 
 
@@ -88,14 +87,14 @@ class QtSlider(QtControl, AbstractTkSlider):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell_minimum_changed(self, minimum):
+    def shell__minimum_changed(self, minimum):
         """ Update the slider when the converter class changes.
 
         """
         shell = self.shell_obj
         self.set_range(minimum, shell.maximum)
 
-    def shell_maximum_changed(self, maximum):
+    def shell__maximum_changed(self, maximum):
         """ Update the slider when the converter class changes.
 
         """
