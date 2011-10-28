@@ -11,23 +11,18 @@ from ..radio_button import AbstractTkRadioButton
 class QtRadioButton(QtToggleControl, AbstractTkRadioButton):
     """ A Qt implementation of RadioButton.
 
-    See Also
-    --------
-    RadioButton
-
     """
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self):
         """ Creates the underlying Qt widget.
-        
+
         """
         self.widget = QtGui.QRadioButton(self.parent_widget())
-        
+
     def bind(self):
-        """ Binds the event handlers for the radio button. Not meant for
-        public consumption.
+        """ Binds the event handlers for the radio button.
 
         """
         super(QtRadioButton, self).bind()
@@ -35,4 +30,4 @@ class QtRadioButton(QtToggleControl, AbstractTkRadioButton):
         widget.toggled.connect(self.on_toggled)
         widget.pressed.connect(self.on_pressed)
         widget.released.connect(self.on_released)
-    
+
