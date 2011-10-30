@@ -7,97 +7,9 @@ from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 import weakref
 
-from traits.api import HasTraits, TraitType, TraitChangeNotifyWrapper
+from traits.api import HasTraits
 
 from .parsing.analyzer import AttributeVisitor
-
-
-#------------------------------------------------------------------------------
-# Expression default trait
-#------------------------------------------------------------------------------
-class ExpressionDefaultTrait(TraitType):
-    """ A custom trait type that handles initializing a component
-    trait attribute with a value computed from an expression binder.
-    This is meant for use with subclasses of EnamlBase. It should 
-    be added as an instance trait and will remove itself upon the 
-    first call to 'get' or 'set'
-
-    """
-    def __init__(self, expression):
-        """ Initialize a binder default trait.
-
-        Parameters
-        ----------
-        expression : Instance(IExpressionBinder)
-            An instance of an expression binder that will give use the 
-            default value.
-
-        """
-        super(ExpressionDefaultTrait, self).__init__()
-        self.expression = expression
-
-    def rebind(self, obj, name, notifier):
-        """ Rebinds a trait notifier by reconstructing the handler and 
-        calling on_trait_change to create the new notifier. Currently
-        only handles TraitChangeNotifyWrappers.
-
-        """
-        if isinstance(notifier, TraitChangeNotifyWrapper):
-            call_method = notifier.call_method
-            if call_method.startswith('call_'):
-                handler = notifier.handler
-            elif call_method.startswith('rebind_call_'):
-                # The handler object is stored as a weakref
-                handler_obj = notifier.object()
-                if handler_obj is None:
-                    return
-                handler_name = notifier.name
-                handler = getattr(handler_obj, handler_name)
-            else:
-                msg = 'unknown call method `%s`' % call_method
-                raise ValueError(msg)
-            obj.on_trait_change(handler, name)
-
-    def remove(self, obj, name):
-        """ Removes the instance trait 'name' from the given object.
-        Any notifiers on the instance trait will be applied to the
-        class trait via the 'rebind' method.
-
-        """
-        instance_trait = obj._instance_traits().get(name)
-        if instance_trait is not None:
-            obj.remove_trait(name)
-            instance_notifiers = instance_trait._notifiers(0)
-            if instance_notifiers is not None:
-                class_trait = obj.trait(name)
-                if class_trait is not None:
-                    for notifier in instance_notifiers:
-                        self.rebind(obj, name, notifier)
-
-    def get(self, obj, name):
-        """ Called to get the value of the trait. 
-
-        Calling this method removes this trait from the object, evaluates 
-        the expression, then performs a setattr followed by a getattr to 
-        mimick a user performing the operation and to ensure safety when
-        operating on delegates or properties.
-
-        """
-        self.remove(obj, name)
-        val = self.expression.eval_expression()
-        setattr(obj, name, val)
-        return getattr(obj, name)
-
-    def set(self, obj, name, val):
-        """ Called to set the value of the trait. 
-
-        Calling this method removes this trait from the object, then
-        performs a setattr with the value. This operations ensures 
-        safety when operating on delegates or properties.
-
-        """
-        self.remove(obj, name)
-        setattr(obj, name, val)
 
 
 #------------------------------------------------------------------------------
@@ -478,14 +390,6 @@ class DelegatingExpression(SimpleExpression):
             dlgt.on_trait_change(self.update_object, dlgt_attr_name)
 
         obj.on_trait_change(self.update_delegate, self.attr_name)
-
-    def eval_expression(self):
-        """ Overridden from the parent class since we have enough
-        information to lookup the delegate more efficiently than 
-        a simple eval.
-
-        """
-        return getattr(*self.lookup_info)
 
     def update_object(self):
         """ The notification handler to update the component object.
