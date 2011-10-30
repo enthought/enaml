@@ -7,7 +7,7 @@ from .expressions import (SimpleExpression, UpdatingExpression,
 from .widgets.setup_hooks import ExpressionSetupHook
 
 
-def operator_factory(expression_class):
+def operator_factory(expression_class, eval_default=True):
     """ A factory function which creates an Enaml operator function 
     for an implementor of enaml.expresssions.AbstractExpression. The
     created operator will setup an appropriate SetupHook for the 
@@ -22,7 +22,7 @@ def operator_factory(expression_class):
         """
         expression = expression_class(component, attr_name, py_ast, code,
                                       globals_f, locals_f)
-        hook = ExpressionSetupHook(attr_name, expression)
+        hook = ExpressionSetupHook(attr_name, expression, eval_default)
         component.setup_hooks.append(hook)
     
     return operator
@@ -39,6 +39,6 @@ OPERATORS = {
     '__operator_Equal__': operator_factory(SimpleExpression),
     '__operator_LessLess__': operator_factory(UpdatingExpression),
     '__operator_ColonEqual__': operator_factory(DelegatingExpression),
-    '__operator_GreaterGreater__': operator_factory(NotifyingExpression),
+    '__operator_GreaterGreater__': operator_factory(NotifyingExpression, False),
 }
 
