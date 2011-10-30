@@ -1,0 +1,48 @@
+
+
+defn MainWindow:
+    Window:
+        constraints = [
+            frame.top == top + 10,
+            frame.left == left + 10,
+            frame.right == right - 10,
+            frame.bottom + 10 == add_button.top,
+            frame.height >= 150,
+
+            add_button.left == frame.left,
+            add_button.bottom + 10 == bottom,
+
+            remove_button.top == add_button.top,
+            remove_button.bottom == add_button.bottom,
+            remove_button.left == add_button.right + 10,
+
+            (change_mode_button.h_center == frame.h_center) | 'weak',
+            change_mode_button.left >= remove_button.right + 10,
+            change_mode_button.top == add_button.top,
+            change_mode_button.bottom == add_button.bottom,
+
+            share_button.top == add_button.top,
+            share_button.bottom == add_button.bottom,
+            share_button.right == frame.right,
+            share_button.left >= change_mode_button.right + 10,
+
+        ]
+        PushButton -> frame:
+            text = 'Frame'
+            # set the content hugging on the frame to weak 
+            # (default is ('strong', 'strong')) so that it expands in 
+            # both directions. The window resize strength is ('medium', 'medium')
+            hug = ('weak', 'weak')
+        PushButton -> add_button:
+            text = 'Add'
+            # Uncomment the next two lines to see how to play around with 
+            # the hugging and compression properties
+            #hug = ('weak', 'strong')
+            #compress = ('weak', 'strong')
+        PushButton -> remove_button:
+            text = 'Remove'
+        PushButton -> change_mode_button:
+            text = 'Change Mode'
+        PushButton -> share_button:
+            text = 'Share...'
+

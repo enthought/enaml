@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod, abstractproperty
 
-from traits.api import Instance, List, Property, Bool
+from traits.api import Instance, List, Property, Bool, Tuple
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
@@ -110,6 +110,15 @@ class Component(BaseComponent):
     #: A private boolean indicating if the component needs to relayout
     #: its children
     _needs_layout = Bool(True)
+
+    # XXX the following two traits will probably need to be 
+    # overridden on a per-control basis to do the natural thing.
+    
+    #: How strong a component hugs it's content
+    hug = Tuple('strong', 'strong')
+
+    #: How strong a component resists compression
+    compress = Tuple('strong', 'strong')
 
     #: An object that manages the layout of this component and its 
     #: direct children. The default is simple constraints based
