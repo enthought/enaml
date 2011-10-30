@@ -4,14 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod, abstractproperty
 
-from traits.api import Instance, List, Property, Bool, Tuple, Event, on_trait_change
+from traits.api import Instance, List, Property, Tuple, Event
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
 from .layout.symbolics import BaseConstraint
 from .layout.layout_ns import LayoutNS
-from .layout.layout_manager import AbstractLayoutManager
-from .layout.constraints_layout import ConstraintsLayout
 
 
 class AbstractTkComponent(AbstractTkBaseComponent):
@@ -111,14 +109,6 @@ class Component(BaseComponent):
     #: for this component. 
     _box_model = Instance(BoxModel, ())
 
-    #: A private boolean indicating if the contraints have changed
-    #: and need to be updated on the next pass.
-    _needs_update_constraints = Bool(True)
-
-    #: A private boolean indicating if the component needs to relayout
-    #: its children
-    _needs_layout = Bool(True)
-
     # XXX the following two traits will probably need to be 
     # overridden on a per-control basis to do the natural thing.
 
@@ -131,10 +121,6 @@ class Component(BaseComponent):
     #: An event that should be emitted by the abstract obj when
     #: its size hint has updated.
     size_hint_updated = Event
-
-    #: An object that manages the layout of this component and its 
-    #: direct children. The default is simple constraints based
-    layout = Instance(AbstractLayoutManager)
 
     #: A list of linear constraints defined for this object.
     constraints = List(Instance(BaseConstraint))
@@ -232,12 +218,6 @@ class Component(BaseComponent):
         """
         return self._box_model.h_center
     
-    def _layout_default(self):
-        """ Default value for the layout manager.
-
-        """
-        return ConstraintsLayout(self)
-
     def _get_L(self):
         """ Property getter for the 'L' property.
 
@@ -303,87 +283,4 @@ class Component(BaseComponent):
 
         """
         return self.abstract_obj.toolkit_widget
-
-    def setup(self):
-        """ Run the setup process for the ui tree.
-
-        This is overridden to add the layout set up.
-
-        """
-        super(Component, self).setup()
-
-        if len(self.children) > 0:
-            self.initialize_layout()
-
-    def initialize_layout(self):
-        """ Initialize the layout for the first time.
-
-        """
-        if len(self.children) > 0:
-            self.layout.initialize()
-            for child in self.children:
-                child.initialize_layout()
-
-    def update_constraints_if_needed(self):
-        """ Update the constraints of this component if necessary. This 
-        is typically the case when a constraint has been changed.
-
-        """
-        if self._needs_update_constraints and len(self.children) > 0:
-            self.toolkit.invoke_later(self.update_constraints)
-
-    def set_needs_update_constraints(self, needs=True):
-        """ Indicate that the constraints for this component should be
-        updated some time later.
-
-        """
-        self._needs_update_constraints = needs
-        if needs and len(self.children) > 0:
-            self.toolkit.invoke_later(self.update_constraints)
-
-    def update_constraints(self):
-        """ Update the constraints for this component.
-
-        """
-        self.layout.update_constraints()
-        for child in self.children:
-            child.update_constraints()
-        self._needs_update_constraints = False
-
-    def layout_if_needed(self):
-        """ Refreshes the layout of this component if necessary. This 
-        will typically be needed if this component has been resized or 
-        the sizes of any of its children have been changed.
-
-        """
-        if self._needs_layout and len(self.children) > 0:
-            self.toolkit.invoke_later(self.do_layout)
-
-    def set_needs_layout(self, needs=True):
-        """ Indicate that the layout should be refreshed some time 
-        later.
-
-        """
-        self._needs_layout = needs
-        if needs and len(self.children) > 0:
-            self.toolkit.invoke_later(self.do_layout)
-
-    def do_layout(self):
-        """ Updates the layout of this component.
-
-        """
-        self.layout.layout()
-        self._needs_layout = False
-
-    @on_trait_change('children:size_hint_updated, children:hug, children:compress')
-    def handle_size_hint_changed(self, child, name, old, new):
-        self.toolkit.invoke_later(self.layout.update_size_cns, child)
-        self.set_needs_layout()
-    
-    @on_trait_change('constraints[]')
-    def handle_constraints_changed(self):
-        if self.layout._initialized:
-            self.set_needs_update_constraints()
-            self.set_needs_layout()
-
 
