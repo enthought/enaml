@@ -64,8 +64,11 @@ class Constructor(HasStrictTraits):
 
         Parameters
         ----------
-        *args, **kwargs
-            The args and kwargs with which this constructor was called
+        *args :
+            Positional arguments with which this constructor was called
+            from the enaml source code.
+        **kwargs :
+            Keyword arguments with which this constructor was called
             from the enaml source code.
 
         """
