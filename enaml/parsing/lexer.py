@@ -377,7 +377,6 @@ class EnamlLexer(object):
         self.token_stream = None
         
     def input(self, txt):
-        # Pull out all of the def blocks as a big chunk of python code
         enaml_txt, py_txt = self.find_python_blocks(txt)
         self.py_block = py_txt
 
@@ -390,6 +389,14 @@ class EnamlLexer(object):
         self.at_line_start = False
 
     def find_python_blocks(self, txt):
+        """ Separate blocks of enaml code and python code.
+        
+        This method will take a block of text and separate it into two
+        separate chunks, the first being enaml code (imports and defn 
+        blocks) and the second being Python code (class and def blocks).
+        The relative ordering of the text within each block is maintained.
+
+        """
         enaml_lines = []
         python_lines = []
 
@@ -423,7 +430,6 @@ class EnamlLexer(object):
                 enaml_lines.append(line)
         
         return '\n'.join(enaml_lines), '\n'.join(python_lines)
-
 
     def token(self):
         try:
