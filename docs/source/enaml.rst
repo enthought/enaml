@@ -4,11 +4,6 @@ enaml core
 The core implementation provides all the necessary machinery to create a
 thin layer over backend widgets and produce the traits View objects.
 
-:mod:`enaml_base` Module
-------------------------
-
-.. automodule:: enaml.enaml_base
-
 :mod:`enums` Module
 -------------------
 
