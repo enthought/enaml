@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod, abstractproperty
 
-from traits.api import Instance, List, Property, Bool, Tuple
+from traits.api import Instance, List, Property, Bool, Tuple, Event, on_trait_change
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
@@ -57,6 +57,14 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         raise NotImplementedError
     
     @abstractmethod
+    def set_min_size(self, min_width, min_height):
+        """ Set the hard minimum width and height of the widget. A widget
+        should not be able to be resized smaller than this value.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def pos(self):
         """ Returns the position of the internal toolkit widget as an 
         (x, y) tuple of integers. The coordinates should be relative to
@@ -105,7 +113,7 @@ class Component(BaseComponent):
 
     #: A private boolean indicating if the contraints have changed
     #: and need to be updated on the next pass.
-    _needs_update_contraints = Bool(True)
+    _needs_update_constraints = Bool(True)
 
     #: A private boolean indicating if the component needs to relayout
     #: its children
@@ -113,12 +121,16 @@ class Component(BaseComponent):
 
     # XXX the following two traits will probably need to be 
     # overridden on a per-control basis to do the natural thing.
-    
+
     #: How strong a component hugs it's content
     hug = Tuple('strong', 'strong')
 
     #: How strong a component resists compression
     compress = Tuple('strong', 'strong')
+
+    #: An event that should be emitted by the abstract obj when
+    #: its size hint has updated.
+    size_hint_updated = Event
 
     #: An object that manages the layout of this component and its 
     #: direct children. The default is simple constraints based
@@ -252,6 +264,13 @@ class Component(BaseComponent):
         """
         self.abstract_obj.resize(width, height)
     
+    def set_min_size(self, min_width, min_height):
+        """ Set the hard minimum width and height of the widget. A widget
+        should not be able to be resized smaller than this value.
+
+        """
+        self.abstract_obj.set_min_size(min_width, min_height)
+
     def pos(self):
         """ Returns the position tuple as given by the abstract widget.
 
@@ -348,11 +367,23 @@ class Component(BaseComponent):
         self._needs_layout = needs
         if needs and len(self.children) > 0:
             self.toolkit.invoke_later(self.do_layout)
-                    
+
     def do_layout(self):
         """ Updates the layout of this component.
 
         """
         self.layout.layout()
         self._needs_layout = False
+
+    @on_trait_change('children:size_hint_updated, children:hug, children:compress')
+    def handle_size_hint_changed(self, child, name, old, new):
+        self.toolkit.invoke_later(self.layout.update_size_cns, child)
+        self.set_needs_layout()
+    
+    @on_trait_change('constraints[]')
+    def handle_constraints_changed(self):
+        if self.layout._initialized:
+            self.set_needs_update_constraints()
+            self.set_needs_layout()
+
 
