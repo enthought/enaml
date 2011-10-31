@@ -30,7 +30,7 @@ defn MainWindow:
         title = "Nested Containers"
         constraints = [
             L.H(L.I, top_left, top_right, L.I),
-            L.V(L.I, top_left, bottom, L.I),
+            L.V(L.I, L._, top_left, bottom, L._, L.I),
             L.H(L.I, bottom, L.I),
             L.align('v_center', top_left, top_right),
             top_left.width == 1.1*top_right.width,
