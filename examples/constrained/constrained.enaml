@@ -29,10 +29,11 @@ defn MainWindow:
         ]
         PushButton -> frame:
             text = 'Frame'
-            # set the content hugging on the frame to weak 
-            # (default is ('strong', 'strong')) so that it expands in 
-            # both directions. The window resize strength is ('medium', 'medium')
-            hug = ('weak', 'weak')
+            # Tell the layout manager to ignore hugging constraints
+            # for this button so that it expands in both directions.
+            # (Setting to 'weak' would also work, but requires more 
+            # computation by the solver).
+            hug = ('ignore', 'ignore')
         PushButton -> add_button:
             text = 'Add'
             # Uncomment the next two lines to see how to play around with 
@@ -43,6 +44,11 @@ defn MainWindow:
             text = 'Remove'
         PushButton -> change_mode_button:
             text = 'Change Mode'
+            # Click this button to update the button text and have
+            # it expand to fit its contents
+            clicked >> setattr(self, 'text', text * 2)
         PushButton -> share_button:
             text = 'Share...'
+            # Click this button to force it to have a width of 200
+            clicked >> parent.constraints.append(width == 200)
 
