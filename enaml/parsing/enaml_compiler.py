@@ -611,6 +611,11 @@ class EnamlCompiler(object):
         """
         for item in node.body:
             self.visit(item)
+    
+    def visit_EnamlRawPython(self, node):
+        py_txt = node.py_txt
+        code = compile(py_txt, '<Enaml>', mode='exec')
+        exec code in self.global_ns
 
     def visit_EnamlImport(self, node):
         """ The import statement visitory method. Used internally 

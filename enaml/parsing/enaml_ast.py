@@ -29,6 +29,14 @@ class EnamlImport(EnamlASTNode):
         self.py_ast = py_ast
 
 
+class EnamlRawPython(EnamlASTNode):
+
+    __slots__ = ('py_txt',)
+
+    def __init__(self, py_txt):
+        self.py_txt = py_txt
+
+
 class EnamlDefine(EnamlASTNode):
 
     __slots__ = ('name', 'parameters', 'body')
