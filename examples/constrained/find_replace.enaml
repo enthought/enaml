@@ -1,0 +1,43 @@
+# A find-replace dialog.
+#
+# To make the buttons look nice, we set weak constraints requesting that the
+# adjacent buttons have the same width after satisfying all of the other
+# constraints. The left border of the Fields should be aligned. The width taken
+# up by the buttons is controlled by the lower row since the PushButton labels
+# "Replace" and "Replace & Find" take up more space than "Find" and "Find Next".
+# The lower row's buttons are not equal widths, because that would take up
+# a bunch of extra space, but the top row's buttons do expand equally to take up
+# the available space.
+
+defn MainWindow:
+    Window:
+        title = "Find & Replace"
+        constraints = [
+            L.H(L.I, L._, find, find_next, L._(4), find_field, L._, L.I),
+            L.H(L.I, L._, replace, replace_and_find, L._(4), replace_field, L._, L.I),
+            L.V(L.I, L._, find_field, L._, replace_field, L.spring(20), L.I),
+            find_field.width >= 20,
+            replace_field.width >= 20,
+            (find.width == find_next.width) | 'weak',
+            (replace.width == replace_and_find.width) | 'weak',
+            # FIXME: We really should be able to pass align='left', etc. to H()
+            # and V(), but the parser is currently buggy and does not support
+            # this.
+            L.align('left', find_field, replace_field),
+            L.align('v_center', find, find_next, find_field),
+            L.align('v_center', replace, replace_and_find, replace_field),
+        ]
+        PushButton -> find:
+            text = "Find"
+        PushButton -> find_next:
+            text = "Find Next"
+        PushButton -> replace:
+            text = "Replace"
+        PushButton -> replace_and_find:
+            # FIXME: On Qt, the double-& is necessary to get a single & in the
+            # label. This is probably related to accelerator keys.
+            text = "Replace && Find"
+        Field -> find_field:
+            hug = ('ignore', 'strong')
+        Field -> replace_field:
+            hug = ('ignore', 'strong')
