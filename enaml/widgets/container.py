@@ -61,7 +61,8 @@ class Container(Component):
         """ Initialize the layout for the first time.
 
         """
-        self.layout.initialize()
+        if self.layout is not None:
+            self.layout.initialize()
 
     def update_constraints_if_needed(self):
         """ Update the constraints of this component if necessary. This 
@@ -84,7 +85,8 @@ class Container(Component):
         """ Update the constraints for this component.
 
         """
-        self.layout.update_constraints()
+        if self.layout is not None:
+            self.layout.update_constraints()
         self._needs_update_constraints = False
 
     def layout_if_needed(self):
@@ -109,7 +111,8 @@ class Container(Component):
         """ Updates the layout of this component.
 
         """
-        self.layout.layout()
+        if self.layout is not None:
+            self.layout.layout()
         self._needs_layout = False
 
     @on_trait_change('children:size_hint_updated, children:hug, children:compress')

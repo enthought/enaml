@@ -9,7 +9,6 @@ import csw
 
 MEDIUM = STRENGTH_MAP['medium']
 
-
 class ConstraintsLayout(AbstractLayoutManager):
 
     def __init__(self, component):
@@ -76,19 +75,21 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         # User constraints
         cns = self.compute_user_cns(component)
+        for child in self.traverse_descendants(component):
+            cns.extend(self.compute_user_cns(child))
         self.user_cns = cns
         self.add_constraints(cns)
 
         # Child default constraints
         cns_dict = self.child_cns
-        for child in component.children:
+        for child in self.traverse_descendants(component):
             cns = self.compute_child_cns(child)
             cns_dict[child].extend(cns)
             self.add_constraints(cns)
         
         # Child size constraints
         cns_dict = self.child_size_cns
-        for child in component.children:
+        for child in self.traverse_descendants(component):
             cns = self.compute_child_size_cns(child)
             cns_dict[child].extend(cns)
             self.add_constraints(cns)
@@ -158,7 +159,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         # or else the variable values will reset to the previous 
         # unedited state.
         set_solved_geometry = self.set_solved_geometry
-        for child in component.children:
+        for child in self.traverse_descendants(component):
             set_solved_geometry(child)
         
         solver.EndEdit()
@@ -210,8 +211,41 @@ class ConstraintsLayout(AbstractLayoutManager):
         y = component.top.csw_var.Value()
         width = component.width.csw_var.Value()
         height = component.height.csw_var.Value()
-        args = (int(round(z)) for z in (x, y, width, height))
-        component.set_geometry(*args)
+        x, y, width, height = (int(round(z)) for z in (x, y, width, height))
+        # This is offset against the root Container. Each Component's geometry
+        # actually needs to be offset against its parent. Walk up the tree and
+        # subtract out the parent's offset.
+        for ancestor in self.walk_up_containers(component):
+            dx, dy = ancestor.pos()
+            x -= dx
+            y -= dy
+        component.set_geometry(x, y, width, height)
+
+    def traverse_descendants(self, component):
+        """ Do a preorder traversal of all descendants of the component that
+        participate in the Constraints-base layout.
+
+        """
+        for child in component.children:
+            yield child
+            child_layout = getattr(child, 'layout', None)
+            if child_layout is None or type(child_layout) is type(self):
+                for desc in self.traverse_descendants(child):
+                    yield desc
+
+    def walk_up_containers(self, component):
+        """ Walk up the component hierarchy from a given node and yield the
+        parent Containers, excepting the root Container.
+
+        """
+        root = self.component()
+        if root is None:
+            msg = 'Component weakly referenced by %r disappeared' % self
+            raise RuntimeError(msg)
+        parent = component.parent
+        while parent is not root and parent is not None:
+            yield parent
+            parent = parent.parent
 
     #--------------------------------------------------------------------------
     # Constraint computation
@@ -240,8 +274,9 @@ class ConstraintsLayout(AbstractLayoutManager):
         should never change for a given child.
 
         """
-        return [val.convert_to_csw() for val in 
+        constraints = [val.convert_to_csw() for val in
                 (child.width >= 0, child.height >= 0)]
+        return constraints
 
     def compute_child_size_cns(self, child):
         """ Computes the constraints relating the size hint of a child.
