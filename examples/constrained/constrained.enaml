@@ -69,4 +69,3 @@ defn MainWindow:
             text = 'Share...'
             # Click this button to force it to have a width of 200
             clicked >> parent.constraints.append(width == 200)
-

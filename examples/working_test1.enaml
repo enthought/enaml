@@ -136,7 +136,16 @@ defn ButtonList:
         ]
         PushButton -> nested_pb:
             text = 'nested button'
+            # Call the module level py function
+            clicked >> a_normal_python_function()
 
+
+def a_normal_python_function():
+    print 'called a py function'
+    # make another view
+    view = TestView()
+    view.show()
+    
 
 defn TestView:
     Window:
