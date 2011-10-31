@@ -6,10 +6,10 @@ from abc import abstractmethod
 
 from traits.api import Str, Enum, Instance
 
-from .component import Component, AbstractTkComponent
+from .container import Container, AbstractTkContainer
 
 
-class AbstractTkWindow(AbstractTkComponent):
+class AbstractTkWindow(AbstractTkContainer):
     """ The abstract Window interface.
 
     """
@@ -44,7 +44,7 @@ class AbstractTkWindow(AbstractTkComponent):
         raise NotImplementedError
 
 
-class Window(Component):
+class Window(Container):
     """ The base top-level Window widget.
 
     Window widgets are top-level components which provide window frame

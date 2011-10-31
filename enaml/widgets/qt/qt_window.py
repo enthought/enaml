@@ -3,12 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtCore, QtGui
-from .qt_component import QtComponent
+from .qt_container import QtContainer
 
 from ..window import AbstractTkWindow
 
 
-class QtWindow(QtComponent, AbstractTkWindow):
+class QtWindow(QtContainer, AbstractTkWindow):
     """ A Qt implementation of a Window.
 
     QtWindow uses a QFrame to create a simple top level window which

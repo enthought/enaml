@@ -46,6 +46,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
 
         """
         self.set_label(text)
+        self.shell_obj.size_hint_updated = True
 
     def on_clicked(self):
         """ The event handler for the button's clicked event.

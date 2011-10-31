@@ -45,7 +45,6 @@ class _FutureCall(QObject):
         # Python threads to work.
         event = QEvent(self._call_event)
         QApplication.postEvent(self, event)
-        QApplication.sendPostedEvents()
 
     def event(self, event):
         """ QObject event handler. Dispatches to the callable immediately

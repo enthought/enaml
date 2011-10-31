@@ -1,162 +1,357 @@
+from collections import defaultdict
 import weakref
 
 from .layout_manager import AbstractLayoutManager
+from .symbolics import STRENGTH_MAP
 
 import csw
 
+
+MEDIUM = STRENGTH_MAP['medium']
 
 class ConstraintsLayout(AbstractLayoutManager):
 
     def __init__(self, component):
         self.component = weakref.ref(component)
+
+        # The solver instance to use for this manager
         self.solver = None
 
-        # Flag to note that we are currently in the initialize() method and
-        # should not re-enter.
-        self._is_initializing = False
-    
-    def update_constraints(self):
-        # FIXME: we should be able to do less than a full initialization.
-        self.initialize()
-    
+        # The constraints for the component which should never need to change
+        self.component_cns = None
+
+        # The user constraints which may change
+        self.user_cns = None
+
+        # The hard constraints for the children which should never change
+        self.child_cns = None
+
+        # The default child size constraints which will change if a 
+        # a childs size_hint is updated
+        self.child_size_cns = None
+
+        # A flag to prevent recursion into various method. 
+        # XXX this may no longer be needed
+        self._recursion_guard = False
+
+        # A flag to indicate whether this manager has been initialized.
+        self._initialized = False
+
+    #--------------------------------------------------------------------------
+    # Initalization
+    #--------------------------------------------------------------------------
     def initialize(self):
-        if self._is_initializing:
+        """ Initializes the solver by creating all of the necessary 
+        constraints for this components children and adding them to 
+        the solver.
+
+        """
+        if self._recursion_guard or self._initialized:
             return
-        self._is_initializing = True
+        self._recursion_guard = True
 
         # Rather than do intialization in the __init__ method, which
         # in Python has the context of only happening once, we use
         # this method since the manager will be re-initialized whenever
         # any of the constraints of the components children change.
+        self.solver = csw.SimplexSolver()
+        self.component_cns = []
+        self.user_cns = []
+        self.child_cns = defaultdict(list)
+        self.child_size_cns = defaultdict(list)
+
         component = self.component()
         if component is None:
             msg = 'Component weakly referenced by %r disappeared' % self
             raise RuntimeError(msg)
 
-        # (LinearConstraint, csw.Constraint)
-        self.constraints = []
-
-        solver = self.solver = csw.SimplexSolver()
+        solver = self.solver
         solver.SetAutosolve(False)
 
-        # Setup the components constraints in the solver's table.
-        # Since the children are laid out relative to the component,
-        # the component's origin is set to (0, 0) for this solver.
-        # Even though this component may be used in a parent solver
-        # where it's origin is other than (0, 0)
-        x = (component.left == 0.0)
-        y = (component.top == 0.0)
-        self.add_constraint(x)
-        self.add_constraint(y)
+        # Component default constraints
+        cns = self.compute_component_cns(component)
+        self.component_cns = cns
+        self.add_constraints(cns)
 
-        # Setup the child constraints in the solver's table
-        for child in component.children:
-            # A the default constraints for width and height
-            # this means that width and height will exist in the
-            # solver and so size_hint will take effect in the absense
-            # of any other constraints
-            self.add_constraint(child.width >= 0)
-            self.add_constraint(child.height >= 0)
-            for constraint in child.constraints:
-                self.add_constraint(constraint)
+        # User constraints
+        cns = self.compute_user_cns(component)
+        for child in self.traverse_descendants(component):
+            cns.extend(self.compute_user_cns(child))
+        self.user_cns = cns
+        self.add_constraints(cns)
 
-        # Compute the hint variables for solver iteration. 
-        # Some are stronger than others.
-        self.changes = changes = []
-        solver_contains = solver.FContainsVariable
-
-        def width_getter(obj):
-            return lambda: obj.size()[0]
+        # Child default constraints
+        cns_dict = self.child_cns
+        for child in self.traverse_descendants(component):
+            cns = self.compute_child_cns(child)
+            cns_dict[child].extend(cns)
+            self.add_constraints(cns)
         
-        def height_getter(obj):
-            return lambda: obj.size()[1]
-        
-        def width_hint_getter(obj):
-            return lambda: obj.size_hint()[0]
-        
-        def height_hint_getter(obj):
-            return lambda: obj.size_hint()[1]
-
-        w_var = component.width.csw_var
-        if solver_contains(w_var):
-            changes.append((w_var, width_getter(component), csw.sMedium()))
-        
-        h_var = component.height.csw_var
-        if solver_contains(h_var):
-            changes.append((h_var, height_getter(component), csw.sMedium()))
-        
-        for child in component.children:
-            if child.style_id == 'pb':
-                print width_hint_getter(child)(), height_hint_getter(child)()
-            w_var = child.width.csw_var
-            if solver_contains(w_var):
-                changes.append((w_var, width_hint_getter(child), csw.sWeak()))
-            
-            h_var = child.height.csw_var
-            if solver_contains(h_var):
-                changes.append((h_var, height_hint_getter(child), csw.sWeak()))
+        # Child size constraints
+        cns_dict = self.child_size_cns
+        for child in self.traverse_descendants(component):
+            cns = self.compute_child_size_cns(child)
+            cns_dict[child].extend(cns)
+            self.add_constraints(cns)
 
         solver.SetAutosolve(True)
 
-        self._is_initializing = False
+        # Set the minimum size of the component based on the current
+        # set of constraints
+        min_size = self.calc_min_size()
+        component.set_min_size(*min_size)
 
-    def add_constraint(self, constraint):
-        """ Add a LinearConstraint or MultiConstraint to the solver, 
-        and keep a reference to it for further examination.
+        self._recursion_guard = False
+        self._initialized = True
+
+    def add_constraints(self, constraints):
+        """ Add an iterable of constraints in csw form to the solver.
 
         """
-        if hasattr(constraint, 'constraints'):
-            # This object actually holds multiple constraints.
-            for sub_constraint in constraint.constraints:
-                self.add_constraint(sub_constraint)
-        else:
-            csw_constraint = constraint.convert_to_csw()
-            self.constraints.append((constraint, csw_constraint))
-            self.solver.AddConstraint(csw_constraint)
+        solver = self.solver
+        for cn in constraints:
+            if isinstance(cn, list):
+                for c in cn:
+                    solver.AddConstraint(c)
+            else:
+                solver.AddConstraint(cn)
 
+    #--------------------------------------------------------------------------
+    # Solver Iteration
+    #--------------------------------------------------------------------------
     def layout(self):
+        """ Perform an iteration of the solver for the new width and 
+        height of the component. This will resolve the system and update
+        the geometry of all of the component's children.
+
+        """
+        if self._recursion_guard or not self._initialized:
+            return
+        self._recursion_guard = True
+
         component = self.component()
         if component is None:
             msg = 'Component weakly referenced by %r disappeared' % self
             raise RuntimeError(msg)
 
-        if self._is_initializing:
-            return
-
         solver = self.solver
-        changes = self.changes
 
-        if not changes:
-            solver.Resolve()
-            set_solved_geometry = self.set_solved_geometry
-            for child in component.children:
-                set_solved_geometry(child)
-            return
-        
-        for var, val_func, strength in changes:
-            solver.AddEditVar(var, strength)
-        
+        # Grab the info required for the suggestions to the solver
+        width, height = component.size()
+        width_var = component.width.csw_var
+        height_var = component.height.csw_var
+
+        # Add the variables we're going to edit to the solver
+        solver.AddEditVar(width_var, MEDIUM)
+        solver.AddEditVar(height_var, MEDIUM)
+
         solver.BeginEdit()
 
-        for var, val_func, strength in changes:
-            solver.SuggestValue(var, val_func())
+        # Suggest the new width and height of the component to 
+        # the solver.
+        solver.SuggestValue(width_var, width)
+        solver.SuggestValue(height_var, height)
             
         solver.Resolve()
 
+        # Update the geometry of the children with their new
+        # solved values. We must do this *before* we call EndEdit
+        # or else the variable values will reset to the previous 
+        # unedited state.
         set_solved_geometry = self.set_solved_geometry
-        for child in component.children:
+        for child in self.traverse_descendants(component):
             set_solved_geometry(child)
-
+        
         solver.EndEdit()
 
+        self._recursion_guard = False
+
+    def calc_min_size(self):
+        """ Run an iteration of the solver with the suggested size of the
+        component set to (0, 0). This will cause the solver to effectively
+        compute the minimum size that the window can be to solve the
+        system. The return value is (min_width, min_height).
+
+        """
+        component = self.component()
+        if component is None:
+            msg = 'Component weakly referenced by %r disappeared' % self
+            raise RuntimeError(msg)
+        
+        solver = self.solver
+            
+        width_var = component.width.csw_var
+        height_var = component.height.csw_var
+
+        # Add the variables we're going to edit to the solver, we use
+        # the same strength that will be used during resize iterations.
+        solver.AddEditVar(width_var, MEDIUM)
+        solver.AddEditVar(height_var, MEDIUM)
+
+        solver.BeginEdit()
+
+        # Suggest the smallest possible component size to the solver
+        # so that the value it computes will be the proper minimum 
+        # size of the component
+        solver.SuggestValue(width_var, 0)
+        solver.SuggestValue(height_var, 0)
+            
+        solver.Resolve()
+
+        min_width = width_var.Value()
+        min_height = height_var.Value()
+
+        return (min_width, min_height)
+
     def set_solved_geometry(self, component):
-        """ Set the geometry of a Component to its solved geometry.
+        """ Set the geometry of a component to its solved geometry.
 
         """
         x = component.left.csw_var.Value()
         y = component.top.csw_var.Value()
         width = component.width.csw_var.Value()
         height = component.height.csw_var.Value()
-        args = (int(round(z)) for z in (x, y, width, height))
-        component.set_geometry(*args)
+        x, y, width, height = (int(round(z)) for z in (x, y, width, height))
+        # This is offset against the root Container. Each Component's geometry
+        # actually needs to be offset against its parent. Walk up the tree and
+        # subtract out the parent's offset.
+        for ancestor in self.walk_up_containers(component):
+            dx, dy = ancestor.pos()
+            x -= dx
+            y -= dy
+        component.set_geometry(x, y, width, height)
+
+    def traverse_descendants(self, component):
+        """ Do a preorder traversal of all descendants of the component that
+        participate in the Constraints-base layout.
+
+        """
+        for child in component.children:
+            yield child
+            child_layout = getattr(child, 'layout', None)
+            if child_layout is None or type(child_layout) is type(self):
+                for desc in self.traverse_descendants(child):
+                    yield desc
+
+    def walk_up_containers(self, component):
+        """ Walk up the component hierarchy from a given node and yield the
+        parent Containers, excepting the root Container.
+
+        """
+        root = self.component()
+        if root is None:
+            msg = 'Component weakly referenced by %r disappeared' % self
+            raise RuntimeError(msg)
+        parent = component.parent
+        while parent is not root and parent is not None:
+            yield parent
+            parent = parent.parent
+
+    #--------------------------------------------------------------------------
+    # Constraint computation
+    #--------------------------------------------------------------------------
+    def compute_component_cns(self, component):
+        """ Computes the required constraints of the component.
+
+        """
+        cns = []
+        for name in ('left', 'top', 'width', 'height'):
+            cn = (getattr(component, name) >= 0).convert_to_csw()
+            cns.append(cn)
+        return cns
+
+    def compute_user_cns(self, component):
+        """ Computes the user supplied constraints for the component.
+
+        """
+        cns = []
+        for constraint in component.constraints:
+            cns.append(constraint.convert_to_csw())
+        return cns
+    
+    def compute_child_cns(self, child):
+        """ Computes the hard default constraints for a child. These
+        should never change for a given child.
+
+        """
+        constraints = [val.convert_to_csw() for val in
+                (child.width >= 0, child.height >= 0)]
+        return constraints
+
+    def compute_child_size_cns(self, child):
+        """ Computes the constraints relating the size hint of a child.
+        These may change if the size hint of a child changes, or the
+        values for its 'hug' or 'compress' attribute changes.
+
+        """
+        constraints = []
+
+        width_hint, height_hint = child.size_hint()
+        width_hug, height_hug = child.hug
+        width_compress, height_compress = child.compress
+
+        if width_hint >= 0:
+            if width_hug != 'ignore':
+                cn = (child.width == width_hint) | width_hug
+                csw_cn = cn.convert_to_csw()
+                constraints.append(csw_cn)
+            if width_compress != 'ignore':
+                cn = (child.width >= width_hint) | width_compress
+                csw_cn = cn.convert_to_csw()
+                constraints.append(csw_cn)
+        
+        if height_hint >= 0:
+            if height_hug != 'ignore':
+                cn = (child.height == height_hint) | height_hug
+                csw_cn = cn.convert_to_csw()
+                constraints.append(csw_cn)
+            if height_compress != 'ignore':
+                cn = (child.height >= height_hint) | height_compress
+                csw_cn = cn.convert_to_csw()
+                constraints.append(csw_cn)
+
+        return constraints
+    
+    #--------------------------------------------------------------------------
+    # Constraint Update 
+    #--------------------------------------------------------------------------
+    def update_constraints(self):
+        """ Re-run the initialization routine to build a new solver with
+        updated constraints. This should typically only be called when 
+        the user constraints are updated.
+
+        """
+        self._initialized = False
+        self.initialize()
+
+    def update_size_cns(self, child):
+        """ Update the constraints for the size hint of the given child.
+        This will be more efficient that calling update_constraints
+        and should be used when size_hint of child changes, or the
+        it 'hug' or 'compress' attribute changes.
+
+        """
+        component = self.component()
+        if component is None:
+            msg = 'Component weakly referenced by %r disappeared' % self
+            raise RuntimeError(msg)
+
+        solver = self.solver
+        
+        # Remove the existing constraints for the child's size hint.
+        old_cns = self.child_size_cns[child]
+        for old_cn in old_cns:
+            solver.RemoveConstraint(old_cn)
+        del self.child_size_cns[child]
+
+        # Add the new constraints for the child's size hint
+        new_cns = self.compute_child_size_cns(child)
+        self.child_size_cns[child].extend(new_cns)
+        for new_cn in new_cns:
+            solver.AddConstraint(new_cn)
+        
+        # Recompute the minimum size since the constraint changes
+        # may have an effect on it.
+        min_size = self.calc_min_size()
+        component.set_min_size(*min_size)
 

@@ -83,6 +83,13 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         self.widget.resize(width, height)
+    
+    def set_min_size(self, min_width, min_height):
+        """ Set the hard minimum width and height of the widget. A widget
+        will not be able to be resized smaller than this value.
+
+        """
+        self.widget.setMinimumSize(min_width, min_height)
 
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
@@ -120,10 +127,20 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         self.widget.setGeometry(x, y, width, height)
 
     def on_resize(self):
-        # should handle the widget resizing by telling something
-        # that things need to be relayed out
-        if self.widget is not None:
-            self.shell_obj.set_needs_layout(True)
+        """ Triggers a relayout of the shell object since the component
+        has been resized.
+
+        """
+        # Notice that we are calling do_layout() here instead of 
+        # set_needs_layout() since we want the layout to happen
+        # immediately. Otherwise the resize layouts will appear 
+        # to lag in the ui. This is a safe operation since by the
+        # time we get this resize event, the widget has already 
+        # changed size. Further, the only geometry that gets set
+        # by the layout manager is that of our children. And should
+        # it be required to resize this widget from within the layout
+        # call, then the layout manager will do that via invoke_later.
+        self.shell_obj.do_layout()
 
     #--------------------------------------------------------------------------
     # Convienence methods

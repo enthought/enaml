@@ -41,6 +41,9 @@ class Spacer(object):
         rel.extent = self.extent
         return rel
 
+    def __call__(self, extent):
+        return Spacer(extent=extent, springy=self.springy)
+
 
 class Border(object):
     """ A border of the parent.
@@ -211,19 +214,14 @@ class LayoutNS(object):
 
         """
         mc = self.linear_layout('horizontal', *components, **kwds)
-        # Add baseline constraints.
-        # FIXME: we don't really have baselines, so we fake it with bottom.
-        real_components = self._extract_real_components(components)
-        first = real_components[0]
-        for comp in real_components[1:]:
-            mc.constraints.append(first.bottom == comp.bottom)
         return mc
 
     def V(self, *components, **kwds):
         """ Lay out components vertically.
 
         """
-        return self.linear_layout('vertical', *components, **kwds)
+        mc = self.linear_layout('vertical', *components, **kwds)
+        return mc
 
     def size_hint(self, component):
         """ Provide constraints for the size hints.
@@ -233,6 +231,16 @@ class LayoutNS(object):
         return MultiConstraint([
             (component.width == w),
             (component.height == h),
+        ])
+
+    def align(self, var, *components):
+        """ Align the specified variables for the given components.
+
+        """
+        c0 = components[0]
+        return MultiConstraint([
+            getattr(c0, var) == getattr(c, var)
+            for c in components[1:]
         ])
 
     def _extract_real_components(self, objects):
