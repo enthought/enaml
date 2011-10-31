@@ -23,6 +23,7 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
     enaml.widgets.component.Component
+    enaml.widgets.container.Container
     enaml.widgets.control.Control
     enaml.widgets.date_edit.DateEdit
     enaml.widgets.datetime_edit.DatetimeEdit
@@ -59,6 +60,7 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.check_box.AbstractTkCheckBox
     enaml.widgets.combo_box.AbstractTkComboBox
     enaml.widgets.component.AbstractTkComponent
+    enaml.widgets.container.AbstractTkContainer
     enaml.widgets.control.AbstractTkControl
     enaml.widgets.date_edit.AbstractTkDateEdit
     enaml.widgets.datetime_edit.AbstractTkDatetimeEdit
@@ -88,6 +90,7 @@ Abstract base widgets
     :template: widget.rst
 
     enaml.widgets.component.Component
+    enaml.widgets.container.Container
     enaml.widgets.control.Control
     enaml.widgets.window.Window
     enaml.widgets.toggle_control.ToggleControl
