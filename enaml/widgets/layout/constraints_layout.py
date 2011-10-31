@@ -109,7 +109,11 @@ class ConstraintsLayout(AbstractLayoutManager):
         """
         solver = self.solver
         for cn in constraints:
-            solver.AddConstraint(cn)
+            if isinstance(cn, list):
+                for c in cn:
+                    solver.AddConstraint(c)
+            else:
+                solver.AddConstraint(cn)
 
     #--------------------------------------------------------------------------
     # Solver Iteration
