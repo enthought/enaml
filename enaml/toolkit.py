@@ -287,7 +287,8 @@ def qt_toolkit():
     from .util.guisupport import get_app_qt4, start_event_loop_qt4
     from .widgets.qt.styling import QT_STYLE_SHEET
     from .widgets.qt.utils import invoke_later
-
+    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
+    
     utils = {}
 
     toolkit = Toolkit(QT_CONSTRUCTORS)
@@ -298,8 +299,10 @@ def qt_toolkit():
     toolkit.invoke_later = invoke_later
     toolkit.update(utils)
     toolkit.update(OPERATORS)
+    toolkit.update(LAYOUT_HELPERS)
 
     return toolkit
+
 
 def wx_toolkit():
     """ Creates and return a toolkit object for the Wx backend.
