@@ -613,8 +613,11 @@ class EnamlLexer(object):
         prev_was_ws = False
         prev_was_py_block = False
 
+        # In case the token stream is empty for a completely
+        # empty file.
+        token = None
+
         for token in token_stream:
-                    
             # WS only occurs at the start of the line
             # There may be WS followed by NEWLINE so
             # only track the depth here.  Don't indent/dedent
@@ -677,7 +680,7 @@ class EnamlLexer(object):
 
         # Sythesize a final newline token in case the user's
         # forgot to end with a newline.
-        if token.type != 'NEWLINE':
+        if token is None or token.type != 'NEWLINE':
             nl = lex.LexToken()
             nl.type = 'NEWLINE'
             nl.value = None

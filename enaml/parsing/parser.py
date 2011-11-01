@@ -83,9 +83,15 @@ def set_locations(node, lineno, col_offset):
 #------------------------------------------------------------------------------
 # Enaml Module
 #------------------------------------------------------------------------------
-def p_enaml(p):
-    ''' enaml : enaml_module ENDMARKER '''
+def p_enaml1(p):
+    ''' enaml : enaml_module ENDMARKER
+              | enaml_module NEWLINE ENDMARKER '''
     p[0] = p[1]
+
+
+def p_enaml2(p):
+    ''' enaml : NEWLINE ENDMARKER '''
+    p[0] = enaml_ast.EnamlModule([])
 
 
 def p_enaml_module(p):
