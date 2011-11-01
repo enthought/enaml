@@ -28,7 +28,9 @@ class QtComboBox(QtControl, AbstractTkComboBox):
 
         """
         super(QtComboBox, self).initialize()
-        self.update_items()
+        shell = self.shell_obj
+        self.set_items(shell._labels)
+        self.set_selection(shell._index)
 
     def bind(self):
         """ Connects the event handlers for the combo box.
