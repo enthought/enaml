@@ -15,23 +15,23 @@ like::
     import enaml
     
     with enaml.imports():
-        from my_view.enaml import MyView
+        from my_enaml_module import MyView
     
     view = MyView(model)
     view.show()
 
 The import step parses and compiles the Enaml file, creating a Python module
-containing view factories that can be used by importing code.  When called,
-these views factories expect model objects to be passed via arguments and then
-use the UI toolkit to construct the actual UI components that will be used in
-the view.  Finally the show() method starts the application mainloop if needed
-and makes the UI components visible.
+containing view factories which can be used by importing the appropriate 
+name.  When called, these views factories expect model objects to be passed 
+via arguments and then use the UI toolkit to construct the actual UI components 
+that will be used in the view.  Finally the show() method starts the application 
+mainloop if needed and makes the UI components visible.
 
 The enaml.imports() context manager provides an import hook that detects when an
-``.enaml`` file is being imported parses it into an Enaml AST and uses
-:py:class:`~enaml.enaml_compiler.EnamlCompiler` to compile it to Enaml bytecode.
-From the importer's point of view it creates a standard Python module which has
-one or more :py:class:`EnamlDefinition` objects which create
+``.enaml`` file is being imported, parses it into an Enaml AST and uses
+:py:class:`~enaml.parsing.enaml_compiler.EnamlCompiler` to compile it to Enaml 
+bytecode. From the importer's point of view it creates a standard Python module 
+which has one or more :py:class:`EnamlDefinition` objects which create
 re-usable UI templates.  The :py:class:`EnamlDefinition` objects can be used by
 other Enaml modules which import them, or directly by Python code.  Each
 :py:class:`EnamlDefinition` instance is a namespace which can have additional
@@ -39,10 +39,13 @@ variable values supplied as arguments when it is called.
 
 Calling an :py:class:`EnamlDefinition` object uses the supplied arguments to
 build its namespace and then executes the Enaml bytecode to construct the UI
-shell components.  The UI shell components are abstract objects which correspond
-to Enaml components and which can use the provided toolkit to build the Enaml
-toolkit widget tree.  Normally the toolkit to use is inferred from the environment
-variables, but a particular toolkit can be selected with a with statement::
+shell components.  The UI shell components are toolkit independent traited
+classes which expose the functionality of a toolkit widget in a uniform manner.
+The toolkit specific widget wrapper objects are managed internally by the 
+shell components. Both of these objects are created through the use of special
+Toolkit objects. Normally the Toolkit object to use is inferred from the user's
+environment variables, but a particular toolkit can be selected using a context
+manager::
 
     from enaml.toolkit import wx_toolkit
     
@@ -52,49 +55,54 @@ variables, but a particular toolkit can be selected with a with statement::
     view.show()
 
 Finally the show() call on the view object recursively creates the underlying
-toolkit objects and goes through construction and initialization, calling each
-Enaml Component's:
+gui toolkit widgets by following a formalized set process. This process calls
+the following methods on each component in the tree in a top-down fashion:
 
-* ``create()`` method to create the toolkit object
-* ``initialize()`` method to set the initial state of the toolkit object
+* ``create()`` method to create the gui toolkit widget
+* ``initialize()`` method to set the initial state of the gui toolkit widget
 * ``bind()`` method to bind event handlers (or the toolkit equivalents)
 
-In addition, widgets which participate in constraints-based layout will have methods
-called to register their constraints with the appropriate constraint solvers,
-and then solve the layout.
+In addition, widgets which participate in constraints-based layout will have 
+methods called to register their constraints with the appropriate constraint 
+solvers, and then solve the layout.
 
 Adding New Widgets
 ^^^^^^^^^^^^^^^^^^
 
 These layers of abstraction and delegation mean that it is fairly simple to add
-new widget types in custom applications.  To create a new widget, you need to:
+new widget types in custom applications.  To create a new widget, one needs to:
 
     1)  Optionally, but ideally, define the abstract interface for your
-        widget, which should be a subclass of the abstract base class
+        widget, which should be at least a subclass of the abstract base class
         :py:class:`~enaml.widgets.base_component.AbstractTkBaseComponent`
-        be a subclass of :py:class:`~enaml.widgets.control.AbstractTkControl`.
+        but will likely be a subclass of 
+        :py:class:`~enaml.widgets.control.AbstractTkControl` or
+        :py:class:`~enaml.widgets.container.AbstractTkContainer`.
         Since this is an abstract base class, you shouldn't implement any of the
         functionality in this class.
 
         This class provides the generic API the individual toolkit backends will
         need to implement, and will provide the methods that the Enaml widget
-        will call.  In particular, there needs to be a specially named
+        will call in order to communicate with the gui toolkit widget.  In 
+        particular, there needs to be a specially named
         :py:meth:`shell_*_changed(self, value)` change handler for every
-        dynamic Trait on the Enaml shell version of the Widget.
+        dynamic Trait on the Enaml shell version of the Widget. These methods 
+        will allow the toolkit widget to appropriately react to changes from 
+        the user's code.
 
-    2)  Create the Enaml shell version of the Widget.  This is a subclass of
-        :py:class:`~enaml.widgets.base_component.BaseComponent`, and most likely a
-        subclass of :py:class:`~enaml.widgets.control.Control`.  This class
+    2)  Create the Enaml shell version of the Widget.  This will at least be a 
+        subclass of :py:class:`~enaml.widgets.base_component.BaseComponent`, 
+        and most likely a subclass of :py:class:`~enaml.widgets.control.Control`
+        or :py:class:`~enaml.widgets.container.AbstractTkContainer`.  This class
         defines the interface that the Enaml markup language sees and can use.
         There should be, at a minimum, traits corresponding to values that can
         be read or changed on the widget, as well as methods for all standard
-        actions that you want to give access to.
+        actions for which access should be supplied.
 
         This class is not abstract, and should provide all the functionality
-        required in a toolkit-independent manner using the :py:attr:`toolkit_impl`
-        implementation interface.  This must define a trait called
-        :py:attr:`abstract_obj` which is an :py:class:`Instance()` of the
-        implementation interface defined in the previous step.
+        required in a toolkit-independent manner.  This must define a trait 
+        called :py:attr:`abstract_obj` which is an :py:class:`Instance()` of 
+        the implementation interface defined in the previous step.
 
     3)  Create a version of the Widget for each backend that you need to support.
         Each of these will be a subclass of the appropriate backend-specific
@@ -105,7 +113,8 @@ new widget types in custom applications.  To create a new widget, you need to:
 
         Instances of this class will have a :py:attr:`shell_obj` attribute
         which provides a reference to the Enaml shell widget instance for that
-        control so that values can be obtained and inspected.
+        control so that values can be obtained and inspected. This attribute
+        is provided by the base class and will normally not need to be overridden.
 
         This class must then, obviously, provide a concrete implemetation of the
         abstract interface.  In particular, it must provide the following methods
@@ -114,6 +123,7 @@ new widget types in custom applications.  To create a new widget, you need to:
             :py:meth:`create(self)`
                 This is responsible for creating the underlying toolkit objects
                 or widgets that the Enaml shell widget requires as part of its UI.
+                e.g. create the QPushButton or wx.Button widget.
 
                 You will almost always have to write this method.
 
@@ -144,7 +154,13 @@ new widget types in custom applications.  To create a new widget, you need to:
                 the underlying toolkit widget, but for an Enaml widget composed
                 of multiple toolkit widgets you will need to lay them out
                 relative to each other and the space that they have been provided.
-        
+            
+            :py:meth:`move(self, x, y)`
+                A position-only version of :py:meth:`set_geometry(...)`
+            
+            :py:meth:`resize(self, width, height)`
+                A size-only version of :py:meth:`set_geometry(...)`
+
         In addition to these standard methods, you will need to provide
         implementations for each of the methods you declared in the first step:
 
@@ -152,9 +168,9 @@ new widget types in custom applications.  To create a new widget, you need to:
                 This has to react to a change to the appropriate trait on the
                 Enaml widget and change the appropriate toolkit state.
 
-        as well as any other methods.
+        as well as any other methods that may be needed.
 
-        .. warning:: These methods are outdated
+        .. warning:: These methods are outdated and for the moment is only a placeholder
 
         To handle styling
 
@@ -213,11 +229,22 @@ new widget types in custom applications.  To create a new widget, you need to:
                 
                     from enaml.toolkit import Constructor
                     
-                    from my_widgets.my_new_widgets import MyNewWidget
-                    from my_widgets.qt.qt_my_new_widgets import QtMyNewWidget
-                
-                    ctor = Constructor(MyNewWidget, QtMyNewWidget)
+                    def my_new_widget():
+                        from my_widgets.my_new_widgets import MyNewWidget
+                        return MyNewWidget
                     
+                    def my_new_qt_widget():
+                        from my_widgets.qt.qt_my_new_widgets import QtMyNewWidget
+                
+                    ctor = Constructor(my_new_widget, my_new_qt_widget)
+                    
+                The items passed to the Constructor are callables which return
+                the appropriate classes, so that importing of the necessary
+                modules can be delayed until the objects actually need to be
+                used. This helps to drastically reduce runtime overhead for
+                simple applications which only use a small portion of a ui
+                toolkit.
+
                 Once you have the constructor you need to add it to a toolkit.
                 If you want this to be globally available in your process as part
                 of the appropriate toolkit then you need to add it to the toolkit's
@@ -242,13 +269,52 @@ new widget types in custom applications.  To create a new widget, you need to:
                 the standard Qt toolkit, but also includes yours.  Code can then
                 choose whether to use the standard Qt toolkit or your new toolkit
                 as appropriate.
+            
+            *   There is a convienence built into the constructors for the cases
+                where a custom widget is only a simple subclass of an existing
+                shell component. Suppose we wish to create a FloatField which
+                is a simple subclass of Field that hard-codes the converter
+                object to a float converter::
+                    
+                    from traits.api import Constant
+
+                    from enaml.converters import FloatConverter
+                    from enaml.widgets.field import Field
+
+                    class FloatField(Field):
+                        
+                        converter = Constant(FloatConverter())
+
+                It would be silly to require the definition of a new
+                toolkit implementation class for each backend, since the 
+                implementation class doesn't need to change. Instead, we
+                can make sure that our new subclass uses the appropriate
+                implementation but creating a clone of its constructor::
+                    
+                    from enaml.toolkits import qt_toolkit
+
+                    def my_float_field():
+                        return FloatField
+
+                    my_toolkit = qt_toolkit()
+
+                    field_constructor = my_toolkit['Field']
+
+                    my_constructor = field_constructor.clone(my_float_field)
+
+                    my_toolkit['FloatField'] = my_constructor
+
+                This toolkit will now always be sure to use the proper
+                toolkit widget for the FloatField.
+
 
 Implementing A New Toolkit
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Currently Enaml supports the Qt toolkit and the Wx toolkit (on Windows only).
-The architecture is designed to be as toolkit-independent as possible.  To
-implement a new toolkit, you will need to perform the following steps:
+Currently, Enaml supports the Qt toolkit and the Wx toolkit (Wx officially on 
+Windows only). The architecture is designed to be as toolkit-independent as 
+possible.  To implement a new toolkit, you will need to perform the following 
+steps:
 
     1)  Create a constructor dictionary for your toolkit.  You should be able
         to take the ``constructor.py`` module from either the Qt or Wx backends
@@ -350,10 +416,10 @@ widget traits will fail to work correctly.
         hook up the expression to its dependencies in your model's notification
         model.  This is likely to require walking the provided expression AST
         to determine dependencies (the AttributeVisitor class may be useful
-        for this) and register you may have to register callbacks
-        on an appropriate object.  This callback will probably look something
-        like the :py:meth:`update_object()` method, but may need to perform
-        additional steps depending on your model.
+        for this) and you may have to register callbacks on an appropriate 
+        object.  This callback will probably look something like the 
+        :py:meth:`update_object()` method, but may need to perform additional 
+        steps depending on your model.
 
     :py:class:`~enaml.expressions.NotifyingExpression`
         This class requires the ability to execute a code expression whenever
@@ -399,3 +465,19 @@ and override the operators in just that instance::
     
     my_toolkit = qt_toolkit()
     my_toolkit['__operator_LessLess__'] = operator_factory(MyUpdatingExpression)
+
+
+Or for even more fine grained control (and are accepting or horrible, horrible
+hacks) then you can pass in an operator as a local variable to an EnamlDefinition::
+
+    defn MainWindow(my_model, __operator_LessLessLess__):
+        Window:
+            PushButton:
+                # The <<< operator is resolved to the 2nd argument 
+                # to MainWindow
+                text <<< my_model.foo
+
+This could also be a keyword argument if desired, or even a module level 
+python function. That is, operators resolved using the same scope rules as 
+the rest of the Enaml file.
+
