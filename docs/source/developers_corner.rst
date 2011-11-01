@@ -18,9 +18,6 @@ Label              Description
 ================== ============================================
 ``master``         main stable branch
 ``develop``        developing branch (unstable)
-``wx``             wxWidgets backend development
-``qt``             Qt backend development
-``parsing``        Future work for replacing the ply parser
 ================== ============================================
 
 Sphinx Source
