@@ -9,23 +9,28 @@
 # a bunch of extra space, but the top row's buttons do expand equally to take up
 # the available space.
 
+
 defn MainWindow:
     Window:
         title = "Find & Replace"
         constraints = [
-            L.H(L.I, L._, find, find_next, L._(4), find_field, L._, L.I),
-            L.H(L.I, L._, replace, replace_and_find, L._(4), replace_field, L._, L.I),
-            L.V(L.I, L._, find_field, L._, replace_field, L.spring(20), L.I),
-            find_field.width >= 20,
-            replace_field.width >= 20,
+            # Setup the horizontal abutment of the two rows of controls
+            horizontal(left, find, find_next, find_field, right),
+            horizontal(left, replace, replace_and_find, replace_field, right),
+
+            # Setup the vertical abutment of the two rows
+            vertical(top, find_field, replace_field, bottom),
+
+            # Setup the alignment of the left of the two fields
+            align_left(find_field, replace_field),
+
+            # Setup the vertical aligment of each row of controls
+            align_v_center(find, find_next, find_field),
+            align_v_center(replace, replace_and_find, replace_field),
+
+            # Setup the weak width constraints of each control
             (find.width == find_next.width) | 'weak',
             (replace.width == replace_and_find.width) | 'weak',
-            # FIXME: We really should be able to pass align='left', etc. to H()
-            # and V(), but the parser is currently buggy and does not support
-            # this.
-            L.align('left', find_field, replace_field),
-            L.align('v_center', find, find_next, find_field),
-            L.align('v_center', replace, replace_and_find, replace_field),
         ]
         PushButton -> find:
             text = "Find"
@@ -41,3 +46,4 @@ defn MainWindow:
             hug = ('ignore', 'strong')
         Field -> replace_field:
             hug = ('ignore', 'strong')
+

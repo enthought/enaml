@@ -9,44 +9,44 @@
 # constrained.enaml to demonstrate that a complicated layout works inside
 # a nested Container, too.
 #
-# FIXME: Occasionally, this example fails with an solver error stating that the
+# FIXME: Occasionally, this example fails with a solver error stating that the
 # objective function is unbounded.
 
 
 defn LabeledField(label_text):
     Container -> container:
         constraints = [
-            L.H(L.I, L._, label, L._, field, L._, L.I),
-            L.V(L.I, label, L.I),
-            L.align('v_center', label, field),
+            horizontal(left, label, field, right),
+            vertical(top, label, bottom),
+            align_v_center(label, field)
         ]
         Label -> label:
             text = label_text
         Field -> field:
             hug = ('ignore', 'strong')
 
+
 defn MainWindow:
     Window:
         title = "Nested Containers"
         constraints = [
-            L.H(L.I, top_left, top_right, L.I),
-            L.V(L.I, L._, top_left, bottom, L._, L.I),
-            L.H(L.I, bottom, L.I),
-            L.align('v_center', top_left, top_right),
-            top_left.width == 1.1*top_right.width,
+            horizontal(left, top_left_cntr, top_right_cntr, right),
+            vertical(top, top_left_cntr, bottom_cntr, bottom),
+            horizontal(left, bottom_cntr, right),
+            align_v_center(top_left_cntr, top_right_cntr),
+            top_left_cntr.width == 1.1 * top_right_cntr.width,
         ]
-        LabeledField("Left:") -> container as top_left:
+        LabeledField("Left:") -> container as top_left_cntr:
             pass
-        LabeledField("Right:") -> container as top_right:
+        LabeledField("Right:") -> container as top_right_cntr:
             pass
-
-        Container -> bottom:
+        Container -> bottom_cntr:
             constraints = [
-                L.V(L.I, L._, frame, L._, add_button, L._, L.I),
-                L.H(L.I, L._, frame, L._, L.I),
-                L.H(L.I, L._, add_button, L._, remove_button, L.spring(), change_mode_button, L.spring(), share_button, L._, L.I),
-                L.align('v_center', add_button, remove_button, change_mode_button, share_button),
-                L.align('h_center', self, change_mode_button) | 'weak',
+                vertical(top, frame, add_button, bottom),
+                horizontal(left, frame, right),
+                horizontal(left, add_button, remove_button, _space_, change_mode_button, _space_, share_button, right),
+                align_v_center(add_button, remove_button, change_mode_button, share_button),
+                align_h_center(self, change_mode_button) | 'weak',
                 frame.height >= 100,
                 frame.width >= 200,
             ]
@@ -61,3 +61,4 @@ defn MainWindow:
                 text = 'Change Mode'
             PushButton -> share_button:
                 text = 'Share...'
+
