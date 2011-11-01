@@ -264,6 +264,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         """ Computes the user supplied constraints for the component.
 
         """
+        # XXX this is a bit of hack at the moment, since only 
+        # Containers have constraints.
+        if not hasattr(component, 'constraints'):
+            return []
         cns = []
         for constraint in component.constraints:
             cns.append(constraint.convert_to_csw())
