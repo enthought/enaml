@@ -46,7 +46,9 @@ class WXComboBox(WXControl, AbstractTkComboBox):
         shell.
 
         """
+        shell = self.shell_obj
         self.set_selection()
+        shell.selected = shell.value
 
     def shell_items_changed(self, items):
         """ The change handler for the 'items' attribute on the enaml
@@ -86,9 +88,7 @@ class WXComboBox(WXControl, AbstractTkComboBox):
         shell = self.shell_obj
         widget = self.widget
         index = widget.GetCurrentSelection()
-        value = shell.items[index]
-        shell.value = value
-        shell.selected = shell.value
+        shell._index = index
         event.Skip()
 
     def set_items(self):
@@ -109,7 +109,7 @@ class WXComboBox(WXControl, AbstractTkComboBox):
 
     # FIXME: I found it easier to setup the selection move when the items
     # change in the widget side. The alternative will require that the
-    # items attribute in the abstract class is a Property of List(Any)
+    # items attreibute in the abstract class is a Property of List(Any)
     # And I was a little worried to try it.
     def move_selection(self, value):
         """ Move the selection to the index where the value exists.
