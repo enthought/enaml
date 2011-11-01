@@ -74,7 +74,7 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """
         shell = self.shell_obj
         self.set_items(shell._labels)
-        self.set_selection(shell._index)
+        self.move_selection(shell._selection)
 
     def on_selected(self, index):
         """ The event handler for a combo box selection event.
@@ -101,3 +101,25 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         widget = self.widget
         widget.setCurrentIndex(index)
 
+    # FIXME: I found it easier to setup the selection move when the items
+    # change in the widget side. The alternative will require that the
+    # items attribute in the abstract class is a Property of List(Any)
+    # And I was a little worried to try it.
+    def move_selection(self, value):
+        """ Move the selection to the index where the value exists.
+
+        The method attempts to find the index of the value. Moving
+        the index does not cause a selected event to be fired. If the
+        value is not found then the selection is undefined.
+
+        """
+        shell = self.shell_obj
+        widget = self.widget
+        index = widget.findText(value)
+        if index:
+            shell._index = -1
+        else:
+            # we silently set the `_index` attribute since the selection
+            # value has not changed
+            shell.trait_setq(_index=index)
+            self.set_selection(index)
