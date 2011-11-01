@@ -48,7 +48,6 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """
         shell = self.shell_obj
         self.set_selection(index)
-        shell.selected = shell.value
 
     def shell_to_string_changed(self, value):
         """ The change handler for the 'string' attribute on the enaml
@@ -75,17 +74,19 @@ class QtComboBox(QtControl, AbstractTkComboBox):
 
         """
         shell = self.shell_obj
+        old_selection = self.get_selection()
+        self.selection_event(enable=False)
         self.set_items(shell._labels)
-        self.move_selection(shell._selection)
+        self.selection_event()
+        self.move_selection(old_selection)
 
     def on_selected(self, index):
         """ The event handler for a combo box selection event.
 
         """
         shell = self.shell_obj
-        value = shell.items[index]
-        if value != shell.value:
-            shell._index = index
+        shell._index = index
+        shell.selected = shell.value
 
     def set_items(self, str_items):
         """ Sets the items in the combo box.
@@ -118,10 +119,33 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         shell = self.shell_obj
         widget = self.widget
         index = widget.findText(value)
-        if index:
-            shell._index = -1
+        if index == -1:
+            shell._index = index
         else:
             # we silently set the `_index` attribute since the selection
             # value has not changed
             shell.trait_setq(_index=index)
+            self.selection_event(enable=False)
             self.set_selection(index)
+            self.selection_event()
+
+    def get_selection(self):
+        """ Retrieve the current selected option from the widget.
+
+        """
+        widget = self.widget
+        return widget.currentText()
+
+    def selection_event(self, enable=True):
+        """ Enable/Disable the on selected event firing at the combo box.
+
+        Since any change in the widget variables will cause a event it is
+        necessary to temporarly disable the on_selected notifier method
+        while the internal data are sycnronized between the component and
+        the Qt widget.
+
+        """
+        if enable:
+            self.widget.currentIndexChanged.connect(self.on_selected)
+        else:
+            self.widget.currentIndexChanged.disconnect(self.on_selected)
