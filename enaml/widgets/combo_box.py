@@ -45,7 +45,7 @@ class ComboBox(Control):
         - If list of items is changed then component should try to find
           the current value in the list and select it. If the value is
           not found the value will change to Undefined. This behaviour
-          needs to be implemented from the toolkit's size.
+          needs to be implemented in the toolkit side.
 
 
     """
