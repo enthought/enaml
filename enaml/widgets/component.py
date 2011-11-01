@@ -4,12 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod, abstractproperty
 
-from traits.api import Instance, List, Property, Tuple, Event
+from traits.api import Instance, Property, Tuple, Event
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
-from .layout.symbolics import BaseConstraint
-from .layout.layout_ns import LayoutNS
 
 
 class AbstractTkComponent(AbstractTkBaseComponent):
@@ -109,21 +107,23 @@ class Component(BaseComponent):
     #: for this component. 
     _box_model = Instance(BoxModel, ())
 
-    # XXX the following two traits will probably need to be 
-    # overridden on a per-control basis to do the natural thing.
-
-    #: How strong a component hugs it's content
+    #: How strongly a component hugs it's content. Valid strengths
+    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
+    #: The default is 'strong' for both width and height. This
+    #: trait should be overridden on a per-control basis to specify
+    #: a logical default for the given control.
     hug = Tuple('strong', 'strong')
 
-    #: How strong a component resists compression
+    #: How strongly a component resists clipping its contents. 
+    #: Valid strengths are 'weak', 'medium', 'strong', 'required'
+    #: and 'ignore'. The default is 'strong' for both width and 
+    #: height. This trait should be overridden on a per-control basis 
+    #: to specify a logical default for the given control.
     compress = Tuple('strong', 'strong')
 
     #: An event that should be emitted by the abstract obj when
-    #: its size hint has updated.
+    #: its size hint has updated do to some change.
     size_hint_updated = Event
-
-    #: A list of linear constraints defined for this object.
-    constraints = List(Instance(BaseConstraint))
 
     #: A read-only symbolic object that represents the left 
     #: boundary of the component
@@ -156,12 +156,6 @@ class Component(BaseComponent):
     #: A read-only symbolic object that represents the horizontal 
     #: center of the component
     h_center = Property
-
-    #: A read-only object providing a convenient entry point for
-    #: constraint-related layout functions.
-    # FIXME: This is a dumb hack to be removed when there is better support in
-    # the Enaml syntax.
-    L = Property
 
     #: A read-only property that returns the toolkit specific widget
     #: being managed by the abstract widget.
@@ -217,12 +211,6 @@ class Component(BaseComponent):
 
         """
         return self._box_model.h_center
-    
-    def _get_L(self):
-        """ Property getter for the 'L' property.
-
-        """
-        return LayoutNS()
 
     def size(self):
         """ Returns the size tuple as given by the abstract widget.
