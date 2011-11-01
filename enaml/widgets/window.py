@@ -70,10 +70,14 @@ class Window(Container):
         displaying itself to the screen.
 
         """
-        # XXX we shouldn't need to .setup() every time. And get rid 
-        # of this qt testing hack
+        # XXX we shouldn't need to .setup() every time.
         self.setup()
-        self.abstract_obj.widget.resize(640, 480)
+
+        # For now, compute the initial size based using the minimum
+        # size routine from the layout. We'll probably want to have
+        # an initial_size optional attribute or something at some point.
+        size = self.layout.calc_min_size()
+        self.resize(*size)
         self.abstract_obj.show()
 
     def hide(self):
