@@ -239,9 +239,14 @@ def p_enaml_keyword_parameter(p):
 #------------------------------------------------------------------------------
 # Enaml Define Body
 #------------------------------------------------------------------------------
-def p_enaml_define_body(p):
+def p_enaml_define_body1(p):
     ''' enaml_define_body : NEWLINE INDENT enaml_calls DEDENT '''
     p[0] = p[3]
+
+
+def p_enaml_define_body2(p):
+    ''' enaml_define_body : NEWLINE INDENT PASS NEWLINE DEDENT '''
+    p[0] = []
 
 
 #------------------------------------------------------------------------------
