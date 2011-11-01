@@ -21,13 +21,13 @@ Binding Operators
 `=`
   *Assignment*. RHS can be any expression. The assignment will be the
   default value, but the value can be changed later through Python code or
-  TML expression execution.
+  expression execution.
 
 `:=`
-  *Delegation*. RHS must be a simple attribute expression, like a.b or
-  a.b.c and so on. Non-attribute expressions here are a syntax error. The
-  value of the view property and value of the attribute are synced, but
-  the type checking of the view property is enforced.
+  *Delegation*. RHS must be a simple attribute expression, like foo.bar .
+  Non-attribute expressions here are a runtime error. The value of the 
+  view property and value of the attribute are synced, but the type 
+  checking of the view property is enforced.
 
 `<<`
   *Binding*. RHS can be any expression. The expression will be parsed for
@@ -45,10 +45,12 @@ Scoping Rules
 -------------
 
 - Imports are global and accessible to everything in the file.
-- Each top-level item defines its own global namespace, which is unioned
-  with the imports. This namespace includes all elements that have a
-  declared identifier.
-- Each item has a local namespace that includes `self` and `parent`. The
-  `self` is a reference to the element itself, whether anonymous or not.
-  The `parent` is a reference to this item's parent element, whether
-  anonymous or not. The `parent` of top-level elements is None.
+- Each top-level item defines its own local namespace. This namespace 
+  includes all elements that have a declared identifier.
+- Each expression has its local namespace that is the union of the block
+  locals and the attribute namespace of the object to which the expression
+  is bound. In otherwords `self` is implicit. However, a `self` exists in 
+  this local namespace in order to break naming conflicts between block 
+  locals and attribute names. To any C++ or Java developers, this will seem
+  natural.
+

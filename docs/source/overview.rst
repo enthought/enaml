@@ -42,8 +42,8 @@ recent versions of the following libraries:
     library
 - `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
   for parsing *.enaml* files
-- `cassowarypy <http://pypi.python.org/pypi/cassowarypy>`_ Cassowary constraint
-  layout system.
+- `cassowarypy <http://pypi.python.org/pypi/cassowarypy>`_ Cassowary 
+  linear constraint solver.
 - `distribute <http://pypi.python.org/pypi/distribute>`_ (package
   installation)
 
