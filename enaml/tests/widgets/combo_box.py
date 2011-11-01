@@ -35,7 +35,7 @@ defn MainWindow(events):
     Window:
         ComboBox -> cmb:
             items = [int, float, oct]
-            value = self.items[1]
+            value = float
             to_string = lambda x: str(x) + '!' if x is not None else ''
             selected >> events.append(('selected', args.new))
 """
@@ -121,11 +121,13 @@ defn MainWindow(events):
         """
         component = self.component
         component.value = int
-        component.items.insert(0, hex)
         self.assertEqual(component.value, int)
+        self.assertEqual(component._index, 0)
+        component.items.insert(0, hex)
         selection = self.get_selected_text(self.widget)
+        self.assertEqual(component._index, 1)
         self.assertEqual(component._selection, selection)
-        self.assertEqual(self.events, [])
+        self.assertEqual(self.events, [('selected', int)])
 
     def test_undefined_when_items_change(self):
         """ Assert that the selection is undefined when the value is
@@ -138,7 +140,8 @@ defn MainWindow(events):
         self.assertTrue(component.value is Undefined)
         selection = self.get_selected_text(self.widget)
         self.assertEqual(component._selection, selection)
-        self.assertEqual(self.events, [('selected', Undefined)])
+        self.assertEqual(self.events, [('selected', int),
+                                        ('selected', Undefined)])
 
     #--------------------------------------------------------------------------
     # absrtact methods
