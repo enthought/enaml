@@ -3,11 +3,13 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from traits.api import Instance, Bool, on_trait_change
+from traits.api import List, Instance, Either, Bool, on_trait_change
 
 from .component import Component, AbstractTkComponent
-from .layout.layout_manager import AbstractLayoutManager
+from .control import Control
 from .layout.constraints_layout import ConstraintsLayout
+from .layout.layout_manager import AbstractLayoutManager
+from .layout.symbolics import BaseConstraint
 
 
 class AbstractTkContainer(AbstractTkComponent):
@@ -24,7 +26,6 @@ class Container(Component):
     """ A Component subclass that provides for laying out child Components.
 
     """
-
     #: A private boolean indicating if the contraints have changed
     #: and need to be updated on the next pass.
     _needs_update_constraints = Bool(True)
@@ -37,9 +38,14 @@ class Container(Component):
     #: direct children. The default is simple constraints based
     layout = Instance(AbstractLayoutManager)
 
+    #: A list of linear constraints defined for this container.
+    constraints = List(Instance(BaseConstraint))
+
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkContainer)
 
+    #: Overridden parent class trait
+    children = List(Either(Instance(Control), Instance('Container')))
 
     def _layout_default(self):
         """ Default value for the layout manager.
@@ -53,6 +59,8 @@ class Container(Component):
         This is overridden to add the layout set up.
 
         """
+        # XXX make layout setup a completely separate pass
+        # probably handled by the view object.
         super(Container, self).setup()
 
         self.initialize_layout()
@@ -125,3 +133,4 @@ class Container(Component):
         if self.layout._initialized:
             self.set_needs_update_constraints()
             self.set_needs_layout()
+
