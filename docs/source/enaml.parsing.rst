@@ -17,7 +17,14 @@ parsing Package
 :mod:`lexer` Module
 -------------------
 
-.. automodule:: enaml.parsing.lexer
+.. currentmodule:: enaml.parsing.lexer
+
+.. autoclass:: EnamlLexer
+    :no-members:
+    :members: __init__,  input, token, __iter__, dedent, indent,
+        make_token_stream, create_py_blocks, create_strings,
+        annotate_indentation_state, synthesize_indentation_tokens,
+        add_endmarker
 
 :mod:`parser` Module
 --------------------
