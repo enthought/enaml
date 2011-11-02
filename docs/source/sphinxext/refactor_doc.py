@@ -12,7 +12,6 @@
         documentation so that is shpinx friendly.
 """
 import re
-import abc
 
 #------------------------------------------------------------------------------
 #  Precompiled regexes
@@ -72,7 +71,7 @@ def get_indent(line):
 #------------------------------------------------------------------------------
 
 def is_variable_field(line, indent=''):
-    regex = indent + r'\w+\s:\s*'
+    regex = indent + r'\*?\*?\w+\s:\s*'
     match = re.match(regex, line)
     return match
 
@@ -83,6 +82,13 @@ def is_method_field(line, indent=''):
 
 def is_empty(line):
     return not line.strip()
+
+#------------------------------------------------------------------------------
+#  Functions to adjust strings
+#------------------------------------------------------------------------------
+
+def fix_name(name):
+    return name.replace('*','\*')
 
 #------------------------------------------------------------------------------
 #  Classes
@@ -146,12 +152,10 @@ class BaseDocstring(object):
 
     seek_to_next_non_empty_line()
         Goto the next non_empty line
+
     """
 
-    __metaclass__ = abc.ABCMeta
-
-    @abc.abstractmethod
-    def __init__(self, lines, headers, verbose=False):
+    def __init__(self, lines, headers = None, verbose=False):
         """ Initialize the class
 
         The method setups the class attributes and starts parsing the
@@ -163,11 +167,12 @@ class BaseDocstring(object):
             The docstring to refactor
 
         headers : dict
-            The sections that the class refactors. Each entry in the
-            dictionary should have as key the name of the section in the
-            form that it appears in the docstrings. The value should be
-            the postfix of the method, in the subclasses, that is
-            responsible for refactoring (e.g. {'Methods': 'method'}).
+            The sections for which the class has custom refactor methods.
+            Each entry in the dictionary should have as key the name of
+            the section in the form that it appears in the docstrings.
+            The value should be the postfix of the method, in the
+            subclasses, that is responsible for refactoring (e.g.
+            {'Methods': 'method'}).
 
         verbose : bool
             When set the class prints a lot of info about the proccess
@@ -179,7 +184,10 @@ class BaseDocstring(object):
         except AttributeError:
             self._docstring = lines
         self.verbose = verbose
-        self.headers = headers
+        if headers is None:
+            self.headers = {}
+        else:
+            self.headers = headers
         self.index = 0
 
         if self.verbose:
@@ -199,7 +207,7 @@ class BaseDocstring(object):
         """
         self.index = 0
         self.seek_to_next_non_empty_line()
-        while not self.eof:
+        while not self.eol:
             if self.verbose:
                 print 'current index is', self.index
             header = self.is_section()
@@ -214,23 +222,35 @@ class BaseDocstring(object):
 
         The name of the refctoring method is constructed using the form
         _refactor_<header>. Where <header> is the value corresponding to
-        ``self.headers[header]``.
+        ``self.headers[header]``. If there is no custom method for the
+        section then the self._refactor_header() is called with the
+        found header name as input.
 
         """
         if self.verbose:
             print 'Header is', header
             print 'Line is', self.index
 
-        try:
-            refactor_postfix = self.headers[header]
-        except KeyError:
-            # No need to do anything since shpinx will flag the heading as
-            # an error.
-            pass
-        else:
-            method_name = ''.join(('_refactor_', refactor_postfix))
-            method = getattr(self, method_name)
-            method(header)
+        refactor_postfix = self.headers.get(header, 'header')
+        method_name = ''.join(('_refactor_', refactor_postfix))
+        method = getattr(self, method_name)
+        method(header)
+
+    def _refactor_header(self, header):
+        """ Refactor the header section using the rubric directive.
+
+        """
+        if self.verbose:
+            print 'Refactoring {0}'.format(header)
+        index = self.index
+        indent = get_indent(self.peek())
+        self.remove_lines(index, 2)
+        descriptions = []
+        descriptions.append(indent + '.. rubric:: {0}'.format(header))
+        descriptions.append('')
+        self.insert_lines(descriptions, index)
+        self.index += len(descriptions)
+        return descriptions
 
 
     def extract_fields(self, indent='', field_check=None):
@@ -282,7 +302,7 @@ class BaseDocstring(object):
 
         parameters = []
 
-        while (not self.eof) and is_field(self.peek(), indent):
+        while (not self.eol) and is_field(self.peek(), indent):
             field = self.get_field()
             if self.verbose:
                 print "next field is: ", field
@@ -371,23 +391,13 @@ class BaseDocstring(object):
         """Check if the line defines a section.
 
         """
-        if self.eof:
+        if self.eol:
             return False
 
-        # peek at line
         header = self.peek()
-
+        line2 = self.peek(1)
         if self.verbose:
             print 'current line is: {0} at index {1}'.format(header, self.index)
-
-        # is it a known header?
-        if header.strip() not in self.headers:
-            return False
-        # peek at second line
-        line2 = self.peek(1)
-
-        if self.verbose:
-            print 'second line is:', header
 
         # check for underline type format
         underline = re.match(r'\s*\S+\s*\Z', line2)
@@ -461,15 +471,29 @@ class BaseDocstring(object):
         docstring = self.docstring
         del docstring[index:(index + count)]
 
-    def peek(self, count=0):
-        """ Peek ahead
+    def peek(self, ahead=0):
+        """ Peek ahead a number of lines
+
+        The function retrieves the line that is ahead of the current
+        index. If the index is at the end of the list then it returns an
+        empty string.
+
+        Arguments
+        ---------
+        ahead : int
+            The number of lines to look ahead.
+
 
         """
-        position = self.index + count
-        return self.docstring[position]
+        position = self.index + ahead
+        try:
+            line = self.docstring[position]
+        except IndexError:
+            line = ''
+        return line
 
     @property
-    def eof(self):
+    def eol(self):
         return self.index >= len(self.docstring)
 
     @property
@@ -478,22 +502,6 @@ class BaseDocstring(object):
 
         """
         return self._docstring
-
-    def _refactor_header(self, header):
-        """ Refactor the header section to strong.
-
-        """
-        if self.verbose:
-            print 'Refactoring {0}'.foramt(header)
-
-        descriptions = []
-        index = self.index
-        self.remove_lines(index, 2)
-        indent = get_indent(self.peek())
-        descriptions.append(indent + '**{0}**'.format(header))
-        self.insert_lines(descriptions, index)
-        self.index += len(descriptions)
-        return descriptions
 
 
 class FunctionDocstring(BaseDocstring):
@@ -599,13 +607,14 @@ class FunctionDocstring(BaseDocstring):
 
         descriptions = []
         for arg_name, arg_type, desc in parameters:
+            arg_name = fix_name(arg_name)
             descriptions.append(indent + ':param {0}: {1}'.\
                                 format(arg_name, desc[0].strip()))
-            desc = add_indent(desc)
             for line in desc[1:]:
                 descriptions.append('{0}'.format(line))
-            descriptions.append(indent + ':type {0}: {1}'.\
-                                format(arg_name, arg_type))
+            if len(arg_type) > 0:
+                descriptions.append(indent + ':type {0}: {1}'.\
+                                    format(arg_name, arg_type))
         descriptions.append('')
         self.insert_lines(descriptions, index)
         self.index += len(descriptions)

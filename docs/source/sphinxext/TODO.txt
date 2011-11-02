@@ -1,6 +1,0 @@
-Enhancements:
-    * Improve documentation
-    * Allow directives to exist inside sections (done for arguments).
-    * Add error messages when formating is wrong.
-    * Better support of field parsing
-    * Clean up code.
