@@ -2,23 +2,36 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Event, Enum, Bool, Instance, Property
+from abc import abstractmethod
 
-from .window import IWindowImpl, Window
+from traits.api import Event, Bool, Instance, Property
+
+from .window import Window, AbstractTkWindow
 
 from ..enums import DialogResult
 
-# XXX punting for now, but this needs to be brought up-to-date
 
-class IDialogImpl(IWindowImpl):
+class AbstractTkDialog(AbstractTkWindow):
 
+    @abstractmethod
     def open(self):
+        """ Open and display the dialog.
+
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def accept(self):
+        """ Close the dialog and set the result to `accepted`.
+
+        """
         raise NotImplementedError
 
+    @abstractmethod
     def reject(self):
+        """ Close the dialog and set the result to `rejected`.
+
+        """
         raise NotImplementedError
 
 
@@ -28,75 +41,39 @@ class Dialog(Window):
     The basic dialog has no buttons, but provides methods for the
     accept and reject behavior for the dialog.
 
-    Attributes
-    ----------
-    active : Property(Bool)
-        A read only property which will be True when the dialog is open,
-        False otherwise.
-
-    opened : Event
-        Fired when the dialog is opened.
-
-    closed : Event
-        Fired when the dialog is closed. The event payload will be the
-        dialog result.
-
-    result : Property(DialogResult).
-        A read only property which is set to the result of the dialog;
-        'rejected' if rejected() was called or the window was closed via
-        the 'x' window button, 'accepted' if accept() was called. The
-        result is set before the 'closed' event is fired.
-
-    _shadow : Bool
-        A protected attribute used by the implementation object to
-        set the value of the active attribute.
-
-    _shadow : Enum(*Dialog.values())
-        A protected attribute used by the implementation object to
-        set the value of the result attribute.
-
-    Methods
-    -------
-    open()
-        Open and display the dialog.
-
-    accept()
-        Close the dialog and set the result to `accepted`.
-
-    reject()
-        Close the dialog and set the result to `rejected`.
-
     """
+
+    #: A read only property which will be True when the dialog is open, False
+    #: otherwise.
     active = Property(Bool, depends_on='_active')
 
+    #: Fired when the dialog is opened.
     opened = Event
 
+    #: Fired when the dialog is closed. The event payload will be the dialog
+    #: result.
     closed = Event
 
+    #: A read only property which is set to the result of the dialog; 'rejected'
+    #: if rejected() was called or the window was closed via the 'x' window
+    #: button, 'accepted' if accept() was called. The result is set before the
+    #: 'closed' event is fired.
     result = Property(DialogResult, depends_on='_result')
 
     _active = Bool
 
-    _result = DialogResult
+    _result = DialogResult('rejected')
 
     #: Overridden parent class trait
-    toolkit_impl = Instance(IDialogImpl)
+    abstract_obj = Instance(AbstractTkDialog)
 
     def open(self):
         """ Open and display the dialog.
 
         Call this method to launch the dialog.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.open()
+        self.abstract_obj.open()
 
     def accept(self):
         """ Close the dialog and set the result to `accepted`.
@@ -104,16 +81,8 @@ class Dialog(Window):
         Call this method to trigger the same behavior as clicking
         on the Ok button.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.accept()
+        self.abstract_obj.accept()
 
     def reject(self):
         """ Close the dialog and set the result to `rejected`.
@@ -121,23 +90,12 @@ class Dialog(Window):
         Call this method to trigger the same behavior as clicking
         on the Cancel button.
 
-        Arguments
-        ---------
-        None
-
-        Returns
-        -------
-        result : None
-
         """
-        self.toolkit_impl.reject()
+        self.abstract_obj.reject()
 
     def _get_active(self):
         return self._active
 
     def _get_result(self):
         return self._result
-
-
-Dialog.protect('_active', '_result', 'opened', 'closed', 'result', 'active')
 

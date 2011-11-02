@@ -85,10 +85,14 @@ class QtWindow(QtContainer, AbstractTkWindow):
 
         """
         if self.widget:
-            if modality == 'application_modal':
+            if modality == 'app_modal':
                 self.widget.setWindowModality(QtCore.Qt.ApplicationModal)
-            elif modality == 'window_modal':
+            elif modality == 'modal':
                 self.widget.setWindowModality(QtCore.Qt.WindowModal)
-            else:
+            elif modality == 'non_modal':
                 self.widget.setWindowModality(QtCore.Qt.NonModal)
+            else:
+                msg = "Expected one of 'app_modal', 'modal', or 'non_modal'. Got %r." % (modality,)
+                raise ValueError(msg)
+
 

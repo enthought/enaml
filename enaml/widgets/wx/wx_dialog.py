@@ -4,40 +4,38 @@
 #------------------------------------------------------------------------------
 import wx
 
-from traits.api import implements
 
 from .wx_window import WXWindow
 
-from ..dialog import IDialogImpl
+from ..dialog import AbstractTkDialog
 
 
-class WXDialog(WXWindow):
+class WXDialog(WXWindow, AbstractTkDialog):
     """ A wxPython implementation of a Dialog.
 
     WXDialog uses a wx.Dialog to create a simple top-level dialog.
 
-    See Also
-    --------
-    Dialog
-
     """
-    implements(IDialogImpl)
 
     #---------------------------------------------------------------------------
-    # IDialogImpl interface
+    # Setup methods
     #---------------------------------------------------------------------------
-    def create_widget(self):
+    def create(self):
         """ Creates the underlying wx.Dialog control.
 
         """
         self.widget = wx.Dialog(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Intializes the attributes on the wx.Dialog.
 
         """
         super(WXDialog, self).initialize_widget()
         self.widget.Bind(wx.EVT_CLOSE, self._on_close)
+
+    #---------------------------------------------------------------------------
+    # Implementation
+    #---------------------------------------------------------------------------
 
     def show(self):
         """ Displays this dialog to the screen.
@@ -51,7 +49,7 @@ class WXDialog(WXWindow):
                 widget.ShowModal()
             else:
                 widget.Show()
-            self.parent._active = True
+            self.shell_obj._active = True
 
     def open(self):
         """ Display the dialog.
@@ -63,15 +61,26 @@ class WXDialog(WXWindow):
         """ Close the dialog and set the result to 'accepted'.
 
         """
-        self.parent._result = 'accepted'
+        self.shell_obj._result = 'accepted'
         self.close_dialog()
 
     def reject(self):
         """ Close the dialog and set the result to 'rejected'.
 
         """
-        self.parent._result = 'rejected'
+        self.shell_obj._result = 'rejected'
         self.close_dialog()
+
+    def close_dialog(self):
+        """ Destroy the dialog, fire events, and set status attributes.
+
+        """
+        self.widget.Destroy()
+        shell = self.shell_obj
+        shell.trait_set(
+            closed = shell.result,
+            _active = False,
+        )
 
     #---------------------------------------------------------------------------
     # Event handling
@@ -82,16 +91,4 @@ class WXDialog(WXWindow):
         """
         self.close_dialog()
         event.Skip()
-
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    def close_dialog(self):
-        """ Destroy the dialog, fire events, and set status attributes.
-
-        """
-        self.widget.Destroy()
-        parent = self.parent
-        parent.closed = parent.result
-        parent._active = False
 
