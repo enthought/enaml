@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_test_assistant import WXTestAssistant
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import field
 
 
+@skip_nonwindows
 class TestWxField(WXTestAssistant, field.TestField):
     """ WXField tests. """
 

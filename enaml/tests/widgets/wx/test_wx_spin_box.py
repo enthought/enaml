@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_test_assistant import WXTestAssistant
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import spin_box
 
 
+@skip_nonwindows
 class TestWxSpinBox(WXTestAssistant, spin_box.TestSpinBox):
     """ WXSpinBox tests. """
 

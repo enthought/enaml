@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_test_assistant import WXTestAssistant
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import slider
 
 
@@ -31,6 +31,8 @@ EVENT_MAP = {slider.TestEvents.PRESSED: wx.EVT_LEFT_DOWN,
              slider.TestEvents.PAGE_UP: wx.EVT_SCROLL_PAGEUP,
              slider.TestEvents.PAGE_DOWN: wx.EVT_SCROLL_PAGEDOWN}
 
+
+@skip_nonwindows
 class TestWXSlider(WXTestAssistant, slider.TestSlider):
     """ QtLabel tests. """
 

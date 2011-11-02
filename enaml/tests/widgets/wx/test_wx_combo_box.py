@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_test_assistant import WXTestAssistant
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import combo_box
 
 
+@skip_nonwindows
 class TestWxComboBox(WXTestAssistant, combo_box.TestComboBox):
     """ WXComboBox tests. """
 

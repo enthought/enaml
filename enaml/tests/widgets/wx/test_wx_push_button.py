@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_test_assistant import WXTestAssistant
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import push_button
 
 
+@skip_nonwindows
 class TestWxPushButton(WXTestAssistant, push_button.TestPushButton):
     """ WXPushButton tests. """
 

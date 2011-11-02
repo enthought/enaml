@@ -2,8 +2,18 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+
+import sys
+from unittest import skipUnless
+
 import wx
+
 from enaml.toolkit import wx_toolkit
+
+
+skip_nonwindows = skipUnless(sys.platform.startswith('win'),
+    "The wx backend is only supported on Windows.")
+
 
 class WXTestAssistant(object):
     """ Assistant class for testing wx based components.

@@ -4,9 +4,10 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_test_assistant import WXTestAssistant
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import check_box
 
+@skip_nonwindows
 class TestWXCheckBox(WXTestAssistant, check_box.TestCheckBox):
     """ WXCheckbox tests. """
 
