@@ -41,8 +41,9 @@ extensions = [
                 'sphinx.ext.viewcode',
                 'sphinx.ext.graphviz',
                 'sphinx.ext.inheritance_diagram',
-                'sphinx.ext.autosummary'
-            ]
+                'sphinx.ext.autosummary',
+                'refactor_doc'
+                ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -290,21 +291,3 @@ intersphinx_mapping = {'python' : ('http://docs.python.org/', None),
                        'traits' : ('http://github.enthought.com/traits/'
                                    'traits_user_manual/', None)}
 
-
-from enamldoc import FunctionDocstring, ClassDocstring
-
-def new_docstring(app, what, name, obj, options, lines):
-
-    verbose = False
-    # if 'component.Component' in name:
-        # verbose = True
-
-    if ('class' in what):
-        ClassDocstring(lines, verbose=verbose)
-
-    elif ('function' in what) or ('method' in what):
-        FunctionDocstring(lines, verbose=verbose)
-
-
-def setup(app):
-    app.connect('autodoc-process-docstring', new_docstring)
