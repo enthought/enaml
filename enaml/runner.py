@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: UTF-8 -*-
-""" Simple command-line tool to parse an Enaml file and display a model-less
-version of the argument-less MainWindow component inside of it.
+""" Command-line tool to run .enaml files.
 """
 
 import enaml
@@ -34,3 +33,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+

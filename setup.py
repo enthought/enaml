@@ -14,8 +14,13 @@ setup(name='enaml',
     url='https://github.com/enthought/enaml',
     description='Reactive language for building dynamic user interfaces with in Python',
     long_description=open('README.rst').read(),
-    requires=['traits', 'PySide', 'ply', 'wx'],
+    requires=['traits', 'PySide', 'ply', 'wx', 'argparse'],
     install_requires=['distribute'],
     packages=find_packages(),
+    entry_points = dict(
+        console_scripts = [
+            "enaml-run = enaml.runner:main",
+        ],
+    ),
     test_suite = "enaml.test_collector"
 )
