@@ -287,8 +287,9 @@ class TestDateConverter(ConverterTestCase):
 
         """
         converter = converters.DateConverter('%B %d, %Y')
-        self.assertConverterSymmetric(converter, 'February 29, 1996',
-                                      datetime.date(1996, 2, 29))
+        test_date = datetime.date(1996, 2, 29)
+        test_text = test_date.strftime('%B %d, %Y')
+        self.assertConverterSymmetric(converter, test_text, test_date)
 
 
 class TestDateTimeConverter(ConverterTestCase):
