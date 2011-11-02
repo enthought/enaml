@@ -161,12 +161,11 @@ defn MainWindow(events):
         """
         component = self.component
         widget = self.widget
-
         component.datetime_format = 'MMM dd yyyy hh:mm'
-        datetime = python_datetime(2007,10,9, 2, 34, 12,2000)
+        test_datetime = python_datetime(2007,10,9, 2, 34, 12,2000)
         component.datetime = datetime
         widget_string = self.get_datetime_as_string(widget)
-        self.assertEqual(widget_string, u'Oct 09 2007 02:34')
+        formated_date = unicode(test_date.strptime('%b %d %Y %H:%M'), encoding='utf-8')
         self.assertEqual(self.events, [('datetime_changed',datetime)])
 
     def test_change_range_invalid(self):
