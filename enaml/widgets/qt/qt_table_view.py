@@ -11,7 +11,7 @@ from ...item_models.abstract_item_model import AbstractItemModel, ModelIndex
 from .enums import QtOrientation, EnamlOrientation, EnamlDataRole
 
 
-# XXX we need to add more handler support for the different modes of 
+# XXX we need to add more handler support for the different modes of
 # resetting the grid.
 class AbstractItemModelTable(QtCore.QAbstractTableModel):
 
@@ -42,15 +42,15 @@ class AbstractItemModelTable(QtCore.QAbstractTableModel):
 
     def rowCount(self, parent):
         return self._item_model.row_count()
-    
+
     def columnCount(self, parent):
         return self._item_model.column_count()
-    
+
     def data(self, index, role, parent_index=ModelIndex()):
         model = self._item_model
         index = model.index(index.row(), index.column(), parent_index)
         data = model.data(index, EnamlDataRole[role])
-        
+
         # adapt Enaml data values to Qt data values where appropriate
         if role == QtCore.Qt.BackgroundRole or role == QtCore.Qt.ForegroundRole:
             if data is not None:
@@ -64,11 +64,11 @@ class AbstractItemModelTable(QtCore.QAbstractTableModel):
 
 class QtTableView(QtControl, AbstractTkTableView):
     """ A Qt implementation of TableView.
-    
+
     See Also
     --------
     TableView
-    
+
     """
     #: The underlying model.
     model_wrapper = None
@@ -78,13 +78,13 @@ class QtTableView(QtControl, AbstractTkTableView):
     #--------------------------------------------------------------------------
     def create(self):
         """ Create the underlying QTableView control.
-        
+
         """
         self.widget = QtGui.QTableView()
 
     def initialize(self):
         """ Initialize the widget with the attributes of this instance.
-        
+
         """
         super(QtTableView, self).initialize()
         self.set_table_model(self.shell_obj.item_model)
@@ -92,17 +92,15 @@ class QtTableView(QtControl, AbstractTkTableView):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def parent_item_model_changed(self, item_model):
-        """ The change handler for the 'item_model' attribute. Not meant
-        for public consumption.
-        
+    def shell_item_model_changed(self, item_model):
+        """ The change handler for the 'item_model' attribute.
+
         """
         self.set_table_model(item_model)
-        
+
     def set_table_model(self, model):
-        """ Set the table view's model.  Not meant for public
-        consumption.
-        
+        """ Set the table view's model.
+
         """
         model_wrapper = AbstractItemModelTable(model)
         self.widget.setModel(model_wrapper)

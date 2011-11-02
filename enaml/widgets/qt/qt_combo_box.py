@@ -11,7 +11,7 @@ from ..combo_box import AbstractTkComboBox
 class QtComboBox(QtControl, AbstractTkComboBox):
     """ A Qt implementation of ComboBox.
 
-    Use a combo box to select a single item from a collection of items. 
+    Use a combo box to select a single item from a collection of items.
 
     """
     #--------------------------------------------------------------------------
@@ -28,7 +28,9 @@ class QtComboBox(QtControl, AbstractTkComboBox):
 
         """
         super(QtComboBox, self).initialize()
-        self.update_items()
+        shell = self.shell_obj
+        self.set_items(shell._labels)
+        self.set_selection(shell._index)
 
     def bind(self):
         """ Connects the event handlers for the combo box.
@@ -36,56 +38,55 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """
         super(QtComboBox, self).bind()
         self.widget.currentIndexChanged.connect(self.on_selected)
-        
+
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell_value_changed(self, value):
-        """ The change handler for the 'value' attribute on the 
-        shell widget.
+    def shell__index_changed(self, index):
+        """ The change handler for the _index attribute on the enaml shell.
 
         """
-        self.set_value(self.shell_obj.to_string(value))
+        shell = self.shell_obj
+        self.set_selection(index)
 
     def shell_to_string_changed(self, value):
-        """ The change handler for the 'string' attribute on the 
-        shell widget.
+        """ The change handler for the 'string' attribute on the enaml
+        shell.
 
         """
         self.update_items()
-    
+
     def shell_items_changed(self, items):
-        """ The change handler of the 'items' attribute on the shell
-        widget.
+        """ The change handler of 'items' attribute on the enaml shell.
 
         """
         self.update_items()
 
     def shell_items_items_changed(self, items):
         """ The change handler for the 'items' event of the 'items'
-        attribute on the shell widget.
-        
+        attribute on the enaml shell.
+
         """
         self.update_items()
 
     def update_items(self):
-        """ Update the QComboBox with items from the shell widget.
-        
+        """ Update the QComboBox with items from the enaml shell.
+
         """
         shell = self.shell_obj
-        str_items = map(shell.to_string, shell.items)
-        self.set_items(str_items)
-        self.set_value(shell.to_string(shell.value))
+        old_selection = self.get_selection()
+        self.selection_event(enable=False)
+        self.set_items(shell._labels)
+        self.selection_event()
+        self.move_selection(old_selection)
 
-    def on_selected(self):
+    def on_selected(self, index):
         """ The event handler for a combo box selection event.
 
         """
         shell = self.shell_obj
-        idx = self.widget.currentIndex()
-        value = shell.items[idx]
-        shell.value = value
-        shell.selected = value
+        shell._index = index
+        shell.selected = shell.value
 
     def set_items(self, str_items):
         """ Sets the items in the combo box.
@@ -95,12 +96,56 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         widget.clear()
         widget.addItems(str_items)
 
-    def set_value(self, str_value):
+    def set_selection(self, index):
         """ Sets the value in the combo box, or resets the combo box
         if the value is not in the list of items.
 
         """
         widget = self.widget
-        index = widget.findText(str_value)
         widget.setCurrentIndex(index)
 
+    # FIXME: I found it easier to setup the selection move when the items
+    # change in the widget side. The alternative will require that the
+    # items attribute in the abstract class is a Property of List(Any)
+    # And I was a little worried to try it.
+    def move_selection(self, value):
+        """ Move the selection to the index where the value exists.
+
+        The method attempts to find the index of the value. Moving
+        the index does not cause a selected event to be fired. If the
+        value is not found then the selection is undefined.
+
+        """
+        shell = self.shell_obj
+        widget = self.widget
+        index = widget.findText(value)
+        if index == -1:
+            shell._index = index
+        else:
+            # we silently set the `_index` attribute since the selection
+            # value has not changed
+            shell.trait_setq(_index=index)
+            self.selection_event(enable=False)
+            self.set_selection(index)
+            self.selection_event()
+
+    def get_selection(self):
+        """ Retrieve the current selected option from the widget.
+
+        """
+        widget = self.widget
+        return widget.currentText()
+
+    def selection_event(self, enable=True):
+        """ Enable/Disable the on selected event firing at the combo box.
+
+        Since any change in the widget variables will cause a event it is
+        necessary to temporarly disable the on_selected notifier method
+        while the internal data are sycnronized between the component and
+        the Qt widget.
+
+        """
+        if enable:
+            self.widget.currentIndexChanged.connect(self.on_selected)
+        else:
+            self.widget.currentIndexChanged.disconnect(self.on_selected)

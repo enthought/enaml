@@ -2,15 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import warnings
-
 import wx
 
-from traits.api import implements, Enum, TraitError, Float
-
 from .wx_control import WXControl
-
-from ..slider import ISliderImpl
+from ..slider import AbstractTkSlider
 
 # A map from Enaml constants to wxSlider TickPosition values to simulate
 # the behaviour of QSlider
@@ -22,7 +17,7 @@ ADAPT_HOR_TICK = {'left': 'top', 'right': 'bottom'}
 ADAPT_VERT_TICK = {'top': 'left', 'bottom': 'right'}
 
 
-class WXSlider(WXControl):
+class WXSlider(WXControl, AbstractTkSlider):
     """ A wxPython implementation of Slider.
 
     The WXSlider uses the wx.Slider control.
@@ -32,12 +27,10 @@ class WXSlider(WXControl):
     Slider
 
     """
-    implements(ISliderImpl)
-
-    #---------------------------------------------------------------------------
-    # ISliderImpl interface
-    #---------------------------------------------------------------------------
-    def create_widget(self):
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def create(self):
         """Initialisation of ISlider based on wxWidget
 
         The method creates the wxPython Slider widget and binds the ui events
@@ -47,99 +40,22 @@ class WXSlider(WXControl):
         widget = wx.Slider(parent=self.parent_widget())
         self.widget = widget
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Initializes the attributes of the toolkit widget.
 
         """
-        parent = self.parent
-        parent._down = False
+        super(WXSlider, self).initialize()
+        shell = self.shell_obj
+        shell._down = False
+        self.set_range(shell.minimum, shell.maximum)
+        self.set_position(shell.value)
+        self.set_orientation(shell.orientation)
+        self.set_tick_position(shell.tick_position)
+        self.set_tick_frequency(shell.tick_interval)
+        self.set_single_step(shell.single_step)
+        self.set_page_step(shell.page_step)
+        self.set_tracking(shell.tracking)
 
-        # We hard-coded range for the widget since we are managing the
-        # conversion.
-        self.set_range(parent.minimum, parent.maximum)
-        self.set_position(parent.value)
-        self.set_orientation(parent.orientation)
-        self.set_tick_position(parent.tick_position)
-        self.set_tick_frequency(parent.tick_interval)
-        self.set_single_step(parent.single_step)
-        self.set_page_step(parent.page_step)
-        self.set_tracking(parent.tracking)
-
-        self.bind()
-
-    def parent__minimum_changed(self, minimum):
-        """ Update the slider when the converter class changes.
-
-        """
-        parent = self.parent
-        self.set_range(minimum, parent.maximum)
-
-    def parent__maximum_changed(self, maximum):
-        """ Update the slider when the converter class changes.
-
-        """
-        parent = self.parent
-        self.set_range(parent.minimum, maximum)
-
-    def parent_value_changed(self, value):
-        """ Update the slider position.
-
-        """
-        parent = self.parent
-        self.set_position(value)
-        self.parent.moved = value
-
-    def parent_tracking_changed(self, tracking):
-        """ Set the tracking event in the widget.
-
-        """
-        self.set_tracking(tracking)
-
-    def parent_single_step_changed(self, single_step):
-        """ Update the the line step in the widget.
-
-        """
-        self.set_single_step(single_step)
-
-    def parent_page_step_changed(self, page_step):
-        """ Update the widget due to change in the line step.
-
-        """
-        self.set_page_step(page_step)
-
-    def parent_tick_interval_changed(self, tick_interval):
-        """ Update the tick marks interval.
-
-        """
-        parent = self.parent
-        self.set_tick_frequency(tick_interval)
-        self.set_single_step(parent.single_step)
-        self.set_page_step(parent.page_step)
-
-    def parent_tick_position_changed(self, tick_position):
-        """ Update the widget due to change in the tick position
-
-        The method ensures that the tick position style can be applied
-        and reverts to the last value if the request is invalid.
-
-        """
-        self.set_tick_position(tick_position)
-
-    def parent_orientation_changed(self, orientation):
-        """ Update the widget due to change in the orientation attribute
-
-        The method applies the orientation style and fixes the tick position
-        option if necessary.
-
-        """
-        self.set_orientation(orientation)
-        # FIXME: we need to relayout the widget in order to make space for the
-        # ticks.
-        self.widget.GetParent().Layout()
-
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
     def bind(self):
         """ Binds the event handlers for the slider widget.
 
@@ -149,6 +65,7 @@ class WXSlider(WXControl):
         the behaviour of the widget.
 
         """
+        super(WXSlider, self).bind()
         widget = self.widget
         widget.Bind(wx.EVT_SCROLL_TOP, self._on_slider_changed)
         widget.Bind(wx.EVT_SCROLL_BOTTOM, self._on_slider_changed)
@@ -159,13 +76,85 @@ class WXSlider(WXControl):
         widget.Bind(wx.EVT_LEFT_DOWN, self._on_left_down)
         widget.Bind(wx.EVT_LEFT_UP, self._on_thumb_released)
 
+    #---------------------------------------------------------------------------
+    # Implementation
+    #---------------------------------------------------------------------------
+    def shell__minimum_changed(self, minimum):
+        """ Update the slider when the converter class changes.
+
+        """
+        shell = self.shell_obj
+        self.set_range(minimum, shell.maximum)
+
+    def shell__maximum_changed(self, maximum):
+        """ Update the slider when the converter class changes.
+
+        """
+        shell = self.shell_obj
+        self.set_range(shell.minimum, maximum)
+
+    def shell_value_changed(self, value):
+        """ Update the slider position.
+
+        """
+        shell = self.shell_obj
+        self.set_position(value)
+        self.shell_obj.moved = value
+
+    def shell_tracking_changed(self, tracking):
+        """ Set the tracking event in the widget.
+
+        """
+        self.set_tracking(tracking)
+
+    def shell_single_step_changed(self, single_step):
+        """ Update the the line step in the widget.
+
+        """
+        self.set_single_step(single_step)
+
+    def shell_page_step_changed(self, page_step):
+        """ Update the widget due to change in the line step.
+
+        """
+        self.set_page_step(page_step)
+
+    def shell_tick_interval_changed(self, tick_interval):
+        """ Update the tick marks interval.
+
+        """
+        shell = self.shell_obj
+        self.set_tick_frequency(tick_interval)
+        self.set_single_step(shell.single_step)
+        self.set_page_step(shell.page_step)
+
+    def shell_tick_position_changed(self, tick_position):
+        """ Update the widget due to change in the tick position
+
+        The method ensures that the tick position style can be applied
+        and reverts to the last value if the request is invalid.
+
+        """
+        self.set_tick_position(tick_position)
+
+    def shell_orientation_changed(self, orientation):
+        """ Update the widget due to change in the orientation attribute
+
+        The method applies the orientation style and fixes the tick position
+        option if necessary.
+
+        """
+        self.set_orientation(orientation)
+        # FIXME: we need to relayout the widget in order to make space for the
+        # ticks.
+
     def _on_slider_changed(self, event):
         """ Respond to change in value from the ui.
 
         """
-        parent = self.parent
+        shell = self.shell_obj
         new_value = self.get_position()
-        parent.value = new_value
+        shell.value = new_value
         event.Skip()
 
     def _on_thumb_track(self, event):
@@ -186,22 +175,22 @@ class WXSlider(WXControl):
         `down` attribute.
 
         """
-        parent = self.parent
+        shell = self.shell_obj
         mouse_position = event.GetPosition()
         if self.is_thumb_hit(mouse_position):
-            parent._down = True
-            parent.pressed = True
+            shell._down = True
+            shell.pressed = True
         event.Skip()
 
     def _on_thumb_released(self, event):
         """ Update if the left button was released
 
         """
-        parent = self.parent
-        if parent._down:
-            parent._down = False
-            parent.released = True
-            parent.value = self.get_position()
+        shell = self.shell_obj
+        if shell._down:
+            shell._down = False
+            shell.released = True
+            shell.value = self.get_position()
         event.Skip()
 
     def set_single_step(self, step):
@@ -238,23 +227,23 @@ class WXSlider(WXControl):
             The :attr:`~enaml.enums.TickPosition` value.
 
         """
-        parent = self.parent
+        shell = self.shell_obj
         widget = self.widget
         style = widget.GetWindowStyle()
         style &= ~(wx.SL_TOP | wx.SL_BOTTOM | wx.SL_LEFT |
                    wx.SL_RIGHT | wx.SL_BOTH | wx.SL_AUTOTICKS |
                    wx.SL_TICKS)
 
-        if parent.orientation == 'vertical':
+        if shell.orientation == 'vertical':
             if ticks in ADAPT_VERT_TICK:
-                parent.tick_position = ADAPT_VERT_TICK[ticks]
+                shell.tick_position = ADAPT_VERT_TICK[ticks]
                 return
 
             if ticks in VERT_TICK_POS_MAP:
                 style |= VERT_TICK_POS_MAP[ticks] | wx.SL_AUTOTICKS
         else:
             if ticks in ADAPT_HOR_TICK:
-                parent.tick_position = ADAPT_HOR_TICK[ticks]
+                shell.tick_position = ADAPT_HOR_TICK[ticks]
                 return
 
             if ticks in HOR_TICK_POS_MAP:
@@ -263,7 +252,7 @@ class WXSlider(WXControl):
         widget.SetWindowStyle(style)
         # FIXME: there is a problem with the wxSlider where some times the tick
         # interval needs to be applied again for it to appear properly
-        widget.SetTickFreq(parent.tick_interval)
+        widget.SetTickFreq(shell.tick_interval)
 
     def set_orientation(self, orientation):
         """ Set the slider orientation
@@ -275,10 +264,10 @@ class WXSlider(WXControl):
 
         """
         widget = self.widget
-        parent = self.parent
+        shell = self.shell_obj
 
 
-        tick_position = parent.tick_position
+        tick_position = shell.tick_position
         style = widget.GetWindowStyle()
         style &= ~(wx.SL_HORIZONTAL | wx.SL_VERTICAL)
 
@@ -288,7 +277,7 @@ class WXSlider(WXControl):
             style |= wx.SL_HORIZONTAL
 
         widget.SetWindowStyle(style)
-        self.set_tick_position(parent.tick_position)
+        self.set_tick_position(shell.tick_position)
 
     def set_tracking(self, tracking):
         """ Bind/Unbind the trakcing event

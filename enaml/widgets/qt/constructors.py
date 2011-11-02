@@ -26,10 +26,10 @@ def constructor(base_path):
     """
     c_module_path = 'enaml.widgets.' + base_path
     c_name = ''.join(part.capitalize() for part in base_path.split('_'))
-    
+
     t_module_path = 'enaml.widgets.qt.' + 'qt_' + base_path
     t_name = 'Qt' + c_name
-    
+
     shell_loader = importer(c_module_path, c_name)
     abstract_loader = importer(t_module_path, t_name)
 
@@ -60,4 +60,3 @@ QT_CONSTRUCTORS = dict((
     constructor('date_edit'),
     constructor('datetime_edit'),
 ))
-

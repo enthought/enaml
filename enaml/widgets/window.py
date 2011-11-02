@@ -19,7 +19,7 @@ class AbstractTkWindow(AbstractTkContainer):
 
         """
         raise NotImplementedError
-    
+
     @abstractmethod
     def hide(self):
         """ Hide the window from the screen.
@@ -34,7 +34,7 @@ class AbstractTkWindow(AbstractTkContainer):
 
         """
         raise NotImplementedError
-    
+
     @abstractmethod
     def shell_modality_changed(self, modality):
         """ Update the window modality with the new value from the
@@ -47,9 +47,9 @@ class AbstractTkWindow(AbstractTkContainer):
 class Window(Container):
     """ The base top-level Window widget.
 
-    Window widgets are top-level components which provide window frame 
-    decorations and other window  related functionality. Only components 
-    which inherit from Window can be shown on the screen. A Window is 
+    Window widgets are top-level components which provide window frame
+    decorations and other window  related functionality. Only components
+    which inherit from Window can be shown on the screen. A Window is
     not expected to have a parent in most cases.
 
     """
@@ -66,7 +66,7 @@ class Window(Container):
         """ Make the window visible on the screen.
 
         If the 'setup' method is not explicity called prior to calling
-        this method, then the window will lay itself out prior to 
+        this method, then the window will lay itself out prior to
         displaying itself to the screen.
 
         """

@@ -38,10 +38,10 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     #--------------------------------------------------------------------------
     def create(self):
         self.widget = QResizingFrame(self.parent_widget())
-    
+
     def bind(self):
         super(QtComponent, self).bind()
-        
+
         # This is a hack at the moment because subclasses of component
         # won't be creating a QResizingFrame and so can't connect to
         # it's signal
@@ -58,19 +58,19 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         return self.widget
-    
+
     def size(self):
-        """ Return the size of the internal toolkit widget as a 
+        """ Return the size of the internal toolkit widget as a
         (width, height) tuple of integers.
 
         """
         widget = self.widget
         return (widget.width(), widget.height())
-    
+
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
-        the suggested size of the widget for its current state. This 
-        value is used by the layout manager to determine how much 
+        the suggested size of the widget for its current state. This
+        value is used by the layout manager to determine how much
         space to allocate the widget.
 
         """
@@ -92,14 +92,14 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         self.widget.setMinimumSize(min_width, min_height)
 
     def pos(self):
-        """ Returns the position of the internal toolkit widget as an 
+        """ Returns the position of the internal toolkit widget as an
         (x, y) tuple of integers. The coordinates should be relative to
         the origin of the widget's parent.
 
         """
         widget = self.widget
         return (widget.x(), widget.y())
-    
+
     def move(self, x, y):
         """ Moves the internal toolkit widget according to the given
         x and y integers which are relative to the origin of the
@@ -107,7 +107,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         self.widget.move(x, y)
-    
+
     def geometry(self):
         """ Returns an (x, y, width, height) tuple of geometry info
         for the internal toolkit widget. The semantic meaning of the
@@ -117,15 +117,15 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         x, y = self.pos()
         width, height = self.size()
         return (x, y, width, height)
-    
+
     def set_geometry(self, x, y, width, height):
-        """ Sets the geometry of the internal widget to the given 
+        """ Sets the geometry of the internal widget to the given
         x, y, width, and height values. The semantic meaning of the
         values is the same as for the 'resize' and 'move' methods.
 
         """
         self.widget.setGeometry(x, y, width, height)
-    
+
     def on_resize(self):
         """ Triggers a relayout of the shell object since the component
         has been resized.
@@ -146,10 +146,10 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     # Convienence methods
     #--------------------------------------------------------------------------
     def parent_widget(self):
-        """ Returns the logical QWidget parent for this component. 
+        """ Returns the logical QWidget parent for this component.
 
         Since some parents may wrap non-Widget objects, this method will
-        walk up the tree of components until a QWidget is found or None 
+        walk up the tree of components until a QWidget is found or None
         if no QWidget is found.
 
         Returns
@@ -165,9 +165,9 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
             if isinstance(widget, QtGui.QWidget):
                 return widget
             shell_parent = shell_parent.parent
-        
+
     def child_widgets(self):
-        """ Iterates over the shell widget's children and yields the 
+        """ Iterates over the shell widget's children and yields the
         toolkit widgets for those children.
 
         """

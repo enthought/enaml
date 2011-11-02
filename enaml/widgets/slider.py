@@ -19,11 +19,11 @@ class AbstractTkSlider(AbstractTkControl):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_minimum_changed(self, minimum):
+    def shell__minimum_changed(self, minimum):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_maximum_changed(self, maximum):
+    def shell__maximum_changed(self, maximum):
         raise NotImplementedError
 
     @abstractmethod

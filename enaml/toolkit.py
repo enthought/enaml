@@ -64,8 +64,11 @@ class Constructor(HasStrictTraits):
 
         Parameters
         ----------
-        *args, **kwargs
-            The args and kwargs with which this constructor was called
+        *args :
+            Positional arguments with which this constructor was called
+            from the enaml source code.
+        **kwargs :
+            Keyword arguments with which this constructor was called
             from the enaml source code.
 
         """
@@ -312,7 +315,7 @@ def wx_toolkit():
     from .widgets.wx.constructors import WX_CONSTRUCTORS
     from .util.guisupport import get_app_wx, start_event_loop_wx
     from .widgets.wx.styling import WX_STYLE_SHEET
-    from .widgets.qt.utils import invoke_later
+    from .widgets.wx.utils import invoke_later
 
     utils = {}
 

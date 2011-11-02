@@ -23,6 +23,7 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.check_box.CheckBox
     enaml.widgets.combo_box.ComboBox
     enaml.widgets.component.Component
+    enaml.widgets.container.Container
     enaml.widgets.control.Control
     enaml.widgets.date_edit.DateEdit
     enaml.widgets.datetime_edit.DatetimeEdit
@@ -59,6 +60,7 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.check_box.AbstractTkCheckBox
     enaml.widgets.combo_box.AbstractTkComboBox
     enaml.widgets.component.AbstractTkComponent
+    enaml.widgets.container.AbstractTkContainer
     enaml.widgets.control.AbstractTkControl
     enaml.widgets.date_edit.AbstractTkDateEdit
     enaml.widgets.datetime_edit.AbstractTkDatetimeEdit
@@ -92,22 +94,7 @@ Abstract base widgets
     enaml.widgets.control.Control
     enaml.widgets.window.Window
     enaml.widgets.toggle_control.ToggleControl
-
-Container widgets
-^^^^^^^^^^^^^^^^^
-
-.. autosummary::
-    :toctree: widgets
-    :template: widget.rst
-
-    enaml.widgets.group.Group
-    enaml.widgets.v_group.VGroup
-    enaml.widgets.h_group.HGroup
-    enaml.widgets.form.Form
-    enaml.widgets.group_box.GroupBox
-    enaml.widgets.panel.Panel
-    enaml.widgets.stacked_group.StackedGroup
-    enaml.widgets.tab_group.TabGroup
+    enaml.widgets.bounded_date.BoundedDate
 
 Basic widgets
 ^^^^^^^^^^^^^
@@ -121,13 +108,11 @@ Basic widgets
     enaml.widgets.combo_box.ComboBox
     enaml.widgets.push_button.PushButton
     enaml.widgets.radio_button.RadioButton
-    enaml.widgets.dialog.Dialog
     enaml.widgets.field.Field
     enaml.widgets.image.Image
     enaml.widgets.label.Label
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
-    enaml.widgets.spacer.Spacer
     enaml.widgets.datetime_edit.DatetimeEdit
     enaml.widgets.date_edit.DateEdit
 

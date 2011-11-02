@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from traits.api import Undefined
+
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -33,9 +35,9 @@ defn MainWindow(events):
     Window:
         ComboBox -> cmb:
             items = [int, float, oct]
-            value = self.items[1]
+            value = float
             to_string = lambda x: str(x) + '!' if x is not None else ''
-            selected >> events.append('selected')
+            selected >> events.append(('selected', args.new))
 """
 
         self.events = []
@@ -43,14 +45,15 @@ defn MainWindow(events):
         self.component = self.component_by_name(self.view, 'cmb')
         self.widget = self.component.toolkit_widget
 
-    def test_selection(self):
-        """ Test the initial checked state of the radio buttons.
+    def test_initialization(self):
+        """ Test the initial state.
 
         """
         component = self.component
         str_value = component.to_string(component.value)
         self.assertEqual(self.get_selected_text(self.widget), str_value)
         self.assertEqual(component.value, component.items[1])
+        self.assertEqual(self.events, [])
 
     def test_items(self):
         """ Check that the Enaml combo box items match the toolkit widget.
@@ -74,17 +77,18 @@ defn MainWindow(events):
 
         """
         self.select_item(self.widget, 2)
-        self.assertEqual(self.events, ['selected'])
+        self.assertEqual(self.events, [('selected', oct)])
 
     def test_change_selected_item(self):
         """ Update the visible item when a new one is selected internally.
 
         """
         component = self.component
+        self.assertEqual(component.value, float)
         index = 2
         self.select_item(self.widget, index)
-        value = component.to_string(component.value)
-        self.assertEqual(value, component.to_string(component.items[index]))
+        self.assertEqual(component.value, oct)
+        self.assertEqual(self.events, [('selected', oct)])
 
     def test_append_item(self):
         """ Add an item on the Enaml side; see if the toolkit widget updates.
@@ -101,6 +105,43 @@ defn MainWindow(events):
         component = self.component
         component.items.pop(0)
         self.test_items()
+
+    def test_deselect(self):
+        """ Assert that an invalid value sets the component to undefined.
+
+        """
+        component = self.component
+        component.value = hex
+        self.assertTrue(component.value is Undefined)
+        self.assertEqual(self.events, [('selected', Undefined)])
+
+    def test_value_when_items_change(self):
+        """ Assert that the selection moves correctly when the items change.
+
+        """
+        component = self.component
+        component.value = int
+        self.assertEqual(component.value, int)
+        self.assertEqual(component._index, 0)
+        component.items.insert(0, hex)
+        selection = self.get_selected_text(self.widget)
+        self.assertEqual(component._index, 1)
+        self.assertEqual(component._selection, selection)
+        self.assertEqual(self.events, [('selected', int)])
+
+    def test_undefined_when_items_change(self):
+        """ Assert that the selection is undefined when the value is
+        removed from the items list.
+
+        """
+        component = self.component
+        component.value = int
+        component.items.pop(0)
+        self.assertTrue(component.value is Undefined)
+        selection = self.get_selected_text(self.widget)
+        self.assertEqual(component._selection, selection)
+        self.assertEqual(self.events, [('selected', int),
+                                        ('selected', Undefined)])
 
     #--------------------------------------------------------------------------
     # absrtact methods

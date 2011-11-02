@@ -4,49 +4,45 @@
 #------------------------------------------------------------------------------
 from .wx_control import WXControl
 
-from ..bounded_date import AbstractTkBoundedDate
+from ..bounded_datetime import AbstractTkBoundedDatetime
 
 
-class WXBoundedDate(WXControl, AbstractTkBoundedDate):
+class WXBoundedDatetime(WXControl, AbstractTkBoundedDatetime):
     """ A base class for use with widgets implementing behavior
-    for subclasses of BoundedDate.
-
-    .. note:: The set_date() method of the WXBoundedDate accepts a key
-        word argument `events` which  designates if events should be fired
-        for the date change.
+    for subclasses of BoundedDatetime.
 
     """
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
     def initialize(self):
-        super(WXControl, self).initialize()
+        super(QtControl, self).initialize()
         shell = self.shell_obj
-        self.set_min_date(shell.min_date)
-        self.set_max_date(shell.max_date)
-        self.set_date(shell.date, events=False)
+        self.set_min_datetime(shell.min_datetime)
+        self.set_max_datetime(shell.max_datetime)
+        self.set_datetime(shell.datetime)
 
     #--------------------------------------------------------------------------
     # Abstract implementation methods
     #--------------------------------------------------------------------------
-    def shell_date_changed(self, date):
-        self.set_date(date)
+    def shell_datetime_changed(self, datetime):
+        self.set_datetime(datetime)
 
-    def shell_min_date_changed(self, min_date):
-        self.set_min_date(min_date)
+    def shell_min_datetime_changed(self, min_datetime):
+        self.set_min_datetime(min_datetime)
 
-    def shell_max_date_changed(self, max_date):
-        self.set_max_date(max_date)
+    def shell_max_datetime_changed(self, max_datetime):
+        self.set_max_datetime(max_datetime)
 
     #--------------------------------------------------------------------------
     # Widget modification methods
     #--------------------------------------------------------------------------
-    def set_date(self, date, event=True):
+    def set_datetime(self, datetime):
         raise NotImplementedError
 
-    def set_min_date(self, min_date):
+    def set_min_datetime(self, min_datetime):
         raise NotImplementedError
 
-    def set_max_date(self, max_date):
+    def set_max_datetime(self, max_datetime):
         raise NotImplementedError
 

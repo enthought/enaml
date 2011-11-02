@@ -2,111 +2,91 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import implements
-
 from .wx_control import WXControl
+from ..toggle_control import AbstractTkToggleControl
 
-from ..toggle_control import IToggleControlImpl
-
-
-class WXToggleControl(WXControl):
+# FIXME: I do not like that there are methods in this class that assume
+# a specific behaviour for the widget. And that we ask the developer to
+# bind to such functions. Are we pushing the remove dublication` rule
+# too much?
+class WXToggleControl(WXControl, AbstractTkToggleControl):
     """ A base class for wxPython toggle widgets.
 
     This class can serve as a base class for widgets that implement
     toggle behavior such as CheckBox and RadioButton. It is not meant
-    to be used directly. Subclasses should implement the 'create_widget'
+    to be used directly. Subclasses should implement the 'create'
     and 'bind' methods.
 
-    See Also
-    --------
-    IToggleElement
+    Furthermore, the toggled, pressed and released event that is generated
+    by the toolkit widget needs to be bound to the on_toggled(),
+    on_pressed() and on_released() methods.
 
     """
-    implements(IToggleControlImpl)
-
-    #---------------------------------------------------------------------------
-    # IToggleControlImpl interface
-    #---------------------------------------------------------------------------
-    def initialize_widget(self):
-        """ Initializes the attributes of the underlying control. Not
-        meant for public consumption.
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
+    def initialize(self):
+        """ Initializes the attributes of the underlying control.
 
         """
-        parent = self.parent
-        self.set_label(parent.text)
-        self.set_checked(parent.checked)
-        self.bind()
+        super(WXToggleControl, self).initialize()
+        shell = self.shell_obj
+        self.set_label(shell.text)
+        self.set_checked(shell.checked)
 
-    def parent_checked_changed(self, checked):
-        """ The change handler for the 'checked' attribute. Not meant
-        for public consumption.
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+
+    def shell_checked_changed(self, checked):
+        """ The change handler for the 'checked' attribute.
 
         """
         self.set_checked(checked)
 
-    def parent_text_changed(self, text):
-        """ The change handler for the 'text' attribute. Not meant
-        for public consumption.
+    def shell_text_changed(self, text):
+        """ The change handler for the 'text' attribute.
 
         """
         self.set_label(text)
 
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    def bind(self):
-        """ Binds the event handlers of the control. Must be implemented
-        by subclasses.
-
-        """
-        raise NotImplementedError
-
     def on_toggled(self, event):
-        """ The event handler for the toggled event. Not meant for
-        public consumption.
+        """ The event handler for the toggled event.
 
         """
-        parent = self.parent
-        parent.checked = self.widget.GetValue()
-        parent._down = False
-        parent.toggled = True
+        shell = self.shell_obj
+        shell.checked = self.widget.GetValue()
+        shell._down = False
+        shell.toggled = True
         event.Skip()
 
     def on_pressed(self, event):
-        """ The event handler for the pressed event. Not meant for
-        public consumption.
+        """ The event handler for the pressed event.
 
         """
-        parent = self.parent
-        parent._down = True
-        parent.pressed = True
+        shell = self.shell_obj
+        shell._down = True
+        shell.pressed = True
         event.Skip()
 
-    def on_leave_window(self, event):
-        """ The event handler for the leave window event. Not meant for
-        public consumption.
+    def on_released(self, event):
+        """ The event handler for the released event.
 
         """
-        # The wx buttons don't emit an EVT_LEFT_UP even though they
-        # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down 
-        # flag when the mouse leaves the button and then releases, 
-        # we need to hook the EVT_LEAVE_WINDOW
-        parent = self.parent
-        if parent._down:
-            parent._down = False
-            parent.released = True
+        shell = self.shell_obj
+        if shell._down:
+            shell._down = False
+            shell.released = True
         event.Skip()
 
     def set_label(self, label):
-        """ Sets the widget's label with the provided value. Not 
-        meant for public consumption.
+        """ Sets the widget's label with the provided value.
 
         """
         self.widget.SetLabel(label)
 
     def set_checked(self, checked):
         """ Sets the widget's checked state with the provided value.
-        Not meant for public consumption.
 
         """
         self.widget.SetValue(checked)

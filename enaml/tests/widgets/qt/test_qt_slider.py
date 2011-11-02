@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from enaml.widgets.qt.qt import QtGui, QtCore
 
-from enaml.widgets.qt.qt_slider import (SLIDER_MAX, HOR_TICK_POS_MAP,
+from enaml.widgets.qt.qt_slider import (HOR_TICK_POS_MAP,
                                         VERT_TICK_POS_MAP)
 
 from .qt_test_assistant import QtTestAssistant

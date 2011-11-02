@@ -4,152 +4,135 @@
 #------------------------------------------------------------------------------
 import wx
 
-from traits.api import implements, cached_property, Property, Str, Event, List
-
 from .wx_control import WXControl
+from ..combo_box import AbstractTkComboBox
 
-from ..combo_box import IComboBoxImpl
 
-
-class WXComboBox(WXControl):
+class WXComboBox(WXControl, AbstractTkComboBox):
     """ A wxPython implementation of ComboBox.
 
-    Use a combo box to select a single item from a collection of items. 
-    
-    See Also
-    --------
-    ComboBox
+    Use a combo box to select a single item from a collection of items.
 
     """
-    implements(IComboBoxImpl)
-
-    #---------------------------------------------------------------------------
-    # IComboBoxImpl interface
-    #---------------------------------------------------------------------------
-    def create_widget(self):
+    #--------------------------------------------------------------------------
+    # Setup methods
+    #--------------------------------------------------------------------------
+    def create(self):
         """ Creates a wx.ComboBox.
 
         """
-        self.widget = widget = wx.ComboBox(self.parent_widget(), 
-                                           style=wx.CB_READONLY)
-        widget.SetDoubleBuffered(True)
+        self.widget = wx.ComboBox(self.parent_widget(), style=wx.CB_READONLY)
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
-        self.set_items(self.str_items)
-        self.set_value(self.str_value)
-        self.bind()
-
-    def parent_items_changed(self, items):
-        """ The change handler for the 'items' attribute on the parent.
-
-        """
-        self.refresh_items = True
-    
-    def parent_items_items_changed(self, items):
-        """ The change handler for the 'items' event of the 'items'
-        attribute on the parent.
-
-        """
-        self.refresh_items = True
-    
-    def parent_value_changed(self, value):
-        """ The change handler for the 'value' attribute on the parent.
-
-        """
-        self.refresh_value = True
-
-    def parent_to_string_changed(self, value):
-        """ The change handler for the 'string' attribute on the parent.
-
-        """
-        self.refresh_items = True
-        self.refresh_value = True
-    
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
-    refresh_items = Event
-
-    refresh_value = Event
-
-    str_items = Property(List(Str), depends_on='refresh_items')
-
-    str_value = Property(Str, depends_on='refresh_value')
-
-    items_set = Property(depends_on='refresh_items')
-
-    @cached_property
-    def _get_str_items(self):
-        """ The cached property getter for 'str_items'.
-        
-        """ 
-        parent = self.parent
-        return map(parent.to_string, parent.items)
-    
-    @cached_property
-    def _get_str_value(self):
-        """ The cached property getter for 'str_value'.
-
-        """
-        parent = self.parent
-        return parent.to_string(parent.value)
-    
-    @cached_property
-    def _get_items_set(self):
-        """ The cached property getter for 'items_set'.
-
-        """
-        return set(self.parent.items)
-
-    def _str_items_changed(self, str_items):
-        """ The change handler for 'str_items'.
-
-        """
-        self.set_items(str_items)
-    
-    def _str_value_changed(self, str_value):
-        """ The change handler for 'str_value'.
-
-        """
-        self.set_value(str_value)
+        super(WXComboBox, self).initialize()
+        self.set_items()
+        self.set_selection()
 
     def bind(self):
         """ Binds the event handlers for the combo box.
 
         """
+        super(WXComboBox, self).bind()
         self.widget.Bind(wx.EVT_COMBOBOX, self.on_selected)
+
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+    def shell__index_changed(self, index):
+        """ The change handler for the '_index' attribute on the enaml
+        shell.
+
+        """
+        shell = self.shell_obj
+        self.set_selection()
+        shell.selected = shell.value
+
+    def shell_items_changed(self, items):
+        """ The change handler for the 'items' attribute on the enaml
+        shell.
+
+        """
+        old_selection = self.get_widget_selection()
+        self.set_items()
+        self.move_selection(old_selection)
+
+    def shell_items_items_changed(self, items):
+        """ The change handler for the 'items' event of the 'items'
+        attribute on the enaml shell.
+
+        """
+        old_selection = self.get_widget_selection()
+        self.set_items()
+        self.move_selection(old_selection)
+
+    def shell_to_string_changed(self, value):
+        """ The change handler for the 'string' attribute on the enaml
+        shell.
+
+        """
+        old_selection = self.get_widget_selection()
+        self.set_items()
+        self.move_selection(old_selection)
+
+    #---------------------------------------------------------------------------
+    # Implementation
+    #---------------------------------------------------------------------------
 
     def on_selected(self, event):
         """ The event handler for a combo box selection event.
 
         """
-        parent = self.parent
-        idx = self.widget.GetCurrentSelection()
-        value = parent.items[idx]
-        parent.value = value
-        parent.selected = value
+        shell = self.shell_obj
+        widget = self.widget
+        index = widget.GetCurrentSelection()
+        shell._index = index
         event.Skip()
 
-    def set_items(self, str_items):
+    def set_items(self):
         """ Sets the items in the combo box.
 
         """
-        self.widget.SetItems(str_items)
+        shell = self.shell_obj
+        widget = self.widget
+        widget.SetItems(shell._labels)
 
-    def set_value(self, str_value):
-        """ Sets the value in the combo box, or resets the combo box
-        if the value is not in the list of items.
+    def set_selection(self):
+        """ Set the selected value in the toolkit widget.
 
         """
-        value = self.parent.value
-        if value not in self.items_set:
-            # This forces a deselection albeit through expensive means
-            # for large combo boxes. But, there is no deselect method '
-            # on the wx.ComboBox. Hooray wx!
-            self.widget.SetItems(self.widget.GetItems())
-        else:
-            self.widget.SetValue(str_value)
+        shell = self.shell_obj
+        widget = self.widget
+        widget.SetSelection(shell._index) # deselects if -1
 
+    # FIXME: I found it easier to setup the selection move when the items
+    # change in the widget side. The alternative will require that the
+    # items attreibute in the abstract class is a Property of List(Any)
+    # And I was a little worried to try it.
+    def move_selection(self, value):
+        """ Move the selection to the index where the value exists.
+
+        The method attempts to find the index of the value. Moving
+        the index does not cause a selected event to be fired. If the
+        value is not found then the selection is undefined.
+
+        """
+        shell = self.shell_obj
+        widget = self.widget
+        index = widget.FindString(value)
+        if index == wx.NOT_FOUND:
+            shell._index = -1
+        else:
+            # we silently set the `_index` attribute since the selection
+            # value has not changed
+            shell.trait_setq(_index=index)
+            self.set_selection()
+
+    def get_widget_selection(self):
+        """ Get the selected labels from the widget.
+
+        """
+        widget = self.widget
+        return widget.GetStringSelection()

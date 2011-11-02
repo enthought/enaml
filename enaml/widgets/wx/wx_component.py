@@ -71,6 +71,14 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         new_size = wx.Size(width, height)
         widget.SetSize(new_size)
 
+    def set_min_size(self, min_width, min_height):
+        """ Set the hard minimum width and height of the widget. A widget
+        will not be able to be resized smaller than this value.
+
+        """
+        widget = self.widget
+        widget.SetSizeHints(min_width, min_height)
+
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
         (x, y) tuple of integers. The coordinates should be relative to

@@ -27,14 +27,14 @@ class TestWXDateEdit(WXTestAssistant, date_edit.TestDateEdit):
         date = widget.GetValue()
         return from_wx_date(date)
 
-    def get_minimum_date(self, widget):
+    def get_min_date(self, widget):
         """  Get the toolkits widget's maximum date attribute.
 
         """
         date = widget.GetLowerLimit()
         return from_wx_date(date)
 
-    def get_maximum_date(self, widget):
+    def get_max_date(self, widget):
         """ Get the toolkits widget's minimum date attribute.
 
         """
