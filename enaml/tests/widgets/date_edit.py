@@ -167,11 +167,12 @@ defn MainWindow(events):
         """
         component = self.component
         widget = self.widget
-
+        test_date = date(2007,10,9)
         component.date_format = 'MMM dd yyyy'
         component.date = date(2007,10,9)
         widget_string = self.get_date_as_string(widget)
-        self.assertEqual(widget_string, u'Oct 09 2007')
+        formated_date = unicode(test_date.strftime('%b %d %Y'), encoding='utf-8')
+        self.assertEqual(widget_string, formated_date)
 
     #--------------------------------------------------------------------------
     # Special initialization tests
