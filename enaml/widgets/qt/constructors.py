@@ -59,4 +59,5 @@ QT_CONSTRUCTORS = dict((
     constructor('table_view'),
     constructor('date_edit'),
     constructor('datetime_edit'),
+    constructor('form'),
 ))
