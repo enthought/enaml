@@ -38,8 +38,13 @@ class Container(Component):
     #: direct children. The default is simple constraints based
     layout = Instance(AbstractLayoutManager)
 
-    #: A list of linear constraints defined for this container.
+    #: A list of user-specified linear constraints defined for this container.
     constraints = List(Instance(BaseConstraint))
+
+    #: A list of default linear constraints defined by this container.
+    #: This is usually only set by specialized subclasses of Container to
+    #: conveniently lay out widgets in a particular manner.
+    default_constraints = List(Instance(BaseConstraint))
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkContainer)
@@ -128,7 +133,7 @@ class Container(Component):
         self.toolkit.invoke_later(self.layout.update_size_cns, child)
         self.set_needs_layout()
 
-    @on_trait_change('constraints[]')
+    @on_trait_change('constraints,constraints_items,default_constraints,default_constraints_items')
     def handle_constraints_changed(self):
         if self.layout._initialized:
             self.set_needs_update_constraints()

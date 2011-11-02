@@ -269,7 +269,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         if not hasattr(component, 'constraints'):
             return []
         cns = []
-        for constraint in component.constraints:
+        for constraint in component.constraints + component.default_constraints:
             cns.append(constraint.convert_to_csw())
         return cns
     
