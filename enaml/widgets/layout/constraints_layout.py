@@ -294,26 +294,28 @@ class ConstraintsLayout(AbstractLayoutManager):
         constraints = []
 
         width_hint, height_hint = child.size_hint()
-        width_hug, height_hug = child.hug
-        width_compress, height_compress = child.compress
+        hug_width = child.hug_width
+        hug_height = child.hug_height
+        resist_clip_width = child.resist_clip_width
+        resist_clip_height = child.resist_clip_height
 
         if width_hint >= 0:
-            if width_hug != 'ignore':
-                cn = (child.width == width_hint) | width_hug
+            if hug_width != 'ignore':
+                cn = (child.width == width_hint) | hug_width
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
-            if width_compress != 'ignore':
-                cn = (child.width >= width_hint) | width_compress
+            if resist_clip_width != 'ignore':
+                cn = (child.width >= width_hint) | resist_clip_width
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
         
         if height_hint >= 0:
-            if height_hug != 'ignore':
-                cn = (child.height == height_hint) | height_hug
+            if hug_height != 'ignore':
+                cn = (child.height == height_hint) | hug_height
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
-            if height_compress != 'ignore':
-                cn = (child.height >= height_hint) | height_compress
+            if resist_clip_height != 'ignore':
+                cn = (child.height >= height_hint) | resist_clip_height
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
 

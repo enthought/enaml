@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod, abstractproperty
 
-from traits.api import Instance, Property, Tuple, Event
+from traits.api import Instance, Property, Tuple, Event, Enum
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
 
+PolicyEnum = Enum('ignore', 'weak', 'strong', 'required')
 
 class AbstractTkComponent(AbstractTkBaseComponent):
     """ The abstract toolkit Component interface.
@@ -107,19 +108,27 @@ class Component(BaseComponent):
     #: for this component. 
     _box_model = Instance(BoxModel, ())
 
-    #: How strongly a component hugs it's content. Valid strengths
+    #: How strongly a component hugs it's contents' width. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
-    #: The default is 'strong' for both width and height. This
-    #: trait should be overridden on a per-control basis to specify
-    #: a logical default for the given control.
-    hug = Tuple('strong', 'strong')
+    #: The default is 'strong'. This trait should be overridden on a per-control
+    #: basis to specify  a logical default for the given control.
+    hug_width = PolicyEnum('strong')
+
+    #: How strongly a component hugs it's contents' height. Valid strengths
+    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
+    #: The default is 'strong'. This trait should be overridden on a per-control
+    #: basis to specify  a logical default for the given control.
+    hug_height = PolicyEnum('strong')
 
     #: How strongly a component resists clipping its contents. 
     #: Valid strengths are 'weak', 'medium', 'strong', 'required'
-    #: and 'ignore'. The default is 'strong' for both width and 
-    #: height. This trait should be overridden on a per-control basis 
-    #: to specify a logical default for the given control.
-    compress = Tuple('strong', 'strong')
+    #: and 'ignore'. The default is 'strong' for width.
+    resist_clip_width = PolicyEnum('strong')
+
+    #: How strongly a component resists clipping its contents. 
+    #: Valid strengths are 'weak', 'medium', 'strong', 'required'
+    #: and 'ignore'. The default is 'strong' for height.
+    resist_clip_height = PolicyEnum('strong')
 
     #: An event that should be emitted by the abstract obj when
     #: its size hint has updated do to some change.

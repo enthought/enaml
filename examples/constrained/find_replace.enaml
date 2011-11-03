@@ -43,7 +43,7 @@ defn MainWindow:
             # label. This is probably related to accelerator keys.
             text = "Replace && Find"
         Field -> find_field:
-            hug = ('ignore', 'strong')
+            pass
         Field -> replace_field:
-            hug = ('ignore', 'strong')
+            pass
 
