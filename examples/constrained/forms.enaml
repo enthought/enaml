@@ -40,7 +40,7 @@ defn MainWindow:
             Field:
                 hug = ('ignore', 'strong')
             Label:
-                text = "Work phone:"
+                text = "Office or Desk phone:"
                 hug = ('weak', 'strong')
             Field:
                 hug = ('ignore', 'strong')
