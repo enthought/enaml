@@ -58,23 +58,6 @@ class Container(Component):
         """
         return ConstraintsLayout(self)
 
-    def _default_constraints_default(self):
-        """ Default constraints for layout is a vertical list.
-        """
-        return self._compute_constraints_for_children()
-    
-    @on_trait_change('children,children_items')
-    def _update_default_constraints(self):
-        self._needs_update_constraints = True
-    
-    def _compute_constraints_for_children(self):
-        """ Compute the current vertical constraints for the children.
-        """
-        from .layout.layout_helpers import horizontal, vertical
-        vertical_args = [self.top] + self.children + [self.bottom]
-        return [vertical(*vertical_args)]+[horizontal(self.left, child, self.right)
-            for child in self.children]
-
     def setup(self):
         """ Run the setup process for the ui tree.
 
@@ -115,7 +98,6 @@ class Container(Component):
         """ Update the constraints for this component.
 
         """
-        self.default_constraints = self._compute_constraints_for_children()
         if self.layout is not None:
             self.layout.update_constraints()
         self._needs_update_constraints = False
