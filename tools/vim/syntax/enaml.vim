@@ -22,9 +22,10 @@ endif
 
 " Enaml extensions
 syn keyword enamlStatement      defn
+syn match enamlSeparator        ":: \w\+ ::"
 " FIXME: This captures the predefined operators, not any extensions that may be
 " added.
-syn match enamlOperator         "\%(\w\|\s\)\(->\|<<\|>>\|=\)\%(\w\|\s\)"
+syn match enamlOperator         "\%(\w\|\s\)\(->\|<<\|>>\|=\|:=\)\%(\w\|\s\)"
 if exists("python_highlight_builtins") || exists("enaml_highlight_builtins")
     syn keyword enamlBuiltin    horizontal vertical align_left align_right
     syn keyword enamlBuiltin    align_top align_bottom align_v_center align_h_center
@@ -39,6 +40,7 @@ if version >= 508 || !exists("did_enaml_syntax_inits")
     command -nargs=+ HiLink hi def link <args>
   endif
   HiLink enamlStatement         Statement
+  HiLink enamlSeparator         Statement
   HiLink enamlOperator          Operator
   if exists("python_highlight_builtins") || exists("enaml_highlight_builtins")
       HiLink enamlBuiltin       Function
