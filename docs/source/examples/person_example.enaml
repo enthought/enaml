@@ -3,25 +3,24 @@ from enaml.converters import IntConverter
 defn PersonWindow(model):
     Window -> main_window:
         title << model.name
-        Component:
-            constraints = [width==parent.width, height==parent.height]
-            Label -> name_label:
+        Form -> person_form:
+            Label:
                 text = 'Name:'
-                constraints = [top == 10, left == 10, height == 30, width == 75]
-            Field -> name_field:
+                hug = ('weak', 'strong')
+            Field:
                 value := model.name
-                constraints = [top == 10, left == 95, height == 30, width == 200]
-            Label -> age_label:
+                hug = ('ignore', 'strong')
+            Label:
                 text = 'Age:'
-                constraints = [top == 50, left == 10, height == 30, width == 75]
-            Field -> age_field:
+                hug = ('weak', 'strong')
+            Field:
                 value := model.age
                 converter = IntConverter()
-                constraints = [top == 50, left == 95, height == 30, width == 200]
-            Label -> address_label:
+                hug = ('ignore', 'strong')
+            Label:
                 text = 'Address:'
-                constraints = [top == 90, left == 10, height == 30, width == 75]
+                hug = ('weak', 'strong')
             Field:
                 value := model.address
-                constraints = [top == 90, left == 95, height == 60, width == 200]
-
+                hug = ('ignore', 'strong')
+            

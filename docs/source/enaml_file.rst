@@ -14,6 +14,25 @@ We could then use this with a Traits model as follows:
 .. literalinclude:: examples/person_example.py
     :language: python
 
+Looking at this example, you will see that an Enaml file consists of one or
+more ``defn`` blocks containing a widget tree that describes the layout of
+that part of the UI.  The widgets have attributes which are bound to expressions
+in various ways, allowing simple reactivity.  Widgets can be assigned names using
+the ``->`` operator and then their attributes are available to other parts of
+the UI.
+
+On the Python side, the Enaml code can be imported using a ``with`` statement
+to add the Enaml import hooks.  The ``defn`` blocks are then available as
+module-level functions that can be called normally from Python code.  Building
+the UI is then a matter of calling an Enaml ``defn`` to build the view, and then
+calling ``show()`` on the view to display it and start the application event loop.
+The parameters passed in to the Enaml ``defn`` block from the Python side can be
+any Python or Enaml objects that would make sense to use within the Enaml code.
+For example, if you use an attribute of an object in the Enaml code, then passing
+an object without that attribute will raise an ``AttributeError`` just as if you
+did the same thing in a Python function.
+
+
 
 Binding Operators
 -----------------
