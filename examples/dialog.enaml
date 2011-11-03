@@ -17,7 +17,7 @@ def raise_dialog():
         idlg = InformDialog("You confirmed that you DID NOT want to do something rash.")
     idlg.show()
 
-:: end::
+:: end ::
 
 
 defn InformDialog(message):
