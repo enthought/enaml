@@ -6,6 +6,10 @@
 import enaml
 from enaml.parsing.parser import parse
 from enaml.parsing.enaml_compiler import EnamlCompiler
+from enaml.toolkit import default_toolkit, wx_toolkit, qt_toolkit
+
+toolkits = {'default': default_toolkit, 'wx': wx_toolkit,
+            'qt': qt_toolkit}
 
 
 def main():
@@ -16,6 +20,9 @@ def main():
     )
     parser.add_argument('-c', '--component', default='MainWindow',
         help="The component to view.")
+    parser.add_argument('-t', '--toolkit', default='default',
+        choices=['default', 'wx', 'qt'],
+        help='The toolkit backend to use')
     parser.add_argument('enaml_file', help='The .enaml file to show.')
 
     args = parser.parse_args()
@@ -28,9 +35,10 @@ def main():
     with enaml.imports():
         EnamlCompiler.compile(ast, ns)
     component = ns[args.component]
-    window = component()
+
+    with toolkits[args.toolkit]():
+        window = component()
     window.show()
 
 if __name__ == '__main__':
     main()
-
