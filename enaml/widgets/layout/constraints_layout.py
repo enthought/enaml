@@ -288,7 +288,7 @@ class ConstraintsLayout(AbstractLayoutManager):
     def compute_child_size_cns(self, child):
         """ Computes the constraints relating the size hint of a child.
         These may change if the size hint of a child changes, or the
-        values for its 'hug' or 'compress' attribute changes.
+        values for its 'hug' or 'resist_clip' attribute changes.
 
         """
         constraints = []
@@ -337,7 +337,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         """ Update the constraints for the size hint of the given child.
         This will be more efficient that calling update_constraints
         and should be used when size_hint of child changes, or the
-        it 'hug' or 'compress' attribute changes.
+        it 'hug' or 'resist_clip' attributes change.
 
         """
         component = self.component()

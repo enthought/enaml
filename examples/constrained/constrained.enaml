@@ -55,7 +55,7 @@ defn MainWindow:
         PushButton -> add_button:
             text = 'Add'
             # Uncomment the next four lines to see how to play around with 
-            # the hugging and compression properties
+            # the hugging and resist_clip properties
             #hug_width = 'weak'
             #hug_height = 'strong'
             #resist_clip_width = 'weak'

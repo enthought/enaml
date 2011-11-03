@@ -142,7 +142,7 @@ class Container(Component):
             self.layout.layout()
         self._needs_layout = False
 
-    @on_trait_change('children:size_hint_updated, children:hug, children:compress')
+    @on_trait_change('children:size_hint_updated, children:hug_width, children:hug_height, children:resist_clip_width, children:resist_clip_height')
     def handle_size_hint_changed(self, child, name, old, new):
         self.toolkit.invoke_later(self.layout.update_size_cns, child)
         self.set_needs_layout()
