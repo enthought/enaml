@@ -76,14 +76,12 @@ class EnamlLexer(object):
         'STRING_CONTINUE',
         'STRING_END',
 
-        # raw python sentinels
-        'RAW_PYTHON_START',
-        'RAW_PYTHON_END',
-        'RAW_PYTHON_CONTINUE',
-
         # Enaml tokens
         'OPERATOR',
         'PY_BLOCK',
+        'PY_BLOCK_START',
+        'PY_BLOCK_END',
+        'PY_BLOCK_CONTINUE'
     )
 
     reserved = {
@@ -355,32 +353,30 @@ class EnamlLexer(object):
     # Raw Python
     #--------------------------------------------------------------------------
     def t_start_raw_python(self, t):
-        r'::[\t\ ]*python[\t\ ]*::[\t\ ]*\n'
+        r'::[\t\ ]*python[\t\ ]*::[\t\ ]*'
         t.lexer.push_state('RAWPYTHON')
-        t.lexer.lineno += 1
-        t.type = 'RAW_PYTHON_START'
+        t.type = 'PY_BLOCK_START'
         return t
 
     def t_RAWPYTHON_end_raw_python(self, t):
-        r'::[\t\ ]*end[\t\ ]*::[\t\ ]*\n'
+        r'::[\t\ ]*end[\t\ ]*::[\t\ ]*'
         t.lexer.pop_state()
-        t.lexer.lineno += 1
-        t.type = 'RAW_PYTHON_END'
+        t.type = 'PY_BLOCK_END'
         return t
 
     def t_RAWPYTHON_simple(self, t):
         r'[^\n]+'
         # This rule will also match the :: end :: tag, but since it is 
         # checked after that rule (since this rule is defined later in 
-        # this file) things work properly. tl;dr do not move the rule
+        # this file) things work properly. tl;dr do not move this rule
         # above t_RAWPYTHON_end_raw_python in this module.
-        t.type = 'RAW_PYTHON_CONTINUE'
+        t.type = 'PY_BLOCK_CONTINUE'
         return t
     
     def t_RAWPYTHON_newline(self, t):
         r'\n+'
         t.lexer.lineno += len(t.value)
-        t.type = 'RAW_PYTHON_CONTINUE'
+        t.type = 'NEWLINE'
         return t
 
     def t_RAWPYTHON_error(self, t):
@@ -464,20 +460,47 @@ class EnamlLexer(object):
 
     def create_py_blocks(self, token_stream):
         for tok in token_stream:
-            if not tok.type == 'RAW_PYTHON_START':
+            if not tok.type == 'PY_BLOCK_START':
                 yield tok
                 continue
             
+            # yield the start token since it's needed by the parser
             start_tok = tok
+            yield start_tok
+
+            # The next token must be a newline or its a syntax error
+            try:
+                nl_tok = token_stream.next()
+            except StopIteration:
+                nl_tok = None
+
+            if nl_tok is None or nl_tok.type != 'NEWLINE':
+                if nl_tok is None:
+                    # create a fake token with a line number
+                    # for the error handler.
+                    nl_tok = lex.LexToken()
+                    nl_tok.lineno = start_tok.lineno
+                msg = 'Newline required after a ":: python ::" tag'
+                raise_syntax_error(msg, nl_tok)
+
+            # yield the newline token since it's needed by the parser
+            yield nl_tok
+
+            # Collect the Python code from the block
             py_toks = []
+            end_tok = None
             for tok in token_stream:
-                if tok.type == 'RAW_PYTHON_END':
+                if tok.type == 'PY_BLOCK_END':
+                    end_tok = tok
                     break
-                else:
-                    assert tok.type == 'RAW_PYTHON_CONTINUE', tok.type
+                elif tok.type == 'NEWLINE':
                     py_toks.append(tok)
-            else:
-                # Reach end of input without end python delimiter
+                else:
+                    assert tok.type == 'PY_BLOCK_CONTINUE', tok.type
+                    py_toks.append(tok)
+            
+            if end_tok is None:
+                # Reach end of input without an :: end :: delimiter
                 msg = 'EOF while scanning raw python block'
                 raise_syntax_error(msg, start_tok)
               
@@ -486,7 +509,6 @@ class EnamlLexer(object):
             # get reported with correct line numbers. The captured
             # text gets handed directly to Python's compile function.
             leader = '\n' * start_tok.lineno
-
             py_txt = leader + ''.join(tok.value for tok in py_toks)
                    
             # create a python token
@@ -496,7 +518,29 @@ class EnamlLexer(object):
             py_block.value = py_txt
             py_block.type = 'PY_BLOCK'
 
+            # Yield the py block to the parser
             yield py_block
+
+            # Yield the end block to the parser
+            yield end_tok
+
+            # An end token must be followed by a newline
+            try:
+                nl_tok = token_stream.next()
+            except StopIteration:
+                nl_tok = None
+            
+            if nl_tok is None or nl_tok.type != 'NEWLINE':
+                if nl_tok is None:
+                    # create a fake token with a line number
+                    # for the error handler.
+                    nl_tok = lex.LexToken()
+                    nl_tok.lineno = end_tok.lineno
+                msg = 'Newline required after a ":: end ::" tag'
+                raise_syntax_error(msg, nl_tok)
+            
+            # The parser requires the newline token
+            yield nl_tok
 
     def create_strings(self, token_stream):
         for tok in token_stream:
@@ -611,7 +655,6 @@ class EnamlLexer(object):
         levels = [0]
         depth = 0
         prev_was_ws = False
-        prev_was_py_block = False
 
         # In case the token stream is empty for a completely
         # empty file.
@@ -629,14 +672,9 @@ class EnamlLexer(object):
                 # WS tokens are never passed to the parser
                 continue
 
-            if token.type == 'PY_BLOCK':
-                prev_was_py_block = True
-                yield token
-                continue
-
             if token.type == 'NEWLINE':
                 depth = 0
-                if prev_was_ws or prev_was_py_block or token.at_line_start:
+                if prev_was_ws or token.at_line_start:
                     # ignore blank lines
                     continue
                 # pass the other cases on through
@@ -646,7 +684,6 @@ class EnamlLexer(object):
             # then it must be a real token (not WS, not NEWLINE)
             # which can affect the indentation level
             prev_was_ws = False
-            prev_was_py_block = False
 
             if token.must_indent:
                 # The current depth must be larger than the previous level

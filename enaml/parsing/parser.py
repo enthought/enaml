@@ -137,8 +137,8 @@ def p_enaml_module_item3(p):
 # Raw Python
 #------------------------------------------------------------------------------
 def p_enaml_raw_python(p):
-    ''' raw_python : PY_BLOCK '''
-    p[0] = enaml_ast.EnamlRawPython(p[1])
+    ''' raw_python : PY_BLOCK_START NEWLINE PY_BLOCK PY_BLOCK_END NEWLINE '''
+    p[0] = enaml_ast.EnamlRawPython(p[3])
 
 
 #------------------------------------------------------------------------------
