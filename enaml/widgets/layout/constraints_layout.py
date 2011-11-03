@@ -201,6 +201,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         min_width = width_var.Value()
         min_height = height_var.Value()
 
+        solver.EndEdit()
+
         return (min_width, min_height)
 
     def set_solved_geometry(self, component):
