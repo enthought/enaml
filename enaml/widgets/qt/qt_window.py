@@ -49,6 +49,7 @@ class QtWindow(QtContainer, AbstractTkWindow):
         """
         if self.widget:
             self.widget.show()
+            self.widget.raise_()
 
     def hide(self):
         """ Hide the window from the screen.
