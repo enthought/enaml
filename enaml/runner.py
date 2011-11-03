@@ -34,11 +34,15 @@ def main():
 
     with enaml.imports():
         EnamlCompiler.compile(ast, ns)
-    component = ns[args.component]
+    
+    if 'main' in ns:
+        ns['main']()
+    else:
+        component = ns[args.component]
 
-    with toolkits[args.toolkit]():
-        window = component()
-    window.show()
+        with toolkits[args.toolkit]():
+            window = component()
+        window.show()
 
 if __name__ == '__main__':
     main()

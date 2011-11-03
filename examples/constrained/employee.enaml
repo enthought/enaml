@@ -1,0 +1,221 @@
+# A demonstration of Form layouts and using raw python from within 
+# an enaml file. This file can be executed directly with the enaml-run
+# script: $ enaml-run employee.enaml
+#
+# Notes:
+# - the midline is shared between both Form containers.
+# - (currently) the hug parameters for the label and field need to be set
+#   as in the example. This will be rendered unnecessary soon.
+# - This example is using traits to build the models, however Enaml is 
+#   flexible enough to be used with the model systems of nearly any other 
+#   Python framework.
+
+# Imports work like normal
+import datetime
+import re
+from traits.api import HasTraits, Str, Int, Instance, Tuple, Date, Property
+from enaml.converters import Converter
+
+# Put raw python code between :: python :: :: end :: delimiters.
+
+
+# All of the code below would normally be put in a separate Python module
+# to make a clean separation from model and view. It is included here
+# just to make the example easier to follow. The code below this block is 
+# the Enaml syntax for defining a view for one of these models.
+
+:: python ::
+
+class Person(HasTraits):
+    """ A simple class representing a person object.
+
+    """
+    # The last name of the person as a string
+    last_name = Str
+
+    # The first name of the person as a string
+    first_name = Str
+
+    # The date of birth of the person
+    dob = Date(datetime.date(1970, 1, 1))
+
+    # The age of the person computed from their dob
+    age = Property(Int, depends_on='dob')
+
+    # This method is called when the age of the person needs to
+    # be computed
+    def _get_age(self):
+        today = datetime.date.today()
+        dob = self.dob
+        delta = today - dob
+        age = delta.days / 365
+        return age
+
+
+class Employer(Person):
+    """ An employer is a person who runs a company.
+
+    """
+    # The name of the company
+    company_name = Str
+
+
+class Employee(Person):
+    """ An employee is person with a boss and a phone number.
+
+    """
+    # The employee's boss
+    boss = Instance(Employer)
+
+    # The employee's phone number as a tuple of 3 ints
+    phone = Tuple(Int, Int, Int)
+
+    # This method is called automatically by traits to get the
+    # default value for the phone number.
+    def _phone_default(self):
+        return (555, 555, 5555)
+
+    # This method will be called automatically by traits when the 
+    # employee's phone number changes
+    def _phone_changed(self, val):
+        print 'received new phone number for %s: %s' % (self.first_name, val)
+
+
+class PhoneNumberConverter(Converter):
+    """ A really dumb phone number converter
+
+    """
+    all_digits = re.compile(r'[0-9]{10}$')
+
+    dashes = re.compile(r'([0-9]{3})\-([0-9]{3})\-([0-9]{4})$')
+
+    proper = re.compile(r'\(([0-9]{3})\)\ ([0-9]{3})\-([0-9]{4})$')
+
+    def to_component(self, value):
+        area, prefix, suffix = value
+        return '(%s) %s-%s' % (area, prefix, suffix)
+    
+    def from_component(self, value):
+        match = self.proper.match(value)
+        if not match:
+            match = self.dashes.match(value)
+        if match:
+            area = match.group(1)
+            prefix = match.group(2)
+            suffix = match.group(3)
+            return (int(area), int(prefix), int(suffix))
+        match = self.all_digits.match(value)
+        if match:
+            area = value[:3]
+            prefix = value[3:6]
+            suffix = value[6:10]
+            return (int(area), int(prefix), int(suffix))
+        raise ValueError('Unable to convert to valid phone number')
+
+
+:: end ::
+
+
+# This Enaml defn block defines a view for an employee
+
+defn EmployeeView(employee):
+    
+    # A brief word about the operators in use. See the enaml docs
+    # for a more thorough explanation
+    #
+    # '=' is a default assignment
+    # '<<' is 1-way update that is left-associative
+    # '>>' is 1-way update that is right-associative
+    # ':=' is 2-way update
+
+    Window:
+        # update the window title when the employee name changes
+        title << "Employee Record for: %s, %s" % (employee.last_name, employee.first_name)
+
+        # This list of constraints makes sure our two form sections are 
+        # properly aligned with each other in the window.
+        constraints = [
+            vertical(top, top_label, top_form, bottom_label, bottom_form, _space_, bottom),
+            horizontal(left, top_label, _space_>=0, right),
+            horizontal(left, top_form, right),
+            horizontal(left, bottom_label, _space_>=0, right),
+            horizontal(left, bottom_form, right),
+            top_form.midline == bottom_form.midline,
+        ]
+
+        # This is the label for the first form of information
+        Label -> top_label:
+            text = "Personal Details"
+
+        # This is form showing the employee's details
+        Form -> top_form:
+            Label:
+                text = "First name:"
+                hug = ('weak', 'strong')
+            Field:
+                hug = ('ignore', 'strong')
+                value := employee.first_name
+            Label:
+                text = "Last name:"
+                hug = ('weak', 'strong')
+            Field:
+                hug = ('ignore', 'strong')
+                value := employee.last_name
+            Label:
+                text = "Home phone:"
+                hug = ('weak', 'strong')
+            Field:
+                hug = ('ignore', 'strong')
+                value := employee.phone
+                converter = PhoneNumberConverter()
+            Label:
+                text = 'Date of Birth:'
+                hug = ('weak', 'strong')
+            DateEdit:
+                date := employee.dob
+                hug = ('ignore', 'strong')
+            Label:
+                text = 'Age:'
+                hug = ('weak', 'strong')
+            Label:
+                text << str(employee.age)
+                hug = ('ignore', 'strong')
+        
+        # This is the label for the second form of information
+        Label -> bottom_label:
+            text = "Employer Details"
+
+        # this is the form showing the employer details
+        Form -> bottom_form:
+            Label:
+                text = "Company:"
+                hug = ('weak', 'strong')
+            Field:
+                hug = ('ignore', 'strong')
+                value << employee.boss.company_name
+                read_only = True
+            Label:
+                text = "Reporting Manager:"
+                hug = ('weak', 'strong')
+            Field:
+                hug = ('ignore', 'strong')
+                value << "%s %s" % (employee.boss.first_name, employee.boss.last_name)
+                read_only = True
+            
+
+# Another block of python code to define an entry point for the enaml-run
+# convenience script.
+
+:: python ::
+
+# The main function is special cased as the entry point by the enaml-run script
+def main():
+    boss_john = Employer(first_name='John', last_name='Paw', company_name="Packrat's Cats")
+    employee_mary = Employee(first_name='Mary', last_name='Sue', boss=boss_john)
+
+    view = EmployeeView(employee_mary)
+    view.show()
+
+:: end ::
+
+
