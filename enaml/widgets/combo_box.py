@@ -65,6 +65,10 @@ class ComboBox(Control):
     #: Fired when a new selection is made py the user or programmaticaly.
     #: The args object will contain the selection.
     selected = Event
+    
+    #: How strongly a component hugs it's contents' width.
+    #: ComboBoxes hug width weakly, by default.
+    hug_width = 'weak'
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkComboBox)

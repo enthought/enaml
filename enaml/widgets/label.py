@@ -22,6 +22,10 @@ class Label(Control):
     """
     #: The text in the label.
     text = Str
+    
+    #: How strongly a component hugs it's content.
+    #: Labels hug their contents' width weakly.
+    hug_width = 'weak'
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkLabel)

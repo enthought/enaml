@@ -35,6 +35,10 @@ class PushButton(Control):
 
     #: Fired when the button is released.
     released = Event
+    
+    #: How strongly a component hugs it's contents' width.
+    #: PushButtons hug their contents' width weakly.
+    hug_width = 'weak'
 
     #: An internal attribute that is used by the implementation object
     #: to set the value of down.

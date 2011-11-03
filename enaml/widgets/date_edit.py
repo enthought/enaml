@@ -32,6 +32,10 @@ class DateEdit(BoundedDate):
     #: Triggered whenever the user clicks and changes the control. 
     #: The event payload will be the date on the control.
     date_changed = Event
+    
+    #: How strongly a component hugs it's contents' width.
+    #: DateEdits ignore the width hug by default, so they expand freely in width.
+    hug_width = 'ignore'
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkDateEdit)
