@@ -41,11 +41,6 @@ class Container(Component):
     #: A list of user-specified linear constraints defined for this container.
     constraints = List(Instance(BaseConstraint))
 
-    #: A list of default linear constraints defined by this container.
-    #: This is usually only set by specialized subclasses of Container to
-    #: conveniently lay out widgets in a particular manner.
-    default_constraints = List(Instance(BaseConstraint))
-
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkContainer)
 
@@ -76,6 +71,25 @@ class Container(Component):
         """
         if self.layout is not None:
             self.layout.initialize()
+    
+    def default_user_constraints(self):
+        """ Constraints to use if the constraints trait is an empty list.
+        
+        Default behaviour is to put the children into a vertical layout.
+        Subclasses of Container which implement container_constraints will
+        probably want to override this (possibly to return an empty list).
+        """
+        from .layout.layout_helpers import horizontal, vertical
+        vertical_args = [self.top] + self.children + [self.bottom]
+        return [vertical(*vertical_args)]+[horizontal(self.left, child, self.right)
+            for child in self.children]
+    
+    def container_constraints(self):
+        """ A set of constraints that should always be applied to this type of
+        container.  This is intended to be implemented by Container subclasses
+        suchas Form to set up their standard constraints
+        """
+        return []
 
     def update_constraints_if_needed(self):
         """ Update the constraints of this component if necessary. This 
