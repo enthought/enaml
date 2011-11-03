@@ -63,8 +63,8 @@ class QtSlider(QtControl, AbstractTkSlider):
 
         self.set_range(shell.minimum, shell.maximum)
         self.set_position(shell.value)
-        self.set_orientation(shell.orientation)
         self.set_tick_position(shell.tick_position)
+        self.set_orientation(shell.orientation)
         self.set_tick_frequency(shell.tick_interval)
         self.set_single_step(shell.single_step)
         self.set_page_step(shell.page_step)
@@ -133,9 +133,6 @@ class QtSlider(QtControl, AbstractTkSlider):
 
     def shell_tick_position_changed(self, tick_position):
         """ Update the widget due to change in the tick position
-
-        The method ensures that the tick position style can be applied
-        and reverts to the last value if the request is invalid.
 
         """
         self.set_tick_position(tick_position)
