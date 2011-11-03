@@ -130,8 +130,13 @@ class Container(Component):
         later.
 
         """
+        old = self._needs_layout
         self._needs_layout = needs
-        if needs:
+        if not old and needs:
+            # Only invoke the do_layout() once, when _needs_layout changes from
+            # False to True, but not when it was already True. This makes sure
+            # that we only update the layout once even if we set multiple traits
+            # that may request a new layout.
             self.toolkit.invoke_later(self.do_layout)
 
     def do_layout(self):
