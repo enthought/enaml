@@ -1,11 +1,12 @@
-Window:
-    title = "Html example"
-    Panel:
-        VGroup:
-            Html:
-                source = (
-                          "<p><b>This text is bold</b></p>"
-                          "<p><i>This text is italic</i></p>"
-                          "<p><small>This text is small</small></p>"
-                          "<p>This is<sub> subscript</sub> and <sup>superscript</sup></p>"
-                          )
+defn MainWindow:
+    Window:
+        title = "Html example"
+        constraints = [vertical(top, html, bottom),
+                        horizontal(left, html, right)]
+        Html -> html:
+            source = (
+                      "<p><b>This text is bold</b></p>"
+                      "<p><i>This text is italic</i></p>"
+                      "<p><small>This text is small</small></p>"
+                      "<p>This is<sub> subscript</sub> and <sup>superscript</sup></p>"
+                  )

@@ -1,8 +1,12 @@
-Window:
-    title = "Slider example"
-    Panel:
-        HGroup:
-            Slider:
-                value = 0.5
-                tick_interval = 0.05
-                tick_position = 'bottom'
+defn MainWindow:
+    Window:
+        title = "Slider example"
+        constraints = [vertical(top, _space_, slider, _space_, bottom),
+                        horizontal(left, slider, right),
+                        slider.width >= 100]
+        Slider -> slider:
+            value = 30
+            maximum = 100
+            hug = ('ignore', 'strong')
+            tick_position = 'top'
+

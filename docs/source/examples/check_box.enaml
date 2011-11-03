@@ -1,9 +1,12 @@
-Window:
-    title = "CheckBox example"
-    Panel:
-        VGroup:
-            CheckBox:
-                text = "I am a CheckBox"
-                checked = True
-            CheckBox:
-                text = "I am another CheckBox"
+defn MainWindow:
+    Window:
+        title = "CheckBox example"
+        constraints = [vertical(top, check1, check2, bottom),
+                       horizontal(left, check1, right),
+                       horizontal(left, check2, right),
+                       align_left(check1, check2)]
+        CheckBox -> check1:
+            text = "I am a CheckBox"
+            checked = True
+        CheckBox -> check2:
+            text = "I am another CheckBox"

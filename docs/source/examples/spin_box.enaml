@@ -1,9 +1,11 @@
-Window:
-    title = "SpinBox example"
-    Panel:
-        VGroup:
-            SpinBox:
-                special_value_text = "Auto"
-                step = 2
-                low = -20
-                high = 20
+defn MainWindow:
+    Window:
+        title = "SpinBox example"
+        constraints = [vertical(top, spinbox, bottom),
+                        horizontal(left, spinbox, right)]
+        SpinBox -> spinbox:
+            special_value_text = "Auto"
+            step = 2
+            low = -20
+            high = 20
+            hug = ('weak', 'strong')

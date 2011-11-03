@@ -1,16 +1,16 @@
-Window:
-    title = "Radio button example"
-    Panel:
-        HGroup:
-            RadioButton:
-                style.cls = "stretch"
-                text = 'rb1'
-            RadioButton:
-                style.cls = "stretch"
-                text = 'rb2'
-            RadioButton:
-                style.cls = "stretch"
-                text = 'rb3'
-            RadioButton:
-                style.cls = "stretch"
-                text = 'rb4'
+defn MainWindow:
+    Window:
+        title = "Radio button example"
+        constraints = [vertical(top, rb1, rb2, rb3, rb4, bottom),
+                        horizontal(left, rb1, right),
+                        horizontal(left, rb2, right),
+                        horizontal(left, rb3, right),
+                        horizontal(left, rb4, right)]
+        RadioButton -> rb1:
+            text = 'rb1'
+        RadioButton -> rb2:
+            text = 'rb2'
+        RadioButton -> rb3:
+            text = 'rb3'
+        RadioButton -> rb4:
+            text = 'rb4'

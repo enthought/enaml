@@ -1,17 +1,12 @@
 from enaml.converters import IntConverter
-
-defn FieldExample:
+defn MainWindow:
     Window:
         title = "Field example"
-        Label:
+        constraints = [vertical(top, label, field, bottom),
+                        horizontal(left, label, right),
+                        horizontal(left, field, right)]
+        Label -> label:
             text = "This is an integer field"
-            constraints = [top == 10, left == 10, height == 30, width == 150,
-                parent.width >= 305,
-                parent.height >= 50,
-            ]
-        Field -> mf:
+        Field -> field:
             converter = IntConverter()
-            value = 0
-            #style.background_color << "error" if self.error else "nocolor"
-            value >> print(value)
-            constraints = [top == 10, left == 170, height == 30, width == 125]
+            value = 23

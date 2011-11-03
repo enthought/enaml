@@ -1,8 +1,10 @@
-Window:
-    title = "Label example"
-    Panel:
-        HGroup:
-            Label:
-                text = "First label"
-            Label:
-                text = "Second label"
+defn MainWindow:
+    Window:
+        title = "Label example"
+        constraints = [vertical(top, label1, label2, bottom),
+                        horizontal(left, label1, right),
+                        horizontal(left, label2, right)]
+        Label -> label1:
+            text = "First label"
+        Label -> label2:
+            text = "Second label"
