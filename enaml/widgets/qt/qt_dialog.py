@@ -2,11 +2,23 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
+from .qt import QtCore, QtGui
 
 from .qt_window import QtWindow
 
 from ..dialog import AbstractTkDialog
+
+
+class QResizingDialog(QtGui.QDialog):
+    """ A QDialog subclass that converts a resize event into a signal
+    that can be connected to a slot. This allows the widget to notify
+    Enaml that it has been resized and the layout needs to be recomputed.
+
+    """
+    resized = QtCore.Signal()
+
+    def resizeEvent(self, event):
+        self.resized.emit()
 
 
 class QtDialog(QtWindow, AbstractTkDialog):
@@ -24,7 +36,7 @@ class QtDialog(QtWindow, AbstractTkDialog):
         """ Creates the underlying QDialog control.
 
         """
-        self.widget = QtGui.QDialog(self.parent_widget())
+        self.widget = QResizingDialog(self.parent_widget())
 
     def initialize(self):
         """ Intializes the attributes on the QDialog.
@@ -32,6 +44,10 @@ class QtDialog(QtWindow, AbstractTkDialog):
         """
         super(QtDialog, self).initialize()
         self.widget.finished.connect(self._on_close)
+
+    def bind(self):
+        super(QtDialog, self).bind()
+        self.widget.resized.connect(self.on_resize)
 
     #---------------------------------------------------------------------------
     # Implementation
@@ -45,14 +61,15 @@ class QtDialog(QtWindow, AbstractTkDialog):
         """
         widget = self.widget
         if widget:
-            # FIXME: modal dialogs should usually use .exec() instead. Using
-            # .show() with a modal dialog means that you need to manually call
-            # QApplication.processEvents() in order to interact with the dialog.
-            widget.show()
-            self.shell_obj.trait_set(
+            shell = self.shell_obj
+            shell.trait_set(
                 _active = True,
                 opened = True,
             )
+            if shell.modality in ('app_modal', 'window_modal'):
+                widget.exec_()
+            else:
+                widget.show()
 
     def open(self):
         """ Display the dialog.
