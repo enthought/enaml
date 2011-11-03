@@ -8,4 +8,3 @@ defn MainWindow:
             step = 2
             low = -20
             high = 20
-            hug = ('weak', 'strong')

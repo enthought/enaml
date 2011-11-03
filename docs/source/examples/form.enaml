@@ -12,6 +12,5 @@ defn MainWindow:
 defn NamedField(name):
         Label:
             text = name
-            hug = ('weak', 'strong')
         Field:
-            hug = ('ignore', 'strong')
+            pass
