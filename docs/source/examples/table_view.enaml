@@ -1,6 +1,0 @@
-Window:
-    title = "TableView example"
-    Panel:
-        HGroup:
-            TableView:
-               item_model = table_model
