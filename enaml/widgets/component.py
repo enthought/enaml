@@ -7,8 +7,6 @@ from abc import abstractmethod, abstractproperty
 from traits.api import Instance, Property, Tuple, Event, Enum
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
-from ..styling.color import ColorTrait
-from ..styling.font import FontTrait
 from .layout.box_model import BoxModel
 
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
@@ -98,29 +96,6 @@ class AbstractTkComponent(AbstractTkBaseComponent):
 
         """
         raise NotImplementedError
-    
-    @abstractmethod
-    def shell_bg_color_changed(self, color):
-        """ The change handler for the 'bg_color' attribute on the parent.
-        Sets the background color of the internal widget to the given color.
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_fg_color_changed(self, color):
-        """ The change handler for the 'fg_color' attribute on the parent.
-        Sets the foreground color of the internal widget to the given color.
-        For some widgets this may do nothing.
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_font_changed(self, font):
-        """ The change handler for the 'font' attribute on the parent.
-        Sets the font of the internal widget to the given font.
-        For some widgets this may do nothing.
-        """
-        raise NotImplementedError
 
 class Component(BaseComponent):
     """ A BaseComponent subclass that adds a box model and support
@@ -195,36 +170,6 @@ class Component(BaseComponent):
     #: A read-only symbolic object that represents the horizontal 
     #: center of the component
     h_center = Property
-    
-    #: The background colour of the widget
-    bg_color = Property(ColorTrait, depends_on=['_user_bg_color', '_style_bg_color'])
-    
-    #: Private trait holding the user-set background color value
-    _user_bg_color = ColorTrait
-    
-    #: Private trait holding the background color value from the style
-    _style_bg_color = ColorTrait
-
-    #: The foreground colour of the widget
-    fg_color = Property(ColorTrait, depends_on=['_user_fg_color', '_style_fg_color'])
-    
-    #: Private trait holding the user-set foreground color value
-    _user_fg_color = ColorTrait
-    
-    #: Private trait holding the foreground color value from the style
-    _style_fg_color = ColorTrait
-
-    #: The foreground colour of the widget
-    font = Property(FontTrait, depends_on=['_user_font', '_style_font'])
-    
-    #: Private trait holding the user-set foreground color value
-    _user_font = FontTrait
-    
-    #: Private trait holding the foreground color value from the style
-    _style_font = FontTrait
-
-    #: The background colour can be set by the style system
-    _style_tags = ('bg_color', 'fg_color')
 
     #: A read-only property that returns the toolkit specific widget
     #: being managed by the abstract widget.
@@ -364,48 +309,6 @@ class Component(BaseComponent):
 
         """
         self.abstract_obj.set_geometry(x, y, width, height)
-
-    def _set_bg_color(self, new):
-        """ Property setter for the 'bg_color' background color property.
-        Set values are pushed to the '_user_bg_color' trait.
-        """
-        self._user_bg_color = new
-    
-    def _get_bg_color(self):
-        """ Property sgtter for the 'bg_color' background color property.
-        We use the '_user_bg_color' trait unless it is None.
-        """
-        if self._user_bg_color:
-            return self._user_bg_color
-        return self._style_bg_color
-
-    def _set_fg_color(self, new):
-        """ Property setter for the 'fg_color' foreground color property.
-        Set values are pushed to the '_user_fg_color' trait.
-        """
-        self._user_fg_color = new
-    
-    def _get_fg_color(self):
-        """ Property sgtter for the 'fg_color' foreground color property.
-        We use the '_user_fg_color' trait unless it is None.
-        """
-        if self._user_fg_color:
-            return self._user_fg_color
-        return self._style_fg_color
-
-    def _set_font(self, new):
-        """ Property setter for the 'fg_color' foreground color property.
-        Set values are pushed to the '_user_fg_color' trait.
-        """
-        self._user_font = new
-    
-    def _get_font(self):
-        """ Property sgtter for the 'fg_color' foreground color property.
-        We use the '_user_fg_color' trait unless it is None.
-        """
-        if self._user_font:
-            return self._user_font
-        return self._style_font
 
     def _get_toolkit_widget(self):
         """ Property getter for the 'toolkit_widget' property.
