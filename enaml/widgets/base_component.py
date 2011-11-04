@@ -5,7 +5,7 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 from functools import wraps
 
-from traits.api import HasStrictTraits, WeakRef, Instance, List, Str
+from traits.api import HasStrictTraits, WeakRef, Instance, List, Str, Tuple
 
 from .setup_hooks import AbstractSetupHook
 
@@ -140,6 +140,9 @@ class BaseComponent(HasStrictTraits):
     #: be stored weakly because the toolkit does not maintain refs
     #: to the compoents that its constructors create.
     toolkit = Instance(Toolkit)
+    
+    #: The attributes on this class that can be set by the styling mechanism
+    _style_tags = Tuple(Str)
 
     #: The optional style identifier for the StyleSheet system.
     style_id = Str
