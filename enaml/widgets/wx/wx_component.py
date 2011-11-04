@@ -142,10 +142,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         this method will walk up the tree of parent components until a
         wx.Window is found or None if no wx.Window is found.
 
-        Arguments
-        ---------
-        None
-
         Returns
         -------
         result : wx.Window or None
