@@ -81,19 +81,15 @@ class QtWindow(QtContainer, AbstractTkWindow):
             self.widget.setWindowTitle(title)
 
     def set_modality(self, modality):
-        """ Sets the modality of the QMainWindow. Not meant for public
-        consumption.
+        """ Sets the modality of the QMainWindow.
 
         """
         if self.widget:
-            if modality == 'app_modal':
+            if modality == 'application_modal':
                 self.widget.setWindowModality(QtCore.Qt.ApplicationModal)
-            elif modality == 'modal':
+            elif modality == 'window_modal':
                 self.widget.setWindowModality(QtCore.Qt.WindowModal)
-            elif modality == 'non_modal':
-                self.widget.setWindowModality(QtCore.Qt.NonModal)
             else:
-                msg = "Expected one of 'app_modal', 'modal', or 'non_modal'. Got %r." % (modality,)
-                raise ValueError(msg)
+                self.widget.setWindowModality(QtCore.Qt.NonModal)
 
 
