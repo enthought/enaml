@@ -58,6 +58,7 @@ class WXComboBox(WXControl, AbstractTkComboBox):
         old_selection = self.get_widget_selection()
         self.set_items()
         self.move_selection(old_selection)
+        self.shell_obj.size_hint_updated = True
 
     def shell_items_items_changed(self, items):
         """ The change handler for the 'items' event of the 'items'
@@ -67,6 +68,7 @@ class WXComboBox(WXControl, AbstractTkComboBox):
         old_selection = self.get_widget_selection()
         self.set_items()
         self.move_selection(old_selection)
+        self.shell_obj.size_hint_updated = True
 
     def shell_to_string_changed(self, value):
         """ The change handler for the 'string' attribute on the enaml
@@ -76,6 +78,7 @@ class WXComboBox(WXControl, AbstractTkComboBox):
         old_selection = self.get_widget_selection()
         self.set_items()
         self.move_selection(old_selection)
+        self.shell_obj.size_hint_updated = True
 
     #---------------------------------------------------------------------------
     # Implementation

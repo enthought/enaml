@@ -131,6 +131,7 @@ class WXField(WXControl, AbstractTkField):
 
         """
         self.set_max_length(max_length)
+        self.shell_obj.size_hint_updated = True
 
     def shell_read_only_changed(self, read_only):
         """ The change handler for the 'read_only' attribute on the
