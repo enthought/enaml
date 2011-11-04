@@ -4,9 +4,6 @@
 # CheckBoxes on the bottom of the window allow you to toggle the presence of the
 # titles and whether they should be shown in a "flat" style or the default
 # style.
-#
-# FIXME: When the titles are toggled off, the layout constraints are not updated
-# to reflect the new margins.
 
 :: python ::
 
