@@ -21,7 +21,13 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """ Creates the underlying wx.Frame control.
 
         """
-        self.widget = wx.Frame(self.parent_widget())
+        style = (wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER |
+                wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX)
+        # FIXME: this is an ugly hack since the wx.Frame does not show
+        # well. It is advised in the wxWidget documentation to add a
+        # Panel or Window control before adding the children.
+        self.frame = wx.Frame(self.parent_widget(), style=style)
+        self.widget = wx.Window(self.frame)
 
     def initialize(self):
         """ Intializes the attributes on the wx.Frame.
@@ -39,8 +45,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """ Displays the window to the screen.
 
         """
-        if self.widget:
-            self.widget.Show()
+        if self.frame:
+            self.frame.Show()
 
     def hide(self):
         """ Hide the window from the screen.
@@ -68,8 +74,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
         consumption.
 
         """
-        if self.widget:
-            self.widget.SetTitle(title)
+        if self.frame:
+            self.frame.SetTitle(title)
 
     def set_modality(self, modality):
         """ Sets the modality of the frame. Not meant for public
@@ -78,8 +84,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """
         # The wx frame cannot distinguish between application and
         # window modal (AFAIK). I think we need a wxDialog for that.
-        if self.widget:
+        if self.frame:
             if modality in ('application_modal', 'window_modal'):
-                self.widget.MakeModal(True)
+                self.frame.MakeModal(True)
             else:
-                self.widget.MakeModal(False)
+                self.frame.MakeModal(False)
