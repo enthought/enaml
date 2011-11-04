@@ -121,9 +121,19 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         widget.SetDimensions(x, y, width, height)
 
     def on_resize(self, event):
-        # should handle the widget resizing by telling something
-        # that things need to be relayed out
-        event.Skip()
+        """ Triggers a relayout of the shell object since the component
+        has been resized.
+
+        The method calls do_layout and then firs the EVT_SIZE on all its
+        chlidren. If any of them is listening then it should be a container
+        an will probably need relayout.
+
+        .. note:: Due to the above behaviour the event info should not be
+            used. Only the fact that is was called is useful.
+
+        """
+        shell = self.shell_obj
+        shell.do_layout()
 
     def parent_widget(self):
         """ Returns the logical wx.Window parent for this component.
