@@ -6,21 +6,18 @@ defn PersonWindow(model):
         Form -> person_form:
             Label:
                 text = 'Name:'
-                hug = ('weak', 'strong')
             Field:
                 value := model.name
-                hug = ('ignore', 'strong')
+                hug_width = 'ignore'
             Label:
                 text = 'Age:'
-                hug = ('weak', 'strong')
             Field:
                 value := model.age
                 converter = IntConverter()
-                hug = ('ignore', 'strong')
+                hug_width = 'ignore'
             Label:
                 text = 'Address:'
-                hug = ('weak', 'strong')
             Field:
                 value := model.address
-                hug = ('ignore', 'strong')
+                hug_width = 'ignore'
             

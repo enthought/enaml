@@ -138,6 +138,28 @@ class Slider(Control):
     abstract_obj = Instance(AbstractTkSlider)
 
     #--------------------------------------------------------------------------
+    # Trait defaults
+    #--------------------------------------------------------------------------
+
+    def _hug_width_default(self):
+        """ Horizontally oriented sliders ignore hug width by default, so that
+        they can expand freely in width.
+        """
+        if self.orientation == 'horizontal':
+            return 'ignore'
+        else:
+            return 'strong'
+
+    def _hug_height_default(self):
+        """ Vertically oriented sliders ignore hug height by default, so that
+        they can expand freely in height.
+        """
+        if self.orientation == 'vertical':
+            return 'ignore'
+        else:
+            return 'strong'
+
+    #--------------------------------------------------------------------------
     # Property methods
     #--------------------------------------------------------------------------
     def _get_down(self):

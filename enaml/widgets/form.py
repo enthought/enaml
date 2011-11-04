@@ -34,21 +34,12 @@ class Form(Container):
     # FIXME: Use an Enum.
     layout_strength = Str('strong')
 
-    def _default_constraints_default(self):
-        return self._compute_form_constraints_for_children()
-
-    @on_trait_change('children,children_items')
-    def _update_default_constraints(self):
-        self._needs_update_constraints = True
-
-    def update_constraints(self):
-        """ Update the constraints for this component.
-
+    def default_user_constraints(self):
+        """All Form constraints are supplied by container_constraints()
         """
-        self.default_constraints = self._compute_form_constraints_for_children()
-        super(Form, self).update_constraints()
+        return []
 
-    def _compute_form_constraints_for_children(self):
+    def container_constraints(self):
         """ Compute the current form constraints for the current children.
 
         """

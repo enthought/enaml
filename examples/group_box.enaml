@@ -1,0 +1,76 @@
+# Group boxes.
+#
+# We create two GroupBoxes containing Form layouts. The GroupBoxes have informative titles.
+# CheckBoxes on the bottom of the window allow you to toggle the presence of the
+# titles and whether they should be shown in a "flat" style or the default
+# style.
+
+:: python ::
+
+def toggle_title(top_box, bottom_box):
+    """ Toggle the presence of titles on the two GroupBoxes. 
+
+    """
+    if top_box.title:
+        top_box.title = ""
+    else:
+        top_box.title = "Personal Details"
+    if bottom_box.title:
+        bottom_box.title = ""
+    else:
+        bottom_box.title = "Employment Details"
+
+def toggle_flat(*boxes):
+    """ Toggle the `flat` flag on the two GroupBoxes.
+
+    """
+    for box in boxes:
+        box.flat = not box.flat
+
+:: end ::
+
+defn MainWindow:
+    Window:
+        title = "Group Boxes"
+        constraints = [
+            vertical(top, top_box, bottom_box, title_check, bottom),
+            horizontal(left, top_box, right),
+            horizontal(left, bottom_box, right),
+            horizontal(left, _space_, title_check, flat_check, right),
+            align_bottom(title_check, flat_check),
+            top_form.midline == bottom_form.midline,
+        ]
+        GroupBox -> top_box:
+            title = "Personal Details"
+            Form -> top_form:
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Home phone:"
+                Field:
+                    pass
+        GroupBox -> bottom_box:
+            title = "Employment Details"
+            Form -> bottom_form:
+                Label:
+                    text = "Employer:"
+                Field:
+                    pass
+                Label:
+                    text = "Office or Desk phone:"
+                Field:
+                    pass
+        CheckBox -> title_check:
+            text = "Show titles"
+            checked = True
+            toggled >> toggle_title(top_box, bottom_box)
+        CheckBox -> flat_check:
+            text = "Flat"
+            checked = False
+            toggled >> toggle_flat(top_box, bottom_box)

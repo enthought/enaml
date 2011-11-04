@@ -90,6 +90,10 @@ class SpinBox(Control):
 
     #: If True, the spin box will wrap around at its extremes.
     wrap = Bool
+    
+    #: How strongly a component hugs it's contents' width.
+    #: SpinBoxes ignore the width hug by default, so they expand freely in width.
+    hug_width = 'ignore'
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkSpinBox)

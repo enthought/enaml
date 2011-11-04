@@ -24,6 +24,14 @@ class EnableCanvas(Control):
     """
     #: The enable.component.Component instance to draw.
     component = Instance(EnableComponent)
+    
+    #: How strongly a component hugs it's contents' width.
+    #: EnableCanvases ignore the width hug by default, so they expand freely in width.
+    hug_width = 'ignore'
+    
+    #: How strongly a component hugs it's contents' height.
+    #: EnableCanvases ignore the height hug by default, so they expand freely in height.
+    hug_height = 'ignore'
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkEnableCanvas)

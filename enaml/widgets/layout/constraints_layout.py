@@ -68,6 +68,16 @@ class ConstraintsLayout(AbstractLayoutManager):
         solver = self.solver
         solver.SetAutosolve(False)
 
+        # The list of all descendants participating in constraints-based layout.
+        descendants = list(self.traverse_descendants(component))
+
+        # Disable the layout engines on all Containers descending from this one.
+        # FIXME: This destructively sets the .layout attribute to None. It
+        # works, but we might be able to do it more cleanly.
+        for desc in descendants:
+            if hasattr(desc, 'layout'):
+                desc.layout = None
+
         # Component default constraints
         cns = self.compute_component_cns(component)
         self.component_cns = cns
@@ -75,21 +85,21 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         # User constraints
         cns = self.compute_user_cns(component)
-        for child in self.traverse_descendants(component):
+        for child in descendants:
             cns.extend(self.compute_user_cns(child))
         self.user_cns = cns
         self.add_constraints(cns)
 
         # Child default constraints
         cns_dict = self.child_cns
-        for child in self.traverse_descendants(component):
+        for child in descendants:
             cns = self.compute_child_cns(child)
             cns_dict[child].extend(cns)
             self.add_constraints(cns)
         
         # Child size constraints
         cns_dict = self.child_size_cns
-        for child in self.traverse_descendants(component):
+        for child in descendants:
             cns = self.compute_child_size_cns(child)
             cns_dict[child].extend(cns)
             self.add_constraints(cns)
@@ -271,7 +281,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         if not hasattr(component, 'constraints'):
             return []
         cns = []
-        for constraint in component.constraints + component.default_constraints:
+        user_constraints = component.constraints if component.constraints else component.default_user_constraints()
+        for constraint in user_constraints + component.container_constraints():
             cns.append(constraint.convert_to_csw())
         return cns
     
@@ -287,32 +298,34 @@ class ConstraintsLayout(AbstractLayoutManager):
     def compute_child_size_cns(self, child):
         """ Computes the constraints relating the size hint of a child.
         These may change if the size hint of a child changes, or the
-        values for its 'hug' or 'compress' attribute changes.
+        values for its 'hug' or 'resist_clip' attribute changes.
 
         """
         constraints = []
 
         width_hint, height_hint = child.size_hint()
-        width_hug, height_hug = child.hug
-        width_compress, height_compress = child.compress
+        hug_width = child.hug_width
+        hug_height = child.hug_height
+        resist_clip_width = child.resist_clip_width
+        resist_clip_height = child.resist_clip_height
 
         if width_hint >= 0:
-            if width_hug != 'ignore':
-                cn = (child.width == width_hint) | width_hug
+            if hug_width != 'ignore':
+                cn = (child.width == width_hint) | hug_width
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
-            if width_compress != 'ignore':
-                cn = (child.width >= width_hint) | width_compress
+            if resist_clip_width != 'ignore':
+                cn = (child.width >= width_hint) | resist_clip_width
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
         
         if height_hint >= 0:
-            if height_hug != 'ignore':
-                cn = (child.height == height_hint) | height_hug
+            if hug_height != 'ignore':
+                cn = (child.height == height_hint) | hug_height
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
-            if height_compress != 'ignore':
-                cn = (child.height >= height_hint) | height_compress
+            if resist_clip_height != 'ignore':
+                cn = (child.height >= height_hint) | resist_clip_height
                 csw_cn = cn.convert_to_csw()
                 constraints.append(csw_cn)
 
@@ -334,7 +347,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         """ Update the constraints for the size hint of the given child.
         This will be more efficient that calling update_constraints
         and should be used when size_hint of child changes, or the
-        it 'hug' or 'compress' attribute changes.
+        it 'hug' or 'resist_clip' attributes change.
 
         """
         component = self.component()

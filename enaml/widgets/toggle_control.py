@@ -49,6 +49,10 @@ class ToggleControl(Control):
 
     #: Internal storage for the down attribute
     _down = Bool
+    
+    #: How strongly a component hugs it's contents' width.
+    #: Toggles hug their contents' width weakly by default.
+    hug_width = 'weak'
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkToggleControl)
