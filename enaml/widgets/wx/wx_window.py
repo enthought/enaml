@@ -56,8 +56,7 @@ class WXWindow(WXContainer, AbstractTkWindow):
             self.widget.Hide()
 
     def shell_title_changed(self, title):
-        """ The change handler for the 'title' attribute. Not meant for
-        public consumption.
+        """ The change handler for the 'title' attribute.
 
         """
         self.set_title(title)
