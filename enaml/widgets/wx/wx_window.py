@@ -4,11 +4,10 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_component import WXComponent
-from .styling import compute_sizer_flags
+from .wx_container import WXContainer
 from ..window import AbstractTkWindow
 
-class WXWindow(WXComponent, AbstractTkWindow):
+class WXWindow(WXContainer, AbstractTkWindow):
     """ A wxPython implementation of a Window.
 
     WXWindow uses a wx.Frame to create a simple top level window which
