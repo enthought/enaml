@@ -7,6 +7,5 @@ defn MainWindow:
         Slider -> slider:
             value = 30
             maximum = 100
-            hug = ('ignore', 'strong')
             tick_position = 'top'
 

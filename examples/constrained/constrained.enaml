@@ -50,13 +50,16 @@ defn MainWindow:
             # for this button so that it expands in both directions.
             # (Setting to 'weak' would also work, but requires more 
             # computation by the solver).
-            hug = ('ignore', 'ignore')
+            hug_width = 'ignore'
+            hug_height = 'ignore'
         PushButton -> add_button:
             text = 'Add'
-            # Uncomment the next two lines to see how to play around with 
-            # the hugging and compression properties
-            #hug = ('weak', 'strong')
-            #compress = ('weak', 'strong')
+            # Uncomment the next four lines to see how to play around with 
+            # the hugging and resist_clip properties
+            #hug_width = 'weak'
+            #hug_height = 'strong'
+            #resist_clip_width = 'weak'
+            #resist_clip_height = 'strong')
         PushButton -> remove_button:
             text = 'Remove'
         PushButton -> change_mode_button:

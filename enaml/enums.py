@@ -103,6 +103,18 @@ Sorted = Enum(('ascending', 'descending'))
 #: ================ ======================================================
 Validity = Enum(('invalid', 'indermediate', 'acceptable'))
 
+#: The strength of widget expand and clip preferences for hug and resist_clip.
+#:
+#: ================ ======================================================
+#: value            description
+#: ================ ======================================================
+#: ``ignore``       No constraint shuld be created.
+#: ``weak``         The constraint should be created, but is weak.
+#: ``strong``       The constraint should be created, but is strong.
+#: ``required``     The constraint should be created, and is required.
+#: ================ ======================================================
+PolicyEnum = Enum('ignore', 'weak', 'strong', 'required')
+
 
 class Buttons(enum.Enum):
     """ Predefined text labels for buttons.

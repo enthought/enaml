@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod, abstractproperty
 
-from traits.api import Instance, Property, Tuple, Event
+from traits.api import Instance, Property, Tuple, Event, Enum
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
 
+PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
 
 class AbstractTkComponent(AbstractTkBaseComponent):
     """ The abstract toolkit Component interface.
@@ -107,19 +108,33 @@ class Component(BaseComponent):
     #: for this component. 
     _box_model = Instance(BoxModel, ())
 
-    #: How strongly a component hugs it's content. Valid strengths
+    #: How strongly a component hugs it's contents' width. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
-    #: The default is 'strong' for both width and height. This
-    #: trait should be overridden on a per-control basis to specify
-    #: a logical default for the given control.
-    hug = Tuple('strong', 'strong')
+    #: The default is 'strong'. This trait should be overridden on a per-control
+    #: basis to specify  a logical default for the given control.
+    hug_width = PolicyEnum('strong')
+
+    #: How strongly a component hugs it's contents' height. Valid strengths
+    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
+    #: The default is 'strong'. This trait should be overridden on a per-control
+    #: basis to specify  a logical default for the given control.
+    hug_height = PolicyEnum('strong')
+
+    #: The combination of (hug_width, hug_height).
+    hug = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['hug_width', 'hug_height'])
 
     #: How strongly a component resists clipping its contents. 
     #: Valid strengths are 'weak', 'medium', 'strong', 'required'
-    #: and 'ignore'. The default is 'strong' for both width and 
-    #: height. This trait should be overridden on a per-control basis 
-    #: to specify a logical default for the given control.
-    compress = Tuple('strong', 'strong')
+    #: and 'ignore'. The default is 'strong' for width.
+    resist_clip_width = PolicyEnum('strong')
+
+    #: How strongly a component resists clipping its contents. 
+    #: Valid strengths are 'weak', 'medium', 'strong', 'required'
+    #: and 'ignore'. The default is 'strong' for height.
+    resist_clip_height = PolicyEnum('strong')
+
+    #: The combination of (resist_clip_width, resist_clip_height).
+    resist_clip = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['resist_clip_width', 'resist_clip_height'])
 
     #: An event that should be emitted by the abstract obj when
     #: its size hint has updated do to some change.
@@ -211,6 +226,36 @@ class Component(BaseComponent):
 
         """
         return self._box_model.h_center
+
+    def _get_hug(self):
+        """ Property getter for the 'hug' property.
+
+        """
+        return (self.hug_width, self.hug_height)
+
+    def _set_hug(self, value):
+        """ Property setter for the 'hug' property.
+
+        """
+        self.trait_set(
+            hug_width=value[0],
+            hug_height=value[1],
+        )
+
+    def _get_resist_clip(self):
+        """ Property getter for the 'resist_clip' property.
+
+        """
+        return (self.resist_clip_width, self.resist_clip_height)
+
+    def _set_resist_clip(self, value):
+        """ Property setter for the 'resist_clip' property.
+
+        """
+        self.trait_set(
+            resist_clip_width=value[0],
+            resist_clip_height=value[1],
+        )
 
     def size(self):
         """ Returns the size tuple as given by the abstract widget.

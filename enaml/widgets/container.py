@@ -41,11 +41,6 @@ class Container(Component):
     #: A list of user-specified linear constraints defined for this container.
     constraints = List(Instance(BaseConstraint))
 
-    #: A list of default linear constraints defined by this container.
-    #: This is usually only set by specialized subclasses of Container to
-    #: conveniently lay out widgets in a particular manner.
-    default_constraints = List(Instance(BaseConstraint))
-
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkContainer)
 
@@ -76,6 +71,25 @@ class Container(Component):
         """
         if self.layout is not None:
             self.layout.initialize()
+    
+    def default_user_constraints(self):
+        """ Constraints to use if the constraints trait is an empty list.
+        
+        Default behaviour is to put the children into a vertical layout.
+        Subclasses of Container which implement container_constraints will
+        probably want to override this (possibly to return an empty list).
+        """
+        from .layout.layout_helpers import horizontal, vertical
+        vertical_args = [self.top] + self.children + [self.bottom]
+        return [vertical(*vertical_args)]+[horizontal(self.left, child, self.right)
+            for child in self.children]
+    
+    def container_constraints(self):
+        """ A set of constraints that should always be applied to this type of
+        container.  This is intended to be implemented by Container subclasses
+        suchas Form to set up their standard constraints
+        """
+        return []
 
     def update_constraints_if_needed(self):
         """ Update the constraints of this component if necessary. This 
@@ -90,9 +104,14 @@ class Container(Component):
         updated some time later.
 
         """
-        self._needs_update_constraints = needs
-        if needs:
-            self.toolkit.invoke_later(self.update_constraints)
+        if self.layout is None:
+            # Our layout is being managed by an ancestor.
+            # FIXME: We probably shouldn't pass it on if it's False.
+            self.parent.set_needs_update_constraints(needs)
+        else:
+            self._needs_update_constraints = needs
+            if needs:
+                self.toolkit.invoke_later(self.update_constraints)
 
     def update_constraints(self):
         """ Update the constraints for this component.
@@ -100,6 +119,7 @@ class Container(Component):
         """
         if self.layout is not None:
             self.layout.update_constraints()
+            self.set_needs_layout(True)
         self._needs_update_constraints = False
 
     def layout_if_needed(self):
@@ -116,9 +136,18 @@ class Container(Component):
         later.
 
         """
-        self._needs_layout = needs
-        if needs:
-            self.toolkit.invoke_later(self.do_layout)
+        if self.layout is None:
+            # Our layout is being managed by an ancestor.
+            self.parent.set_needs_layout(needs)
+        else:
+            old = self._needs_layout
+            self._needs_layout = needs
+            if not old and needs:
+                # Only invoke the do_layout() once, when _needs_layout changes from
+                # False to True, but not when it was already True. This makes sure
+                # that we only update the layout once even if we set multiple traits
+                # that may request a new layout.
+                self.toolkit.invoke_later(self.do_layout)
 
     def do_layout(self):
         """ Updates the layout of this component.
@@ -128,7 +157,7 @@ class Container(Component):
             self.layout.layout()
         self._needs_layout = False
 
-    @on_trait_change('children:size_hint_updated, children:hug, children:compress')
+    @on_trait_change('children:size_hint_updated, children:hug_width, children:hug_height, children:resist_clip_width, children:resist_clip_height')
     def handle_size_hint_changed(self, child, name, old, new):
         self.toolkit.invoke_later(self.layout.update_size_cns, child)
         self.set_needs_layout()

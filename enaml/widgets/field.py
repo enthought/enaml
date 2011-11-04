@@ -145,6 +145,10 @@ class Field(Control):
 
     #: Fired when the return/enter key is pressed in the line edit.
     return_pressed = Event
+    
+    #: How strongly a component hugs it's contents' width.
+    #: Fields ignore the width hug by default, so they expand freely in width.
+    hug_width = 'ignore'
 
     #: An internal attribute that is used by the implementation object
     #: to update the value of 'modified'.

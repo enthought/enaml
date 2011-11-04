@@ -23,7 +23,7 @@ defn LabeledField(label_text):
         Label -> label:
             text = label_text
         Field -> field:
-            hug = ('ignore', 'strong')
+            pass
 
 
 defn MainWindow:
@@ -52,7 +52,8 @@ defn MainWindow:
             ]
             PushButton -> frame:
                 text = 'Frame'
-                hug = ('ignore', 'ignore')
+                hug_width = 'ignore'
+                hug_height = 'ignore'
             PushButton -> add_button:
                 text = 'Add'
             PushButton -> remove_button:
