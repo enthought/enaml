@@ -61,6 +61,62 @@ that the dimension be equal to the preferred value, while the ``resist_clip``
 attributes specify how strongly the widget resists compression by adding a constraint
 that specifies that the dimension be greater than or equal to the preferred value.
 
+XXX Example here
+
+Containers can specify additional constraints that relate their child widgets.
+By default a container simply lays out its children as a vertical list and tries
+to expand them to use the full width and height that the container has available.
+Layout containers, like Form, specify different default constraints that give
+automatic layout of their children, and may provide additional hooks for other
+widgets to use to align with their significant features.
+
+Additional constraints are specified via the ``constraints`` attribute on the
+container.  The simplest way to specify a constraint is with a simple equality
+or inequality.  Inequalities can be specified in terms of symbols provided
+by the components, which at least default to the box model's symbols: ``top``,
+``bottom``, ``left``, ``right``, ``v_center``, ``h_center``, ``width`` and
+``height``.  Other components may expose other symbols: for example the Form
+widget exposes ``midline`` for aligning the fields of multiple forms along
+the same line.
+
+XXX Example here
+
+However, this can get tedious, and so there are some helpers that are
+available to simply specifying layout.  These are:
+
+    ``_space_``
+        A singleton spacer that represents a flexible space in a layout
+        with a minimum value of the default space.  Additional restrictions
+        on the space can be specified using ``==``, ``<=`` and ``>=`` with
+        an integer value.
+
+    ``horizontal(*items)``
+    
+    ``vertical(*items)``
+        These two functions take a list of symbols, widgets and spacers and
+        create a series of constraints that specify a sequential horizontal
+        or vertical layout where the sides of each object in sequence abut
+        against each other.
+    
+    ``align_left(*items)``
+    
+    ``align_right(*items)``
+    
+    ``align_top(*items)``
+    
+    ``align_bottom(*items)``
+    
+    ``align_v_center(*items)``
+    
+    ``align_h_center(*items)``
+        These functions take a list of widgets and align the appropriate
+        parts of their box models.
+
+By using appropriate combinations of these objects you can specify complex layouts
+quickly and clearly.
+
+XXX Example here
+
 Binding Operators
 -----------------
 
