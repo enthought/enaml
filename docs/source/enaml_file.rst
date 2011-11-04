@@ -32,7 +32,34 @@ For example, if you use an attribute of an object in the Enaml code, then passin
 an object without that attribute will raise an ``AttributeError`` just as if you
 did the same thing in a Python function.
 
+Enaml Components and Layout
+---------------------------
 
+Enaml widgets come in two basic types: Containers and Controls.  Controls
+are conceptually single UI elements with no other Enaml widgets inside them,
+such as labels, fields, and buttons.  Containers are widgets which contain other
+widgets, usually including information about how to layout the widgets that they
+contain.  Examples of containers include top-level windows, dialogs and forms.
+
+Enaml uses constraints-based layout implemented by the Cassowary layout system.
+Constraints are specified as a system of linear inequalities together with an
+error function which is minimized according to a modified version of the Simplex
+method.  The error function is specified via assigning weights to the various
+inequalities.  The default weights exposed in Enaml are ``'weak'``, ``'strong'``
+and ``'required'``, but other values are possible within the system, if needed.
+While a developer writing Enaml code could specify all constraints
+directly, in practice they will use a set of helper classes, functions and
+attributes to help specify the set of constraints in a more understandable way.
+
+Every widget knows its preferred size, usually by querying the underlying toolkit,
+and can express how closely it adheres to the preferred size via its ``hug__width``,
+``hug_height``, ``resist_clip_width`` and ``resist_clip_height`` which take the
+a weight or ``'ignore'``.  These are set to reasonable defaults for most widgets,
+but they can be overriden. The ``hug`` attributes specify how strongly the widget
+resists expansion by adding a constraint of the appropriate weight that specifies
+that the dimension be equal to the preferred value, while the ``resist_clip``
+attributes specify how strongly the widget resists compression by adding a constraint
+that specifies that the dimension be greater than or equal to the preferred value.
 
 Binding Operators
 -----------------
