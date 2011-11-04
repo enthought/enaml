@@ -160,6 +160,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         toolkit widgets for those children.
 
         """
-        for child in self.parent.children:
-            yield child.toolkit_widget()
-
+        shell = self.shell_obj
+        for child in shell.children:
+            yield child.toolkit_widget
