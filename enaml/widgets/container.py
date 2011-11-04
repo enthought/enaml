@@ -104,9 +104,14 @@ class Container(Component):
         updated some time later.
 
         """
-        self._needs_update_constraints = needs
-        if needs:
-            self.toolkit.invoke_later(self.update_constraints)
+        if self.layout is None:
+            # Our layout is being managed by an ancestor.
+            # FIXME: We probably shouldn't pass it on if it's False.
+            self.parent.set_needs_update_constraints(needs)
+        else:
+            self._needs_update_constraints = needs
+            if needs:
+                self.toolkit.invoke_later(self.update_constraints)
 
     def update_constraints(self):
         """ Update the constraints for this component.
@@ -114,6 +119,7 @@ class Container(Component):
         """
         if self.layout is not None:
             self.layout.update_constraints()
+            self.set_needs_layout(True)
         self._needs_update_constraints = False
 
     def layout_if_needed(self):
@@ -130,14 +136,18 @@ class Container(Component):
         later.
 
         """
-        old = self._needs_layout
-        self._needs_layout = needs
-        if not old and needs:
-            # Only invoke the do_layout() once, when _needs_layout changes from
-            # False to True, but not when it was already True. This makes sure
-            # that we only update the layout once even if we set multiple traits
-            # that may request a new layout.
-            self.toolkit.invoke_later(self.do_layout)
+        if self.layout is None:
+            # Our layout is being managed by an ancestor.
+            self.parent.set_needs_layout(needs)
+        else:
+            old = self._needs_layout
+            self._needs_layout = needs
+            if not old and needs:
+                # Only invoke the do_layout() once, when _needs_layout changes from
+                # False to True, but not when it was already True. This makes sure
+                # that we only update the layout once even if we set multiple traits
+                # that may request a new layout.
+                self.toolkit.invoke_later(self.do_layout)
 
     def do_layout(self):
         """ Updates the layout of this component.
