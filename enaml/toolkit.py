@@ -291,7 +291,7 @@ def qt_toolkit():
     from .widgets.qt.styling import QT_STYLE_SHEET
     from .widgets.qt.utils import invoke_later
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    
+
     utils = {}
 
     toolkit = Toolkit(QT_CONSTRUCTORS)
@@ -316,6 +316,7 @@ def wx_toolkit():
     from .util.guisupport import get_app_wx, start_event_loop_wx
     from .widgets.wx.styling import WX_STYLE_SHEET
     from .widgets.wx.utils import invoke_later
+    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
 
     utils = {}
 
@@ -327,6 +328,7 @@ def wx_toolkit():
     toolkit.invoke_later = invoke_later
     toolkit.update(utils)
     toolkit.update(OPERATORS)
+    toolkit.update(LAYOUT_HELPERS)
 
     return toolkit
 
