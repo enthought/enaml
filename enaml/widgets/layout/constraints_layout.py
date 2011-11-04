@@ -68,6 +68,16 @@ class ConstraintsLayout(AbstractLayoutManager):
         solver = self.solver
         solver.SetAutosolve(False)
 
+        # The list of all descendants participating in constraints-based layout.
+        descendants = list(self.traverse_descendants(component))
+
+        # Disable the layout engines on all Containers descending from this one.
+        # FIXME: This destructively sets the .layout attribute to None. It
+        # works, but we might be able to do it more cleanly.
+        for desc in descendants:
+            if hasattr(desc, 'layout'):
+                desc.layout = None
+
         # Component default constraints
         cns = self.compute_component_cns(component)
         self.component_cns = cns
@@ -75,21 +85,21 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         # User constraints
         cns = self.compute_user_cns(component)
-        for child in self.traverse_descendants(component):
+        for child in descendants:
             cns.extend(self.compute_user_cns(child))
         self.user_cns = cns
         self.add_constraints(cns)
 
         # Child default constraints
         cns_dict = self.child_cns
-        for child in self.traverse_descendants(component):
+        for child in descendants:
             cns = self.compute_child_cns(child)
             cns_dict[child].extend(cns)
             self.add_constraints(cns)
         
         # Child size constraints
         cns_dict = self.child_size_cns
-        for child in self.traverse_descendants(component):
+        for child in descendants:
             cns = self.compute_child_size_cns(child)
             cns_dict[child].extend(cns)
             self.add_constraints(cns)
