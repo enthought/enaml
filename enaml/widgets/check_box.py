@@ -27,3 +27,6 @@ class CheckBox(ToggleControl):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkCheckBox)
 
+    hug_width = "strong"
+    hug_height = "strong"
+
