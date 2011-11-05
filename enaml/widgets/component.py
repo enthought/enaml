@@ -112,13 +112,13 @@ class Component(BaseComponent):
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
     #: The default is 'strong'. This trait should be overridden on a per-control
     #: basis to specify  a logical default for the given control.
-    hug_width = PolicyEnum('strong')
+    hug_width = PolicyEnum('medium')
 
     #: How strongly a component hugs it's contents' height. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
     #: The default is 'strong'. This trait should be overridden on a per-control
     #: basis to specify  a logical default for the given control.
-    hug_height = PolicyEnum('strong')
+    hug_height = PolicyEnum('medium')
 
     #: The combination of (hug_width, hug_height).
     hug = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['hug_width', 'hug_height'])
