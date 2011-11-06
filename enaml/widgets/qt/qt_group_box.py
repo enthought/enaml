@@ -3,8 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from .qt import QtCore, QtGui
+from .qt import QtCore
 from .qt_container import QtContainer
+from .qt_resizing_widgets import QResizingGroupBox
 
 from ..group_box import AbstractTkGroupBox
 
@@ -14,18 +15,6 @@ QT_ALIGNMENTS = dict(
     right=QtCore.Qt.AlignRight,
     center=QtCore.Qt.AlignHCenter,
 )
-
-class QResizingGroupBox(QtGui.QGroupBox):
-    """ A QGroupBox subclass that converts a resize event into a signal
-    that can be connected to a slot. This allows the widget to notify
-    Enaml that it has been resized and the layout needs to be recomputed.
-
-    """
-    resized = QtCore.Signal()
-
-    def resizeEvent(self, event):
-        super(QResizingGroupBox, self).resizeEvent(event)
-        self.resized.emit()
 
 
 class QtGroupBox(QtContainer, AbstractTkGroupBox):
@@ -52,10 +41,6 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         self.shell_title_changed(shell.title)
         self.shell_flat_changed(shell.flat)
         self.shell_title_align_changed(shell.title_align)
-
-    def bind(self):
-        super(QtGroupBox, self).bind()
-        self.widget.resized.connect(self.on_resize)
 
     #--------------------------------------------------------------------------
     # Implementation
