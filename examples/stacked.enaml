@@ -1,0 +1,38 @@
+
+defn MainWindow():
+    Window:
+        constraints = [
+            vertical(top, selector, stack, bottom),
+            horizontal(left, selector, _space_, right),
+            horizontal(left, stack, right),
+        ]
+        ComboBox -> selector:
+            items = ["Personal Details", "Employer Details"]
+            value = "Personal Details"
+        Stacked -> stack:
+            index << selector._index
+            hug_width = 'ignore'
+            hug_height = 'ignore'
+            Form:
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Home phone:"
+                Field:
+                    pass
+            Form:
+                Label:
+                    text = "Employer:"
+                Field:
+                    pass
+                Label:
+                    text = "Office or Desk phone:"
+                Field:
+                    pass
+
