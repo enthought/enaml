@@ -2,22 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
+from .qt import QtGui
 from .qt_base_component import QtBaseComponent
+from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 
 from ..component import AbstractTkComponent
-
-
-class QResizingFrame(QtGui.QFrame):
-    """ A QFrame subclass that converts a resize event into a signal
-    that can be connected to a slot. This allows the widget to notify
-    Enaml that it has been resized and the layout needs to be recomputed.
-
-    """
-    resized = QtCore.Signal()
-
-    def resizeEvent(self, event):
-        self.resized.emit()
 
 
 class QtComponent(QtBaseComponent, AbstractTkComponent):
@@ -42,10 +31,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     def bind(self):
         super(QtComponent, self).bind()
 
-        # This is a hack at the moment because subclasses of component
-        # won't be creating a QResizingFrame and so can't connect to
-        # it's signal
-        if isinstance(self.widget, QResizingFrame):
+        if isinstance(self.widget, QResizingWidget):
             self.widget.resized.connect(self.on_resize)
 
     #--------------------------------------------------------------------------
