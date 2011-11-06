@@ -72,3 +72,16 @@ class QResizingGroupBox(QtGui.QGroupBox):
         super(QResizingGroupBox, self).resizeEvent(event)
         self.resized.emit()
 
+
+class QResizingStackedWidget(QtGui.QStackedWidget):
+    """ A QStackedWidget subclass that passes its resize events back to Enaml through
+    a Qt signal.
+
+    """
+
+    resized = QtCore.Signal()
+
+    def resizeEvent(self, event):
+        super(QResizingStackedWidget, self).resizeEvent(event)
+        self.resized.emit()
+
