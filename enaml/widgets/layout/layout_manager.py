@@ -17,3 +17,18 @@ class AbstractLayoutManager(object):
     def layout(self):
         raise NotImplementedError
 
+
+class NullLayoutManager(AbstractLayoutManager):
+    """ A LayoutManager that does nothing.
+
+    """
+
+    def initialize(self):
+        pass
+
+    def update_constraints(self):
+        pass
+
+    def layout(self):
+        pass
+
