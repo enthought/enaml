@@ -51,6 +51,16 @@ class Stacked(Container):
     #: `children` list.
     _nchildren = Property(Int, depends_on=['children', 'children_items'])
 
+    #: How strongly a component hugs it's contents' width.
+    #: Stacked containers ignore the width hug by default, so they expand freely
+    #: in width.
+    hug_width = 'ignore'
+
+    #: How strongly a component hugs it's contents' height.
+    #: Stacked containers ignore the height hug by default, so they expand freely
+    #: in height.
+    hug_height = 'ignore'
+
     def initialize_layout(self):
         """ Initialize the layout of the children.
 
