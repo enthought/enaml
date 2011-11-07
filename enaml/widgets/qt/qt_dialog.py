@@ -66,7 +66,7 @@ class QtDialog(QtWindow, AbstractTkDialog):
                 _active = True,
                 opened = True,
             )
-            if shell.modality in ('app_modal', 'window_modal'):
+            if shell.modality in ('application_modal', 'window_modal'):
                 widget.exec_()
             else:
                 widget.show()
