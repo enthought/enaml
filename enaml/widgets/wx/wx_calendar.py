@@ -21,8 +21,7 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
         """ Creates the wx.calendar.CalendarCtrl.
 
         """
-        self.widget = widget = wx.calendar.CalendarCtrl(self.parent_widget())
-        widget.SetDoubleBuffered(True)
+        self.widget = wx.calendar.CalendarCtrl(self.parent_widget())
 
     def bind(self):
         """ Binds the event handlers for the calendar widget.
