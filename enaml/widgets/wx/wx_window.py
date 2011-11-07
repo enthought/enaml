@@ -58,8 +58,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """ Hide the window from the screen.
 
         """
-        if self.widget:
-            self.widget.Hide()
+        if self.frame:
+            self.frame.Hide()
 
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute.
