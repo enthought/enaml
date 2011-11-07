@@ -7,7 +7,7 @@ from abc import abstractmethod
 from traits.api import Str, Enum, Instance
 
 from .container import Container, AbstractTkContainer
-
+from ..enums import Modality
 
 class AbstractTkWindow(AbstractTkContainer):
     """ The abstract Window interface.
@@ -57,7 +57,7 @@ class Window(Container):
     title = Str
 
     #: The modality of the window.
-    modality = Enum('non_modal', 'modal', 'app_modal')
+    modality = Modality
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkWindow)
