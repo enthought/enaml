@@ -15,9 +15,10 @@ class EnamlASTNode(object):
 
 class EnamlModule(EnamlASTNode):
     
-    __slots__ = ('body',)
+    __slots__ = ('doc', 'body',)
 
-    def __init__(self, body):
+    def __init__(self, doc, body):
+        self.doc = doc
         self.body = body
 
 
@@ -39,11 +40,12 @@ class EnamlRawPython(EnamlASTNode):
 
 class EnamlDefine(EnamlASTNode):
 
-    __slots__ = ('name', 'parameters', 'body')
+    __slots__ = ('name', 'parameters', 'doc', 'body')
 
-    def __init__(self, name, parameters, body):
+    def __init__(self, name, parameters, doc, body):
         self.name = name
         self.parameters = parameters
+        self.doc = doc
         self.body = body
 
 

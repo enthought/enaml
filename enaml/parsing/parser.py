@@ -94,12 +94,17 @@ def p_enaml1(p):
 
 def p_enaml2(p):
     ''' enaml : NEWLINE ENDMARKER '''
-    p[0] = enaml_ast.EnamlModule([])
+    p[0] = enaml_ast.EnamlModule('', [])
 
 
-def p_enaml_module(p):
+def p_enaml_module1(p):
     ''' enaml_module : enaml_module_body '''
-    p[0] = enaml_ast.EnamlModule(p[1])
+    p[0] = enaml_ast.EnamlModule('', p[1])
+
+
+def p_enaml_module2(p):
+    ''' enaml_module : STRING NEWLINE enaml_module_body '''
+    p[0] = enaml_ast.EnamlModule(p[1], p[3])
     
 
 #------------------------------------------------------------------------------
@@ -157,12 +162,14 @@ def p_enaml_import(p):
 def p_enaml_define1(p):
     ''' enaml_define : DEFN NAME COLON enaml_define_body '''
     params = enaml_ast.EnamlParameters([], [])
-    p[0] = enaml_ast.EnamlDefine(p[2], params, p[4])
+    doc, items = p[4]
+    p[0] = enaml_ast.EnamlDefine(p[2], params, doc, items)
 
 
 def p_enaml_define2(p):
     ''' enaml_define : DEFN NAME enaml_parameters COLON enaml_define_body '''
-    p[0] = enaml_ast.EnamlDefine(p[2], p[3], p[5])
+    doc, items = p[5]
+    p[0] = enaml_ast.EnamlDefine(p[2], p[3], doc, items)
 
 
 #------------------------------------------------------------------------------
@@ -248,11 +255,18 @@ def p_enaml_keyword_parameter(p):
 #------------------------------------------------------------------------------
 # Enaml Define Body
 #------------------------------------------------------------------------------
-def p_enaml_define_body(p):
+def p_enaml_define_body1(p):
     ''' enaml_define_body : NEWLINE INDENT enaml_calls DEDENT '''
     # Filter out any pass statements
     calls = filter(None, p[3])
-    p[0] = calls
+    p[0] = ('', calls)
+
+
+def p_enaml_defined_body2(p):
+    ''' enaml_define_body : NEWLINE INDENT STRING NEWLINE enaml_calls DEDENT '''
+    # Filter out any pass statements
+    calls = filter(None, p[5])
+    p[0] = (p[3], calls)
 
 
 #------------------------------------------------------------------------------
