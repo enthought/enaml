@@ -21,4 +21,10 @@ class WXContainer(WXComponent, AbstractTkContainer):
         widget = self.widget
         widget.Bind(wx.EVT_SIZE, self.on_resize)
 
+    def size_hint(self):
+        """ Return default value (-1,-1) as a size hint for the generic
+        containers in wx backend.
+
+        """
+        return (-1, -1)
 
