@@ -11,8 +11,13 @@ from ..window import AbstractTkWindow
 class WXWindow(WXContainer, AbstractTkWindow):
     """ A wxPython implementation of a Window.
 
-    WXWindow uses a wx.Frame to create a simple top level window which
-    contains other child widgets and layouts.
+    WXWindow uses a combined set of wx.Frame - wx.Window widget to create
+    a simple top level window which contains other child widgets and
+    layouts.
+
+    Since it is a top_level container the WXWindow widget overides the
+    generic container behaviour and returns resonable values instead of
+    (-1, -1).
 
     """
     #--------------------------------------------------------------------------
