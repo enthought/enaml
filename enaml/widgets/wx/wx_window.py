@@ -5,6 +5,7 @@
 import wx
 
 from .wx_container import WXContainer
+from .wx_component import WXComponent
 from ..window import AbstractTkWindow
 
 class WXWindow(WXContainer, AbstractTkWindow):
@@ -88,3 +89,10 @@ class WXWindow(WXContainer, AbstractTkWindow):
                 self.frame.MakeModal(True)
             else:
                 self.frame.MakeModal(False)
+
+    def size_hint(self):
+        """ Window is a top level container and should return
+            a resonable size hint.
+
+        """
+        return super(WXComponent, self).size_hint()
