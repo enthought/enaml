@@ -12,6 +12,13 @@ class WXContainer(WXComponent, AbstractTkContainer):
     widgets. However, it may also be used directly as an undecorated container
     for widgets for layout purposes.
 
+    Notes
+    -----
+        - All components are bound to the wx.EVT_SIZE singal that is
+          directed to the widget.
+        - The default behaviour of the WXContainer is to return as it's size
+          hint the tuple (-1, -1).
+
     """
     def bind(self):
         """Bind the widget to the wx.EVT_SIZE.
