@@ -1,3 +1,5 @@
+import wx
+
 from .wx_component import WXComponent
 
 from ..container import AbstractTkContainer
@@ -11,6 +13,12 @@ class WXContainer(WXComponent, AbstractTkContainer):
     for widgets for layout purposes.
 
     """
+    def bind(self):
+        """Bind the widget to the wx.EVT_SIZE.
 
-    # The WXComponent implementation is enough.
-    pass
+        """
+        super(WXContainer, self).bind()
+        widget = self.widget
+        widget.Bind(wx.EVT_SIZE, self.on_resize)
+
+
