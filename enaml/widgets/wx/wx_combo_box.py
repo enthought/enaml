@@ -112,7 +112,7 @@ class WXComboBox(WXControl, AbstractTkComboBox):
 
     # FIXME: I found it easier to setup the selection move when the items
     # change in the widget side. The alternative will require that the
-    # items attreibute in the abstract class is a Property of List(Any)
+    # items attribute in the abstract class is a Property of List(Any)
     # And I was a little worried to try it.
     def move_selection(self, value):
         """ Move the selection to the index where the value exists.
