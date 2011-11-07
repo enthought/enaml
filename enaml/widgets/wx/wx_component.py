@@ -117,13 +117,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         """ Triggers a relayout of the shell object since the component
         has been resized.
 
-        The method calls do_layout and then firs the EVT_SIZE on all its
-        chlidren. If any of them is listening then it should be a container
-        an will probably need relayout.
-
-        .. note:: Due to the above behaviour the event info should not be
-            used. Only the fact that is was called is useful.
-
         """
         shell = self.shell_obj
         shell.do_layout()
