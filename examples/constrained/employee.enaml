@@ -168,6 +168,8 @@ defn EmployeeView(employee):
                 hug = ('ignore', 'strong')
                 value := employee.phone
                 converter = PhoneNumberConverter()
+                error_color = '#F9A7A7'
+                bg_color << error_color if error else "none" 
             Label:
                 text = 'Date of Birth:'
                 hug = ('weak', 'strong')

@@ -218,7 +218,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         the role if the enaml color is invalid.
         """
         if not color:
-            palette = QtGui.QApplication.instance().palette(widget)
+            palette = QtGui.QApplication.instance().palette(self.toolkit_widget)
             qcolor = palette.color(role)
             # On OSX, the default color is rendered *slightly* off
             # so a simple workaround is to tell the widget not to
