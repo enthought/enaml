@@ -28,13 +28,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
 
     def bind(self):
         super(WXComponent, self).bind()
-        # FIXME: I do not like checking if there are children before
-        # binding to the resize event. It will probably fail if the
-        # object gets children at runtime.
-        shell = self.shell_obj
-        if len(shell.children) > 0:
-            widget = self.widget
-            widget.Bind(wx.EVT_SIZE, self.on_resize)
 
     #--------------------------------------------------------------------------
     # Implementation
