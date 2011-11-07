@@ -49,15 +49,15 @@ defn MainWindow():
         """ Change the modality of the Window.
 
         """
-        self.component.modality = 'modal'
-        self.assertEnamlInSync(self.component, 'modality', 'modal')
-        self.component.modality = 'app_modal'
-        self.assertEnamlInSync(self.component, 'modality', 'app_modal')
+        self.component.modality = 'window_modal'
+        self.assertEnamlInSync(self.component, 'modality', 'window_modal')
+        self.component.modality = 'application_modal'
+        self.assertEnamlInSync(self.component, 'modality', 'application_modal')
         self.component.modality = 'non_modal'
         self.assertEnamlInSync(self.component, 'modality', 'non_modal')
-        self.assertRaises(TraitError, self.component.trait_set, modality='application_modal')
+        self.assertRaises(TraitError, self.component.trait_set, modality='app_modal')
         self.assertEnamlInSync(self.component, 'modality', 'non_modal')
-        self.assertRaises(TraitError, self.component.trait_set, modality='window_modal')
+        self.assertRaises(TraitError, self.component.trait_set, modality='win_modal')
         self.assertEnamlInSync(self.component, 'modality', 'non_modal')
 
 
@@ -79,5 +79,4 @@ defn MainWindow():
 
         """
         pass
-
 

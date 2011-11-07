@@ -21,9 +21,9 @@ class TestQtWindow(QtTestAssistant, window.TestWindow):
         """
         qt_modality = widget.windowModality()
         if qt_modality == QtCore.Qt.ApplicationModal:
-            return 'app_modal'
+            return 'application_modal'
         elif qt_modality == QtCore.Qt.WindowModal:
-            return 'modal'
+            return 'window_modal'
         elif qt_modality == QtCore.Qt.NonModal:
             return 'non_modal'
         else:
