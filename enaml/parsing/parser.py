@@ -97,6 +97,11 @@ def p_enaml2(p):
     p[0] = enaml_ast.EnamlModule('', [])
 
 
+def p_enaml3(p):
+    ''' enaml : STRING NEWLINE ENDMARKER '''
+    p[0] = enaml_ast.EnamlModule(p[1], [])
+
+
 def p_enaml_module1(p):
     ''' enaml_module : enaml_module_body '''
     p[0] = enaml_ast.EnamlModule('', p[1])
