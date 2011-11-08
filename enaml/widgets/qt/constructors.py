@@ -62,4 +62,5 @@ QT_CONSTRUCTORS = dict((
     constructor('form'),
     constructor('group_box'),
     constructor('stacked'),
+    constructor('scroll_area'),
 ))
