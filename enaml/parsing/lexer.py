@@ -393,7 +393,7 @@ class EnamlLexer(object):
 
     # A custom operator can be composed of: ~!@%^&-+=/<>:$*?|.
     def t_OPERATOR(self, t):
-        r'[~!@%&-+=/<>:\^\$\*\?\|\.]+'
+        r'[~!@%&/<>:=\+\-\^\$\*\?\|\.]+'
         # Since this longer operator definition will be matched before
         # any of the other standard operators, we need to check if 
         # we're a standard operator and change the token type appropriately
@@ -447,6 +447,14 @@ class EnamlLexer(object):
         tok.value = None
         tok.lineno = lineno
         tok.lexpos = -1
+        return tok
+
+    def newline(self, lineno):
+        tok = lex.LexToken()
+        tok.type = 'NEWLINE'
+        tok.value = '\n'
+        tok.lineno = lineno
+        tok.lexpos = lineno
         return tok
 
     def make_token_stream(self):
@@ -715,16 +723,21 @@ class EnamlLexer(object):
 
             yield token
 
+        # It the current token is WS (which is only emitted at the start
+        # of a line), the the previou
         # Sythesize a final newline token in case the user's
         # forgot to end with a newline.
-        if token is None or token.type != 'NEWLINE':
-            nl = lex.LexToken()
-            nl.type = 'NEWLINE'
-            nl.value = None
-            nl.lineno = -1
-            nl.lexpos = -1
-            yield nl
-        
+        #
+        # If the current token is WS (which is only emitted at the start
+        # of a line), then the token before that was a newline unless
+        # we're on line number 1. If that's the case, then we don't 
+        # need another newline token.
+        if token is None:
+            yield self.newline(-1)
+        elif token.type != 'NEWLINE':
+            if token.type != 'WS' or token.lineno == 1:
+                yield self.newline(-1)
+
         # Must dedent any remaining levels
         if len(levels) > 1:
             assert token is not None

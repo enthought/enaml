@@ -93,7 +93,8 @@ def p_enaml1(p):
 
 
 def p_enaml2(p):
-    ''' enaml : NEWLINE ENDMARKER '''
+    ''' enaml : NEWLINE ENDMARKER
+              | ENDMARKER '''
     p[0] = enaml_ast.EnamlModule('', [])
 
 
