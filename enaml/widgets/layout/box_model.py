@@ -9,11 +9,12 @@ class BoxModel(object):
     __slots__ = ('left', 'right', 'width', 'height',
                  'top', 'bottom', 'v_center', 'h_center')
 
-    def __init__(self):
-        self.left = ConstraintVariable('left_%x' % id(self))
-        self.top = ConstraintVariable('top_%x' % id(self))
-        self.width = ConstraintVariable('width_%x' % id(self))
-        self.height = ConstraintVariable('height_%x' % id(self))
+    def __init__(self, component):
+        label = '{0}_{1:x}'.format(type(component).__name__, id(component))
+        self.left = ConstraintVariable('left_{}'.format(label))
+        self.top = ConstraintVariable('top_{}'.format(label))
+        self.width = ConstraintVariable('width_{}'.format(label))
+        self.height = ConstraintVariable('height_{}'.format(label))
         self.right = self.left + self.width
         self.bottom = self.top + self.height
         self.v_center = self.top + self.height / 2.0
@@ -29,11 +30,12 @@ class MarginBoxModel(BoxModel):
         'contents_width', 'contents_top', 'contents_bottom',
         'contents_v_center', 'contents_h_center')
 
-    def __init__(self):
-        super(MarginBoxModel, self).__init__()
+    def __init__(self, component):
+        super(MarginBoxModel, self).__init__(component)
+        label = '{0}_{1:x}'.format(type(component).__name__, id(component))
         for primitive in ('left', 'right', 'top', 'bottom'):
-            attr = 'margin_%s' % primitive
-            setattr(self, attr, ConstraintVariable('%s_%x' % (attr, id(self))))
+            attr = 'margin_{}'.format(primitive)
+            setattr(self, attr, ConstraintVariable('{0}_{1}'.format(attr, label)))
         self.contents_left = self.left + self.margin_left
         self.contents_top = self.top + self.margin_top
         self.contents_right = self.right - self.margin_right

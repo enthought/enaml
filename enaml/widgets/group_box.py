@@ -120,7 +120,9 @@ class GroupBox(Container):
 
     #: A private attribute that holds the box model instance
     #: for this component. 
-    _box_model = Instance(MarginBoxModel, ())
+    _box_model = Instance(MarginBoxModel)
+    def __box_model_default(self):
+        return MarginBoxModel(self)
 
 
     def default_user_constraints(self):
