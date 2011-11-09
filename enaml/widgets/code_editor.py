@@ -34,6 +34,12 @@ class AbstractTkCodeEditor(AbstractTkTextEditor):
         """ Unindent the selected lines of code.
         """
         pass
+    
+    @abstractmethod
+    def block_comment(self):
+        """ Comment out or uncomment the selected lines of code.
+        """
+        pass
 
 class CodeEditor(TextEditor):
     """
