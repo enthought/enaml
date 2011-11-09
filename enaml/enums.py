@@ -38,6 +38,18 @@ Orientation = Enum(('horizontal', 'vertical'))
 #: ========== =====================================================
 TabPosition = Enum(('left', 'right', 'top', 'bottom'))
 
+#: Horizontal alingment.
+#:
+#: ========== =====================================================
+#: value      description
+#: ========== =====================================================
+#: ``left``   (default) Align left
+#: ``right``  Align right
+#: ``center`` Align center
+#: ========== =====================================================
+HorizontalAlign = Enum(('left', 'right', 'center'))
+
+
 #: A container's layout style, based on the order of insertion.
 #:
 #: ================= ===============================================
