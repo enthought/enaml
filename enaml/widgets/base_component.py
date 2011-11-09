@@ -107,25 +107,58 @@ def setup_hook(func):
 
     """
     method_name = func.__name__
+
+    def collect_gens(component):
+        """ A function used by 'closure' that walks the tree of
+        components from the given component and collects the 
+        setup hook generators into a flat list.
+
+        """
+        gens = []
+        gens_extend = gens.extend
+        stack = [component]
+        stack_extend = stack.extend
+        stack_pop = stack.pop
+        while stack:
+            cmpnt = stack_pop()
+            gens_extend((getattr(hook, method_name)(cmpnt) 
+                         for hook in cmpnt.setup_hooks))
+            stack_extend(cmpnt.children)
+        return gens
     
+    # A flag that is used by the closure to know if it's at the
+    # top of the recursion stack. This ameliorates the need to 
+    # pass a flag to each closure func and try to awkwardly manage
+    # function call signatures. The list works around the lack of
+    # nonlocal scoping in Python 2.x
+    at_top = [True]
+
     @wraps(func)
     def closure(self, *args, **kwargs):
-        # Create the generators from the setup hooks
-        gens = [getattr(hook, method_name)(self) for hook in self.setup_hooks]
+        is_top = at_top[0]
+        if is_top:
+            # Iterate the generators once to allow them to pre-process
+            gens = collect_gens(self)
+            for gen in gens:
+                gen.next()
 
-        # Iterate the generators to allow them to pre-process
-        for gen in gens:
-            gen.next()
-        
+            # Set the at_top flag to False so any child recursion 
+            # doesn't re-call the generators.
+            at_top[0] = False
+
         # Perform the setup operation
         func(self, *args, **kwargs)
 
-        # Iterate the generators a second time to allow post-processing
-        for gen in gens:
-            try:
-                gen.next()
-            except StopIteration:
-                pass
+        if is_top:
+            # Iterate the generators a second time to allow post-processing
+            for gen in gens:
+                try:
+                    gen.next()
+                except StopIteration:
+                    pass
+            
+            # reset the at_top flag to True so the process is repeatable
+            at_top[0] = True
 
     return closure
 
