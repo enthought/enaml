@@ -136,11 +136,11 @@ class EnamlTestCase(unittest.TestCase):
         .. note:: It is expected that the user has defined an appropriate
             method get_<attribute_name>(component, widget) in the current
             test case. The extended signature is required because additional
-            information component attribute are required return a sensible
-            result (e.g. the component uses Converters to set and retrieve
-            the value of the attribute. The get methods can raise
-            assertion errors when it is not possible to retrieve a sensible
-            value for the attribute.
+            information on the component's attributes is required to return
+            a sensible result (e.g. the component uses Converters to set
+            and retrieve the value of the attribute). The get methods can
+            raise assertion errors when it is not possible to retrieve a
+            sensible value for the attribute.
 
         """
         widget = component.toolkit_widget
