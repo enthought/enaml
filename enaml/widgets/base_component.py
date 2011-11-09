@@ -5,9 +5,11 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 from functools import wraps
 
-from traits.api import HasStrictTraits, WeakRef, Instance, List, Str
+from traits.api import HasStrictTraits, WeakRef, Instance, List, Str, Tuple, Property
 
 from .setup_hooks import AbstractSetupHook
+from ..styling.color import ColorTrait
+from ..styling.font import FontTrait
 
 from ..toolkit import Toolkit
 
@@ -71,6 +73,29 @@ class AbstractTkBaseComponent(object):
 
         """
         raise NotImplementedError
+    
+    @abstractmethod
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the parent.
+        Sets the background color of the internal widget to the given color.
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the parent.
+        Sets the foreground color of the internal widget to the given color.
+        For some widgets this may do nothing.
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the parent.
+        Sets the font of the internal widget to the given font.
+        For some widgets this may do nothing.
+        """
+        raise NotImplementedError
 
 
 def setup_hook(func):
@@ -82,58 +107,25 @@ def setup_hook(func):
 
     """
     method_name = func.__name__
-
-    def collect_gens(component):
-        """ A function used by 'closure' that walks the tree of
-        components from the given component and collects the 
-        setup hook generators into a flat list.
-
-        """
-        gens = []
-        gens_extend = gens.extend
-        stack = [component]
-        stack_extend = stack.extend
-        stack_pop = stack.pop
-        while stack:
-            cmpnt = stack_pop()
-            gens_extend((getattr(hook, method_name)(cmpnt) 
-                         for hook in cmpnt.setup_hooks))
-            stack_extend(cmpnt.children)
-        return gens
     
-    # A flag that is used by the closure to know if it's at the
-    # top of the recursion stack. This ameliorates the need to 
-    # pass a flag to each closure func and try to awkwardly manage
-    # function call signatures. The list works around the lack of
-    # nonlocal scoping in Python 2.x
-    at_top = [True]
-
     @wraps(func)
     def closure(self, *args, **kwargs):
-        is_top = at_top[0]
-        if is_top:
-            # Iterate the generators once to allow them to pre-process
-            gens = collect_gens(self)
-            for gen in gens:
-                gen.next()
+        # Create the generators from the setup hooks
+        gens = [getattr(hook, method_name)(self) for hook in self.setup_hooks]
 
-            # Set the at_top flag to False so any child recursion 
-            # doesn't re-call the generators.
-            at_top[0] = False
-
+        # Iterate the generators to allow them to pre-process
+        for gen in gens:
+            gen.next()
+        
         # Perform the setup operation
         func(self, *args, **kwargs)
 
-        if is_top:
-            # Iterate the generators a second time to allow post-processing
-            for gen in gens:
-                try:
-                    gen.next()
-                except StopIteration:
-                    pass
-            
-            # reset the at_top flag to True so the process is repeatable
-            at_top[0] = True
+        # Iterate the generators a second time to allow post-processing
+        for gen in gens:
+            try:
+                gen.next()
+            except StopIteration:
+                pass
 
     return closure
 
@@ -169,15 +161,41 @@ class BaseComponent(HasStrictTraits):
     #: appended to this list instead of a list being assigned atomically.
     setup_hooks = List(Instance(AbstractSetupHook))
 
-    #: A private attribute that is used to store setup hook
-    #: generators during the setup process.
-    _hook_gens = List
-
     #: The toolkit that created this object. This does not need to 
     #: be stored weakly because the toolkit does not maintain refs
     #: to the compoents that its constructors create.
     toolkit = Instance(Toolkit)
+    
+    #: The background color of the widget
+    bg_color = Property(ColorTrait, depends_on=['_user_bg_color', '_style_bg_color'])
+    
+    #: Private trait holding the user-set background color value
+    _user_bg_color = ColorTrait
+    
+    #: Private trait holding the background color value from the style
+    _style_bg_color = ColorTrait
 
+    #: The foreground color of the widget
+    fg_color = Property(ColorTrait, depends_on=['_user_fg_color', '_style_fg_color'])
+    
+    #: Private trait holding the user-set foreground color value
+    _user_fg_color = ColorTrait
+    
+    #: Private trait holding the foreground color value from the style
+    _style_fg_color = ColorTrait
+
+    #: The foreground color of the widget
+    font = Property(FontTrait, depends_on=['_user_font', '_style_font'])
+    
+    #: Private trait holding the user-set foreground color value
+    _user_font = FontTrait
+    
+    #: Private trait holding the foreground color value from the style
+    _style_font = FontTrait
+
+    #: The attributes on this class that can be set by the styling mechanism
+    _style_tags = Tuple(Str, ('bg_color', 'fg_color', 'font'))
+ 
     #: The optional style identifier for the StyleSheet system.
     style_id = Str
 
@@ -349,4 +367,46 @@ class BaseComponent(HasStrictTraits):
         self.add_trait_listener(self.abstract_obj, 'shell')
         for child in self.children:
             child.set_listeners()
+
+    def _set_bg_color(self, new):
+        """ Property setter for the 'bg_color' background color property.
+        Set values are pushed to the '_user_bg_color' trait.
+        """
+        self._user_bg_color = new
+    
+    def _get_bg_color(self):
+        """ Property sgtter for the 'bg_color' background color property.
+        We use the '_user_bg_color' trait unless it is None.
+        """
+        if self._user_bg_color:
+            return self._user_bg_color
+        return self._style_bg_color
+
+    def _set_fg_color(self, new):
+        """ Property setter for the 'fg_color' foreground color property.
+        Set values are pushed to the '_user_fg_color' trait.
+        """
+        self._user_fg_color = new
+    
+    def _get_fg_color(self):
+        """ Property sgtter for the 'fg_color' foreground color property.
+        We use the '_user_fg_color' trait unless it is None.
+        """
+        if self._user_fg_color:
+            return self._user_fg_color
+        return self._style_fg_color
+
+    def _set_font(self, new):
+        """ Property setter for the 'fg_color' foreground color property.
+        Set values are pushed to the '_user_fg_color' trait.
+        """
+        self._user_font = new
+    
+    def _get_font(self):
+        """ Property sgtter for the 'fg_color' foreground color property.
+        We use the '_user_fg_color' trait unless it is None.
+        """
+        if self._user_font:
+            return self._user_font
+        return self._style_font
 
