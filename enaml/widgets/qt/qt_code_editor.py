@@ -47,7 +47,6 @@ class QtCodeEditor(QtTextEditor, AbstractTkCodeEditor):
     def block_indent(self):
         """ Indent the selected lines of code.
         """
-        print 'calling indent'
         self.widget.block_indent()
     
     def block_unindent(self):
