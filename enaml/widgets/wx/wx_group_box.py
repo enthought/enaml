@@ -137,7 +137,13 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
     def refresh_title(self, title=None):
         """ Align the title in the GroupBox.
 
+        Arguments
+        ---------
+        title : str
+            Optional; if not given, the internal title is used.
+
         """
+        # FIXME I am sure there is a better way to do this
         label = self._label
         shell = self.shell_obj
 
@@ -173,6 +179,8 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
 
     def refresh_widget(self):
         """ Refersh the internal private widgets in order.
+
+        The border has to be refreshed before the title.
 
         """
         self.refresh_border()
