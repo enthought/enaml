@@ -14,9 +14,8 @@ class TestQtCheckBox(QtTestAssistant, check_box.TestCheckBox):
         """
         return widget.text()
 
-    def checked_status(self, widget):
-        """ Returns the text from the tookit widget.
-
+    def get_checked(self, widget):
+        """ Returns the checked status from the tookit widget.
 
         """
         return widget.isChecked()
