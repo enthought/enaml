@@ -25,10 +25,12 @@ class TestWxPushButton(WXTestAssistant, push_button.TestPushButton):
         widget = self.widget
         self.send_wx_event(widget, wx.EVT_LEFT_UP)
         self.send_wx_event(widget, wx.EVT_LEAVE_WINDOW)
+        self.process_wx_events(self.app)
 
     def button_clicked(self):
         """ Click the button programmatically.
 
         """
         self.send_wx_event(self.widget, wx.EVT_BUTTON)
+        self.process_wx_events(self.app)
 

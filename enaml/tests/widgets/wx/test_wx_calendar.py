@@ -38,6 +38,7 @@ class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
         event = wx.calendar.CalendarEvent(widget, cal_event.typeId)
         event.PySetDate(date)
         widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)
 
     def select_date(self, widget, date):
         """ Fire an event to indicate that a date was selected.
@@ -48,3 +49,4 @@ class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
         widget.PySetDate(date)
         event.PySetDate(date)
         widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)

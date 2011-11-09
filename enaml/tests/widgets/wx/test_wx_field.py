@@ -59,3 +59,4 @@ class TestWxField(WXTestAssistant, field.TestField):
 
         """
         self.send_wx_event(widget, wx.EVT_TEXT_ENTER)
+        self.process_wx_events(self.app)

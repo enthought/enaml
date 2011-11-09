@@ -30,3 +30,4 @@ class TestWxComboBox(WXTestAssistant, combo_box.TestComboBox):
         """
         widget.SetSelection(index)
         self.send_wx_event(widget, wx.EVT_COMBOBOX)
+        self.process_wx_events(self.app)
