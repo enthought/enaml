@@ -92,9 +92,13 @@ class AbstractTkPlainTextEdit(AbstractTkControl):
     def redo(self):
         raise NotImplementedError
     
-    #@abstractmethod
-    #def find(self):
-    #    raise NotImplementedError
+    @abstractmethod
+    def find(self, text, backwards=False, case_sensitive=False, whole_words=False):
+        """ Find the text in the editor.
+        
+        Returns True and sets the cursor position if found, otherwise returns False
+        """
+        raise NotImplementedError
 
 class PlainTextEdit(Control):
     """
@@ -301,6 +305,13 @@ class PlainTextEdit(Control):
 
         """
         self.abstract_obj.redo()
+
+    def find(self, text, backwards=False, case_sensitive=False, whole_words=False):
+        """ Find the text in the editor.
+        
+        Returns True and sets the cursor position if found, otherwise returns False
+        """
+        self.abstract_obj.find(text, backwards, case_sensitive, whole_words)
 
     #--------------------------------------------------------------------------
     # Property methods 

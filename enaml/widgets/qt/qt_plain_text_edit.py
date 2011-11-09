@@ -91,7 +91,7 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
             self.update_text()
             self.shell_obj._modified = False
     
-    def shell_overwrite_changed(self, overwwrite):
+    def shell_overwrite_changed(self, overwrite):
         """ The change handler for the 'overwrite' attribute on the parent.
 
         """
@@ -254,6 +254,20 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         """
         self.widget.redo()
         self.update_shell_selection()
+
+    def find(self, text, backwards=False, case_sensitive=False, whole_words=False):
+        """ Find the text in the editor.
+        
+        Returns True and sets the cursor position if found, otherwise returns False
+        """
+        options = QtGui.QTextDocument.FindFlags()
+        if backwards:
+            options |= QtGui.QTextDocument.FindBackward
+        if case_sensitive:
+            options |= QtGui.QTextDocument.FindCaseSensitively
+        if whole_words:
+            options |= QtGui.QTextDocument.FindWholeWords
+        return self.widget.find(text, options)
 
     def on_text_updated(self):
         """ The event handler for the text update event.

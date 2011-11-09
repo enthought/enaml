@@ -89,5 +89,6 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         Not meant for public consumption.
 
         """
+        print 'set checked', checked
         self.widget.setChecked(checked)
 
