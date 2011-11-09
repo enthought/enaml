@@ -1,4 +1,4 @@
-
+from enaml.styling.font import Font
 
 defn EditorPanel(editor):
     GroupBox:
@@ -10,7 +10,7 @@ defn EditorPanel(editor):
         CheckBox:
             text = 'Read only'
             checked := editor.read_only
-        CheckBox -> ow:
+        CheckBox:
             text = 'Overwrite'
             checked := editor.overwrite
     Container:
@@ -50,6 +50,7 @@ defn MainWindow:
             text = 'Test'
             text >> print(text)
             cursor_position >> print(cursor_position)
+            font = 'Arial 12'
         Label -> cursor_info:
             text << '%d/%d' % (editor.cursor_line, editor.cursor_column)
         EditorPanel(editor) -> properties, find_box:
