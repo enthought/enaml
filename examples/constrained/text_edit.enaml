@@ -37,7 +37,7 @@ defn EditorPanel(editor):
 
 defn MainWindow:
     Window:
-        title = "Plain Text Editor"
+        title = "Text Editor"
         constraints = [
             vertical(top, editor, cursor_info, bottom),
             vertical(top, properties, find_box, _space_ >= 0, bottom),
@@ -46,7 +46,7 @@ defn MainWindow:
             align_left(properties, find_box),
             align_right(properties, find_box),
         ]
-        PlainTextEdit -> editor:
+        CodeEditor -> editor:
             text = 'Test'
             text >> print(text)
             cursor_position >> print(cursor_position)

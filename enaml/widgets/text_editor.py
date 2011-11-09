@@ -9,7 +9,7 @@ from traits.api import Bool, Event, Int, Str, Enum, Property, Instance, Any
 from .control import Control, AbstractTkControl
 
 
-class AbstractTkPlainTextEdit(AbstractTkControl):
+class AbstractTkTextEditor(AbstractTkControl):
     """ A text editor widget capable of editing plain text with styles.
     
     This is not a general text edit widget with general capabilties for sophistcated
@@ -100,7 +100,7 @@ class AbstractTkPlainTextEdit(AbstractTkControl):
         """
         raise NotImplementedError
 
-class PlainTextEdit(Control):
+class TextEditor(Control):
     """
     """
     #: Whether or not the editor is read only.
@@ -149,11 +149,11 @@ class PlainTextEdit(Control):
     text_edited = Event
     
     #: How strongly a component hugs it's contents' width.
-    #: PlainTextEdits ignore the width hug by default, so they expand freely in width.
+    #: TextEditors ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
     
     #: How strongly a component hugs it's contents' height.
-    #: PlainTextEdits ignore the height hug by default, so they expand freely
+    #: TextEditors ignore the height hug by default, so they expand freely
     #: in height.
     hug_height = 'ignore'
 
@@ -174,7 +174,7 @@ class PlainTextEdit(Control):
     _selected_text = Str
 
     #: Overridden parent class trait
-    abstract_obj = Instance(AbstractTkPlainTextEdit)
+    abstract_obj = Instance(AbstractTkTextEditor)
 
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.

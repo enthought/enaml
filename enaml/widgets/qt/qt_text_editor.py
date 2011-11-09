@@ -6,13 +6,13 @@ from qt import QtGui
 
 from .qt_control import QtControl
 
-from ..plain_text_edit import AbstractTkPlainTextEdit
+from ..text_editor import AbstractTkTextEditor
 
 
-class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
+class QtTextEditor(QtControl, AbstractTkTextEditor):
     """ A Qt implementation of a Field.
 
-    QtPlainTextEdit uses a QPlainTextEdit to provide a simple text editor widget.
+    QtTextEditor uses a QPlainTextEdit to provide a simple text editor widget.
 
     """
     # A flag which set to True when we're applying updates to the 
@@ -23,7 +23,7 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
     # SetupMethods
     #--------------------------------------------------------------------------
     def create(self):
-        """ Creates the underlying QPlainTextEdit.
+        """ Creates the underlying QTextEditor.
 
         """
         self.widget = QtGui.QPlainTextEdit(parent=self.parent_widget())
@@ -32,7 +32,7 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         """ Initializes the attributes of the Qt widget.
 
         """
-        super(QtPlainTextEdit, self).initialize()
+        super(QtTextEditor, self).initialize()
         shell = self.shell_obj
         self.set_read_only(shell.read_only)
         
@@ -49,7 +49,7 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         """ Binds the event handlers for the QLineEdit.
 
         """
-        super(QtPlainTextEdit, self).bind()
+        super(QtTextEditor, self).bind()
         widget = self.widget
         widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
         widget.selectionChanged.connect(self.on_selection)
