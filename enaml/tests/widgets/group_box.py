@@ -25,8 +25,8 @@ class TestGroupBox(EnamlTestCase):
 
     Notes
     -----
-    All the provided methods need to support the extented signature
-    <method>(component, widget).
+    - All the provided methods need to support the extented signature
+      <method>(component, widget).
 
     """
 
@@ -51,7 +51,7 @@ defn MainWindow():
 """
         self.view = self.parse_and_create(enaml_source)
         self.component = self.component_by_name(self.view, 'gb')
-        self.widget = component.toolkit_widget
+        self.widget = self.component.toolkit_widget
 
     def test_initialization(self):
         """ Test initialization
