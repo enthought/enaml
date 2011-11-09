@@ -97,7 +97,6 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         """
         raise NotImplementedError
 
-
 class Component(BaseComponent):
     """ A BaseComponent subclass that adds a box model and support
     for constraints specification. This class represents the most

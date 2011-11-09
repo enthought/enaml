@@ -83,7 +83,7 @@ class Font(tuple):
         
         point_size : an integer
         
-        weight : one of ['light', 'demi_bold', 'bold', 'black']
+        weight : one of ['light', 'normal', 'demi_bold', 'bold', 'black']
         
         style : one of ['italic', 'oblique']
 
