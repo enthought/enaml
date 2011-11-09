@@ -34,25 +34,6 @@ class EnamlTestCase(unittest.TestCase):
     #: default toolkit to use for the enaml source parsing
     toolkit = default_toolkit()
 
-##    def component_by_id(self, component, component_id):
-##        """ Find an item in the view's namespace with a given id.
-##
-##        Arguments
-##        ---------
-##        view :
-##            The enaml based view object
-##
-##        component_id :
-##            The enaml component id.
-##
-##        Raises
-##        ------
-##        AttributeError :
-##            if there is no object with that id.
-##
-##        """
-##        return getattr(view.ns, component_id)
-
     def component_by_name(self, view, name):
         """ Find an item in the view with a given name.
 
