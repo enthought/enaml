@@ -15,11 +15,35 @@ class AbstractTkCodeEditor(AbstractTkTextEditor):
     This is not a general text edit widget with general capabilties for sophistcated
     formatting or image display.
     """
-    pass
+    @abstractmethod
+    def shell_highlight_current_line_changed(self):
+        pass
     
+    @abstractmethod
+    def shell_lexer_changed(self):
+        pass
+    
+    @abstractmethod
+    def block_indent(self):
+        """ Indent the selected lines of code.
+        """
+        pass
+    
+    @abstractmethod
+    def block_unindent(self):
+        """ Unindent the selected lines of code.
+        """
+        pass
+
 class CodeEditor(TextEditor):
     """
     """
+    
+    #: Whether or not we should highlight the current line
+    highlight_current_line = Bool
+    
+    #: The lexer to use for syntax highlighting
+    lexer = Any
     
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkCodeEditor)

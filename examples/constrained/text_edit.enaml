@@ -46,7 +46,7 @@ defn MainWindow:
             align_left(properties, find_box),
             align_right(properties, find_box),
         ]
-        CodeEditor -> editor:
+        TextEditor -> editor:
             text = 'Test'
             text >> print(text)
             cursor_position >> print(cursor_position)
