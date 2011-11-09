@@ -1,0 +1,8 @@
+
+defn MainWindow:
+    Window:
+        title = "Form Layout"
+        PlainTextEdit:
+            text = 'Test'
+            text >> print(text)
+            selected_text >> print(selected_text)

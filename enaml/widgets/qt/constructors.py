@@ -50,6 +50,7 @@ QT_CONSTRUCTORS = dict((
     constructor('html'),
     constructor('image'),
     constructor('label'),
+    constructor('plain_text_edit'),
     constructor('push_button'),
     constructor('radio_button'),
     constructor('slider'),
