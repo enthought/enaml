@@ -37,7 +37,7 @@ class TestCheckBox(EnamlTestCase):
 
         self.check_box_label = 'checkbox label'
 
-        enaml = """
+        enaml_source = """
 defn MainWindow(events):
     Window:
         CheckBox -> checkb1:
@@ -49,7 +49,7 @@ defn MainWindow(events):
 """.format(self.check_box_label)
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'checkb1')
         self.widget = self.component.toolkit_widget
 

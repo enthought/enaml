@@ -22,7 +22,7 @@ class TestField(EnamlTestCase):
 
         """
 
-        enaml = """
+        enaml_source = """
 defn MainWindow(events):
     Window:
         Field -> field:
@@ -39,7 +39,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'field')
         self.widget = self.component.toolkit_widget
 
