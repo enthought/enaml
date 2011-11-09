@@ -166,7 +166,7 @@ class BaseComponent(HasStrictTraits):
     #: to the compoents that its constructors create.
     toolkit = Instance(Toolkit)
     
-    #: The background colour of the widget
+    #: The background color of the widget
     bg_color = Property(ColorTrait, depends_on=['_user_bg_color', '_style_bg_color'])
     
     #: Private trait holding the user-set background color value
@@ -175,7 +175,7 @@ class BaseComponent(HasStrictTraits):
     #: Private trait holding the background color value from the style
     _style_bg_color = ColorTrait
 
-    #: The foreground colour of the widget
+    #: The foreground color of the widget
     fg_color = Property(ColorTrait, depends_on=['_user_fg_color', '_style_fg_color'])
     
     #: Private trait holding the user-set foreground color value
@@ -184,7 +184,7 @@ class BaseComponent(HasStrictTraits):
     #: Private trait holding the foreground color value from the style
     _style_fg_color = ColorTrait
 
-    #: The foreground colour of the widget
+    #: The foreground color of the widget
     font = Property(FontTrait, depends_on=['_user_font', '_style_font'])
     
     #: Private trait holding the user-set foreground color value

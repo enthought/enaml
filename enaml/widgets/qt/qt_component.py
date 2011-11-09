@@ -47,10 +47,10 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         
         shell = self.shell_obj
         if shell.bg_color:
-            role = self.toolkit_widget.backgroundRole()
+            role = self.widget.backgroundRole()
             self.set_role_color(role, shell.bg_color)
         if shell.fg_color:
-            role = self.toolkit_widget.foregroundRole()
+            role = self.widget.foregroundRole()
             self.set_role_color(role, shell.fg_color)
         if shell.font:
             self.set_font(shell.font)
@@ -162,7 +162,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """ The change handler for the 'bg_color' attribute on the parent.
         Sets the background color of the internal widget to the given color.
         """
-        role = self.toolkit_widget.backgroundRole()
+        role = self.widget.backgroundRole()
         self.set_role_color(role, color)
     
     def shell_fg_color_changed(self, color):
@@ -170,7 +170,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         Sets the foreground color of the internal widget to the given color.
         For some widgets this may do nothing.
         """
-        role = self.toolkit_widget.foregroundRole()
+        role = self.widget.foregroundRole()
         self.set_role_color(role, color)
 
     def shell_font_changed(self, font):
@@ -218,27 +218,27 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         the role if the enaml color is invalid.
         """
         if not color:
-            palette = QtGui.QApplication.instance().palette(self.toolkit_widget)
+            palette = QtGui.QApplication.instance().palette(self.widget)
             qcolor = palette.color(role)
             # On OSX, the default color is rendered *slightly* off
             # so a simple workaround is to tell the widget not to
             # auto fill the background.
-            if role == self.toolkit_widget.backgroundRole():
-                self.toolkit_widget.setAutoFillBackground(False)
+            if role == self.widget.backgroundRole():
+                self.widget.setAutoFillBackground(False)
         else:
             qcolor = q_color_from_color(color)
             # When not using qt style sheets to set the background
             # color, we need to tell the widget to auto fill the 
             # background or the bgcolor won't render at all.
-            if role == self.toolkit_widget.backgroundRole():
-                self.toolkit_widget.setAutoFillBackground(True)
-        palette = self.toolkit_widget.palette()
+            if role == self.widget.backgroundRole():
+                self.widget.setAutoFillBackground(True)
+        palette = self.widget.palette()
         palette.setColor(role, qcolor)
-        self.toolkit_widget.setPalette(palette)
+        self.widget.setPalette(palette)
 
     def set_font(self, font):
         """ Set the font of the underlying toolkit widget to an appropriate
         QFont.
         """
         q_font = q_font_from_font(font)
-        self.toolkit_widget.setFont(q_font)
+        self.widget.setFont(q_font)
