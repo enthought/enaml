@@ -2,7 +2,15 @@
 defn MainWindow:
     Window:
         title = "Form Layout"
-        PlainTextEdit:
+        PlainTextEdit -> editor:
             text = 'Test'
             text >> print(text)
-            selected_text >> print(selected_text)
+            cursor_position >> print(cursor_position)
+            wrap_lines := wrap.checked
+            read_only := ro.checked
+        CheckBox -> wrap:
+            text = 'Wrap lines:'
+        CheckBox -> ro:
+            text = 'Read only:'
+        Label:
+            text << '%d/%d' % (editor.cursor_line, editor.cursor_column)

@@ -17,7 +17,7 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
     """
     # A flag which set to True when we're applying updates to the 
     # model. Allows us to avoid unnecessary notification recursion.
-    setting_value = False
+    setting_text = False
 
     #--------------------------------------------------------------------------
     # SetupMethods
@@ -41,6 +41,9 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         
         shell._modified = False
         self.set_cursor_position(shell.cursor_position)
+        self.set_anchor_position(shell.anchor_position)
+        self.set_wrap_lines(shell.wrap_lines)
+        self.set_overwrite(shell.overwrite)
 
     def bind(self):
         """ Binds the event handlers for the QLineEdit.
@@ -50,6 +53,7 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         widget = self.widget
         widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
         widget.selectionChanged.connect(self.on_selection)
+        widget.cursorPositionChanged.connect(self.on_cursor)
 
 
     #--------------------------------------------------------------------------
@@ -68,16 +72,36 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         the parent.
 
         """
-        if not self.setting_value:
+        if not self.setting_text:
             self.set_cursor_position(cursor_position)
-    
-    def shell_text_changed(self, value):
-        """ The change handler for the 'value' attribute on the parent.
+
+    def shell_anchor_position_changed(self, anchor_position):
+        """ The change handler for the 'anchor_position' attribute on 
+        the parent.
 
         """
-        if not self.setting_value:
+        if not self.setting_text:
+            self.set_anchor_position(anchor_position)
+    
+    def shell_text_changed(self, value):
+        """ The change handler for the 'text' attribute on the parent.
+
+        """
+        if not self.setting_text:
             self.update_text()
             self.shell_obj._modified = False
+    
+    def shell_overwrite_changed(self, overwwrite):
+        """ The change handler for the 'overwrite' attribute on the parent.
+
+        """
+        self.set_overwrite(overwrite)
+    
+    def shell_wrap_lines_changed(self, wrap_lines):
+        """ The change handler for the 'wrap_lines' attribute on the parent.
+
+        """
+        self.set_wrap_lines(wrap_lines)
 
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
@@ -85,7 +109,7 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
 
         """
         cursor = self.widget.textCursor()
-        cursor.setPosition(start)
+        cursor.setAnchor(start)
         cursor.setPosition(end)
         self.widget.setTextCursor(cursor)
         self.update_shell_selection()
@@ -238,9 +262,9 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         widget = self.widget
         shell = self.shell_obj
         text = widget.toPlainText()
-        self.setting_value = True
+        self.setting_text = True
         shell.text = text
-        self.setting_value = False
+        self.setting_text = False
         self.update_shell_selection()
         shell.text_edited = text
         shell._modified = True
@@ -252,6 +276,12 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         """
         self.update_shell_selection()
 
+    def on_cursor(self):
+        """ The event handler for a cursor move.
+
+        """
+        self.update_shell_selection()
+
     def update_shell_selection(self):
         """ Updates the selection and cursor position of the parent
         to reflect the current state of the widget.
@@ -259,26 +289,21 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         """
         shell = self.shell_obj
         cursor = self.widget.textCursor()
-        shell._selected_text = cursor.selectedText()
-        self.setting_value = True
+        selected_text = cursor.selectedText()
+        selected_text.replace('\u2029', '\n') # replace unicode line break
+        shell._selected_text = selected_text
+        self.setting_text = True
         shell.cursor_position = cursor.position()
-        self.setting_value = False
+        shell.anchor_position = cursor.anchor()
+        shell._cursor_column = cursor.positionInBlock()
+        shell._cursor_line = cursor.blockNumber()
+        self.setting_text = False
 
     def update_text(self):
-        """ Updates the text control with the converted parent value or
-        sets the error state on the parent if the conversion fails.
+        """ Updates the text control.
 
         """
-        shell = self.shell_obj
-        try:
-            text = shell.converter.to_component(shell.text)
-        except Exception as e:
-            shell.exception = e
-            shell.error = True
-        else:
-            shell.exception = None
-            shell.error = False
-            self.change_text(text)
+        self.change_text(self.shell_obj.text)
 
     def change_text(self, text):
         """ Changes the text in the widget without emitted a text 
@@ -301,4 +326,24 @@ class QtPlainTextEdit(QtControl, AbstractTkPlainTextEdit):
         cursor = self.widget.textCursor()
         cursor.setPosition(cursor_position)
 
+    def set_anchor_position(self, anchor_position):
+        """ Sets the cursor position of the widget.
 
+        """
+        cursor = self.widget.textCursor()
+        cursor.setPosition(anchor_position)
+
+    def set_wrap_lines(self, wrap_lines):
+        """ Sets the line wrapping of the widget.
+
+        """
+        if wrap_lines:
+            self.widget.setLineWrapMode(QtGui.QPlainTextEdit.WidgetWidth)
+        else:
+            self.widget.setLineWrapMode(QtGui.QPlainTextEdit.NoWrap)
+
+    def set_overwrite(self, overwrite):
+        """ Sets the overwrite mode of the widget.
+
+        """
+        self.widget.setOverwriteMode(overwrite)

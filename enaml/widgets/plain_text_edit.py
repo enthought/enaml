@@ -17,7 +17,23 @@ class AbstractTkPlainTextEdit(AbstractTkControl):
     """
     
     @abstractmethod
+    def shell_cursor_position_changed(self, cursor_position):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_anchor_position_changed(self, anchor_position):
+        raise NotImplementedError
+    
+    @abstractmethod
     def shell_text_changed(self, value):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_wrap_lines_changed(self, value):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_overwrite_changed(self, overwrite):
         raise NotImplementedError
 
     @abstractmethod
@@ -86,19 +102,37 @@ class PlainTextEdit(Control):
     #: Whether or not the editor is read only.
     read_only = Bool
     
-    #: The position of the cursor in the field.
+    #: Whether to wrap text in the editor or not.  If True, keep words together
+    #: if possible.
+    wrap_lines = Bool(True)
+    
+    #: Whether to overwrite or insert text when the user types.
+    overwrite = Bool(False)
+    
+    #: The position of the cursor in the editor.
     cursor_position = Int
+
+    #: The anchor of the selection in the editor.
+    anchor_position = Int
+
+    #: A read only property holding the line number of cursor in the
+    #: editor.
+    cursor_line = Property(Int, depends_on='_cursor_line')
+
+    #: A read only property holding the column number of cursor in the
+    #: editor.
+    cursor_column = Property(Int, depends_on='_cursor_column')
 
     #: A read only property that is set to True if the user has changed
     #: the line edit from the ui, False otherwise. This is reset to
     #: False if the text is programmatically changed.
     modified = Property(Bool, depends_on='_modified')
 
-    #: The Python value to display in the field.
+    #: The Python value to display in the editor.
     text = Str
 
     #: A read only property that is updated with the text selected
-    #: in the field.
+    #: in the editor.
     selected_text = Property(Str, depends_on='_selected_text')
 
     #: Fired when the text is changed programmatically, or by the
@@ -110,17 +144,22 @@ class PlainTextEdit(Control):
     #: the text.
     text_edited = Event
     
-    #: Whether to wrap text in the editor, and if so where to break lines
-    line_wrap_mode = Enum('none', 'character', 'word')
-    
     #: How strongly a component hugs it's contents' width.
-    #: Fields ignore the width hug by default, so they expand freely in width.
+    #: PlainTextEdits ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
     
     #: How strongly a component hugs it's contents' height.
     #: PlainTextEdits ignore the height hug by default, so they expand freely
     #: in height.
     hug_height = 'ignore'
+
+    #: An internal attribute that is used by the implementation object
+    #: to update the value of 'cursor_line'.
+    _cursor_line = Int
+
+    #: An internal attribute that is used by the implementation object
+    #: to update the value of 'cursor_column'.
+    _cursor_column = Int
 
     #: An internal attribute that is used by the implementation object
     #: to update the value of 'modified'.
@@ -266,6 +305,18 @@ class PlainTextEdit(Control):
     #--------------------------------------------------------------------------
     # Property methods 
     #--------------------------------------------------------------------------
+    def _get_cursor_column(self):
+        """ The property getter for the 'cursor_column' attribute.
+
+        """
+        return self._cursor_column
+
+    def _get_cursor_line(self):
+        """ The property getter for the 'cursor_line' attribute.
+
+        """
+        return self._cursor_line
+
     def _get_modified(self):
         """ The property getter for the 'modified' attribute.
 
