@@ -14,10 +14,11 @@ class WXContainer(WXComponent, AbstractTkContainer):
 
     Notes
     -----
-        - All components are bound to the wx.EVT_SIZE singal that is
-          directed to the widget.
-        - The default behaviour of the WXContainer is to return as it's size
-          hint the tuple (-1, -1).
+    - All components are bound to the wx.EVT_SIZE singal that is
+      directed to the widget.
+    - The default behaviour of the WXContainer is to return as it's size
+      hint the tuple (-1, -1). This is valid for widgets that cannot
+      determine a hint size.
 
     """
     def bind(self):
@@ -34,4 +35,3 @@ class WXContainer(WXComponent, AbstractTkContainer):
 
         """
         return (-1, -1)
-
