@@ -26,7 +26,6 @@ class TestWxField(WXTestAssistant, field.TestField):
         widget.SetFocus()
         widget.WriteText(text)
         self.send_wx_event(widget, wx.EVT_TEXT)
-        self.process_wx_events(self.app)
 
     def change_text(self, widget, text):
         """ Change text programmatically, rather than "edit" it.
@@ -34,7 +33,6 @@ class TestWxField(WXTestAssistant, field.TestField):
         """
         widget.ChangeValue(text)
         self.send_wx_event(widget, wx.EVT_TEXT)
-        self.process_wx_events(self.app)
 
     def set_cursor_position(self, widget, index):
         """ Set the cursor at a specific position.
@@ -59,4 +57,3 @@ class TestWxField(WXTestAssistant, field.TestField):
 
         """
         self.send_wx_event(widget, wx.EVT_TEXT_ENTER)
-        self.process_wx_events(self.app)

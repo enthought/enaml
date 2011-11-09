@@ -28,7 +28,6 @@ class TestWXCheckBox(WXTestAssistant, check_box.TestCheckBox):
 
         """
         self.send_wx_event(widget, wx.EVT_LEFT_DOWN)
-        self.process_wx_events(self.app)
 
     def checkbox_released(self, widget):
         """ Release the button programmatically.
@@ -36,11 +35,9 @@ class TestWXCheckBox(WXTestAssistant, check_box.TestCheckBox):
         """
         self.send_wx_event(widget, wx.EVT_LEFT_UP)
         self.send_wx_event(widget, wx.EVT_LEAVE_WINDOW)
-        self.process_wx_events(self.app)
 
     def checkbox_toggle(self, widget):
         """ Toggle the button programmatically.
 
         """
         self.send_wx_event(widget, wx.EVT_CHECKBOX)
-        self.process_wx_events(self.app)

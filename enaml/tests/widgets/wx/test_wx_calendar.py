@@ -9,7 +9,7 @@ from .. import calendar
 
 
 @skip_nonwindows
-class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
+class TestWXCalendar(WXTestAssistant, calendar.TestCalendar):
     """ WXCalendar tests. """
 
     def get_date(self, widget):

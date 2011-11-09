@@ -9,7 +9,7 @@ from .. import combo_box
 
 
 @skip_nonwindows
-class TestWxComboBox(WXTestAssistant, combo_box.TestComboBox):
+class TestWXComboBox(WXTestAssistant, combo_box.TestComboBox):
     """ WXComboBox tests. """
 
     def get_selected_text(self, widget):
@@ -30,4 +30,3 @@ class TestWxComboBox(WXTestAssistant, combo_box.TestComboBox):
         """
         widget.SetSelection(index)
         self.send_wx_event(widget, wx.EVT_COMBOBOX)
-        self.process_wx_events(self.app)

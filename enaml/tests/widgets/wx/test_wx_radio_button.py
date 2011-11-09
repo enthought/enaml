@@ -22,4 +22,3 @@ class TestWxRadioButton(WXTestAssistant, radio_button.TestRadioButton):
 
         """
         return button.GetLabel()
-
