@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from unittest import expectedFailure
+
 from .qt_test_assistant import QtTestAssistant
 from .. import field
 
@@ -55,3 +57,11 @@ class TestQtField(QtTestAssistant, field.TestField):
 
         """
         widget.returnPressed.emit()
+
+    @expectedFailure
+    def test_max_length(self):
+        """ Check that the field enforces its maximum length.
+
+        This is known to fail on Qt.
+        """
+        super(TestQtField, self).test_max_length()
