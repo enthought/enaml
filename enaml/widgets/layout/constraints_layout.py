@@ -76,7 +76,11 @@ class ConstraintsLayout(AbstractLayoutManager):
         # works, but we might be able to do it more cleanly.
         for desc in descendants:
             if hasattr(desc, 'layout'):
-                desc.layout = None
+                if type(desc.layout) is type(self):
+                    desc.layout = None
+                else:
+                    # Initialize their layout.
+                    desc.initialize_layout()
 
         # Component default constraints
         cns = self.compute_component_cns(component)

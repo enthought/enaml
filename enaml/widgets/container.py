@@ -159,8 +159,12 @@ class Container(Component):
 
     @on_trait_change('children:size_hint_updated, children:hug_width, children:hug_height, children:resist_clip_width, children:resist_clip_height')
     def handle_size_hint_changed(self, child, name, old, new):
-        self.toolkit.invoke_later(self.layout.update_size_cns, child)
-        self.set_needs_layout()
+        if self.layout is None:
+            # Our layout is managed by an ancestor. Pass up the notification.
+            self.parent.handle_size_hint_changed(child, name, old, new)
+        else:
+            self.toolkit.invoke_later(self.layout.update_size_cns, child)
+            self.set_needs_layout()
 
     @on_trait_change('constraints,constraints_items,default_constraints,default_constraints_items')
     def handle_constraints_changed(self):

@@ -117,10 +117,28 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     def on_resize(self, event):
         """ Triggers a relayout of the shell object since the component
         has been resized.
+    
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the parent.
+        Sets the background color of the internal widget to the given color.
+        """
+        pass
+    
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the parent.
+        Sets the foreground color of the internal widget to the given color.
+        For some widgets this may do nothing.
+        """
+        pass
 
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the parent.
+        Sets the font of the internal widget to the given font.
+        For some widgets this may do nothing.
         """
         shell = self.shell_obj
         shell.do_layout()
+        pass   
 
     def parent_widget(self):
         """ Returns the logical wx.Window parent for this component.

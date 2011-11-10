@@ -61,4 +61,6 @@ QT_CONSTRUCTORS = dict((
     constructor('datetime_edit'),
     constructor('form'),
     constructor('group_box'),
+    constructor('stacked'),
+    constructor('scroll_area'),
 ))

@@ -97,7 +97,6 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         """
         raise NotImplementedError
 
-
 class Component(BaseComponent):
     """ A BaseComponent subclass that adds a box model and support
     for constraints specification. This class represents the most
@@ -106,7 +105,9 @@ class Component(BaseComponent):
     """
     #: A private attribute that holds the box model instance
     #: for this component. 
-    _box_model = Instance(BoxModel, ())
+    _box_model = Instance(BoxModel)
+    def __box_model_default(self):
+        return BoxModel(self)
 
     #: How strongly a component hugs it's contents' width. Valid strengths
     #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 

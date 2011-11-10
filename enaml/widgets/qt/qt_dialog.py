@@ -2,23 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
-
+from .qt import QtGui
 from .qt_window import QtWindow
+from .qt_resizing_widgets import QResizingDialog
 
 from ..dialog import AbstractTkDialog
-
-
-class QResizingDialog(QtGui.QDialog):
-    """ A QDialog subclass that converts a resize event into a signal
-    that can be connected to a slot. This allows the widget to notify
-    Enaml that it has been resized and the layout needs to be recomputed.
-
-    """
-    resized = QtCore.Signal()
-
-    def resizeEvent(self, event):
-        self.resized.emit()
 
 
 class QtDialog(QtWindow, AbstractTkDialog):
@@ -44,10 +32,6 @@ class QtDialog(QtWindow, AbstractTkDialog):
         """
         super(QtDialog, self).initialize()
         self.widget.finished.connect(self._on_close)
-
-    def bind(self):
-        super(QtDialog, self).bind()
-        self.widget.resized.connect(self.on_resize)
 
     #---------------------------------------------------------------------------
     # Implementation

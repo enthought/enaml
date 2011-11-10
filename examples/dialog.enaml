@@ -31,6 +31,9 @@ defn InformDialog(message):
         ]
         Label -> label:
             text = message
+            bg_color = "red"
+            fg_color = 'blue'
+            font = 'times 18 bold'
         PushButton -> ok_button:
             text = "OK"
             clicked >> dialog.accept()

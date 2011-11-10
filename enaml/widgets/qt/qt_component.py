@@ -2,22 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
+from .qt import QtGui
 from .qt_base_component import QtBaseComponent
+from .qt_resizing_widgets import QResizingFrame, QResizingWidget
+from .styling import q_color_from_color, q_font_from_font
 
 from ..component import AbstractTkComponent
-
-
-class QResizingFrame(QtGui.QFrame):
-    """ A QFrame subclass that converts a resize event into a signal
-    that can be connected to a slot. This allows the widget to notify
-    Enaml that it has been resized and the layout needs to be recomputed.
-
-    """
-    resized = QtCore.Signal()
-
-    def resizeEvent(self, event):
-        self.resized.emit()
 
 
 class QtComponent(QtBaseComponent, AbstractTkComponent):
@@ -38,14 +28,26 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     #--------------------------------------------------------------------------
     def create(self):
         self.widget = QResizingFrame(self.parent_widget())
+    
+    def initialize(self):
+        """Initialize the attributes of the Qt widget.
+        """
+        super(QtComponent, self).initialize()
+        
+        shell = self.shell_obj
+        if shell.bg_color:
+            role = self.widget.backgroundRole()
+            self.set_role_color(role, shell.bg_color)
+        if shell.fg_color:
+            role = self.widget.foregroundRole()
+            self.set_role_color(role, shell.fg_color)
+        if shell.font:
+            self.set_font(shell.font)
 
     def bind(self):
         super(QtComponent, self).bind()
 
-        # This is a hack at the moment because subclasses of component
-        # won't be creating a QResizingFrame and so can't connect to
-        # it's signal
-        if isinstance(self.widget, QResizingFrame):
+        if isinstance(self.widget, QResizingWidget):
             self.widget.resized.connect(self.on_resize)
 
     #--------------------------------------------------------------------------
@@ -141,6 +143,28 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         # it be required to resize this widget from within the layout
         # call, then the layout manager will do that via invoke_later.
         self.shell_obj.do_layout()
+    
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the parent.
+        Sets the background color of the internal widget to the given color.
+        """
+        role = self.widget.backgroundRole()
+        self.set_role_color(role, color)
+    
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the parent.
+        Sets the foreground color of the internal widget to the given color.
+        For some widgets this may do nothing.
+        """
+        role = self.widget.foregroundRole()
+        self.set_role_color(role, color)
+
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the parent.
+        Sets the font of the internal widget to the given font.
+        For some widgets this may do nothing.
+        """
+        self.set_font(font)    
 
     #--------------------------------------------------------------------------
     # Convienence methods
@@ -174,3 +198,33 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         for child in self.shell_obj.children:
             yield child.toolkit_widget
 
+    def set_role_color(self, role, color):
+        """ Set the color for a role of a QWidget to the color specified by
+        the given enaml color or reset the widgets color to the default value for
+        the role if the enaml color is invalid.
+        """
+        if not color:
+            palette = QtGui.QApplication.instance().palette(self.widget)
+            qcolor = palette.color(role)
+            # On OSX, the default color is rendered *slightly* off
+            # so a simple workaround is to tell the widget not to
+            # auto fill the background.
+            if role == self.widget.backgroundRole():
+                self.widget.setAutoFillBackground(False)
+        else:
+            qcolor = q_color_from_color(color)
+            # When not using qt style sheets to set the background
+            # color, we need to tell the widget to auto fill the 
+            # background or the bgcolor won't render at all.
+            if role == self.widget.backgroundRole():
+                self.widget.setAutoFillBackground(True)
+        palette = self.widget.palette()
+        palette.setColor(role, qcolor)
+        self.widget.setPalette(palette)
+
+    def set_font(self, font):
+        """ Set the font of the underlying toolkit widget to an appropriate
+        QFont.
+        """
+        q_font = q_font_from_font(font)
+        self.widget.setFont(q_font)

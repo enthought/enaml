@@ -5,9 +5,11 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 from functools import wraps
 
-from traits.api import HasStrictTraits, WeakRef, Instance, List, Str
+from traits.api import HasStrictTraits, WeakRef, Instance, List, Str, Tuple, Property
 
 from .setup_hooks import AbstractSetupHook
+from ..styling.color import ColorTrait
+from ..styling.font import FontTrait
 
 from ..toolkit import Toolkit
 
@@ -71,6 +73,131 @@ class AbstractTkBaseComponent(object):
 
         """
         raise NotImplementedError
+    
+    @abstractmethod
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the parent.
+        Sets the background color of the internal widget to the given color.
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the parent.
+        Sets the foreground color of the internal widget to the given color.
+        For some widgets this may do nothing.
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the parent.
+        Sets the font of the internal widget to the given font.
+        For some widgets this may do nothing.
+        """
+        raise NotImplementedError
+
+
+class NullContext(object):
+    """ A do-nothing context object that is created by the __call__
+    method of SetupContext when that context is being used by a 
+    non-toplevel call.
+
+    """
+    def __enter__(self):
+        pass
+    
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        pass
+
+
+class SetupContext(object):
+    """ A context object that will compute and run a set of generators
+    before and after yield control to user code. An instance of this
+    context manager cannot be entered recursively.
+
+    """
+    def __init__(self, method_name):
+        """ Initialize a SetupContext.
+
+        Parameters
+        ----------
+        method_name : string
+            The name of the method on the setup hooks to call in order
+            to create the setup generators.
+
+        """
+        self.method_name = method_name
+        self.component = None
+        self.gens = None
+
+    def __call__(self, component):
+        """ Prime the context manager for use.
+
+        Parameters
+        ----------
+        component : Instance(BaseComponent)
+            A component which has SetupHooks installed.
+
+        Returns
+        -------
+        result : NullContext or self.
+            If this manager is not in use, it will be primed and 
+            returned, otherwise a NullContext instance will be returned.
+
+        """
+        if self.component is not None:
+            return NullContext()
+        self.component = component
+        return self
+
+    def __enter__(self):
+        """ Collects the setuphook generators for the tree starting at
+        the current node and iterates the generators as a pre-processing
+        step.
+
+        """
+        # Walk the tree of components from this point down and collect
+        # a flat list of all of the setup hook generators.
+        gens = []
+        gens_extend = gens.extend
+        stack = [self.component]
+        stack_extend = stack.extend
+        stack_pop = stack.pop
+        while stack:
+            cmpnt = stack_pop()
+            gens_extend((getattr(hook, self.method_name)(cmpnt) 
+                         for hook in cmpnt.setup_hooks))
+            stack_extend(cmpnt.children)
+        
+        # Iterate the generators as a pre-processing step
+        for gen in gens:
+            gen.next()
+        
+        # Store the generators until the exit method, 
+        # so they can be iterated a second time.
+        self.gens = gens
+    
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        """ Iterates the collected generates a second time as a post
+        processing step, provided that the user code did not raise 
+        any exceptions.
+
+        """
+        # The user functions have now already run, and possibly
+        # raised an exception. In any case, we need to reset the
+        # internal state of this context manager and then iterate
+        # the generators a second time if no exception was raise
+        # by the user code.
+        self.component = None
+        gens = self.gens
+        self.gens = None
+        if exc_type is None:
+            for gen in gens:
+                try:
+                    gen.next()
+                except StopIteration:
+                    pass
 
 
 def setup_hook(func):
@@ -81,26 +208,12 @@ def setup_hook(func):
     used to do pre- and post- processing of a setup method.
 
     """
-    method_name = func.__name__
-    
+    setup_context = SetupContext(func.__name__)
+
     @wraps(func)
     def closure(self, *args, **kwargs):
-        # Create the generators from the setup hooks
-        gens = [getattr(hook, method_name)(self) for hook in self.setup_hooks]
-
-        # Iterate the generators to allow them to pre-process
-        for gen in gens:
-            gen.next()
-        
-        # Perform the setup operation
-        func(self, *args, **kwargs)
-
-        # Iterate the generators a second time to allow post-processing
-        for gen in gens:
-            try:
-                gen.next()
-            except StopIteration:
-                pass
+        with setup_context(self):
+            func(self, *args, **kwargs)
 
     return closure
 
@@ -140,7 +253,37 @@ class BaseComponent(HasStrictTraits):
     #: be stored weakly because the toolkit does not maintain refs
     #: to the compoents that its constructors create.
     toolkit = Instance(Toolkit)
+    
+    #: The background color of the widget
+    bg_color = Property(ColorTrait, depends_on=['_user_bg_color', '_style_bg_color'])
+    
+    #: Private trait holding the user-set background color value
+    _user_bg_color = ColorTrait
+    
+    #: Private trait holding the background color value from the style
+    _style_bg_color = ColorTrait
 
+    #: The foreground color of the widget
+    fg_color = Property(ColorTrait, depends_on=['_user_fg_color', '_style_fg_color'])
+    
+    #: Private trait holding the user-set foreground color value
+    _user_fg_color = ColorTrait
+    
+    #: Private trait holding the foreground color value from the style
+    _style_fg_color = ColorTrait
+
+    #: The foreground color of the widget
+    font = Property(FontTrait, depends_on=['_user_font', '_style_font'])
+    
+    #: Private trait holding the user-set foreground color value
+    _user_font = FontTrait
+    
+    #: Private trait holding the foreground color value from the style
+    _style_font = FontTrait
+
+    #: The attributes on this class that can be set by the styling mechanism
+    _style_tags = Tuple(Str, ('bg_color', 'fg_color', 'font'))
+ 
     #: The optional style identifier for the StyleSheet system.
     style_id = Str
 
@@ -312,4 +455,46 @@ class BaseComponent(HasStrictTraits):
         self.add_trait_listener(self.abstract_obj, 'shell')
         for child in self.children:
             child.set_listeners()
+
+    def _set_bg_color(self, new):
+        """ Property setter for the 'bg_color' background color property.
+        Set values are pushed to the '_user_bg_color' trait.
+        """
+        self._user_bg_color = new
+    
+    def _get_bg_color(self):
+        """ Property sgtter for the 'bg_color' background color property.
+        We use the '_user_bg_color' trait unless it is None.
+        """
+        if self._user_bg_color:
+            return self._user_bg_color
+        return self._style_bg_color
+
+    def _set_fg_color(self, new):
+        """ Property setter for the 'fg_color' foreground color property.
+        Set values are pushed to the '_user_fg_color' trait.
+        """
+        self._user_fg_color = new
+    
+    def _get_fg_color(self):
+        """ Property sgtter for the 'fg_color' foreground color property.
+        We use the '_user_fg_color' trait unless it is None.
+        """
+        if self._user_fg_color:
+            return self._user_fg_color
+        return self._style_fg_color
+
+    def _set_font(self, new):
+        """ Property setter for the 'fg_color' foreground color property.
+        Set values are pushed to the '_user_fg_color' trait.
+        """
+        self._user_font = new
+    
+    def _get_font(self):
+        """ Property sgtter for the 'fg_color' foreground color property.
+        We use the '_user_fg_color' trait unless it is None.
+        """
+        if self._user_font:
+            return self._user_font
+        return self._style_font
 

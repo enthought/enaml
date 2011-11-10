@@ -26,7 +26,7 @@ class EnamlDefinition(object):
     Enaml virtual machine for executing the function body.
 
     """
-    def __init__(self, name, code, args, defaults, global_ns):
+    def __init__(self, name, doc, code, args, defaults, global_ns):
         """ Initialize an EnamlDefinition.
 
         Parameters
@@ -34,6 +34,9 @@ class EnamlDefinition(object):
         name : string
             The name of the defn block.
         
+        doc : string
+            The docstring for the defn block.
+
         code : list
             The list of instruction to execute in the vm when called.
         
@@ -51,6 +54,7 @@ class EnamlDefinition(object):
         
         """
         self.__name__ = name
+        self.__doc__ = doc
         self.__code__ = code
         self.__args__ = args
         self.__defaults__ = defaults
@@ -609,6 +613,8 @@ class EnamlCompiler(object):
         compiler.
 
         """
+        if node.doc:
+            self.global_ns['__doc__'] = node.doc
         for item in node.body:
             self.visit(item)
     
@@ -669,8 +675,9 @@ class EnamlCompiler(object):
         # which, when called, creates the local namespace and dispatches
         # to the virtual machine to execute the instruction set.
         name = node.name
+        doc = node.doc
         definition = EnamlDefinition(
-            name, instructions, args, computed_defaults, self.global_ns,
+            name, doc, instructions, args, computed_defaults, self.global_ns,
         )
 
         # The defintion is a normal callable python object that we
