@@ -98,6 +98,108 @@ class AbstractTkBaseComponent(object):
         raise NotImplementedError
 
 
+class NullContext(object):
+    """ A do-nothing context object that is created by the __call__
+    method of SetupContext when that context is being used by a 
+    non-toplevel call.
+
+    """
+    def __enter__(self):
+        pass
+    
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        pass
+
+
+class SetupContext(object):
+    """ A context object that will compute and run a set of generators
+    before and after yield control to user code. An instance of this
+    context manager cannot be entered recursively.
+
+    """
+    def __init__(self, method_name):
+        """ Initialize a SetupContext.
+
+        Parameters
+        ----------
+        method_name : string
+            The name of the method on the setup hooks to call in order
+            to create the setup generators.
+
+        """
+        self.method_name = method_name
+        self.component = None
+        self.gens = None
+
+    def __call__(self, component):
+        """ Prime the context manager for use.
+
+        Parameters
+        ----------
+        component : Instance(BaseComponent)
+            A component which has SetupHooks installed.
+
+        Returns
+        -------
+        result : NullContext or self.
+            If this manager is not in use, it will be primed and 
+            returned, otherwise a NullContext instance will be returned.
+
+        """
+        if self.component is not None:
+            return NullContext()
+        self.component = component
+        return self
+
+    def __enter__(self):
+        """ Collects the setuphook generators for the tree starting at
+        the current node and iterates the generators as a pre-processing
+        step.
+
+        """
+        # Walk the tree of components from this point down and collect
+        # a flat list of all of the setup hook generators.
+        gens = []
+        gens_extend = gens.extend
+        stack = [self.component]
+        stack_extend = stack.extend
+        stack_pop = stack.pop
+        while stack:
+            cmpnt = stack_pop()
+            gens_extend((getattr(hook, self.method_name)(cmpnt) 
+                         for hook in cmpnt.setup_hooks))
+            stack_extend(cmpnt.children)
+        
+        # Iterate the generators as a pre-processing step
+        for gen in gens:
+            gen.next()
+        
+        # Store the generators until the exit method, 
+        # so they can be iterated a second time.
+        self.gens = gens
+    
+    def __exit__(self, exc_type, exc_value, exc_tb):
+        """ Iterates the collected generates a second time as a post
+        processing step, provided that the user code did not raise 
+        any exceptions.
+
+        """
+        # The user functions have now already run, and possibly
+        # raised an exception. In any case, we need to reset the
+        # internal state of this context manager and then iterate
+        # the generators a second time if no exception was raise
+        # by the user code.
+        self.component = None
+        gens = self.gens
+        self.gens = None
+        if exc_type is None:
+            for gen in gens:
+                try:
+                    gen.next()
+                except StopIteration:
+                    pass
+
+
 def setup_hook(func):
     """ A decorator for methods involved in the setup process of a 
     BaseComponent tree. It handles the calling of the setup hooks at 
@@ -106,59 +208,12 @@ def setup_hook(func):
     used to do pre- and post- processing of a setup method.
 
     """
-    method_name = func.__name__
-
-    def collect_gens(component):
-        """ A function used by 'closure' that walks the tree of
-        components from the given component and collects the 
-        setup hook generators into a flat list.
-
-        """
-        gens = []
-        gens_extend = gens.extend
-        stack = [component]
-        stack_extend = stack.extend
-        stack_pop = stack.pop
-        while stack:
-            cmpnt = stack_pop()
-            gens_extend((getattr(hook, method_name)(cmpnt) 
-                         for hook in cmpnt.setup_hooks))
-            stack_extend(cmpnt.children)
-        return gens
-    
-    # A flag that is used by the closure to know if it's at the
-    # top of the recursion stack. This ameliorates the need to 
-    # pass a flag to each closure func and try to awkwardly manage
-    # function call signatures. The list works around the lack of
-    # nonlocal scoping in Python 2.x
-    at_top = [True]
+    setup_context = SetupContext(func.__name__)
 
     @wraps(func)
     def closure(self, *args, **kwargs):
-        is_top = at_top[0]
-        if is_top:
-            # Iterate the generators once to allow them to pre-process
-            gens = collect_gens(self)
-            for gen in gens:
-                gen.next()
-
-            # Set the at_top flag to False so any child recursion 
-            # doesn't re-call the generators.
-            at_top[0] = False
-
-        # Perform the setup operation
-        func(self, *args, **kwargs)
-
-        if is_top:
-            # Iterate the generators a second time to allow post-processing
-            for gen in gens:
-                try:
-                    gen.next()
-                except StopIteration:
-                    pass
-            
-            # reset the at_top flag to True so the process is repeatable
-            at_top[0] = True
+        with setup_context(self):
+            func(self, *args, **kwargs)
 
     return closure
 
