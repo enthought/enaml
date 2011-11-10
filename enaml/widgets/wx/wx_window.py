@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-
 from .wx_container import WXContainer
 from .wx_component import WXComponent
 from ..window import AbstractTkWindow
@@ -13,11 +12,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
 
     WXWindow uses a combined set of wx.Frame - wx.Window widget to create
     a simple top level window which contains other child widgets and
-    layouts.
-
-    Since it is a top_level container the WXWindow widget overides the
-    generic container behaviour and returns resonable values instead of
-    (-1, -1).
+    layouts. Because of this dual behaviour some enaml calls need
+    to be delegated to the wx.Frame and some to the wx.Window.
 
     """
     #--------------------------------------------------------------------------
@@ -32,8 +28,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
         # FIXME: this is an ugly hack since the wx.Frame does not show
         # well. It is advised in the wxWidget documentation to add a
         # Panel or Window control before adding the children.
-        self.frame = wx.Frame(self.parent_widget(), style=style)
-        self.widget = wx.Window(self.frame)
+        self._frame = wx.Frame(self.parent_widget(), style=style)
+        self.widget = wx.Window(self._frame)
 
     def initialize(self):
         """ Intializes the attributes on the wx.Frame.
@@ -51,15 +47,13 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """ Displays the window to the screen.
 
         """
-        if self.frame:
-            self.frame.Show()
+        self._frame.Show()
 
     def hide(self):
         """ Hide the window from the screen.
 
         """
-        if self.frame:
-            self.frame.Hide()
+        self._frame.Hide()
 
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute.
@@ -76,20 +70,18 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """ Sets the title of the frame.
 
         """
-        if self.frame:
-            self.frame.SetTitle(title)
+        self._frame.SetTitle(title)
 
     def set_modality(self, modality):
         """ Sets the modality of the frame.
 
         """
-        # The wx frame cannot distinguish between application and
-        # window modal (AFAIK). I think we need a wxDialog for that.
-        if self.frame:
-            if modality in ('application_modal', 'window_modal'):
-                self.frame.MakeModal(True)
-            else:
-                self.frame.MakeModal(False)
+        # FIXME: The wx frame cannot distinguish between application and
+        # window modal.
+        if modality in ('application_modal', 'window_modal'):
+            self._frame.MakeModal(True)
+        else:
+            self._frame.MakeModal(False)
 
     def on_resize(self, event):
         """ Respond to a resize event.
@@ -99,14 +91,13 @@ class WXWindow(WXContainer, AbstractTkWindow):
 
         """
         super(WXWindow, self).on_resize(event)
-        self.frame.Fit()
+        self._frame.Fit()
 
     def size_hint(self):
         """ Return the sizehin for the WXWindow;
 
         Window is a top level container and should return a resonable size
-        hint. Thus the WXComponent is used here to overide the generic
+        hint. Thus the WXComponent is used here to override the generic
         behaviour of WXContainers.
-
         """
         super(WXComponent, self).size_hint()
