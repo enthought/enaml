@@ -11,10 +11,10 @@ from .util import enum
 #: ============ ===============================================
 #: value        description
 #: ============ ===============================================
-#: ``accepted`` (default) The user accepted the dialog.
-#: ``rejected`` The user declined the default result.
+#: ``accepted`` The user accepted the dialog.
+#: ``rejected`` (default) The user declined the default result.
 #: ============ ===============================================
-DialogResult = Enum(('accepted', 'rejected'))
+DialogResult = Enum(('rejected', 'accepted'))
 
 #: Generic orientation values.
 #:
