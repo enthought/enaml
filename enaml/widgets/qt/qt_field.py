@@ -8,6 +8,11 @@ from .qt_control import QtControl
 
 from ..field import AbstractTkField
 
+password_modes = {
+    'normal': QtGui.QLineEdit.Normal,
+    'password': QtGui.QLineEdit.Password,
+    'silent': QtGui.QLineEdit.NoEcho,
+}
 
 class QtField(QtControl, AbstractTkField):
     """ A Qt implementation of a Field.
@@ -42,6 +47,7 @@ class QtField(QtControl, AbstractTkField):
         
         shell._modified = False
         self.set_cursor_position(shell.cursor_position)
+        self.set_password_mode(shell.password_mode)
         
         max_length = shell.max_length
         if max_length:
@@ -63,21 +69,21 @@ class QtField(QtControl, AbstractTkField):
     #--------------------------------------------------------------------------
     def shell_max_length_changed(self, max_length):
         """ The change handler for the 'max_length' attribute on the 
-        parent.
+        shell object.
 
         """
         self.set_max_length(max_length)
 
     def shell_read_only_changed(self, read_only):
         """ The change handler for the 'read_only' attribute on the
-        parent.
+        shell object.
 
         """
         self.set_read_only(read_only)
 
     def shell_cursor_position_changed(self, cursor_position):
         """ The change handler for the 'cursor_position' attribute on 
-        the parent.
+        the shell object.
 
         """
         if not self.setting_value:
@@ -85,25 +91,31 @@ class QtField(QtControl, AbstractTkField):
 
     def shell_placeholder_text_changed(self, placeholder_text):
         """ The change handler for the 'placeholder_text' attribute
-        on the parent.
+        on the shell object.
 
         """
         self.set_placeholder_text(placeholder_text)
 
     def shell_converter_changed(self, converter):
-        """ Handles the converter object on the parent changing.
+        """ Handles the converter object on the shell object changing.
 
         """
         self.update_text()
         self._convert_text_value()
     
     def shell_value_changed(self, value):
-        """ The change handler for the 'value' attribute on the parent.
+        """ The change handler for the 'value' attribute on the shell object.
 
         """
         if not self.setting_value:
             self.update_text()
             self.shell_obj._modified = False
+
+    def shell_password_mode_changed(self, mode):
+        """ The change handler for the 'password_mode' attribute on the shell object.
+        """
+        shell = self.shell_obj
+        self.set_password_mode(shell.password_mode)
 
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
@@ -375,3 +387,6 @@ class QtField(QtControl, AbstractTkField):
         """
         self.widget.setCursorPosition(cursor_position)
 
+    def set_password_mode(self, password_mode):
+        self.widget.setEchoMode(password_modes[password_mode])
+        
