@@ -21,7 +21,7 @@ defn EditorPanel(editor):
                 'c++': 'C++',
                 'html': 'HTML',
             }
-            items = lexers.keys()
+            items = sorted(lexers.keys())
             to_string = lexers.get
         PushButton:
             text = 'Comment'
@@ -61,6 +61,7 @@ defn MainWindow:
         title = "Text Editor"
         constraints = [
             vertical(top, editor, cursor_info, bottom),
+            align_left(editor, cursor_info),
             vertical(top, properties, find_box, _space_ >= 0, bottom),
             horizontal(left, editor, properties, right),
             align_top(editor, properties),
@@ -70,6 +71,7 @@ defn MainWindow:
         CodeEditor -> editor:
             text = 'Test'
             font = 'Courier 12'
+            language = 'python'
         Label -> cursor_info:
             text << '%d/%d' % (editor.cursor_line, editor.cursor_column)
         EditorPanel(editor) -> properties, find_box:
