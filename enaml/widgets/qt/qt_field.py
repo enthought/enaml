@@ -53,7 +53,8 @@ class QtField(QtControl, AbstractTkField):
         """
         super(QtField, self).bind()
         widget = self.widget
-        widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
+        widget.textEdited.connect(self.on_text_edited)
+        widget.textChanged.connect(self.on_text_changed)
         widget.returnPressed.connect(self.on_text_enter)
         widget.selectionChanged.connect(self.on_selection)
 
@@ -94,7 +95,7 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.update_text()
-        self.on_text_updated(None) # XXX - this is a bit smelly
+        self._convert_text_value()
     
     def shell_value_changed(self, value):
         """ The change handler for the 'value' attribute on the parent.
@@ -253,8 +254,8 @@ class QtField(QtControl, AbstractTkField):
         self.widget.redo()
         self.update_shell_selection()
 
-    def on_text_updated(self, event):
-        """ The event handler for the text update event.
+    def _convert_text_value(self):
+        """ Convert the widget's text value through the shell's converter function.
 
         """
         widget = self.widget
@@ -271,10 +272,30 @@ class QtField(QtControl, AbstractTkField):
             shell.error = False
             shell.value = value
         self.setting_value = False
-        self.update_shell_selection()
+
+    def on_text_edited(self, event):
+        """ The event handler for when the user edits the text through the UI.
+
+        """
+        widget = self.widget
+        shell = self.shell_obj
+        text = widget.text()
+        # Simply tell the shell that the event happened. on_text_changed() will
+        # also be called and will do the work of converting the value for us.
         shell.text_edited = text
-        shell._modified = True
+
+    def on_text_changed(self, event):
+        """ The event handler for when the text is changed either
+        programmatically or through the UI.
+
+        """
+        widget = self.widget
+        shell = self.shell_obj
+        text = widget.text()
+        self._convert_text_value()
+        self.update_shell_selection()
         shell.text_changed = text
+        shell._modified = True
 
     def on_text_enter(self):
         """ The event handler for the return pressed event.
