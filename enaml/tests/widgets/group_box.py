@@ -9,7 +9,7 @@ from .enaml_test_case import EnamlTestCase, required_method
 class TestGroupBox(EnamlTestCase):
     """ Logic for testing labels.
 
-    Tooklit testcases need to provide the following methods
+    Tooklit testcases need to provide the following methods:
 
     Abstract Methods
     ----------------
@@ -22,11 +22,10 @@ class TestGroupBox(EnamlTestCase):
     get_title_align
         Returns the title align style from the tookit widget
 
-
     Notes
     -----
-    - All the provided methods need to support the extented signature
-      <method>(component, widget).
+    All the provided methods need to support the extented signature
+    <method>(component, widget).
 
     """
 
@@ -37,7 +36,7 @@ class TestGroupBox(EnamlTestCase):
 
         enaml_source = """
 defn MainWindow():
-    Window:
+    Window -> win:
         contrains = [horizontal(left, gb, right), vertical(top, gb, bottom),
                     vertical(label1, label2), align_left(label1, label2)]
         GroupBox -> gb:
@@ -58,7 +57,7 @@ defn MainWindow():
 
         Test that the atrributes of the GroupBox have the
         correct values and these values are insync with the information
-        in the toolkiwidget.
+        in the toolkit widget.
 
         """
         component = self.component

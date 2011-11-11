@@ -2,8 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import wx
 from .wx_test_assistant import WXTestAssistant
 from .. import group_box
+from pdb import set_trace
 
 class TestGroupBox(WXTestAssistant, group_box.TestGroupBox):
 
@@ -16,8 +18,9 @@ class TestGroupBox(WXTestAssistant, group_box.TestGroupBox):
 
         """
         super(TestGroupBox, self).setUp()
-        widget = self.widget
-        widget.SetSizeWH(200, 200)
+        window = self.component_by_name(self.view, 'win')
+        abstract = window.abstract_obj
+        abstract.resize(200, 200)
         self.process_wx_events(self.app)
 
     def get_title(self, component, widget):
@@ -61,12 +64,13 @@ class TestGroupBox(WXTestAssistant, group_box.TestGroupBox):
         result = []
         left_space = title_rect.Left
         right_space = width - title_rect.Right
-        if left_space <= 10:
-            result.append('left')
-        if right_space <= 10:
-            result.append('right')
-        if -5 <= (right_space - left_space) <= 5:
+        difference = (right_space - left_space)
+        if -5 <= difference <= 5:
             result.append('center')
+        if difference > 5:
+            result.append('left')
+        if difference < -5:
+            result.append('right')
         self.assertTrue(len(result) == 1, "The position of the title "
                     "cannot be estimated reliably please increase the "
                     "resulting width of the Window")
