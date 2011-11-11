@@ -836,7 +836,7 @@ def p_or_test_list1(p):
 
 def p_or_test_list2(p):
     ''' or_test_list : or_test_list OR and_test '''
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[3]]
 
 
 def p_and_test1(p):
@@ -858,7 +858,7 @@ def p_and_test_list1(p):
 
 def p_and_test_list2(p):
     ''' and_test_list : and_test_list AND not_test '''
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[3]]
 
 
 def p_not_test(p):
