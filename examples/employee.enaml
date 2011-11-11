@@ -171,6 +171,11 @@ defn EmployeeView(employee):
                     text = 'Age:'
                 Label:
                     text << str(employee.age)
+                Label:
+                    text = 'Password'
+                Field:
+                    password_mode = 'password'
+                    value >> print(value)
         
         # This is the group box for the second form of information
         GroupBox -> bottom_box:

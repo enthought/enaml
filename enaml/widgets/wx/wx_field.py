@@ -2,8 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import warnings
 import wx
-
 from .wx_control import WXControl
 from ..field import AbstractTkField
 
@@ -169,6 +169,12 @@ class WXField(WXControl, AbstractTkField):
         self.update_text()
         event = wx.PyCommandEvent(wx.EVT_TEXT.typeId, self.widget.GetId())
         self.on_text_updated(event)
+
+    def shell_password_mode_changed(self, mode):
+        """ The change handler for the 'password_mode' attribute on the shell object.
+        """
+        shell = self.shell_obj
+        self.set_password_mode(shell.password_mode)
 
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and
@@ -438,4 +444,21 @@ class WXField(WXControl, AbstractTkField):
         """
         self.widget.SetInsertionPoint(cursor_position)
 
+    def set_password_mode(self, password_mode):
+        """ Reflect the password_mode on the widget
+
+        Currently WXField only supports `password` and normal`.
+
+        """
+        widget = self.widget
+        if password_mode == 'normal':
+            style = widget.GetWindowStyle()
+            style &= ~wx.TE_PASSWORD
+            style = widget.SetWindowStyle(style)
+        elif password_mode == 'password':
+            widget.SetWindowStyleFlag(wx.TE_PASSWORD)
+        else:
+            msg = ("The `silent` mode for the password_mode attribute is not"
+                   " supported in WXField")
+            warnings.warn(msg)
 

@@ -133,21 +133,24 @@ font_style_map = {
     'italic': QtGui.QFont.StyleItalic,
     'oblique': QtGui.QFont.StyleOblique,
 }
+
+
 font_family_hint_map = {
-    'any': QtGui.QFont.StyleHint.AnyStyle,
-    'sans_serif': QtGui.QFont.StyleHint.SansSerif,
-    'helvetica': QtGui.QFont.StyleHint.Helvetica,
-    'serif': QtGui.QFont.StyleHint.Serif,
-    'times': QtGui.QFont.StyleHint.Times,
-    'type_writer': QtGui.QFont.StyleHint.TypeWriter,
-    'courier': QtGui.QFont.StyleHint.Courier,
-    'old_english': QtGui.QFont.StyleHint.OldEnglish,
-    'decorative': QtGui.QFont.StyleHint.Decorative,
-    'monospace': QtGui.QFont.StyleHint.Monospace,
-    'fantasy': QtGui.QFont.StyleHint.Fantasy,
-    'cursive': QtGui.QFont.StyleHint.Cursive,
-    'system': QtGui.QFont.StyleHint.System,
+    'any': QtGui.QFont.AnyStyle,
+    'sans_serif': QtGui.QFont.SansSerif,
+    'helvetica': QtGui.QFont.Helvetica,
+    'serif': QtGui.QFont.Serif,
+    'times': QtGui.QFont.Times,
+    'type_writer': QtGui.QFont.TypeWriter,
+    'courier': QtGui.QFont.Courier,
+    'old_english': QtGui.QFont.OldEnglish,
+    'decorative': QtGui.QFont.Decorative,
+    'monospace': QtGui.QFont.Monospace,
+    'fantasy': QtGui.QFont.Fantasy,
+    'cursive': QtGui.QFont.Cursive,
+    'system': QtGui.QFont.System,
 }
+
 
 def q_font_from_font(font):
     """ Converts an enaml Font into a QtGui.QFont instance.
