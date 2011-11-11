@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-
+from unittest import expectedFailure
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import field
 
@@ -48,6 +48,29 @@ class TestWxField(WXTestAssistant, field.TestField):
         """
         return widget.GetInsertionPoint()
 
+    def get_password_mode(self, widget):
+        """ Get the password mode status of the widget.
+
+        Currently WXField only supports `password` and normal`.
+
+        """
+        # FIXME: specifically checking if we are using WX and the component
+        # is set to 'silent' so that we can set the test to expected failure
+        # we use this ugly hack.
+        @expectedFailure
+        def silent_password_mode(self):
+            self.fail('Currently WXField only supports `password` and normal`.')
+
+        component = self.component
+        if component.password_mode == 'silent':
+            silent_password_mode()
+
+        if widget.HasFlag(wx.TE_PASSWORD):
+            return 'password'
+        else:
+            return 'normal'
+
+
     def get_selected_text(self, widget):
         """ Get the currently-selected text from a field.
 
@@ -59,3 +82,6 @@ class TestWxField(WXTestAssistant, field.TestField):
 
         """
         self.send_wx_event(widget, wx.EVT_TEXT_ENTER)
+
+
+
