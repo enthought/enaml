@@ -82,6 +82,32 @@ defn MainWindow(events):
         self.component.value = 'test'
         self.assertEnamlInSync(self.component, 'value', 'test')
 
+    def test_password_mode_silent(self):
+        """ Test the password_mode status.
+
+        """
+        component = self.component
+        component.password_mode = 'silent'
+        self.assertEnamlInSync(component, 'password_mode', 'silent')
+
+    def test_password_mode_password(self):
+        """ Test the password_mode status.
+
+        """
+        component = self.component
+        component.password_mode = 'password'
+        self.assertEnamlInSync(component, 'password_mode', 'password')
+
+    def test_password_mode_normal(self):
+        """ Test the password_mode status.
+
+        """
+        component = self.component
+        self.assertEnamlInSync(component, 'password_mode', 'normal')
+        component.password_mode = 'password' # switch to something else
+        component.password_mode = 'normal'
+        self.assertEnamlInSync(component, 'password_mode', 'normal')
+
     def test_max_length(self):
         """ Check that the field enforces its maximum length.
 
