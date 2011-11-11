@@ -149,7 +149,7 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
             x = 0 if flat else margins[1]
             label.Move((x, 0))
         elif align == 'right':
-            right = width # necessary offset
+            right = width
             right -=  0 if flat else margins[2]
             x = right - text_width
             label.Move((x, 0))
