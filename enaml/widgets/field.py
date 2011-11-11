@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Event, Int, Str, Property, Instance, Any
+from traits.api import Bool, Event, Int, Str, Enum, Property, Instance, Any
 
 from .control import Control, AbstractTkControl
 
@@ -35,6 +35,10 @@ class AbstractTkField(AbstractTkControl):
 
     @abstractmethod
     def shell_value_changed(self, value):
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_password_mode_changed(self, mode):
         raise NotImplementedError
 
     @abstractmethod
@@ -122,6 +126,9 @@ class Field(Control):
     #: The grayed-out text to display if 'value' is empty and the
     #: widget doesn't have focus.
     placeholder_text = Str
+    
+    #: How to obscure password text in the field
+    password_mode = Enum('normal', 'password', 'silent')
 
     #: A converter object for converting values to and from the component
     #: The default is basic str(...) conversion.

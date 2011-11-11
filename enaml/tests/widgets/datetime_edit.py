@@ -216,7 +216,7 @@ from datetime import datetime as python_datetime
 defn MainWindow(events):
     Window:
         DatetimeEdit -> test:
-            date_time = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
+            datetime = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
             min_datetime = python_datetime(1990, 1, 1)
             max_datetime = python_datetime(2000, 1, 1)
             datetime_changed >> events.append(('datetime_changed', args.new))
