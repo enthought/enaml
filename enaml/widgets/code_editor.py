@@ -10,7 +10,7 @@ from .text_editor import TextEditor, AbstractTkTextEditor
 
 
 class AbstractTkCodeEditor(AbstractTkTextEditor):
-    """ A text editor widget oriented toward code editing task.
+    """ A text editor widget oriented toward code editing.
     
     This is not a general text edit widget with general capabilties for sophistcated
     formatting or image display.
@@ -39,7 +39,10 @@ class AbstractTkCodeEditor(AbstractTkTextEditor):
         pass
 
 class CodeEditor(TextEditor):
-    """
+    """ A text editor widget oriented toward code editing.
+
+    This is not a general text edit widget with general capabilties for
+    sophistcated formatting or image display.
     """
     
     #: The language to use for syntax highlighting
@@ -60,6 +63,6 @@ class CodeEditor(TextEditor):
         self.abstract_obj.block_unindent()
     
     def block_comment(self):
-        """ Unindent the selected lines of code.
+        """ Comment or uncomment the selected lines of code.
         """
         self.abstract_obj.block_comment()

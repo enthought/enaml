@@ -101,8 +101,12 @@ class AbstractTkTextEditor(AbstractTkControl):
         raise NotImplementedError
 
 class TextEditor(Control):
+    """ A text editor widget capable of editing plain text with styles.
+    
+    This is not a general text edit widget with general capabilties for sophistcated
+    formatting or image display.
     """
-    """
+
     #: Whether or not the editor is read only.
     read_only = Bool
     
