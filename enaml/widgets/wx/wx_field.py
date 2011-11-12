@@ -115,7 +115,7 @@ class WXField(WXControl, AbstractTkField):
     setting_value = False
 
     #--------------------------------------------------------------------------
-    # SetupMethods
+    # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
         """ Creates the underlying wx.CustomTextCtrl.
@@ -130,13 +130,12 @@ class WXField(WXControl, AbstractTkField):
         """
         super(WXField, self).initialize()
         shell = self.shell_obj
-        self.set_max_length(shell.max_length)
-        self.set_read_only(shell.read_only)
-        self.set_placeholder_text(shell.placeholder_text)
+        self._set_max_length(shell.max_length)
+        self._set_placeholder_text(shell.placeholder_text)
         if shell.value:
-            self.update_text()
+            self._update_text()
         shell._modified = False
-        self.set_cursor_position(shell.cursor_position)
+        self._set_cursor_position(shell.cursor_position)
 
     def bind(self):
         """ Binds the event handlers for the wx.TextCtrl.
@@ -144,20 +143,21 @@ class WXField(WXControl, AbstractTkField):
         """
         super(WXField, self).bind()
         widget = self.widget
-        widget.Bind(wx.EVT_TEXT_MAXLEN, self.on_max_length)
-        widget.Bind(wx.EVT_TEXT, self.on_text_updated)
-        widget.Bind(wx.EVT_TEXT_ENTER, self.on_text_enter)
-        widget.Bind(wx.EVT_LEFT_UP, self.on_selection)
+        widget.Bind(wx.EVT_TEXT_MAXLEN, self._on_max_length)
+        widget.Bind(wx.EVT_TEXT, self._on_text_updated)
+        widget.Bind(wx.EVT_TEXT_ENTER, self._on_text_enter)
+        widget.Bind(wx.EVT_LEFT_UP, self._on_selection)
 
     #--------------------------------------------------------------------------
-    # Implementation
+    # Notifiers
     #--------------------------------------------------------------------------
+
     def shell_max_length_changed(self, max_length):
         """ The change handler for the 'max_length' attribute on the
         shell.
 
         """
-        self.set_max_length(max_length)
+        self._set_max_length(max_length)
         self.shell_obj.size_hint_updated = True
 
     def shell_read_only_changed(self, read_only):
@@ -165,14 +165,14 @@ class WXField(WXControl, AbstractTkField):
         shell.
 
         """
-        self.set_read_only(read_only)
+        self._set_read_only(read_only)
 
     def shell_placeholder_text_changed(self, placeholder_text):
         """ The change handler for the 'placeholder_text' attribute on
         the shell.
 
         """
-        self.set_placeholder_text(placeholder_text)
+        self._set_placeholder_text(placeholder_text)
 
     def shell_cursor_position_changed(self, cursor_position):
         """ The change handler for the 'cursor_position' attribute on
@@ -180,29 +180,49 @@ class WXField(WXControl, AbstractTkField):
 
         """
         if not self.setting_value:
-            self.set_cursor_position(cursor_position)
+            self._set_cursor_position(cursor_position)
 
     def shell_value_changed(self, value):
         """ The change handler for the 'text' attribute on the shell.
 
         """
         if not self.setting_value:
-            self.update_text()
+            self._update_text()
             self.shell_obj._modified = False
 
     def shell_converter_changed(self, converter):
         """ Handles the converter object on the shell changing.
 
         """
-        self.update_text()
+        self._update_text()
         event = wx.PyCommandEvent(wx.EVT_TEXT.typeId, self.widget.GetId())
-        self.on_text_updated(event)
+        self._on_text_updated(event)
 
     def shell_password_mode_changed(self, mode):
-        """ The change handler for the 'password_mode' attribute on the shell object.
+        """ The change handler for the 'password_mode' attribute on the
+        shell object.
+
         """
         shell = self.shell_obj
-        self.set_password_mode(shell.password_mode)
+        self._set_password_mode(shell.password_mode)
+
+    #---------------------------------------------------------------------------
+    # Event handlers
+    #---------------------------------------------------------------------------
+
+    def _on_text_enter(self, event):
+        self.shell_obj.return_pressed = True
+
+    def _on_max_length(self, event):
+        self.shell_obj.max_length_reached = True
+
+    def _on_selection(self, event):
+        self._update_shell_selection()
+        event.Skip()
+
+    #--------------------------------------------------------------------------
+    # Public methods
+    #--------------------------------------------------------------------------
 
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and
@@ -210,7 +230,7 @@ class WXField(WXControl, AbstractTkField):
 
         """
         self.widget.SetSelection(start, end)
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def select_all(self):
         """ Select all the text in the line edit.
@@ -220,7 +240,7 @@ class WXField(WXControl, AbstractTkField):
 
         """
         self.widget.SetSelection(-1, -1)
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def deselect(self):
         """ Deselect any selected text.
@@ -232,14 +252,14 @@ class WXField(WXControl, AbstractTkField):
         widget = self.widget
         start, end = widget.GetSelection()
         widget.SetSelection(start, start)
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def clear(self):
         """ Clear the line edit of all text.
 
         """
         self.widget.Clear()
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def backspace(self):
         """ Simple backspace functionality.
@@ -253,7 +273,7 @@ class WXField(WXControl, AbstractTkField):
         if start == end:
             start = end - 1
         widget.Remove(start, end)
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def delete(self):
         """ Simple delete functionality.
@@ -267,7 +287,7 @@ class WXField(WXControl, AbstractTkField):
         if start == end:
             end = end + 1
         widget.Remove(start, end)
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def end(self, mark=False):
         """ Moves the cursor to the end of the line.
@@ -286,7 +306,7 @@ class WXField(WXControl, AbstractTkField):
             widget.SetSelection(start, end)
         else:
             widget.SetInsertionPointEnd()
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def home(self, mark=False):
         """ Moves the cursor to the beginning of the line.
@@ -305,7 +325,7 @@ class WXField(WXControl, AbstractTkField):
             widget.SetSelection(start, end)
         else:
             widget.SetInsertionPoint(0)
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def cut(self):
         """ Cuts the selected text from the line edit.
@@ -315,14 +335,14 @@ class WXField(WXControl, AbstractTkField):
 
         """
         self.widget.Cut()
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def copy(self):
         """ Copies the selected text to the clipboard.
 
         """
         self.widget.Copy()
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
@@ -332,7 +352,7 @@ class WXField(WXControl, AbstractTkField):
 
         """
         self.widget.Paste()
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def insert(self, text):
         """ Insert the text into the line edit.
@@ -347,28 +367,36 @@ class WXField(WXControl, AbstractTkField):
 
         """
         self.widget.WriteText(text)
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def undo(self):
         """ Undoes the last operation.
 
         """
         self.widget.Undo()
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     def redo(self):
         """ Redoes the last operation
 
         """
         self.widget.Redo()
-        self.update_shell_selection()
+        self._update_shell_selection()
 
     #---------------------------------------------------------------------------
-    # Implementation
+    # Private methods
     #---------------------------------------------------------------------------
 
+    def _set_max_length(self, max_length):
+        self.widget.SetMaxLength(max_length)
 
-    def on_text_updated(self, event):
+    def _set_placeholder_text(self, placeholder_text):
+        self.widget.SetPlaceHolderText(placeholder_text)
+
+    def _set_cursor_position(self, cursor_position):
+        self.widget.SetInsertionPoint(cursor_position)
+
+    def _on_text_updated(self, event):
         """ The event handler for the text update event.
 
         """
@@ -387,31 +415,12 @@ class WXField(WXControl, AbstractTkField):
             shell.error = False
             shell.value = value
         self.setting_value = False
-        self.update_shell_selection()
+        self._update_shell_selection()
         shell.text_edited = text
         shell._modified = True
         shell.text_changed = text
 
-    def on_text_enter(self, event):
-        """ The event handler for the return pressed event.
-
-        """
-        self.shell_obj.return_pressed = True
-
-    def on_max_length(self, event):
-        """ The event handler for the max length event.
-
-        """
-        self.shell_obj.max_length_reached = True
-
-    def on_selection(self, event):
-        """ The event handler for a selection (really a left up) event.
-
-        """
-        self.update_shell_selection()
-        event.Skip()
-
-    def update_shell_selection(self):
+    def _update_shell_selection(self):
         """ Updates the selection and cursor position of the shell
         to reflect the current state of the widget.
 
@@ -423,7 +432,7 @@ class WXField(WXControl, AbstractTkField):
         shell.cursor_position = widget.GetInsertionPoint()
         self.setting_value = False
 
-    def update_text(self):
+    def _update_text(self):
         """ Updates the text control with the coverted shell value or
         sets the error state on the shell if the conversion fails.
 
@@ -439,9 +448,9 @@ class WXField(WXControl, AbstractTkField):
             shell.error = False
             # wx.TextCtrl doesn't seem to accept input unless it has focus.
             self.widget.SetFocus()
-            self.change_text(text)
+            self._change_text(text)
 
-    def change_text(self, text):
+    def _change_text(self, text):
         """ Changes the text in the widget without emitted a text
         updated event. This should be called when the text is changed
         programmatically.
@@ -449,44 +458,68 @@ class WXField(WXControl, AbstractTkField):
         """
         self.widget.ChangeValue(text)
 
-    def set_max_length(self, max_length):
-        """ Sets the max length of the widget to max_length.
+    def _set_read_only(self, read_only):
+        """ Sets the read only state of the widget.
+
+        Notes
+        -----
+        The widget is actually cloned with the correct style and replaced.
 
         """
-        self.widget.SetMaxLength(max_length)
+        style = self.widget.GetWindowStyle()
+        if read_only:
+            style |= wx.TE_READONLY
+        else:
+            style &= ~wx.TE_READONLY
+        new_widget = self._create_new_widget(style)
+        self._replace_widget(new_widget)
 
-    def set_read_only(self, read_only):
-        """ Sets read only state of the widget.
-
-        """
-        # XXX this may require some trickery in Windows to change
-        # this value properly on the fly.
-        self.widget.SetEditable(not read_only)
-
-    def set_placeholder_text(self, placeholder_text):
-        self.widget.SetPlaceHolderText(placeholder_text)
-
-    def set_cursor_position(self, cursor_position):
-        """ Sets the cursor position of the widget.
-
-        """
-        self.widget.SetInsertionPoint(cursor_position)
-
-    def set_password_mode(self, password_mode):
+    def _set_password_mode(self, password_mode):
         """ Reflect the password_mode on the widget
 
         Currently WXField only supports `password` and normal`.
 
+        Notes
+        -----
+        The widget is actually cloned with the correct style and replaced.
+
         """
         widget = self.widget
+        style = widget.GetWindowStyle()
         if password_mode == 'normal':
-            style = widget.GetWindowStyle()
             style &= ~wx.TE_PASSWORD
-            style = widget.SetWindowStyle(style)
         elif password_mode == 'password':
-            widget.SetWindowStyleFlag(wx.TE_PASSWORD)
+            style |= wx.TE_PASSWORD
         else:
             msg = ("The `silent` mode for the password_mode attribute is not"
                    " supported in WXField")
             warnings.warn(msg)
+        new_widget = self._create_new_widget(style)
+        self._replace_widget(new_widget)
+
+
+    def _create_new_widget(self, style):
+        """ Create a new CustomTextWidget widget with the given style.
+
+        """
+        new_widget = self.widget.Clone(parent=self.parent_widget(),
+                                        style=style | wx.TE_PROCESS_ENTER)
+        return new_widget
+
+    def _replace_widget(self, new_widget):
+        """ Replace the internal widget with a new one.
+
+        First destory the old widget. Then assign the new widget to
+        :attr:`widget` and rebind the callbacks to the events. Finally
+        show the widget and ask for re-layout.
+
+        """
+
+        self.widget.Destroy()
+        self.widget = new_widget
+        self.bind()
+        self.widget.Show()
+        self.widget.Refresh()
+        self.shell_obj.size_hint_updated = True
+
 
