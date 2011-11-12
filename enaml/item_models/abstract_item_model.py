@@ -2,135 +2,41 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from functools import total_ordering
+from traits.api import Event, HasTraits
 
-from traits.api import Event, HasTraits, ReadOnly
-
-from ..enums import DataRole, ItemFlags, Match, Sorted
+from .model_index import ModelIndex
 
 
-#-------------------------------------------------------------------------------
-# ModelIndex
-#-------------------------------------------------------------------------------
-@total_ordering
-class ModelIndex(object):
-    """ ModelIndexes are used to navigate an AbstractItemModel.
-
-    A ModelIndex is a lightweight object and should be created on the
-    fly, rather than attempting some form of caching.
-
-    """
-    __slots__ = ('row', 'column', 'context', 'model')
-
-    def __init__(self, row=-1, column=-1, context=None, model=None):
-        """ Construct a model index.
-
-        Arguments
-        ---------
-        row : int, optional
-            The row index represented by this index. Defaults to -1.
-
-        column : int, optional
-            The column index represented by this index. Defaults to -1.
-
-        context : object, optional
-            A user supplied object that aids in navigating the user's
-            model. Defaults to None.
-
-        model : AbstractItemModel, optional
-            The model in which this index is active. This is typically
-            supplied by the create_index method of the AbstractItemModel.
-
-        """
-        self.row = row
-        self.column = column
-        self.context = context
-        self.model = model
-
-    def __eq__(self, other):
-        """ Returns True if this index is functionally equivalent to
-        another. False otherwise.
-
-        """
-        if isinstance(other, ModelIndex):
-            return (self.row == other.row and
-                    self.column == other.column and
-                    self.context == other.context and
-                    self.model == other.model)
-        return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __lt__(self, other):
-        """ Returns True if this index is functionally less than another.
-        False otherwise.
-
-        """
-        if isinstance(other, ModelIndex):
-            if self.row < other.row:
-                return True
-            if self.row == other.row:
-                if self.column < other.column:
-                    return True
-                if self.column == other.column:
-                    # Rich comparing the user's objects has the potential
-                    # to throw a TypeError. Like when comparing a datetime
-                    # to a non-datetime.
-                    try:
-                        if self.context < other.context:
-                            return True
-                    except TypeError:
-                        return True
-                    if self.context == other.context:
-                        return self.model < other.model
-        return False
-
-    def parent(self):
-        """ Returns the parent ModelIndex of this index.
-
-        """
-        return self.model.parent(self)
-
-    def sibling(self, row, column):
-        """ Returns the sibling ModelIndex of this index for the given
-        row and column indexes.
-
-        """
-        if self.row == row and self.column == column:
-            return self
-        return self.model.index(row, column, self.model.parent(self))
-
-    def child(self, row, column):
-        """ Returns the child ModelIndex of this index for the given
-        row and column indexes.
-
-        """
-        return self.model.index(row, column, self)
-
-    def data(self, role=DataRole.DISPLAY):
-        """ Returns the data for this index for the given role.
-
-        """
-        return self.model.data(self, role)
-
-    def flags(self):
-        """ Returns the flags for this index.
-
-        """
-        return self.model.flags(self)
-
-    def is_valid(self):
-        """ Returns True if the if the row and column indices are greater
-        than zero and the model is not None. False otherwise.
-
-        """
-        return self.row >= 0 and self.column >= 0 and self.model is not None
+#------------------------------------------------------------------------------
+# The various AbstractItemModel flags
+#------------------------------------------------------------------------------
+# Item flags (these are the same values as Qt's flags so we don't
+# have to do a map lookup for Qt).
+NO_ITEM_FLAGS = 0x0         # The item has no state flags
+ITEM_IS_SELECTABLE = 0x1    # The item can be selected in a view.
+ITEM_IS_EDITABLE = 0x2      # The item can be edited in a view.
+ITEM_IS_DRAG_ENABLED = 0x4  # The item can be dragged.
+ITEM_IS_DROP_ENABLED = 0x8  # Another item can be dropped onto this one.
+ITEM_IS_CHECKABLE = 0x10    # The item's "checked" state can be changed from a view.
+ITEM_IS_ENABLED = 0x20      # This item permits user interaction in a view.
+ITEM_IS_TRISTATE = 0x40     # The item is checkable, and it has three distinct states.
 
 
-#-------------------------------------------------------------------------------
+# Alignment flags (these are the same values as Qt's flags so we don't
+# have to do a map lookup for Qt).
+ALIGN_LEFT = 0x1
+ALIGN_RIGHT = 0x2
+ALIGN_HCENTER = 0x4
+ALIGN_JUSTIFY = 0x8
+ALIGN_TOP = 0x20
+ALIGN_BOTTOM = 0x40
+ALIGN_VCENTER = 0x80
+ALIGN_CENTER = ALIGN_HCENTER | ALIGN_VCENTER
+
+
+#------------------------------------------------------------------------------
 # AbstractItemModel
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class AbstractItemModel(HasTraits):
     """ An abstract model for supplying information to heierarchical
     widgets.
@@ -186,10 +92,16 @@ class AbstractItemModel(HasTraits):
 
     #: Fired by the notify_data_changed method
     data_changed = Event
+    
+    #: Fired by the notify_horizontal_header_data_changed method
+    horizontal_header_data_changed = Event
 
-    #: Fired by the notify_header_data_changed method
-    header_data_changed = Event
-
+    #: Fired by the notify_vertical_header_data_changed method
+    vertical_header_data_changed = Event
+    
+    #--------------------------------------------------------------------------
+    # Model change notification trigger methods 
+    #--------------------------------------------------------------------------
     def begin_insert_columns(self, parent, first, last):
         """ Begins inserting a column.
 
@@ -208,31 +120,32 @@ class AbstractItemModel(HasTraits):
             The column position at which insertion will end.
 
         """
-        self.columns_about_to_be_inserted = True
+        evt_arg = (parent, first, last)
+        self.columns_about_to_be_inserted = evt_arg
 
-    def begin_move_columns(self, source_parent, source_first, source_last,
-                           destination_parent, destination_child):
+    def begin_move_columns(self, src_parent, src_first, src_last, dst_parent, dst_child):
         """ Begins to move a column.
 
         Arguments
         ---------
-        source_parent : ModelIndex
+        src_parent : ModelIndex
             The item from which columns will be moved.
 
-        source_first : int
+        src_first : int
             The number of the first column to be moved.
 
-        source_last : int
+        src_last : int
             The number of the last column to be moved.
 
-        destination_parent : ModelIndex
+        dst_parent : ModelIndex
             The item into which the columns will be moved.
 
-        destination_child : int
+        dst_child : int
             The column number to which the columns will be moved.
 
         """
-        self.columns_about_to_be_moved = True
+        evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
+        self.columns_about_to_be_moved = evt_arg
 
     def begin_remove_columns(self, parent, first, last):
         """ Begins to remove columns.
@@ -252,32 +165,75 @@ class AbstractItemModel(HasTraits):
             The number of the last column to remove.
 
         """
-        self.columns_about_to_be_removed = True
+        evt_arg = (parent, first, last)
+        self.columns_about_to_be_removed = evt_arg
 
-    def end_insert_columns(self):
+    def end_insert_columns(self, parent, first, last):
         """ Finish inserting columns.
 
         This method must be called after inserting data into
         the model.
 
-        """
-        self.columns_inserted = True
+        Arguments
+        ---------
+        parent : ModelIndex
+            The parent into which the new columns will be inserted.
 
-    def end_move_columns(self):
+        first : int
+            The column position at which insertion will begin.
+
+        last : int
+            The column position at which insertion will end.
+
+        """
+        evt_arg = (parent, first, last)
+        self.columns_inserted = evt_arg
+
+    def end_move_columns(self, src_parent, src_first, src_last, dst_parent, dst_child):
         """ Finish moving columns.
 
         This method must be called after moving data in a model.
 
-        """
-        self.columns_moved = True
+        Arguments
+        ---------
+        src_parent : ModelIndex
+            The item from which columns will be moved.
 
-    def end_remove_columns(self):
+        src_first : int
+            The number of the first column to be moved.
+
+        src_last : int
+            The number of the last column to be moved.
+
+        dst_parent : ModelIndex
+            The item into which the columns will be moved.
+
+        dst_child : int
+            The column number to which the columns will be moved.
+
+        """
+        evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
+        self.columns_moved = evt_arg
+
+    def end_remove_columns(self, parent, first, last):
         """ Finish removing columns.
 
         This method must be called after removing data from a model.
 
+        Arguments
+        ---------
+        parent : ModelIndex
+            The item from which the columns will be removed.
+
+        first : int
+            The number of the first column to remove.
+
+        last : int
+            The number of the last column to remove.
+
         """
-        self.columns_removed = True
+        evt_arg = (parent, first, last)
+        self.columns_removed = evt_arg
 
     def begin_insert_rows(self, parent, first, last):
         """ Begins a row insertion.
@@ -297,32 +253,33 @@ class AbstractItemModel(HasTraits):
             The row position at which insertion will end.
 
         """
+        evt_arg = (parent, first, last)
+        self.rows_about_to_be_inserted = evt_arg
 
-        self.rows_about_to_be_inserted = True
-
-    def begin_move_rows(self, source_parent, source_first, source_last,
-                        destination_parent, destination_child):
+    def begin_move_rows(self, src_parent, src_first, src_last,
+                        dst_parent, dst_child):
         """ Begins to move a row.
 
         Arguments
         ---------
-        source_parent : ModelIndex
+        src_parent : ModelIndex
             The item from which rows will be moved.
 
-        source_first : int
+        src_first : int
             The number of the first row to be moved.
 
-        source_last : int
+        src_last : int
             The number of the last row to be moved.
 
-        destination_parent : ModelIndex
+        dst_parent : ModelIndex
             The item into which the rows will be moved.
 
-        destination_child : int
+        dst_child : int
             The row number to which the rows will be moved.
 
         """
-        self.rows_about_to_be_moved = True
+        evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
+        self.rows_about_to_be_moved = evt_arg
 
     def begin_remove_rows(self, parent, first, last):
         """ Begins to remove rows.
@@ -342,32 +299,75 @@ class AbstractItemModel(HasTraits):
             The number of the last row to remove.
 
         """
-        self.rows_about_to_be_removed = True
+        evt_arg = (parent, first, last)
+        self.rows_about_to_be_removed = evt_arg
 
-    def end_insert_rows(self):
+    def end_insert_rows(self, parent, first, last):
         """ Finish inserting rows.
 
         This method must be called after inserting data into
         the model.
 
-        """
-        self.rows_inserted = True
+        Arguments
+        ---------
+        parent : ModelIndex
+            The item into which the new rows will be inserted.
 
-    def end_move_rows(self):
+        first : int
+            The row position at which insertion will begin.
+
+        last : int
+            The row position at which insertion will end.
+
+        """
+        evt_arg = (parent, first, last)
+        self.rows_inserted = evt_arg
+
+    def end_move_rows(self, src_parent, src_first, src_last, dst_parent, dst_child):
         """ Finish moving rows
 
         This method must be called after moving data in a model.
 
-        """
-        self.rows_moved = True
+        Arguments
+        ---------
+        src_parent : ModelIndex
+            The item from which rows will be moved.
 
-    def end_remove_rows(self):
+        src_first : int
+            The number of the first row to be moved.
+
+        src_last : int
+            The number of the last row to be moved.
+
+        dst_parent : ModelIndex
+            The item into which the rows will be moved.
+
+        dst_child : int
+            The row number to which the rows will be moved.
+
+        """
+        evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
+        self.rows_moved = evt_arg
+
+    def end_remove_rows(self, parent, first, last):
         """ Finish removing rows.
 
         This method must be called after moving data in a model.
 
+        Arguments
+        ---------
+        parent : ModelIndex
+            The item from which the rows will be removed.
+
+        first : int
+            The number of the first row to remove.
+
+        last : int
+            The number of the last row to remove.
+
         """
-        self.rows_removed = True
+        evt_arg = (parent, first, last)
+        self.rows_removed = evt_arg
 
     def begin_change_layout(self):
         """ Begin a change to the layout of the model -- e.g., sort it.
@@ -380,7 +380,7 @@ class AbstractItemModel(HasTraits):
     def end_change_layout(self):
         """ Finish a change to the layout of the model.
 
-        This method must be called after rearrangin data in a model.
+        This method must be called after rearranging data in a model.
 
         """
         self.layout_changed = True
@@ -388,8 +388,8 @@ class AbstractItemModel(HasTraits):
     def begin_reset_model(self):
         """ Begin to reset a model.
 
-        Model indices must be recomputed, and any associated
-        views will also reset.
+        Model indices must be recomputed, and any associated views will 
+        also be reset.
 
         This method must be called before a model is reset.
 
@@ -404,6 +404,75 @@ class AbstractItemModel(HasTraits):
         """
         self.model_reset = True
 
+    def notify_data_changed(self, top_left, bottom_right):
+        """ Create a notification event for the model data has changed.
+
+        Arguments
+        ---------
+        top_left : ModelIndex
+            The upper-left boundary of the changed items.
+
+        bottom_right : ModelIndex
+            The bottom-right boundary of the changed items.
+
+        """
+        self.data_changed = (top_left, bottom_right)
+
+    def notify_horizontal_header_data_changed(self, first, last):
+        """ Create a notification that model horizontal header data 
+        has changed.
+
+        Arguments
+        ---------
+        first : int
+            The first horizontal/column header that has been modified.
+
+        last : int
+            The last horizontal/column header that has been modified.
+
+        """
+        self.horizontal_header_data_changed = (first, last)
+
+    def notify_vertical_header_data_changed(self, first, last):
+        """ Create a notification that model vertical header data 
+        has changed.
+
+        Arguments
+        ---------
+        first : int
+            The first vertical/row header that has been modified.
+
+        last : int
+            The last vertical/row header that has been modified.
+
+        """
+        self.vertical_header_data_changed = (first, last)
+
+    #--------------------------------------------------------------------------
+    # Misc methods 
+    #--------------------------------------------------------------------------
+    def sibling(self, row, column, index):
+        """ Obtain an item with the same parent as `index`.
+
+        Arguments
+        ---------
+        row : int
+            The row of the new item.
+
+        column : int
+            The column of the new item.
+
+        index : ModelIndex
+            An item for which to find a "sibling".
+
+        Returns
+        -------
+        index : ModelIndex
+            An element with the same parent as the specified item.
+
+        """
+        return self.index(row, column, self.parent(index))
+
     def buddy(self, index):
         """ Refers the caller to an item in the model to edit.
 
@@ -412,7 +481,8 @@ class AbstractItemModel(HasTraits):
         Arguments
         ---------
         index : ModelIndex
-            The model index for which a buddy will
+            The model index for which the buddy index should be 
+            returned for editing.
 
         Returns
         -------
@@ -422,13 +492,13 @@ class AbstractItemModel(HasTraits):
         """
         return index
 
-    def can_fetch_more(self, parent):
-        """ Returns `True` if itmes of `parent` can provide more data.
+    def can_fetch_more(self, parent=None):
+        """ Returns `True` if items of `parent` can provide more data.
 
         Arguments
         ---------
-        parent : ModelIndex
-            A model item, possibly with more data that can be fetched.
+        parent : ModelIndex or None
+            A model index, possibly with more data that can be fetched.
 
         Returns
         -------
@@ -438,14 +508,14 @@ class AbstractItemModel(HasTraits):
         """
         return False
 
-    def fetch_more(self, parent):
+    def fetch_more(self, parent=None):
         """ Obtain data from model items, if more is available.
 
         This method is useful when incrementally adding data to a model.
 
         Arguments
         ---------
-        parent : ModelIndex
+        parent : ModelIndex or None
             An index to query.
 
         Returns
@@ -456,7 +526,7 @@ class AbstractItemModel(HasTraits):
         """
         pass
 
-    def has_index(self, row, column, parent=ModelIndex()):
+    def has_index(self, row, column, parent=None):
         """ Determine whether this model can provide a valid index with
         certain specifications.
 
@@ -468,7 +538,7 @@ class AbstractItemModel(HasTraits):
         column : int
             A column to be used in the index.
 
-        parent : ModelIndex, optional
+        parent : ModelIndex or None
             A parent on which to base the new model index.
 
         Returns
@@ -481,12 +551,12 @@ class AbstractItemModel(HasTraits):
             return False
         return row < self.row_count(parent) and column < self.column_count(parent)
 
-    def has_children(self, parent=ModelIndex()):
+    def has_children(self, parent=None):
         """ Determines if an index has any child items.
 
         Arguments
         ---------
-        parent : ModelIndex, optional
+        parent : ModelIndex or None
             A model index to check for children.
 
         Returns
@@ -517,39 +587,7 @@ class AbstractItemModel(HasTraits):
             A new index into this model.
 
         """
-        return ModelIndex(row, column, context, self)
-
-    def notify_data_changed(self, top_left, bottom_right):
-        """ Create a notification that model data has changed.
-
-        Arguments
-        ---------
-        top_left : ModelIndex
-            The upper-left boundary of the changed items.
-
-        bottom_right : ModelIndex
-            The bottom-right boundary of the changed items.
-
-        """
-        self.data_changed = (top_left, top_right)
-
-    def notify_header_data_changed(self, orientation, first, last):
-        """ Create a notification that model header data has changed.
-
-        Arguments
-        ---------
-        orientation : str
-            Specify if changed the header is ``vertical`` or
-            ``horizontal``.
-
-        first : int
-            The first column or row header that has been modified.
-
-        last : int
-            The last column or row header that has been modified.
-
-        """
-        self.header_data_changed = (orientation, first, last)
+        return ModelIndex(row, column, self, context)
 
     def flags(self, index):
         """ Obtain the flags that specify user interaction with items.
@@ -561,199 +599,21 @@ class AbstractItemModel(HasTraits):
 
         Returns
         -------
-        item_flags : enaml.enums.ItemFlags
+        item_flags : tuple of strings
             The ways in which a view can interact with the items.
 
         """
-        if not index.is_valid():
-            return 0
-        return ItemFlags.IS_SELECTABLE | ItemFlags.IS_ENABLED
+        return ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
 
-    def header_data(self, section, orientation, role=DataRole.DISPLAY):
-        """ Get data from a header, possibly specifying the data role.
-
-        Arguments
-        ---------
-        section : int
-            The row or column number of a header.
-
-        orientation : str
-            Select a ``horizontal`` header or a ``vertical`` header.
-
-        role : enaml.enums.DataRole
-            Select data with a particular role.
-
-        Returns
-        -------
-        data : Any
-            The requested data.
-
-        """
-        if role == DataRole.DISPLAY:
-            return section + 1
-
-    def item_data(self, index):
-        """ Get a mapping of the form {DataRole: value} for each data
-        role defined on the given item.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            An item from which to obtain data.
-
-        Returns
-        -------
-        data : Dict(enaml.enums.DataRole, Any)
-            The requested data.
-
-        """
-        res = {}
-        for role in DataRole.ALL:
-            res[role] = self.data(index, role)
-        return res
-
-    def match(self, start, role, value, hits=1,
-              flags=Match.STARTS_WITH | Match.WRAP):
-        """ Search along an axis for data matching a particular value.
-
-        Arguments
-        ---------
-        start : int
-            A row or column at which to begin the search.
-
-        role : enaml.enums.DataRole
-            A data role to check in the search.
-
-        value : Any
-            The sought-after result.
-
-        hits : int
-            The maximum number of matches.
-
-        flags : enaml.enums.Match
-            Options to customize the search.
-
-        Returns
-        -------
-        matches : List(ModelIndex)
-            An index for each item that matched.
-
-        """
-        pass
-
-    def set_data(self, index, value, role=DataRole.EDIT):
-        """ Update a model item's data.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            An item to update.
-
-        value : Any
-            A new value.
-
-        role : enaml.enums.DataRole
-            The data role to modify.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-
-    def set_header_data(self, section, orientation, value, role=DataRole.EDIT):
-        """ Update a header's data.
-
-        Arguments
-        ---------
-        section : int
-            The row or column of a header.
-
-        orientation : str
-            The axis along which the update will occur.
-
-        value : Any
-            A new value.
-
-        role : enaml.enums.DataRole
-            The data role to modify.
-
-        Returns
-        -------
-        success : bool
-            True if the header data was updated, False otherwise.
-
-        """
-        return False
-
-    def set_item_data(self, index, roles):
-        """ Update an item's data, for certain data roles.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            An item to update.
-
-        roles : Dict(enaml.enums.DataRole, Any)
-            A map of data roles to their associated new values.
-
-        Returns
-        -------
-        success : bool
-            True if the data was updated succesfully, False otherwise.
-        """
-        res = True
-        for role, value in roles.iteritems():
-            res &= self.dat_data(index, value, role)
-        return res
-
-    def sibling(self, row, column, index):
-        """ Obtain an item with the same parent as `index`.
-
-        Arguments
-        ---------
-        row : int
-            The row of the new item.
-
-        column : int
-            The column of the new item.
-
-        index : ModelIndex
-            An item for which to find a "sibling".
-
-        Returns
-        -------
-        index : ModelIndex
-            An element with the same parent as the specified item.
-
-        """
-        return self.index(row, column, self.parent(index))
-
-    def sort(self, column, order=Sorted.ASCENDING):
-        """ Sort the model by values in a column.
-
-        Arguments
-        ---------
-        column : int
-            The column on which to sort.
-
-        order : enaml.enums.Sorted
-            The ordering of the sort.
-
-        """
-        pass
-
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Abstract Methods
-    #---------------------------------------------------------------------------
-    def column_count(self, parent=ModelIndex()):
+    #--------------------------------------------------------------------------
+    def column_count(self, parent=None):
         """ Count the number of columns in the children of an item.
 
         Arguments
         ---------
-        parent : ModelIndex
+        parent : ModelIndex or None
             A model item with children.
 
         Returns
@@ -762,14 +622,15 @@ class AbstractItemModel(HasTraits):
             The number of columns in the model.
 
         """
-        raise NotImplementedError
+        msg = 'This method must be implemented by a subclass'
+        raise NotImplementedError(msg)
 
-    def row_count(self, parent=ModelIndex()):
+    def row_count(self, parent=None):
         """ Count the number of rows in the children of an item.
 
         Arguments
         ---------
-        parent : ModelIndex
+        parent : ModelIndex or None
             A model item with children.
 
         Returns
@@ -778,9 +639,10 @@ class AbstractItemModel(HasTraits):
             The number of rows in the model.
 
         """
-        raise NotImplementedError
+        msg = 'This method must be implemented by a subclass'
+        raise NotImplementedError(msg)
 
-    def index(self, row, column, parent=ModelIndex()):
+    def index(self, row, column, parent=None):
         """ Obtain an index coresponding to an item in the model.
 
         Arguments
@@ -791,16 +653,17 @@ class AbstractItemModel(HasTraits):
         column : int
             The sought-after item's column.
 
-        parent : ModelIndex
+        parent : ModelIndex or None
             The parent item that is the base of this index.
 
         Returns
         -------
-        item : ModelIndex
+        item : ModelIndex or None
             An index for the specified item.
 
         """
-        raise NotImplementedError
+        msg = 'This method must be implemented by a subclass'
+        raise NotImplementedError(msg)
 
     def parent(self, index):
         """ Obtain the parent of a model item.
@@ -816,200 +679,960 @@ class AbstractItemModel(HasTraits):
             An index for the parent item.
 
         """
-        raise NotImplementedError
+        msg = 'This method must be implemented by a subclass'
+        raise NotImplementedError(msg)
 
-    def data(self, index, role=DataRole.DISPLAY):
-        """ Get a model item's data, for a particular role.
+    #--------------------------------------------------------------------------
+    # Data Method 
+    #--------------------------------------------------------------------------
+    def data(self, index):
+        """ Get the data for a model index as a string for display.
 
         Arguments
         ---------
         index : ModelIndex
-            An item to query.
+            The model index for which to return the data.
 
         Returns
         -------
-        value : Any
-            The requested value.
+        value : string
+            The data as a string for display.
 
         """
-        raise NotImplementedError
+        msg = 'This method must be implemented by a subclass'
+        raise NotImplementedError(msg)
+
+    #--------------------------------------------------------------------------
+    # Auxiliary Data Methods
+    #--------------------------------------------------------------------------
+    def decoration(self, index):
+        """ Return an icon for the index
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the icon.
+
+        Returns
+        -------
+        value : icon??
+            The icon to display for the cell.
+
+        """
+        # XXX Handle Icons !!!
+        return None
+    
+    def edit_data(self, index):
+        """ Get the data for a model index as a string for editing.
+
+        The default implementation returns 'data(index)'.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the data.
+
+        Returns
+        -------
+        value : string
+            The data as a string for editing.
+
+        """
+        return self.data(index)
+    
+    def tool_tip(self, index):
+        """ Get the tool tip string for a given model index.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the tool tip.
+
+        Returns
+        -------
+        value : string
+            The tool tip string.
+
+        """
+        return None
+    
+    def status_tip(self, index):
+        """ Get the status tip string for a given model index.
+
+         The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the status tip.
+
+        Returns
+        -------
+        value : string
+            The status tip string.
+
+        """
+        return None
+
+    def whats_this(self, index):
+        """ Get the what's this? string for a given model index.
+
+         The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the what's this? string.
+
+        Returns
+        -------
+        value : string
+            The what's this? string.
+
+        """
+        return None
+    
+    def font(self, index):
+        """ Get the font for a given model index.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the font.
+
+        Returns
+        -------
+        value : Font
+            The font to use for this model index.
+
+        """
+        return None
+    
+    def alignment(self, index):
+        """ Get the alignment of the text for a given model index.
+
+        The default implementation returns ALIGN_VCENTER | ALIGN_RIGHT
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the alignment.
+
+        Returns
+        -------
+        value : int
+            The OR'd alignment flags to use for the given model index.
+
+        """
+        return ALIGN_VCENTER | ALIGN_RIGHT
+    
+    def background(self, index):
+        """ The background brush to use for the given index.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the brush.
+
+        Returns
+        -------
+        value : Brush
+            The brush to use for the given model index.
+
+        """
+        return None
+    
+    def foreground(self, index):
+        """ The foreground brush to use for the given index.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the brush.
+
+        Returns
+        -------
+        value : Brush
+            The brush to use for the given model index.
+
+        """
+        return None
+    
+    def check_state(self, index):
+        """ Get the check state for the given index.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the check state.
+
+        Returns
+        -------
+        value : string
+            The check state to use for the given model index.
+
+        """
+        return None
+    
+    def size_hint(self, index):
+        """ Get the (width, height) size hint for the given index.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for which to return the size hint.
+
+        Returns
+        -------
+        value : (width, height)
+            The size hint to use for the given model index.
+
+        """
+        return None
+
+    #--------------------------------------------------------------------------
+    # Data Setter Method
+    #--------------------------------------------------------------------------
+    def set_data(self, index, value):
+        """ Update a model item's data. The default implementation does
+        nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : string
+            The user supplied value to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+    
+    #--------------------------------------------------------------------------
+    # Auxiliary Data Setter Methods
+    #--------------------------------------------------------------------------
+    def set_decoration(self, index, value):
+        """ Update a model item's icon. The default implementation does
+        nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : object
+            The user supplied value to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        # XXX handle icons
+        return False
+    
+    def set_tool_tip(self, index, value):
+        """ Update a model item's tool tip. The default implementation does
+        nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : string
+            The tool tip to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+
+    def set_status_tip(self, index, value):
+        """ Update a model item's status tip. The default implementation 
+        does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : string
+            The status tip to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+
+    def set_whats_this(self, index, value):
+        """ Update a model item's what's this? The default implementation 
+        does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : string
+            The what's this? to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+    
+    def set_font(self, index, value):
+        """ Update a model item's font. The default implementation 
+        does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : Font
+            The font object to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+    
+    def set_alignment(self, index, value):
+        """ Update a model item's alignment. The default implementation 
+        does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : int
+            The alignment to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+    
+    def set_background(self, index, value):
+        """ Update a model item's background brush. The default 
+        implementation does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : Brush
+            The background brush to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+
+    def set_foreground(self, index, value):
+        """ Update a model item's foreground brush. The default 
+        implementation does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : Brush
+            The background brush to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+    
+    def set_check_state(self, index, value):
+        """ Update a model item's check state. The default implementation 
+        does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : string
+            The check state to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+    
+    def set_size_hint(self, index, value):
+        """ Update a model item's size hint. The default implementation 
+        does nothing and returns False.
+
+        Implementations that allow editing must set the 'editable' flag
+        to True, and call notify_data_changed(...) explicity in order
+        for the table to update.
+
+        Arguments
+        ---------
+        index : ModelIndex
+            The model index for the item to update.
+
+        value : (width, height)
+            The size hint to set in the model.
+
+        Returns
+        -------
+        success : bool
+            True if the data was successfully set, False otherwise.
+
+        """
+        return False
+    
+    #--------------------------------------------------------------------------
+    # Header Data Methods 
+    #--------------------------------------------------------------------------
+    def horizontal_header_data(self, section):
+        """ Get the horizontal label for a particular header section.
+
+        The default implementation returns the column number of the given 
+        header. Subclasses should override this method to return 
+        appropriate data for their model.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested header label
+
+        """
+        return str(section + 1)
+    
+    def vertical_header_data(self, section):
+        """ Get the vertical label for a particular header section.
+
+        The default implementation returns the row number of the given 
+        header. Subclasses should override this method to return 
+        appropriate data for their model.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested header label
+
+        """
+        return str(section + 1)
+
+    #--------------------------------------------------------------------------
+    # Header Data auxiliary methods
+    #--------------------------------------------------------------------------
+    def horizontal_header_decoration(self, section):
+        """ Get the horizontal icon for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : icon??
+            The requested icon for the header
+
+        """
+        # XXX implement icons
+        return None
+    
+    def vertical_header_decoration(self, section):
+        """ Get the vertical icon for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : icon??
+            The requested icon for the header
+
+        """
+        # XXX implement icons
+        return None
+
+    def horizontal_header_tool_tip(self, section):
+        """ Get the horizontal tool tip for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested tool tip for the header
+
+        """
+        return None
+    
+    def vertical_header_tool_tip(self, section):
+        """ Get the vertical tool tip for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested tool tip for the header
+
+        """
+        return None   
+    
+    def horizontal_header_status_tip(self, section):
+        """ Get the horizontal status tip for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested status tip for the header
+
+        """
+        return None
+    
+    def vertical_header_status_tip(self, section):
+        """ Get the vertical status tip for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested status tip for the header
+
+        """
+        return None 
+        
+    def horizontal_header_whats_this(self, section):
+        """ Get the horizontal whats this for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested what's this? for the header
+
+        """
+        return None
+    
+    def vertical_header_whats_this(self, section):
+        """ Get the vertical whats this for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : string
+            The requested what's this? for the header
+
+        """
+        return None 
+    
+    def horizontal_header_font(self, section):
+        """ Get the horizontal font for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : Font()
+            The requested font for the header
+
+        """
+        return None
+    
+    def vertical_header_font(self, section):
+        """ Get the vertical font for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : Font()
+            The requested font for the header
+
+        """
+        return None 
+
+    def horizontal_header_alignment(self, section):
+        """ Get the horizontal whats this for a particular header section.
+
+        The default implementation returns ALIGN_CENTER.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : int
+            The OR'd alignment flags for the header
+
+        """
+        return ALIGN_CENTER
+    
+    def vertical_header_alignment(self, section):
+        """ Get the vertical whats this for a particular header section.
+
+        The default implementation returns ALIGN_CENTER
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : int
+            The OR'd alignment flags for the header
+
+        """
+        return ALIGN_CENTER
+    
+    def horizontal_header_background(self, section):
+        """ Get the horizontal background brush for a particular 
+        header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : Brush()
+            The requested brush for the header
+
+        """
+        return None
+    
+    def vertical_header_background(self, section):
+        """ Get the vertical background brush for a particular
+        header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : Brush()
+            The requested brush for the header
+
+        """
+        return None 
+
+    def horizontal_header_foreground(self, section):
+        """ Get the horizontal foreground brush for a particular 
+        header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : Brush()
+            The requested brush for the header
+
+        """
+        return None
+    
+    def vertical_header_foreground(self, section):
+        """ Get the vertical foreground brush for a particular
+        header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The row number of the header.
+
+        Returns
+        -------
+        data : Brush()
+            The requested brush for the header
+
+        """
+        return None
+
+    def horizontal_header_size_hint(self, section):
+        """ Get the horizontal size hint for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : int
+            The requested size hint for the width of the header.
+
+        """
+        return None
+    
+    def vertical_header_size_hint(self, section):
+        """ Get the vertical size hint for a particular header section.
+
+        The default implementation returns None.
+
+        Arguments
+        ---------
+        section : int
+            The column number of the header.
+
+        Returns
+        -------
+        data : int
+            The requested size hint for the height of the header.
+
+        """
+        return None
+
+    #--------------------------------------------------------------------------
+    # Header Data Setters
+    #--------------------------------------------------------------------------
+    
+    # At the moment we dont have a compelling use case where we
+    # need to be able to set the header data from the ui. But in 
+    # the future, that functionality will be added here.
 
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # AbstractTableModel
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class AbstractTableModel(AbstractItemModel):
+    """ An AbstractItemModel subclass that implements the methods 
+    necessary to restrict the model to a 2-dimensional table of data.
 
-    def index(self, row, column, parent=ModelIndex()):
+    """
+    def index(self, row, column, parent=None):
+        """ Abstract method implementation that will create a valid
+        model index for the given row and column if they are valid.
+        Otherwise, returns an invalid index.
+
+        """
         if self.has_index(row, column, parent):
             return self.create_index(row, column, None)
-        return ModelIndex()
 
     def parent(self, index):
-        return ModelIndex()
+        """ Abstract method implementation that always returns None, 
+        forcing the model to be flat.
 
-    def has_children(self, parent=ModelIndex()):
-        if parent.model() is self or not parent.is_valid():
+        """
+        return None
+
+    def has_children(self, parent):
+        """ Overridden parent class method which restrics the model to
+        2-dimensions.
+
+        """
+        if parent is None or parent.model is self:
             return self.row_count(parent) > 0 and self.column_count(parent) > 0
         return False
 
 
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 # AbstractListModel
-#-------------------------------------------------------------------------------
+#------------------------------------------------------------------------------
 class AbstractListModel(AbstractItemModel):
+    """ An AbstractItemModel subclass that implements the methods 
+    necessary to restrict the model to a 1-dimensional list of data.
 
-    def index(self, row, column, parent=ModelIndex()):
+    """
+    def index(self, row, column, parent=None):
+        """ Abstract method implementation that will create a valid
+        model index for the given row and column if they are valid.
+        Otherwise, returns an invalid index.
+
+        """
         if self.has_index(row, column, parent):
             return self.create_index(row, column, None)
-        return ModelIndex()
 
     def parent(self, index):
-        return ModelIndex()
+        """ Abstract method implementation that always returns an
+        invalid index, forcing the model to be flat.
 
-    def column_count(self, parent=ModelIndex()):
-        if parent.is_valid():
+        """
+        return None
+
+    def column_count(self, parent=None):
+        """ Overridden parent class method which restricts the model
+        to a single column.
+
+        """
+        if parent is not None:
             return 0
         return 1
 
-    def has_children(self, parent=ModelIndex()):
-        if parent.is_valid():
+    def has_children(self, parent=None):
+        """ Overridden parent class method which restrics the model
+        to 1-dimension.
+
+        """
+        if parent is not None:
             return False
         return self.row_count() > 0
-
-
-#-------------------------------------------------------------------------------
-# DispatchMixin
-#-------------------------------------------------------------------------------
-class DispatchMixin(HasTraits):
-
-    _data_dispatch_table = ReadOnly
-
-    _header_dispatch_table = ReadOnly
-
-    def __data_dispatch_table_default(self):
-        table = {
-            DataRole.DISPLAY: self.data_display,
-            DataRole.DECORATION: self.data_decoration,
-            DataRole.EDIT: self.data_edit,
-            DataRole.TOOL_TIP: self.data_tool_tip,
-            DataRole.STATUS_TIP: self.data_status_tip,
-            DataRole.WHATS_THIS: self.data_whats_this,
-            DataRole.FONT: self.data_font,
-            DataRole.TEXT_ALIGNMENT: self.data_text_alignment,
-            DataRole.BACKGROUND: self.data_background,
-            DataRole.FOREGROUND: self.data_foreground,
-            DataRole.CHECK_STATE: self.data_check_state,
-            DataRole.SIZE_HINT: self.data_size_hint,
-            DataRole.USER: self.data_user,
-        }
-        return table
-
-    def __header_dispatch_table_default(self):
-        table = {
-            DataRole.DISPLAY: self.header_display,
-            DataRole.DECORATION: self.header_decoration,
-            DataRole.EDIT: self.header_edit,
-            DataRole.TOOL_TIP: self.header_tool_tip,
-            DataRole.STATUS_TIP: self.header_status_tip,
-            DataRole.WHATS_THIS: self.header_whats_this,
-            DataRole.FONT: self.header_font,
-            DataRole.TEXT_ALIGNMENT: self.header_text_alignment,
-            DataRole.BACKGROUND: self.header_background,
-            DataRole.FOREGROUND: self.header_foreground,
-            DataRole.CHECK_STATE: self.header_check_state,
-            DataRole.SIZE_HINT: self.header_size_hint,
-            DataRole.USER: self.header_user,
-        }
-        return table
-
-    #---------------------------------------------------------------------------
-    # Data dispatching
-    #---------------------------------------------------------------------------
-    def data(self, index, role=DataRole.DISPLAY):
-        return self._data_dispatch_table[role](index)
-
-    def data_display(self, index):
-        pass
-
-    def data_decoration(self, index):
-        pass
-
-    def data_edit(self, index):
-        pass
-
-    def data_tool_tip(self, index):
-        pass
-
-    def data_status_tip(self, index):
-        pass
-
-    def data_whats_this(self, index):
-        pass
-
-    def data_font(self, index):
-        pass
-
-    def data_text_alignment(self, index):
-        pass
-
-    def data_background(self, index):
-        pass
-
-    def data_foreground(self, index):
-        pass
-
-    def data_check_state(self, index):
-        pass
-
-    def data_size_hint(self, index):
-        pass
-
-    def data_user(self, index):
-        pass
-
-    #---------------------------------------------------------------------------
-    # Header dispatching
-    #---------------------------------------------------------------------------
-    def header_data(self, section, orientation, role=DataRole.DISPLAY):
-        return self._header_dispatch_table(section, orientation)
-
-    def header_display(self, section, orientation):
-        return section + 1
-
-    def header_decoration(self, section, orientation):
-        pass
-
-    def header_edit(self, section, orientation):
-        pass
-
-    def header_tool_tip(self, section, orientation):
-        pass
-
-    def header_status_tip(self, section, orientation):
-        pass
-
-    def header_whats_this(self, section, orientation):
-        pass
-
-    def header_font(self, section, orientation):
-        pass
-
-    def header_text_alignment(self, section, orientation):
-        pass
-
-    def header_background(self, section, orientation):
-        pass
-
-    def header_foreground(self, section, orientation):
-        pass
-
-    def header_check_state(self, section, orientation):
-        pass
-
-    def header_size_hint(self, section, orientation):
-        pass
-
-    def header_user(self, section, orientation):
-        pass
 
