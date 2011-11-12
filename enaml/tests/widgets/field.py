@@ -41,7 +41,16 @@ defn MainWindow(events):
         self.events = []
         self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'field')
-        self.widget = self.component.toolkit_widget
+
+    @property
+    def widget(self):
+        """ Get the widget of the main component.
+
+        The property getter is necessary because the internal widget of
+        the component might change.
+
+        """
+        return self.component.toolkit_widget
 
     def test_value(self):
         """ Test the toolkit widget's initial state.
@@ -129,17 +138,17 @@ defn MainWindow(events):
         self.component.set_selection(1, 3)
         self.assertEqual(self.component.selected_text, 'ex')
 
-    ## Note: When setting text programmatically, neither backend (wxPython
-    ## or Qt) seems to support becoming read-only at run time.
-    #def test_widget_read_only(self):
-    #    """ Check that the toolkit widget enforces its read-only flag.
-    #
-    #    """
-    #    initial = self.get_value(self.widget)
-    #    self.component.read_only = True
-    #    self.edit_text(self.widget, 'foo')
-    #    #self.component.value = 'foo'
-    #    self.assertEqual(self.get_value(self.widget), initial)
+    # Note: When setting text programmatically, neither backend (wxPython
+    # or Qt) seems to support becoming read-only at run time.
+    def test_widget_read_only(self):
+        """ Check that the toolkit widget enforces its read-only flag.
+
+        """
+        initial = 'abc'
+        self.component.read_only = True
+        self.edit_text(self.widget, 'foo')
+        self.component.value = 'foo'
+        self.assertEqual(self.get_value(self.widget), initial)
 
     def test_convert_to_component(self):
         """ Test the field's 'to_string' attribute.
@@ -253,35 +262,37 @@ defn MainWindow(events):
         self.component.home()
         self.assertEnamlInSync(self.component, 'cursor_position', 0)
 
-    # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
 
-    #def test_cut(self):
-    #    """ Remove selected text and add it to the clipboard.
-    #
-    #    """
-    #    self.component.set_selection(1, 3)
-    #    self.component.cut()
-    #    self.assertEnamlInSync(self.component, 'value', 'a')
+    def test_cut(self):
+        """ Remove selected text and add it to the clipboard.
 
-    #def test_copy_paste(self):
-    #    """ Copy text, then paste it at the beginning of the field.
-    #
-    #    """
-    #    self.component.set_selection(1, 2)
-    #    self.component.copy()
-    #    self.set_cursor_position(self.widget, 0)
-    #    self.component.paste()
-    #    self.assertEnamlInSync(self.component, 'value', 'babc')
+        """
+        # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
+        self.component.set_selection(1, 3)
+        self.component.cut()
+        self.assertEnamlInSync(self.component, 'value', 'a')
 
-    #def test_cut_paste(self):
-    #    """ Cut text, then paste it at the beginning of the field.
-    #
-    #    """
-    #    self.component.set_selection(1, 2)
-    #    self.component.cut()
-    #    self.set_cursor_position(self.widget, 0)
-    #    self.component.paste()
-    #    self.assertEnamlInSync(self.component, 'value', 'bac')
+    def test_copy_paste(self):
+        """ Copy text, then paste it at the beginning of the field.
+
+        """
+        # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
+        self.component.set_selection(1, 2)
+        self.component.copy()
+        self.set_cursor_position(self.widget, 0)
+        self.component.paste()
+        self.assertEnamlInSync(self.component, 'value', 'babc')
+
+    def test_cut_paste(self):
+        """ Cut text, then paste it at the beginning of the field.
+
+        """
+        # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
+        self.component.set_selection(1, 2)
+        self.component.cut()
+        self.set_cursor_position(self.widget, 0)
+        self.component.paste()
+        self.assertEnamlInSync(self.component, 'value', 'bac')
 
     def test_insert(self):
         """ Insert text into the field.
@@ -333,6 +344,13 @@ defn MainWindow(events):
     @required_method
     def get_value(self, widget):
         """ Get the visible text of a field.
+
+        """
+        pass
+
+    @required_method
+    def get_password_mode(self, widget):
+        """ Get the password_mode status.
 
         """
         pass
