@@ -2,6 +2,7 @@
 *.un~
 *.swp
 *.egg-info
+*.so
 /build
 /dist
 /docs/build
