@@ -75,6 +75,33 @@ class CustomTextCtrl(wx.TextCtrl):
             return
         super(CustomTextCtrl, self).SetForegroundColour(wxColor)
 
+    def Clone(self, parent, style=None):
+        """ Clone the CustomTextCtrl widget.
+
+        Arguments
+        ---------
+        parent: wx.Window
+            The parent to use for the new widget.
+
+        style: int
+            The style to use for the new widget. Default is to use the
+            same style as the current object.
+
+        """
+        if style is None:
+            style = self.GetWindowStyle()
+
+        new_widget = CustomTextCtrl(parent=parent, style=style)
+        new_widget._placeholder_text = self._placeholder_text
+        new_widget._placeholder_active = self._placeholder_active
+        new_widget.SetForegroundColour(self._user_fgcolor)
+        new_widget.ChangeValue(self.GetValue())
+        new_widget.SetInsertionPoint(self.GetInsertionPoint())
+        new_widget.SetSelection(*self.GetSelection())
+        new_widget.SetPosition(self.GetPosition())
+        new_widget.SetSize(self.GetSize())
+        new_widget.SetDoubleBuffered(True)
+        return new_widget
 
 class WXField(WXControl, AbstractTkField):
     """ A wxPython implementation of a LineEdit.
