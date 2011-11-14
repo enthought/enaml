@@ -24,19 +24,20 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """ Creates the underlying wx.Dialog control.
 
         """
-        self.widget = wx.Dialog(self.parent_widget())
+        # The parent WXWindow class expects there to be a _frame 
+        # attribute available.
+        self.widget = self._frame = wx.Dialog(self.parent_widget())
 
     def initialize(self):
         """ Intializes the attributes on the wx.Dialog.
 
         """
-        super(WXDialog, self).initialize_widget()
+        super(WXDialog, self).initialize()
         self.widget.Bind(wx.EVT_CLOSE, self._on_close)
 
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-
     def show(self):
         """ Displays this dialog to the screen.
 
@@ -45,11 +46,18 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """
         widget = self.widget
         if widget:
-            if widget.IsModal():
+            shell = self.shell_obj
+            shell.trait_set(
+                _active = True,
+                opened = True,
+            )
+            if shell.modality in ('application_modal', 'window_modal'):
                 widget.ShowModal()
             else:
                 widget.Show()
-            self.shell_obj._active = True
+
+    def set_modality(self, modality):
+        pass
 
     def open(self):
         """ Display the dialog.
@@ -61,34 +69,35 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """ Close the dialog and set the result to 'accepted'.
 
         """
-        self.shell_obj._result = 'accepted'
-        self.close_dialog()
+        self._close_dialog('accepted')
 
     def reject(self):
         """ Close the dialog and set the result to 'rejected'.
 
         """
-        self.shell_obj._result = 'rejected'
-        self.close_dialog()
+        self._close_dialog('rejected')
 
-    def close_dialog(self):
+    def _close_dialog(self, result):
         """ Destroy the dialog, fire events, and set status attributes.
 
         """
-        self.widget.Destroy()
-        shell = self.shell_obj
-        shell.trait_set(
-            closed = shell.result,
+        self.widget.Hide()
+        #         
+        #self.widget.Destroy()
+        self.shell_obj.trait_set(
+            _result = result, 
             _active = False,
+            closed = result,
         )
 
     #---------------------------------------------------------------------------
     # Event handling
     #---------------------------------------------------------------------------
     def _on_close(self, event):
-        """ Destroy the dialog to handle the EVT_CLOSE event.
+        """ Destroy the dialog to handle the EVT_CLOSE event. This will 
+        happen if the user clicks on the 'X'. This is equivalent to
+        calling 'reject()'.
 
         """
-        self.close_dialog()
-        event.Skip()
+        self.reject()
 
