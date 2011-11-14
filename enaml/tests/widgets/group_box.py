@@ -61,9 +61,9 @@ defn MainWindow():
 
         """
         component = self.component
-        self.assertEnamlInSyncExtended(component, 'title', 'MyGroup')
-        self.assertEnamlInSyncExtended(component, 'flat', True)
-        self.assertEnamlInSyncExtended(component, 'title_align', 'center')
+        self.assertEnamlInSync(component, 'title', 'MyGroup')
+        self.assertEnamlInSync(component, 'flat', True)
+        self.assertEnamlInSync(component, 'title_align', 'center')
 
     def test_title_changed(self):
         """ Change the title text of the GroupBox.
@@ -71,7 +71,7 @@ defn MainWindow():
         """
         component = self.component
         component.title = "New title"
-        self.assertEnamlInSyncExtended(component, 'title', 'New title')
+        self.assertEnamlInSync(component, 'title', 'New title')
 
     def test_flat_style_changed(self):
         """ Change the flat style border of the GroupBox.
@@ -79,7 +79,7 @@ defn MainWindow():
         """
         component = self.component
         component.flat = False
-        self.assertEnamlInSyncExtended(component, 'flat', False)
+        self.assertEnamlInSync(component, 'flat', False)
 
     def test_title_align_changed(self):
         """ Change the title alignment.
@@ -87,11 +87,11 @@ defn MainWindow():
         """
         component = self.component
         component.title_align = 'right'
-        self.assertEnamlInSyncExtended(component, 'title_align', 'right')
+        self.assertEnamlInSync(component, 'title_align', 'right')
         component.title_align = 'left'
-        self.assertEnamlInSyncExtended(component, 'title_align', 'left')
+        self.assertEnamlInSync(component, 'title_align', 'left')
         component.title_align = 'center'
-        self.assertEnamlInSyncExtended(component, 'title_align', 'center')
+        self.assertEnamlInSync(component, 'title_align', 'center')
 
     def test_invalid_alignment(self):
         """ Change the title alignment to an invalid value.
@@ -100,7 +100,7 @@ defn MainWindow():
         component = self.component
         with self.assertRaises(TraitError):
             component.title_align = 'almost center'
-        self.assertEnamlInSyncExtended(component, 'title_align', 'center')
+        self.assertEnamlInSync(component, 'title_align', 'center')
 
     #--------------------------------------------------------------------------
     # absrtact methods

@@ -140,15 +140,20 @@ defn MainWindow(events):
 
     # Note: When setting text programmatically, neither backend (wxPython
     # or Qt) seems to support becoming read-only at run time.
-    def test_widget_read_only(self):
-        """ Check that the toolkit widget enforces its read-only flag.
+    #
+    # That's because a Field should only be read-only from the ui. It 
+    # still needs to be editable programatically. This is a bad test
+    # and should be removed. - SCC
+    #
+    # def test_widget_read_only(self):
+    #     """ Check that the toolkit widget enforces its read-only flag.
 
-        """
-        initial = 'abc'
-        self.component.read_only = True
-        self.edit_text(self.widget, 'foo')
-        self.component.value = 'foo'
-        self.assertEqual(self.get_value(self.widget), initial)
+    #     """
+    #     initial = 'abc'
+    #     self.component.read_only = True
+    #     self.edit_text(self.widget, 'foo')
+    #     self.component.value = 'foo'
+    #     self.assertEqual(self.get_value(self.widget), initial)
 
     def test_convert_to_component(self):
         """ Test the field's 'to_string' attribute.

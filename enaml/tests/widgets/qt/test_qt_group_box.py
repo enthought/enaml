@@ -6,9 +6,11 @@ from enaml.widgets.qt.qt import QtCore
 from .qt_test_assistant import QtTestAssistant
 from .. import group_box
 
-QT_2_ENAML_ALIGNMENTS = {QtCore.Qt.AlignLeft: 'left',
-                        QtCore.Qt.AlignRight: 'right',
-                        QtCore.Qt.AlignHCenter: 'center'}
+# The alignment object we get back from widget.alignment() is not
+# hashable. So we convert the flags to ints.
+QT_2_ENAML_ALIGNMENTS = {int(QtCore.Qt.AlignLeft): 'left',
+                         int(QtCore.Qt.AlignRight): 'right',
+                         int(QtCore.Qt.AlignHCenter): 'center'}
 
 
 class TestGroupBox(QtTestAssistant, group_box.TestGroupBox):
@@ -29,5 +31,5 @@ class TestGroupBox(QtTestAssistant, group_box.TestGroupBox):
         """ Returns the title aligment in the tookit widget
 
         """
-        alignment = widget.alignment()
+        alignment = int(widget.alignment())
         return QT_2_ENAML_ALIGNMENTS[alignment]
