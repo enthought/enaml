@@ -36,7 +36,6 @@ class QtDialog(QtWindow, AbstractTkDialog):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-
     def show(self):
         """ Displays this dialog to the screen.
 
@@ -66,7 +65,6 @@ class QtDialog(QtWindow, AbstractTkDialog):
 
         """
         self.widget.accept()
-
 
     def reject(self):
         """ Reject and close the dialog, sending the 'finished' signal.
