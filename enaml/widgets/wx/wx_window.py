@@ -5,8 +5,8 @@
 #------------------------------------------------------------------------------
 import wx
 from .wx_container import WXContainer
-from .wx_component import WXComponent
 from ..window import AbstractTkWindow
+
 
 class WXWindow(WXContainer, AbstractTkWindow):
     """ A wxPython implementation of a Window.
@@ -24,12 +24,10 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """ Creates the underlying wx.Frame control.
 
         """
-        style = (wx.MINIMIZE_BOX | wx.MAXIMIZE_BOX | wx.RESIZE_BORDER |
-                wx.SYSTEM_MENU | wx.CAPTION | wx.CLOSE_BOX)
         # FIXME: this is an ugly hack since the wx.Frame does not show
         # well. It is advised in the wxWidget documentation to add a
         # Panel or Window control before adding the children.
-        self._frame = wx.Frame(self.parent_widget(), style=style)
+        self._frame = wx.Frame(self.parent_widget())
         self.widget = wx.Window(self._frame)
 
     def initialize(self):
