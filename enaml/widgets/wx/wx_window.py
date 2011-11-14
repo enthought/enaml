@@ -1,4 +1,5 @@
-﻿#------------------------------------------------------------------------------
+# -*- coding: UTF-8 -*-
+#------------------------------------------------------------------------------
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
@@ -94,10 +95,10 @@ class WXWindow(WXContainer, AbstractTkWindow):
         self._frame.Fit()
 
     def size_hint(self):
-        """ Return the sizehin for the WXWindow;
+        """ Return the sizehint for the WXWindow;
 
         Window is a top level container and should return a resonable size
         hint. Thus the WXComponent is used here to override the generic
         behaviour of WXContainers.
         """
-        super(WXComponent, self).size_hint()
+        super(WXContainer, self).size_hint()
