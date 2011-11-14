@@ -49,6 +49,12 @@ class EnamlLexer(object):
         '~': (r'~', 'TILDE'),
         '|': (r'\|', 'VBAR'),
 
+        # These are not *real* operators, but we want to distinguish
+        # these from a generic OPERATOR token in the parser for the
+        # purpose of slicing.
+        '::': (r'::', 'DOUBLECOLON'),
+        '...': (r'\.\.\.', 'ELLIPSIS'),
+        
         # Enaml operator
         '->': (r'->', 'UNPACK'),
     }

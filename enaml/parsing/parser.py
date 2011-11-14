@@ -571,6 +571,8 @@ def p_enaml_operator(p):
                        | TILDE
                        | VBAR
                        | UNPACK
+                       | DOUBLECOLON
+                       | ELLIPSIS
                        | OPERATOR '''
     # A custom operator can be any of the standard operators (overloaded)
     # as well as one that is custom defined.
@@ -1431,7 +1433,7 @@ def p_subscript_list2(p):
 
 
 def p_subscript1(p):
-    ''' subscript : DOT DOT DOT '''
+    ''' subscript : ELLIPSIS '''
     p[0] = ast.Ellipsis()
 
 
@@ -1446,7 +1448,7 @@ def p_subscript3(p):
 
 
 def p_subscript4(p):
-    ''' subscript : COLON COLON '''
+    ''' subscript : DOUBLECOLON '''
     name = ast.Name(id='None', ctx=ast.Load())
     p[0] = ast.Slice(lower=None, upper=None, step=name)
 
@@ -1457,7 +1459,7 @@ def p_subscript5(p):
 
 
 def p_subscrip6(p):
-    ''' subscript : test COLON COLON '''
+    ''' subscript : test DOUBLECOLON '''
     name = ast.Name(id='None', ctx=ast.Load())
     p[0] = ast.Slice(lower=p[1], upper=None, step=name)
 
@@ -1474,8 +1476,8 @@ def p_subscript8(p):
 
 
 def p_subscript9(p):
-    ''' subscript : COLON COLON test '''
-    p[0] = ast.Slice(lower=None, upper=None, step=p[3])
+    ''' subscript : DOUBLECOLON test '''
+    p[0] = ast.Slice(lower=None, upper=None, step=p[2])
 
 
 def p_subscript10(p):
@@ -1497,6 +1499,11 @@ def p_subscript12(p):
 def p_subscript13(p):
     ''' subscript : test COLON test COLON test '''
     p[0] = ast.Slice(lower=p[1], upper=p[3], step=p[5])
+
+
+def p_subscript14(p):
+    ''' subscript : test DOUBLECOLON test '''
+    p[0] = ast.Slice(lower=p[1], upper=None, step=p[3])
 
 
 # exprlist is used as the assignment target in a comprehension;
