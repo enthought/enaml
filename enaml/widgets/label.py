@@ -30,3 +30,10 @@ class Label(Control):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkLabel)
 
+    def _text_changed(self):
+        """ Since the text has changed, the label's size hint has probably
+        changed too. The layout system of the parent Container should be
+        informed of this.
+
+        """
+        self.parent.set_needs_update_constraints(True)
