@@ -63,4 +63,5 @@ QT_CONSTRUCTORS = dict((
     constructor('group_box'),
     constructor('stacked'),
     constructor('scroll_area'),
+    constructor('progress_bar'),
 ))
