@@ -24,13 +24,11 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
-        self.widget = wx.Window(self.parent_widget())
+        style = wx.NO_BORDER
+        self.widget = wx.Window(self.parent_widget(), style=style)
 
     def bind(self):
         super(WXComponent, self).bind()
-        # FIXME: I am not sure if we should always bind to EVT_SIZE
-        widget = self.widget
-        widget.Bind(wx.EVT_SIZE, self.on_resize)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -117,16 +115,19 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         widget.SetDimensions(x, y, width, height)
 
     def on_resize(self, event):
-        # should handle the widget resizing by telling something
-        # that things need to be relayed out
-        event.Skip()
-    
+        """ Triggers a relayout of the shell object since the component
+        has been resized.
+
+        """
+        shell = self.shell_obj
+        shell.do_layout()
+
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the parent.
         Sets the background color of the internal widget to the given color.
         """
         pass
-    
+
     def shell_fg_color_changed(self, color):
         """ The change handler for the 'fg_color' attribute on the parent.
         Sets the foreground color of the internal widget to the given color.
@@ -139,7 +140,7 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         Sets the font of the internal widget to the given font.
         For some widgets this may do nothing.
         """
-        pass   
+        pass
 
     def parent_widget(self):
         """ Returns the logical wx.Window parent for this component.
@@ -147,10 +148,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         Since some parents may wrap non-Window objects (like sizers),
         this method will walk up the tree of parent components until a
         wx.Window is found or None if no wx.Window is found.
-
-        Arguments
-        ---------
-        None
 
         Returns
         -------
@@ -170,6 +167,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         toolkit widgets for those children.
 
         """
-        for child in self.parent.children:
-            yield child.toolkit_widget()
-
+        shell = self.shell_obj
+        for child in shell.children:
+            yield child.toolkit_widget

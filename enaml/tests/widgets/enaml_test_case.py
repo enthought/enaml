@@ -4,10 +4,11 @@
 #------------------------------------------------------------------------------
 import unittest
 import inspect
+
 from enaml.parsing.parser import parse
-from enaml.parsing.enaml_compiler import EnamlCompiler, evalcode
-from enaml.widgets.component import Component
+from enaml.parsing.enaml_compiler import EnamlCompiler
 from enaml.toolkit import default_toolkit
+
 
 def required_method(function_object):
     """ Decorator for required methods.
@@ -22,6 +23,7 @@ def required_method(function_object):
                 format(function_name, self))
         raise NotImplementedError(msg)
     return proxy_function
+
 
 class EnamlTestCase(unittest.TestCase):
     """ Base class for testing Enaml object widgets.
@@ -81,7 +83,6 @@ class EnamlTestCase(unittest.TestCase):
         view.root.setup()
         return view
 
-
     def assertEnamlInSync(self, component, attribute_name, value):
         """ Verify that the requested attribute is properly set
 
@@ -125,3 +126,4 @@ class EnamlTestCase(unittest.TestCase):
 
         self.assertEqual(value, enaml_value)
         self.assertEqual(value, widget_value)
+

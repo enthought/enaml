@@ -23,7 +23,7 @@ def raise_dialog():
 defn InformDialog(message):
     Dialog -> dialog:
         title = "Inform"
-        modality = "app_modal"
+        modality = "application_modal"
         constraints = [
             vertical(top, label, ok_button, bottom),
             horizontal(left, label, right),
@@ -42,7 +42,7 @@ defn InformDialog(message):
 defn ConfirmDialog(message):
     Dialog -> dialog:
         title = "Confirm"
-        modality = "app_modal"
+        modality = "application_modal"
         constraints = [
             vertical(top, label, cancel_button, bottom),
             horizontal(left, label, right),

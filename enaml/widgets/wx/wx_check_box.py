@@ -22,7 +22,6 @@ class WXCheckBox(WXToggleControl, AbstractTkCheckBox):
 
         """
         self.widget = widget = wx.CheckBox(self.parent_widget())
-        widget.SetDoubleBuffered(True)
 
     def bind(self):
         """ Binds the event handlers for the check box. Not meant for

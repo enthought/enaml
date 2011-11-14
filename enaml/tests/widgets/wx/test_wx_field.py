@@ -16,7 +16,7 @@ class TestWxField(WXTestAssistant, field.TestField):
         """ Get the visible text of a field.
 
         """
-
+        self.process_wx_events(self.app)
         return widget.GetValue()
 
     def edit_text(self, widget, text):
@@ -41,11 +41,13 @@ class TestWxField(WXTestAssistant, field.TestField):
 
         """
         widget.SetInsertionPoint(index)
+        self.process_wx_events(self.app)
 
     def get_cursor_position(self, widget):
         """ Get the cursor position.
 
         """
+        self.process_wx_events(self.app)
         return widget.GetInsertionPoint()
 
     def get_password_mode(self, widget):
@@ -65,16 +67,17 @@ class TestWxField(WXTestAssistant, field.TestField):
         if component.password_mode == 'silent':
             silent_password_mode()
 
+        self.process_wx_events(self.app)
         if widget.HasFlag(wx.TE_PASSWORD):
             return 'password'
         else:
             return 'normal'
 
-
     def get_selected_text(self, widget):
         """ Get the currently-selected text from a field.
 
         """
+        self.process_wx_events(self.app)
         return widget.GetStringSelection()
 
     def press_return(self, widget):
@@ -82,6 +85,5 @@ class TestWxField(WXTestAssistant, field.TestField):
 
         """
         self.send_wx_event(widget, wx.EVT_TEXT_ENTER)
-
-
+        self.process_wx_events(self.app)
 

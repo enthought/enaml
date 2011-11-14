@@ -15,7 +15,7 @@ from .layout.symbolics import BaseConstraint
 class AbstractTkContainer(AbstractTkComponent):
     """ The abstract toolkit Container interface.
 
-    A toolkit container is responsible for handling changes on a shell 
+    A toolkit container is responsible for handling changes on a shell
     Container and proxying those changes to and from its internal toolkit
     widget.
 
@@ -34,7 +34,7 @@ class Container(Component):
     #: its children
     _needs_layout = Bool(True)
 
-    #: An object that manages the layout of this component and its 
+    #: An object that manages the layout of this component and its
     #: direct children. The default is simple constraints based
     layout = Instance(AbstractLayoutManager)
 
@@ -64,7 +64,7 @@ class Container(Component):
         super(Container, self).setup()
 
         self.initialize_layout()
-    
+
     def initialize_layout(self):
         """ Initialize the layout for the first time.
 
@@ -92,7 +92,7 @@ class Container(Component):
         return []
 
     def update_constraints_if_needed(self):
-        """ Update the constraints of this component if necessary. This 
+        """ Update the constraints of this component if necessary. This
         is typically the case when a constraint has been changed.
 
         """
@@ -123,8 +123,8 @@ class Container(Component):
         self._needs_update_constraints = False
 
     def layout_if_needed(self):
-        """ Refreshes the layout of this component if necessary. This 
-        will typically be needed if this component has been resized or 
+        """ Refreshes the layout of this component if necessary. This
+        will typically be needed if this component has been resized or
         the sizes of any of its children have been changed.
 
         """
@@ -132,7 +132,7 @@ class Container(Component):
             self.toolkit.invoke_later(self.do_layout)
 
     def set_needs_layout(self, needs=True):
-        """ Indicate that the layout should be refreshed some time 
+        """ Indicate that the layout should be refreshed some time
         later.
 
         """

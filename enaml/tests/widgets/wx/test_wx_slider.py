@@ -172,3 +172,4 @@ class TestWXSlider(WXTestAssistant, slider.TestSlider):
             widget.SetValue(value)
             event = wx.ScrollEvent(event_type.typeId, widget.GetId())
             widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)

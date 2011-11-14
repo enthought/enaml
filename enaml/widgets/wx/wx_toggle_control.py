@@ -49,6 +49,7 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
 
         """
         self.set_label(text)
+        self.shell_obj.size_hint_updated = True
 
     def on_toggled(self, event):
         """ The event handler for the toggled event.

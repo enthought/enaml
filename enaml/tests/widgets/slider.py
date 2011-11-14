@@ -74,7 +74,7 @@ class TestSlider(EnamlTestCase):
 
         """
 
-        enaml = """
+        enaml_source = """
 defn MainWindow(events):
     Window:
         Slider -> slider:
@@ -84,7 +84,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'slider')
         self.widget = self.component.toolkit_widget
 

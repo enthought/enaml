@@ -8,7 +8,7 @@ from traits.api import Bool, Enum, Instance, Property, Str
 
 from .container import Container, AbstractTkContainer
 from .layout.box_model import MarginBoxModel
-
+from ..enums import HorizontalAlign
 
 def _get_from_box_model(self, name):
     """ Property getter for all attributes that come from the MarginBoxModel.
@@ -65,7 +65,7 @@ class GroupBox(Container):
     flat = Bool(False)
 
     #: The alignment of the title text.
-    title_align = Enum('left', 'right', 'center')
+    title_align = HorizontalAlign
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkGroupBox)
@@ -119,7 +119,7 @@ class GroupBox(Container):
     contents_h_center = Property(fget=_get_from_box_model)
 
     #: A private attribute that holds the box model instance
-    #: for this component. 
+    #: for this component.
     _box_model = Instance(MarginBoxModel)
     def __box_model_default(self):
         return MarginBoxModel(self)
@@ -127,7 +127,7 @@ class GroupBox(Container):
 
     def default_user_constraints(self):
         """ Constraints to use if the constraints trait is an empty list.
-        
+
         Default behaviour is to put the children into a vertical layout.
         Subclasses of Container which implement container_constraints will
         probably want to override this (possibly to return an empty list).

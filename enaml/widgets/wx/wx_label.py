@@ -39,6 +39,7 @@ class WXLabel(WXControl, AbstractTkLabel):
 
         """
         self.set_label(text)
+        self.shell_obj.size_hint_updated = True
 
     def set_label(self, label):
         """ Sets the label on the underlying control.

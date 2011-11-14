@@ -57,8 +57,11 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
     def shell_date_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
 
+        .. note:: Currently this call is ignored
+
         """
         self.set_format(date_format)
+##        self.shell_obj.size_hint_updated = True
 
     def on_date_changed(self, event):
         """ The event handler for the date's changed event. Not meant

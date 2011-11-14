@@ -9,7 +9,7 @@ from .. import combo_box
 
 
 @skip_nonwindows
-class TestWxComboBox(WXTestAssistant, combo_box.TestComboBox):
+class TestWXComboBox(WXTestAssistant, combo_box.TestComboBox):
     """ WXComboBox tests. """
 
     def get_selected_text(self, widget):

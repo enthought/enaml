@@ -38,7 +38,7 @@ class TestDateEdit(EnamlTestCase):
 
         """
 
-        enaml = """
+        enaml_source = """
 defn MainWindow(events):
     Window:
         DateEdit -> test:
@@ -46,7 +46,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'test')
         self.widget = self.component.toolkit_widget
 
@@ -182,7 +182,7 @@ defn MainWindow(events):
         """ Check initialization with an invalid late date.
 
         """
-        enaml = """
+        enaml_source = """
 import datetime
 defn MainWindow(events):
     Window:
@@ -195,14 +195,14 @@ defn MainWindow(events):
         events = []
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml, events=events)
+            view = self.parse_and_create(enaml_source, events=events)
 
     def test_initial_too_early(self):
         """ Check initialization with an invalid early date.
 
         """
 
-        enaml = """
+        enaml_source = """
 import datetime
 defn MainWindow(events):
     Window:
@@ -216,7 +216,7 @@ defn MainWindow(events):
         events = []
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml, events=events)
+            view = self.parse_and_create(enaml_source, events=events)
 
     #--------------------------------------------------------------------------
     # absrtact methods

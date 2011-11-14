@@ -37,7 +37,7 @@ class TestDatetimeEdit(EnamlTestCase):
 
         """
 
-        enaml = """
+        enaml_source = """
 from datetime import datetime as python_datetime
 defn MainWindow(events):
     Window:
@@ -48,7 +48,7 @@ defn MainWindow(events):
 
         self.default_datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'test')
         self.widget = self.component.toolkit_widget
 
@@ -191,7 +191,7 @@ defn MainWindow(events):
         .. todo:: avoid using the enaml source
 
         """
-        enaml = """
+        enaml_source = """
 from datetime import datetime as python_datetime
 defn MainWindow(events):
     Window:
@@ -203,7 +203,7 @@ defn MainWindow(events):
 """
         events = []
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml, events=events)
+            view = self.parse_and_create(enaml_source, events=events)
 
     def test_initial_too_late(self):
         """ Check initialization with an invalid late datetime is corrected.
@@ -211,7 +211,7 @@ defn MainWindow(events):
         .. todo:: avoid using the enaml source
 
         """
-        enaml = """
+        enaml_source = """
 from datetime import datetime as python_datetime
 defn MainWindow(events):
     Window:
@@ -223,7 +223,7 @@ defn MainWindow(events):
 """
         events = []
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml, events=events)
+            view = self.parse_and_create(enaml_source, events=events)
 
     #--------------------------------------------------------------------------
     # absrtact methods
