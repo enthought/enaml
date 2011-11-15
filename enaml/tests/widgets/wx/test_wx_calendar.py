@@ -30,12 +30,10 @@ class TestWXCalendar(WXTestAssistant, calendar.TestCalendar):
         """
         return widget.PyGetUpperDateLimit()
 
-    @expectedFailure
     def activate_date(self, widget, date):
         """ Fire an event to indicate that a date was activated.
 
         """
-        self.fail("This is a known failure")
         cal_event = wx.calendar.EVT_CALENDAR
         event = wx.calendar.CalendarEvent(widget, cal_event.typeId)
         event.PySetDate(date)

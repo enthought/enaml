@@ -41,37 +41,43 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         super(WXDateEdit, self).initialize()
         # FIXME: Set the date format functionality is not available yet
         shell = self.shell_obj
-        self.set_format(shell.date_format)
+        self._set_format(shell.date_format)
 
     def bind(self):
         """ Binds the event handlers for the date widget.
 
         """
         super(WXDateEdit, self).bind()
-        widget = self.widget
-        widget.Bind(wx.EVT_DATE_CHANGED, self.on_date_changed)
+        self.widget.Bind(wx.EVT_DATE_CHANGED, self._on_date_changed)
 
     #--------------------------------------------------------------------------
-    # Implementation
+    # Component attribute notifiers
     #--------------------------------------------------------------------------
+
     def shell_date_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
 
-        .. note:: Currently this call is ignored
+        .. note:: Currently this call does nothing.
 
         """
-        self.set_format(date_format)
-##        self.shell_obj.size_hint_updated = True
+        self._set_format(date_format)
 
-    def on_date_changed(self, event):
+    #--------------------------------------------------------------------------
+    # Signal handlers
+    #--------------------------------------------------------------------------
+
+    def _on_date_changed(self, event):
         """ The event handler for the date's changed event. Not meant
         for public consumption.
 
         """
-        shell = self.shell_obj
-        shell.date = from_wx_date(event.GetDate())
+        self.shell_obj.date = from_wx_date(event.GetDate())
 
-    def set_date(self, date, events=True):
+    #---------------------------------------------------------------------------
+    # Private methods
+    #---------------------------------------------------------------------------
+
+    def _set_date(self, date):
         """ Sets the date on the widget.
 
         wxDatePickerCtrl will not fire an EVT_DATE_CHANGED event when
@@ -80,13 +86,10 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         widget.
 
         """
-        widget = self.widget
-        widget.SetValue(to_wx_date(date))
-        if events:
-            shell = self.shell_obj
-            shell.date_changed = date
+        self.widget.SetValue(to_wx_date(date))
+        self.shell_obj.date_changed = date
 
-    def set_min_date(self, date):
+    def _set_min_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
         Not meant for public consumption.
 
@@ -94,7 +97,7 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         widget = self.widget
         widget.SetRange(to_wx_date(date), widget.GetUpperLimit())
 
-    def set_max_date(self, date):
+    def _set_max_date(self, date):
         """ Sets the maximum date on the widget with the provided value.
         Not meant for public consumption.
 
@@ -102,5 +105,5 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         widget = self.widget
         widget.SetRange(widget.GetLowerLimit(), to_wx_date(date))
 
-    def set_format(self, date_format):
+    def _set_format(self, date_format):
         pass
