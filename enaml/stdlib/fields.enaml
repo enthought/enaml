@@ -3,30 +3,31 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-from .converters import IntConverter, FloatConverter
+from enaml.converters import IntConverter, FloatConverter
 
 defn ErrorField:
-    error_color = '#F9A7A7'
-    bg_color << error_color if error else "none"
+    Field:
+        error_color = '#F9A7A7'
+        bg_color << error_color if error else "none"
 
 defn IntField:
     ErrorField:
-        converter = IntConverter
+        converter = IntConverter()
         #alignment = 'right'
 
 defn LongField:
     ErrorField:
-        converter = LongConverter
+        converter = LongConverter()
         #alignment = 'right'
 
 defn FloatField:
     ErrorField:
-        converter = FloatConverter
+        converter = FloatConverter()
         #alignment = 'right'
 
 defn ComplexField:
     ErrorField:
-        converter = ComplexConverter
+        converter = ComplexConverter()
         #alignment = 'right'
 
 defn PasswordField:
