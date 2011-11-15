@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
 from .qt_container import QtContainer
 
 from ..window import AbstractTkWindow
@@ -24,14 +23,11 @@ class QtWindow(QtContainer, AbstractTkWindow):
 
         """
         super(QtWindow, self).initialize()
-        shell = self.shell_obj
-        self.set_title(shell.title)
-        self.set_modality(shell.modality)
+        self.set_title(self.shell_obj.title)
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-
     def pos(self):
         """ Returns the position of the internal toolkit widget as an 
         (x, y) tuple of integers. The coordinates should be relative to
@@ -65,13 +61,6 @@ class QtWindow(QtContainer, AbstractTkWindow):
         """
         self.set_title(title)
 
-    def shell_modality_changed(self, modality):
-        """ The change handler for the 'modality' attribute. Not meant
-        for public consumption.
-
-        """
-        self.set_modality(modality)
-
     def set_title(self, title):
         """ Sets the title of the QFrame. Not meant for public
         consumption.
@@ -79,17 +68,4 @@ class QtWindow(QtContainer, AbstractTkWindow):
         """
         if self.widget:
             self.widget.setWindowTitle(title)
-
-    def set_modality(self, modality):
-        """ Sets the modality of the QMainWindow.
-
-        """
-        if self.widget:
-            if modality == 'application_modal':
-                self.widget.setWindowModality(QtCore.Qt.ApplicationModal)
-            elif modality == 'window_modal':
-                self.widget.setWindowModality(QtCore.Qt.WindowModal)
-            else:
-                self.widget.setWindowModality(QtCore.Qt.NonModal)
-
 
