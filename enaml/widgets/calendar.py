@@ -20,12 +20,13 @@ class Calendar(BoundedDate):
     """
     #: Triggered whenever the user clicks or changes the control. The
     #: event payload will be the date on the control. This is event is
-    #: also fired when the value of :attr:`date` is set programmatically.
+    #: also fired when the value of the widget is set programmatically.
     selected = Event
 
     #: Triggered whenever the user activates a new date via double
     #: click or pressing enter. The event payload will be the date
-    #: on the control.
+    #: on the control. This event aslo means that the date value
+    #: has been updated
     activated = Event
 
     #: Overridden parent class trait
