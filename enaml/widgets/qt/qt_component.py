@@ -58,8 +58,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         return self.widget
 
     def size(self):
-        """ Return the size of the internal toolkit widget as a
-        (width, height) tuple of integers.
+        """ Returns the size of the internal toolkit widget, ignoring any
+        windowing decorations, as a (width, height) tuple of integers.
 
         """
         widget = self.widget
@@ -67,9 +67,9 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
-        the suggested size of the widget for its current state. This
-        value is used by the layout manager to determine how much
-        space to allocate the widget.
+        the suggested size of the widget for its current state, ignoring
+        any windowing decorations. This value is used by the layout 
+        manager to determine how much space to allocate the widget.
 
         """
         size_hint = self.widget.sizeHint()
@@ -77,22 +77,24 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
     def resize(self, width, height):
         """ Resizes the internal toolkit widget according the given
-        width and height integers.
+        width and height integers, ignoring any windowing decorations.
 
         """
         self.widget.resize(width, height)
     
     def set_min_size(self, min_width, min_height):
-        """ Set the hard minimum width and height of the widget. A widget
-        will not be able to be resized smaller than this value.
+        """ Set the hard minimum width and height of the widget, ignoring
+        any windowing decorations. A widget will not be able to be resized 
+        smaller than this value.
 
         """
         self.widget.setMinimumSize(min_width, min_height)
 
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
-        (x, y) tuple of integers. The coordinates should be relative to
-        the origin of the widget's parent.
+        (x, y) tuple of integers, including any windowing decorations. 
+        The coordinates should be relative to the origin of the widget's 
+        parent, or to the screen if the widget is toplevel.
 
         """
         widget = self.widget
@@ -101,29 +103,37 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     def move(self, x, y):
         """ Moves the internal toolkit widget according to the given
         x and y integers which are relative to the origin of the
-        widget's parent.
+        widget's parent and includes any windowing decorations.
 
         """
         self.widget.move(x, y)
 
-    def geometry(self):
+    def frame_geometry(self):
         """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget. The semantic meaning of the
-        values are the same as for the 'size' and 'pos' methods.
+        for the internal toolkit widget, including any windowing
+        decorations.
 
         """
-        x, y = self.pos()
-        width, height = self.size()
-        return (x, y, width, height)
+        geo = self.widget.frameGeometry()
+        return (geo.x(), geo.y(), geo.width(), geo.height())
+
+    def geometry(self):
+        """ Returns an (x, y, width, height) tuple of geometry info
+        for the internal toolkit widget, ignoring any windowing
+        decorations.
+
+        """
+        geo = self.widget.geometry()
+        return (geo.x(), geo.y(), geo.width(), geo.height())
 
     def set_geometry(self, x, y, width, height):
         """ Sets the geometry of the internal widget to the given
-        x, y, width, and height values. The semantic meaning of the
-        values is the same as for the 'resize' and 'move' methods.
+        x, y, width, and height values, ignoring any windowing 
+        decorations.
 
         """
         self.widget.setGeometry(x, y, width, height)
-    
+
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the shell
         object. Sets the background color of the internal widget to the 

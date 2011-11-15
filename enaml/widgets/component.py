@@ -9,7 +9,9 @@ from traits.api import Instance, Property, Tuple, Event, Enum
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
 
+
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
+
 
 class AbstractTkComponent(AbstractTkBaseComponent):
     """ The abstract toolkit Component interface.
@@ -29,8 +31,8 @@ class AbstractTkComponent(AbstractTkBaseComponent):
 
     @abstractmethod
     def size(self):
-        """ Return the size of the internal toolkit widget as a 
-        (width, height) tuple of integers.
+        """ Returns the size of the internal toolkit widget, ignoring any
+        windowing decorations, as a (width, height) tuple of integers.
 
         """
         raise NotImplementedError
@@ -38,9 +40,9 @@ class AbstractTkComponent(AbstractTkBaseComponent):
     @abstractmethod
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
-        the suggested size of the widget for its current state. This 
-        value is used by the layout manager to determine how much 
-        space to allocate the widget.
+        the suggested size of the widget for its current state, ignoring
+        any windowing decorations. This value is used by the layout 
+        manager to determine how much space to allocate the widget.
 
         """
         raise NotImplementedError
@@ -48,24 +50,26 @@ class AbstractTkComponent(AbstractTkBaseComponent):
     @abstractmethod
     def resize(self, width, height):
         """ Resizes the internal toolkit widget according the given
-        width and height integers.
+        width and height integers, ignoring any windowing decorations.
 
         """
         raise NotImplementedError
     
     @abstractmethod
     def set_min_size(self, min_width, min_height):
-        """ Set the hard minimum width and height of the widget. A widget
-        should not be able to be resized smaller than this value.
+        """ Set the hard minimum width and height of the widget, ignoring
+        any windowing decorations. A widget will not be able to be resized 
+        smaller than this value.
 
         """
         raise NotImplementedError
 
     @abstractmethod
     def pos(self):
-        """ Returns the position of the internal toolkit widget as an 
-        (x, y) tuple of integers. The coordinates should be relative to
-        the origin of the widget's parent.
+        """ Returns the position of the internal toolkit widget as an
+        (x, y) tuple of integers, including any windowing decorations. 
+        The coordinates should be relative to the origin of the widget's 
+        parent, or to the screen if the widget is toplevel.
 
         """
         raise NotImplementedError
@@ -74,28 +78,38 @@ class AbstractTkComponent(AbstractTkBaseComponent):
     def move(self, x, y):
         """ Moves the internal toolkit widget according to the given
         x and y integers which are relative to the origin of the
-        widget's parent.
+        widget's parent and includes any windowing decorations.
 
         """
         raise NotImplementedError
-    
+        
+    @abstractmethod
+    def frame_geometry(self):
+        """ Returns an (x, y, width, height) tuple of geometry info
+        for the internal toolkit widget, including any windowing
+        decorations.
+
+        """
+        raise NotImplementedError
+
     @abstractmethod
     def geometry(self):
         """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget. The semantic meaning of the
-        values are the same as for the 'size' and 'pos' methods.
+        for the internal toolkit widget, ignoring any windowing
+        decorations.
 
         """
         raise NotImplementedError
     
     @abstractmethod
     def set_geometry(self, x, y, width, height):
-        """ Sets the geometry of the internal widget to the given 
-        x, y, width, and height values. The semantic meaning of the
-        values is the same as for the 'resize' and 'move' methods.
+        """ Sets the geometry of the internal widget to the given
+        x, y, width, and height values, ignoring any windowing 
+        decorations.
 
         """
         raise NotImplementedError
+
 
 class Component(BaseComponent):
     """ A BaseComponent subclass that adds a box model and support
