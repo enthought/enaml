@@ -29,62 +29,59 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
         """
         super(WXCalendar, self).bind()
         widget = self.widget
-        widget.Bind(wx.calendar.EVT_CALENDAR, self.on_date_activated)
+        widget.Bind(wx.calendar.EVT_CALENDAR, self._on_date_activated)
         widget.Bind(wx.calendar.EVT_CALENDAR_SEL_CHANGED,
-                    self.on_date_selected)
+                    self._on_date_selected)
 
     #--------------------------------------------------------------------------
-    # Implementation
+    # Signal handlers
     #--------------------------------------------------------------------------
 
-    def on_date_activated(self, event):
+    def _on_date_activated(self, event):
         """ The event handler for the calendar's activation event.
 
         """
         shell = self.shell_obj
-        widget = self.widget
-        date = widget.PyGetDate()
+        date = self.widget.PyGetDate()
         shell.date = date
         shell.activated = date
 
-    def on_date_selected(self, event):
+    def _on_date_selected(self, event):
         """ The event handler for the calendar's selection event.
 
         """
-        shell = self.shell_obj
-        widget = self.widget
-        date = widget.PyGetDate()
-        shell.selected = date
+        self.shell_obj.selected = event.PyGetDate()
 
     #---------------------------------------------------------------------------
-    # Implementation
+    # Private methods
     #---------------------------------------------------------------------------
-
-    def set_date(self, date, events=True):
-        """ Sets the component date on the widget.
+    def _set_date(self, date):
+        """ Sets the component date in the widget.
 
         wxCalendar will not fire an EVT_CALENDAR_SEL_CHANGED event when
         the value is programmatically set, so the method fires the
         `selected` event manually after setting the value in the widget.
 
+        .. note:: During an activate singla the date is moved from the ui to
+            the widget. This will case the component notifier to be called and
+            at the end _set_date will be called. In this case we do not need to
+            fire the selected event (or set the value again!).
+
         """
         widget = self.widget
-        widget.PySetDate(date)
-        if events:
-            shell = self.shell_obj
-            shell.selected = date
+        widget_date = widget.PyGetDate()
+        if date != widget_date:
+            widget.PySetDate(date)
+            self.shell_obj.selected = date
 
-
-    def set_min_date(self, date):
+    def _set_min_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
 
         """
-        widget = self.widget
-        widget.PySetLowerDateLimit(date)
+        self.widget.PySetLowerDateLimit(date)
 
-    def set_max_date(self, date):
+    def _set_max_date(self, date):
         """ Sets the maximum date on the widget with the provided value.
 
         """
-        widget = self.widget
-        widget.PySetUpperDateLimit(date)
+        self.widget.PySetUpperDateLimit(date)
