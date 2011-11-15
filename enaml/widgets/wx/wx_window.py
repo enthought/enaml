@@ -28,7 +28,7 @@ class WXWindow(WXContainer, AbstractTkWindow):
         # well. It is advised in the wxWidget documentation to add a
         # Panel or Window control before adding the children.
         self._frame = wx.Frame(self.parent_widget())
-        self.widget = wx.Window(self._frame)
+        self.widget = wx.Panel(self._frame)
 
     def initialize(self):
         """ Intializes the attributes on the wx.Frame.

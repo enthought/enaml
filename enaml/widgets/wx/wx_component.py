@@ -26,7 +26,7 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
-        self.widget = wx.Window(self.parent_widget())
+        self.widget = wx.Panel(self.parent_widget())
 
     #--------------------------------------------------------------------------
     # Implementation
