@@ -3,10 +3,11 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-from .wx_test_assistant import WXTestAssistant
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import group_box
 from pdb import set_trace
 
+@skip_nonwindows
 class TestGroupBox(WXTestAssistant, group_box.TestGroupBox):
 
     def setUp(self):
