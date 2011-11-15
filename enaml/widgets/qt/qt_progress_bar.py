@@ -23,6 +23,7 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
     
     def initialize(self):
         super(QtControl, self).initialize()
+        self.widget.setTextVisible(False)
         shell = self.shell_obj
         self.shell_minimum_changed(shell.minimum)
         self.shell_maximum_changed(shell.maximum)
