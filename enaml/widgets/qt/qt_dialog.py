@@ -2,11 +2,17 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
+from .qt import QtGui, QtCore
 from .qt_window import QtWindow
 from .qt_resizing_widgets import QResizingDialog
 
 from ..dialog import AbstractTkDialog
+
+
+_MODAL_MAP = {
+    'application_modal': QtCore.Qt.ApplicationModal,
+    'window_modal': QtCore.Qt.WindowModal,
+}
 
 
 class QtDialog(QtWindow, AbstractTkDialog):
@@ -15,11 +21,9 @@ class QtDialog(QtWindow, AbstractTkDialog):
     This class creates a simple top-level dialog.
 
     """
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-
     def create(self):
         """ Creates the underlying QDialog control.
 
@@ -37,9 +41,7 @@ class QtDialog(QtWindow, AbstractTkDialog):
     # Implementation
     #---------------------------------------------------------------------------
     def show(self):
-        """ Displays this dialog to the screen.
-
-        If the dialog is modal, disable all other windows in the application.
+        """ Displays this modal dialog to the screen.
 
         """
         widget = self.widget
@@ -49,16 +51,17 @@ class QtDialog(QtWindow, AbstractTkDialog):
                 _active = True,
                 opened = True,
             )
-            if shell.modality in ('application_modal', 'window_modal'):
-                widget.exec_()
-            else:
-                widget.show()
+            widget.setWindowModality(_MODAL_MAP[shell.modality])
+            widget.exec_()
 
-    def open(self):
-        """ Display the dialog.
+    def hide(self):
+        """ Overridden parent class method. Hiding a dialog is the same
+        as rejecting it.
 
         """
-        self.show()
+        widget = self.widget
+        if widget and widget.visible():
+            self.reject()
 
     def accept(self):
         """ Accept and close the dialog, sending the 'finished' signal.
