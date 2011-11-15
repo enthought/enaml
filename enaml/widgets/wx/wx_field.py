@@ -220,6 +220,28 @@ class WXField(WXControl, AbstractTkField):
         self._update_shell_selection()
         event.Skip()
 
+    def _on_text_updated(self, event):
+        """ The event handler for the text update event.
+
+        """
+        event.Skip()
+        shell = self.shell_obj
+        text = self.widget.GetValue()
+        self.setting_value = True
+        try:
+            value = shell.converter.from_component(text)
+        except Exception as e:
+            shell.exception = e
+            shell.error = True
+        else:
+            shell.exception = None
+            shell.error = False
+            shell.value = value
+        self.setting_value = False
+        self._update_shell_selection()
+        shell._modified = True
+        shell.text_changed = text
+
     #--------------------------------------------------------------------------
     # Public methods
     #--------------------------------------------------------------------------
@@ -401,30 +423,6 @@ class WXField(WXControl, AbstractTkField):
 
     def _set_cursor_position(self, cursor_position):
         self.widget.SetInsertionPoint(cursor_position)
-
-    def _on_text_updated(self, event):
-        """ The event handler for the text update event.
-
-        """
-        event.Skip()
-        widget = self.widget
-        shell = self.shell_obj
-        text = widget.GetValue()
-        self.setting_value = True
-        try:
-            value = shell.converter.from_component(text)
-        except Exception as e:
-            shell.exception = e
-            shell.error = True
-        else:
-            shell.exception = None
-            shell.error = False
-            shell.value = value
-        self.setting_value = False
-        self._update_shell_selection()
-        shell.text_edited = text
-        shell._modified = True
-        shell.text_changed = text
 
     def _update_shell_selection(self):
         """ Updates the selection and cursor position of the shell
