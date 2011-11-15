@@ -1,0 +1,84 @@
+""" ProgressBar driven by Timer
+
+In this example, we demonstrate connecting a ProgressBar up to a model that is
+modified by a Timer.
+
+"""
+
+:: python ::
+
+import random
+
+from traits.api import Any, Bool, HasTraits, Int
+from pyface.timer.api import Timer
+
+
+class Model(HasTraits):
+    """ Model a process that does some work on command.
+    """
+
+    # The total units of work to do.
+    work_units = Int(1000)
+
+    # The number of units done.
+    units_done = Int(0)
+
+    # The timer that drives the work.
+    timer = Any()
+
+    timer_started = Bool(False)
+
+    def start_work(self):
+        """ Start the Timer to do work.
+        """
+        if not self.timer_started:
+            self.timer = Timer(1.0, self.do_work)
+            self.timer_started = True
+            self.timer.Start()
+
+    def do_work(self):
+        """ Do a random amount of work.
+        """
+        self.units_done += 1
+        if self.units_done >= self.work_units:
+            # Stop the Timer.
+            self.timer_started = False
+            raise StopIteration()
+
+    def reset(self):
+        """ Reset the work done back to 0.
+        """
+        self.units_done = 0
+
+:: end ::
+
+defn MainWindow(model):
+    Window:
+        title = 'Progress Bar'
+        constraints = [
+            vertical(top, progress, label, work_button, _space_, bottom),
+            horizontal(left, progress, right),
+            horizontal(left, _space_, label, _space_, right),
+            horizontal(left, _space_, work_button, _space_, right),
+            align_h_center(progress, label, work_button),
+            width >= 200,
+        ]
+        ProgressBar -> progress:
+            value := model.units_done
+            maximum := model.work_units
+        Label -> label:
+            text << '{0}% ({1}/{2})'.format(progress.percentage, progress.value, progress.maximum)
+        PushButton -> work_button:
+            text << "Start" if progress.value == 0 else "Reset"
+            clicked >> model.start_work() if progress.value == 0 else model.reset()
+
+:: python ::
+
+# The main function is special cased as the entry point by the enaml-run script
+def main():
+    model = Model()
+    window = MainWindow(model=model)
+    window.show()
+
+:: end ::
+
