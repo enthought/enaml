@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Str, Enum, Instance
+from traits.api import Str, Instance
 
 from .container import Container, AbstractTkContainer
-from ..enums import Modality
+
 
 class AbstractTkWindow(AbstractTkContainer):
     """ The abstract Window interface.
@@ -35,14 +35,6 @@ class AbstractTkWindow(AbstractTkContainer):
         """
         raise NotImplementedError
 
-    @abstractmethod
-    def shell_modality_changed(self, modality):
-        """ Update the window modality with the new value from the
-        shell object
-
-        """
-        raise NotImplementedError
-
 
 class Window(Container):
     """ The base top-level Window widget.
@@ -55,9 +47,6 @@ class Window(Container):
     """
     #: The title displayed on the window frame.
     title = Str
-
-    #: The modality of the window.
-    modality = Modality
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkWindow)
