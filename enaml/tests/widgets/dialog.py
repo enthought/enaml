@@ -32,19 +32,17 @@ defn MainWindow():
         self.component = self.component_by_name(self.view, 'dialog')
         self.widget = self.component.toolkit_widget
         # Don't actually show the dialog.
-        self.widget.show = lambda: None
+        self.disable_showing(self.widget)
         # (trait_name, value) log of all trait change events on the Dialog.
         self.event_log = []
         self.component.on_trait_change(self._append_event_handler, 'anytrait')
 
-    @skip_test
     def test_initial_active(self):
         """ Test the initial value of the active flag on the Dialog.
 
         """
         self.assertEquals(self.component.active, False)
     
-    @skip_test
     def test_result_value(self):
         """ Test the modification of the result value.
 
@@ -55,12 +53,11 @@ defn MainWindow():
         self.component.reject()
         self.assertEquals(self.component.result, 'rejected')
 
-    @skip_test
     def test_show_close(self):
         """ Test the behavior when showing and closing the dialog.
 
         """
-        self.component.open()
+        self.component.abstract_obj.show()
         # Compare sets because the order is unimportant.
         self.assertEquals(set(self.event_log), set([
             ('active', True),
@@ -77,7 +74,7 @@ defn MainWindow():
             ('closed', 'accepted'),
         ]))
         self.event_log = []
-        self.component.open()
+        self.component.abstract_obj.show()
         self.assertEquals(set(self.event_log), set([
             ('active', True),
             ('_active', True),
@@ -94,8 +91,8 @@ defn MainWindow():
         ]))
 
     @required_method
-    def get_result(self, widget):
-        """ Get the result value from the widget.
+    def disable_showing(self, widget):
+        """ Disable the actual display of the dialog window.
 
         """
         pass

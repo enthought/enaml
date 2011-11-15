@@ -2,17 +2,22 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from . import test_qt_window
+from . import test_wx_window
 from .. import dialog
 
-class TestQtDialog(test_qt_window.TestQtWindow, dialog.TestDialog):
-    """ QtDialog tests. """
+class TestWXDialog(test_wx_window.TestWXWindow, dialog.TestDialog):
+    """ WXDialog tests. """
+
+    def get_title(self, widget):
+        """ Get a window's title.
+
+        """
+        return widget.GetTitle()
 
     def disable_showing(self, widget):
         """ Disable the actual display of the dialog window.
 
         """
-        widget.exec_ = lambda:None
-        widget.show = lambda:None
-        widget.setWindowModality = lambda x:None
+        widget.ShowModal = lambda:None
+
 
