@@ -7,6 +7,7 @@ from qt import QtGui
 from .qt_control import QtControl
 
 from ..field import AbstractTkField
+from ...exceptions import notification_context
 
 password_modes = {
     'normal': QtGui.QLineEdit.Normal,
@@ -276,13 +277,14 @@ class QtField(QtControl, AbstractTkField):
         self.setting_value = True
         try:
             value = shell.converter.from_component(text)
+            with notification_context():
+                shell.value = value
         except Exception as e:
             shell.exception = e
             shell.error = True
         else:
             shell.exception = None
             shell.error = False
-            shell.value = value
         self.setting_value = False
 
     def on_text_edited(self, event):
