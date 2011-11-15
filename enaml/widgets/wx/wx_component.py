@@ -5,7 +5,9 @@
 import wx
 
 from .wx_base_component import WXBaseComponent
+
 from ..component import AbstractTkComponent
+
 
 class WXComponent(WXBaseComponent, AbstractTkComponent):
     """ A wxPython implementation of Component.
@@ -98,13 +100,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
 
         """
         self.widget.SetDimensions(x, y, width, height)
-
-    def on_resize(self, event):
-        """ Triggers a relayout of the shell object since the component
-        has been resized.
-
-        """
-        self.shell_obj.do_layout()
 
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the parent.

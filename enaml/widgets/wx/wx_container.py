@@ -26,8 +26,7 @@ class WXContainer(WXComponent, AbstractTkContainer):
 
         """
         super(WXContainer, self).bind()
-        widget = self.widget
-        widget.Bind(wx.EVT_SIZE, self.on_resize)
+        self.widget.Bind(wx.EVT_SIZE, self.on_resize)
 
     def size_hint(self):
         """ Return default value (-1,-1) as a size hint for the generic
@@ -35,3 +34,11 @@ class WXContainer(WXComponent, AbstractTkContainer):
 
         """
         return (-1, -1)
+    
+    def on_resize(self, event):
+        """ Triggers a relayout of the shell object since the component
+        has been resized.
+
+        """
+        self.shell_obj.do_layout()
+
