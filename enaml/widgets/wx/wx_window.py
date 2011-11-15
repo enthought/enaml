@@ -1,10 +1,11 @@
-# -*- coding: UTF-8 -*-
 #------------------------------------------------------------------------------
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
+
 from .wx_container import WXContainer
+
 from ..window import AbstractTkWindow
 
 
@@ -65,39 +66,52 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """
         self._frame.SetTitle(title)
     
-    def size(self):
-        """ Overridden parent class method to take into account the
-        size of the frame decoration.
-
-        """
-        return self._frame.GetClientSizeTuple()
-    
     def resize(self, width, height):
-        """ Overridden parent class method to take into account the
-        size of the frame decoration.
+        """ Overridden parent class method to do the resize on the 
+        internal wx.Frame object.
 
         """
-        self._frame.SetClientSize((width, height))
+        self._resize(self._frame, width, height)
     
     def set_min_size(self, min_width, min_height):
-        """ Overridden parent class method to take into account the
-        size of the frame decoration.
+        """ Overridden parent class method to set the min size on the
+        internal wx.Frame object.
 
         """
-        frame = self._frame
-        frame_width, frame_height = frame.GetSizeTuple()
-        client_width, client_height = frame.GetClientSizeTuple() 
-        min_width = min_width + frame_width - client_width
-        min_height = min_height + frame_height - client_height
-        frame.SetSizeHints(min_width, min_height)
+        self._set_min_size(self._frame, min_width, min_height)
         
+    def pos(self):
+        """ Overridden parent class method to get the position of
+        the internal wx.Frame object.
+
+        """
+        return self._pos(self._frame)
+
     def move(self, x, y):
-        """ Overridden parent class method to move the frame rather
-        than its internal Window.
+        """ Overridden parent class method to do the move on the internal
+        wx.Frame object.
 
         """
-        self._frame.MoveXY(x, y)
+        self._move(self._frame, x, y)
         
-    # XXX we still need to handle geometry() and set_geometry()
-    # to deal with frame decorations properly
+    def frame_geometry(self):
+        """ Overridden parent class method to get the frame geometry
+        of the internal wx.Frame object.
+
+        """
+        return self._frame_geometry(self._frame)
+
+    def geometry(self):
+        """ Overridden parent class method to get the geometry
+        of the internal wx.Frame object.
+
+        """
+        return self._geometry(self._frame)
     
+    def set_geometry(self, x, y, width, height):
+        """ Overridden parent class method to set the geometry
+        of the internal wx.Frame object.
+
+        """
+        self._set_geometry(self._frame, x, y, width, height)
+
