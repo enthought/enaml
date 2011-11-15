@@ -74,7 +74,7 @@ Direction = Enum(('left_to_right', 'right_to_left',
 #: ``application_modal`` The window blocks input to all other windows in
 #:                       the application.
 #: ===================== =================================================
-Modality = Enum(('non_modal', 'window_modal', 'application_modal'))
+Modality = Enum(('application_modal', 'window_modal'))
 
 #: The position of ticks for a control.
 #:
