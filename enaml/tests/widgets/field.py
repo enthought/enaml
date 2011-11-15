@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from unittest import expectedFailure
 from enaml.converters import Converter, IntConverter
 
 from .enaml_test_case import EnamlTestCase, required_method
@@ -47,7 +48,7 @@ defn MainWindow(events):
         """ Get the widget of the main component.
 
         The property getter is necessary because the internal widget of
-        the component might change.
+        the component might change (see WXField).
 
         """
         return self.component.toolkit_widget
@@ -138,22 +139,22 @@ defn MainWindow(events):
         self.component.set_selection(1, 3)
         self.assertEqual(self.component.selected_text, 'ex')
 
-    # Note: When setting text programmatically, neither backend (wxPython
-    # or Qt) seems to support becoming read-only at run time.
-    #
-    # That's because a Field should only be read-only from the ui. It 
-    # still needs to be editable programatically. This is a bad test
-    # and should be removed. - SCC
-    #
-    # def test_widget_read_only(self):
-    #     """ Check that the toolkit widget enforces its read-only flag.
 
-    #     """
-    #     initial = 'abc'
-    #     self.component.read_only = True
-    #     self.edit_text(self.widget, 'foo')
-    #     self.component.value = 'foo'
-    #     self.assertEqual(self.get_value(self.widget), initial)
+    @expectedFailure
+    def test_widget_read_only(self):
+         """ Check that the toolkit widget enforces its read-only flag.
+
+         The testcase uses the self.edit_text to simulate editing the
+         field thought the ui.
+
+         .. note:: Currently this test is an ``expected failure`` until
+            we can find a way to simulate the keystrokes.
+
+         """
+         initial = 'abc'
+         self.component.read_only = True
+         self.edit_text(self.widget, 'foo')
+         self.assertEqual(self.get_value(self.widget), initial)
 
     def test_convert_to_component(self):
         """ Test the field's 'to_string' attribute.
@@ -191,12 +192,6 @@ defn MainWindow(events):
         self.change_text(self.widget, '100.0')
         self.component.converter = IntConverter()
         self.assertTrue(self.component.error)
-
-    #def test_placeholder_text(self):
-    #    """ Remove focus to check a field's placeholder text.
-    #
-    #    """
-    #    #Not sure how to do this.
 
     def test_change_text(self):
         """ Change text programmatically, as opposed to editing it.
@@ -272,7 +267,6 @@ defn MainWindow(events):
         """ Remove selected text and add it to the clipboard.
 
         """
-        # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
         self.component.set_selection(1, 3)
         self.component.cut()
         self.assertEnamlInSync(self.component, 'value', 'a')
@@ -281,7 +275,6 @@ defn MainWindow(events):
         """ Copy text, then paste it at the beginning of the field.
 
         """
-        # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
         self.component.set_selection(1, 2)
         self.component.copy()
         self.set_cursor_position(self.widget, 0)
@@ -292,7 +285,6 @@ defn MainWindow(events):
         """ Cut text, then paste it at the beginning of the field.
 
         """
-        # NOTE: The clipboard-related tests sometimes pass, and sometimes fail.
         self.component.set_selection(1, 2)
         self.component.cut()
         self.set_cursor_position(self.widget, 0)
@@ -369,7 +361,7 @@ defn MainWindow(events):
 
     @required_method
     def change_text(self, widget, text):
-        """ Change text programmatically, rather than "edit" it.
+        """ Change text programmatically, rather than "editing" it.
 
         """
         pass
