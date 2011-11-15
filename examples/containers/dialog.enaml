@@ -1,9 +1,10 @@
-# Dialogs
-#
-# In this example, the MainWindow displays a PushButton prompting you to press
-# it. It will raise a modal confirmation Dialog asking you if you really want to do
-# it. Once you select OK or Cancel on the confirmation Dialog, an information
-# Dialog will be raised to tell you the result of your action.
+""" Dialogs
+
+In this example, the MainWindow displays a PushButton prompting you to press
+it. It will raise a modal confirmation Dialog asking you if you really want to do
+it. Once you select OK or Cancel on the confirmation Dialog, an information
+Dialog will be raised to tell you the result of your action.
+"""
 
 :: python ::
 

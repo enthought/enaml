@@ -1,14 +1,15 @@
-# A demonstration of Form layouts and using raw python from within 
-# an enaml file. This file can be executed directly with the enaml-run
-# script: $ enaml-run employee.enaml
-#
-# Notes:
-# - the midline is shared between both Form containers.
-# - (currently) the hug parameters for the label and field need to be set
-#   as in the example. This will be rendered unnecessary soon.
-# - This example is using traits to build the models, however Enaml is 
-#   flexible enough to be used with the model systems of nearly any other 
-#   Python framework.
+""" A demonstration of Form layouts and using raw python from within an enaml
+file. This file can be executed directly with the enaml-run script: $ enaml-run
+employee.enaml
+
+Notes:
+ - the midline is shared between both Form containers.
+ - (currently) the hug parameters for the label and field need to be set
+   as in the example. This will be rendered unnecessary soon.
+ - This example is using traits to build the models, however Enaml is 
+   flexible enough to be used with the model systems of nearly any other 
+   Python framework.
+"""
 
 # Imports work like normal
 import datetime
