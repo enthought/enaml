@@ -24,11 +24,7 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
-        style = wx.NO_BORDER
-        self.widget = wx.Window(self.parent_widget(), style=style)
-
-    def bind(self):
-        super(WXComponent, self).bind()
+        self.widget = wx.Window(self.parent_widget())
 
     #--------------------------------------------------------------------------
     # Implementation
