@@ -17,7 +17,6 @@ class QtWindow(QtContainer, AbstractTkWindow):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-
     def initialize(self):
         """ Intializes the attributes on the QWindow.
 
