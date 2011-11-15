@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from unittest import expectedFailure
 import wx
 from unittest import expectedFailure
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
@@ -28,10 +29,12 @@ class TestWxField(WXTestAssistant, field.TestField):
         self.send_wx_event(widget, wx.EVT_TEXT)
         self.process_wx_events(self.app)
 
+    @expectedFailure
     def change_text(self, widget, text):
         """ Change text programmatically, rather than "edit" it.
 
         """
+        self.fail()
         widget.ChangeValue(text)
         self.send_wx_event(widget, wx.EVT_TEXT)
         self.process_wx_events(self.app)

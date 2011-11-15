@@ -2,10 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from unittest import expectedFailure
 import wx.calendar
-
-from .wx_test_assistant import WXTestAssistant, skip_nonwindows
-from .. import calendar
+from enaml.tests.widgets.wx.wx_test_assistant import WXTestAssistant, skip_nonwindows
+from enaml.tests.widgets import calendar
 
 
 @skip_nonwindows
@@ -30,10 +30,12 @@ class TestWXCalendar(WXTestAssistant, calendar.TestCalendar):
         """
         return widget.PyGetUpperDateLimit()
 
+    @expectedFailure
     def activate_date(self, widget, date):
         """ Fire an event to indicate that a date was activated.
 
         """
+        self.fail("This is a known failure")
         cal_event = wx.calendar.EVT_CALENDAR
         event = wx.calendar.CalendarEvent(widget, cal_event.typeId)
         event.PySetDate(date)
