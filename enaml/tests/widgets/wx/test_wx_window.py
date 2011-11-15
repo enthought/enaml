@@ -15,9 +15,3 @@ class TestWXWindow(WXTestAssistant, window.TestWindow):
         frame = widget.GetParent()
         return frame.GetTitle()
 
-    def get_modality(self, widget):
-        """ Get a window's modality.
-
-        """
-        self.skipTest("It is not possile (yet) to find the window"
-                      " modality in of a wx.Frame")
