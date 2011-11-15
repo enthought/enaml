@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 import wx
 
-
 from .wx_window import WXWindow
 
 from ..dialog import AbstractTkDialog
@@ -51,19 +50,18 @@ class WXDialog(WXWindow, AbstractTkDialog):
                 _active = True,
                 opened = True,
             )
-            if shell.modality in ('application_modal', 'window_modal'):
-                widget.ShowModal()
-            else:
-                widget.Show()
+            # wx cannot distinguish between app modal and 
+            # window modal, so we only get one kind.
+            widget.ShowModal()
 
-    def set_modality(self, modality):
-        pass
-
-    def open(self):
-        """ Display the dialog.
+    def hide(self):
+        """ Overridden parent class method. Hiding a dialog is the same
+        as rejecting it.
 
         """
-        self.show()
+        widget = self.widget
+        if widget and widget.IsShown():
+            self.reject()
 
     def accept(self):
         """ Close the dialog and set the result to 'accepted'.
@@ -81,9 +79,8 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """ Destroy the dialog, fire events, and set status attributes.
 
         """
-        self.widget.Hide()
-        #         
-        #self.widget.Destroy()
+        if self.widget:
+            self.widget.Destroy()
         self.shell_obj.trait_set(
             _result = result, 
             _active = False,
