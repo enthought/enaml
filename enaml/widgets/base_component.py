@@ -8,9 +8,9 @@ from functools import wraps
 from traits.api import HasStrictTraits, WeakRef, Instance, List, Str, Tuple, Property
 
 from .setup_hooks import AbstractSetupHook
+
 from ..styling.color import ColorTrait
 from ..styling.font import FontTrait
-
 from ..toolkit import Toolkit
 
 
@@ -76,24 +76,28 @@ class AbstractTkBaseComponent(object):
     
     @abstractmethod
     def shell_bg_color_changed(self, color):
-        """ The change handler for the 'bg_color' attribute on the parent.
-        Sets the background color of the internal widget to the given color.
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
         """
         raise NotImplementedError
     
     @abstractmethod
     def shell_fg_color_changed(self, color):
-        """ The change handler for the 'fg_color' attribute on the parent.
-        Sets the foreground color of the internal widget to the given color.
-        For some widgets this may do nothing.
+        """ The change handler for the 'fg_color' attribute on the shell
+        object. Sets the foreground color of the internal widget to the 
+        given color. For some widgets this may do nothing.
+
         """
         raise NotImplementedError
     
     @abstractmethod
     def shell_font_changed(self, font):
-        """ The change handler for the 'font' attribute on the parent.
-        Sets the font of the internal widget to the given font.
+        """ The change handler for the 'font' attribute on the shell
+        object. Sets the font of the internal widget to the given font.
         For some widgets this may do nothing.
+
         """
         raise NotImplementedError
 
@@ -113,7 +117,7 @@ class NullContext(object):
 
 class SetupContext(object):
     """ A context object that will compute and run a set of generators
-    before and after yield control to user code. An instance of this
+    before and after yielding control to user code. An instance of this
     context manager cannot be entered recursively.
 
     """

@@ -11,7 +11,6 @@ class WXBaseComponent(AbstractTkBaseComponent):
     """ Base component object for the WxPython based backend.
 
     """
-
     _shell_obj = lambda: None
 
     def _get_shell_obj(self):
@@ -62,6 +61,27 @@ class WXBaseComponent(AbstractTkBaseComponent):
         method is delay the binding of event handlers until after
         everything has been intialized in order to mitigate extraneous
         event firing. Subclasses may optionally implement this method.
+
+        """
+        pass
+
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Should be implemented by subclasses where appropriate.
+
+        """
+        pass
+            
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the shell
+        object. Should be implemented by subclasses where appropriate.
+
+        """
+        pass
+            
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell
+        object. Should be implemented by subclasses where appropriate.
 
         """
         pass
