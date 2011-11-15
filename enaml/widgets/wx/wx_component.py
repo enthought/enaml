@@ -42,8 +42,7 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         (width, height) tuple of integers.
 
         """
-        widget = self.widget
-        return widget.GetSizeTuple()
+        return self.widget.GetSizeTuple()
 
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
@@ -52,26 +51,21 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         space to allocate the widget.
 
         """
-        widget = self.widget
-        size_hint = widget.GetBestSize()
-        return (size_hint.width, size_hint.height)
+        return self.widget.GetBestSizeTuple()
 
     def resize(self, width, height):
         """ Resizes the internal toolkit widget according the given
         width and height integers.
 
         """
-        widget = self.widget
-        new_size = wx.Size(width, height)
-        widget.SetSize(new_size)
+        self.widget.SetSize((width, height))
 
     def set_min_size(self, min_width, min_height):
         """ Set the hard minimum width and height of the widget. A widget
         will not be able to be resized smaller than this value.
 
         """
-        widget = self.widget
-        widget.SetSizeHints(min_width, min_height)
+        self.widget.SetSizeHints(min_width, min_height)
 
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
@@ -79,8 +73,7 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         the origin of the widget's parent.
 
         """
-        widget = self.widget
-        return widget.GetPositionTuple()
+        return self.widget.GetPositionTuple()
 
     def move(self, x, y):
         """ Moves the internal toolkit widget according to the given
@@ -88,8 +81,7 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         widget's parent.
 
         """
-        widget = self.widget
-        widget.MoveXY(x, y)
+        self.widget.MoveXY(x, y)
 
     def geometry(self):
         """ Returns an (x, y, width, height) tuple of geometry info
@@ -97,9 +89,7 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         values are the same as for the 'size' and 'pos' methods.
 
         """
-        widget = self.widget
-        rectangle = widget.GetRect()
-        return rectangle.asTuple()
+        return self.widget.GetRect().asTuple()
 
     def set_geometry(self, x, y, width, height):
         """ Sets the geometry of the internal widget to the given
@@ -107,16 +97,14 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         values is the same as for the 'resize' and 'move' methods.
 
         """
-        widget = self.widget
-        widget.SetDimensions(x, y, width, height)
+        self.widget.SetDimensions(x, y, width, height)
 
     def on_resize(self, event):
         """ Triggers a relayout of the shell object since the component
         has been resized.
 
         """
-        shell = self.shell_obj
-        shell.do_layout()
+        self.shell_obj.do_layout()
 
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the parent.
