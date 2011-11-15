@@ -37,7 +37,6 @@ class WXWindow(WXContainer, AbstractTkWindow):
         super(WXWindow, self).initialize()
         shell = self.shell_obj
         self.set_title(shell.title)
-        self.set_modality(shell.modality)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -60,43 +59,45 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """
         self.set_title(title)
 
-    def shell_modality_changed(self, modality):
-        """ The change handler for the 'modality' attribute.
-        """
-        self.set_modality(modality)
-
     def set_title(self, title):
         """ Sets the title of the frame.
 
         """
         self._frame.SetTitle(title)
-
-    def set_modality(self, modality):
-        """ Sets the modality of the frame.
-
-        """
-        # FIXME: The wx frame cannot distinguish between application and
-        # window modal.
-        if modality in ('application_modal', 'window_modal'):
-            self._frame.MakeModal(True)
-        else:
-            self._frame.MakeModal(False)
-
-    def on_resize(self, event):
-        """ Respond to a resize event.
-
-        The method makes sure that after re-layout all the widgets are
-        visible.
+    
+    def size(self):
+        """ Overridden parent class method to take into account the
+        size of the frame decoration.
 
         """
-        super(WXWindow, self).on_resize(event)
-        self._frame.Fit()
+        return self._frame.GetClientSizeTuple()
+    
+    def resize(self, width, height):
+        """ Overridden parent class method to take into account the
+        size of the frame decoration.
 
-    def size_hint(self):
-        """ Return the sizehint for the WXWindow;
-
-        Window is a top level container and should return a resonable size
-        hint. Thus the WXComponent is used here to override the generic
-        behaviour of WXContainers.
         """
-        super(WXContainer, self).size_hint()
+        self._frame.SetClientSize((width, height))
+    
+    def set_min_size(self, min_width, min_height):
+        """ Overridden parent class method to take into account the
+        size of the frame decoration.
+
+        """
+        frame = self._frame
+        frame_width, frame_height = frame.GetSizeTuple()
+        client_width, client_height = frame.GetClientSizeTuple() 
+        min_width = min_width + frame_width - client_width
+        min_height = min_height + frame_height - client_height
+        frame.SetSizeHints(min_width, min_height)
+        
+    def move(self, x, y):
+        """ Overridden parent class method to move the frame rather
+        than its internal Window.
+
+        """
+        self._frame.MoveXY(x, y)
+        
+    # XXX we still need to handle geometry() and set_geometry()
+    # to deal with frame decorations properly
+    
