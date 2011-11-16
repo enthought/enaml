@@ -1,4 +1,4 @@
-from cysw import STRENGTH_MAP, Strength, SymbolicWeight, ConstraintVariable, LinearExpression, LinearSymbolic, LinearConstraint
+from casuarius import STRENGTH_MAP, Strength, SymbolicWeight, ConstraintVariable, LinearExpression, LinearSymbolic, LinearConstraint
 
 
 class MultiConstraint(object):

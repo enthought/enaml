@@ -4,9 +4,9 @@ import weakref
 from .layout_manager import AbstractLayoutManager
 from .symbolics import MultiConstraint
 
-import cysw
+import casuarius
 
-STRENGTH_MAP = cysw.STRENGTH_MAP
+STRENGTH_MAP = casuarius.STRENGTH_MAP
 
 
 class ConstraintsLayout(AbstractLayoutManager):
@@ -54,7 +54,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         # in Python has the context of only happening once, we use
         # this method since the manager will be re-initialized whenever
         # any of the constraints of the components children change.
-        self.solver = cysw.Solver(autosolve=False)
+        self.solver = casuarius.Solver(autosolve=False)
         self.component_cns = []
         self.user_cns = []
         self.child_cns = defaultdict(list)
@@ -154,7 +154,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         width_var = component.width
         height_var = component.height
 
-        with solver.suggest_values([(width_var, width), (height_var, height)], cysw.medium):
+        with solver.suggest_values([(width_var, width), (height_var, height)], casuarius.medium):
             # Update the geometry of the children with their new
             # solved values.
             set_solved_geometry = self.set_solved_geometry
@@ -180,7 +180,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         width_var = component.width
         height_var = component.height
 
-        with solver.suggest_values([(width_var, 0.0), (height_var, 0.0)], cysw.medium):
+        with solver.suggest_values([(width_var, 0.0), (height_var, 0.0)], casuarius.medium):
             min_width = width_var.value
             min_height = height_var.value
 
