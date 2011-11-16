@@ -186,7 +186,10 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         """ Resizes the given widget. See also 'resize(width, height)'
 
         """
-        widget.SetClientSize((width, height))
+        # SetClientSize completely breaks down on Windows, so it seems 
+        # there is no way to reliably set the client size. Instead we
+        # just set the frame size and hope for the best.
+        widget.SetSize((width, height))
 
     def _set_min_size(self, widget, min_width, min_height):
         """ Sets the minimum size of the given widget. See also
