@@ -6,6 +6,7 @@ from traits.api import Bool, Instance, List
 
 from .base_component import BaseComponent
 from .component import Component, AbstractTkComponent
+from ..exceptions import ShellExceptionContext, ShellNotificationContext
 
 
 class AbstractTkControl(AbstractTkComponent):

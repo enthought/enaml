@@ -61,17 +61,17 @@ class ShellExceptionContext(object):
     def __enter__(self):
         return self
     
-    def __exit_(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, traceback):
         self.shell_obj.exception = exc_value
-        self.shell_obj.error = (exc_val is not None)
+        self.shell_obj.error = (exc_value is not None)
         if exc_value is not None:
-            shell_exception_handler = self.shell_obj.toolkit.shell_exception_handler
-            if shell_exception_handler is not None:
-                shell_exception_handler(exc_value)
+            control_exception_handler = self.shell_obj.toolkit.control_exception_handler
+            if control_exception_handler is not None:
+                control_exception_handler(exc_value)
         return True
 
 
-class ShellNotificationContext(object):
+class ShellNotificationContext(ShellExceptionContext):
     """ Combination of a ShellExceptionContext and a notification_context
     
     Default behaviour is to use the null_handler with exceptions re-raised,
@@ -91,13 +91,7 @@ class ShellNotificationContext(object):
             self.reraise_exceptions, self.main, self.locked)
         return self
     
-    def __exit_(self, exc_type, exc_value, traceback):
+    def __exit__(self, exc_type, exc_value, traceback):
         pop_exception_handler()
-        self.shell_obj.exception = exc_value
-        self.shell_obj.error = (exc_val is not None)
-        if exc_value is not None:
-            shell_exception_handler = self.shell_obj.toolkit.shell_exception_handler
-            if shell_exception_handler is not None:
-                shell_exception_handler(exc_value)
-        return True
+        return super(ShellNotificationContext, self).__exit__(exc_type, exc_value, traceback)
     

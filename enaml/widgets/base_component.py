@@ -12,7 +12,6 @@ from .setup_hooks import AbstractSetupHook
 from ..styling.color import ColorTrait
 from ..styling.font import FontTrait
 from ..toolkit import Toolkit
-from ..exceptions import ShellExceptionContext, ShellNotificationContext
 
 
 class AbstractTkBaseComponent(object):
