@@ -2,8 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import abstractmethod
 from .wx_control import WXControl
+
 from ..bounded_date import AbstractTkBoundedDate
 
 
@@ -41,15 +41,12 @@ class WXBoundedDate(WXControl, AbstractTkBoundedDate):
     #--------------------------------------------------------------------------
     # Widget modification methods
     #--------------------------------------------------------------------------
-    @abstractmethod
     def _set_date(self, date):
         raise NotImplementedError
 
-    @abstractmethod
     def _set_min_date(self, min_date):
         raise NotImplementedError
 
-    @abstractmethod
     def _set_max_date(self, max_date):
         raise NotImplementedError
 
