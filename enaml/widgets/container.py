@@ -9,7 +9,6 @@ from .component import Component, AbstractTkComponent
 from .control import Control
 from .layout.constraints_layout import ConstraintsLayout
 from .layout.layout_manager import AbstractLayoutManager
-from .layout.symbolics import BaseConstraint
 
 
 class AbstractTkContainer(AbstractTkComponent):
@@ -39,7 +38,8 @@ class Container(Component):
     layout = Instance(AbstractLayoutManager)
 
     #: A list of user-specified linear constraints defined for this container.
-    constraints = List(Instance(BaseConstraint))
+    #constraints = List(Instance(BaseConstraint))
+    constraints = List()
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkContainer)
