@@ -20,7 +20,8 @@ _INVALID_QINDEX = QModelIndex()
 #------------------------------------------------------------------------------
 # The construction cost of creating an ItemsFlag object is very high
 # so instead we enumerate all 128 combinations so we can look them 
-# up as a simple map
+# up as a simple map. This is a hack to workaround a PySide issue
+# where it doesn't accept ints as return values from the flags() method
 _qitem_flags = (
     Qt.NoItemFlags, Qt.ItemIsSelectable, Qt.ItemIsEditable,
     Qt.ItemIsDragEnabled, Qt.ItemIsDropEnabled, Qt.ItemIsUserCheckable,
