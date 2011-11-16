@@ -69,12 +69,3 @@ class MultiConstraint(object):
     def __iter__(self):
         return iter(self.constraints)
 
-    def convert_to_csw(self):
-        """ Return a list of CSW constraints.
-
-        """
-        return [c.convert_to_csw() for c in self.constraints]
-
-
-
-
