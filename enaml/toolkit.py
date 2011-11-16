@@ -264,6 +264,16 @@ class Toolkit(dict):
 
     invoke_later = property(_get_invoke_later, _set_invoke_later)
 
+    def _get_control_exception_handler(self):
+        """ Returns the function for handling exceptions on a control object
+        that would otherwise be swallowed.
+        """
+        return self['__control_exception_handler__']
+    
+    def _set_control_exception_handler(self, val):
+        self['__control_exception_handler__'] = val
+        
+    control_exception_handler = property(_get_control_exception_handler, _set_control_exception_handler)
 
 def default_toolkit():
     """ Creates an returns the default toolkit object based on
@@ -300,6 +310,7 @@ def qt_toolkit():
     toolkit.start_app = start_event_loop_qt4
     toolkit.style_sheet = QT_STYLE_SHEET
     toolkit.invoke_later = invoke_later
+    toolkit.control_exception_handler = None
     toolkit.update(utils)
     toolkit.update(OPERATORS)
     toolkit.update(LAYOUT_HELPERS)
@@ -326,6 +337,7 @@ def wx_toolkit():
     toolkit.start_app = start_event_loop_wx
     toolkit.style_sheet = WX_STYLE_SHEET
     toolkit.invoke_later = invoke_later
+    toolkit.control_exception_handler = None
     toolkit.update(utils)
     toolkit.update(OPERATORS)
     toolkit.update(LAYOUT_HELPERS)

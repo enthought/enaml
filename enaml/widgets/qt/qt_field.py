@@ -43,7 +43,7 @@ class QtField(QtControl, AbstractTkField):
         self.set_read_only(shell.read_only)
         self.set_placeholder_text(shell.placeholder_text)
         
-        if shell.value:
+        if shell.value is not None:
             self.update_text()
         
         shell._modified = False
@@ -275,16 +275,9 @@ class QtField(QtControl, AbstractTkField):
         shell = self.shell_obj
         text = widget.text()
         self.setting_value = True
-        try:
+        with shell.capture_notification_exceptions():
             value = shell.converter.from_component(text)
-            with notification_context():
-                shell.value = value
-        except Exception as e:
-            shell.exception = e
-            shell.error = True
-        else:
-            shell.exception = None
-            shell.error = False
+            shell.value = value
         self.setting_value = False
 
     def on_text_edited(self, event):
@@ -347,14 +340,8 @@ class QtField(QtControl, AbstractTkField):
 
         """
         shell = self.shell_obj
-        try:
+        with shell.capture_exceptions():
             text = shell.converter.to_component(shell.value)
-        except Exception as e:
-            shell.exception = e
-            shell.error = True
-        else:
-            shell.exception = None
-            shell.error = False
             self.change_text(text)
 
     def change_text(self, text):

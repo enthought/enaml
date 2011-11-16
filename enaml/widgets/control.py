@@ -31,3 +31,16 @@ class Control(Component):
     #: Overridden parent class trait
     children = List(BaseComponent, maxlen=0)
 
+    def capture_exceptions(self):
+        """ Return a ShellExceptionContext that will capture error state automatically
+        """
+        return ShellExceptionContext(self)
+    
+    def capture_notification_exceptions(self, handler=None, reraise_exceptions=True,
+            main=False, locked=False):
+        """ Return a ShellNotificationContext that will set error state automatically,
+        including TraitErrors in listeners.
+        """
+        return ShellNotificationContext(self, handler, reraise_exceptions, main,
+            locked)
+
