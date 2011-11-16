@@ -11,6 +11,9 @@ from ..table_view import AbstractTkTableView
 from ...item_models.abstract_item_model import AbstractItemModel
 
 
+GridCellAttr = wx.grid.GridCellAttr
+
+
 def wx_color_from_color(color):
     return wx.Color(*color)
 
@@ -24,6 +27,17 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
         if not isinstance(item_model, AbstractItemModel):
             raise TypeError('Model must be an instance of AbstractItemModel.')
         self._item_model = item_model
+
+        # Cache frequently used bound methods
+        self._row_count = item_model.row_count
+        self._col_count = item_model.column_count
+        self._model_index = item_model.index
+        self._model_data = item_model.data
+        self._model_background = item_model.background
+        self._model_foreground = item_model.foreground
+        self._vert_header_data = item_model.vertical_header_data
+        self._horiz_header_data = item_model.horizontal_header_data
+
         self._item_model.on_trait_change(self._end_model_reset, 'model_reset')
         self._item_model.on_trait_change(self._data_changed, 'data_changed')
 
@@ -40,39 +54,35 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
         grid.Refresh()
 
     def GetNumberRows(self):
-        return self._item_model.row_count()
+        return self._row_count()
 
     def GetNumberCols(self):
-        return self._item_model.column_count()
+        return self._col_count()
 
     def GetValue(self, row, col):
-        model = self._item_model
-        index = model.index(row, col, None)
-        return model.data(index)
+        index = self._model_index(row, col, None)
+        return self._model_data(index)
 
     def GetAttr(self, row, col, ignored):
-        model = self._item_model
-        index = model.index(row, col, None)
+        index = self._model_index(row, col, None)
 
-        attr = wx.grid.GridCellAttr()
+        attr = GridCellAttr()
 
-        brush = model.background(index)
+        brush = self._model_background(index)
         if brush is not None:
             attr.SetBackgroundColour(wx_color_from_color(brush.color))
 
-        brush = model.foreground(index)
-        if brush:
+        brush = self._model_foreground(index)
+        if brush is not None:
             attr.SetTextColour(wx_color_from_color(brush.color))
-
+            
         return attr
 
     def GetRowLabelValue(self, row):
-        model = self._item_model
-        return model.vertical_header_data(row)
+        return self._vert_header_data(row)
 
     def GetColLabelValue(self, col):
-        model = self._item_model
-        return model.horizontal_header_data(col)
+        return self._horiz_header_data(col)
 
 
 class WXTableView(WXControl, AbstractTkTableView):
