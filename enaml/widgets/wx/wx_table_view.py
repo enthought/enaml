@@ -2,13 +2,17 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import wx
 import wx.grid
 
 from .wx_control import WXControl
 from ..table_view import AbstractTkTableView
 
-from ...item_models.abstract_item_model import AbstractItemModel, ModelIndex
-from ...enums import DataRole
+from ...item_models.abstract_item_model import AbstractItemModel
+
+
+def wx_color_from_color(color):
+    return wx.Color(*color)
 
 
 # XXX we need to add more handler support for the different modes of
@@ -41,34 +45,34 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
     def GetNumberCols(self):
         return self._item_model.column_count()
 
-    def GetValue(self, row, col, parent_index=ModelIndex()):
+    def GetValue(self, row, col):
         model = self._item_model
-        index = model.index(row, col, parent_index)
-        return model.data(index, DataRole.DISPLAY)
+        index = model.index(row, col, None)
+        return model.data(index)
 
-    def GetAttr(self, row, col, ignored, parent_index=ModelIndex()):
+    def GetAttr(self, row, col, ignored):
         model = self._item_model
-        index = model.index(row, col, parent_index)
+        index = model.index(row, col, None)
 
         attr = wx.grid.GridCellAttr()
 
-        bgcolor = model.data(index, DataRole.BACKGROUND)
-        if bgcolor:
-            attr.SetBackgroundColour(wx_color_from_color(bgcolor))
+        brush = model.background(index)
+        if brush is not None:
+            attr.SetBackgroundColour(wx_color_from_color(brush.color))
 
-        fgcolor = model.data(index, DataRole.FOREGROUND)
-        if fgcolor:
-            attr.SetTextColour(wx_color_from_color(fgcolor))
+        brush = model.foreground(index)
+        if brush:
+            attr.SetTextColour(wx_color_from_color(brush.color))
 
         return attr
 
     def GetRowLabelValue(self, row):
         model = self._item_model
-        return model.header_data(row, 'vertical', DataRole.DISPLAY)
+        return model.vertical_header_data(row)
 
     def GetColLabelValue(self, col):
         model = self._item_model
-        return model.header_data(col, 'horizontal', DataRole.DISPLAY)
+        return model.horizontal_header_data(col)
 
 
 class WXTableView(WXControl, AbstractTkTableView):
@@ -91,38 +95,13 @@ class WXTableView(WXControl, AbstractTkTableView):
         """
         self.widget = wx.grid.Grid(self.parent_widget())
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Intialize the widget with the attributes of this instance.
 
         """
         super(WXTableView, self).initialize()
-        self.set_table_model(self.parent.item_model)
-
-##    def create_style_handler(self):
-##        """ Initialize a style handler.
-##
-##        """
-##        pass
-##
-##    def initialize_style(self):
-##        """ Configure the widget's minimum width and height.
-##
-##        """
-##        style = self.parent.style
-##        min_width = style.get_property("min_width")
-##        min_height = style.get_property("min_height")
-##
-##        if isinstance(min_width, int) and min_width >= 0:
-##            pass
-##        else:
-##            min_width = -1
-##
-##        if isinstance(min_height, int) and min_height >= 0:
-##            pass
-##        else:
-##            min_height = -1
-##
-##        self.widget.SetMinSize((min_width, min_height))
+        self.set_table_model(self.shell_obj.item_model)
+        self.widget.SetDoubleBuffered(True)
 
     def bind(self):
         """ Bind the event handlers for the table view.
@@ -148,13 +127,6 @@ class WXTableView(WXControl, AbstractTkTableView):
 
         """
         event.Skip()
-        shell = self.shell_obj
-        parent_index = ModelIndex()
-        row = event.GetRow()
-        col = event.GetCol()
-        index = shell.item_model.index(row, col, parent_index)
-        shell.selected = index
-
 
     def on_left_dclick(self, event):
         """ The event handler for the double-click event.  Not meant
@@ -162,8 +134,6 @@ class WXTableView(WXControl, AbstractTkTableView):
 
         """
         event.Skip()
-        shell = self.shell_obj
-        shell.left_dclick = shell.selected
 
     def set_table_model(self, model):
         """ Set the table view's model.  Not meant for public
@@ -174,4 +144,11 @@ class WXTableView(WXControl, AbstractTkTableView):
         self.widget.SetTable(model_wrapper)
         self.widget.Refresh()
         self.model_wrapper = model_wrapper
+
+    def size_hint(self):
+        # This size hint is taken from QAbstractScrollArea::sizeHint
+        # which is the size hint implementation for QTableView.
+        # The wx GetBestSize() call returns the size for the entire
+        # table, which may be millions of pixels for large tables.
+        return (256, 192)
 
