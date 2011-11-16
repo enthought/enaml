@@ -2,10 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from functools import total_ordering
-
-
-@total_ordering
 class ModelIndex(tuple):
     """ ModelIndexes are used to navigate an AbstractItemModel.
 
@@ -100,6 +96,15 @@ class ModelIndex(tuple):
                         return self.model < other.model
         return False
 
+    def __gt__(self, other):
+        return other < self
+    
+    def __le__(self, other):
+        return not other < self
+    
+    def __ge__(self, other):
+        return not self < other
+        
     def parent(self):
         """ Returns the parent ModelIndex of this index.
 
