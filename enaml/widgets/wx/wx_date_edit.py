@@ -13,7 +13,7 @@ from ..date_edit import AbstractTkDateEdit
 
 def to_wx_date(py_date):
     day = py_date.day
-    month = py_date.month - 1 # wx peculiarity!
+    month = py_date.month - 1  # wx peculiarity!
     year = py_date.year
     return wx.DateTimeFromDMY(day, month, year)
 
@@ -21,7 +21,7 @@ def to_wx_date(py_date):
 def from_wx_date(wx_date):
     if wx_date.IsValid():
         day = wx_date.GetDay()
-        month = wx_date.GetMonth() + 1 # wx peculiarity!
+        month = wx_date.GetMonth() + 1  # wx peculiarity!
         year = wx_date.GetYear()
         return datetime.date(year, month, day)
 
@@ -65,10 +65,8 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         """ The event handler for the date's changed event.
 
         """
-        shell = self.shell_obj
         new_date = from_wx_date(event.GetDate())
-        shell.date = new_date
-        shell.date_changed = new_date
+        self.shell_obj.date = new_date
 
     #--------------------------------------------------------------------------
     # Private methods
@@ -77,8 +75,8 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         """ Sets the date on the widget.
 
         """
-        # wx will not fire an EVT_DATE_CHANGED event when the value is 
-        # programmatically set, so the method fires the shell event 
+        # wx will not fire an EVT_DATE_CHANGED event when the value is
+        # programmatically set, so the method fires the shell event
         # manually after setting the value in the widget.
         self.widget.SetValue(to_wx_date(date))
         self.shell_obj.date_changed = date
@@ -96,4 +94,3 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         """
         widget = self.widget
         widget.SetRange(widget.GetLowerLimit(), to_wx_date(date))
-
