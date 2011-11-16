@@ -5,6 +5,7 @@
 import wx
 
 from .wx_control import WXControl
+
 from ..combo_box import AbstractTkComboBox
 
 
@@ -28,8 +29,9 @@ class WXComboBox(WXControl, AbstractTkComboBox):
 
         """
         super(WXComboBox, self).initialize()
-        self.set_items()
-        self.set_selection()
+        shell = self.shell_obj
+        self.set_items(shell.labels)
+        self.set_selection(shell.index)
 
     def bind(self):
         """ Binds the event handlers for the combo box.
@@ -41,101 +43,48 @@ class WXComboBox(WXControl, AbstractTkComboBox):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell__index_changed(self, index):
+    def shell_index_changed(self, index):
         """ The change handler for the '_index' attribute on the enaml
         shell.
 
         """
-        shell = self.shell_obj
-        self.set_selection()
-        shell.selected = shell.value
+        self.set_selection(index)
 
-    def shell_items_changed(self, items):
-        """ The change handler for the 'items' attribute on the enaml
-        shell.
+    def shell_labels_changed(self, labels):
+        """ The change handler for the 'labels' attribute on the shell
+        object.
 
         """
-        old_selection = self.get_widget_selection()
-        self.set_items()
-        self.move_selection(old_selection)
-        self.shell_obj.size_hint_updated = True
-
-    def shell_items_items_changed(self, items):
-        """ The change handler for the 'items' event of the 'items'
-        attribute on the enaml shell.
-
-        """
-        old_selection = self.get_widget_selection()
-        self.set_items()
-        self.move_selection(old_selection)
-        self.shell_obj.size_hint_updated = True
-
-    def shell_to_string_changed(self, value):
-        """ The change handler for the 'string' attribute on the enaml
-        shell.
-
-        """
-        old_selection = self.get_widget_selection()
-        self.set_items()
-        self.move_selection(old_selection)
-        self.shell_obj.size_hint_updated = True
-
-    #---------------------------------------------------------------------------
-    # Implementation
-    #---------------------------------------------------------------------------
+        self.set_items(labels)
 
     def on_selected(self, event):
         """ The event handler for a combo box selection event.
 
         """
         shell = self.shell_obj
-        widget = self.widget
-        index = widget.GetCurrentSelection()
-        shell._index = index
+        curr_index = self.widget.GetCurrentSelection()
+        shell.index = curr_index
+
+        # Only fire the selected event if we have a valid selection
+        if curr_index != -1:
+            shell.selected = shell.value
+
         event.Skip()
 
-    def set_items(self):
+    def set_items(self, str_items):
         """ Sets the items in the combo box.
 
         """
-        shell = self.shell_obj
-        widget = self.widget
-        widget.SetItems(shell._labels)
+        # wx does not emit events on SetItems or SetSelection, so we
+        # do not need any feedback guards here.
+        self.widget.SetItems(str_items)
+        self.widget.SetSelection(self.shell_obj.index)
 
-    def set_selection(self):
+    def set_selection(self, index):
         """ Set the selected value in the toolkit widget.
 
         """
-        shell = self.shell_obj
-        widget = self.widget
-        widget.SetSelection(shell._index) # deselects if -1
+        # wx does not emit events on SetSelection, so we do 
+        # not need any feedback guards here.
+        self.widget.SetSelection(index) # deselects if -1
 
-    # FIXME: I found it easier to setup the selection move when the items
-    # change in the widget side. The alternative will require that the
-    # items attribute in the abstract class is a Property of List(Any)
-    # And I was a little worried to try it.
-    def move_selection(self, value):
-        """ Move the selection to the index where the value exists.
-
-        The method attempts to find the index of the value. Moving
-        the index does not cause a selected event to be fired. If the
-        value is not found then the selection is undefined.
-
-        """
-        shell = self.shell_obj
-        widget = self.widget
-        index = widget.FindString(value)
-        if index == wx.NOT_FOUND:
-            shell._index = -1
-        else:
-            # we silently set the `_index` attribute since the selection
-            # value has not changed
-            shell.trait_setq(_index=index)
-            self.set_selection()
-
-    def get_widget_selection(self):
-        """ Get the selected labels from the widget.
-
-        """
-        widget = self.widget
-        return widget.GetStringSelection()

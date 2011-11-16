@@ -29,8 +29,8 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """
         super(QtComboBox, self).initialize()
         shell = self.shell_obj
-        self.set_items(shell._labels)
-        self.set_selection(shell._index)
+        self.set_items(shell.labels)
+        self.set_selection(shell.index)
 
     def bind(self):
         """ Connects the event handlers for the combo box.
@@ -42,110 +42,70 @@ class QtComboBox(QtControl, AbstractTkComboBox):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell__index_changed(self, index):
-        """ The change handler for the _index attribute on the enaml shell.
+    def shell_index_changed(self, index):
+        """ The change handler for the 'index' attribute on the shell
+        object.
 
         """
-        shell = self.shell_obj
         self.set_selection(index)
 
-    def shell_to_string_changed(self, value):
-        """ The change handler for the 'string' attribute on the enaml
-        shell.
+    def shell_labels_changed(self, labels):
+        """ The change handler for the 'labels' attribute on the shell
+        object.
 
         """
-        self.update_items()
+        self.set_items(labels)
 
-    def shell_items_changed(self, items):
-        """ The change handler of 'items' attribute on the enaml shell.
-
-        """
-        self.update_items()
-
-    def shell_items_items_changed(self, items):
-        """ The change handler for the 'items' event of the 'items'
-        attribute on the enaml shell.
-
-        """
-        self.update_items()
-
-    def update_items(self):
-        """ Update the QComboBox with items from the enaml shell.
-
-        """
-        shell = self.shell_obj
-        old_selection = self.get_selection()
-        self.selection_event(enable=False)
-        self.set_items(shell._labels)
-        self.selection_event()
-        self.move_selection(old_selection)
-
-    def on_selected(self, index):
+    def on_selected(self):
         """ The event handler for a combo box selection event.
 
         """
-        shell = self.shell_obj
-        shell._index = index
-        shell.selected = shell.value
+        if not self._setting_items and not self._setting_selection:
+            shell = self.shell_obj
+            curr_index = self.widget.currentIndex()
+            shell.index = curr_index
+
+            # Only fire the selected event if we have a valid selection
+            if curr_index != -1:
+                shell.selected = shell.value
+
+    #: A boolean flag used to avoid feedback loops when updating the
+    #: items in the combo box.
+    _setting_items = False
 
     def set_items(self, str_items):
         """ Sets the items in the combo box.
 
         """
+        # We need to avoid a feedback loop when updating the items in 
+        # the combo box. Qt will emit index changed signals when the 
+        # items are updated. But, the shell object has already computed
+        # the proper index for the new items, so we use that to update
+        # the index of the control after updating the items. The flag
+        # is read by the on_selected handler to ignore updates during
+        # this process.
+        self._setting_items = True
         widget = self.widget
         widget.clear()
         widget.addItems(str_items)
+        widget.setCurrentIndex(self.shell_obj.index)
+        self._setting_items = False
+
+    #: A boolean flag used to avoid feedback loops when updating the
+    #: selection in the combo box.
+    _setting_selection = False
 
     def set_selection(self, index):
         """ Sets the value in the combo box, or resets the combo box
         if the value is not in the list of items.
 
         """
-        widget = self.widget
-        widget.setCurrentIndex(index)
+        # We need to avoid a feedback loop when updating the selection
+        # in the combo box. Qt will emit index changed signals when the 
+        # selectino is updated. But, the shell object has already computed
+        # the proper index for the new selection so we don't need to feed
+        # back while doing this.
+        self._setting_selection = True
+        self.widget.setCurrentIndex(index)
+        self._setting_selection = False
 
-    # FIXME: I found it easier to setup the selection move when the items
-    # change in the widget side. The alternative will require that the
-    # items attribute in the abstract class is a Property of List(Any)
-    # And I was a little worried to try it.
-    def move_selection(self, value):
-        """ Move the selection to the index where the value exists.
-
-        The method attempts to find the index of the value. Moving
-        the index does not cause a selected event to be fired. If the
-        value is not found then the selection is undefined.
-
-        """
-        shell = self.shell_obj
-        widget = self.widget
-        index = widget.findText(value)
-        if index == -1:
-            shell._index = index
-        else:
-            # we silently set the `_index` attribute since the selection
-            # value has not changed
-            shell.trait_setq(_index=index)
-            self.selection_event(enable=False)
-            self.set_selection(index)
-            self.selection_event()
-
-    def get_selection(self):
-        """ Retrieve the current selected option from the widget.
-
-        """
-        widget = self.widget
-        return widget.currentText()
-
-    def selection_event(self, enable=True):
-        """ Enable/Disable the on selected event firing at the combo box.
-
-        Since any change in the widget variables will cause a event it is
-        necessary to temporarly disable the on_selected notifier method
-        while the internal data are sycnronized between the component and
-        the Qt widget.
-
-        """
-        if enable:
-            self.widget.currentIndexChanged.connect(self.on_selected)
-        else:
-            self.widget.currentIndexChanged.disconnect(self.on_selected)

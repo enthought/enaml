@@ -5,13 +5,15 @@
 import wx
 
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
+
 from .. import combo_box
 
 
 @skip_nonwindows
 class TestWXComboBox(WXTestAssistant, combo_box.TestComboBox):
-    """ WXComboBox tests. """
+    """ WXComboBox tests. 
 
+    """
     def get_selected_text(self, widget):
         """ Get the current selected text of a combo box.
 
@@ -30,3 +32,4 @@ class TestWXComboBox(WXTestAssistant, combo_box.TestComboBox):
         """
         widget.SetSelection(index)
         self.send_wx_event(widget, wx.EVT_COMBOBOX)
+
