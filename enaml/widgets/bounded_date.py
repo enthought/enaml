@@ -65,50 +65,43 @@ class BoundedDate(Control):
     # Property methods
     #--------------------------------------------------------------------------
     def _set_min_date(self, date):
-        """ Set the min_date.
-
-        Addtional checks are applied to make sure that
-        :attr:`min_date` < :attr:`max_date`
+        """ Set the min_date. Addtional checks are applied to make sure 
+        that :attr:`min_date` < :attr:`max_date`
 
         """
         if date > self.max_date:
-            msg = ("The minimum date of Calendar should be smaller than the "
-                   "current maximum date({0}), but a value of {1} was given")
+            msg = ("The minimum date should be smaller than the current "
+                   "maximum date({0}), but a value of {1} was given.")
             msg = msg.format(self.max_date, date)
             raise TraitError(msg)
         self._min_date = date
         self._adapt_date()
 
     def _set_max_date(self, date):
-        """ Set the max_date.
-
-        Addtional checks are applied to make sure that
-        :attr:`min_date` < :attr:`max_date`
+        """ Set the max_date. Addtional checks are applied to make sure
+        that :attr:`min_date` < :attr:`max_date`
 
         """
         if date < self.min_date:
-            msg = ("The maximum date of Calendar should be larger than the "
-                   "current minimum date({0}), but a value of {1} was given")
+            msg = ("The maximum date should be larger than the current "
+                   "minimum date({0}), but a value of {1} was given.")
             msg = msg.format(self.min_date, date)
             raise TraitError(msg)
         self._max_date = date
         self._adapt_date()
 
     def _get_max_date(self):
-        """ The property getter for the Calendar maximum.
+        """ The property getter for the maximum date.
 
         """
         return self._max_date
 
     def _get_min_date(self):
-        """ The property getter for the Calendar minimum.
+        """ The property getter for the minimum date.
 
         """
         return self._min_date
 
-    # FIXME: I would like to have this method use the on_change decorator, but
-    # it should not be run while the component is initialized so that an
-    # exception is raised when the enaml source contains invalid values.
     def _adapt_date(self):
         """ Adapt the date to the bounderies
 
