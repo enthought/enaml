@@ -20,7 +20,7 @@ class WXBoundedDate(WXControl, AbstractTkBoundedDate):
     # Setup methods
     #--------------------------------------------------------------------------
     def initialize(self):
-        super(WXControl, self).initialize()
+        super(WXBoundedDate, self).initialize()
         shell = self.shell_obj
         self._set_min_date(shell.min_date)
         self._set_max_date(shell.max_date)
