@@ -11,10 +11,6 @@ class WXBoundedDate(WXControl, AbstractTkBoundedDate):
     """ A base class for use with widgets implementing behavior
     for subclasses of BoundedDate.
 
-    .. note:: The set_date() method of the WXBoundedDate accepts a key
-        word argument `events` which  designates if events should be fired
-        for the date change.
-
     """
     #--------------------------------------------------------------------------
     # Setup methods
