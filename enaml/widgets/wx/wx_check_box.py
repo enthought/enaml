@@ -5,27 +5,25 @@
 import wx
 
 from .wx_toggle_control import WXToggleControl
+
 from ..check_box import AbstractTkCheckBox
+
 
 class WXCheckBox(WXToggleControl, AbstractTkCheckBox):
     """ A wxPython implementation of CheckBox.
 
-    A Checkbox provides a toggleable control using a wx.CheckBox.
-
     """
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self):
-        """ Creates and the wx.CheckBox.
+        """ Creates the underlying wx.CheckBox.
 
         """
-        self.widget = widget = wx.CheckBox(self.parent_widget())
+        self.widget = wx.CheckBox(self.parent_widget())
 
     def bind(self):
-        """ Binds the event handlers for the check box. Not meant for
-        public consumption.
+        """ Binds the event handlers for the check box.
 
         """
         super(WXCheckBox, self).bind()
