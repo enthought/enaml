@@ -23,7 +23,7 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self):
-        """ Creates the underlying QtCalendarWidget.
+        """ Creates the underlying QDateEdit.
 
         """
         self.widget = QtGui.QDateEdit(self.parent_widget())
@@ -68,7 +68,6 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
 
     def set_min_date(self, min_date):
         """ Sets the minimum date on the widget with the provided value.
-        Not meant for public consumption.
 
         """
         self.widget.setMinimumDate(min_date)
