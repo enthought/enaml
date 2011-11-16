@@ -1,9 +1,10 @@
-# Group boxes.
-#
-# We create two GroupBoxes containing Form layouts. The GroupBoxes have informative titles.
-# CheckBoxes on the bottom of the window allow you to toggle the presence of the
-# titles and whether they should be shown in a "flat" style or the default
-# style.
+""" Group boxes.
+
+We create two GroupBoxes containing Form layouts. The GroupBoxes have
+informative titles. CheckBoxes on the bottom of the window allow you to toggle
+the presence of the titles and whether they should be shown in a "flat" style or
+the default style.
+"""
 
 :: python ::
 

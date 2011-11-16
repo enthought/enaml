@@ -1,14 +1,13 @@
-# A demonstration of Form layouts and using raw python from within 
-# an enaml file. This file can be executed directly with the enaml-run
-# script: $ enaml-run employee.enaml
-#
-# Notes:
-# - the midline is shared between both Form containers.
-# - (currently) the hug parameters for the label and field need to be set
-#   as in the example. This will be rendered unnecessary soon.
-# - This example is using traits to build the models, however Enaml is 
-#   flexible enough to be used with the model systems of nearly any other 
-#   Python framework.
+""" A demonstration of Form layouts and using raw python from within an enaml
+file. This file can be executed directly with the enaml-run script: $ enaml-run
+employee.enaml
+
+Notes:
+ - the midline is shared between both Form containers.
+ - This example is using traits to build the models, however Enaml is
+   flexible enough to be used with the model systems of nearly any other
+   Python framework.
+"""
 
 # Imports work like normal
 import datetime
@@ -94,7 +93,7 @@ class PhoneNumberConverter(Converter):
     def to_component(self, value):
         area, prefix, suffix = value
         return '(%s) %s-%s' % (area, prefix, suffix)
-    
+
     def from_component(self, value):
         match = self.proper.match(value)
         if not match:
@@ -119,7 +118,7 @@ class PhoneNumberConverter(Converter):
 # This Enaml defn block defines a view for an employee
 
 defn EmployeeView(employee):
-    
+
     # A brief word about the operators in use. See the enaml docs
     # for a more thorough explanation
     #
@@ -162,7 +161,7 @@ defn EmployeeView(employee):
                     value := employee.phone
                     converter = PhoneNumberConverter()
                     error_color = '#F9A7A7'
-                    bg_color << error_color if error else "none" 
+                    bg_color << error_color if error else "none"
                 Label:
                     text = 'Date of Birth:'
                 DateEdit:
@@ -176,7 +175,7 @@ defn EmployeeView(employee):
                 Field:
                     password_mode = 'password'
                     value >> print(value)
-        
+
         # This is the group box for the second form of information
         GroupBox -> bottom_box:
             title = "Employer Details"
@@ -193,7 +192,7 @@ defn EmployeeView(employee):
                 Field:
                     value << "%s %s" % (employee.boss.first_name, employee.boss.last_name)
                     read_only = True
-            
+
 
 # Another block of python code to define an entry point for the enaml-run
 # convenience script.

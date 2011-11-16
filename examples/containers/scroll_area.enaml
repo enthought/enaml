@@ -1,8 +1,9 @@
-# Scroll Area container
-#
-# We show a ScrollArea containing a long Form. By default, a ScrollArea starts
-# with a limited vertical extent, but gets its initial width from the contained
-# widget.
+""" Scroll Area container
+
+We show a ScrollArea containing a long Form. By default, a ScrollArea starts
+with a limited vertical extent, but gets its initial width from the contained
+widget.
+"""
 
 
 defn MainWindow:

@@ -1,10 +1,11 @@
-# Stacked Container
-#
-# A Stacked Container holds a list of child widgets (themselves usually
-# Containers of some sort) and displays only one of them at a time. The
-# displayed widget can be changed by through its `index` attribute. Usually,
-# this is controlled by some other widget. In this example, a ComboBox
-# describing the contents of each child switches between the two child Forms.
+""" Stacked Container
+
+A Stacked Container holds a list of child widgets (themselves usually Containers
+of some sort) and displays only one of them at a time. The displayed widget can
+be changed by through its `index` attribute. Usually, this is controlled by some
+other widget. In this example, a ComboBox describing the contents of each child
+switches between the two child Forms.
+"""
 
 
 defn MainWindow():
