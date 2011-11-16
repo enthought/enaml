@@ -1,9 +1,9 @@
-# Form layouts
-#
-# Note:
-# - the midline is shared between both Form containers.
-# - (currently) the hug parameters for the label and field need to be set
-#   as in the example
+""" Form layouts
+
+Note:
+ - the midline is shared between both Form containers. Constraints can cross
+   most Container boundaries.
+"""
 
 
 defn MainWindow:
