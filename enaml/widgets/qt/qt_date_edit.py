@@ -7,6 +7,8 @@ from .qt_bounded_date import QtBoundedDate
 
 from ..date_edit import AbstractTkDateEdit
 
+from ...guard import guard
+
 
 # Workaround for an incompatibility between PySide and PyQt
 try:
@@ -57,16 +59,12 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         """
         # only emit update the shell object if the widget was 
         # changed via the ui and not programmatically.
-        if not self._setting_date:
+        if not guard.guarded(self, 'updating'):
             shell = self.shell_obj
             qdate = self.widget.date()
             new_date = qdate_to_python(qdate)
             shell.date = new_date
             shell.date_changed = new_date
-
-    #: A boolen flag used to avoid feedback loops when setting the
-    #: date programmatically.
-    _setting_date = False
 
     def set_date(self, date):
         """ Sets the date on the widget.
@@ -75,9 +73,8 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         # Calling setDate will trigger the dateChanged signal.
         # We want to avoid that feeback loop since the value is
         # being set programatically.
-        self._setting_date = True
-        self.widget.setDate(date)
-        self._setting_date = False
+        with guard(self, 'updating'):
+            self.widget.setDate(date)
 
     def set_min_date(self, min_date):
         """ Sets the minimum date on the widget with the provided value.
@@ -87,9 +84,8 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         # if the date needs to be clipped. We want to avoid that feeback 
         # loop since the value is being set programatically and the new
         # date will already have been updated by the shell object.
-        self._setting_date = True
-        self.widget.setMinimumDate(min_date)
-        self._setting_date = False
+        with guard(self, 'updating'):
+            self.widget.setMinimumDate(min_date)
 
     def set_max_date(self, max_date):
         """ Sets the maximum date on the widget with the provided value.
@@ -99,9 +95,8 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         # if the date needs to be clipped. We want to avoid that feeback 
         # loop since the value is being set programatically and the new
         # date will already have been updated by the shell object.
-        self._setting_date = True
-        self.widget.setMaximumDate(max_date)
-        self._setting_date = False
+        with guard(self, 'updating'):
+            self.widget.setMaximumDate(max_date)
         
     def set_format(self, date_format):
         """ Sets the display format on the widget with the provided value.

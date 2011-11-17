@@ -7,6 +7,8 @@ from .qt_control import QtControl
 
 from ..combo_box import AbstractTkComboBox
 
+from ...guard import guard
+
 
 class QtComboBox(QtControl, AbstractTkComboBox):
     """ A Qt implementation of ComboBox.
@@ -60,7 +62,7 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         """ The event handler for a combo box selection event.
 
         """
-        if not self._setting_items and not self._setting_selection:
+        if not guard.guarded(self, 'updating'):
             shell = self.shell_obj
             curr_index = self.widget.currentIndex()
             shell.index = curr_index
@@ -68,10 +70,6 @@ class QtComboBox(QtControl, AbstractTkComboBox):
             # Only fire the selected event if we have a valid selection
             if curr_index != -1:
                 shell.selected = shell.value
-
-    #: A boolean flag used to avoid feedback loops when updating the
-    #: items in the combo box.
-    _setting_items = False
 
     def set_items(self, str_items):
         """ Sets the items in the combo box.
@@ -84,16 +82,11 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         # the index of the control after updating the items. The flag
         # is read by the on_selected handler to ignore updates during
         # this process.
-        self._setting_items = True
-        widget = self.widget
-        widget.clear()
-        widget.addItems(str_items)
-        widget.setCurrentIndex(self.shell_obj.index)
-        self._setting_items = False
-
-    #: A boolean flag used to avoid feedback loops when updating the
-    #: selection in the combo box.
-    _setting_selection = False
+        with guard(self, 'updating'):
+            widget = self.widget
+            widget.clear()
+            widget.addItems(str_items)
+            widget.setCurrentIndex(self.shell_obj.index)
 
     def set_selection(self, index):
         """ Sets the value in the combo box, or resets the combo box
@@ -105,7 +98,6 @@ class QtComboBox(QtControl, AbstractTkComboBox):
         # selectino is updated. But, the shell object has already computed
         # the proper index for the new selection so we don't need to feed
         # back while doing this.
-        self._setting_selection = True
-        self.widget.setCurrentIndex(index)
-        self._setting_selection = False
+        with guard(self, 'updating'):
+            self.widget.setCurrentIndex(index)
 
