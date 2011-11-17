@@ -56,19 +56,9 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
         """ Sets the component date in the widget.
 
         """
-        # During an activate event the date is moved from the ui to the 
-        # shell object. This will case the shell notifier to be called 
-        # and thus _set_date will be called. In this case we do not need 
-        # to fire the selected event or set the value again.
-        #
-        # wx will not fire an EVT_CALENDAR_SEL_CHANGED event when the 
-        # value is programmatically set, so this method fires the shell
-        # event manually after setting the value in the widget.
-        widget = self.widget
-        widget_date = widget.PyGetDate()
-        if date != widget_date:
-            widget.PySetDate(date)
-            self.shell_obj.selected = date
+        # wx does not emit a selection changed event when manually 
+        # setting the date, so we don't need a feedback guard here.
+        self.widget.PySetDate(date)
 
     def _set_min_date(self, date):
         """ Sets the minimum date on the widget with the provided value.

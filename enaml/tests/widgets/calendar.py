@@ -88,8 +88,7 @@ defn MainWindow(events):
         new_date = date(2007,10,9)
         component.date = new_date
         self.assertEnamlInSync(component, 'date', new_date)
-        self.assertEqual(self.events, [('selected', new_date)])
-
+        self.assertEqual(self.events, [])
 
     def test_invalid_min_date(self):
         """ Test changing to an invalid date below the min range.
@@ -109,14 +108,13 @@ defn MainWindow(events):
         """
         component = self.component
         component.date = date(2011,10,9)
-        self.assertEqual(self.events, [('selected', date(2011,10,9))])
+        self.assertEqual(self.events, [])
         max_date = date(2014,2,3)
         component.max_date = max_date
         with self.assertRaises(TraitError):
             component.date = date(2016,10,9)
         self.assertEnamlInSync(component, 'date', date(2011,10,9))
-        self.assertEqual(self.events, [('selected', date(2011,10,9))])
-
+        self.assertEqual(self.events, [])
 
     def test_select_date_in_ui(self):
         """ Test changing the current date thought the ui
@@ -152,8 +150,7 @@ defn MainWindow(events):
         component.date = date(2007,10,9)
         component.max_date = date(2006,5,9)
         self.assertEnamlInSync(component, 'date', date(2006,5,9))
-        self.assertEqual(self.events, [('selected', date(2007,10,9)),
-                                        ('selected', date(2006,5,9))])
+        self.assertEqual(self.events, [])
 
     def test_change_minimum_and_date(self):
         """ Test setting minimum while the date is out of range.
@@ -163,8 +160,7 @@ defn MainWindow(events):
         component.date = date(2007,10,9)
         component.min_date = date(2010,5,9)
         self.assertEnamlInSync(component, 'date', date(2010,5,9))
-        self.assertEqual(self.events, [('selected', date(2007,10,9)),
-                                        ('selected', date(2010,5,9))])
+        self.assertEqual(self.events, [])
 
     def test_change_range_invalid(self):
         """ Test setting minimum > maximum.
@@ -182,7 +178,6 @@ defn MainWindow(events):
     #--------------------------------------------------------------------------
     # Special initialization tests
     #--------------------------------------------------------------------------
-
     def test_initial_too_early(self):
         """ Check initialization with an invalid early date is corrected.
 
@@ -203,7 +198,7 @@ defn MainWindow(events):
 """
         events = []
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml_source, events=events)
+            self.parse_and_create(enaml_source, events=events)
 
     def test_initial_too_late(self):
         """ Check initialization with an invalid late date is corrected.
@@ -224,12 +219,11 @@ defn MainWindow(events):
 """
         events = []
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml, events=events)
+            self.parse_and_create(enaml, events=events)
 
     #--------------------------------------------------------------------------
     # absrtact methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_date(self, widget):
         """ Get a calendar's active date.
@@ -264,3 +258,4 @@ defn MainWindow(events):
 
         """
         pass
+

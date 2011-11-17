@@ -2,16 +2,17 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from unittest import expectedFailure
 import wx.calendar
+
 from enaml.tests.widgets.wx.wx_test_assistant import WXTestAssistant, skip_nonwindows
 from enaml.tests.widgets import calendar
 
 
 @skip_nonwindows
 class TestWXCalendar(WXTestAssistant, calendar.TestCalendar):
-    """ WXCalendar tests. """
+    """ WXCalendar tests. 
 
+    """
     def get_date(self, widget):
         """ Get a calendar's active date.
 
@@ -50,3 +51,4 @@ class TestWXCalendar(WXTestAssistant, calendar.TestCalendar):
         event.PySetDate(date)
         widget.GetEventHandler().ProcessEvent(event)
         self.process_wx_events(self.app)
+
