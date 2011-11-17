@@ -71,3 +71,9 @@ class guard(object):
         """
         return signature in self._counts
 
+
+#: A singleton instance of the guard class. There is no need for more
+#: than one.
+guard = guard()
+
+
