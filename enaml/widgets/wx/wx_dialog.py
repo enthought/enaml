@@ -79,6 +79,8 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """ Destroy the dialog, fire events, and set status attributes.
 
         """
+        # We have to manually Destroy the dialog, or the wx app
+        # will never quit.
         if self.widget:
             self.widget.Destroy()
         self.shell_obj.trait_set(
