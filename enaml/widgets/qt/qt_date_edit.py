@@ -55,29 +55,53 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         """ The signal handler for the controls's changed event.
 
         """
-        shell = self.shell_obj
-        new_date = qdate_to_python(qdate)
-        shell.date = new_date
-        shell.date_changed = new_date
+        # only emit update the shell object if the widget was 
+        # changed via the ui and not programmatically.
+        if not self._setting_date:
+            shell = self.shell_obj
+            new_date = qdate_to_python(qdate)
+            shell.date = new_date
+            shell.date_changed = new_date
+
+    #: A boolen flag used to avoid feedback loops when setting the
+    #: date programmatically.
+    _setting_date = False
 
     def set_date(self, date):
         """ Sets the date on the widget.
 
         """
+        # Calling setDate will trigger the dateChanged signal.
+        # We want to avoid that feeback loop since the value is
+        # being set programatically.
+        self._setting_date = True
         self.widget.setDate(date)
+        self._setting_date = False
 
     def set_min_date(self, min_date):
         """ Sets the minimum date on the widget with the provided value.
 
         """
+        # Calling setMinimumDate *may* trigger the dateChanged signal,
+        # if the date needs to be clipped. We want to avoid that feeback 
+        # loop since the value is being set programatically and the new
+        # date will already have been updated by the shell object.
+        self._setting_date = True
         self.widget.setMinimumDate(min_date)
+        self._setting_date = False
 
     def set_max_date(self, max_date):
         """ Sets the maximum date on the widget with the provided value.
 
         """
+        # Calling setMaximumDate *may* trigger the dateChanged signal,
+        # if the date needs to be clipped. We want to avoid that feeback 
+        # loop since the value is being set programatically and the new
+        # date will already have been updated by the shell object.
+        self._setting_date = True
         self.widget.setMaximumDate(max_date)
-
+        self._setting_date = False
+        
     def set_format(self, date_format):
         """ Sets the display format on the widget with the provided value.
 
