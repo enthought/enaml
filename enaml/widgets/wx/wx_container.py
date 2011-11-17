@@ -43,5 +43,14 @@ class WXContainer(WXComponent, AbstractTkContainer):
         has been resized.
 
         """
+        # Notice that we are calling do_layout() here instead of 
+        # set_needs_layout() since we want the layout to happen
+        # immediately. Otherwise the resize layouts will appear 
+        # to lag in the ui. This is a safe operation since by the
+        # time we get this resize event, the widget has already 
+        # changed size. Further, the only geometry that gets set
+        # by the layout manager is that of our children. And should
+        # it be required to resize this widget from within the layout
+        # call, then the layout manager will do that via invoke_later.
         self.shell_obj.do_layout()
 
