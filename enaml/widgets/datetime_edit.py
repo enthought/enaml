@@ -17,10 +17,8 @@ class AbstractTkDatetimeEdit(AbstractTkBoundedDatetime):
 
 
 class DatetimeEdit(BoundedDatetime):
-    """ A datetime widget.
-
-    A DatetimeEdit displays a Python datetime.datetime object using an
-    appropriate toolkit specific control.
+    """ A datetime widget that displays a Python datetime.datetime object 
+    using an appropriate toolkit specific control.
 
     """
     #: A python date format string to format the datetime. If None is
@@ -28,12 +26,13 @@ class DatetimeEdit(BoundedDatetime):
     #: This may not be supported by all backends.
     datetime_format = Str
 
-    #: Triggered whenever the user clicks or changes the control. 
-    #: The event payload will be the datetime on the control.
+    #: Triggered whenever the user changes the date through the ui
+    #: control, but not programmatically. The event payload will be 
+    #: the datetime on the control.
     datetime_changed = Event
     
-    #: How strongly a component hugs it's contents' width.
-    #: DatetimeEdits ignore the width hug by default, so they expand freely in width.
+    #: How strongly a component hugs it's contents' width. DatetimeEdits 
+    #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
     #: Overridden parent class trait

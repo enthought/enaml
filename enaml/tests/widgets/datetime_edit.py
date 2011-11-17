@@ -8,6 +8,7 @@ from traits.api import TraitError
 
 from .enaml_test_case import EnamlTestCase, required_method
 
+
 class TestDatetimeEdit(EnamlTestCase):
     """ Logic for testing the date time edit components.
 
@@ -94,8 +95,7 @@ defn MainWindow(events):
         component.datetime = python_datetime(2007,10,9)
         component.max_datetime = python_datetime(2006,5,9)
         self.assertEnamlInSync(component, 'datetime', python_datetime(2006,5,9))
-        self.assertEqual(self.events, [('datetime_changed', python_datetime(2007,10,9)),
-                                        ('datetime_changed', python_datetime(2006,5,9))])
+        self.assertEqual(self.events, [])
 
     def test_change_minimum_and_datetime(self):
         """ Test setting minimum while the datetime is out of range.
@@ -105,8 +105,7 @@ defn MainWindow(events):
         component.datetime = python_datetime(2007,10,9)
         component.min_datetime = python_datetime(2010,5,9)
         self.assertEnamlInSync(component, 'datetime', python_datetime(2010,5,9))
-        self.assertEqual(self.events, [('datetime_changed', python_datetime(2007,10,9)),
-                                        ('datetime_changed', python_datetime(2010,5,9))])
+        self.assertEqual(self.events, [])
 
     def test_change_datetime_in_enaml(self):
         """ Test changing the current datetime through the component.
@@ -116,7 +115,7 @@ defn MainWindow(events):
         new_datetime = python_datetime(2007,10,9)
         component.datetime = new_datetime
         self.assertEnamlInSync(component, 'datetime', new_datetime)
-        self.assertEqual(self.events, [('datetime_changed', new_datetime)])
+        self.assertEqual(self.events, [])
 
     def test_change_datetime_in_ui(self):
         """ Test changing the current datetime thought the ui
@@ -147,13 +146,13 @@ defn MainWindow(events):
         component = self.component
         init_datetime = python_datetime(2011,10,9)
         component.datetime = init_datetime
-        self.assertEqual(self.events, [('datetime_changed',init_datetime)])
+        self.assertEqual(self.events, [])
         max_datetime = python_datetime(2014,2,3)
         component.max_datetime = max_datetime
         with self.assertRaises(TraitError):
             component.datetime = python_datetime(2016,10,9)
         self.assertEnamlInSync(component, 'datetime', init_datetime)
-        self.assertEqual(self.events, [('datetime_changed',init_datetime)])
+        self.assertEqual(self.events, [])
 
     def test_set_format(self):
         """ Test setting the output format
@@ -166,7 +165,8 @@ defn MainWindow(events):
         component.datetime = test_datetime
         widget_string = self.get_datetime_as_string(widget)
         formated_date = unicode(test_datetime.strftime('%b %d %Y %H:%M'), encoding='utf-8')
-        self.assertEqual(self.events, [('datetime_changed',test_datetime)])
+        self.assertEqual(widget_string, formated_date)
+        self.assertEqual(self.events, [])
 
     def test_change_range_invalid(self):
         """ Test setting minimum > maximum.
@@ -184,7 +184,6 @@ defn MainWindow(events):
     #--------------------------------------------------------------------------
     # Special initialization tests
     #--------------------------------------------------------------------------
-
     def test_initial_too_early(self):
         """ Check initialization with an invalid early datetime is corrected.
 
@@ -203,7 +202,7 @@ defn MainWindow(events):
 """
         events = []
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml_source, events=events)
+            self.parse_and_create(enaml_source, events=events)
 
     def test_initial_too_late(self):
         """ Check initialization with an invalid late datetime is corrected.
@@ -223,12 +222,11 @@ defn MainWindow(events):
 """
         events = []
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml_source, events=events)
+            self.parse_and_create(enaml_source, events=events)
 
     #--------------------------------------------------------------------------
     # absrtact methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_datetime(self, widget):
         """  Get the toolkits widget's active datetime.
@@ -263,3 +261,4 @@ defn MainWindow(events):
 
         """
         pass
+
