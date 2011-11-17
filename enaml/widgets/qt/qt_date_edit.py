@@ -51,7 +51,7 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         """
         self.set_format(date_format)
 
-    def on_date_changed(self, qdate):
+    def on_date_changed(self):
         """ The signal handler for the controls's changed event.
 
         """
@@ -59,6 +59,7 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
         # changed via the ui and not programmatically.
         if not self._setting_date:
             shell = self.shell_obj
+            qdate = self.widget.date()
             new_date = qdate_to_python(qdate)
             shell.date = new_date
             shell.date_changed = new_date
