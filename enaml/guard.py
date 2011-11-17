@@ -49,10 +49,12 @@ class guard(object):
             counts[signature] += 1
         else:
             counts[signature] = 1
-        yield self
-        counts[signature] -= 1
-        if counts[signature] == 0:
-            del counts[signature]
+        try:
+            yield self
+        finally:
+            counts[signature] -= 1
+            if counts[signature] == 0:
+                del counts[signature]
                 
     def guarded(self, *signature):
         """ Check whether the given signature is currently guarded.
