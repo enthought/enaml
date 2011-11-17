@@ -33,6 +33,7 @@ class EnamlRuntimeError(EnamlError):
 
 def null_handler(obj, trait, old, new):
     """ A null Traits exception handler.
+    
     """
     pass
 
@@ -44,6 +45,7 @@ def notification_context(handler=null_handler, reraise_exceptions=True, main=Fal
     no matter what.  Default behaviour is to use the null_handler with
     exceptions re-raised, which means any exceptions which occur will be passed
     through.
+    
     """
     yield push_exception_handler(handler, reraise_exceptions, main, locked)
     pop_exception_handler()
@@ -54,6 +56,7 @@ class ShellExceptionContext(object):
     
     Any exceptions which occur within a with statement using this context
     will get swallowed and set into the exception trait of the shell object.
+    
     """
     def __init__(self, shell_obj):
         self.shell_obj = shell_obj
@@ -77,6 +80,7 @@ class ShellNotificationContext(ShellExceptionContext):
     Default behaviour is to use the null_handler with exceptions re-raised,
     which means any exceptions which occur during traits notification will be
     caught and set to the shell object's exception trait.
+    
     """
     def __init__(self, shell_obj, handler=null_handler, reraise_exceptions=True,
             main=False, locked=False):

@@ -33,7 +33,8 @@ class Control(Component):
     children = List(BaseComponent, maxlen=0)
 
     def capture_exceptions(self):
-        """ Return a ShellExceptionContext that will capture error state automatically
+        """ Return a ShellExceptionContext that will capture error state automatically.
+        
         """
         return ShellExceptionContext(self)
     
@@ -41,6 +42,7 @@ class Control(Component):
             main=False, locked=False):
         """ Return a ShellNotificationContext that will set error state automatically,
         including TraitErrors in listeners.
+        
         """
         return ShellNotificationContext(self, handler, reraise_exceptions, main,
             locked)

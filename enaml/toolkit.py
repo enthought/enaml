@@ -267,6 +267,7 @@ class Toolkit(dict):
     def _get_control_exception_handler(self):
         """ Returns the function for handling exceptions on a control object
         that would otherwise be swallowed.
+        
         """
         return self['__control_exception_handler__']
     
