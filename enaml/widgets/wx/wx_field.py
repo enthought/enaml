@@ -228,14 +228,8 @@ class WXField(WXControl, AbstractTkField):
         shell = self.shell_obj
         text = self.widget.GetValue()
         self.setting_value = True
-        try:
+        with shell.capture_notification_exceptions():
             value = shell.converter.from_component(text)
-        except Exception as e:
-            shell.exception = e
-            shell.error = True
-        else:
-            shell.exception = None
-            shell.error = False
             shell.value = value
         self.setting_value = False
         self._update_shell_selection()
@@ -442,14 +436,8 @@ class WXField(WXControl, AbstractTkField):
 
         """
         shell = self.shell_obj
-        try:
+        with shell.capture_exceptions():
             text = shell.converter.to_component(shell.value)
-        except Exception as e:
-            shell.exception = e
-            shell.error = True
-        else:
-            shell.exception = None
-            shell.error = False
             # wx.TextCtrl doesn't seem to accept input unless it has focus.
             self.widget.SetFocus()
             self._change_text(text)
