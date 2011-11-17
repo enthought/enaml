@@ -6,10 +6,7 @@ from .qt_control import QtControl
 
 from ..toggle_control import AbstractTkToggleControl
 
-# FIXME: I do not like that there are methods in this class that assume
-# a specific behaviour for the widget. And that we ask the developer to
-# bind to such functions. Are we pushing the `remove dublication` rule
-# too much?
+
 class QtToggleControl(QtControl, AbstractTkToggleControl):
     """ A base class for Qt toggle widgets.
 
