@@ -29,18 +29,13 @@ class Form(Container):
     #: The ConstraintVariable giving the midline along which the labels 
     #: and widgets are aligned.
     midline = Instance(ConstraintVariable)
+    def _midline_default(self):
+        label = 'midline_{0}_{1:x}'.format(type(self).__name__, id(self))
+        return ConstraintVariable(label)
 
     #: The strength for the form layout constraints.
     # FIXME: Use an Enum.
     layout_strength = Str('strong')
-    
-    def _midline_default(self):
-        """ The factory method which creates the constraint variable
-        instance for the 'midline' trait.
-
-        """
-        label = 'midline_{0}_{1:x}'.format(type(self).__name__, id(self))
-        return ConstraintVariable(label)
 
     def default_user_constraints(self):
         """ Overridden parent class method which returns an empty list.
