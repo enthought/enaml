@@ -121,8 +121,8 @@ class Container(Component):
         """
         if self.layout is None:
             # Our layout is being managed by an ancestor.
-            # FIXME: We probably shouldn't pass it on if it's False.
-            self.parent.set_needs_update_constraints(needs)
+            if needs:
+                self.parent.set_needs_update_constraints(needs)
         else:
             self._needs_update_constraints = needs
             if needs:

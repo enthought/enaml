@@ -40,29 +40,6 @@ class QtDialog(QtWindow, AbstractTkDialog):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-    def show(self):
-        """ Displays this modal dialog to the screen.
-
-        """
-        widget = self.widget
-        if widget:
-            shell = self.shell_obj
-            shell.trait_set(
-                _active = True,
-                opened = True,
-            )
-            widget.setWindowModality(_MODAL_MAP[shell.modality])
-            widget.exec_()
-
-    def hide(self):
-        """ Overridden parent class method. Hiding a dialog is the same
-        as rejecting it.
-
-        """
-        widget = self.widget
-        if widget and widget.visible():
-            self.reject()
-
     def accept(self):
         """ Accept and close the dialog, sending the 'finished' signal.
 
@@ -97,4 +74,38 @@ class QtDialog(QtWindow, AbstractTkDialog):
             _active = False,
             closed = result,
         )
+
+    def set_visible(self, visible):
+        """ Show or hide the window.
+        
+        If we are initializing, don't show yet.
+        """
+        if not self._initializing:
+            if visible:
+                self._show()
+            else:
+                self._hide()
+
+    def _show(self):
+        """ Displays this modal dialog to the screen.
+
+        """
+        widget = self.widget
+        if widget:
+            shell = self.shell_obj
+            shell.trait_set(
+                _active = True,
+                opened = True,
+            )
+            widget.setWindowModality(_MODAL_MAP[shell.modality])
+            widget.exec_()
+
+    def _hide(self):
+        """ Hiding a dialog is the same as rejecting it.
+
+        """
+        widget = self.widget
+        if widget and widget.visible():
+            self.reject()
+
 

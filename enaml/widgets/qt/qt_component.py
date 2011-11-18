@@ -45,6 +45,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
             self.set_role_color(role, shell.fg_color)
         if shell.font:
             self.set_font(shell.font)
+        self.set_enabled(shell.enabled)
+        self.set_visible(shell.visible)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -134,6 +136,16 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         self.widget.setGeometry(x, y, width, height)
 
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the parent.
+        """
+        self.set_enabled(enabled)
+
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the parent.
+        """
+        self.set_visible(visible)
+
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the shell
         object. Sets the background color of the internal widget to the 
@@ -157,7 +169,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         object. Sets the font of the internal widget to the given font.
 
         """
-        self.set_font(font)    
+        self.set_font(font)
 
     #--------------------------------------------------------------------------
     # Convienence methods
@@ -190,6 +202,17 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         for child in self.shell_obj.children:
             yield child.toolkit_widget
+
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+        """
+        self.widget.setEnabled(enabled)
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+        """
+        self.shell_obj.parent.set_needs_update_constraints()
+        self.widget.setVisible(visible)
 
     def set_role_color(self, role, color):
         """ Set the color for a role of a QWidget to the color specified 

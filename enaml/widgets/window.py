@@ -14,20 +14,6 @@ class AbstractTkWindow(AbstractTkContainer):
 
     """
     @abstractmethod
-    def show(self):
-        """ Make the window visible on the screen.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def hide(self):
-        """ Hide the window from the screen.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
     def shell_title_changed(self, title):
         """ Update the title of the window with the new value from the
         shell object.
@@ -48,6 +34,10 @@ class Window(Container):
     #: The title displayed on the window frame.
     title = Str
 
+    #: Whether the widget is visible or not (windows are not visible by
+    #: default).
+    visible = False
+
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkWindow)
 
@@ -67,7 +57,7 @@ class Window(Container):
         # an initial_size optional attribute or something at some point.
         size = self.layout.calc_min_size()
         self.resize(*size)
-        self.abstract_obj.show()
+        self.visible = True
 
     def hide(self):
         """ Hide the window, but do not destroy the underlying widgets.
@@ -76,5 +66,12 @@ class Window(Container):
         will always succeed.
 
         """
-        self.abstract_obj.hide()
+        self.visible = False
 
+    def update_constraints(self):
+        """ Update the constraints for this component.
+
+        """
+        super(Window, self).update_constraints()
+        size = self.layout.calc_min_size()
+        self.set_min_size(*size)
