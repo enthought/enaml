@@ -46,7 +46,12 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         if shell.font:
             self.set_font(shell.font)
         self.set_enabled(shell.enabled)
-        self.set_visible(shell.visible)
+        if not shell.visible:
+            # Some QtContainers will turn off the visibility of their children
+            # entirely on the Qt side when the parent-child relationship is
+            # made. They have probably already done their work, so don't
+            # override it in the default case of visible=True.
+            self.set_visible(shell.visible)
 
     #--------------------------------------------------------------------------
     # Implementation
