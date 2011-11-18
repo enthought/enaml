@@ -171,10 +171,17 @@ class Container(Component):
         """
         if self.layout is None:
             # Our layout is managed by an ancestor, so pass up 
-            #  the notification.
+            # the notification.
             self.parent.handle_size_hint_changed(child, name, old, new)
         else:
-            self.toolkit.invoke_later(self.layout.update_size_cns, child)
+            # Update the constraints in the solver immediately since
+            # there may be more than one widget during a pass that
+            # will the size hint updated, and multiple calls to 
+            # set_needs_layout get collapsed to a single call. If we
+            # were to update the size hint cns via invoke_later, some
+            # of the updates may occur after the layout pass has already
+            # taken place.
+            self.layout.update_size_cns(child)
             self.set_needs_layout()
 
     @on_trait_change(_CONSTRAINT_DEPS)

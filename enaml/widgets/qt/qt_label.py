@@ -11,14 +11,12 @@ from ..label import AbstractTkLabel
 class QtLabel(QtControl, AbstractTkLabel):
     """ A Qt implementation of Label.
 
-    A QtLabel displays static text using a QLabel control.
-
     """
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self):
-        """ Creates the underlying text control.
+        """ Creates the underlying QLabel control.
 
         """
         self.widget = QtGui.QLabel(self.parent_widget())
@@ -38,10 +36,10 @@ class QtLabel(QtControl, AbstractTkLabel):
 
         """
         self.set_label(text)
-        # XXX we might need a relayout call here when the text changes
-        # since it's width may have changed and the size hint may
-        # now be different. We probably want to make it configurable
-        # though since fixed width labels don't need a relayout
+        # If the text in the label changes, then the size hint of
+        # label will have changed, and the layout system needs to
+        # be informed.
+        self.shell_obj.size_hint_updated = True
 
     def set_label(self, label):
         """ Sets the label on the underlying control.

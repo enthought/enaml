@@ -6,23 +6,24 @@ import wx
 import wx.lib.newevent
 
 from .wx_toggle_control import WXToggleControl
+
 from ..radio_button import AbstractTkRadioButton
 
 
-# A new radio button event for the custom radio button this is emitted on
-# the parent whenever any CustomRadioButton is toggled.
+#: A new radio button event for the custom radio button this is emitted 
+#: on the parent whenever any CustomRadioButton is toggled.
 wxGroupRadio, EVT_GROUP_RADIO = wx.lib.newevent.NewEvent()
 
-# A radio button event emitted when the value is interactively turned on.
+#: A radio button event emitted when the value is interactively turned on.
 wxRadioToggleOn, EVT_RADIO_TOGGLE_ON = wx.lib.newevent.NewEvent()
 
-# A radio button event that is emited when the button is auto unchecked
+#: A radio button event that is emited when the button is auto unchecked.
 wxRadioToggleOff, EVT_RADIO_TOGGLE_OFF = wx.lib.newevent.NewEvent()
 
-# A radio button event emitted when the value is programatically turned on.
+#: A radio button event emitted when the value is programatically turned on.
 wxRadioSetChecked, EVT_RADIO_SET_CHECKED = wx.lib.newevent.NewEvent()
 
-# A radio button event emitted when the value is programatically turned off.
+#: A radio button event emitted when the value is programatically turned off.
 wxRadioSetUnchecked, EVT_RADIO_SET_UNCHECKED = wx.lib.newevent.NewEvent()
 
 
@@ -39,7 +40,6 @@ class CustomRadioButton(wx.RadioButton):
     """
     def __init__(self, *args, **kwargs):
         super(CustomRadioButton, self).__init__(*args, **kwargs)
-
         # This class works by binding every instance to an event that
         # is emitted on the parent. When an instance is toggled, it
         # emits the group event on the parent, which allows every other

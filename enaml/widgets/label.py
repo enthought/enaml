@@ -23,17 +23,15 @@ class Label(Control):
     #: The text in the label.
     text = Str
     
-    #: How strongly a component hugs it's content.
-    #: Labels hug their contents' width weakly.
+    #: How strongly a component hugs it's content. Labels hug their
+    #: contents' width weakly by default.
     hug_width = 'weak'
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkLabel)
 
-    def _text_changed(self):
-        """ Since the text has changed, the label's size hint has probably
-        changed too. The layout system of the parent Container should be
-        informed of this.
+    # Note: Do not attempt to create a _text_changed handler here
+    # to fire off size hint updated events. This is because such
+    # a handler might get fired *before* the label is actually
+    # updated and so the computed size hint will be incorrect.
 
-        """
-        self.parent.set_needs_update_constraints(True)
