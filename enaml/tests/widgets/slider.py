@@ -5,7 +5,6 @@
 from traits.api import TraitError
 
 from .enaml_test_case import EnamlTestCase, required_method
-from enaml.util.enum import Enum
 
 class TestEvents(object):
     """ Events required by the testcase. """

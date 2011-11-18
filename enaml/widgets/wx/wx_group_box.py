@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from pdb import set_trace
 import wx
 from .wx_container import WXContainer
 from ..group_box import AbstractTkGroupBox

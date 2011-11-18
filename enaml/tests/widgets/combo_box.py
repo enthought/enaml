@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Undefined
-
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -78,7 +76,7 @@ defn MainWindow(events):
         """
         self.select_item(self.widget, 2)
         self.assertEqual(self.events, [('selected', oct)])
-        
+
     def test_change_selected_item(self):
         """ Update the visible item when a new one is selected internally.
 
@@ -128,7 +126,7 @@ defn MainWindow(events):
         self.assertEqual(self.events, [])
 
     def test_index_when_items_change(self):
-        """ Assert that the index is -1 when the value is removed from the 
+        """ Assert that the index is -1 when the value is removed from the
         items list.
 
         """

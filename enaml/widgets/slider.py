@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import (Bool, Enum, Event, Instance, Property, Int,
+from traits.api import (Bool, Event, Instance, Property, Int,
                         TraitError, Range)
 
 from .control import Control, AbstractTkControl
