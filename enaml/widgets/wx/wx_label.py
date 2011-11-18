@@ -37,7 +37,11 @@ class WXLabel(WXControl, AbstractTkLabel):
 
         """
         self.set_label(text)
-
+        # If the text in the label changes, then the size hint of
+        # label will have changed, and the layout system needs to
+        # be informed.
+        self.shell_obj.size_hint_updated = True
+        
     def set_label(self, label):
         """ Sets the label on the underlying control.
 
