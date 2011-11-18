@@ -8,7 +8,7 @@ import wx.grid
 from .wx_control import WXControl
 from ..table_view import AbstractTkTableView
 
-from ...item_models.abstract_item_model import AbstractItemModel
+from ...item_models.abstract_item_model import AbstractItemModel, ITEM_IS_EDITABLE
 
 
 GridCellAttr = wx.grid.GridCellAttr
@@ -77,6 +77,13 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
             attr.SetTextColour(wx_color_from_color(brush.color))
             
         return attr
+
+    def SetValue(self, row, col, val):
+        item_model = self._item_model
+        index = item_model.index(row, col, None)
+        flags = item_model.flags(index)
+        if flags & ITEM_IS_EDITABLE:
+            item_model.set_data(index, val)
 
     def GetRowLabelValue(self, row):
         return self._vert_header_data(row)
