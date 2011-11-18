@@ -1,0 +1,45 @@
+""" Nested hbox()/vbox()
+
+FIXME: this is a dumb example.
+
+"""
+
+
+defn MainWindow():
+    Window:
+        constraints = [
+            vbox(
+                ALabel,
+                BLabel,
+                # FIXME: hbox and vbox implicitly include a fixed space around their
+                # borders. A smarter "space-between-components" algorithm can do
+                # better than this. For now, just put in 0-sized spaces.
+                0,
+                hbox(0, CLabel, _space_, DLabel, _space_, ELabel, 0),
+                0,
+                FLabel,
+                GLabel,
+                hbox(0, button1, _space_, button2, _space_, button3, 0),
+                0),
+            align('h_center', self, DLabel, button2),
+        ]
+        Label -> ALabel:
+            text = "A"
+        Label -> BLabel:
+            text = "B"
+        Label -> CLabel:
+            text = "C"
+        Label -> DLabel:
+            text = "D"
+        Label -> ELabel:
+            text = "E"
+        Label -> FLabel:
+            text = "F"
+        Label -> GLabel:
+            text = "G"
+        PushButton -> button1:
+            text = "1"
+        PushButton -> button2:
+            text = "2"
+        PushButton -> button3:
+            text = "3"
