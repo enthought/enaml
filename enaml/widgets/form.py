@@ -21,20 +21,20 @@ class Form(Container):
     """ A Container subclass that arranges child Components as a two
     column form.
 
-    The left column is typically Labels (but this is not a requirement). 
-    The right are the actual widgets for data entry. The children should 
+    The left column is typically Labels (but this is not a requirement).
+    The right are the actual widgets for data entry. The children should
     be in alternating label/widget order. If there are an odd number
     of children, the last child will span both columns.
 
     """
-    #: The ConstraintVariable giving the midline along which the labels 
+    #: The ConstraintVariable giving the midline along which the labels
     #: and widgets are aligned.
     midline = Instance(ConstraintVariable)
 
     #: The strength for the form layout constraints.
     # FIXME: Use an Enum.
     layout_strength = Str('strong')
-    
+
     def _midline_default(self):
         """ The factory method which creates the constraint variable
         instance for the 'midline' trait.
@@ -46,15 +46,16 @@ class Form(Container):
     def default_user_constraints(self):
         """ Overridden parent class method which returns an empty list.
         All constraints are supplied by 'container_constraints()'.
-        
+
         """
         return []
 
     def container_constraints(self):
-        """ Computes the current form constraints for the current 
+        """ Computes the current form constraints for the current
         children.
 
         """
+        # FIXME: do something sensible when children are not visible.
         children = self.children
         labels = children[::2]
         widgets = children[1::2]
@@ -69,7 +70,7 @@ class Form(Container):
                 odd_child = widgets.pop()
         else:
             odd_child = None
-        
+
         layout_strength = self.layout_strength
         constraints = []
 
@@ -79,7 +80,7 @@ class Form(Container):
         for widget in widgets:
             cn = (widget.left == midline) | layout_strength
             constraints.append(cn)
-        
+
         # Arrange each label/widget pair horizontally in the form
         left = self.left
         right = self.right
@@ -98,11 +99,11 @@ class Form(Container):
         else:
             widget_args = [self.top] + widgets + [self.bottom]
             constraints.append(vertical(*widget_args) | layout_strength)
-        
+
         # Finally, handle the horizontal constraints of the odd child.
         if odd_child is not None:
             cn = horizontal(left, odd_child, right) | layout_strength
             constraints.append(cn)
-        
+
         return constraints
 

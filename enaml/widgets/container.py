@@ -15,8 +15,7 @@ _SIZE_HINT_DEPS = ('children:size_hint_updated, children:hug_width, '
                    'children:resist_clip_height')
 
 
-_CONSTRAINT_DEPS = ('constraints, constraints_items, default_constraints, '
-                    'default_constraints_items')
+_CONSTRAINT_DEPS = 'constraints, constraints_items'
 
 
 class AbstractTkContainer(AbstractTkComponent):
@@ -95,9 +94,10 @@ class Container(Component):
         left = self.left
         right = self.right
         vert = [vertical(*([top] + children + [bottom]))]
-        horiz = [horizontal(left, child, right) for child in children]
+        horiz = [horizontal(left, child, right) for child in children
+            if child.visible]
         return vert + horiz
-    
+
     def container_constraints(self):
         """ A set of constraints that should always be applied to this
         type of container. This should be implemented by subclasses
@@ -191,7 +191,12 @@ class Container(Component):
         container change.
 
         """
-        if self.layout._initialized:
+        if self.layout is None or self.layout._initialized:
             self.set_needs_update_constraints()
             self.set_needs_layout()
 
+    @on_trait_change('children:visible')
+    def handle_visible_changed(self, child, name, old, new):
+        if self.layout is None or self.layout._initialized:
+            self.set_needs_update_constraints()
+            self.set_needs_layout()

@@ -199,16 +199,17 @@ class ConstraintsLayout(AbstractLayoutManager):
         component.set_geometry(x, y, width, height)
 
     def traverse_descendants(self, component):
-        """ Do a preorder traversal of all descendants of the component that
-        participate in the Constraints-base layout.
+        """ Do a preorder traversal of all visible descendants of the component
+        that participate in the Constraints-base layout.
 
         """
         for child in component.children:
-            yield child
-            child_layout = getattr(child, 'layout', None)
-            if child_layout is None or type(child_layout) is type(self):
-                for desc in self.traverse_descendants(child):
-                    yield desc
+            if child.visible:
+                yield child
+                child_layout = getattr(child, 'layout', None)
+                if child_layout is None or type(child_layout) is type(self):
+                    for desc in self.traverse_descendants(child):
+                        yield desc
 
     def walk_up_containers(self, component):
         """ Walk up the component hierarchy from a given node and yield the

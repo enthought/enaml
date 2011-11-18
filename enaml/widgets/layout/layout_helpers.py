@@ -28,6 +28,9 @@ def clear_invisible(items):
     objects. Spacer objects that appear before an invisible Component will be
     removed.
 
+    Lists that consist solely of anchors and spacers will result in an empty
+    list.
+
     """
     visible = []
     i = 0
@@ -37,6 +40,8 @@ def clear_invisible(items):
                 visible.pop()
         else:
             visible.append(item)
+    if all(is_spacer(item) or isinstance(item, LinearSymbolic) for item in visible):
+        visible = []
     return visible
 
 
@@ -176,9 +181,9 @@ class AbstractCnFactory(object):
     def validate(items):
         """ A validator staticmethod that insures a sequence of items is 
         appropriate for generating a sequence of linear constraints. The 
-        following conditions are verfied of the sequence of given items:
+        following conditions are verified of the sequence of given items:
 
-            * There are two or more items in the sequence.
+            * There are either 0 or else two or more items in the sequence.
 
             * The first and last items are instances of either
               LinearSymbolic or Component.
@@ -190,6 +195,9 @@ class AbstractCnFactory(object):
         raised with a (hopefully) useful error message.
 
         """
+        if len(items) == 0:
+            return
+
         if len(items) < 2:
             msg = 'Two or more items required to setup abutment constraints.'
             raise ValueError(msg)
