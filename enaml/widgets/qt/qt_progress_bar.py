@@ -22,22 +22,58 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
         self.widget = QtGui.QProgressBar(self.parent_widget())
     
     def initialize(self):
+        """ Initialize the attribute of the progress bar.
+
+        """
         super(QtControl, self).initialize()
         self.widget.setTextVisible(False)
         shell = self.shell_obj
-        self.shell_minimum_changed(shell.minimum)
-        self.shell_maximum_changed(shell.maximum)
-        self.shell_value_changed(shell.value)
+        self._set_minimum(shell.minimum)
+        self._set_maximum(shell.maximum)
+        self._set_value(shell.value)
 
     #--------------------------------------------------------------------------
     # Abstract implementation methods
     #--------------------------------------------------------------------------
     def shell_value_changed(self, value):
-        self.widget.setValue(value)
+        """ The change handler for the 'value' attribute of the shell
+        object.
+
+        """
+        self._set_value(value)
 
     def shell_minimum_changed(self, minimum):
+        """ The change handler for the 'minimum' attribute of the shell
+        object.
+
+        """
+        self._set_minimum(minimum)
+            
+    def shell_maximum_changed(self, maximum):
+        """ The change handler for the 'maximum' attribute of the shell
+        object
+
+        """
+        self._set_maximum(maximum)
+
+    #--------------------------------------------------------------------------
+    # Widget update  methods
+    #--------------------------------------------------------------------------
+    def _set_value(self, value):
+        """ Sets the value of the progress bar.
+
+        """
+        self.widget.setValue(value)
+
+    def _set_minimum(self, minimum):
+        """ Sets the minimum value of the progress bar.
+
+        """
         self.widget.setMinimum(minimum)
     
-    def shell_maximum_changed(self, maximum):
+    def _set_maximum(self, maximum):
+        """ Sets the maximum value of the progress bar.
+
+        """
         self.widget.setMaximum(maximum)
 
