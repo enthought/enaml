@@ -168,7 +168,6 @@ class Container(Component):
 
         """
         if self.layout is not None:
-            print 'doing layout'
             self.layout.layout()
         self._needs_layout = False
 
