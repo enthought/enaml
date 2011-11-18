@@ -87,16 +87,8 @@ class Container(Component):
         probably want to override this (possibly to return an empty list).
 
         """
-        from .layout.layout_helpers import horizontal, vertical
-        children = self.children
-        top = self.top
-        bottom = self.bottom
-        left = self.left
-        right = self.right
-        vert = [vertical(*([top] + children + [bottom]))]
-        horiz = [horizontal(left, child, right) for child in children
-            if child.visible]
-        return vert + horiz
+        from .layout.layout_helpers import vbox
+        return [vbox(*self.children)]
 
     def container_constraints(self):
         """ A set of constraints that should always be applied to this

@@ -131,21 +131,6 @@ class GroupBox(Container):
     def __box_model_default(self):
         return MarginBoxModel(self)
 
-    def default_user_constraints(self):
-        """ Overridden parent class method to generate constraints based
-        on the contents borders instead of the container borders.
-
-        """
-        from .layout.layout_helpers import horizontal, vertical
-        children = self.children
-        top = self.contents_top
-        bottom = self.contents_bottom
-        left = self.contents_left
-        right = self.contents_right
-        vert = [vertical(*([top] + children + [bottom]))]
-        horiz = [horizontal(left, child, right) for child in children]
-        return vert + horiz
-
     def container_constraints(self):
         """ A set of constraints that should always be applied to this 
         type of container.
