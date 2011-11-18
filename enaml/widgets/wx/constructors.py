@@ -61,4 +61,5 @@ WX_CONSTRUCTORS = dict((
     constructor('datetime_edit'),
     constructor('form'),
     constructor('group_box'),
+    constructor('progress_bar'),
 ))
