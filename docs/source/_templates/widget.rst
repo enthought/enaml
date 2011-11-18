@@ -5,6 +5,8 @@
 
 .. autoclass:: {{ objname }}
 
+{ # todo: properly convert the name from camel case to underscore separated
+  lower case name # }
 
 Backends
 --------
