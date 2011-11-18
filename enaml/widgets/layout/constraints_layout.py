@@ -322,6 +322,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         it 'hug' or 'resist_clip' attributes change.
 
         """
+        if not self._initialized:
+            return
         component = self.component()
         if component is None:
             msg = 'Component weakly referenced by %r disappeared' % self
