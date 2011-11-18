@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Enum, Instance, Property, Str
+from traits.api import Bool, Instance, Property, Str
 
 from .container import Container, AbstractTkContainer
 from .layout.box_model import MarginBoxModel

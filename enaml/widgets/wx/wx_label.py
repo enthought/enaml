@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
-
 from .wx_control import WXControl
 from ..label import AbstractTkLabel
 
@@ -21,7 +20,7 @@ class WXLabel(WXControl, AbstractTkLabel):
         """ Creates the underlying text control.
 
         """
-        self.widget = widget = wx.StaticText(self.parent_widget())
+        self.widget = wx.StaticText(self.parent_widget())
 
     def initialize(self):
         """ Initializes the attributes on the underlying control.

@@ -7,7 +7,6 @@ and dynamically binding and computing values based on user interaction.
 A simple example of an Enaml file might look something like this:
 
 .. literalinclude:: examples/person_example.enaml
-    :language: enaml
 
 We could then use this with a Traits model as follows:
 
@@ -91,23 +90,23 @@ available to simply specifying layout.  These are:
         an integer value.
 
     ``horizontal(*items)``
-    
+
     ``vertical(*items)``
         These two functions take a list of symbols, widgets and spacers and
         create a series of constraints that specify a sequential horizontal
         or vertical layout where the sides of each object in sequence abut
         against each other.
-    
+
     ``align_left(*items)``
-    
+
     ``align_right(*items)``
-    
+
     ``align_top(*items)``
-    
+
     ``align_bottom(*items)``
-    
+
     ``align_v_center(*items)``
-    
+
     ``align_h_center(*items)``
         These functions take a list of widgets and align the appropriate
         parts of their box models.
@@ -127,8 +126,8 @@ Binding Operators
 
 `:=`
   *Delegation*. RHS must be a simple attribute expression, like foo.bar .
-  Non-attribute expressions here are a runtime error. The value of the 
-  view property and value of the attribute are synced, but the type 
+  Non-attribute expressions here are a runtime error. The value of the
+  view property and value of the attribute are synced, but the type
   checking of the view property is enforced.
 
 `<<`
@@ -147,12 +146,12 @@ Scoping Rules
 -------------
 
 - Imports are global and accessible to everything in the file.
-- Each top-level item defines its own local namespace. This namespace 
+- Each top-level item defines its own local namespace. This namespace
   includes all elements that have a declared identifier.
 - Each expression has its local namespace that is the union of the block
   locals and the attribute namespace of the object to which the expression
-  is bound. In otherwords `self` is implicit. However, a `self` exists in 
-  this local namespace in order to break naming conflicts between block 
+  is bound. In otherwords `self` is implicit. However, a `self` exists in
+  this local namespace in order to break naming conflicts between block
   locals and attribute names. To any C++ or Java developers, this will seem
   natural.
 

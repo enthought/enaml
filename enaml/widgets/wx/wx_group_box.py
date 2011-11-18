@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from pdb import set_trace
 import wx
 from .wx_container import WXContainer
 from ..group_box import AbstractTkGroupBox
@@ -14,7 +13,8 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
     """ A wxPython implementation of GroupBox.
 
     The Enaml component is implemented using a combination of WX Static
-    widgets.
+    widgets that are shown and hidden to create the different styling of
+    the GroupBox.
 
     """
     #--------------------------------------------------------------------------
@@ -26,7 +26,11 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
 
         In addition to the wxWindow container widget the GroupBox
         creates:
+
             - a wxLabel
+            - a wxStaticLine
+            - a wxStaticBox
+
         """
         super(WXGroupBox, self).create()
         widget = self.widget
