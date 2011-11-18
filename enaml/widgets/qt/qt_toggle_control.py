@@ -46,7 +46,10 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
 
         """
         self.set_label(text)
-
+        # If the label of the control changes, its size hint has likely
+        # updated and the layout system needs to be informed
+        self.shell_obj.size_hint_updated = True
+        
     def on_toggled(self):
         """ The event handler for the toggled event.
 
