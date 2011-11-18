@@ -2,11 +2,9 @@ from collections import defaultdict
 import weakref
 
 from .layout_manager import AbstractLayoutManager
-from .symbolics import MultiConstraint
+from .layout_helpers import DeferredConstraints
 
 import casuarius
-
-STRENGTH_MAP = casuarius.STRENGTH_MAP
 
 
 class ConstraintsLayout(AbstractLayoutManager):
@@ -123,11 +121,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         """
         solver = self.solver
         for cn in constraints:
-            if isinstance(cn, MultiConstraint):
-                for c in cn:
-                    solver.add_constraint(c)
-            else:
-                solver.add_constraint(cn)
+            solver.add_constraint(cn)
 
     #--------------------------------------------------------------------------
     # Solver Iteration
@@ -254,8 +248,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         cns = []
         user_constraints = component.constraints if component.constraints else component.default_user_constraints()
         for constraint in user_constraints + component.container_constraints():
-            if isinstance(constraint, MultiConstraint):
-                cns.extend(constraint)
+            if isinstance(constraint, DeferredConstraints):
+                cns.extend(constraint.get_constraint_list(component))
             else:
                 cns.append(constraint)
         return cns
@@ -312,6 +306,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         the user constraints are updated.
 
         """
+        # FIXME: we can probably do better by storing the old constraints,
+        # getting the new constraints, finding the differences, and telling the
+        # solver to remove/add constraints.
+        # Or maybe not. Timings will tell.
         self._initialized = False
         self.initialize()
 

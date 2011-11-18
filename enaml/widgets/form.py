@@ -4,8 +4,9 @@
 #------------------------------------------------------------------------------
 from traits.api import Instance, Str
 
+from casuarius import ConstraintVariable
+
 from .layout.layout_helpers import align_v_center, horizontal, vertical
-from .layout.symbolics import ConstraintVariable
 from .container import AbstractTkContainer, Container
 
 

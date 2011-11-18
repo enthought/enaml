@@ -1,4 +1,4 @@
-from .symbolics import ConstraintVariable
+from casuarius import ConstraintVariable
 
 
 class BoxModel(object):
