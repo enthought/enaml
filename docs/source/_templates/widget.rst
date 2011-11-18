@@ -5,28 +5,25 @@
 
 .. autoclass:: {{ objname }}
 
-{ # todo: properly convert the name from camel case to underscore separated
-  lower case name # }
 
 Backends
 --------
-
 
 Qt
 ^^
 
 .. inheritance-diagram::
-    enaml.widgets.qt.qt_{{ objname|lower }}.Qt{{ objname }}
+    {{ module|replace('widgets.', 'widgets.qt.qt_') }}.Qt{{ objname }}
     :parts: 1
 
-.. autoclass:: enaml.widgets.qt.qt_{{ objname|lower }}.Qt{{ objname }}
+.. autoclass:: {{ module|replace('widgets.', 'widgets.qt.qt_') }}.Qt{{ objname }}
 
 Wx
 ^^
 
 .. inheritance-diagram::
-    enaml.widgets.wx.wx_{{ objname|lower }}.WX{{ objname }}
+    {{ module|replace('widgets.', 'widgets.wx.wx_') }}.WX{{ objname }}
     :parts: 1
 
-.. autoclass:: enaml.widgets.wx.wx_{{ objname|lower }}.WX{{ objname }}
+.. autoclass:: {{ module|replace('widgets.', 'widgets.wx.wx_') }}.WX{{ objname }}
 
