@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 """ Slider Example
 
-Show the use of a simple slider control which used to convert a 
-range of values on a log scale.
+Demonstrates the use of a simple slider control which used to convert a 
+range of integer values into values on a log scale.
 
 """
 import math
