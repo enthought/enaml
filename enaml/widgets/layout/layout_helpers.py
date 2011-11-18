@@ -1,12 +1,25 @@
 from abc import ABCMeta, abstractmethod
 
-from casuarius import LinearSymbolic, STRENGTH_MAP
+from casuarius import ConstraintVariable, LinearSymbolic, STRENGTH_MAP
 
 from ..component import Component
 
 
 # XXX make default space computed better
 DEFAULT_SPACE = 10
+
+
+class Constrainable(object):
+    """ Abstract base class for objects that can be laid out by these helpers.
+
+    Minimally, they need to have `top`, `bottom`, `left`, `right` attributes
+    that are `LinearSymbolic` instances. They also need a `visible` attribute
+    that is a `bool`.
+
+    """
+    __metaclass__ = ABCMeta
+
+Constrainable.register(Component)
 
 
 #------------------------------------------------------------------------------
@@ -70,8 +83,10 @@ class DeferredConstraints(object):
 
         Parameters
         ----------
-        container : Container
-            The container that owns this DeferredConstraints.
+        container : Container or None
+            The container that owns this DeferredConstraints. Sometimes it can
+            be None for contexts in which there may be no Container, as in
+            certain nested DeferredConstraints.
 
         Returns
         -------
@@ -85,8 +100,10 @@ class DeferredConstraints(object):
 
         Parameters
         ----------
-        container : Container
-            The container that owns this DeferredConstraints.
+        container : Container or None
+            The container that owns this DeferredConstraints. Sometimes it can
+            be None for contexts in which there may be no Container, as in
+            certain nested DeferredConstraints.
 
         Returns
         -------
@@ -135,13 +152,13 @@ class DeferredConstraintsFunction(DeferredConstraints):
 
 
 class AbutmentHelper(DeferredConstraints):
-    """ A deferred constraints helper base class that lays out Components
+    """ A deferred constraints helper class that lays out Components
     abutting each other in a given orientation.
 
     """
 
     def __init__(self, orientation, *items):
-        super(AbutmentHelper, self).__init__(*items)
+        super(AbutmentHelper, self).__init__(orientation, *items)
         self.orientation = orientation
         self.items = items
 
@@ -150,15 +167,19 @@ class AbutmentHelper(DeferredConstraints):
         cns = [f.constraint() for f in AbutmentCn.from_items(items, self.orientation)]
         return cns
 
+    def __repr__(self):
+        return '{0}({1})'.format(self.orientation,
+            ', '.join(map(repr(self.items))))
+
 
 class AlignmentHelper(DeferredConstraints):
-    """ A deferred constraints helper base class that lays out with a given
+    """ A deferred constraints helper class that lays out with a given
     anchor to align.
 
     """
 
     def __init__(self, anchor, *items):
-        super(AlignmentHelper, self).__init__(*items)
+        super(AlignmentHelper, self).__init__(anchor, *items)
         self.anchor = anchor
         self.items = items
 
@@ -166,6 +187,86 @@ class AlignmentHelper(DeferredConstraints):
         items = clear_invisible(self.items)
         cns = [f.constraint() for f in AlignmentCn.from_items(items, self.anchor)]
         return cns
+
+    def __repr__(self):
+        return 'align({1!r}, {2})'.format(self.anchor,
+            ', '.join(map(repr(self.items))))
+
+
+class LinearBoxHelper(DeferredConstraints, Constrainable):
+    """ A DeferredConstraints helper class that lays out Components either
+    horizontally or vertically and taking up all of the space in the orthogonal
+    direction.
+
+    LinearBoxHelpers can be nested.
+
+    """
+
+    #: Satisfy the Constrainable interface by supplying a static True vaue for
+    #: visibility.
+    visible = True
+
+    #: A mapping from direction to the order of anchor names on the parent
+    #: container to lookup for a pair of items in order to make the constraints
+    #: between the border of the container and the first/last items.
+    container_direction_map = {
+        'horizontal': ('left', 'right'),
+        'vertical': ('top', 'bottom'),
+    }
+
+    def __init__(self, orientation, *items):
+        super(LinearBoxHelper, self).__init__(orientation, *items)
+        self.orientation = orientation
+        if orientation == 'horizontal':
+            self.ortho_orientation = 'vertical'
+        elif orientation == 'vertical':
+            self.ortho_orientation = 'horizontal'
+        else:
+            msg = ("Expected 'horizontal' or 'vertical' for orientation. "
+                "Got {!r} instead.").format(orientation)
+            raise ValueError(msg)
+        self.items = items
+
+        for attr in ('top', 'bottom', 'left', 'right'):
+            label = '{0}_{1:x}'.format(self.orientation[0]+'box', id(self))
+            setattr(self, attr, ConstraintVariable('{0}_{1}'.format(attr, label)))
+
+    def _get_constraint_list(self, container):
+        items = clear_invisible(self.items)
+        first_name, last_name = self.container_direction_map[self.orientation]
+        first_boundary = getattr(self, first_name)
+        last_boundary = getattr(self, last_name)
+        first_name, last_name = self.container_direction_map[self.ortho_orientation]
+        first_ortho_boundary = getattr(self, first_name)
+        last_ortho_boundary = getattr(self, last_name)
+        if container is not None:
+            # We have a real container, not just nested inside of another
+            # LinearBoxHelper.
+            # Check for .contents_top, etc. attributes. If those exist, use them
+            # instead.
+            if hasattr(container, 'contents_top'):
+                constraints = [
+                    getattr(self, attr) == getattr(container, 'contents_'+attr)
+                        for attr in ('top', 'bottom', 'left', 'right')]
+            else:
+                constraints = [getattr(self, attr) == getattr(container, attr)
+                    for attr in ('top', 'bottom', 'left', 'right')]
+        else:
+            constraints = []
+
+        along_args = [first_boundary] + items + [last_boundary]
+        helpers = [AbutmentHelper(self.orientation, *along_args)]
+        for item in items:
+            if isinstance(item, Constrainable):
+                helpers.append(AbutmentHelper(self.ortho_orientation, first_ortho_boundary, item, last_ortho_boundary))
+            if isinstance(item, type(self)):
+                # This is a nested LinearBoxHelper.
+                helpers.append(item)
+
+        for helper in helpers:
+            constraints.extend(helper.get_constraint_list(None))
+
+        return constraints
 
 
 class AbstractCnFactory(object):
@@ -186,10 +287,10 @@ class AbstractCnFactory(object):
             * There are either 0 or else two or more items in the sequence.
 
             * The first and last items are instances of either
-              LinearSymbolic or Component.
+              LinearSymbolic or Constrainable.
 
             * All of the items in the sequence are instances of 
-              LinearSymbolic, Component, Spacer, or int.
+              LinearSymbolic, Constrainable, Spacer, or int.
     
         If any of the above conditions do not hold, an exception is 
         raised with a (hopefully) useful error message.
@@ -202,11 +303,11 @@ class AbstractCnFactory(object):
             msg = 'Two or more items required to setup abutment constraints.'
             raise ValueError(msg)
         
-        extrema_types = (LinearSymbolic, Component)
+        extrema_types = (LinearSymbolic, Constrainable)
         def extrema_test(item):
             return isinstance(item, extrema_types)
         
-        item_types = (LinearSymbolic, Component, BaseSpacer, int)
+        item_types = (LinearSymbolic, Constrainable, BaseSpacer, int)
         def item_test(item):
             return isinstance(item, item_types)
 
@@ -318,7 +419,7 @@ class AbutmentCn(BaseCnFactory):
             # 'validate'. For subsequent iterations, this condition is 
             # enforced by the fact that this loop only pushes those types 
             # back onto the stack.
-            if isinstance(first_item, Component):
+            if isinstance(first_item, Constrainable):
                 first_anchor = getattr(first_item, first_name)
             elif isinstance(first_item, LinearSymbolic):
                 first_anchor = first_item
@@ -326,7 +427,7 @@ class AbutmentCn(BaseCnFactory):
                 raise TypeError('This should never happen')
             
             # Grab the next item off the stack. It is either a 
-            # Component, LinearSymbolic, Spacer, or int. If it
+            # Constrainable, LinearSymbolic, Spacer, or int. If it
             # can't provide an anchor, we grab the after that
             # which *should* be able to provide one. If no space
             # is given, we compute a default space.
@@ -337,7 +438,7 @@ class AbutmentCn(BaseCnFactory):
             elif isinstance(next_item, int):
                 spacer = EqSpacer(next_item)
                 second_item = items.pop()
-            elif isinstance(next_item, Component):
+            elif isinstance(next_item, Constrainable):
                 spacer = EqSpacer()
                 second_item = next_item
             elif isinstance(next_item, LinearSymbolic):
@@ -349,12 +450,12 @@ class AbutmentCn(BaseCnFactory):
             # If the second_item can't provide an anchor, such as
             # two spacers next to each other, then this is an error
             # condition and we raise an appropriate exception.
-            if isinstance(second_item, Component):
+            if isinstance(second_item, Constrainable):
                 second_anchor = getattr(second_item, second_name)   
             elif isinstance(second_item, LinearSymbolic):
                 second_anchor = second_item
             else:
-                msg = 'Expected anchor or Component. Got %s instead.'
+                msg = 'Expected anchor or Constrainable. Got %r instead.'
                 raise TypeError(msg % second_item)
             
             # Create the class instance for this constraint
@@ -413,12 +514,12 @@ class AlignmentCn(BaseCnFactory):
             # constraint pair
             first_item = items.pop()
 
-            # first_item will be either a Component or a LinearSymbolic.
+            # first_item will be either a Constrainable or a LinearSymbolic.
             # For the first iteration, this is enforced by the staticmethod
             # 'validate'. For subsequent iterations, this condition is 
             # enforced by the fact that this loop only pushes those types 
             # back onto the stack.
-            if isinstance(first_item, Component):
+            if isinstance(first_item, Constrainable):
                 first_anchor = getattr(first_item, anchor_name)
             elif isinstance(first_item, LinearSymbolic):
                 first_anchor = first_item
@@ -426,7 +527,7 @@ class AlignmentCn(BaseCnFactory):
                 raise TypeError('This should never happen')
             
             # Grab the next item off the stack. It is either a 
-            # Component, LinearSymbolic, Spacer, or int. If it
+            # Constrainable, LinearSymbolic, Spacer, or int. If it
             # can't provide an anchor, we grab the after that
             # which *should* be able to provide one. If no space
             # is given, we compute a default space of zero since
@@ -438,7 +539,7 @@ class AlignmentCn(BaseCnFactory):
             elif isinstance(item, int):
                 spacer = EqSpacer(item)
                 second_item = items.pop()
-            elif isinstance(item, Component):
+            elif isinstance(item, Constrainable):
                 spacer = EqSpacer(0)
                 second_item = item
             elif isinstance(item, LinearSymbolic):
@@ -450,7 +551,7 @@ class AlignmentCn(BaseCnFactory):
             # If the second_item can't provide an anchor, such as
             # two spacers next to each other, then this is an error
             # condition and we raise an appropriate exception.
-            if isinstance(second_item, Component):
+            if isinstance(second_item, Constrainable):
                 second_anchor = getattr(second_item, anchor_name)   
             elif isinstance(second_item, LinearSymbolic):
                 second_anchor = second_item
@@ -608,6 +709,22 @@ def vertical(*items):
     return AbutmentHelper('vertical', *items)
 
 
+def hbox(*items):
+    """ Create a DeferredConstraints object composed of horizontal abutments for
+    a given sequence of items.
+
+    """
+    return LinearBoxHelper('horizontal', *items)
+
+
+def vbox(*items):
+    """ Create a DeferredConstraints object composed of vertical abutments for
+    a given sequence of items.
+
+    """
+    return LinearBoxHelper('vertical', *items)
+
+
 def align_left(*items):
     """ Align the left anchors of the given components. Inter-component
     spacing is allowed.
@@ -670,6 +787,8 @@ def align(anchor, *items):
 LAYOUT_HELPERS = {
     'horizontal': horizontal,
     'vertical': vertical,
+    'hbox': hbox,
+    'vbox': vbox,
     'align_left': align_left,
     'align_right': align_right,
     'align_top': align_top,
