@@ -5,24 +5,23 @@
 import wx.html
 
 from .wx_control import WXControl
+
 from ..html import AbstractTkHtml
 
-class WXHtml(WXControl, AbstractTkHtml):
-    """ A wxPython implementation of IHtml.
 
-    The WXHtml widget renders html source using a wx.html.HtmlWindow.
+class WXHtml(WXControl, AbstractTkHtml):
+    """ A wxPython implementation of Html
 
     """
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self):
-        """ Creates the underlying html control.
+        """ Creates the underlying wx.html.HtmlWindow.
 
         """
-        # XXX GetBestSize on the HtmlWindow returns (0, 0)
-        # So for now, we just set the min size to something sensible.
-        self.widget = wx.html.HtmlWindow(self.parent_widget(), size=(300, 200))
+
+        self.widget = wx.html.HtmlWindow(self.parent_widget())
 
     def initialize(self):
         """ Initializes the attributes of the control.
@@ -44,4 +43,13 @@ class WXHtml(WXControl, AbstractTkHtml):
 
         """
         self.widget.SetPage(source)
+
+    def size_hint(self):
+        """ Overridden parent class method to return a sensible size
+        hint.
+
+        """ 
+        # wx returns (0, 0) for the best size of an HtmlWindow so we 
+        # just return the same size hint as a QAbstractScrollArea
+        return (256, 192)
 
