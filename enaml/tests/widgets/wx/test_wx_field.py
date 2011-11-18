@@ -4,16 +4,22 @@
 #------------------------------------------------------------------------------
 from unittest import expectedFailure
 import warnings
+
 import wx
+
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
+
 from .. import field
+
 
 warnings.simplefilter('ignore')
 
+
 @skip_nonwindows
 class TestWxField(WXTestAssistant, field.TestField):
-    """ WXField tests. """
+    """ WXField tests. 
 
+    """
     def get_value(self, widget):
         """ Get the visible text of a field.
 
@@ -25,7 +31,6 @@ class TestWxField(WXTestAssistant, field.TestField):
         """ Simulate typing in a field.
 
         """
-        widget.SetFocus()
         widget.WriteText(text)
         self.send_wx_event(widget, wx.EVT_TEXT)
         self.process_wx_events(self.app)
@@ -35,7 +40,6 @@ class TestWxField(WXTestAssistant, field.TestField):
 
         """
         widget.ChangeValue(text)
-        self.send_wx_event(widget, wx.EVT_TEXT)
         self.process_wx_events(self.app)
 
     def set_cursor_position(self, widget, index):
@@ -88,4 +92,21 @@ class TestWxField(WXTestAssistant, field.TestField):
         """
         self.send_wx_event(widget, wx.EVT_TEXT_ENTER)
         self.process_wx_events(self.app)
+
+    def gain_focus_if_needed(self, widget):
+        """ Have the widget gain focus if required for the tests.
+
+        """
+        # wx doesn't seem to handle anything on the widget properly 
+        # if the widget's not visible or doesn't have focus. So, in order 
+        # for these tests to run, we need to gain focus on the widget. This
+        # is not required in normal circumstances. Further, we can't get
+        # widget to SetFocus before the value has been set, so we need
+        # to "re-initialize" the widget it. This is really terrible and
+        # it would be good to know which part of wx is broken so this
+        # can be fixed.
+        widget.SetFocus()
+        val = self.component.value
+        self.component.value = ''
+        self.component.value = val
 

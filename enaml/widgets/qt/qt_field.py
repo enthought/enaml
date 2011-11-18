@@ -7,24 +7,22 @@ from qt import QtGui
 from .qt_control import QtControl
 
 from ..field import AbstractTkField
-from ...exceptions import notification_context
 
-password_modes = {
+from ...guard import guard
+
+
+_PASSWORD_MODES = {
     'normal': QtGui.QLineEdit.Normal,
     'password': QtGui.QLineEdit.Password,
     'silent': QtGui.QLineEdit.NoEcho,
 }
 
-class QtField(QtControl, AbstractTkField):
-    """ A Qt implementation of a Field.
 
-    QtField uses a QLineEdit to provides a single line of editable text.
+class QtField(QtControl, AbstractTkField):
+    """ A Qt implementation of a Field which uses a QLineEdit to provide
+    a single line of editable text.
 
     """
-    # A flag which set to True when we're applying updates to the 
-    # model. Allows us to avoid unnecessary notification recursion.
-    setting_value = False
-
     #--------------------------------------------------------------------------
     # SetupMethods
     #--------------------------------------------------------------------------
@@ -42,17 +40,16 @@ class QtField(QtControl, AbstractTkField):
         shell = self.shell_obj
         self.set_read_only(shell.read_only)
         self.set_placeholder_text(shell.placeholder_text)
-        
-        if shell.value is not None:
-            self.update_text()
+
+        text = shell.field_text
+        if text is not None:
+            self.set_text(text)
         
         shell._modified = False
+
         self.set_cursor_position(shell.cursor_position)
         self.set_password_mode(shell.password_mode)
-        
-        max_length = shell.max_length
-        if max_length:
-            self.set_max_length(max_length)
+        self.set_max_length(shell.max_length)
 
     def bind(self):
         """ Binds the event handlers for the QLineEdit.
@@ -62,11 +59,12 @@ class QtField(QtControl, AbstractTkField):
         widget = self.widget
         widget.textEdited.connect(self.on_text_edited)
         widget.textChanged.connect(self.on_text_changed)
-        widget.returnPressed.connect(self.on_text_enter)
-        widget.selectionChanged.connect(self.on_selection)
+        widget.returnPressed.connect(self.on_return_pressed)
+        widget.selectionChanged.connect(self.on_selection_changed)
+        widget.cursorPositionChanged.connect(self.on_cursor_changed)
 
     #--------------------------------------------------------------------------
-    # Implementation
+    # Shell Object Change Handlers
     #--------------------------------------------------------------------------
     def shell_max_length_changed(self, max_length):
         """ The change handler for the 'max_length' attribute on the 
@@ -82,14 +80,6 @@ class QtField(QtControl, AbstractTkField):
         """
         self.set_read_only(read_only)
 
-    def shell_cursor_position_changed(self, cursor_position):
-        """ The change handler for the 'cursor_position' attribute on 
-        the shell object.
-
-        """
-        if not self.setting_value:
-            self.set_cursor_position(cursor_position)
-
     def shell_placeholder_text_changed(self, placeholder_text):
         """ The change handler for the 'placeholder_text' attribute
         on the shell object.
@@ -97,34 +87,40 @@ class QtField(QtControl, AbstractTkField):
         """
         self.set_placeholder_text(placeholder_text)
 
-    def shell_converter_changed(self, converter):
-        """ Handles the converter object on the shell object changing.
+    def shell_cursor_position_changed(self, cursor_position):
+        """ The change handler for the 'cursor_position' attribute on 
+        the shell object.
 
         """
-        self.update_text()
-        self._convert_text_value()
-    
-    def shell_value_changed(self, value):
-        """ The change handler for the 'value' attribute on the shell object.
+        if not guard.guarded(self, 'updating_cursor'):
+            self.set_cursor_position(cursor_position)
+
+    def shell_field_text_changed(self, text):
+        """ The change handler for the 'field_text' attribute on the shell 
+        object.
 
         """
-        if not self.setting_value:
-            self.update_text()
-            self.shell_obj._modified = False
+        if text is not None:
+            if not guard.guarded(self, 'updating_text'):
+                self.set_text(text)
+                self.shell_obj._modified = False
 
     def shell_password_mode_changed(self, mode):
-        """ The change handler for the 'password_mode' attribute on the shell object.
+        """ The change handler for the 'password_mode' attribute on the 
+        shell object.
+        
         """
-        shell = self.shell_obj
-        self.set_password_mode(shell.password_mode)
+        self.set_password_mode(mode)
 
+    #--------------------------------------------------------------------------
+    # Manipulation Methods 
+    #--------------------------------------------------------------------------
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
         end positions, inclusive.
 
         """
         self.widget.setSelection(start, end - start)
-        self.update_shell_selection()
 
     def select_all(self):
         """ Select all the text in the line edit.
@@ -134,7 +130,6 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.widget.selectAll()
-        self.update_shell_selection()
 
     def deselect(self):
         """ Deselect any selected text.
@@ -144,14 +139,12 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.widget.deselect()
-        self.update_shell_selection()
 
     def clear(self):
         """ Clear the line edit of all text.
 
         """
         self.widget.clear()
-        self.update_shell_selection()
 
     def backspace(self):
         """ Simple backspace functionality.
@@ -161,7 +154,6 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.widget.backspace()
-        self.update_shell_selection()
 
     def delete(self):
         """ Simple delete functionality.
@@ -171,7 +163,6 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.widget.del_()
-        self.update_shell_selection()
 
     def end(self, mark=False):
         """ Moves the cursor to the end of the line.
@@ -190,7 +181,6 @@ class QtField(QtControl, AbstractTkField):
             widget.setSelection(start, end)
         else:
             widget.end(mark)
-        self.update_shell_selection()
 
     def home(self, mark=False):
         """ Moves the cursor to the beginning of the line.
@@ -209,7 +199,6 @@ class QtField(QtControl, AbstractTkField):
             widget.setSelection(start, end)
         else:
             widget.home(mark)
-        self.update_shell_selection()
 
     def cut(self):
         """ Cuts the selected text from the line edit.
@@ -219,14 +208,12 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.widget.cut()
-        self.update_shell_selection()
 
     def copy(self):
         """ Copies the selected text to the clipboard.
 
         """
         self.widget.copy()
-        self.update_shell_selection()
 
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
@@ -236,7 +223,6 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.widget.paste()
-        self.update_shell_selection()
 
     def insert(self, text):
         """ Insert the text into the line edit.
@@ -251,113 +237,92 @@ class QtField(QtControl, AbstractTkField):
 
         """
         self.widget.insert(text)
-        self.update_shell_selection()
 
     def undo(self):
         """ Undoes the last operation.
 
         """
         self.widget.undo()
-        self.update_shell_selection()
 
     def redo(self):
         """ Redoes the last operation
 
         """
         self.widget.redo()
-        self.update_shell_selection()
 
-    def _convert_text_value(self):
-        """ Convert the widget's text value through the shell's converter function.
-
-        """
-        widget = self.widget
-        shell = self.shell_obj
-        text = widget.text()
-        self.setting_value = True
-        with shell.capture_notification_exceptions():
-            value = shell.converter.from_component(text)
-            shell.value = value
-        self.setting_value = False
-
-    def on_text_edited(self, event):
-        """ The event handler for when the user edits the text through the UI.
+    #--------------------------------------------------------------------------
+    # Signal Handlers 
+    #--------------------------------------------------------------------------
+    def on_text_edited(self):
+        """ The event handler for when the user edits the text through 
+        the ui.
 
         """
-        widget = self.widget
-        shell = self.shell_obj
-        text = widget.text()
-        # Simply tell the shell that the event happened. on_text_changed() will
-        # also be called and will do the work of converting the value for us.
-        shell.text_edited = text
+        # The textEdited signal will be emitted along with the 
+        # textChanged signal if the user edits from the ui. In 
+        # that case, we only want to do one update.
+        if not guard.guarded(self, 'updating_text'):
+            with guard(self, 'updating_text'):
+                shell = self.shell_obj
+                text = self.widget.text()
+                shell.field_text = text
+                shell.text_edited = text
+                shell._modified = True
 
-    def on_text_changed(self, event):
-        """ The event handler for when the text is changed either
-        programmatically or through the UI.
+    def on_text_changed(self):
+        """ The event handler for when the user edits the text 
+        programmatically.
 
         """
-        widget = self.widget
-        shell = self.shell_obj
-        text = widget.text()
-        self._convert_text_value()
-        self.update_shell_selection()
-        shell.text_changed = text
-        shell._modified = True
+        # The textEdited signal will be emitted along with the 
+        # textChanged signal if the user edits from the ui. In 
+        # that case, we only want to do one update.
+        if not guard.guarded(self, 'updating_text'):
+            with guard(self, 'updating_text'):
+                shell = self.shell_obj
+                text = self.widget.text()
+                shell.field_text = text
 
-    def on_text_enter(self):
+    def on_return_pressed(self):
         """ The event handler for the return pressed event.
 
         """
         self.shell_obj.return_pressed = True
 
-    def on_max_length(self, event):
-        """ The event handler for the max length event.
+    def on_selection_changed(self):
+        """ The event handler for a selection event.
 
         """
-        self.shell_obj.max_length_reached = True
+        with guard(self, 'updating_selection'):
+            self.shell_obj._selected_text = self.widget.selectedText()
 
-    def on_selection(self):
-        """ The event handler for a selection (really a left up) event.
-
-        """
-        self.update_shell_selection()
-
-    def update_shell_selection(self):
-        """ Updates the selection and cursor position of the parent
-        to reflect the current state of the widget.
+    def on_cursor_changed(self):
+        """ The event handler for a cursor change event.
 
         """
-        shell = self.shell_obj
-        widget = self.widget
-        shell._selected_text = widget.selectedText()
-        self.setting_value = True
-        shell.cursor_position = widget.cursorPosition()
-        self.setting_value = False
+        with guard(self, 'updating_cursor'):
+            self.shell_obj.cursor_position = self.widget.cursorPosition()
 
-    def update_text(self):
-        """ Updates the text control with the converted parent value or
-        sets the error state on the parent if the conversion fails.
-
-        """
-        shell = self.shell_obj
-        with shell.capture_exceptions():
-            text = shell.converter.to_component(shell.value)
-            self.change_text(text)
-
-    def change_text(self, text):
-        """ Changes the text in the widget without emitted a text 
-        updated event. This should be called when the text is changed
-        programmatically.
+    #--------------------------------------------------------------------------
+    # Update methods 
+    #--------------------------------------------------------------------------
+    def set_text(self, text):
+        """ Updates the text control with the new text from the shell
+        object.
 
         """
         self.widget.setText(text)
 
     def set_max_length(self, max_length):
-        """ Sets the max length of the widget to max_length.
+        """ Set the max length of the control to max_length. If the max 
+        length is <= 0 or > 32767 then the control will be set to hold 
+        32kb of text.
 
         """
+        if (max_length <= 0) or (max_length > 32767):
+            max_length = 32767
         self.widget.setMaxLength(max_length)
-    
+
     def set_read_only(self, read_only):
         """ Sets read only state of the widget.
 
@@ -377,5 +342,8 @@ class QtField(QtControl, AbstractTkField):
         self.widget.setCursorPosition(cursor_position)
 
     def set_password_mode(self, password_mode):
-        self.widget.setEchoMode(password_modes[password_mode])
+        """ Sets the password mode of the wiget.
+
+        """
+        self.widget.setEchoMode(_PASSWORD_MODES[password_mode])
         
