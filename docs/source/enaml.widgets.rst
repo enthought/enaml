@@ -43,6 +43,7 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.form.Form
     enaml.widgets.group_box.GroupBox
     enaml.widgets.dialog.Dialog
+    enaml.widgets.progress_bar.ProgressBar
     :parts: 1
 
 Implementation
@@ -83,6 +84,7 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.form.AbstractTkForm
     enaml.widgets.group_box.AbstractTkGroupBox
     enaml.widgets.dialog.AbstractTkDialog
+    enaml.widgets.progress_bar.AbstractTkProgressBar
     :parts: 1
 
 Standard Widgets
@@ -120,7 +122,7 @@ Basic widgets
     enaml.widgets.spin_box.SpinBox
     enaml.widgets.datetime_edit.DatetimeEdit
     enaml.widgets.date_edit.DateEdit
-
+    enaml.widgets.progress_bar.ProgressBar
 
 Container widgets
 ^^^^^^^^^^^^^^^^^
