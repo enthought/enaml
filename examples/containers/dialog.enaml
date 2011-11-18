@@ -26,9 +26,8 @@ defn InformDialog(message):
         title = "Inform"
         modality = "application_modal"
         constraints = [
-            vertical(top, label, ok_button, bottom),
-            horizontal(left, label, right),
-            horizontal(left, _space_, ok_button, right),
+            vbox(label,
+                hbox(_space_, ok_button)),
         ]
         Label -> label:
             text = message
@@ -45,10 +44,8 @@ defn ConfirmDialog(message):
         title = "Confirm"
         modality = "application_modal"
         constraints = [
-            vertical(top, label, cancel_button, bottom),
-            horizontal(left, label, right),
-            horizontal(left, _space_, ok_button, cancel_button, right),
-            align_v_center(ok_button, cancel_button),
+            vbox(label,
+                hbox(_space_, ok_button, cancel_button)),
         ]
         Label -> label:
             text = message
@@ -63,8 +60,7 @@ defn ConfirmDialog(message):
 defn MainWindow():
     Window:
         constraints = [
-            vertical(top, dlg_button, bottom),
-            horizontal(left, dlg_button, right),
+            vbox(dlg_button),
         ]
         PushButton -> dlg_button:
             text = "Do Something Rash"

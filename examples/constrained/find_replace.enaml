@@ -23,11 +23,11 @@ defn MainWindow:
             vertical(top, find_field, replace_field, bottom),
 
             # Setup the alignment of the left of the two fields
-            align_left(find_field, replace_field),
+            align('left', find_field, replace_field),
 
             # Setup the vertical aligment of each row of controls
-            align_v_center(find, find_next, find_field),
-            align_v_center(replace, replace_and_find, replace_field),
+            align('v_center', find, find_next, find_field),
+            align('v_center', replace, replace_and_find, replace_field),
 
             # Setup the weak width constraints of each control
             (find.width == find_next.width) | 'weak',

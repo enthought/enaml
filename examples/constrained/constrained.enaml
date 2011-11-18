@@ -30,16 +30,16 @@ defn MainWindow:
             horizontal(add_button, remove_button, _space_, change_mode_button, _space_, share_button),
 
             # Align the bottom edge of all buttons
-            align_bottom(add_button, remove_button, change_mode_button, share_button),
+            align('bottom', add_button, remove_button, change_mode_button, share_button),
 
             # Align the left edge of the first button and the frame
-            align_left(frame, add_button),
+            align('left', frame, add_button),
 
             # Align the right edge of the last button and the frame
-            align_right(frame, share_button),
+            align('right', frame, share_button),
 
             # Weakly align the center of the frame and the center button
-            align_h_center(frame, change_mode_button) | 'weak',
+            align('h_center', frame, change_mode_button) | 'weak',
 
             # Set a sensible minimum height for the frame
             frame.height >= 150,

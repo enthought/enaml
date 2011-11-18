@@ -34,12 +34,10 @@ defn MainWindow:
     Window:
         title = "Group Boxes"
         constraints = [
-            vertical(top, top_box, bottom_box, title_check, bottom),
-            horizontal(left, top_box, right),
-            horizontal(left, bottom_box, right),
-            horizontal(left, _space_, title_check, flat_check, right),
-            align_bottom(title_check, flat_check),
-            top_form.midline == bottom_form.midline,
+            vbox(top_box,
+                bottom_box,
+                hbox(_space_, title_check, flat_check)),
+            align('midline', top_form, bottom_form),
         ]
         GroupBox -> top_box:
             title = "Personal Details"
