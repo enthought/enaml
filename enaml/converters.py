@@ -2,51 +2,52 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import datetime
-import math
-
 from abc import ABCMeta, abstractmethod
+import datetime
 
 
 class Converter(object):
-    """ Map values from an Enaml component to userspace models, and vice versa.
+    """ Map values from an Enaml component to userspace models and 
+    vice versa.
 
-    Converters can be used to translate a values between the userspace models
-    and the Enaml components or toolkit widgets. For example, a Converter can
-    can be used to synchronize a Field's value with an integer attribute.
+    Converters can be used to translate a values between the userspace 
+    models and the Enaml components or toolkit widgets. For example, a 
+    Converter can be used to synchronize a Field's string value with an 
+    integer attribute.
 
-    Enaml provides several base Converters to be used with components like the
-    Slider and Field. Custom converters can be created by subclassing and
+    Enaml provides several base Converters to be used with components 
+    like the Field. Custom converters can be created by subclassing and
     implementing the :meth:`to_component` and `from_component` methods.
 
-    .. note:: To avoid race conditions and had to find bugs please ensure that
-        'to_component' and 'from_component' are inverse functions. Thus the
-        following expression is always valid::
+    .. note:: To avoid race conditions and hard to track bugs 
+        'to_component' and 'from_component' should be inverse 
+        functions. Thus the following expression should hold::
 
-            value == Converter.from_component(Converter.to_component(value))
+            val == Converter.from_component(Converter.to_component(val))
 
     """
-
     __metaclass__ = ABCMeta
 
     @abstractmethod
     def to_component(self, value):
-        """ Convert a value to be used by the Enaml component.
+        """ Convert a value to be used by the Enaml component. If the
+        value cannot be converted, the method should raise a ValueError.
 
         """
         return NotImplemented
 
     @abstractmethod
     def from_component(self, value):
-        """ Convert from the Enaml component to userspace models.
+        """ Convert from the Enaml component to userspace models. If the
+        value cannot be converted, the method should raise a ValueError.
 
         """
         return NotImplemented
 
-class PassThroughConverter(Converter):
-    """ A simple pass throught converter.
 
-    The converter just passes the values throught without acting uppon them.
+class NullConverter(Converter):
+    """ A simple pass through converter which does not perform any
+    value modification.
 
     """
     def to_component(self, value):
@@ -55,14 +56,15 @@ class PassThroughConverter(Converter):
     def from_component(self,value):
         return value
 
-class BaseStringConverter(Converter):
-    """ A simple abstract Converter that converts a userspace value to a string.
 
-    The converter is an abstract class that defines only the to_component
-    method. Subclasses need to implement the from_component method in order
-    to have a fully functional Converter. Converters subclassing the
-    :class:`BaseStringConverter` are suitable for use in Enaml Field
-    components.
+class BaseStringConverter(Converter):
+    """ A simple abstract Converter that converts a userspace value 
+    to a string.
+
+    This is an abstract class that defines only the to_component method. 
+    Subclasses need to implement the from_component method in order to
+    have a fully functional Converter. Subclasses derived from this class
+    are suitable for use in Enaml Field components.
 
     """
     def to_component(self, value):
@@ -70,10 +72,12 @@ class BaseStringConverter(Converter):
 
 
 class StringConverter(BaseStringConverter):
-    """ A simple Converter that converts a userspace value to a string and back.
+    """ A simple Converter that converts a userspace value to a string 
+    and back.
 
-    .. note:: The class methods are only symmetric when the userspace value
-        is a string. For other types a custom `from_component` method is needed.
+    .. note:: The class methods are only symmetric when the userspace 
+        value is a string. For other types a custom `from_component` 
+        method is needed.
 
     """
     def from_component(self, value):
@@ -86,6 +90,7 @@ class IntConverter(BaseStringConverter):
     """
     def from_component(self, value):
         return int(value)
+
 
 class FloatConverter(BaseStringConverter):
     """ Convert a float value to a string and back.
@@ -107,7 +112,7 @@ class HexConverter(BaseStringConverter):
 
 
 class OctalConverter(BaseStringConverter):
-    """ Convert from a widget to a base-8 integer, and back to an octal string.
+    """ Convert from a widget to a base-8 integer.
 
     """
     def to_component(self, value):
@@ -115,34 +120,6 @@ class OctalConverter(BaseStringConverter):
 
     def from_component(self, value):
         return int(value, 8)
-
-
-class SliderRangeConverter(Converter):
-    """ Map a slider's value onto an interval other than (0.0, 1.0).
-
-    """
-    def __init__(self, low, high):
-        self.low = low
-        self.high = high
-
-    def to_component(self, value):
-        low = self.low
-        return (value - low) / float(self.high - low)
-
-    def from_component(self, value):
-        low = self.low
-        return float(value * (self.high - low) + low)
-
-
-class SliderLogConverter(Converter):
-    """ Map the slider's range to a log scale.
-
-    """
-    def to_component(self, value):
-        return math.log10(value)
-
-    def from_component(self, value):
-        return 10 ** value
 
 
 class DateConverter(Converter):
@@ -195,3 +172,4 @@ class DateTimeConverter(Converter):
 
         """
         return datetime.datetime.strptime(value, self.format_string)
+

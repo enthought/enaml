@@ -9,7 +9,6 @@ class ConverterTestCase(unittest.TestCase):
     """ A base class for testing `enaml.converters.Converter` objects.
 
     """
-
     def assertConverterSymmetric(self, converter, widget_value, external_value):
         """ Check that the 'to_component' and 'from_component' methods of
         a converter are symmetric:
