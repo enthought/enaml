@@ -21,7 +21,6 @@ defn MainWindow:
                 value << math.log(val_slider.value)
                 read_only = True
             Slider -> val_slider:
-                tick_position = 'bottom'
                 tick_interval = 50
                 maximum = 1000
                 minimum = 1
