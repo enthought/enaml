@@ -9,17 +9,15 @@ from .wx_control import WXControl
 from ..slider import AbstractTkSlider
 
 
-#: A map from horiz Enaml constants to wxSlider vert TickPosition values.
-#: Note that in this case 'top' means the ticks are on top of a horizontal
-#: scroll bar.
+#: A map from Enaml constants to wxSlider TickPosition values for a
+#: horizontal slider.
 HORIZ_TICK_POS_MAP = {'top': wx.SL_TOP, 
                       'bottom': wx.SL_BOTTOM,
                       'both': wx.SL_BOTH}
 
 
-#: A map from vert Enaml constants to wxSlider horiz TickPosition values.
-#: Note that in this case 'left' means the ticks are to the left of a 
-#: vertical scroll bar.
+#: A map from Enaml constants to wxSlider TickPosition values for a
+#: vertical slider.
 VERT_TICK_POS_MAP = {'left': wx.SL_LEFT, 
                      'right': wx.SL_RIGHT,
                      'both': wx.SL_BOTH}
