@@ -145,7 +145,7 @@ class Slider(Control):
 
     #: Hug height is redefined as a property to be computed based on the 
     #: orientation of the slider unless overridden by the user.
-    hug_height = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
+    hug_height = Property(PolicyEnum, depends_on=['_hug_height', 'orientation'])
 
     #: An internal override trait for hug_width
     _hug_width = Either(None, PolicyEnum, default=None)
@@ -244,10 +244,10 @@ class Slider(Control):
             msg = msg.format(self.minimum, value)
             raise TraitError(msg)
 
-        # FIXME:
-        # Because the Range Trait will not fire the change notifier when
-        # the dynamic bounds cause a change we will perform the check
-        # and make sure the value_changed function is called.
+        # The Range Trait will not fire a change notification when the 
+        # dynamic bounds cause a value change. So, we perform the check
+        # and make sure the value is properly updated, which will fire
+        # a change event on its own.
         position = self.value
         if position > value:
             self.value = value
