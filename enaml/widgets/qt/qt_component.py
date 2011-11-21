@@ -144,13 +144,15 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     # Shell Object Change Handlers 
     #--------------------------------------------------------------------------
     def shell_enabled_changed(self, enabled):
-        """ The change handler for the 'enabled' attribute on the parent.
+        """ The change handler for the 'enabled' attribute on the shell
+        object.
 
         """
         self.set_enabled(enabled)
 
     def shell_visible_changed(self, visible):
-        """ The change handler for the 'visible' attribute on the parent.
+        """ The change handler for the 'visible' attribute on the shell
+        object.
 
         """
         self.set_visible(visible)
