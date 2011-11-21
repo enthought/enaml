@@ -22,7 +22,7 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
         self.widget = QtGui.QProgressBar(self.parent_widget())
     
     def initialize(self):
-        """ Initialize the attribute of the progress bar.
+        """ Initialize the attributes of the progress bar.
 
         """
         super(QtControl, self).initialize()

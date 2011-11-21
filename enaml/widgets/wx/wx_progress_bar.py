@@ -23,6 +23,9 @@ class WXProgressBar(WXControl, AbstractTkProgressBar):
         self.widget = wx.Gauge(self.parent_widget())
 
     def initialize(self):
+        """ Initialize the attributes of the progress bar.
+
+        """
         super(WXControl, self).initialize()
         shell = self.shell_obj
         self._set_minimum(shell.minimum)
