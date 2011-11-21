@@ -13,7 +13,7 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
 
     """
     #--------------------------------------------------------------------------
-    # Setup methods
+    # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
         """ Creates the underlying QProgressBar.
@@ -33,7 +33,7 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
         self._set_value(shell.value)
 
     #--------------------------------------------------------------------------
-    # Abstract implementation methods
+    # Abstract Implementation Methods
     #--------------------------------------------------------------------------
     def shell_value_changed(self, value):
         """ The change handler for the 'value' attribute of the shell
@@ -57,7 +57,7 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
         self._set_maximum(maximum)
 
     #--------------------------------------------------------------------------
-    # Widget update  methods
+    # Widget Update Methods
     #--------------------------------------------------------------------------
     def _set_value(self, value):
         """ Sets the value of the progress bar.
