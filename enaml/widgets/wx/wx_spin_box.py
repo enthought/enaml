@@ -6,10 +6,13 @@ import wx
 import wx.lib.newevent
 
 from .wx_control import WXControl
+
 from ..spin_box import AbstractTkSpinBox
 
+from ...converters import IntConverter
 
-# The new changed event for the custom spin ctrl.
+
+#: The changed event for the custom spin ctrl.
 CustomSpinCtrlEvent, EVT_CUSTOM_SPINCTRL = wx.lib.newevent.NewEvent()
 
 
@@ -25,11 +28,21 @@ class CustomSpinCtrl(wx.SpinCtrl):
     rather than EVT_SPINCTRL.
 
     See the method docstrings for supported functionality.
+    
+    This custom control does not support the tracking mode that is
+    available in the Qt version. It's infeasible to implement this
+    using a subclass of wx.SpinCtrl. Implementing this would
+    require create a custom wx.PyControl that combines a wx.TextCtrl
+    and wx.SpinButton into a single control.
 
     """
-    def __init__(self, parent, low=0, high=100, step=1, prefix='', suffix='',
-                 special_value_text='', to_string=None, from_string=None,
-                 wrap=False):
+    #: The text in the control may be acceptable
+    INTERMEDIATE = 1
+    
+    #: The text in the control is a valid value
+    ACCEPTABLE = 2
+
+    def __init__(self, parent, low=0, high=100, step=1, converter=None, wrap=False):
         """ CustomSpinCtrl constructor.
 
         Arguments
@@ -46,23 +59,10 @@ class CustomSpinCtrl(wx.SpinCtrl):
         step : int, optional
             The step amount to use for the spin ctrl. Defaults to 1.
 
-        prefix : string, optional
-            A prefix to place in front of the value in the ctrl.
-
-        suffix : string, optional
-            A suffix to place behind the value in the ctrl.
-
-        special_value_text : string, optional
-            The text to display when the control is at its minimum
-            value, if different from the normal value.
-
-        to_string : callable, optional
-            A function to convert the integer spin value to a string
-            for display. Should not include prefix and suffix.
-
-        from_string : callable, optional
-            A function to convert a string input by the user into
-            an integer spin value.
+        converter : Instance(Converter), optional
+            A converter to use to convert to and from string display
+            values and the internal integer value of the control.
+            Defaults to IntConverter().
 
         wrap : bool, optional
             A flag indicating whether the spin ctrl should wrap
@@ -74,52 +74,79 @@ class CustomSpinCtrl(wx.SpinCtrl):
         # the control, since we maintain our own internal counter.
         # and because the internal value of the widget gets reset to
         # the minimum of the range whenever SetValueString is called.
-        #
-        # XXX - look into using a wx.PyValidator for this
         self._hard_min = -(1 << 31)
         self._hard_max = (1 << 31) - 1
         self._internal_value = low
-        self._user_text = ''
         self._low = low
         self._high = high
         self._step = step
-        self._prefix = prefix
-        self._suffix = suffix
-        self._special_value_text = special_value_text
-        self._to_string = to_string or str
-        self._from_string = from_string or int
+        self._converter = converter or IntConverter()
+        self._value_string = self._converter.to_component(low)
         self._wrap = wrap
+
+        # Stores whether spin-up or spin-down was pressed.
         self._spin_state = None
 
         super(CustomSpinCtrl, self).__init__(parent)
         super(CustomSpinCtrl, self).SetRange(self._hard_min, self._hard_max)
+
+        # Setting the spin control to process the enter key removes
+        # its processing of the Tab key. This is desired for two reasons:
+        # 1) It is consistent with the Qt version of the control.
+        # 2) The default tab processing is kinda wacky in that when 
+        #    tab is pressed, it emits a text event with the string
+        #    representation of the integer value of the control,
+        #    regardless of the value of the user supplied string.
+        #    This is definitely not correct and so processing on 
+        #    Enter allows us to avoid the issue entirely.
+        self.WindowStyle |= wx.TE_PROCESS_ENTER
 
         self.Bind(wx.EVT_SPIN_UP, self.OnSpinUp)
         self.Bind(wx.EVT_SPIN_DOWN, self.OnSpinDown)
         self.Bind(wx.EVT_SPINCTRL, self.OnSpinCtrl)
         self.Bind(wx.EVT_TEXT, self.OnText)
         self.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnEnterPressed)
+
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def OnEnterPressed(self, event):
+        """ The event handler for an enter key press. It forces an 
+        interpretation of the current text control value.
+
+        """
+        self.InterpretText()
 
     def OnKillFocus(self, event):
-        """ The spin control doesn't emit a spin event when losing focus
-        to process typed input change unless it results in a different
-        value, so we have to handle it manually and update the control
-        again after the event. And it must be on a CallAfter or it doesn't
-        work.
+        """ Handles evaluating the text in the control when the control 
+        loses focus. 
 
         """
         event.Skip()
-        # The lambda fixes a DeadObjectError if the app
-        # is closed before the callback executes.
-        wx.CallAfter(lambda: self.Update() if self else None)
+        # The spin control doesn't emit a spin event when losing focus
+        # to process typed input change unless it results in a different
+        # value, so we have to handle it manually and update the control
+        # again after the event. It must be invoked on a CallAfter or it 
+        # doesn't work properly. The lambda avoids a DeadObjectError if 
+        # the app is exited before the callback executes.
+        wx.CallAfter(lambda: self.InterpretText() if self else None)
 
     def OnText(self, event):
         """ Handles the text event of the spin control to store away the
         user typed text for later conversion.
 
         """
-        self._user_text = event.GetString()
-        event.Skip()
+        # Do not be tempted to try to implement the 'tracking' feature
+        # by adding logic to this method. Wx emits this event at weird
+        # times such as ctrl-a select all as well as when SetValueString
+        # is called. Granted, this can be avoided with a recursion guard,
+        # however, there is no way to get/set the caret position on the
+        # control and every call to SetValueString resets the caret 
+        # position to Zero. So, there is really no possible way to 
+        # implement 'tracking' without creating an entirely new custom
+        # control. So for now, the wx backend just lacks that feature.
+        self._value_string = event.GetString()
 
     def OnSpinUp(self, event):
         """ The event handler for the spin up event. We veto the spin
@@ -157,40 +184,35 @@ class CustomSpinCtrl(wx.SpinCtrl):
         spin_state = self._spin_state
 
         if spin_state == 'down':
-            potential = last - step
-            if potential < low:
-                if not wrap:
-                    computed = low
-                else:
-                    computed = high - (low - potential - 1)
-            else:
-                computed = potential
-        elif spin_state == 'up':
-            potential = last + step
-            if potential > high:
-                if not wrap:
+            if last == low:
+                if wrap:
                     computed = high
                 else:
-                    computed = (potential - high - 1) + low
+                    computed = low
             else:
-                computed = potential
+                computed = last - step
+                if computed < low:
+                    computed = low
+            self.SetValue(computed)
+        elif spin_state == 'up':
+            if last == high:
+                if wrap:
+                    computed = low
+                else:
+                    computed = high
+            else:
+                computed = last + step
+                if computed > high:
+                    computed = high
+            self.SetValue(computed)
         else:
-            # The user typed a value, and we need to convert the
-            # stored text into an int. Bailing to the last value
-            # if conversion fails.
-            try:
-                potential = self._from_string(self._user_text)
-            except Exception:
-                potential = last
-            finally:
-                self._user_text = ''
-            if low <= potential <= high:
-                computed = potential
-            else:
-                computed = last
+            # A suprious spin event generated by wx when the widget loses 
+            # focus. We can safetly ignore it.
+            pass
 
-        self.SetValue(computed)
-
+    #--------------------------------------------------------------------------
+    # Getters/Setters 
+    #--------------------------------------------------------------------------
     def GetLow(self):
         """ Returns the minimum value of the control.
 
@@ -256,70 +278,18 @@ class CustomSpinCtrl(wx.SpinCtrl):
         """
         self._step = step
 
-    def GetPrefix(self):
-        """ Returns the prefix of the control.
+    def GetConverter(self):
+        """ Returns the converter in use for the control.
 
         """
-        return self._prefix
-
-    def SetPrefix(self, prefix):
-        """ Sets the prefix of the control.
-
-        """
-        self._prefix = prefix
-        self.Update()
-
-    def GetSuffix(self):
-        """ Returns the suffix of the control.
+        return self._converter
+    
+    def SetConverter(self, converter):
+        """ Sets the converter in use for the control.
 
         """
-        return self._suffix
-
-    def SetSuffix(self, suffix):
-        """ Sets the suffix of the control.
-
-        """
-        self._suffix = suffix
-        self.Update()
-
-    def GetSpecialValueText(self):
-        """ Returns the special value text of the control.
-
-        """
-        return self._special_value_text
-
-    def SetSpecialValueText(self, text):
-        """ Sets the special value text of the control.
-
-        """
-        self._special_value_text = text
-        self.Update()
-
-    def GetToString(self):
-        """ Returns the to_string converter of the control.
-
-        """
-        return self._to_string
-
-    def SetToString(self, to_string):
-        """ Sets the to_string converter of the control.
-
-        """
-        self._to_string = to_string
-        self.Update()
-
-    def GetFromString(self):
-        """ Returns the from_string converter of the control.
-
-        """
-        return self._from_string
-
-    def SetFromString(self, from_string):
-        """ Sets the from_string converter of the control.
-
-        """
-        self._from_string = from_string
-        self.Update()
+        self._converter = converter
+        self.InterpretText()
 
     def GetWrap(self):
         """ Gets the wrap flag of the control.
@@ -346,29 +316,78 @@ class CustomSpinCtrl(wx.SpinCtrl):
         value of the control, an EVT_CUSTOM_SPINCTRL will be emitted.
 
         """
+        different = False
         if self._low <= value <= self._high:
-            if self._internal_value != value:
-                self._internal_value = value
-                self.Update()
-                evt = CustomSpinCtrlEvent()
-                wx.PostEvent(self, evt)
+            different = (self._internal_value != value)
+            self._internal_value = value
 
-    def Update(self):
-        """ Trigger an update of the displayed string value. Should not
-        need to be called directly by the user.
+        # Always set the value string, just to be overly 
+        # safe that we don't fall out of sync.
+        self._value_string = self.TextFromValue(self._internal_value)
+        self.SetValueString(self._value_string)
+
+        if different:
+            evt = CustomSpinCtrlEvent()
+            wx.PostEvent(self, evt)
+
+    #--------------------------------------------------------------------------
+    # Support Methods 
+    #--------------------------------------------------------------------------
+    def InterpretText(self):
+        """ Interprets the user supplied text and updates the control. 
 
         """
-        self.SetValueString(self.ComputeValueString(self.GetValue()))
-
-    def ComputeValueString(self, value):
-        """ Computes the string that will be displayed in the control
-        for the given value.
-
-        """
-        if value == self._low and self._special_value_text:
-            res = self._special_value_text
+        text = self._value_string
+        valid = self.Validate(text)
+        if valid == self.ACCEPTABLE:
+            value = self.ValueFromText(text)
+            self.SetValue(value)
         else:
-            res = self._prefix + self._to_string(value) + self._suffix
+            # If the text does not validate, use the current value.
+            self.SetValue(self._internal_value)
+
+    def TextFromValue(self, value):
+        """ Converts the given integer to a string for display using
+        the user supplied converter object. 
+
+        If the conversion fails due to the converter raising a ValueError
+        then simple str(...) conversion is used.
+
+        """
+        try:
+            text = self._converter.to_component(value)
+        except ValueError:
+            text = str(value)
+        return text
+
+    def ValueFromText(self, text):
+        """ Converts the user typed string into an integer for the
+        control using the user supplied converter.
+
+        """
+        # This will only be called if the validate method has returned 
+        # ACCEPTABLE, so we can assume that calling the converter again 
+        # will not raise an error. Further, we don't worry too much about 
+        # calling the converter twice since it should be a relatively 
+        # cheap operation to convert a string to some int. If it's not, 
+        # then a given converter can implement its own internal caching 
+        # to speed things up.
+        return self._converter.from_component(text)
+
+    def Validate(self, text):
+        """ Validates whether or not the given text can be converted
+        to a valid integer.
+
+        """
+        try:
+            val = self._converter.from_component(text)
+        except ValueError:
+            res = self.INTERMEDIATE
+        else:
+            if self._low <= val <= self._high:
+                res = self.ACCEPTABLE
+            else:
+                res = self.INTERMEDIATE
         return res
 
 
@@ -378,30 +397,25 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
     WXSpinBox uses a custom subclass of wx.SpinCtrl that behaves more
     like Qt's QSpinBox.
 
-    See Also
-    --------
-    SpinBox
-
     """
     def create(self):
         """ Creates the underlying custom spin control.
 
         """
-        self.widget = widget = CustomSpinCtrl(self.parent_widget())
-        widget.SetDoubleBuffered(True)
+        self.widget = CustomSpinCtrl(self.parent_widget())
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
+        # Note: Don't set the widget to double buffered, it causes 
+        # rendering problems on Windows where the spin buttons fail
+        # to paint reliably.
         super(WXSpinBox, self).initialize()
         shell = self.shell_obj
         self.set_spin_low(shell.low)
         self.set_spin_high(shell.high)
         self.set_spin_step(shell.step)
-        self.set_spin_prefix(shell.prefix)
-        self.set_spin_suffix(shell.suffix)
-        self.set_spin_special_value_text(shell.special_value_text)
         self.set_spin_converter(shell.converter)
         self.set_spin_wrap(shell.wrap)
         self.set_spin_value(shell.value)
@@ -413,9 +427,9 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         super(WXSpinBox, self).bind()
         self.widget.Bind(EVT_CUSTOM_SPINCTRL, self.on_custom_spin_ctrl)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Implementation
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def shell_value_changed(self, value):
         """ The change handler for the 'value' attribute.
 
@@ -440,25 +454,6 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         """
         self.set_spin_step(step)
 
-    def shell_prefix_changed(self, prefix):
-        """ The change handler for the 'prefix' attribute.
-
-        """
-        self.set_spin_prefix(prefix)
-
-    def shell_suffix_changed(self, suffix):
-        """ The change handler for the 'suffix' attribute.
-
-        """
-        self.set_spin_suffix(suffix)
-
-    def shell_special_value_text_changed(self, text):
-        """ The change handler for the 'special_value_text' attribute.
-        Not meant for public consumption.
-
-        """
-        self.set_spin_special_value_text(text)
-
     def shell_converter_changed(self, converter):
         """ The change handler for the 'converter' attribute.
 
@@ -471,6 +466,16 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         """
         self.set_spin_wrap(wrap)
 
+    def shell_tracking_changed(self, tracking):
+        """ The change handler for the 'tracking' attribute of the shell
+        object. The wx implementation does not support keyboard tracking.
+
+        """
+        pass
+
+    #--------------------------------------------------------------------------
+    # Event Handlers 
+    #--------------------------------------------------------------------------
     def on_custom_spin_ctrl(self, event):
         """ The event handler for the widget's spin event.
 
@@ -478,6 +483,9 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         self.shell_obj.value = self.widget.GetValue()
         event.Skip()
 
+    #--------------------------------------------------------------------------
+    # Widget Update Methods 
+    #--------------------------------------------------------------------------
     def set_spin_value(self, value):
         """ Updates the widget with the given value.
 
@@ -502,31 +510,12 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         """
         self.widget.SetStep(step)
 
-    def set_spin_prefix(self, prefix):
-        """ Updates the prefix of the spin box.
-
-        """
-        self.widget.SetPrefix(prefix)
-
-    def set_spin_suffix(self, suffix):
-        """ Updates the suffix of the spin box.
-
-        """
-        self.widget.SetSuffix(suffix)
-
-    def set_spin_special_value_text(self, text):
-        """ Updates the special value text of the spin box.
-
-        """
-        self.widget.SetSpecialValueText(text)
-
     def set_spin_converter(self, converter):
         """ Updates the 'to_string' and 'from_string' functions of the
         spin box. Not meant for public consumption.
 
         """
-        self.widget.SetFromString(converter.from_component)
-        self.widget.SetToString(converter.to_component)
+        self.widget.SetConverter(converter)
 
     def set_spin_wrap(self, wrap):
         """ Updates the wrap value of the spin box.

@@ -8,7 +8,6 @@ from .enaml_test_case import EnamlTestCase, required_method
 class TestSpinBox(EnamlTestCase):
     """ Logic for testing spin boxes.
 
-
     Tooklit testcases need to provide the following methods
 
     Abstract Methods
@@ -28,15 +27,6 @@ class TestSpinBox(EnamlTestCase):
     get_wrap(self, widget)
         Check if a spin box wraps around at the edge values.
 
-    get_prefix(self, widget)
-        Get a spin box's text prefix.
-
-    get_suffix(self, widget)
-        Get a spin box's text suffix.
-
-    get_special_value_text(self, widget):
-        Get a spin box's special value text, displayed at the minimum value.
-
     get_text(self, widget)
         Get the text displayed in a spin box.
 
@@ -47,7 +37,6 @@ class TestSpinBox(EnamlTestCase):
         Simulate a click on the 'down' spin button.
 
     """
-
     def setUp(self):
         """ Set up before the spin box tests.
 
@@ -62,10 +51,6 @@ defn MainWindow(events):
             high = 21
             step = 2
             value = -4
-            prefix = 'foo'
-            suffix = ' bar'
-            special_value_text = 'Special'
-            converter = IntConverter()
             wrap = True
 """
 
@@ -86,11 +71,6 @@ defn MainWindow(events):
         self.assertEqual(self.get_high(widget), component.high)
         self.assertEqual(self.get_step(widget), component.step)
         self.assertEqual(self.get_wrap(widget), component.wrap)
-        self.assertEqual(self.get_value(widget), component.value)
-        self.assertEqual(self.get_prefix(widget), component.prefix)
-        self.assertEqual(self.get_suffix(widget), component.suffix)
-        self.assertEqual(self.get_special_value_text(widget),
-                         component.special_value_text)
 
     def test_change_low(self):
         """ Update the spin box's minimum value.
@@ -200,26 +180,11 @@ defn MainWindow(events):
         """ Check the displayed text.
 
         """
-        component = self.component
-        expected = '{0}{1}{2}'.format(component.prefix,
-                            component.converter.from_component(component.value),
-                            component.suffix)
-        self.assertEqual(self.get_text(self.widget), expected)
-
-    def test_special_value_text(self):
-        """ Check the special value text.
-
-        """
-        widget = self.widget
-        component = self.component
-        component.value = component.low
-        special_value_text = self.get_special_value_text(widget)
-        self.assertEqual(self.get_text(widget), special_value_text)
+        self.assertEqual(self.get_text(self.widget), '-4')
 
     #--------------------------------------------------------------------------
     # absrtact methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_value(self, widget):
         """ Get a spin box's value.
@@ -256,27 +221,6 @@ defn MainWindow(events):
         pass
 
     @required_method
-    def get_prefix(self, widget):
-        """ Get a spin box's text prefix.
-
-        """
-        pass
-
-    @required_method
-    def get_suffix(self, widget):
-        """ Get a spin box's text suffix.
-
-        """
-        pass
-
-    @required_method
-    def get_special_value_text(self, widget):
-        """ Get a spin box's special value text, displayed at the minimum value.
-
-        """
-        pass
-
-    @required_method
     def get_text(self, widget):
         """ Get the text displayed in a spin box.
 
@@ -296,3 +240,4 @@ defn MainWindow(events):
 
         """
         pass
+

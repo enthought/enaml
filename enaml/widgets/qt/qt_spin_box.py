@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-
 from .qt_control import QtControl
 
 from ..spin_box import AbstractTkSpinBox
@@ -15,8 +14,8 @@ class EnamlQSpinBox(QtGui.QSpinBox):
     """ A QSpinBox with hooks for user-supplied string conversion.
 
     """
-    #: The internal storage for the Enaml converter object. The
-    #: default converter is an IntConverter.
+    #: The internal storage for the Enaml converter object. 
+    #: The default converter is an IntConverter.
     _converter = IntConverter()
 
     def converter(self):
@@ -33,8 +32,8 @@ class EnamlQSpinBox(QtGui.QSpinBox):
         self.interpretText()
 
     def textFromValue(self, value):
-        """ Converts the given integer to a string for display using
-        the user supplied converter object. 
+        """ Converts the given integer to a string for display using the 
+        user supplied converter object. 
 
         If the conversion fails due to the converter raising a ValueError
         then simple str(...) conversion is used.
@@ -52,19 +51,22 @@ class EnamlQSpinBox(QtGui.QSpinBox):
 
         """
         # Qt will only call this method if the validate method has 
-        # returned True, so we can assume that calling the converter
-        # again will not raise an error. Further, we don't worry too
-        # much about calling the converter twice since it should be
-        # a relatively cheap operation to convert a string to some
-        # in. If it's not, then a given converter can implement its
+        # returned Acceptable, so we can safetly assume that calling 
+        # the converter again will not raise an error. Further, we don't 
+        # worry too much about calling the converter twice since it 
+        # should be a relatively cheap operation to convert a string to 
+        # some int. If it's not, then a given converter can implement its
         # own internal caching to speed things up.
         return self._converter.from_component(text)
 
     def validate(self, text, pos):
         """ Validates whether or not the given text can be converted
-        to a valid integer.
+        to an integer.
 
         """
+        # Note that we avoid returning an Invalid QValidator value
+        # since that prevents the control from accepting that keystroke
+        # and makes the ui a bit cumbersome to use.
         try:
             val = self._converter.from_component(text)
         except ValueError:
@@ -73,16 +75,12 @@ class EnamlQSpinBox(QtGui.QSpinBox):
             if self.minimum() <= val <= self.maximum():
                 res = QtGui.QValidator.Acceptable
             else:
-                res = QtGui.QValidator.Invalid
+                res = QtGui.QValidator.Intermediate
         return res
 
 
 class QtSpinBox(QtControl, AbstractTkSpinBox):
     """ A Qt implementation of SpinBox.
-
-    See Also
-    --------
-    SpinBox
 
     """
     #--------------------------------------------------------------------------
