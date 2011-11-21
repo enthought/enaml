@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 
-from casuarius import ConstraintVariable, LinearSymbolic, STRENGTH_MAP
+from casuarius import ConstraintVariable, LinearSymbolic, Strength, STRENGTH_MAP
 
 from ..component import Component
 
@@ -46,7 +46,6 @@ def clear_invisible(items):
 
     """
     visible = []
-    i = 0
     for item in items:
         if isinstance(item, Component) and not item.visible:
             if len(visible) > 0 and is_spacer(visible[-1]):
@@ -148,7 +147,7 @@ class DeferredConstraintsFunction(DeferredConstraints):
         self.kwds = kwds
 
     def _get_constraint_list(self, container):
-        return self.func(*args, **kwds)
+        return self.func(*self.args, **self.kwds)
 
 
 class AbutmentHelper(DeferredConstraints):
