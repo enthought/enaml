@@ -12,28 +12,27 @@ defn MainWindow():
                 ALabel,
                 BLabel,
                 hbox(CLabel, _space_, DLabel, _space_, ELabel),
-                FLabel,
-                GLabel,
+                hbox(_space_, FLabel, GLabel),
                 hbox(button1, _space_, button2, _space_, button3)),
             align('h_center', self, DLabel, button2),
         ]
         Label -> ALabel:
-            text = "A"
+            text = "Label A"
         Label -> BLabel:
-            text = "B"
+            text = "Label B"
         Label -> CLabel:
-            text = "C"
+            text = "Label C"
         Label -> DLabel:
-            text = "D"
+            text = "Label D"
         Label -> ELabel:
-            text = "E"
+            text = "Label E"
         Label -> FLabel:
-            text = "F"
+            text = "Label F"
         Label -> GLabel:
-            text = "G"
+            text = "Label G"
         PushButton -> button1:
-            text = "1"
+            text = "Button 1"
         PushButton -> button2:
-            text = "2"
+            text = "Button 2"
         PushButton -> button3:
-            text = "3"
+            text = "Button 3"
