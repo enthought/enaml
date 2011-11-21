@@ -2,8 +2,6 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-
-from .qt import QtCore
 from .qt_container import QtContainer
 from .qt_resizing_widgets import QResizingStackedWidget
 
@@ -14,11 +12,9 @@ class QtStacked(QtContainer, AbstractTkStacked):
     """ Qt implementation of the Stacked Container.
 
     """
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-
     def create(self):
         """ Creates the underlying QStackedWidget control.
 
@@ -31,18 +27,18 @@ class QtStacked(QtContainer, AbstractTkStacked):
         """
         super(QtStacked, self).initialize()
         self.update_children()
+        self.set_index(self.shell_obj.index)
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-
     def shell_index_changed(self, index):
-        """ Update the widget index with the new value from the shell object.
+        """ Update the widget index with the new value from the shell 
+        object.
 
         """
-        self.widget.setCurrentIndex(index)
-        shell = self.shell_obj
-        shell.size_hint_updated = True
+        self.set_index(index)
+        self.shell_obj.size_hint_updated = True
 
     def shell_children_changed(self, children):
         """ Update the widget with new children.
@@ -56,14 +52,23 @@ class QtStacked(QtContainer, AbstractTkStacked):
         """
         self.update_children()
     
+    #--------------------------------------------------------------------------
+    # Widget Update Methods 
+    #--------------------------------------------------------------------------
+    def set_index(self, index):
+        """ Set the current visible index of the widget.
+
+        """
+        self.widget.setCurrentIndex(index)
+
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
         the suggested size of the widget for its current state. This
         value is used by the layout manager to determine how much
         space to allocate the widget.
 
-        Override to ask the currently displayed widget for its size hint. Fall
-        back to the minimum size if there is no size hint. If we use
+        Override to ask the currently displayed widget for its size hint. 
+        Fall back to the minimum size if there is no size hint. If we use
         a constraints-based Container as a child widget, it will only have
         a minimum size set, not a size hint.
 
@@ -77,8 +82,8 @@ class QtStacked(QtContainer, AbstractTkStacked):
         """ Update the QStackedWidget's children with the current children.
 
         """
-        # FIXME: there should be a more efficient way to do this, but for now
-        # just remove all present widgets and add the current ones.
+        # FIXME: there should be a more efficient way to do this, but for 
+        # now just remove all present widgets and add the current ones.
         while self.widget.count():
             self.widget.removeWidget(self.widget.currentWidget())
         shell = self.shell_obj
