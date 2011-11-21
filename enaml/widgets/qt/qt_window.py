@@ -33,17 +33,6 @@ class QtWindow(QtContainer, AbstractTkWindow):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def pos(self):
-        """ Returns the position of the internal toolkit widget as an 
-        (x, y) tuple of integers. The coordinates should be relative to
-        the origin of the widget's parent.
-
-        """
-        # Use the geometry member to avoid window dressing.
-        widget = self.widget
-        geom = widget.geometry()
-        return (geom.x(), geom.y())
-
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute. Not meant for
         public consumption.
