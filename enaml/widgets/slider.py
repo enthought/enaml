@@ -4,12 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import (Bool, Event, Instance, Property, Int,
-                        TraitError, Range)
+from traits.api import (Bool, Event, Instance, Property, Int, TraitError,
+                        Either, Range)
 
 from .control import Control, AbstractTkControl
 
-from ..enums import Orientation, TickPosition
+from ..enums import Orientation, TickPosition, PolicyEnum
 
 
 class AbstractTkSlider(AbstractTkControl):
@@ -19,11 +19,11 @@ class AbstractTkSlider(AbstractTkControl):
         raise NotImplementedError
 
     @abstractmethod
-    def shell__minimum_changed(self, minimum):
+    def shell_minimum_changed(self, minimum):
         raise NotImplementedError
 
     @abstractmethod
-    def shell__maximum_changed(self, maximum):
+    def shell_maximum_changed(self, maximum):
         raise NotImplementedError
 
     @abstractmethod
@@ -56,9 +56,8 @@ MAX_SLIDER_VALUE = (1 << 16) - 1
 
 
 class Slider(Control):
-    """ A simple slider widget.
-
-    A slider can be used to select from a range of values.
+    """ A simple slider widget that can be used to select from a 
+    range of values.
 
     """
     #: The minimum value for the index. To avoid issues where
@@ -103,10 +102,11 @@ class Slider(Control):
     page_step = Range(low=1, high='span', value=10)
 
     #: A TickPosition enum value indicating how to display the tick
-    #: marks. Please note that the orientation takes precedence over
-    #: the tick mark position and an incompatible tick position will
-    #: be addapted according to the current orientation.
-    tick_position = TickPosition
+    #: marks. Note that the orientation takes precedence over the tick 
+    #: mark position and an incompatible tick position will be adapted 
+    #: according to the current orientation. The default tick position
+    #: is 'bottom'.
+    tick_position = TickPosition('bottom')
 
     #: The orientation of the slider. The default orientation is
     #: horizontal. When the orientation is flipped the tick positions
@@ -124,7 +124,9 @@ class Slider(Control):
     #: Fired when the slider is released.
     released = Event
 
-    #: Fired when the slider is moved.
+    #: Fired when the user drags the slider handle via the mouse.
+    #: The event payload will be the position of the slider. This is
+    #: always fired regardless of the value of :attr:`tracking`
     moved = Event
 
     #: A read only property which indicates whether or not the slider
@@ -137,27 +139,62 @@ class Slider(Control):
     #: Overridden parent class tait
     abstract_obj = Instance(AbstractTkSlider)
 
+    #: Hug width is redefined as a property to be computed based on the 
+    #: orientation of the slider unless overridden by the user.
+    hug_width = Property(PolicyEnum, depends_on=['_hug_width', 'orientation'])
+
+    #: Hug height is redefined as a property to be computed based on the 
+    #: orientation of the slider unless overridden by the user.
+    hug_height = Property(PolicyEnum, depends_on=['_hug_height', 'orientation'])
+
+    #: An internal override trait for hug_width
+    _hug_width = Either(None, PolicyEnum, default=None)
+
+    #: An internal override trait for hug_height
+    _hug_height = Either(None, PolicyEnum, default=None)
+
     #--------------------------------------------------------------------------
     # Trait defaults
     #--------------------------------------------------------------------------
+    def _get_hug_width(self):
+        """ The proper getter for 'hug_width'. Returns a computed hug 
+        value unless overridden by the user.
 
-    def _hug_width_default(self):
-        """ Horizontally oriented sliders ignore hug width by default, so that
-        they can expand freely in width.
         """
-        if self.orientation == 'horizontal':
-            return 'ignore'
-        else:
-            return 'strong'
+        res = self._hug_width
+        if res is None:
+            if self.orientation == 'horizontal':
+                res = 'ignore'
+            else:
+                res = 'strong'
+        return res
 
-    def _hug_height_default(self):
-        """ Vertically oriented sliders ignore hug height by default, so that
-        they can expand freely in height.
+    def _get_hug_height(self):
+        """ The proper getter for 'hug_width'. Returns a computed hug 
+        value unless overridden by the user.
+
         """
-        if self.orientation == 'vertical':
-            return 'ignore'
-        else:
-            return 'strong'
+        res = self._hug_height
+        if res is None:
+            if self.orientation == 'vertical':
+                res = 'ignore'
+            else:
+                res = 'strong'
+        return res
+
+    def _set_hug_width(self, value):
+        """ The property setter for 'hug_width'. Overrides the computed
+        value.
+
+        """
+        self._hug_width = value
+
+    def _set_hug_height(self, value):
+        """ The property setter for 'hug_height'. Overrides the computed
+        value.
+
+        """
+        self._hug_height = value
 
     #--------------------------------------------------------------------------
     # Property methods
@@ -175,33 +212,29 @@ class Slider(Control):
         return (self.maximum - self.minimum) + 1
 
     def _set_minimum(self, value):
-        """ Validate the assigment of the slider minimum.
-
-        The minimum property should be positive and always smaller
-        than :attr:`maximum`.
+        """ The property setter for the 'minimum' attribute. This
+        validates that the value is always smaller than :attr:`maximum`.
 
         """
         if  (value < 0) or (value > self.maximum):
-            msg = ("The minimum value of the slider should be a positive "
-                   "integer and smaller than the current maximum ({0}), "
-                   "but a value of {1} was given")
+            msg = ('The minimum value of the slider should be a positive '
+                   'integer and smaller than the current maximum ({0}), '
+                   'but a value of {1} was given')
             msg = msg.format(self.maximum, value)
             raise TraitError(msg)
 
-        # FIXME:
-        # Because the Range Trait will not fire the change notifier when
-        # the dynamic bounds cause a change we will perform the check
-        # and make sure the value_changed function is called.
+        # The Range Trait will not fire a change notification when the 
+        # dynamic bounds cause a value change. So, we perform the check
+        # and make sure the value is properly updated, which will fire
+        # a change event on its own.
         position = self.value
         if position < value:
             self.value = value
         self._minimum = value
 
     def _set_maximum(self, value):
-        """ Validate the assigment of the slider maximum.
-
-        The maximum property should be positive and always larger
-        than :attr:`minimum`.
+        """ The property setter for the 'maximum' attribute. This
+        validates that the value is always larger than :attr:`minimum`.
 
         """
         if  (value < self.minimum) or (value > MAX_SLIDER_VALUE):
@@ -211,10 +244,10 @@ class Slider(Control):
             msg = msg.format(self.minimum, value)
             raise TraitError(msg)
 
-        # FIXME:
-        # Because the Range Trait will not fire the change notifier when
-        # the dynamic bounds cause a change we will perform the check
-        # and make sure the value_changed function is called.
+        # The Range Trait will not fire a change notification when the 
+        # dynamic bounds cause a value change. So, we perform the check
+        # and make sure the value is properly updated, which will fire
+        # a change event on its own.
         position = self.value
         if position > value:
             self.value = value

@@ -1,0 +1,51 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" SpinBox example
+
+An demonstration of how to use a spin box to select from a list
+of months.
+
+"""
+
+
+:: python ::
+
+from enaml.converters import Converter
+
+class MonthSpinConverter(Converter):
+
+    months = ('January', 'February', 'March', 'April', 'May', 'June', 'July', 
+              'August', 'September', 'October', 'November', 'December')
+
+    int_map = dict((i + 1, s) for (i, s) in enumerate(months))
+
+    month_map = dict((value.lower(), key) for (key, value) in int_map.iteritems())
+
+    def to_component(self, val):
+        s = self.int_map.get(val)
+        if s is None:
+            raise ValueError
+        return s
+    
+    def from_component(self, txt):
+        i = self.month_map.get(txt.strip().lower())
+        if i is None:
+            # Allow integers as well as month names. This will raise
+            # a ValueError if the conversion fails.
+            i = int(txt) 
+        return i
+
+:: end ::
+
+
+defn MainWindow:
+    Window:
+        SpinBox:
+            converter = MonthSpinConverter()
+            low = 1
+            high = 12
+            value >> print('new value', value)
+            wrap = True
+

@@ -2,31 +2,31 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt_control import QtControl
-from .qt import QtGui
+import wx
+
+from .wx_control import WXControl
 
 from ..progress_bar import AbstractTkProgressBar
 
 
-class QtProgressBar(QtControl, AbstractTkProgressBar):
-    """ Qt implementation of ProgressBar.
+class WXProgressBar(WXControl, AbstractTkProgressBar):
+    """ WX implementation of ProgressBar.
 
     """
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
-        """ Creates the underlying QProgressBar.
+        """ Creates the underlying wx.Gauge.
 
         """
-        self.widget = QtGui.QProgressBar(self.parent_widget())
-    
+        self.widget = wx.Gauge(self.parent_widget())
+
     def initialize(self):
         """ Initialize the attributes of the progress bar.
 
         """
-        super(QtControl, self).initialize()
-        self.widget.setTextVisible(False)
+        super(WXControl, self).initialize()
         shell = self.shell_obj
         self._set_minimum(shell.minimum)
         self._set_maximum(shell.maximum)
@@ -63,17 +63,20 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
         """ Sets the value of the progress bar.
 
         """
-        self.widget.setValue(value)
+        gauge_value = value - self.shell_obj.minimum
+        self.widget.SetValue(gauge_value)
 
     def _set_minimum(self, minimum):
         """ Sets the minimum value of the progress bar.
 
         """
-        self.widget.setMinimum(minimum)
+        gauge_range = self.shell_obj.maximum - minimum
+        self.widget.SetRange(gauge_range)
     
     def _set_maximum(self, maximum):
         """ Sets the maximum value of the progress bar.
 
         """
-        self.widget.setMaximum(maximum)
+        gauge_range = maximum - self.shell_obj.minimum
+        self.widget.SetRange(gauge_range)
 

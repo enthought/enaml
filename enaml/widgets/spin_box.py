@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Int, Str, Callable, Bool, Range, Instance
+from traits.api import Int, Bool, Range, Instance
 
 from .control import Control, AbstractTkControl
 
@@ -30,18 +30,6 @@ class AbstractTkSpinBox(AbstractTkControl):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_prefix_changed(self, prefix):
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_suffix_changed(self, suffix):
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_special_value_text_changed(self, special_value_text):
-        raise NotImplementedError
-
-    @abstractmethod
     def shell_converter_changed(self, converter):
         raise NotImplementedError
 
@@ -49,50 +37,49 @@ class AbstractTkSpinBox(AbstractTkControl):
     def shell_wrap_changed(self, wrap):
         raise NotImplementedError
     
+    @abstractmethod
+    def shell_tracking_changed(self, tracking):
+        raise NotImplementedError
+
 
 class SpinBox(Control):
     """ A spin box widget.
 
     """
-    #: The minimum value for the spin box. Defautls to 0.
-    low = Int
+    #: The minimum value for the spin box. Defaults to 0.
+    low = Int(0)
 
     #: The maximum value for the spin box. Defaults to 100.
     high = Int(100)
 
-    # The maximum value for the spin box. Defaults to 1.
+    #: The step size for the spin box. Defaults to 1.
     step = Int(1)
 
-    #: The current value for the spin box, constrained to low-high.
+    #: The current integer value for the spin box, constrained to
+    #: low <= value <= high.
     value = Range('low', 'high')
 
-    #: The prefix string to display in the spin box.
-    prefix = Str
+    #: A converter object to convert to and from a spin box integer
+    #: and a string for display. The to_component method will be called 
+    #: with an integer and should return a string for display. The 
+    #: from_component method will be passed a string and should return 
+    #: an int or raise a ValueError if the string cannot be converted. 
+    #: If the conversion is succesful but the returned int does not fall
+    #: within the allowed range of the spin box, then the spin box will
+    #: not be updated. The default converter is a simple IntConverter
+    converter = Instance(Converter, factory=IntConverter)
 
-    #: The suffix string to display in the spin box.
-    suffix = Str
-
-    #: An optional string to display when the user selects the 
-    #: minimum value in the spin box.
-    special_value_text = Str
-
-    # XXX - what is this actually doing?
-    #: A converter object to convert to and from the widget value
-    converter = Instance(Converter, factory=IntConverter, args=())
-
-    # XXX - what is this?? 
-    #: An optional callable that takes a one argument and checks
-    #: if it is a valid text value.  Must return an enums.Validity
-    #: value.  It a from_string is supplied without a validate_string,
-    #: the SpinBox will consider the input acceptable if from_string
-    #: does not raise an exception, and intermediate otherwise.
-    validate_string = Callable
-
-    #: If True, the spin box will wrap around at its extremes.
-    wrap = Bool
+    #: Whether or not the spin box will wrap around at its extremes. 
+    #: Defaults to False.
+    wrap = Bool(False)
     
-    #: How strongly a component hugs it's contents' width.
-    #: SpinBoxes ignore the width hug by default, so they expand freely in width.
+    #: Whether the spin box will update on every key press (True), or
+    #: only when enter is pressed or the widget loses focus (False).
+    #: Defaults to False.
+    tracking = Bool(False)
+
+    #: How strongly a component hugs it's contents' width. SpinBoxes 
+    #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 
     #: Overridden parent class trait

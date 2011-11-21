@@ -2,9 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from unittest import expectedFailure
 import wx
+
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
+
 from .. import spin_box
 
 
@@ -42,47 +43,25 @@ class TestWxSpinBox(WXTestAssistant, spin_box.TestSpinBox):
         """
         return widget.GetWrap()
 
-    def get_prefix(self, widget):
-        """ Get a spin box's text prefix.
-
-        """
-        return widget.GetPrefix()
-
-    def get_suffix(self, widget):
-        """ Get a spin box's text suffix.
-
-        """
-        return widget.GetSuffix()
-
-    def get_special_value_text(self, widget):
-        """ Get a spin box's special value text, displayed at the minimum value.
-
-        """
-        return widget.GetSpecialValueText()
-
     def get_text(self, widget):
         """ Get the text displayed in a spin box.
 
         """
-        value = widget.GetValue()
-        return widget.ComputeValueString(value)
+        return widget._value_string
 
-    @expectedFailure
     def spin_up_event(self, widget):
         """ Simulate a click on the 'up' spin button.
 
         """
         event = wx.SpinEvent(wx.EVT_SPIN_UP.typeId)
-        widget.GetEventHandler().ProcessEvent(event)
-        self.process_wx_events(self.app)
-        self.fail("The wraping functionality in WXSpinBox is only partially working")
+        widget.OnSpinUp(event)
+        self.process_wx_events(wx.GetApp())
 
-    @expectedFailure
     def spin_down_event(self, widget):
         """ Simulate a click on the 'down' spin button.
 
         """
         event = wx.SpinEvent(wx.EVT_SPIN_DOWN.typeId)
-        widget.GetEventHandler().ProcessEvent(event)
-        self.process_wx_events(self.app)
-        self.fail("The wraping functionality in WXSpinBox is only partially working")
+        widget.OnSpinDown(event)
+        self.process_wx_events(wx.GetApp())
+
