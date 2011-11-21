@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool
-
 from .qt_container import QtContainer
 
 from ..window import AbstractTkWindow
@@ -16,8 +14,7 @@ class QtWindow(QtContainer, AbstractTkWindow):
     contains other child widgets and layouts.
 
     """
-
-    _initializing = Bool(False)
+    _initializing = False
 
     #--------------------------------------------------------------------------
     # Setup methods

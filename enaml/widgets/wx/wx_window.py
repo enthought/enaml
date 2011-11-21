@@ -18,6 +18,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
     to be delegated to the wx.Frame and some to the wx.Window.
 
     """
+    _initializing = False
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -38,8 +40,7 @@ class WXWindow(WXContainer, AbstractTkWindow):
         self._initializing = True
         try:
             super(WXWindow, self).initialize()
-            shell = self.shell_obj
-            self.set_title(shell.title)
+            self.set_title(self.shell_obj.title)
         finally:
             self._initializing = False
 
