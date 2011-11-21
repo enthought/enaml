@@ -92,8 +92,24 @@ class IntConverter(BaseStringConverter):
         return int(value)
 
 
+class LongConverter(BaseStringConverter):
+    """ Convert an long integer value to a string and back.
+
+    """
+    def from_component(self, value):
+        return long(value)
+
+
 class FloatConverter(BaseStringConverter):
     """ Convert a float value to a string and back.
+
+    """
+    def from_component(self, value):
+        return float(value)
+
+
+class ComplexConverter(BaseStringConverter):
+    """ Convert a complex value to a string and back.
 
     """
     def from_component(self, value):
