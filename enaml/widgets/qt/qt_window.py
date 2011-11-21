@@ -34,28 +34,30 @@ class QtWindow(QtContainer, AbstractTkWindow):
     # Implementation
     #--------------------------------------------------------------------------
     def shell_title_changed(self, title):
-        """ The change handler for the 'title' attribute. Not meant for
-        public consumption.
+        """ The change handler for the 'title' attribute.
 
         """
         self.set_title(title)
-
+    
+    #--------------------------------------------------------------------------
+    # Widget Update Methods 
+    #--------------------------------------------------------------------------
     def set_title(self, title):
-        """ Sets the title of the QFrame. Not meant for public
-        consumption.
+        """ Sets the title of the QFrame.
 
         """
-        if self.widget:
-            self.widget.setWindowTitle(title)
+        self.widget.setWindowTitle(title)
 
     def set_visible(self, visible):
-        """ Show or hide the window.
+        """ Overridden from the parent class to raise the window to
+        the front if it should be shown.
 
-        If we are initializing, don't show yet.
         """
+        # Don't show the window if we're not initializing.
         if not self._initializing:
             if visible:
-                self.widget.show()
+                self.widget.setVisible(True)
                 self.widget.raise_()
             else:
-                self.widget.hide()
+                self.widget.setVisible(False)
+
