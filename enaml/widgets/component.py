@@ -124,63 +124,63 @@ class Component(BaseComponent):
         return BoxModel(self)
 
     #: How strongly a component hugs it's contents' width. Valid strengths
-    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
-    #: The default is 'strong'. This trait should be overridden on a per-control
-    #: basis to specify  a logical default for the given control.
+    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default is 
+    #: 'strong'. This trait should be overridden on a per-control basis to
+    #: specify  a logical default for the given control.
     hug_width = PolicyEnum('strong')
 
     #: How strongly a component hugs it's contents' height. Valid strengths
-    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
-    #: The default is 'strong'. This trait should be overridden on a per-control
-    #: basis to specify  a logical default for the given control.
+    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default is
+    #: 'strong'. This trait should be overridden on a per-control basis to 
+    #: specify  a logical default for the given control.
     hug_height = PolicyEnum('strong')
 
     #: The combination of (hug_width, hug_height).
     hug = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['hug_width', 'hug_height'])
 
-    #: How strongly a component resists clipping its contents. 
-    #: Valid strengths are 'weak', 'medium', 'strong', 'required'
-    #: and 'ignore'. The default is 'strong' for width.
+    #: How strongly a component resists clipping its contents. Valid 
+    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
+    #: The default is 'strong' for width.
     resist_clip_width = PolicyEnum('strong')
 
-    #: How strongly a component resists clipping its contents. 
-    #: Valid strengths are 'weak', 'medium', 'strong', 'required'
-    #: and 'ignore'. The default is 'strong' for height.
+    #: How strongly a component resists clipping its contents. Valid 
+    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
+    #: The default is 'strong' for height.
     resist_clip_height = PolicyEnum('strong')
 
     #: The combination of (resist_clip_width, resist_clip_height).
     resist_clip = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['resist_clip_width', 'resist_clip_height'])
 
-    #: An event that should be emitted by the abstract obj when
-    #: its size hint has updated do to some change.
+    #: An event that should be emitted by the abstract obj when its size 
+    #: hint has updated do to some change.
     size_hint_updated = Event
 
-    #: A read-only symbolic object that represents the left 
-    #: boundary of the component
+    #: A read-only symbolic object that represents the left boundary of 
+    #: the component
     left = Property
 
-    #: A read-only symbolic object that represents the top 
-    #: boundary of the component
+    #: A read-only symbolic object that represents the top boundary of 
+    #: the component
     top = Property
 
-    #: A read-only symbolic object that represents the width
-    #: of the component
+    #: A read-only symbolic object that represents the width of the 
+    #: component
     width = Property
 
-    #: A read-only symbolic object that represents the height 
-    #: of the component
+    #: A read-only symbolic object that represents the height of the 
+    #: component
     height = Property
 
-    #: A read-only symbolic object that represents the right 
-    #: boundary of the component
+    #: A read-only symbolic object that represents the right boundary 
+    #: of the component
     right = Property
 
-    #: A read-only symbolic object that represents the bottom 
-    #: boundary of the component
+    #: A read-only symbolic object that represents the bottom boundary 
+    #: of the component
     bottom = Property
 
-    #: A read-only symbolic object that represents the vertical 
-    #: center of the component
+    #: A read-only symbolic object that represents the vertical center 
+    #: of the component
     v_center = Property
 
     #: A read-only symbolic object that represents the horizontal 

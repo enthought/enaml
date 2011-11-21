@@ -75,3 +75,4 @@ class Window(Container):
         super(Window, self).update_constraints()
         size = self.layout.calc_min_size()
         self.set_min_size(*size)
+

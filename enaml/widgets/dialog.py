@@ -35,34 +35,36 @@ class Dialog(Window):
     accept and reject behavior for the dialog.
 
     """
-    #: A read only property which will be True when the dialog is open, False
-    #: otherwise.
+    #: A read only property which will be True when the dialog is open, 
+    #: False otherwise.
     active = Property(Bool, depends_on='_active')
 
     #: Fired when the dialog is opened.
     opened = Event
 
-    #: Fired when the dialog is closed. The event payload will be the dialog
-    #: result.
+    #: Fired when the dialog is closed. The event payload will be the 
+    #: dialog result.
     closed = Event
 
-    #: A read only property which is set to the result of the dialog; 'rejected'
-    #: if rejected() was called or the window was closed via the 'x' window
-    #: button, 'accepted' if accept() was called. The result is set before the
-    #: 'closed' event is fired.
+    #: A read only property which is set to the result of the dialog; 
+    #: 'rejected' if rejected() was called or the window was closed via 
+    #: the 'x' window button, 'accepted' if accept() was called. The 
+    #: result is set before the 'closed' event is fired.
     result = Property(DialogResult, depends_on='_result')
 
     #: An enum which indicates the modality of the dialog. One of 
-    #: "application_modal" or "window_modal". The default is app modal.
-    #: Changes to this attribute *after* the dialog is shown will have
-    #: no effect.
+    #: 'application_modal' or 'window_modal'. The default value is 
+    #: 'application_modal'. Changes to this attribute *after* the 
+    #: dialog is shown will have no effect.
     modality = Modality
 
+    #: An internal trait used to store the active state of the dialog.
     _active = Bool
 
+    #: An internal trait used to store the result of the dialog.
     _result = DialogResult('rejected')
 
-    #: Overridden parent class trait
+    #: Overridden parent class trait.
     abstract_obj = Instance(AbstractTkDialog)
 
     def accept(self):
@@ -84,8 +86,14 @@ class Dialog(Window):
         self.abstract_obj.reject()
 
     def _get_active(self):
+        """ The property getter for the 'active' attribute.
+
+        """
         return self._active
 
     def _get_result(self):
+        """ The property getter for the 'result' attribute.
+
+        """
         return self._result
 
