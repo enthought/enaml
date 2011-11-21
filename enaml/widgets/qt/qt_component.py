@@ -38,23 +38,22 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         super(QtComponent, self).initialize()
         shell = self.shell_obj
         if shell.bg_color:
-            role = self.widget.backgroundRole()
-            self.set_role_color(role, shell.bg_color)
+            self.set_bg_color(shell.bg_color)
         if shell.fg_color:
-            role = self.widget.foregroundRole()
-            self.set_role_color(role, shell.fg_color)
+            self.set_fg_color(shell.fg_color)
         if shell.font:
             self.set_font(shell.font)
         self.set_enabled(shell.enabled)
         if not shell.visible:
-            # Some QtContainers will turn off the visibility of their children
-            # entirely on the Qt side when the parent-child relationship is
-            # made. They have probably already done their work, so don't
-            # override it in the default case of visible=True.
+            # Some QtContainers will turn off the visibility of their 
+            # children entirely on the Qt side when the parent-child 
+            # relationship is made. They have probably already done 
+            # their work, so don't override it in the default case of 
+            # visible=True.
             self.set_visible(shell.visible)
 
     #--------------------------------------------------------------------------
-    # Implementation
+    # Abstract Implementation
     #--------------------------------------------------------------------------
     @property
     def toolkit_widget(self):
@@ -141,13 +140,18 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         self.widget.setGeometry(x, y, width, height)
 
+    #--------------------------------------------------------------------------
+    # Shell Object Change Handlers 
+    #--------------------------------------------------------------------------
     def shell_enabled_changed(self, enabled):
         """ The change handler for the 'enabled' attribute on the parent.
+
         """
         self.set_enabled(enabled)
 
     def shell_visible_changed(self, visible):
         """ The change handler for the 'visible' attribute on the parent.
+
         """
         self.set_visible(visible)
 
@@ -157,8 +161,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         given color.
         
         """
-        role = self.widget.backgroundRole()
-        self.set_role_color(role, color)
+        self.set_bg_color(color)
     
     def shell_fg_color_changed(self, color):
         """ The change handler for the 'fg_color' attribute on the shell
@@ -166,8 +169,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         given color.
 
         """
-        role = self.widget.foregroundRole()
-        self.set_role_color(role, color)
+        self.set_fb_color(color)
 
     def shell_font_changed(self, font):
         """ The change handler for the 'font' attribute on the shell 
@@ -175,6 +177,68 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         self.set_font(font)
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+
+        """
+        self.widget.setEnabled(enabled)
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+
+        """
+        self.shell_obj.parent.set_needs_update_constraints()
+        self.widget.setVisible(visible)
+
+    def set_bg_color(self, color):
+        """ Set the background color of the widget.
+
+        """
+        widget = self.widget
+        role = widget.backgroundRole()
+        if not color:
+            palette = QtGui.QApplication.instance().palette(widget)
+            qcolor = palette.color(role)
+            # On OSX, the default color is rendered *slightly* off
+            # so a simple workaround is to tell the widget not to
+            # auto fill the background.
+            widget.setAutoFillBackground(False)
+        else:
+            qcolor = q_color_from_color(color)
+            # When not using qt style sheets to set the background
+            # color, we need to tell the widget to auto fill the 
+            # background or the bgcolor won't render at all.
+            widget.setAutoFillBackground(True)
+        palette = widget.palette()
+        palette.setColor(role, qcolor)
+        widget.setPalette(palette)
+    
+    def set_fg_color(self, color):
+        """ Set the foreground color of the widget.
+
+        """
+        widget = self.widget
+        role = widget.foregroundRole()
+        if not color:
+            palette = QtGui.QApplication.instance().palette(widget)
+            qcolor = palette.color(role)
+        else:
+            qcolor = q_color_from_color(color)
+        palette = widget.palette()
+        palette.setColor(role, qcolor)
+        widget.setPalette(palette)
+
+    def set_font(self, font):
+        """ Set the font of the underlying toolkit widget to an 
+        appropriate QFont.
+
+        """
+        q_font = q_font_from_font(font)
+        self.widget.setFont(q_font)
 
     #--------------------------------------------------------------------------
     # Convienence methods
@@ -207,48 +271,4 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         for child in self.shell_obj.children:
             yield child.toolkit_widget
-
-    def set_enabled(self, enabled):
-        """ Enable or disable the widget.
-        """
-        self.widget.setEnabled(enabled)
-
-    def set_visible(self, visible):
-        """ Show or hide the widget.
-        """
-        self.shell_obj.parent.set_needs_update_constraints()
-        self.widget.setVisible(visible)
-
-    def set_role_color(self, role, color):
-        """ Set the color for a role of a QWidget to the color specified 
-        by the given enaml color or reset the widgets color to the default
-        value for the role if the enaml color is invalid.
-
-        """
-        if not color:
-            palette = QtGui.QApplication.instance().palette(self.widget)
-            qcolor = palette.color(role)
-            # On OSX, the default color is rendered *slightly* off
-            # so a simple workaround is to tell the widget not to
-            # auto fill the background.
-            if role == self.widget.backgroundRole():
-                self.widget.setAutoFillBackground(False)
-        else:
-            qcolor = q_color_from_color(color)
-            # When not using qt style sheets to set the background
-            # color, we need to tell the widget to auto fill the 
-            # background or the bgcolor won't render at all.
-            if role == self.widget.backgroundRole():
-                self.widget.setAutoFillBackground(True)
-        palette = self.widget.palette()
-        palette.setColor(role, qcolor)
-        self.widget.setPalette(palette)
-
-    def set_font(self, font):
-        """ Set the font of the underlying toolkit widget to an 
-        appropriate QFont.
-
-        """
-        q_font = q_font_from_font(font)
-        self.widget.setFont(q_font)
 
