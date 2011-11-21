@@ -1,0 +1,57 @@
+from enaml.styling.font import Font
+
+defn EditorPanel(editor):
+    GroupBox:
+        title = 'Properties'
+        flat = True
+        CheckBox:
+            text = 'Wrap lines'
+            checked := editor.wrap_lines
+        CheckBox:
+            text = 'Read only'
+            checked := editor.read_only
+        CheckBox:
+            text = 'Overwrite'
+            checked := editor.overwrite
+    Container:
+        constraints = [
+            vertical(top, find_field, case_sensitive, next, bottom),
+            horizontal(left, find_field, right),
+            horizontal(left, case_sensitive, whole_words, _space_, right),
+            horizontal(left, _space_, next, prev, right),
+            align_top(case_sensitive, whole_words),
+            align_top(next, prev),
+        ]
+        Field -> find_field:
+            value >> editor.find(value, False, case_sensitive.checked, whole_words.checked)
+        CheckBox -> case_sensitive:
+            text = "Case Sensitive"
+        CheckBox -> whole_words:
+            text = "Whole Words"
+        PushButton -> next:
+            text = 'Next'
+            clicked >> editor.find(find_field.value, False, case_sensitive.checked, whole_words.checked)
+        PushButton -> prev:
+            text = 'Prev'
+            clicked >> editor.find(find_field.value, True, case_sensitive.checked, whole_words.checked)
+
+defn MainWindow:
+    Window:
+        title = "Text Editor"
+        constraints = [
+            vertical(top, editor, cursor_info, bottom),
+            vertical(top, properties, find_box, _space_ >= 0, bottom),
+            horizontal(left, editor, properties, right),
+            align_top(editor, properties),
+            align_left(properties, find_box),
+            align_right(properties, find_box),
+        ]
+        TextEditor -> editor:
+            text = 'Test'
+            text >> print(text)
+            cursor_position >> print(cursor_position)
+            font = 'Arial 12'
+        Label -> cursor_info:
+            text << '%d/%d' % (editor.cursor_line, editor.cursor_column)
+        EditorPanel(editor) -> properties, find_box:
+            pass
