@@ -273,7 +273,12 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
         helpers = [AbutmentHelper(self.orientation, *along_args)]
         for item in items:
             if isinstance(item, Constrainable):
-                helpers.append(AbutmentHelper(self.ortho_orientation, first_ortho_boundary, margin_spacer, item, margin_spacer, last_ortho_boundary))
+                helpers.append(AbutmentHelper(self.ortho_orientation,
+                    first_ortho_boundary,
+                    margin_spacer|'medium'|1.5,
+                    item,
+                    margin_spacer|'medium'|1.25,
+                    last_ortho_boundary))
             if isinstance(item, type(self)):
                 # This is a nested LinearBoxHelper.
                 helpers.append(item)

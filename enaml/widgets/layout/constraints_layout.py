@@ -170,11 +170,15 @@ class ConstraintsLayout(AbstractLayoutManager):
             raise RuntimeError(msg)
         
         solver = self.solver
-            
+
         width_var = component.width
         height_var = component.height
 
-        with solver.suggest_values([(width_var, 0.0), (height_var, 0.0)], casuarius.medium):
+        # FIXME: here we pick a 'medium' strength like the window resize but
+        # weight it a little less. Uses of 'medium' in constraints should
+        # override this. In the future, we should add more meaningful Strengths.
+        with solver.suggest_values([(width_var, 0.0), (height_var, 0.0)],
+            default_strength=casuarius.medium, default_weight=0.1):
             min_width = width_var.value
             min_height = height_var.value
 

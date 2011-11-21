@@ -15,12 +15,10 @@ defn MainWindow:
     Window:
         title = "Find & Replace"
         constraints = [
-            # Setup the horizontal abutment of the two rows of controls
-            horizontal(left, find, find_next, find_field, right),
-            horizontal(left, replace, replace_and_find, replace_field, right),
-
-            # Setup the vertical abutment of the two rows
-            vertical(top, find_field, replace_field, bottom),
+            vbox(
+                hbox(find, find_next, find_field),
+                hbox(replace, replace_and_find, replace_field),
+            ),
 
             # Setup the alignment of the left of the two fields
             align('left', find_field, replace_field),
