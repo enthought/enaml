@@ -232,6 +232,8 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
 
     def _get_constraint_list(self, container):
         items = clear_invisible(self.items)
+        if len(items) == 0:
+            return []
         first_name, last_name = self.container_direction_map[self.orientation]
         first_boundary = getattr(self, first_name)
         last_boundary = getattr(self, last_name)
