@@ -1747,7 +1747,7 @@ def p_argument3(p):
     arg = p[1]
     assert isinstance(arg, ast.Name), 'Keyword arg must be a Name.'
     value = p[3]
-    p[0] = ast.keyword(arg=arg, value=value)
+    p[0] = ast.keyword(arg=arg.id, value=value)
 
 
 def p_list_for1(p):

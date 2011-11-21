@@ -67,9 +67,7 @@ table_model = ColoredTable(table, data_setter=table_setter)
 defn MainWindow:
     Window:
         constraints = [
-            vertical(top, tv1, bottom),
-            vertical(top, tv2, bottom),
-            horizontal(left, tv1, tv2, right),
+            hbox(tv1, tv2),
         ]
         TableView -> tv1:
             hug_width = 'strong'

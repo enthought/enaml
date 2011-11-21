@@ -56,11 +56,11 @@ defn MainWindow(model):
     Window:
         title = 'Progress Bar'
         constraints = [
-            vertical(top, progress, label, work_button, _space_, bottom),
-            horizontal(left, progress, right),
-            horizontal(left, _space_, label, _space_, right),
-            horizontal(left, _space_, work_button, _space_, right),
-            align_h_center(progress, label, work_button),
+            vbox(progress,
+                hbox(_space_, label, _space_), 
+                hbox(_space_, work_button, _space_),
+                _space_),
+            align('h_center', progress, label, work_button),
             width >= 200,
         ]
         ProgressBar -> progress:

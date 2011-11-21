@@ -28,6 +28,17 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     def create(self):
         self.widget = wx.Panel(self.parent_widget())
 
+    def initialize(self):
+        super(WXComponent, self).initialize()
+        shell = self.shell_obj
+        self.set_enabled(shell.enabled)
+        if not shell.visible:
+            # Some Containers will turn off the visibility of their children
+            # entirely on the toolkit side when the parent-child relationship is
+            # made. They have probably already done their work, so don't
+            # override it in the default case of visible=True.
+            self.set_visible(shell.visible)
+
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -111,6 +122,16 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         """
         self._set_geometry(self.widget, x, y, width, height)
 
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the parent.
+        """
+        self.set_enabled(enabled)
+
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the parent.
+        """
+        self.set_visible(visible)
+
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the parent.
         Sets the background color of the internal widget to the given color.
@@ -160,6 +181,17 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         for child in shell.children:
             yield child.toolkit_widget
 
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+        """
+        self.widget.Enable(enabled)
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+        """
+        self.shell_obj.parent.set_needs_update_constraints()
+        self.widget.Show(visible)
+
     #--------------------------------------------------------------------------
     # Indirection getters and setters 
     #--------------------------------------------------------------------------
@@ -202,6 +234,9 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         min_width = min_width + (widget_width - client_width)
         min_height = min_height + (widget_height - client_height)
         widget.SetMinSize((min_width, min_height))
+        new_size = (max(widget_width, min_width), max(widget_height, min_height))
+        if new_size != (widget_width, widget_height):
+            widget.SetSize(new_size)
 
     def _pos(self, widget):
         """ Returns the position of the given widget. See also 'pos()'.

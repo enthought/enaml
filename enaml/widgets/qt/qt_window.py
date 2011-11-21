@@ -14,6 +14,8 @@ class QtWindow(QtContainer, AbstractTkWindow):
     contains other child widgets and layouts.
 
     """
+    _initializing = False
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -21,8 +23,12 @@ class QtWindow(QtContainer, AbstractTkWindow):
         """ Intializes the attributes on the QWindow.
 
         """
-        super(QtWindow, self).initialize()
-        self.set_title(self.shell_obj.title)
+        self._initializing = True
+        try:
+            super(QtWindow, self).initialize()
+            self.set_title(self.shell_obj.title)
+        finally:
+            self._initializing = False
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -37,21 +43,6 @@ class QtWindow(QtContainer, AbstractTkWindow):
         widget = self.widget
         geom = widget.geometry()
         return (geom.x(), geom.y())
-
-    def show(self):
-        """ Displays the window to the screen.
-
-        """
-        if self.widget:
-            self.widget.show()
-            self.widget.raise_()
-
-    def hide(self):
-        """ Hide the window from the screen.
-
-        """
-        if self.widget:
-            self.widget.hide()
 
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute. Not meant for
@@ -68,3 +59,14 @@ class QtWindow(QtContainer, AbstractTkWindow):
         if self.widget:
             self.widget.setWindowTitle(title)
 
+    def set_visible(self, visible):
+        """ Show or hide the window.
+
+        If we are initializing, don't show yet.
+        """
+        if not self._initializing:
+            if visible:
+                self.widget.show()
+                self.widget.raise_()
+            else:
+                self.widget.hide()

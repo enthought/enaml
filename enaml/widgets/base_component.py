@@ -5,7 +5,8 @@
 from abc import ABCMeta, abstractmethod, abstractproperty
 from functools import wraps
 
-from traits.api import HasStrictTraits, WeakRef, Instance, List, Str, Tuple, Property
+from traits.api import (Bool, HasStrictTraits, Instance, List, Property, Str,
+    Tuple, WeakRef)
 
 from .setup_hooks import AbstractSetupHook
 
@@ -73,7 +74,19 @@ class AbstractTkBaseComponent(object):
 
         """
         raise NotImplementedError
-    
+
+    @abstractmethod
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the parent.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the parent.
+        """
+        raise NotImplementedError
+
     @abstractmethod
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the shell
@@ -257,7 +270,13 @@ class BaseComponent(HasStrictTraits):
     #: be stored weakly because the toolkit does not maintain refs
     #: to the compoents that its constructors create.
     toolkit = Instance(Toolkit)
-    
+
+    #: Whether the widget is enabled or not
+    enabled = Bool(True)
+
+    #: Whether the widget is visible or not
+    visible = Bool(True)
+
     #: The background color of the widget
     bg_color = Property(ColorTrait, depends_on=['_user_bg_color', '_style_bg_color'])
     

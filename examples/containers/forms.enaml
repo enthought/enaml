@@ -10,11 +10,12 @@ defn MainWindow:
     Window:
         title = "Form Layout"
         constraints = [
-            vertical(top, top_label, top_form, bottom_label, bottom_form, _space_, bottom),
-            horizontal(left, top_label, _space_>=0, right),
-            horizontal(left, top_form, right),
-            horizontal(left, bottom_label, _space_>=0, right),
-            horizontal(left, bottom_form, right),
+            vbox(
+                hbox(top_label, _space_>=0),
+                top_form,
+                hbox(bottom_label, _space_>=0),
+                bottom_form,
+                _space_),
             top_form.midline == bottom_form.midline,
         ]
         Label -> top_label:

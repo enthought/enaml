@@ -18,6 +18,8 @@ class WXWindow(WXContainer, AbstractTkWindow):
     to be delegated to the wx.Frame and some to the wx.Window.
 
     """
+    _initializing = False
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -35,25 +37,16 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """ Intializes the attributes on the wx.Frame.
 
         """
-        super(WXWindow, self).initialize()
-        shell = self.shell_obj
-        self.set_title(shell.title)
+        self._initializing = True
+        try:
+            super(WXWindow, self).initialize()
+            self.set_title(self.shell_obj.title)
+        finally:
+            self._initializing = False
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def show(self):
-        """ Displays the window to the screen.
-
-        """
-        self._frame.Show()
-
-    def hide(self):
-        """ Hide the window from the screen.
-
-        """
-        self._frame.Hide()
-
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute.
 
@@ -66,6 +59,17 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """
         self._frame.SetTitle(title)
     
+    def set_visible(self, visible):
+        """ Show or hide the window.
+
+        If we are initializing, don't show yet.
+        """
+        if not self._initializing:
+            if visible:
+                self._frame.Show()
+            else:
+                self._frame.Hide()
+
     def resize(self, width, height):
         """ Overridden parent class method to do the resize on the 
         internal wx.Frame object.

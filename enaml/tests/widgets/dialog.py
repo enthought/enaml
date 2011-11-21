@@ -57,7 +57,7 @@ defn MainWindow():
         """ Test the behavior when showing and closing the dialog.
 
         """
-        self.component.abstract_obj.show()
+        self.component.abstract_obj.shell_visible_changed(True)
         # Compare sets because the order is unimportant.
         self.assertEquals(set(self.event_log), set([
             ('active', True),
@@ -74,7 +74,7 @@ defn MainWindow():
             ('closed', 'accepted'),
         ]))
         self.event_log = []
-        self.component.abstract_obj.show()
+        self.component.abstract_obj.shell_visible_changed(True)
         self.assertEquals(set(self.event_log), set([
             ('active', True),
             ('_active', True),

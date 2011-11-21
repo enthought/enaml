@@ -19,7 +19,7 @@ defn LabeledField(label_text):
         constraints = [
             horizontal(left, label, field, right),
             vertical(top, label, bottom),
-            align_v_center(label, field)
+            align('v_center', label, field)
         ]
         Label -> label:
             text = label_text
@@ -34,7 +34,7 @@ defn MainWindow:
             horizontal(left, top_left_cntr, top_right_cntr, right),
             vertical(top, top_left_cntr, bottom_cntr, bottom),
             horizontal(left, bottom_cntr, right),
-            align_v_center(top_left_cntr, top_right_cntr),
+            align('v_center', top_left_cntr, top_right_cntr),
             top_left_cntr.width == 1.1 * top_right_cntr.width,
         ]
         LabeledField("Left:") -> container as top_left_cntr:
@@ -46,8 +46,8 @@ defn MainWindow:
                 vertical(top, frame, add_button, bottom),
                 horizontal(left, frame, right),
                 horizontal(left, add_button, remove_button, _space_, change_mode_button, _space_, share_button, right),
-                align_v_center(add_button, remove_button, change_mode_button, share_button),
-                align_h_center(self, change_mode_button) | 'weak',
+                align('v_center', add_button, remove_button, change_mode_button, share_button),
+                align('h_center', self, change_mode_button) | 'weak',
                 frame.height >= 100,
                 frame.width >= 200,
             ]
