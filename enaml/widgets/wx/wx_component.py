@@ -234,6 +234,9 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         min_width = min_width + (widget_width - client_width)
         min_height = min_height + (widget_height - client_height)
         widget.SetMinSize((min_width, min_height))
+        new_size = (max(widget_width, min_width), max(widget_height, min_height))
+        if new_size != (widget_width, widget_height):
+            widget.SetSize(new_size)
 
     def _pos(self, widget):
         """ Returns the position of the given widget. See also 'pos()'.
