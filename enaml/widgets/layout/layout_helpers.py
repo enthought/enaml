@@ -169,7 +169,7 @@ class AbutmentHelper(DeferredConstraints):
 
     def __repr__(self):
         return '{0}({1})'.format(self.orientation,
-            ', '.join(map(repr(self.items))))
+            ', '.join(map(repr, self.items)))
 
 
 class AlignmentHelper(DeferredConstraints):
@@ -184,13 +184,12 @@ class AlignmentHelper(DeferredConstraints):
         self.items = items
 
     def _get_constraint_list(self, container):
-        items = clear_invisible(self.items)
-        cns = [f.constraint() for f in AlignmentCn.from_items(items, self.anchor)]
+        cns = [f.constraint() for f in AlignmentCn.from_items(self.items, self.anchor)]
         return cns
 
     def __repr__(self):
-        return 'align({1!r}, {2})'.format(self.anchor,
-            ', '.join(map(repr(self.items))))
+        return 'align({0!r}, {1})'.format(self.anchor,
+            ', '.join(map(repr, self.items)))
 
 
 class LinearBoxHelper(DeferredConstraints, Constrainable):
@@ -251,14 +250,17 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
             else:
                 constraints = [getattr(self, attr) == getattr(container, attr)
                     for attr in ('top', 'bottom', 'left', 'right')]
+            margin_spacer = EqSpacer()
         else:
             constraints = []
+            margin_spacer = EqSpacer(0)
 
-        along_args = [first_boundary] + items + [last_boundary]
+
+        along_args = [first_boundary, margin_spacer] + items + [margin_spacer, last_boundary]
         helpers = [AbutmentHelper(self.orientation, *along_args)]
         for item in items:
             if isinstance(item, Constrainable):
-                helpers.append(AbutmentHelper(self.ortho_orientation, first_ortho_boundary, item, last_ortho_boundary))
+                helpers.append(AbutmentHelper(self.ortho_orientation, first_ortho_boundary, margin_spacer, item, margin_spacer, last_ortho_boundary))
             if isinstance(item, type(self)):
                 # This is a nested LinearBoxHelper.
                 helpers.append(item)
@@ -267,6 +269,10 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
             constraints.extend(helper.get_constraint_list(None))
 
         return constraints
+
+    def __repr__(self):
+        return '{0}box({1})'.format(self.orientation[0],
+            ', '.join(map(repr, self.items)))
 
 
 class AbstractCnFactory(object):

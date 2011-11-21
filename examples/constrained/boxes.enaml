@@ -11,16 +11,10 @@ defn MainWindow():
             vbox(
                 ALabel,
                 BLabel,
-                # FIXME: hbox and vbox implicitly include a fixed space around their
-                # borders. A smarter "space-between-components" algorithm can do
-                # better than this. For now, just put in 0-sized spaces.
-                0,
-                hbox(0, CLabel, _space_, DLabel, _space_, ELabel, 0),
-                0,
+                hbox(CLabel, _space_, DLabel, _space_, ELabel),
                 FLabel,
                 GLabel,
-                hbox(0, button1, _space_, button2, _space_, button3, 0),
-                0),
+                hbox(button1, _space_, button2, _space_, button3)),
             align('h_center', self, DLabel, button2),
         ]
         Label -> ALabel:
