@@ -36,43 +36,6 @@ class WXDialog(WXWindow, AbstractTkDialog):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def set_visible(self, visible):
-        """ Show or hide the window.
-        
-        If we are initializing, don't show yet.
-        """
-        if not self._initializing:
-            if visible:
-                self.show()
-            else:
-                self.hide()
-
-    def show(self):
-        """ Displays this dialog to the screen.
-
-        If the dialog is modal, disable all other windows in the application.
-
-        """
-        widget = self.widget
-        if widget:
-            shell = self.shell_obj
-            shell.trait_set(
-                _active = True,
-                opened = True,
-            )
-            # wx cannot distinguish between app modal and 
-            # window modal, so we only get one kind.
-            widget.ShowModal()
-
-    def hide(self):
-        """ Overridden parent class method. Hiding a dialog is the same
-        as rejecting it.
-
-        """
-        widget = self.widget
-        if widget and widget.IsShown():
-            self.reject()
-
     def accept(self):
         """ Close the dialog and set the result to 'accepted'.
 
@@ -85,23 +48,9 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """
         self._close_dialog('rejected')
 
-    def _close_dialog(self, result):
-        """ Destroy the dialog, fire events, and set status attributes.
-
-        """
-        # We have to manually Destroy the dialog, or the wx app
-        # will never quit.
-        if self.widget:
-            self.widget.Destroy()
-        self.shell_obj.trait_set(
-            _result = result, 
-            _active = False,
-            closed = result,
-        )
-
-    #---------------------------------------------------------------------------
-    # Event handling
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
     def _on_close(self, event):
         """ Destroy the dialog to handle the EVT_CLOSE event. This will 
         happen if the user clicks on the 'X'. This is equivalent to
@@ -109,4 +58,35 @@ class WXDialog(WXWindow, AbstractTkDialog):
 
         """
         self.reject()
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ Overridden from the parent class to properly launch and close 
+        the dialog.
+
+        """
+        if not self._initializing:
+            widget = self.widget
+            shell = self.shell_obj
+            if visible:
+                shell.trait_set(_active=True, opened=True)
+                # wx cannot distinguish between app modal and 
+                # window modal, so we only get one kind.
+                widget.ShowModal()
+            else:
+                self.reject()
+    
+    #--------------------------------------------------------------------------
+    # Helper Methods 
+    #--------------------------------------------------------------------------
+    def _close_dialog(self, result):
+        """ Destroy the dialog, fire events, and set status attributes.
+
+        """
+        # Explicitly Destroy the dialog or the wxApp won't properly exit.
+        if self.widget:
+            self.widget.Destroy()
+        self.shell_obj.trait_set(_result=result, _active=False, closed=result)
 

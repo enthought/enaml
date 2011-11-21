@@ -65,6 +65,20 @@ class WXBaseComponent(AbstractTkBaseComponent):
         """
         pass
 
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell
+        object. Should be implemented by subclasses where appropriate.
+
+        """
+        pass
+    
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the shell
+        object. Should be implemented by subclasses where appropriate.
+
+        """
+        pass
+        
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the shell
         object. Should be implemented by subclasses where appropriate.

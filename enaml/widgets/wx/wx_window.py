@@ -52,7 +52,10 @@ class WXWindow(WXContainer, AbstractTkWindow):
 
         """
         self.set_title(title)
-
+    
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
     def set_title(self, title):
         """ Sets the title of the frame.
 
@@ -60,16 +63,20 @@ class WXWindow(WXContainer, AbstractTkWindow):
         self._frame.SetTitle(title)
     
     def set_visible(self, visible):
-        """ Show or hide the window.
+        """ Overridden from the parent class to raise the window to
+        the front if it should be shown.
 
-        If we are initializing, don't show yet.
         """
+        # Don't show the window if we're not initializing.
         if not self._initializing:
             if visible:
                 self._frame.Show()
             else:
                 self._frame.Hide()
 
+    #--------------------------------------------------------------------------
+    # Overridden Geometry Methods 
+    #--------------------------------------------------------------------------
     def resize(self, width, height):
         """ Overridden parent class method to do the resize on the 
         internal wx.Frame object.

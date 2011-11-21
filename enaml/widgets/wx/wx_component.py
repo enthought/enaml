@@ -26,21 +26,28 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
+        """ Creates the underlying wx widget.
+
+        """
         self.widget = wx.Panel(self.parent_widget())
 
     def initialize(self):
+        """ Initializes the attributes of the wx widget.
+
+        """
         super(WXComponent, self).initialize()
         shell = self.shell_obj
         self.set_enabled(shell.enabled)
         if not shell.visible:
-            # Some Containers will turn off the visibility of their children
-            # entirely on the toolkit side when the parent-child relationship is
-            # made. They have probably already done their work, so don't
-            # override it in the default case of visible=True.
+            # Some Containers will turn off the visibility of their 
+            # children entirely on the Qt side when the parent-child 
+            # relationship is made. They have probably already done 
+            # their work, so don't override it in the default case of 
+            # visible=True.
             self.set_visible(shell.visible)
 
     #--------------------------------------------------------------------------
-    # Implementation
+    # Abstract Implementation
     #--------------------------------------------------------------------------
     @property
     def toolkit_widget(self):
@@ -122,19 +129,28 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         """
         self._set_geometry(self.widget, x, y, width, height)
 
+    #--------------------------------------------------------------------------
+    # Shell Object Change Handlers 
+    #--------------------------------------------------------------------------
     def shell_enabled_changed(self, enabled):
-        """ The change handler for the 'enabled' attribute on the parent.
+        """ The change handler for the 'enabled' attribute on the shell 
+        object.
+
         """
         self.set_enabled(enabled)
 
     def shell_visible_changed(self, visible):
-        """ The change handler for the 'visible' attribute on the parent.
+        """ The change handler for the 'visible' attribute on the shell
+        object.
+
         """
         self.set_visible(visible)
 
     def shell_bg_color_changed(self, color):
-        """ The change handler for the 'bg_color' attribute on the parent.
-        Sets the background color of the internal widget to the given color.
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
         """
         pass
 
@@ -146,12 +162,31 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         pass
 
     def shell_font_changed(self, font):
-        """ The change handler for the 'font' attribute on the parent.
-        Sets the font of the internal widget to the given font.
-        For some widgets this may do nothing.
+        """ The change handler for the 'font' attribute on the shell 
+        object. Sets the font of the internal widget to the given font.
+
         """
         pass
 
+    #--------------------------------------------------------------------------
+    # Widget Update Methods 
+    #--------------------------------------------------------------------------
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+
+        """
+        self.widget.Enable(enabled)
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+
+        """
+        self.shell_obj.parent.set_needs_update_constraints()
+        self.widget.Show(visible)
+
+    #--------------------------------------------------------------------------
+    # Convenience Methods 
+    #--------------------------------------------------------------------------
     def parent_widget(self):
         """ Returns the logical wx.Window parent for this component.
 
@@ -180,17 +215,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         shell = self.shell_obj
         for child in shell.children:
             yield child.toolkit_widget
-
-    def set_enabled(self, enabled):
-        """ Enable or disable the widget.
-        """
-        self.widget.Enable(enabled)
-
-    def set_visible(self, visible):
-        """ Show or hide the widget.
-        """
-        self.shell_obj.parent.set_needs_update_constraints()
-        self.widget.Show(visible)
 
     #--------------------------------------------------------------------------
     # Indirection getters and setters 
