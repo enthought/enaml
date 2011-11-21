@@ -1,0 +1,8 @@
+defn MainWindow:
+    Window:
+        title = "Progressbar example"
+        constraints = [vertical(top, progress, bottom),
+                        horizontal(left, progress, right)]
+        ProgressBar -> progress:
+            value = 32
+            maximum = 100
