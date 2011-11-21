@@ -48,7 +48,6 @@ defn MainWindow(model):
                 hbox(_space_, work_button, _space_),
                 _space_),
             align('h_center', progress, label, work_button),
-            width >= 200,
         ]
         ProgressBar -> progress:
             value := model.units_done
