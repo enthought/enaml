@@ -158,8 +158,7 @@ defn EmployeeView(employee):
                 Field -> fld:
                     value := employee.phone
                     converter = PhoneNumberConverter()
-                    error_color = '#F9A7A7'
-                    bg_color << error_color if error else "none"
+                    bg_color << 'error' if error else 'none'
                 Label:
                     text = 'Date of Birth:'
                 DateEdit:
@@ -194,13 +193,11 @@ defn EmployeeView(employee):
                 Field:
                     value << employee.boss.company_name
                     enabled << en_cb.checked
-                    bg_color << 'lightgray' if read_only else 'none'
                 Label:
                     text = "Reporting Manager:"
                 Field:
                     value << "%s %s" % (employee.boss.first_name, employee.boss.last_name)
                     enabled << en_cb.checked
-                    bg_color << 'lightgray' if read_only else 'none'
                 Label:
                     text = "Allow Editing:"
                 CheckBox -> en_cb:
