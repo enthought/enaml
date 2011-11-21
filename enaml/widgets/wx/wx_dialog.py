@@ -15,7 +15,6 @@ class WXDialog(WXWindow, AbstractTkDialog):
     WXDialog uses a wx.Dialog to create a simple top-level dialog.
 
     """
-
     #---------------------------------------------------------------------------
     # Setup methods
     #---------------------------------------------------------------------------
@@ -34,9 +33,20 @@ class WXDialog(WXWindow, AbstractTkDialog):
         super(WXDialog, self).initialize()
         self.widget.Bind(wx.EVT_CLOSE, self._on_close)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Implementation
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ Show or hide the window.
+        
+        If we are initializing, don't show yet.
+        """
+        if not self._initializing:
+            if visible:
+                self.show()
+            else:
+                self.hide()
+
     def show(self):
         """ Displays this dialog to the screen.
 
