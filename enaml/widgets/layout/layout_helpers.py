@@ -255,8 +255,21 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
             constraints = []
             margin_spacer = EqSpacer(0)
 
+        if not is_spacer(items[0]):
+            pre_along_args = [first_boundary, margin_spacer]
+        else:
+            # Cannot have two spacers in a row.
+            pre_along_args = [first_boundary]
 
-        along_args = [first_boundary, margin_spacer] + items + [margin_spacer, last_boundary]
+        if not is_spacer(items[-1]):
+            post_along_args = [margin_spacer, last_boundary]
+        else:
+            # Cannot have two spacers in a row.
+            post_along_args = [last_boundary]
+
+        along_args = pre_along_args + items + post_along_args
+        # FIXME: we should do something intelligent about the alignment along
+        # the orientation.
         helpers = [AbutmentHelper(self.orientation, *along_args)]
         for item in items:
             if isinstance(item, Constrainable):
