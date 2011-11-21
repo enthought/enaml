@@ -608,8 +608,11 @@ class BaseSpacer(object):
 
     __slots__ = ()
 
+    strength = None
+    weight = None
+
     @abstractmethod
-    def constrain(self, first_anchor, second_anchor):
+    def _constrain(self, first_anchor, second_anchor):
         """ An abstract method. Subclasses should implement this 
         method to return a symbolics.LinearConstraint object that
         is appropriate to separate the two anchors according to
@@ -618,16 +621,53 @@ class BaseSpacer(object):
         """
         raise NotImplementedError
 
+    def constrain(self, first_anchor, second_anchor):
+        """ Return a LinearConstraint object that is appropriate to separate the
+        two anchors according to the amount of space represented by the spacer.
+
+        The LinearConstraint will have any strength or weight that has been
+        provided by the | operator.
+
+        """
+        constraint = self._constrain(first_anchor, second_anchor)
+        if self.strength is not None:
+            constraint = constraint | self.strength
+        if self.weight is not None:
+            constraint = constraint | self.weight
+        return constraint
+
 
 class Spacer(BaseSpacer):
     """ A spacer base class which adds support for storing a value
     which represent the amount of space to use in the constraint.
 
     """
-    __slots__ = ('amt',)
+    __slots__ = ('amt', 'strength', 'weight')
 
-    def __init__(self, amt=DEFAULT_SPACE):
+    def __init__(self, amt=DEFAULT_SPACE, strength=None, weight=None):
         self.amt = max(0, amt)
+        self.strength = strength
+        self.weight = weight
+
+    def __or__(self, other):
+        """ Set the strength of all of the constraints to a common strength.
+
+        """
+        strength = self.strength
+        weight = self.weight
+        if isinstance(other, (float, int, long)):
+            weight = float(other)
+        elif isinstance(other, basestring):
+            mapping = STRENGTH_MAP
+            if other not in mapping:
+                raise ValueError('Invalid strength `%s`' % other)
+            strength = STRENGTH_MAP[other]
+        elif isinstance(other, Strength):
+            strength = other
+        else:
+            msg = 'Strength must be a string. Got %s instead.' % type(other)
+            raise TypeError(msg)
+        return type(self)(amt=self.amt, strength=strength, weight=weight)
 
 
 class EqSpacer(Spacer):
@@ -636,11 +676,11 @@ class EqSpacer(Spacer):
     """
     __slots__ = ()
 
-    def constrain(self, first_anchor, second_anchor):
+    def _constrain(self, first_anchor, second_anchor):
         """ A constraint of the form (anchor_1 + space == anchor_2)
 
         """
-        return first_anchor + self.amt == second_anchor
+        return (first_anchor + self.amt == second_anchor)
 
 
 class LeSpacer(Spacer):
@@ -649,7 +689,7 @@ class LeSpacer(Spacer):
     """
     __slots__ = ()
 
-    def constrain(self, first_anchor, second_anchor):
+    def _constrain(self, first_anchor, second_anchor):
         """ A constraint of the form (anchor_1 + space >= anchor_2)
         That is, the visible space must be less than or equal to the
         given amount.
@@ -664,7 +704,7 @@ class GeSpacer(Spacer):
     """
     __slots__ = ()
 
-    def constrain(self, first_anchor, second_anchor):
+    def _constrain(self, first_anchor, second_anchor):
         """ A constraint of the form (anchor_1 + space >= anchor_2)
         That is, the visible space must be greater than or equal to
         the given amount.
@@ -697,12 +737,13 @@ class _space_(BaseSpacer):
             raise TypeError('space can only be created from ints')
         return GeSpacer(other)
     
-    def constrain(self, first_anchor, second_anchor):
+    def _constrain(self, first_anchor, second_anchor):
         """ Returns a constraint that is a flexible amount of space
         with a minimum equal to the default system space.
 
         """
-        return GeSpacer().constrain(first_anchor, second_anchor)
+        spacer = GeSpacer()
+        return spacer._constrain(first_anchor, second_anchor)
 
 
 # The singleton _space_ instance. There is no need for more than one.
