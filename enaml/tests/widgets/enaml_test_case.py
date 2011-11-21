@@ -3,11 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import unittest
+import inspect
 
 from enaml.parsing.parser import parse
-from enaml.parsing.enaml_compiler import EnamlCompiler, evalcode
-from enaml.widgets.component import Component
+from enaml.parsing.enaml_compiler import EnamlCompiler
 from enaml.toolkit import default_toolkit
+
 
 def required_method(function_object):
     """ Decorator for required methods.
@@ -23,6 +24,7 @@ def required_method(function_object):
         raise NotImplementedError(msg)
     return proxy_function
 
+
 class EnamlTestCase(unittest.TestCase):
     """ Base class for testing Enaml object widgets.
 
@@ -33,25 +35,6 @@ class EnamlTestCase(unittest.TestCase):
 
     #: default toolkit to use for the enaml source parsing
     toolkit = default_toolkit()
-
-##    def component_by_id(self, component, component_id):
-##        """ Find an item in the view's namespace with a given id.
-##
-##        Arguments
-##        ---------
-##        view :
-##            The enaml based view object
-##
-##        component_id :
-##            The enaml component id.
-##
-##        Raises
-##        ------
-##        AttributeError :
-##            if there is no object with that id.
-##
-##        """
-##        return getattr(view.ns, component_id)
 
     def component_by_name(self, view, name):
         """ Find an item in the view with a given name.
@@ -100,7 +83,6 @@ class EnamlTestCase(unittest.TestCase):
         view.root.setup()
         return view
 
-
     def assertEnamlInSync(self, component, attribute_name, value):
         """ Verify that the requested attribute is properly set
 
@@ -121,50 +103,27 @@ class EnamlTestCase(unittest.TestCase):
             The expected value.
 
         .. note:: It is expected that the user has defined an appropriate
-            method get_<attribute_name>(widget) in the current test case.
-            The get methods can raise assertion errors when it is
-            not possible to retrieve a sensible value for the attribute.
+            method get_<attribute_name>(widget) or the extentded version
+            get_<attribute_name>(component, widget) in the current test
+            case. The extended signature is commonly used because additional
+            information on the component's attributes is required to return
+            a sensible result (e.g. the component uses Converters to set
+            and retrieve the value of the attribute). The assert method
+            The get methods can raise assertion errors when it is not
+            possible to retrieve a sensible value for the attribute.
 
         """
         widget = component.toolkit_widget
         enaml_value = getattr(component, attribute_name)
-        widget_value = getattr(self, 'get_' + attribute_name)(widget)
+        widget_method = getattr(self, 'get_' + attribute_name)
+
+        try:
+            inspect.getcallargs(widget_method, widget)
+        except TypeError:
+            widget_value = widget_method(component, widget)
+        else:
+            widget_value = widget_method(widget)
 
         self.assertEqual(value, enaml_value)
         self.assertEqual(value, widget_value)
 
-    def assertEnamlInSyncExtended(self, component, attribute_name, value):
-        """ Verify that the requested attribute is properly set
-
-        The method compares the attribute value in the Enaml object and
-        check if it is synchronized with the toolkit widget. The component
-        attribute is retrieved directly while the widget value is retrieved
-        through a call to a method function in the test case.
-
-        Arguments
-        ---------
-        component : enaml.widgets.component.Component
-            The Enaml component to check.
-
-        attribute_name : str
-            The string name of the Enaml attribute to check.
-
-        value :
-            The expected value.
-
-        .. note:: It is expected that the user has defined an appropriate
-            method get_<attribute_name>(component, widget) in the current
-            test case. The extended signature is required because additional
-            information component attribute are required return a sensible
-            result (e.g. the component uses Converters to set and retrieve
-            the value of the attribute. The get methods can raise
-            assertion errors when it is not possible to retrieve a sensible
-            value for the attribute.
-
-        """
-        widget = component.toolkit_widget
-        enaml_value = getattr(component, attribute_name)
-        widget_value = getattr(self, 'get_' + attribute_name)(component, widget)
-
-        self.assertEqual(value, enaml_value)
-        self.assertEqual(value, widget_value)

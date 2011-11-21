@@ -23,14 +23,14 @@ class TestHtml(EnamlTestCase):
         """ Set up before the Html tests.
 
         """
-        enaml = """
+        enaml_source = """
 defn MainWindow():
     Window:
         Html -> html:
             source = '<b>{0}</b>'
 """.format(self.text)
 
-        self.view = self.parse_and_create(enaml)
+        self.view = self.parse_and_create(enaml_source)
         self.component = self.component_by_name(self.view, 'html')
         self.widget = self.component.toolkit_widget
 

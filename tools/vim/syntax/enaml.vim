@@ -27,8 +27,8 @@ syn match enamlSeparator        ":: \w\+ ::"
 " added.
 syn match enamlOperator         "\%(\w\|\s\)\(->\|<<\|>>\|=\|:=\)\%(\w\|\s\)"
 if exists("python_highlight_builtins") || exists("enaml_highlight_builtins")
-    syn keyword enamlBuiltin    horizontal vertical align_left align_right
-    syn keyword enamlBuiltin    align_top align_bottom align_v_center align_h_center
+    syn keyword enamlBuiltin    horizontal vertical hbox vbox align align_left align_right
+    syn keyword enamlBuiltin    align_top align_bottom align_v_center align_h_center _space_
 endif
 
 " Default highlighting

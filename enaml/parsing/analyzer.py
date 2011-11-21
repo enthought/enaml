@@ -6,7 +6,7 @@ import ast
 
 
 class AttributeVisitor(ast.NodeVisitor):
-
+    # XXX this visitor needs to be far more intelligent
     def __init__(self):
         self.deps = set()
         self.attr = None
@@ -19,6 +19,7 @@ class AttributeVisitor(ast.NodeVisitor):
         attr = self.attr
         if attr is not None:
             self.deps.add((node.id, attr))
+            self.attr = None
         else:
             self.attr = None
         

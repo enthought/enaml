@@ -2,23 +2,17 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
-
+from .qt import QtGui, QtCore
 from .qt_window import QtWindow
+from .qt_resizing_widgets import QResizingDialog
 
 from ..dialog import AbstractTkDialog
 
 
-class QResizingDialog(QtGui.QDialog):
-    """ A QDialog subclass that converts a resize event into a signal
-    that can be connected to a slot. This allows the widget to notify
-    Enaml that it has been resized and the layout needs to be recomputed.
-
-    """
-    resized = QtCore.Signal()
-
-    def resizeEvent(self, event):
-        self.resized.emit()
+_MODAL_MAP = {
+    'application_modal': QtCore.Qt.ApplicationModal,
+    'window_modal': QtCore.Qt.WindowModal,
+}
 
 
 class QtDialog(QtWindow, AbstractTkDialog):
@@ -27,11 +21,9 @@ class QtDialog(QtWindow, AbstractTkDialog):
     This class creates a simple top-level dialog.
 
     """
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-
     def create(self):
         """ Creates the underlying QDialog control.
 
@@ -45,44 +37,14 @@ class QtDialog(QtWindow, AbstractTkDialog):
         super(QtDialog, self).initialize()
         self.widget.finished.connect(self._on_close)
 
-    def bind(self):
-        super(QtDialog, self).bind()
-        self.widget.resized.connect(self.on_resize)
-
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-
-    def show(self):
-        """ Displays this dialog to the screen.
-
-        If the dialog is modal, disable all other windows in the application.
-
-        """
-        widget = self.widget
-        if widget:
-            shell = self.shell_obj
-            shell.trait_set(
-                _active = True,
-                opened = True,
-            )
-            if shell.modality in ('app_modal', 'window_modal'):
-                widget.exec_()
-            else:
-                widget.show()
-
-    def open(self):
-        """ Display the dialog.
-
-        """
-        self.show()
-
     def accept(self):
         """ Accept and close the dialog, sending the 'finished' signal.
 
         """
         self.widget.accept()
-
 
     def reject(self):
         """ Reject and close the dialog, sending the 'finished' signal.
@@ -112,4 +74,38 @@ class QtDialog(QtWindow, AbstractTkDialog):
             _active = False,
             closed = result,
         )
+
+    def set_visible(self, visible):
+        """ Show or hide the window.
+        
+        If we are initializing, don't show yet.
+        """
+        if not self._initializing:
+            if visible:
+                self._show()
+            else:
+                self._hide()
+
+    def _show(self):
+        """ Displays this modal dialog to the screen.
+
+        """
+        widget = self.widget
+        if widget:
+            shell = self.shell_obj
+            shell.trait_set(
+                _active = True,
+                opened = True,
+            )
+            widget.setWindowModality(_MODAL_MAP[shell.modality])
+            widget.exec_()
+
+    def _hide(self):
+        """ Hiding a dialog is the same as rejecting it.
+
+        """
+        widget = self.widget
+        if widget and widget.visible():
+            self.reject()
+
 

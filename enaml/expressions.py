@@ -10,6 +10,7 @@ import weakref
 from traits.api import HasTraits
 
 from .parsing.analyzer import AttributeVisitor
+from .guard import guard
 
 
 #------------------------------------------------------------------------------
@@ -393,25 +394,62 @@ class DelegatingExpression(SimpleExpression):
 
         obj.on_trait_change(self.update_delegate, self.attr_name)
 
-    def update_object(self):
+
+    # XXX can we do this with a trait set(..., trait_change_notify=False)?
+    def update_object(self, val):
         """ The notification handler to update the component object.
 
         When this method is called, the delegate expression is evaluated
         and the results are assigned to the appropriate attribute on
         the component.
 
-        """
-        setattr(self.obj, self.attr_name, self.eval_expression())
+        We guard against circular notifications, but try to ensure that we
+        end up in a consistent state, ie. when all is said and done, the
+        object and the delegate end up with the same value.
 
+        """
+        dlgt_obj, dlgt_attr_name = self.lookup_info
+        
+        # guard against re-setting the object on a change
+        with guard(self.obj, self.attr_name):
+            if not guard.guarded(dlgt_obj, dlgt_attr_name):
+                setattr(self.obj, self.attr_name, val)
+
+                new_val = getattr(self.obj, self.attr_name)
+                if new_val != val:
+                    # we ended up with a different value on the object than we have
+                    # on the delegate.  We need to push this back to the delegate,
+                    # and we want to guard against further changes
+                    with guard(dlgt_obj, dlgt_attr_name):
+                        setattr(dlgt_obj, dlgt_attr_name, new_val)
+
+
+    # XXX can we do this with a trait set(..., trait_change_notify=False)?
     def update_delegate(self, val):
         """ The notification handler to update the delegate object.
 
         When this method is called, the delegate expression is updated
         with the appropriate value from the component.
 
+        We guard against circular notifications, but try to ensure that we
+        end up in a consistent state, ie. when all is said and done, the
+        object and the delegate end up with the same value.
+
         """
         dlgt_obj, dlgt_attr_name = self.lookup_info
-        setattr(dlgt_obj, dlgt_attr_name, val)
+
+        # guard against re-setting the delegate on a change
+        with guard(dlgt_obj, dlgt_attr_name):
+            if not guard.guarded(self.obj, self.attr_name):
+                setattr(dlgt_obj, dlgt_attr_name, val)
+                
+                new_val = getattr(dlgt_obj, dlgt_attr_name)
+                if new_val != val:
+                    # we ended up with a different value on the delegate than we have
+                    # on the object.  We need to push this back to the object,
+                    # and we want to guard against further changes
+                    with guard(self.obj, self.attr_name):
+                        setattr(self.obj, self.attr_name, new_val)
 
 
 class NotifyingExpression(SimpleExpression):

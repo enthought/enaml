@@ -30,6 +30,9 @@ class WXTestAssistant(object):
     def process_wx_events(self, app):
         """ Process posted wxPython events.
 
+        Tests that require resize, move and show/hide or generic event
+        response take place need to call this method.
+
         """
         app.ProcessPendingEvents()
 
@@ -39,6 +42,7 @@ class WXTestAssistant(object):
         """
         event = wx.PyCommandEvent(event_type.typeId, widget.GetId())
         widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)
 
     def send_wx_mouse_event(self, widget, event_type, position=None):
         """ Send a wxPython widget an mouse event (e.g., EVT_BUTTON).
@@ -52,3 +56,4 @@ class WXTestAssistant(object):
             event.m_x = position.x
             event.m_y = position.y
         widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)

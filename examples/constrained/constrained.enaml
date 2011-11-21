@@ -1,21 +1,21 @@
-# "Realistic" demo of how the constraint-based layout engine can be used to
-# create fluid, adaptable layouts.
-#
-# At the top, we have the "Frame" PushButton that is just a dummy standin for
-# a larger, expandable widget, like a table. Below the Frame are four
-# PushButtons. On the left are the Add and Remove buttons, which hug the left
-# and bottom sides of their container and stay close to each other. Hugging the
-# bottom right corner is the Share PushButton. Centered is the Change Mode
-# PushButton. However, as the window gets resized, the Change Mode button may
-# not be able to be centered, but it will always leave a gap between it and its
-# two neighbors.
-#
-# Pressing the Change Mode PushButton will increase the amount of text on that
-# button, thus forcing changes to the layout due to the new size hint for that
-# PushButton.
-#
-# Pressing the Share PushButton will add a new constraint that forces the width
-# of that PushButton to increase to 200.
+""" Demo of how the constraint-based layout engine can be used to create fluid,
+adaptable layouts.
+
+At the top, we have the "Frame" PushButton that is just a dummy standin for
+a larger, expandable widget, like a table. Below the Frame are four PushButtons.
+On the left are the Add and Remove buttons, which hug the left and bottom sides
+of their container and stay close to each other. Hugging the bottom right corner
+is the Share PushButton. Centered is the Change Mode PushButton. However, as the
+window gets resized, the Change Mode button may not be able to be centered, but
+it will always leave a gap between it and its two neighbors.
+
+Pressing the Change Mode PushButton will increase the amount of text on that
+button, thus forcing changes to the layout due to the new size hint for that
+PushButton.
+
+Pressing the Share PushButton will add a new constraint that forces the width of
+that PushButton to increase to 200.
+"""
 
 defn MainWindow:
     Window:
@@ -30,16 +30,16 @@ defn MainWindow:
             horizontal(add_button, remove_button, _space_, change_mode_button, _space_, share_button),
 
             # Align the bottom edge of all buttons
-            align_bottom(add_button, remove_button, change_mode_button, share_button),
+            align('bottom', add_button, remove_button, change_mode_button, share_button),
 
             # Align the left edge of the first button and the frame
-            align_left(frame, add_button),
+            align('left', frame, add_button),
 
             # Align the right edge of the last button and the frame
-            align_right(frame, share_button),
+            align('right', frame, share_button),
 
             # Weakly align the center of the frame and the center button
-            align_h_center(frame, change_mode_button) | 'weak',
+            align('h_center', frame, change_mode_button) | 'weak',
 
             # Set a sensible minimum height for the frame
             frame.height >= 150,

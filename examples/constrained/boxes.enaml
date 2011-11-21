@@ -1,0 +1,38 @@
+""" Nested hbox()/vbox()
+
+FIXME: this is a dumb example.
+
+"""
+
+
+defn MainWindow():
+    Window:
+        constraints = [
+            vbox(
+                ALabel,
+                BLabel,
+                hbox(CLabel, _space_, DLabel, _space_, ELabel),
+                hbox(_space_, FLabel, GLabel),
+                hbox(button1, _space_, button2, _space_, button3)),
+            align('h_center', self, DLabel, button2),
+        ]
+        Label -> ALabel:
+            text = "Label A"
+        Label -> BLabel:
+            text = "Label B"
+        Label -> CLabel:
+            text = "Label C"
+        Label -> DLabel:
+            text = "Label D"
+        Label -> ELabel:
+            text = "Label E"
+        Label -> FLabel:
+            text = "Label F"
+        Label -> GLabel:
+            text = "Label G"
+        PushButton -> button1:
+            text = "Button 1"
+        PushButton -> button2:
+            text = "Button 2"
+        PushButton -> button3:
+            text = "Button 3"

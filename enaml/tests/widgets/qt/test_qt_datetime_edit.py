@@ -3,13 +3,16 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt_test_assistant import QtTestAssistant
+
 from .. import datetime_edit
 
 from enaml.widgets.qt.qt_datetime_edit import qdatetime_to_python
 
-class TestQtDatetimeEdit(QtTestAssistant, datetime_edit.TestDatetimeEdit):
-    """ QtDateEdit tests. """
 
+class TestQtDatetimeEdit(QtTestAssistant, datetime_edit.TestDatetimeEdit):
+    """ QtDateEdit tests. 
+
+    """
     def get_datetime(self, widget):
         """  Get the toolkits widget's active datetime.
 
@@ -34,9 +37,9 @@ class TestQtDatetimeEdit(QtTestAssistant, datetime_edit.TestDatetimeEdit):
     def change_datetime(self, widget, datetime):
         """ Simulate a change datetime action at the toolkit widget.
 
-        .. note:: The setDateTime method in Qt will also signal the
-            dateTimeChanged signal.
         """
+        # The setDateTime method in Qt will also emit the
+        # dateTimeChanged signal.
         self.widget.setDateTime(datetime)
 
     def get_datetime_as_string(self, widget):
@@ -44,5 +47,4 @@ class TestQtDatetimeEdit(QtTestAssistant, datetime_edit.TestDatetimeEdit):
 
         """
         return self.widget.text()
-
 

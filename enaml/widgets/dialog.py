@@ -8,17 +8,10 @@ from traits.api import Event, Bool, Instance, Property
 
 from .window import Window, AbstractTkWindow
 
-from ..enums import DialogResult
+from ..enums import DialogResult, Modality
 
 
 class AbstractTkDialog(AbstractTkWindow):
-
-    @abstractmethod
-    def open(self):
-        """ Open and display the dialog.
-
-        """
-        raise NotImplementedError
 
     @abstractmethod
     def accept(self):
@@ -42,7 +35,6 @@ class Dialog(Window):
     accept and reject behavior for the dialog.
 
     """
-
     #: A read only property which will be True when the dialog is open, False
     #: otherwise.
     active = Property(Bool, depends_on='_active')
@@ -60,20 +52,18 @@ class Dialog(Window):
     #: 'closed' event is fired.
     result = Property(DialogResult, depends_on='_result')
 
+    #: An enum which indicates the modality of the dialog. One of 
+    #: "application_modal" or "window_modal". The default is app modal.
+    #: Changes to this attribute *after* the dialog is shown will have
+    #: no effect.
+    modality = Modality
+
     _active = Bool
 
     _result = DialogResult('rejected')
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkDialog)
-
-    def open(self):
-        """ Open and display the dialog.
-
-        Call this method to launch the dialog.
-
-        """
-        self.abstract_obj.open()
 
     def accept(self):
         """ Close the dialog and set the result to `accepted`.

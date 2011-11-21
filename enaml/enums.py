@@ -11,10 +11,10 @@ from .util import enum
 #: ============ ===============================================
 #: value        description
 #: ============ ===============================================
-#: ``accepted`` (default) The user accepted the dialog.
-#: ``rejected`` The user declined the default result.
+#: ``accepted`` The user accepted the dialog.
+#: ``rejected`` (default) The user declined the default result.
 #: ============ ===============================================
-DialogResult = Enum(('accepted', 'rejected'))
+DialogResult = Enum(('rejected', 'accepted'))
 
 #: Generic orientation values.
 #:
@@ -37,6 +37,18 @@ Orientation = Enum(('horizontal', 'vertical'))
 #: ``bottom`` Place tabs below the main content.
 #: ========== =====================================================
 TabPosition = Enum(('left', 'right', 'top', 'bottom'))
+
+#: Horizontal alingment.
+#:
+#: ========== =====================================================
+#: value      description
+#: ========== =====================================================
+#: ``left``   (default) Align left
+#: ``right``  Align right
+#: ``center`` Align center
+#: ========== =====================================================
+HorizontalAlign = Enum(('left', 'right', 'center'))
+
 
 #: A container's layout style, based on the order of insertion.
 #:
@@ -62,7 +74,7 @@ Direction = Enum(('left_to_right', 'right_to_left',
 #: ``application_modal`` The window blocks input to all other windows in
 #:                       the application.
 #: ===================== =================================================
-Modality = Enum(('non_modal', 'window_modal', 'application_modal'))
+Modality = Enum(('application_modal', 'window_modal'))
 
 #: The position of ticks for a control.
 #:

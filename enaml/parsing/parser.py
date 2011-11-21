@@ -93,13 +93,24 @@ def p_enaml1(p):
 
 
 def p_enaml2(p):
-    ''' enaml : NEWLINE ENDMARKER '''
-    p[0] = enaml_ast.EnamlModule([])
+    ''' enaml : NEWLINE ENDMARKER
+              | ENDMARKER '''
+    p[0] = enaml_ast.EnamlModule('', [])
 
 
-def p_enaml_module(p):
+def p_enaml3(p):
+    ''' enaml : STRING NEWLINE ENDMARKER '''
+    p[0] = enaml_ast.EnamlModule(p[1], [])
+
+
+def p_enaml_module1(p):
     ''' enaml_module : enaml_module_body '''
-    p[0] = enaml_ast.EnamlModule(p[1])
+    p[0] = enaml_ast.EnamlModule('', p[1])
+
+
+def p_enaml_module2(p):
+    ''' enaml_module : STRING NEWLINE enaml_module_body '''
+    p[0] = enaml_ast.EnamlModule(p[1], p[3])
     
 
 #------------------------------------------------------------------------------
@@ -157,12 +168,14 @@ def p_enaml_import(p):
 def p_enaml_define1(p):
     ''' enaml_define : DEFN NAME COLON enaml_define_body '''
     params = enaml_ast.EnamlParameters([], [])
-    p[0] = enaml_ast.EnamlDefine(p[2], params, p[4])
+    doc, items = p[4]
+    p[0] = enaml_ast.EnamlDefine(p[2], params, doc, items)
 
 
 def p_enaml_define2(p):
     ''' enaml_define : DEFN NAME enaml_parameters COLON enaml_define_body '''
-    p[0] = enaml_ast.EnamlDefine(p[2], p[3], p[5])
+    doc, items = p[5]
+    p[0] = enaml_ast.EnamlDefine(p[2], p[3], doc, items)
 
 
 #------------------------------------------------------------------------------
@@ -248,11 +261,18 @@ def p_enaml_keyword_parameter(p):
 #------------------------------------------------------------------------------
 # Enaml Define Body
 #------------------------------------------------------------------------------
-def p_enaml_define_body(p):
+def p_enaml_define_body1(p):
     ''' enaml_define_body : NEWLINE INDENT enaml_calls DEDENT '''
     # Filter out any pass statements
     calls = filter(None, p[3])
-    p[0] = calls
+    p[0] = ('', calls)
+
+
+def p_enaml_defined_body2(p):
+    ''' enaml_define_body : NEWLINE INDENT STRING NEWLINE enaml_calls DEDENT '''
+    # Filter out any pass statements
+    calls = filter(None, p[5])
+    p[0] = (p[3], calls)
 
 
 #------------------------------------------------------------------------------
@@ -551,6 +571,8 @@ def p_enaml_operator(p):
                        | TILDE
                        | VBAR
                        | UNPACK
+                       | DOUBLECOLON
+                       | ELLIPSIS
                        | OPERATOR '''
     # A custom operator can be any of the standard operators (overloaded)
     # as well as one that is custom defined.
@@ -816,7 +838,7 @@ def p_or_test_list1(p):
 
 def p_or_test_list2(p):
     ''' or_test_list : or_test_list OR and_test '''
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[3]]
 
 
 def p_and_test1(p):
@@ -838,7 +860,7 @@ def p_and_test_list1(p):
 
 def p_and_test_list2(p):
     ''' and_test_list : and_test_list AND not_test '''
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[3]]
 
 
 def p_not_test(p):
@@ -1411,7 +1433,7 @@ def p_subscript_list2(p):
 
 
 def p_subscript1(p):
-    ''' subscript : DOT DOT DOT '''
+    ''' subscript : ELLIPSIS '''
     p[0] = ast.Ellipsis()
 
 
@@ -1426,7 +1448,7 @@ def p_subscript3(p):
 
 
 def p_subscript4(p):
-    ''' subscript : COLON COLON '''
+    ''' subscript : DOUBLECOLON '''
     name = ast.Name(id='None', ctx=ast.Load())
     p[0] = ast.Slice(lower=None, upper=None, step=name)
 
@@ -1437,7 +1459,7 @@ def p_subscript5(p):
 
 
 def p_subscrip6(p):
-    ''' subscript : test COLON COLON '''
+    ''' subscript : test DOUBLECOLON '''
     name = ast.Name(id='None', ctx=ast.Load())
     p[0] = ast.Slice(lower=p[1], upper=None, step=name)
 
@@ -1454,8 +1476,8 @@ def p_subscript8(p):
 
 
 def p_subscript9(p):
-    ''' subscript : COLON COLON test '''
-    p[0] = ast.Slice(lower=None, upper=None, step=p[3])
+    ''' subscript : DOUBLECOLON test '''
+    p[0] = ast.Slice(lower=None, upper=None, step=p[2])
 
 
 def p_subscript10(p):
@@ -1477,6 +1499,11 @@ def p_subscript12(p):
 def p_subscript13(p):
     ''' subscript : test COLON test COLON test '''
     p[0] = ast.Slice(lower=p[1], upper=p[3], step=p[5])
+
+
+def p_subscript14(p):
+    ''' subscript : test DOUBLECOLON test '''
+    p[0] = ast.Slice(lower=p[1], upper=None, step=p[3])
 
 
 # exprlist is used as the assignment target in a comprehension;
@@ -1720,7 +1747,7 @@ def p_argument3(p):
     arg = p[1]
     assert isinstance(arg, ast.Name), 'Keyword arg must be a Name.'
     value = p[3]
-    p[0] = ast.keyword(arg=arg, value=value)
+    p[0] = ast.keyword(arg=arg.id, value=value)
 
 
 def p_list_for1(p):

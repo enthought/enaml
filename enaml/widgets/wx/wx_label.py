@@ -5,31 +5,29 @@
 import wx
 
 from .wx_control import WXControl
+
 from ..label import AbstractTkLabel
 
 
 class WXLabel(WXControl, AbstractTkLabel):
     """ A wxPython implementation of Label.
 
-    A WXLabel displays static text using a wx.StaticText control.
-
     """
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self):
-        """ Creates the underlying text control.
+        """ Creates the underlying wx.StaticText control.
 
         """
-        self.widget = widget = wx.StaticText(self.parent_widget())
+        self.widget = wx.StaticText(self.parent_widget())
 
     def initialize(self):
         """ Initializes the attributes on the underlying control.
 
         """
         super(WXLabel, self).initialize()
-        shell = self.shell_obj
-        self.set_label(shell.text)
+        self.set_label(self.shell_obj.text)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -39,7 +37,11 @@ class WXLabel(WXControl, AbstractTkLabel):
 
         """
         self.set_label(text)
-
+        # If the text in the label changes, then the size hint of
+        # label will have changed, and the layout system needs to
+        # be informed.
+        self.shell_obj.size_hint_updated = True
+        
     def set_label(self, label):
         """ Sets the label on the underlying control.
 

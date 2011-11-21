@@ -29,7 +29,7 @@ class TestRadioButton(EnamlTestCase):
         label_1 = 'Label 1'
         label_2 = 'Label 2'
 
-        enaml = """
+        enaml_source = """
 defn MainWindow():
     Window:
         RadioButton -> radio1:
@@ -40,7 +40,7 @@ defn MainWindow():
 """.format(label_1, label_2)
 
         self.events = []
-        self.view = self.parse_and_create(enaml)
+        self.view = self.parse_and_create(enaml_source)
         self.radio1 = self.component_by_name(self.view, 'radio1')
         self.widget1 = self.radio1.toolkit_widget
         self.radio2 = self.component_by_name(self.view, 'radio2')

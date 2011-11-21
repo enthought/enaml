@@ -8,14 +8,11 @@ from .. import dialog
 class TestQtDialog(test_qt_window.TestQtWindow, dialog.TestDialog):
     """ QtDialog tests. """
 
-    def get_result(self, widget):
-        """ Get the result value from the widget.
+    def disable_showing(self, widget):
+        """ Disable the actual display of the dialog window.
 
         """
-        qt_result = widget.result()
-        if qt_result == widget.Accepted:
-            return 'accepted'
-        elif qt_result == widget.Rejected:
-            return 'rejected'
-        else:
-            return qt_result
+        widget.exec_ = lambda:None
+        widget.show = lambda:None
+        widget.setWindowModality = lambda x:None
+

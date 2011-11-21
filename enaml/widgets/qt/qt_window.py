@@ -2,7 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
+from traits.api import Bool
+
 from .qt_container import QtContainer
 
 from ..window import AbstractTkWindow
@@ -15,23 +16,26 @@ class QtWindow(QtContainer, AbstractTkWindow):
     contains other child widgets and layouts.
 
     """
+
+    _initializing = Bool(False)
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-
     def initialize(self):
         """ Intializes the attributes on the QWindow.
 
         """
-        super(QtWindow, self).initialize()
-        shell = self.shell_obj
-        self.set_title(shell.title)
-        self.set_modality(shell.modality)
+        self._initializing = True
+        try:
+            super(QtWindow, self).initialize()
+            self.set_title(self.shell_obj.title)
+        finally:
+            self._initializing = False
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-
     def pos(self):
         """ Returns the position of the internal toolkit widget as an 
         (x, y) tuple of integers. The coordinates should be relative to
@@ -43,34 +47,12 @@ class QtWindow(QtContainer, AbstractTkWindow):
         geom = widget.geometry()
         return (geom.x(), geom.y())
 
-    def show(self):
-        """ Displays the window to the screen.
-
-        """
-        if self.widget:
-            self.widget.show()
-            self.widget.raise_()
-
-    def hide(self):
-        """ Hide the window from the screen.
-
-        """
-        if self.widget:
-            self.widget.hide()
-
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute. Not meant for
         public consumption.
 
         """
         self.set_title(title)
-
-    def shell_modality_changed(self, modality):
-        """ The change handler for the 'modality' attribute. Not meant
-        for public consumption.
-
-        """
-        self.set_modality(modality)
 
     def set_title(self, title):
         """ Sets the title of the QFrame. Not meant for public
@@ -80,20 +62,14 @@ class QtWindow(QtContainer, AbstractTkWindow):
         if self.widget:
             self.widget.setWindowTitle(title)
 
-    def set_modality(self, modality):
-        """ Sets the modality of the QMainWindow. Not meant for public
-        consumption.
+    def set_visible(self, visible):
+        """ Show or hide the window.
 
+        If we are initializing, don't show yet.
         """
-        if self.widget:
-            if modality == 'app_modal':
-                self.widget.setWindowModality(QtCore.Qt.ApplicationModal)
-            elif modality == 'modal':
-                self.widget.setWindowModality(QtCore.Qt.WindowModal)
-            elif modality == 'non_modal':
-                self.widget.setWindowModality(QtCore.Qt.NonModal)
+        if not self._initializing:
+            if visible:
+                self.widget.show()
+                self.widget.raise_()
             else:
-                msg = "Expected one of 'app_modal', 'modal', or 'non_modal'. Got %r." % (modality,)
-                raise ValueError(msg)
-
-
+                self.widget.hide()

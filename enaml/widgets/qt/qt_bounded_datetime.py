@@ -16,7 +16,7 @@ class QtBoundedDatetime(QtControl, AbstractTkBoundedDatetime):
     # Setup methods
     #--------------------------------------------------------------------------
     def initialize(self):
-        super(QtControl, self).initialize()
+        super(QtBoundedDatetime, self).initialize()
         shell = self.shell_obj
         self.set_min_datetime(shell.min_datetime)
         self.set_max_datetime(shell.max_datetime)

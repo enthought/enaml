@@ -7,9 +7,11 @@ from .. import calendar
 
 from enaml.widgets.qt.qt_date_edit import qdate_to_python
 
-class TestQtCalendar(QtTestAssistant, calendar.TestCalendar):
-    """ QtCalendar tests. """
 
+class TestQtCalendar(QtTestAssistant, calendar.TestCalendar):
+    """ QtCalendar tests. 
+
+    """
     def get_date(self, widget):
         """  Get the toolkits widget's active date.
 
@@ -40,8 +42,8 @@ class TestQtCalendar(QtTestAssistant, calendar.TestCalendar):
     def select_date(self, widget, date):
         """ Fire an event to indicate that a date was selected.
 
-        .. note:: The setDate method in Qt will also signal the dateSelected
-            signal.
-
         """
+        # The setDate method in Qt will also signal the dateSelected 
+        # signal.
         widget.setSelectedDate(date)
+

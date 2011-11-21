@@ -6,10 +6,7 @@ from .qt_control import QtControl
 
 from ..toggle_control import AbstractTkToggleControl
 
-# FIXME: I do not like that there are methods in this class that assume
-# a specific behaviour for the widget. And that we ask the developer to
-# bind to such functions. Are we pushing the `remove dublication` rule
-# too much?
+
 class QtToggleControl(QtControl, AbstractTkToggleControl):
     """ A base class for Qt toggle widgets.
 
@@ -49,7 +46,10 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
 
         """
         self.set_label(text)
-
+        # If the label of the control changes, its size hint has likely
+        # updated and the layout system needs to be informed
+        self.shell_obj.size_hint_updated = True
+        
     def on_toggled(self):
         """ The event handler for the toggled event.
 

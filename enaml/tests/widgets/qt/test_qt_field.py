@@ -2,12 +2,24 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from enaml.widgets.qt.qt import QtGui
+
 from .qt_test_assistant import QtTestAssistant
+
 from .. import field
 
-class TestQtField(QtTestAssistant, field.TestField):
-    """ QtField tests. """
 
+QT_2_ENAML_PASSWORD_MODES = {
+    QtGui.QLineEdit.Normal: 'normal',
+    QtGui.QLineEdit.Password: 'password',
+    QtGui.QLineEdit.NoEcho: 'silent',
+}
+
+
+class TestQtField(QtTestAssistant, field.TestField):
+    """ QtField tests. 
+
+    """
     def get_value(self, widget):
         """ Get the visible text of a field.
 
@@ -50,8 +62,23 @@ class TestQtField(QtTestAssistant, field.TestField):
         """
         return widget.selectedText()
 
+    def get_password_mode(self, widget):
+        """ Get the password mode status of the widget
+
+        """
+        mode = widget.echoMode()
+        return QT_2_ENAML_PASSWORD_MODES[mode]
+
     def press_return(self, widget):
         """ Simulate a press of the 'Return' key.
 
         """
         widget.returnPressed.emit()
+
+    def gain_focus_if_needed(self, widget):
+        """ Have the widget gain focus if required for the tests.
+
+        """
+        # qt does the right thing, so we don't need to gain focus.
+        pass
+

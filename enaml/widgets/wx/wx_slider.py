@@ -97,7 +97,6 @@ class WXSlider(WXControl, AbstractTkSlider):
         """ Update the slider position.
 
         """
-        shell = self.shell_obj
         self.set_position(value)
         self.shell_obj.moved = value
 
@@ -136,6 +135,7 @@ class WXSlider(WXControl, AbstractTkSlider):
 
         """
         self.set_tick_position(tick_position)
+        self.shell_obj.size_hint_updated = True
 
     def shell_orientation_changed(self, orientation):
         """ Update the widget due to change in the orientation attribute
@@ -145,8 +145,7 @@ class WXSlider(WXControl, AbstractTkSlider):
 
         """
         self.set_orientation(orientation)
-        # FIXME: we need to relayout the widget in order to make space for the
-        # ticks.
+        self.shell_obj.size_hint_updated = True
 
     def _on_slider_changed(self, event):
         """ Respond to change in value from the ui.
@@ -266,8 +265,6 @@ class WXSlider(WXControl, AbstractTkSlider):
         widget = self.widget
         shell = self.shell_obj
 
-
-        tick_position = shell.tick_position
         style = widget.GetWindowStyle()
         style &= ~(wx.SL_HORIZONTAL | wx.SL_VERTICAL)
 

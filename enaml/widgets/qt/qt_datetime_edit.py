@@ -8,6 +8,8 @@ from .qt_bounded_datetime import QtBoundedDatetime
 
 from ..datetime_edit import AbstractTkDatetimeEdit
 
+from ...guard import guard
+
 
 # Workaround for an incompatibility between PySide and PyQt
 try:
@@ -58,32 +60,54 @@ class QtDatetimeEdit(QtBoundedDatetime, AbstractTkDatetimeEdit):
         meant for public consumption.
 
         """
-        shell = self.shell_obj
-        qdatetime = self.widget.dateTime()
-        new_datetime = qdatetime_to_python(qdatetime)
-        shell.datetime = new_datetime
-        shell.datetime_changed = new_datetime
+        # only emit update the shell object if the widget was 
+        # changed via the ui and not programmatically.
+        if not guard.guarded(self, 'updating'):
+            shell = self.shell_obj
+            qdatetime = self.widget.dateTime()
+            new_datetime = qdatetime_to_python(qdatetime)
+            shell.datetime = new_datetime
+            shell.datetime_changed = new_datetime
 
     def set_datetime(self, datetime):
         """ Sets and the datetime on the widget.
 
         """
-        self.widget.setDateTime(datetime)
+        # Calling setDate will trigger the dateChanged signal.
+        # We want to avoid that feeback loop since the value is
+        # being set programatically.
+        with guard(self, 'updating'):
+            self.widget.setDateTime(datetime)
 
     def set_min_datetime(self, datetime):
-        """ Sets the minimum datetime on the widget with the provided value.
+        """ Sets the minimum datetime on the widget with the provided 
+        value.
 
         """
-        self.widget.setMinimumDateTime(datetime)
+        # Calling setMinimumDateTime *may* trigger the dateTimeChanged 
+        # signal, if the datetime needs to be clipped. We want to avoid 
+        # that feeback  loop since the value is being set programatically 
+        # and the new datetime will already have been updated by the shell 
+        # object.
+        with guard(self, 'updating'):
+            self.widget.setMinimumDateTime(datetime)
 
     def set_max_datetime(self, datetime):
-        """ Sets the maximum datetime on the widget with the provided value.
+        """ Sets the maximum datetime on the widget with the provided 
+        value.
 
         """
-        self.widget.setMaximumDateTime(datetime)
-
+        # Calling setMaximumDateTime *may* trigger the dateTimeChanged 
+        # signal, if the datetime needs to be clipped. We want to avoid 
+        # that feeback  loop since the value is being set programatically 
+        # and the new datetime will already have been updated by the shell 
+        # object.
+        with guard(self, 'updating'):
+            self.widget.setMaximumDateTime(datetime)
+        
     def set_format(self, datetime_format):
-        """ Sets the display format on the widget with the provided value.
+        """ Sets the display format on the widget with the provided 
+        value.
 
         """
         self.widget.setDisplayFormat(datetime_format)

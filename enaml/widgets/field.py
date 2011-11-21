@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Event, Int, Str, Property, Instance, Any
+from traits.api import Bool, Event, Int, Str, Enum, Property, Instance, Any
 
 from .control import Control, AbstractTkControl
 
@@ -30,11 +30,11 @@ class AbstractTkField(AbstractTkControl):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_converter_changed(self, converter):
+    def shell_field_text_changed(self, value):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_value_changed(self, value):
+    def shell_password_mode_changed(self, mode):
         raise NotImplementedError
 
     @abstractmethod
@@ -102,16 +102,14 @@ class Field(Control):
     by the Field.
 
     """
-    #: The maximum length of the field in characters.
+    #: The maximum length of the field in characters. The default value
+    #: is Zero and indicates there is no maximum length.
     max_length = Int
 
-    #: An event fired when the max length has been reached.
-    max_length_reached = Event
-
-    #: Whether or not the field is read only.
+    #: Whether or not the field is read only. Defaults to False.
     read_only = Bool
 
-    #: The position of the cursor in the field.
+    #: The position of the cursor in the field. Defaults to Zero.
     cursor_position = Int
 
     #: A read only property that is set to True if the user has changed
@@ -120,26 +118,31 @@ class Field(Control):
     modified = Property(Bool, depends_on='_modified')
 
     #: The grayed-out text to display if 'value' is empty and the
-    #: widget doesn't have focus.
+    #: widget doesn't have focus. Defaults to the empty string.
     placeholder_text = Str
+    
+    #: How to obscure password text in the field.
+    password_mode = Enum('normal', 'password', 'silent')
 
     #: A converter object for converting values to and from the component
     #: The default is basic str(...) conversion.
     converter = Instance(Converter, factory=StringConverter)
 
-    #: The Python value to display in the field.
-    value = Any
+    #: The Python value to display in the field. The default value
+    #: is an empty string.
+    value = Any('')
+
+    #: A property which manages the conversion to and from :attr:`value`
+    #: and the string for display and editing. Toolkit implementations
+    #: should use this attribute for getting/setting the value.
+    field_text = Property(depends_on=['value', 'converter'])
 
     #: A read only property that is updated with the text selected
     #: in the field.
     selected_text = Property(Str, depends_on='_selected_text')
 
-    #: Fired when the text is changed programmatically, or by the
-    #: user via the ui. The args object will contain the text.
-    text_changed = Event
-
     #: Fired when the text is changed by the user explicitly through
-    #: the ui and not programmatically. The args object will contain
+    #: the ui but not programmatically. The args object will contain
     #: the text.
     text_edited = Event
 
@@ -305,4 +308,24 @@ class Field(Control):
 
         """
         return self._selected_text
+
+    def _get_field_text(self):
+        """ The property getter for :attr:`field_text`. It uses an 
+        appropriate exception guard to manage the error state if
+        the conversion from value to text fails. If there is an
+        error during conversion, this will return None and toolkit
+        implementations should not perform an update.
+
+        """
+        with self.capture_exceptions():
+            return self.converter.to_component(self.value)
+        
+    def _set_field_text(self, text):
+        """ The property setter for :attr:`field_text`. It uses an
+        appropriate exception guard to manage the error state if
+        the conversion from string to value fails.
+
+        """
+        with self.capture_notification_exceptions():
+            self.value = self.converter.from_component(text)
 

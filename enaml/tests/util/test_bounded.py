@@ -5,12 +5,9 @@
 import unittest
 from datetime import date
 
-from traits.api import (HasStrictTraits, TraitError, Float,
-                        Callable, Instance, Date)
+from traits.api import (HasStrictTraits, TraitError, Float, Instance, Date)
 
 from enaml.util.trait_types import Bounded
-from enaml.converters import (Converter, PassThroughConverter,
-                              SliderLogConverter)
 
 class Test_Bounded_Static(unittest.TestCase):
     """ Test the use of the Bounded trait with static bounds.

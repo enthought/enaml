@@ -2,9 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
-from .qt import QtCore, QtGui
+from .qt import QtCore
 from .qt_container import QtContainer
+from .qt_resizing_widgets import QResizingGroupBox
 
 from ..group_box import AbstractTkGroupBox
 
@@ -15,28 +15,14 @@ QT_ALIGNMENTS = dict(
     center=QtCore.Qt.AlignHCenter,
 )
 
-class QResizingGroupBox(QtGui.QGroupBox):
-    """ A QGroupBox subclass that converts a resize event into a signal
-    that can be connected to a slot. This allows the widget to notify
-    Enaml that it has been resized and the layout needs to be recomputed.
-
-    """
-    resized = QtCore.Signal()
-
-    def resizeEvent(self, event):
-        super(QResizingGroupBox, self).resizeEvent(event)
-        self.resized.emit()
-
 
 class QtGroupBox(QtContainer, AbstractTkGroupBox):
     """ A Qt4 implementation of GroupBox.
 
     """
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-
     def create(self):
         """ Creates the underlying QGroupBox control.
 
@@ -49,13 +35,9 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         """
         super(QtGroupBox, self).initialize()
         shell = self.shell_obj
-        self.shell_title_changed(shell.title)
-        self.shell_flat_changed(shell.flat)
-        self.shell_title_align_changed(shell.title_align)
-
-    def bind(self):
-        super(QtGroupBox, self).bind()
-        self.widget.resized.connect(self.on_resize)
+        self._set_title(shell.title)
+        self._set_flat(shell.flat)
+        self._set_title_align(shell.title_align)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -65,27 +47,57 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         shell object.
 
         """
-        self.widget.setTitle(title)
+        self._set_title(title)
+        # We need to call update constraints since the margins may 
+        # have changed. Using the size_hint_updated event here is
+        # not sufficient.
         self.shell_obj.set_needs_update_constraints()
 
     def shell_flat_changed(self, flat):
-        """ Update the flat flag of the group box with the new value from the
-        shell object.
+        """ Update the flat flag of the group box with the new value from
+        the shell object.
 
         """
-        self.widget.setFlat(flat)
+        self._set_flat(flat)
+        # We need to call update constraints since the margins may 
+        # have changed. Using the size_hint_updated event here is
+        # not sufficient.
         self.shell_obj.set_needs_update_constraints()
 
     def shell_title_align_changed(self, align):
-        """ Update the title alignment to the new value from the shell object.
+        """ Update the title alignment to the new value from the shell 
+        object.
+
+        """
+        self._set_title_align(align)
+
+    def get_contents_margins(self):
+        """ Return the (top, left, right, bottom) margin values for the
+        widget.
+
+        """
+        m = self.widget.contentsMargins()
+        return (m.top(), m.left(), m.right(), m.bottom())
+    
+    #--------------------------------------------------------------------------
+    # Widget Update methods 
+    #--------------------------------------------------------------------------
+    def _set_title(self, title):
+        """ Updates the title of group box.
+
+        """
+        self.widget.setTitle(title)
+    
+    def _set_flat(self, flat):
+        """ Updates the flattened appearance of the group box.
+
+        """
+        self.widget.setFlat(flat)
+    
+    def _set_title_align(self, align):
+        """ Updates the alignment of the title of the group box.
 
         """
         qt_align = QT_ALIGNMENTS[align]
         self.widget.setAlignment(qt_align)
 
-    def get_contents_margins(self):
-        """ Return the (top, left, right, bottom) margin values for the widget.
-
-        """
-        margins = self.widget.contentsMargins()
-        return (margins.top(), margins.left(), margins.right(), margins.bottom())

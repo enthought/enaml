@@ -2,12 +2,10 @@ from collections import defaultdict
 import weakref
 
 from .layout_manager import AbstractLayoutManager
-from .symbolics import STRENGTH_MAP
+from .layout_helpers import DeferredConstraints
 
-import csw
+import casuarius
 
-
-MEDIUM = STRENGTH_MAP['medium']
 
 class ConstraintsLayout(AbstractLayoutManager):
 
@@ -54,7 +52,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         # in Python has the context of only happening once, we use
         # this method since the manager will be re-initialized whenever
         # any of the constraints of the components children change.
-        self.solver = csw.SimplexSolver()
+        self.solver = casuarius.Solver(autosolve=False)
         self.component_cns = []
         self.user_cns = []
         self.child_cns = defaultdict(list)
@@ -66,7 +64,6 @@ class ConstraintsLayout(AbstractLayoutManager):
             raise RuntimeError(msg)
 
         solver = self.solver
-        solver.SetAutosolve(False)
 
         # The list of all descendants participating in constraints-based layout.
         descendants = list(self.traverse_descendants(component))
@@ -76,7 +73,11 @@ class ConstraintsLayout(AbstractLayoutManager):
         # works, but we might be able to do it more cleanly.
         for desc in descendants:
             if hasattr(desc, 'layout'):
-                desc.layout = None
+                if type(desc.layout) is type(self):
+                    desc.layout = None
+                else:
+                    # Initialize their layout.
+                    desc.initialize_layout()
 
         # Component default constraints
         cns = self.compute_component_cns(component)
@@ -104,7 +105,7 @@ class ConstraintsLayout(AbstractLayoutManager):
             cns_dict[child].extend(cns)
             self.add_constraints(cns)
 
-        solver.SetAutosolve(True)
+        solver.autosolve = True
 
         # Set the minimum size of the component based on the current
         # set of constraints
@@ -115,16 +116,12 @@ class ConstraintsLayout(AbstractLayoutManager):
         self._initialized = True
 
     def add_constraints(self, constraints):
-        """ Add an iterable of constraints in csw form to the solver.
+        """ Add an iterable of constraints to the solver.
 
         """
         solver = self.solver
         for cn in constraints:
-            if isinstance(cn, list):
-                for c in cn:
-                    solver.AddConstraint(c)
-            else:
-                solver.AddConstraint(cn)
+            solver.add_constraint(cn)
 
     #--------------------------------------------------------------------------
     # Solver Iteration
@@ -148,31 +145,15 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         # Grab the info required for the suggestions to the solver
         width, height = component.size()
-        width_var = component.width.csw_var
-        height_var = component.height.csw_var
+        width_var = component.width
+        height_var = component.height
 
-        # Add the variables we're going to edit to the solver
-        solver.AddEditVar(width_var, MEDIUM)
-        solver.AddEditVar(height_var, MEDIUM)
-
-        solver.BeginEdit()
-
-        # Suggest the new width and height of the component to 
-        # the solver.
-        solver.SuggestValue(width_var, width)
-        solver.SuggestValue(height_var, height)
-            
-        solver.Resolve()
-
-        # Update the geometry of the children with their new
-        # solved values. We must do this *before* we call EndEdit
-        # or else the variable values will reset to the previous 
-        # unedited state.
-        set_solved_geometry = self.set_solved_geometry
-        for child in self.traverse_descendants(component):
-            set_solved_geometry(child)
-        
-        solver.EndEdit()
+        with solver.suggest_values([(width_var, width), (height_var, height)], casuarius.medium):
+            # Update the geometry of the children with their new
+            # solved values.
+            set_solved_geometry = self.set_solved_geometry
+            for child in self.traverse_descendants(component):
+                set_solved_geometry(child)
 
         self._recursion_guard = False
 
@@ -189,29 +170,17 @@ class ConstraintsLayout(AbstractLayoutManager):
             raise RuntimeError(msg)
         
         solver = self.solver
-            
-        width_var = component.width.csw_var
-        height_var = component.height.csw_var
 
-        # Add the variables we're going to edit to the solver, we use
-        # the same strength that will be used during resize iterations.
-        solver.AddEditVar(width_var, MEDIUM)
-        solver.AddEditVar(height_var, MEDIUM)
+        width_var = component.width
+        height_var = component.height
 
-        solver.BeginEdit()
-
-        # Suggest the smallest possible component size to the solver
-        # so that the value it computes will be the proper minimum 
-        # size of the component
-        solver.SuggestValue(width_var, 0)
-        solver.SuggestValue(height_var, 0)
-            
-        solver.Resolve()
-
-        min_width = width_var.Value()
-        min_height = height_var.Value()
-
-        solver.EndEdit()
+        # FIXME: here we pick a 'medium' strength like the window resize but
+        # weight it a little less. Uses of 'medium' in constraints should
+        # override this. In the future, we should add more meaningful Strengths.
+        with solver.suggest_values([(width_var, 0.0), (height_var, 0.0)],
+            default_strength=casuarius.medium, default_weight=0.1):
+            min_width = width_var.value
+            min_height = height_var.value
 
         return (min_width, min_height)
 
@@ -219,10 +188,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         """ Set the geometry of a component to its solved geometry.
 
         """
-        x = component.left.csw_var.Value()
-        y = component.top.csw_var.Value()
-        width = component.width.csw_var.Value()
-        height = component.height.csw_var.Value()
+        x = component.left.value
+        y = component.top.value
+        width = component.width.value
+        height = component.height.value
         x, y, width, height = (int(round(z)) for z in (x, y, width, height))
         # This is offset against the root Container. Each Component's geometry
         # actually needs to be offset against its parent. Walk up the tree and
@@ -234,16 +203,17 @@ class ConstraintsLayout(AbstractLayoutManager):
         component.set_geometry(x, y, width, height)
 
     def traverse_descendants(self, component):
-        """ Do a preorder traversal of all descendants of the component that
-        participate in the Constraints-base layout.
+        """ Do a preorder traversal of all visible descendants of the component
+        that participate in the Constraints-base layout.
 
         """
         for child in component.children:
-            yield child
-            child_layout = getattr(child, 'layout', None)
-            if child_layout is None or type(child_layout) is type(self):
-                for desc in self.traverse_descendants(child):
-                    yield desc
+            if child.visible:
+                yield child
+                child_layout = getattr(child, 'layout', None)
+                if child_layout is None or type(child_layout) is type(self):
+                    for desc in self.traverse_descendants(child):
+                        yield desc
 
     def walk_up_containers(self, component):
         """ Walk up the component hierarchy from a given node and yield the
@@ -268,7 +238,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         """
         cns = []
         for name in ('left', 'top', 'width', 'height'):
-            cn = (getattr(component, name) >= 0).convert_to_csw()
+            cn = (getattr(component, name) >= 0)
             cns.append(cn)
         return cns
 
@@ -283,7 +253,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         cns = []
         user_constraints = component.constraints if component.constraints else component.default_user_constraints()
         for constraint in user_constraints + component.container_constraints():
-            cns.append(constraint.convert_to_csw())
+            if isinstance(constraint, DeferredConstraints):
+                cns.extend(constraint.get_constraint_list(component))
+            else:
+                cns.append(constraint)
         return cns
     
     def compute_child_cns(self, child):
@@ -291,8 +264,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         should never change for a given child.
 
         """
-        constraints = [val.convert_to_csw() for val in
-                (child.width >= 0, child.height >= 0)]
+        constraints = [
+            child.width >= 0,
+            child.height >= 0,
+        ]
         return constraints
 
     def compute_child_size_cns(self, child):
@@ -312,22 +287,18 @@ class ConstraintsLayout(AbstractLayoutManager):
         if width_hint >= 0:
             if hug_width != 'ignore':
                 cn = (child.width == width_hint) | hug_width
-                csw_cn = cn.convert_to_csw()
-                constraints.append(csw_cn)
+                constraints.append(cn)
             if resist_clip_width != 'ignore':
                 cn = (child.width >= width_hint) | resist_clip_width
-                csw_cn = cn.convert_to_csw()
-                constraints.append(csw_cn)
+                constraints.append(cn)
         
         if height_hint >= 0:
             if hug_height != 'ignore':
                 cn = (child.height == height_hint) | hug_height
-                csw_cn = cn.convert_to_csw()
-                constraints.append(csw_cn)
+                constraints.append(cn)
             if resist_clip_height != 'ignore':
                 cn = (child.height >= height_hint) | resist_clip_height
-                csw_cn = cn.convert_to_csw()
-                constraints.append(csw_cn)
+                constraints.append(cn)
 
         return constraints
     
@@ -340,6 +311,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         the user constraints are updated.
 
         """
+        # FIXME: we can probably do better by storing the old constraints,
+        # getting the new constraints, finding the differences, and telling the
+        # solver to remove/add constraints.
+        # Or maybe not. Timings will tell.
         self._initialized = False
         self.initialize()
 
@@ -350,6 +325,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         it 'hug' or 'resist_clip' attributes change.
 
         """
+        if not self._initialized:
+            return
         component = self.component()
         if component is None:
             msg = 'Component weakly referenced by %r disappeared' % self
@@ -360,15 +337,15 @@ class ConstraintsLayout(AbstractLayoutManager):
         # Remove the existing constraints for the child's size hint.
         old_cns = self.child_size_cns[child]
         for old_cn in old_cns:
-            solver.RemoveConstraint(old_cn)
+            solver.remove_constraint(old_cn)
         del self.child_size_cns[child]
 
         # Add the new constraints for the child's size hint
         new_cns = self.compute_child_size_cns(child)
         self.child_size_cns[child].extend(new_cns)
         for new_cn in new_cns:
-            solver.AddConstraint(new_cn)
-        
+            solver.add_constraint(new_cn)
+
         # Recompute the minimum size since the constraint changes
         # may have an effect on it.
         min_size = self.calc_min_size()

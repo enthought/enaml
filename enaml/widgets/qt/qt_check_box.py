@@ -23,8 +23,7 @@ class QtCheckBox(QtToggleControl, AbstractTkCheckBox):
         self.widget = QtGui.QCheckBox(self.parent_widget())
         
     def bind(self):
-        """ Connects the event handlers for the check box. Not meant for
-        public consumption.
+        """ Binds the event handlers for the check box.
 
         """
         super(QtCheckBox, self).bind()

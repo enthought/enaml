@@ -2,22 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
+from .qt import QtGui
 from .qt_base_component import QtBaseComponent
+from .styling import q_color_from_color, q_font_from_font
 
 from ..component import AbstractTkComponent
-
-
-class QResizingFrame(QtGui.QFrame):
-    """ A QFrame subclass that converts a resize event into a signal
-    that can be connected to a slot. This allows the widget to notify
-    Enaml that it has been resized and the layout needs to be recomputed.
-
-    """
-    resized = QtCore.Signal()
-
-    def resizeEvent(self, event):
-        self.resized.emit()
 
 
 class QtComponent(QtBaseComponent, AbstractTkComponent):
@@ -37,16 +26,32 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create(self):
-        self.widget = QResizingFrame(self.parent_widget())
+        """ Creates the underlying Qt widget.
 
-    def bind(self):
-        super(QtComponent, self).bind()
+        """
+        self.widget = QtGui.QFrame(self.parent_widget())
+    
+    def initialize(self):
+        """ Initializes the attributes of the Qt widget.
 
-        # This is a hack at the moment because subclasses of component
-        # won't be creating a QResizingFrame and so can't connect to
-        # it's signal
-        if isinstance(self.widget, QResizingFrame):
-            self.widget.resized.connect(self.on_resize)
+        """
+        super(QtComponent, self).initialize()
+        shell = self.shell_obj
+        if shell.bg_color:
+            role = self.widget.backgroundRole()
+            self.set_role_color(role, shell.bg_color)
+        if shell.fg_color:
+            role = self.widget.foregroundRole()
+            self.set_role_color(role, shell.fg_color)
+        if shell.font:
+            self.set_font(shell.font)
+        self.set_enabled(shell.enabled)
+        if not shell.visible:
+            # Some QtContainers will turn off the visibility of their children
+            # entirely on the Qt side when the parent-child relationship is
+            # made. They have probably already done their work, so don't
+            # override it in the default case of visible=True.
+            self.set_visible(shell.visible)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -60,8 +65,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         return self.widget
 
     def size(self):
-        """ Return the size of the internal toolkit widget as a
-        (width, height) tuple of integers.
+        """ Returns the size of the internal toolkit widget, ignoring any
+        windowing decorations, as a (width, height) tuple of integers.
 
         """
         widget = self.widget
@@ -69,9 +74,9 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
-        the suggested size of the widget for its current state. This
-        value is used by the layout manager to determine how much
-        space to allocate the widget.
+        the suggested size of the widget for its current state, ignoring
+        any windowing decorations. This value is used by the layout 
+        manager to determine how much space to allocate the widget.
 
         """
         size_hint = self.widget.sizeHint()
@@ -79,22 +84,24 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
     def resize(self, width, height):
         """ Resizes the internal toolkit widget according the given
-        width and height integers.
+        width and height integers, ignoring any windowing decorations.
 
         """
         self.widget.resize(width, height)
     
     def set_min_size(self, min_width, min_height):
-        """ Set the hard minimum width and height of the widget. A widget
-        will not be able to be resized smaller than this value.
+        """ Set the hard minimum width and height of the widget, ignoring
+        any windowing decorations. A widget will not be able to be resized 
+        smaller than this value.
 
         """
         self.widget.setMinimumSize(min_width, min_height)
 
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
-        (x, y) tuple of integers. The coordinates should be relative to
-        the origin of the widget's parent.
+        (x, y) tuple of integers, including any windowing decorations. 
+        The coordinates should be relative to the origin of the widget's 
+        parent, or to the screen if the widget is toplevel.
 
         """
         widget = self.widget
@@ -103,44 +110,71 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     def move(self, x, y):
         """ Moves the internal toolkit widget according to the given
         x and y integers which are relative to the origin of the
-        widget's parent.
+        widget's parent and includes any windowing decorations.
 
         """
         self.widget.move(x, y)
 
-    def geometry(self):
+    def frame_geometry(self):
         """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget. The semantic meaning of the
-        values are the same as for the 'size' and 'pos' methods.
+        for the internal toolkit widget, including any windowing
+        decorations.
 
         """
-        x, y = self.pos()
-        width, height = self.size()
-        return (x, y, width, height)
+        geo = self.widget.frameGeometry()
+        return (geo.x(), geo.y(), geo.width(), geo.height())
+
+    def geometry(self):
+        """ Returns an (x, y, width, height) tuple of geometry info
+        for the internal toolkit widget, ignoring any windowing
+        decorations.
+
+        """
+        geo = self.widget.geometry()
+        return (geo.x(), geo.y(), geo.width(), geo.height())
 
     def set_geometry(self, x, y, width, height):
         """ Sets the geometry of the internal widget to the given
-        x, y, width, and height values. The semantic meaning of the
-        values is the same as for the 'resize' and 'move' methods.
+        x, y, width, and height values, ignoring any windowing 
+        decorations.
 
         """
         self.widget.setGeometry(x, y, width, height)
 
-    def on_resize(self):
-        """ Triggers a relayout of the shell object since the component
-        has been resized.
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the parent.
+        """
+        self.set_enabled(enabled)
+
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the parent.
+        """
+        self.set_visible(visible)
+
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
+        """
+        role = self.widget.backgroundRole()
+        self.set_role_color(role, color)
+    
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the shell
+        object. Sets the foreground color of the internal widget to the 
+        given color.
 
         """
-        # Notice that we are calling do_layout() here instead of 
-        # set_needs_layout() since we want the layout to happen
-        # immediately. Otherwise the resize layouts will appear 
-        # to lag in the ui. This is a safe operation since by the
-        # time we get this resize event, the widget has already 
-        # changed size. Further, the only geometry that gets set
-        # by the layout manager is that of our children. And should
-        # it be required to resize this widget from within the layout
-        # call, then the layout manager will do that via invoke_later.
-        self.shell_obj.do_layout()
+        role = self.widget.foregroundRole()
+        self.set_role_color(role, color)
+
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell 
+        object. Sets the font of the internal widget to the given font.
+
+        """
+        self.set_font(font)
 
     #--------------------------------------------------------------------------
     # Convienence methods
@@ -173,4 +207,48 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         for child in self.shell_obj.children:
             yield child.toolkit_widget
+
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+        """
+        self.widget.setEnabled(enabled)
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+        """
+        self.shell_obj.parent.set_needs_update_constraints()
+        self.widget.setVisible(visible)
+
+    def set_role_color(self, role, color):
+        """ Set the color for a role of a QWidget to the color specified 
+        by the given enaml color or reset the widgets color to the default
+        value for the role if the enaml color is invalid.
+
+        """
+        if not color:
+            palette = QtGui.QApplication.instance().palette(self.widget)
+            qcolor = palette.color(role)
+            # On OSX, the default color is rendered *slightly* off
+            # so a simple workaround is to tell the widget not to
+            # auto fill the background.
+            if role == self.widget.backgroundRole():
+                self.widget.setAutoFillBackground(False)
+        else:
+            qcolor = q_color_from_color(color)
+            # When not using qt style sheets to set the background
+            # color, we need to tell the widget to auto fill the 
+            # background or the bgcolor won't render at all.
+            if role == self.widget.backgroundRole():
+                self.widget.setAutoFillBackground(True)
+        palette = self.widget.palette()
+        palette.setColor(role, qcolor)
+        self.widget.setPalette(palette)
+
+    def set_font(self, font):
+        """ Set the font of the underlying toolkit widget to an 
+        appropriate QFont.
+
+        """
+        q_font = q_font_from_font(font)
+        self.widget.setFont(q_font)
 

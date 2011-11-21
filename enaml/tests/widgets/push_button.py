@@ -27,7 +27,7 @@ class TestPushButton(EnamlTestCase):
 
         """
 
-        enaml = """
+        enaml_source = """
 defn MainWindow(events):
     Window:
         PushButton -> pb1:
@@ -38,7 +38,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'pb1')
         self.widget = self.component.toolkit_widget
 

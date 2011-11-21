@@ -51,6 +51,7 @@ class TestWXDateEdit(WXTestAssistant, date_edit.TestDateEdit):
         event_type = wx.EVT_DATE_CHANGED
         event = wx.DateEvent(widget, wx_date, event_type.typeId)
         widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)
 
     def get_date_as_string(self, widget):
         """  Get the toolkits widget's active date as a string.
