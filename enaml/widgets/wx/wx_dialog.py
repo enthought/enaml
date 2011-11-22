@@ -24,7 +24,9 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """
         # The parent WXWindow class expects there to be a _frame 
         # attribute available.
-        self.widget = self._frame = wx.Dialog(self.parent_widget())
+        style = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER
+        self.widget = wx.Dialog(self.parent_widget(), style=style)
+        self._frame = self.widget
 
     def initialize(self):
         """ Intializes the attributes on the wx.Dialog.
@@ -72,6 +74,10 @@ class WXDialog(WXWindow, AbstractTkDialog):
             shell = self.shell_obj
             if visible:
                 shell.trait_set(_active=True, opened=True)
+                # Wx doesn't reliably emit resize events when making a 
+                # ui visible. So this extra call to update cns helps make 
+                # sure things are arranged nicely.
+                self.shell_obj.set_needs_update_constraints()
                 # wx cannot distinguish between app modal and 
                 # window modal, so we only get one kind.
                 widget.ShowModal()

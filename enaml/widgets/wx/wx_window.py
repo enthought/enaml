@@ -70,6 +70,10 @@ class WXWindow(WXContainer, AbstractTkWindow):
         # Don't show the window if we're not initializing.
         if not self._initializing:
             if visible:
+                # Wx doesn't reliably emit resize events when making a 
+                # ui visible. So this extra call to update cns helps make 
+                # sure things are arranged nicely.
+                self.shell_obj.set_needs_update_constraints()
                 self._frame.Show()
             else:
                 self._frame.Hide()
