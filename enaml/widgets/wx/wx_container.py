@@ -43,6 +43,7 @@ class WXContainer(WXComponent, AbstractTkContainer):
         has been resized.
 
         """
+        print 'resize called', self
         # Notice that we are calling do_layout() here instead of 
         # set_needs_layout() since we want the layout to happen
         # immediately. Otherwise the resize layouts will appear 
