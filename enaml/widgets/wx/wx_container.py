@@ -43,7 +43,6 @@ class WXContainer(WXComponent, AbstractTkContainer):
         has been resized.
 
         """
-        print 'resize called', self
         # Notice that we are calling do_layout() here instead of 
         # set_needs_layout() since we want the layout to happen
         # immediately. Otherwise the resize layouts will appear 
@@ -54,4 +53,8 @@ class WXContainer(WXComponent, AbstractTkContainer):
         # it be required to resize this widget from within the layout
         # call, then the layout manager will do that via invoke_later.
         self.shell_obj.do_layout()
+
+        # We need to call event.Skip() here or controls like 
+        # wx.ChoiceBook won't inform their children to resize.
+        event.Skip()
 

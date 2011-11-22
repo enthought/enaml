@@ -43,7 +43,6 @@ class WXStacked(WXContainer, AbstractTkStacked):
         super(WXStacked, self).initialize()
         self.update_children()
         self.set_index(self.shell_obj.index)
-        self.widget.Layout()
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -110,4 +109,12 @@ class WXStacked(WXContainer, AbstractTkStacked):
         for child in shell.children:
             widget.AddPage(child.toolkit_widget, '')
         self.set_index(shell.index)
+
+        # XXX - This is a god-awful hack. We need to manually tell the 
+        # child to do an update or it will not layout properly initially.
+        # Calling child.set_needs_layout() is not sufficient since there
+        # is already a call to it in the pipeline and that one alone 
+        # doesn't seem to be sufficient.
+        child = shell.children[shell.index]
+        child.toolkit.invoke_later(child.do_layout)
 

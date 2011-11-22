@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Range, Int, Constant, Property, on_trait_change
+from traits.api import Instance, Range, Int, Constant, Property, on_trait_change, List
 
 from .container import Container, AbstractTkContainer
 from .layout.layout_manager import NullLayoutManager
@@ -63,6 +63,10 @@ class Stacked(Container):
     #: container ignores its height hug by default, so it expands freely
     #: in height.
     hug_height = 'ignore'
+
+    #: Overridden parent class trait. Children of a Stacked container
+    #: must themselves be containers.
+    children = List(Instance(Container))
 
     def initialize_layout(self):
         """ Initialize the layout of the children. This is overridden
