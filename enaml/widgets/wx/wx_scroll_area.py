@@ -43,7 +43,8 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         """ Creates the underlying QScrollAreacontrol.
 
         """
-        self.widget = wx.ScrolledWindow(self.parent_widget())
+        style = wx.HSCROLL | wx.VSCROLL | wx.BORDER_SIMPLE
+        self.widget = wx.ScrolledWindow(self.parent_widget(), style=style)
     
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
@@ -56,7 +57,7 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         child = self.shell_obj.children[0]
         sizer = ScrollSizer(child)
         self.widget.SetSizer(sizer)
-        
+
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
