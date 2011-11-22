@@ -88,6 +88,13 @@ class WXWindow(WXContainer, AbstractTkWindow):
         """
         self._resize(self._frame, width, height)
     
+    def min_size(self):
+        """ Overridden parent class method to get the min size on 
+        the internal wx.Frame object.
+
+        """
+        return self._min_size(self._frame)
+        
     def set_min_size(self, min_width, min_height):
         """ Overridden parent class method to set the min size on the
         internal wx.Frame object.

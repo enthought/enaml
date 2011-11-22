@@ -56,6 +56,15 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         raise NotImplementedError
     
     @abstractmethod
+    def min_size(self):
+        """ Returns the hard minimum (width, height) of the widget, 
+        ignoring any windowing decorations. A widget will not be able
+        to be resized smaller than this value
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def set_min_size(self, min_width, min_height):
         """ Set the hard minimum width and height of the widget, ignoring
         any windowing decorations. A widget will not be able to be resized 
@@ -292,6 +301,14 @@ class Component(BaseComponent):
         """
         self.abstract_obj.resize(width, height)
     
+    def min_size(self):
+        """ Returns the hard minimum (width, height) of the widget, 
+        ignoring any windowing decorations. A widget will not be able
+        to be resized smaller than this value
+
+        """
+        return self.abstract_obj.min_size()
+
     def set_min_size(self, min_width, min_height):
         """ Set the hard minimum width and height of the widget. A widget
         should not be able to be resized smaller than this value.

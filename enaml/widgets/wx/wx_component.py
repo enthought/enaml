@@ -80,6 +80,14 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         """
         self._resize(self.widget, width, height)
 
+    def min_size(self):
+        """ Returns the hard minimum (width, height) of the widget, 
+        ignoring any windowing decorations. A widget will not be able
+        to be resized smaller than this value
+
+        """
+        return self._min_size(self.widget)
+
     def set_min_size(self, min_width, min_height):
         """ Set the hard minimum width and height of the widget, ignoring
         any windowing decorations. A widget will not be able to be resized 
@@ -246,6 +254,14 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         # there is no way to reliably set the client size. Instead we
         # just set the frame size and hope for the best.
         widget.SetSize((width, height))
+
+    def _min_size(self, widget):
+        """ Returns the minimum size of the widget. See also
+        'min_size()'.
+
+        """
+        # Wx really needs a GetMinClientSize function...
+        return tuple(widget.GetMinSize())
 
     def _set_min_size(self, widget, min_width, min_height):
         """ Sets the minimum size of the given widget. See also
