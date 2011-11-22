@@ -86,6 +86,19 @@ class QResizingStackedWidget(QtGui.QStackedWidget):
         self.resized.emit()
 
 
+class QResizingSplitter(QtGui.QSplitter):
+    """ A QSplitter subclass that passes its resize events back to Enaml through
+    a Qt signal.
+
+    """
+
+    resized = QtCore.Signal()
+
+    def resizeEvent(self, event):
+        super(QResizingSplitter, self).resizeEvent(event)
+        self.resized.emit()
+
+
 class QResizingScrollArea(QtGui.QScrollArea):
     """ A QScrollArea subclass that passes its resize events back to Enaml through
     a Qt signal.
