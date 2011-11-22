@@ -110,6 +110,37 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         """
         raise NotImplementedError
 
+    def set_solved_geometry(self, root):
+        """ Makes the component take the solved geometry and other constrained
+        variables and set its internal values.
+
+        This method can assume that all of its parents have had their geometry
+        set correctly.
+
+        Parameters
+        ----------
+        root : Container
+            The root container that actually performed the layout for this
+            component. Implementations will need this to know how to transform
+            the global solved (x,y) values to local values relative to their
+            immediate parent.
+
+        """
+        shell = self.shell_obj
+        x = shell.left.value
+        y = shell.top.value
+        width = shell.width.value
+        height = shell.height.value
+        x, y, width, height = (int(round(z)) for z in (x, y, width, height))
+        # This is offset against the root Container. Each Component's geometry
+        # actually needs to be offset against its parent. Walk up the tree and
+        # subtract out the parent's offset.
+        for ancestor in shell.walk_up_containers(root):
+            dx, dy, _, _ = ancestor.geometry()
+            x -= dx
+            y -= dy
+        self.set_geometry(x, y, width, height)
+
 
 class Component(BaseComponent):
     """ A BaseComponent subclass that adds a box model and support
@@ -325,6 +356,34 @@ class Component(BaseComponent):
 
         """
         self.abstract_obj.set_geometry(x, y, width, height)
+
+    def set_solved_geometry(self, root):
+        """ Makes the component take the solved geometry and other constrained
+        variables and set its internal values.
+
+        This method can assume that all of its parents have had their geometry
+        set correctly.
+
+        Parameters
+        ----------
+        root : Container
+            The root container that actually performed the layout for this
+            component. Implementations will need this to know how to transform
+            the global solved (x,y) values to local values relative to their
+            immediate parent.
+
+        """
+        self.abstract_obj.set_solved_geometry(root)
+
+    def walk_up_containers(self, root):
+        """ Walk up the component hierarchy from this component and yield the
+        parent Containers, excepting the given root Container.
+
+        """
+        parent = self.parent
+        while parent is not root and parent is not None:
+            yield parent
+            parent = parent.parent
 
     def _get_toolkit_widget(self):
         """ Property getter for the 'toolkit_widget' property.

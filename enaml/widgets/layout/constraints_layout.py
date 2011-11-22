@@ -151,9 +151,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         with solver.suggest_values([(width_var, width), (height_var, height)], casuarius.medium):
             # Update the geometry of the children with their new
             # solved values.
-            set_solved_geometry = self.set_solved_geometry
             for child in self.traverse_descendants(component):
-                set_solved_geometry(child)
+                child.set_solved_geometry(component)
 
         self._recursion_guard = False
 
@@ -184,24 +183,6 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         return (min_width, min_height)
 
-    def set_solved_geometry(self, component):
-        """ Set the geometry of a component to its solved geometry.
-
-        """
-        x = component.left.value
-        y = component.top.value
-        width = component.width.value
-        height = component.height.value
-        x, y, width, height = (int(round(z)) for z in (x, y, width, height))
-        # This is offset against the root Container. Each Component's geometry
-        # actually needs to be offset against its parent. Walk up the tree and
-        # subtract out the parent's offset.
-        for ancestor in self.walk_up_containers(component):
-            dx, dy = ancestor.pos()
-            x -= dx
-            y -= dy
-        component.set_geometry(x, y, width, height)
-
     def traverse_descendants(self, component):
         """ Do a preorder traversal of all visible descendants of the component
         that participate in the Constraints-base layout.
@@ -215,19 +196,6 @@ class ConstraintsLayout(AbstractLayoutManager):
                     for desc in self.traverse_descendants(child):
                         yield desc
 
-    def walk_up_containers(self, component):
-        """ Walk up the component hierarchy from a given node and yield the
-        parent Containers, excepting the root Container.
-
-        """
-        root = self.component()
-        if root is None:
-            msg = 'Component weakly referenced by %r disappeared' % self
-            raise RuntimeError(msg)
-        parent = component.parent
-        while parent is not root and parent is not None:
-            yield parent
-            parent = parent.parent
 
     #--------------------------------------------------------------------------
     # Constraint computation
