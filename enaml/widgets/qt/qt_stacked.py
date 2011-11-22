@@ -73,21 +73,26 @@ class QtStacked(QtContainer, AbstractTkStacked):
         a minimum size set, not a size hint.
 
         """
-        size_hint = self.widget.currentWidget().sizeHint()
-        if not size_hint.isValid():
-            size_hint = self.widget.currentWidget().minimumSize()
-        return (size_hint.width(), size_hint.height())
+        shell = self.shell_obj
+        curr_shell = shell.children[shell.index]
+        size_hint = curr_shell.size_hint()
+        if size_hint == (-1, -1):
+            q_size = curr_shell.toolkit_widget.minimumSize()
+            size_hint = (q_size.width(), q_size.height())
+        return size_hint
 
     def update_children(self):
-        """ Update the QStackedWidget's children with the current children.
+        """ Update the QStackedWidget's children with the current 
+        children.
 
         """
         # FIXME: there should be a more efficient way to do this, but for 
         # now just remove all present widgets and add the current ones.
-        while self.widget.count():
-            self.widget.removeWidget(self.widget.currentWidget())
+        widget = self.widget
+        while widget.count():
+            widget.removeWidget(widget.currentWidget())
         shell = self.shell_obj
         for child in shell.children:
-            self.widget.addWidget(child.toolkit_widget)
-        self.shell_index_changed(shell.index)
+            widget.addWidget(child.toolkit_widget)
+        self.set_index(shell.index)
 
