@@ -9,31 +9,71 @@ from .wx_container import WXContainer
 from ..scroll_area import AbstractTkScrollArea
 
 
-SCROLLBAR_POLICY_MAP = dict(
-     as_needed=1,
-     always_off=0,
-     always_on=1,
-)
+# As mentioned in the notes of the docstring for WXScrollArea, we
+# don't support the 'always_on' policy of the scrollbars. Since
+# we only have to support 'off' or 'auto' it's easiest to use this
+# mapping to convert straight from policy values into a respective
+# scroll rate. A rate of Zero causes wx not to show the scroll bar.
+# A positive rate indicates to scroll that many pixels per event.
+# We set the rate to 1 to have smooth scrolling. Wx doesn't make a
+# distinction between scroll events caused by the mouse or scrollbar
+# and those caused by clicking the scroll buttons (ala qt), and thus
+# this rate applies the same to all of those events. Since we expect
+# that clicking on a scroll button happens much more infrequently 
+# than scrolling by dragging the scroll bar, we opt for a lower rate
+# in order to get smooth drag scrolling and sacrifice some usability
+# on the scroll buttons.
+SCROLLBAR_POLICY_MAP = {
+     'as_needed': 1,
+     'always_off': 0,
+     'always_on': 1,
+}
 
 
 class ScrollSizer(wx.PySizer):
+    """ A custom wx Sizer for use in the WXScrollArea. It manages the
+    necessary resizing of the child container when the scroll area
+    is resized.
 
+    """
     def __init__(self, child):
+        """ Initializes a ScrollSizer
+
+        Parameters
+        ----------
+        child :
+            The child container this size is managing.
+        
+        """
         super(ScrollSizer, self).__init__()
         self.child = child
-        self.min_size = None
-        
+
     def CalcMin(self):
-        if self.min_size is None:
-            self.min_size = wx.Size(*self.child.layout.calc_min_size())
-        return self.min_size
+        """ Returns the minimum size of the child this sizer is managing.
+
+        """
+        return self.child.min_size()
     
     def RecalcSizes(self):
+        """ Resizes the child to fit the available space of the scroll
+        area.
+
+        """
+        # XXX this probably wont do the right thing if the child
+        # is not a container and shouldn't be resized.
         self.child.resize(*self.GetSizeTuple())
 
 
 class WXScrollArea(WXContainer, AbstractTkScrollArea):
     """ Wx implementation of the ScrollArea Container.
+
+    ..Note: The 'always_on' scrollbar policy is not supported on wx. Wx
+        *does* allow the scollbars to be always show, but said window 
+        style applies to *both* horizontal and vertical directions, and
+        it must be applied at widget creation time. It does not reliably
+        toggle on/off dynamically after the widget has been created. As
+        it's not reliable, we simple support that mode on wx. Should it
+        become a highly desired feature, this decision can be revisited.
 
     """
     #--------------------------------------------------------------------------
@@ -43,7 +83,7 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         """ Creates the underlying QScrollAreacontrol.
 
         """
-        style = wx.HSCROLL | wx.VSCROLL | wx.BORDER_SIMPLE
+        style = wx.HSCROLL | wx.VSCROLL | wx.BORDER_SIMPLE 
         self.widget = wx.ScrolledWindow(self.parent_widget(), style=style)
     
     def initialize(self):
@@ -54,9 +94,7 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         shell = self.shell_obj
         self._set_horiz_policy(shell.horizontal_scrollbar_policy)
         self._set_vert_policy(shell.vertical_scrollbar_policy)
-        child = self.shell_obj.children[0]
-        sizer = ScrollSizer(child)
-        self.widget.SetSizer(sizer)
+        self._update_children()
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -93,13 +131,14 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
     
     def size_hint(self):
         """ Returns a (width, height) tuple of integers for the size hint
-        of the scroll area.
+        of the scroll area. Overridden from the parent class to return
+        a reasonable value for a Scroll Area.
 
         """
         # Trying to have wx compute a decent size hint is probably
         # the most painful thing i've experienced in programming. It's 
         # just not worth the effort. For now, just return the default 
-        # used by QAbstractScrollArea
+        # size hint used by QAbstractScrollArea.
         return (256, 192)
 
     #--------------------------------------------------------------------------
@@ -125,10 +164,21 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         """ Update the QScrollArea's children with the current children.
 
         """
-        return
-        # shell = self.shell_obj
-        # if len(shell.children) == 0:
-        #     self.widget.setWidget(None)
-        # else:
-        #     self.widget.setWidget(shell.children[0].toolkit_widget)
+        # Setup a custom sizer for the child widget so that it receives
+        # resize events at the appropriate times. There doesn't seem to
+        # be any other way to make this work in wx.
+
+        # XXX at the moment, we don't really handle children updates
+        # properly. This can be done, but we'll need some contracts
+        # in place about the safety of calling a re-setup on a child
+        # when its added or removed from a component dynamically.
+        # For now, we just assume that there is one child, and
+        # that it never changes.
+        shell = self.shell_obj
+        if len(shell.children) == 0:
+            pass
+        else:
+            sizer = ScrollSizer(shell.children[0])
+            self.widget.SetSizer(sizer)
+            self.widget.Refresh()
 
