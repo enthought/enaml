@@ -125,6 +125,13 @@ class AbstractTkComponent(AbstractTkBaseComponent):
             the global solved (x,y) values to local values relative to their
             immediate parent.
 
+        Returns
+        -------
+        dx, dy : int
+            The offsets needed to convert (x,y) variable values into local
+            positions. These are mostly used in overrides of this method that
+            handle additional variables.
+
         """
         shell = self.shell_obj
         x = shell.left.value
@@ -135,11 +142,14 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         # This is offset against the root Container. Each Component's geometry
         # actually needs to be offset against its parent. Walk up the tree and
         # subtract out the parent's offset.
+        dx = 0
+        dy = 0
         for ancestor in shell.walk_up_containers(root):
-            dx, dy, _, _ = ancestor.geometry()
-            x -= dx
-            y -= dy
-        self.set_geometry(x, y, width, height)
+            adx, ady, _, _ = ancestor.geometry()
+            dx += adx
+            dy += ady
+        self.set_geometry(x-dx, y-dy, width, height)
+        return (dx, dy)
 
 
 class Component(BaseComponent):
@@ -364,16 +374,8 @@ class Component(BaseComponent):
         This method can assume that all of its parents have had their geometry
         set correctly.
 
-        Parameters
-        ----------
-        root : Container
-            The root container that actually performed the layout for this
-            component. Implementations will need this to know how to transform
-            the global solved (x,y) values to local values relative to their
-            immediate parent.
-
         """
-        self.abstract_obj.set_solved_geometry(root)
+        return self.abstract_obj.set_solved_geometry(root)
 
     def walk_up_containers(self, root):
         """ Walk up the component hierarchy from this component and yield the
