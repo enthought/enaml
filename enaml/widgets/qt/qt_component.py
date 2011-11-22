@@ -109,11 +109,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         parent, or to the screen if the widget is toplevel.
 
         """
-        geom = self.layout_item.geometry()
-        x = geom.x()
-        y = geom.y()
-        dx, dy, _, _ = self._parent_margins
-        return (x-dx, y-dy)
+        widget = self.widget
+        return (widget.x(), widget.y())
 
     def move(self, x, y):
         """ Moves the internal toolkit widget according to the given
@@ -121,12 +118,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         widget's parent and includes any windowing decorations.
 
         """
-        dx, dy, _, _ = self._layout_margins
-        pdx, pdy, _, _ = self._parent_margins
-        widget = self.widget
-        geom = widget.geometry()
-        geom.moveTo(x-dx+pdx, y-dy+pdy)
-        widget.setGeometry(geom)
+        self.widget.move(x, y)
 
     def frame_geometry(self):
         """ Returns an (x, y, width, height) tuple of geometry info
@@ -143,8 +135,9 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         decorations.
 
         """
+        pdx, pdy, pdr, pdb = self._parent_margins
         geom = self.layout_item.geometry()
-        return (geom.x(), geom.y(), geom.width(), geom.height())
+        return (geom.x()-pdx, geom.y()-pdy, geom.width(), geom.height())
 
     def set_geometry(self, x, y, width, height):
         """ Sets the geometry of the internal widget to the given
