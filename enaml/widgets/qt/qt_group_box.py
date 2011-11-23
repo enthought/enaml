@@ -38,6 +38,7 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         self._set_title(shell.title)
         self._set_flat(shell.flat)
         self._set_title_align(shell.title_align)
+        self._reset_layout_margins()
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -48,6 +49,7 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
 
         """
         self._set_title(title)
+        self._reset_layout_margins()
         # We need to call update constraints since the margins may 
         # have changed. Using the size_hint_updated event here is
         # not sufficient.
@@ -59,6 +61,7 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
 
         """
         self._set_flat(flat)
+        self._reset_layout_margins()
         # We need to call update constraints since the margins may 
         # have changed. Using the size_hint_updated event here is
         # not sufficient.
@@ -76,9 +79,12 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         widget.
 
         """
+        dx, dy, dr, db = self._layout_margins
         m = self.widget.contentsMargins()
-        return (m.top(), m.left(), m.right(), m.bottom())
-    
+        contents_margins = (m.top()-dy, m.left()-dx, m.right()-dr, m.bottom()-db)
+        #contents_margins = (m.top(), m.left(), m.right(), m.bottom())
+        return contents_margins
+
     #--------------------------------------------------------------------------
     # Widget Update methods 
     #--------------------------------------------------------------------------

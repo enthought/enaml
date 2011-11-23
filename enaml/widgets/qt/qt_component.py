@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
+from .qt import QtCore, QtGui
 from .qt_base_component import QtBaseComponent
 from .styling import q_color_from_color, q_font_from_font
 
@@ -36,6 +36,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         super(QtComponent, self).initialize()
+        self.layout_item = QtGui.QWidgetItem(self.widget)
+        self._reset_layout_margins()
         shell = self.shell_obj
         if shell.bg_color:
             self.set_bg_color(shell.bg_color)
@@ -68,8 +70,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         windowing decorations, as a (width, height) tuple of integers.
 
         """
-        widget = self.widget
-        return (widget.width(), widget.height())
+        geom = self.layout_item.geometry()
+        return (geom.width(), geom.height())
 
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
@@ -78,7 +80,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         manager to determine how much space to allocate the widget.
 
         """
-        size_hint = self.widget.sizeHint()
+        size_hint = self.layout_item.sizeHint()
         return (size_hint.width(), size_hint.height())
 
     def resize(self, width, height):
@@ -86,7 +88,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         width and height integers, ignoring any windowing decorations.
 
         """
-        self.widget.resize(width, height)
+        dx, dy, dr, db = self._layout_margins
+        self.widget.resize(width+dx+dr, height+dy+db)
     
     def min_size(self):
         """ Returns the hard minimum (width, height) of the widget, 
@@ -103,7 +106,8 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         smaller than this value.
 
         """
-        self.widget.setMinimumSize(min_width, min_height)
+        dx, dy, dr, db = self._layout_margins
+        self.widget.setMinimumSize(min_width+dx+dr, min_height+dy+db)
 
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
@@ -138,8 +142,9 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         decorations.
 
         """
-        geo = self.widget.geometry()
-        return (geo.x(), geo.y(), geo.width(), geo.height())
+        pdx, pdy, pdr, pdb = self._parent_margins
+        geom = self.layout_item.geometry()
+        return (geom.x()-pdx, geom.y()-pdy, geom.width(), geom.height())
 
     def set_geometry(self, x, y, width, height):
         """ Sets the geometry of the internal widget to the given
@@ -147,7 +152,9 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         decorations.
 
         """
-        self.widget.setGeometry(x, y, width, height)
+        dx, dy, dr, db = self._layout_margins
+        pdx, pdy, pdr, pdb = self._parent_margins
+        self.widget.setGeometry(x-dx+pdx, y-dy+pdy, width+dr+dx, height+db+dy)
 
     #--------------------------------------------------------------------------
     # Shell Object Change Handlers 
@@ -252,7 +259,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         self.widget.setFont(q_font)
 
     #--------------------------------------------------------------------------
-    # Convienence methods
+    # Convenienence methods
     #--------------------------------------------------------------------------
     def parent_widget(self):
         """ Returns the logical QWidget parent for this component.
@@ -283,3 +290,26 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         for child in self.shell_obj.children:
             yield child.toolkit_widget
 
+    def _get_layout_margins(self, widget):
+        """ Compute the size of the margins between the layout rectangle and the
+        widget drawing rectangle.
+
+        """
+        layout_geom = QtGui.QWidgetItem(widget).geometry()
+        widget_geom = widget.geometry()
+        margins = (layout_geom.x() - widget_geom.x(),
+                   layout_geom.y() - widget_geom.y(),
+                   widget_geom.right() - layout_geom.right(),
+                   widget_geom.bottom() - layout_geom.bottom())
+        return margins
+
+    def _reset_layout_margins(self):
+        """ Reset the layout margins for this widget.
+
+        """
+        self._layout_margins = self._get_layout_margins(self.widget)
+        parent = self.parent_widget()
+        if parent is not None:
+            self._parent_margins = self._get_layout_margins(parent)
+        else:
+            self._parent_margins = (0, 0, 0, 0)

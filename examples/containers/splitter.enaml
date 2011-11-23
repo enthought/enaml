@@ -1,0 +1,67 @@
+from enaml.item_models.standard_models import ListModel, TableModel
+from enaml.styling.brush import Brush
+from enaml.styling.color import Color
+
+
+:: python ::
+
+# A single row of data with 100k elements
+row = range(1000000)
+
+# A (1000, 100) table of data
+table = [[i + (100 * j) for i in xrange(100)] for j in xrange(1000)]
+
+list_model = ListModel(row)
+table_model = TableModel(table)
+
+:: end ::
+
+
+# ListModel and TableModel are both subclasses of AbstractItemModel
+# which means they can both be passed to TableView and work just fine.
+# And once ListView and TreeView are implemented, will work just fine
+# there as well.
+
+defn MainWindow:
+    Window:
+        Splitter:
+            orientation = 'vertical'
+            TableView:
+                item_model = table_model
+            Splitter:
+                Form:
+                    Label:
+                        text = "First name:"
+                    Field:
+                        pass
+                    Label:
+                        text = "Last name:"
+                    Field:
+                        pass
+                    Label:
+                        text = "Address:"
+                    Field:
+                        pass
+                    Label:
+                        text = ""
+                    Field:
+                        pass
+                    Label:
+                        text = "City:"
+                    Field:
+                        pass
+                    Label:
+                        text = "State:"
+                    Field:
+                        pass
+                    Label:
+                        text = "Postal Code:"
+                    Field:
+                        pass
+                    Label:
+                        text = "Country:"
+                    Field:
+                        pass
+                TableView:
+                    item_model = table_model
+

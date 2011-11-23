@@ -66,5 +66,6 @@ QT_CONSTRUCTORS = dict((
     constructor('progress_bar'),
     constructor('tabbed'),
     constructor('tab'),
+    constructor('splitter'),
 ))
 
