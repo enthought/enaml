@@ -11,9 +11,10 @@ from .tab import Tab
 
 from ..enums import TabPosition
 
+
 _SIZE_HINT_DEPS = ('children:size_hint_updated, children:hug_width, '
                    'children:hug_height, children:resist_clip_width, '
-                   'children:resist_clip_height, index, tab_position')
+                   'children:resist_clip_height')
 
 
 class AbstractTkTabbed(AbstractTkStacked):
