@@ -8,6 +8,7 @@ from traits.api import Instance, Range, Int, Constant, Property, on_trait_change
 
 from .container import Container, AbstractTkContainer
 from .component import Component
+from ..enums import Orientation
 from .layout.layout_manager import NullLayoutManager
 
 
@@ -26,6 +27,17 @@ class AbstractTkSplitter(AbstractTkContainer):
     """
 
     @abstractmethod
+    def set_initial_sizes(self):
+        """ Set the initial sizes for the children.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_orientation_changed(self, orientation):
+        raise NotImplementedError
+
+    @abstractmethod
     def shell_children_changed(self, children):
         raise NotImplementedError
 
@@ -38,6 +50,11 @@ class Splitter(Container):
     """ A Container that displays just one of its children at a time.
 
     """
+
+    #: The orientation of the Splitter. 'horizontal' means the children are laid
+    #: out side-by-side.
+    orientation = Orientation('horizontal')
+
     #: An object that manages the layout of this component and its 
     #: direct children. In this case, it does nothing.
     layout = Instance(NullLayoutManager, ())
@@ -65,6 +82,7 @@ class Splitter(Container):
         for child in self.children:
             if hasattr(child, 'initialize_layout'):
                 child.initialize_layout()
+        self.abstract_obj.set_initial_sizes()
 
     @on_trait_change(_SIZE_HINT_DEPS)
     def handle_size_hint_changed(self, child, name, old, new):

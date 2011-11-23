@@ -2,10 +2,17 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
+from .qt import QtCore
 from .qt_container import QtContainer
 from .qt_resizing_widgets import QResizingSplitter
 
 from ..splitter import AbstractTkSplitter
+
+
+_ORIENTATION_MAP = {
+    'horizontal': QtCore.Qt.Horizontal,
+    'vertical': QtCore.Qt.Vertical,
+}
 
 
 class QtSplitter(QtContainer, AbstractTkSplitter):
@@ -26,11 +33,18 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
 
         """
         super(QtSplitter, self).initialize()
+        self.set_orientation(self.shell_obj.orientation)
         self.update_children()
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
+
+    def shell_orientation_changed(self, orientation):
+        """ Update the orientation of the widget.
+
+        """
+        self.set_orientation(orientation)
 
     def shell_children_changed(self, children):
         """ Update the widget with new children.
@@ -47,6 +61,13 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
+
+    def set_orientation(self, orientation):
+        """ Update the orientation of the QSplitter.
+
+        """
+        q_orientation = _ORIENTATION_MAP[orientation]
+        self.widget.setOrientation(q_orientation)
 
     def update_children(self):
         """ Update the QSplitter's children with the current 
@@ -65,4 +86,42 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
         shell = self.shell_obj
         for child in shell.children:
             widget.addWidget(child.toolkit_widget)
+
+    def size_hint(self):
+        """ Return a size hint for the widget.
+
+        """
+        along_hint = 0
+        ortho_hint = 0
+        shell = self.shell_obj
+        i = ['horizontal', 'vertical'].index(shell.orientation)
+        j = 1 - i
+        for child in shell.children:
+            if child.visible:
+                size_hint = child.size_hint()
+                if size_hint == (-1, -1):
+                    min_size = child.toolkit_widget.minimumSize()
+                    size_hint = (min_size.width(), min_size.height())
+                # FIXME: Add handle widths? QSplitter doesn't.
+                along_hint += size_hint[i]
+                ortho_hint = max(ortho_hint, size_hint[j])
+        if shell.orientation == 'horizontal':
+            return (along_hint, ortho_hint)
+        else:
+            return (ortho_hint, along_hint)
+
+    def set_initial_sizes(self):
+        """ Set the initial sizes for the children.
+
+        """
+        shell = self.shell_obj
+        i = ['horizontal', 'vertical'].index(shell.orientation)
+        sizes = []
+        for child in shell.children:
+            hint = child.size_hint()[i]
+            if hint <= 0:
+                min_size = child.toolkit_widget.minimumSize()
+                hint = (min_size.width(), min_size.height())[i]
+            sizes.append(hint)
+        self.widget.setSizes(sizes)
 
