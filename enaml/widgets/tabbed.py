@@ -87,7 +87,6 @@ class Tabbed(Stacked):
             raise ValueError(msg)
         self.index = idx
 
-
     @on_trait_change(_SIZE_HINT_DEPS)
     def handle_size_hint_changed(self, child, name, old, new):
         """ Pass up the size hint changed notification to the parent
