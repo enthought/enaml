@@ -1,0 +1,52 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+
+defn GenForm(button_text):
+    Form:
+        Label:
+            text = 'First'
+        Field:
+            pass
+        Label:
+            text = 'Last'
+        Field:
+            pass
+        Label:
+            text = 'Phone'
+        Field:
+            pass
+        PushButton -> pb:
+            text = button_text
+
+
+:: python ::
+
+import itertools
+
+tab_pos = itertools.cycle(['top', 'bottom', 'left', 'right'])
+tab_pos.next()
+
+:: end ::
+
+
+defn MainWindow:
+    Window:
+        title = 'Tabbed'
+        Tabbed -> tbd:
+            Tab:
+                title = 'Spam'
+                GenForm('spam'):
+                    pass
+            Tab:
+                title = 'Ham'
+                GenForm('ham'):
+                    pass
+            Tab:
+                title = 'Toggle'
+                GenForm('toggle') -> pb as pb:
+                    pb.text = 'Cycle Tab Position'
+                    pb.clicked >> setattr(tbd, 'tab_position', tab_pos.next())
+
