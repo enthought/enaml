@@ -55,7 +55,8 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
 
         """
         self._set_tab_position(tab_position)
-
+        self.shell_obj.size_hint_updated = True
+        
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
         the suggested size of the widget for its current state. This
@@ -77,7 +78,6 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
         if q_tab_position != widget.tabPosition():
             widget.setTabPosition(q_tab_position)
 
-        style = widget.style()
         opt = QtGui.QStyleOptionTabWidgetFrame()
         widget.initStyleOption(opt)
         tab_bar_size = opt.tabBarSize
