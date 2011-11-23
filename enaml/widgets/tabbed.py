@@ -4,12 +4,16 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import List, Instance, Property
+from traits.api import List, Instance, Property, on_trait_change
 
 from .stacked import Stacked, AbstractTkStacked
 from .tab import Tab
 
 from ..enums import TabPosition
+
+_SIZE_HINT_DEPS = ('children:size_hint_updated, children:hug_width, '
+                   'children:hug_height, children:resist_clip_width, '
+                   'children:resist_clip_height, index, tab_position')
 
 
 class AbstractTkTabbed(AbstractTkStacked):
@@ -81,4 +85,13 @@ class Tabbed(Stacked):
             msg = '%s is not a child of the Tabbed container' % selected
             raise ValueError(msg)
         self.index = idx
+
+
+    @on_trait_change(_SIZE_HINT_DEPS)
+    def handle_size_hint_changed(self, child, name, old, new):
+        """ Pass up the size hint changed notification to the parent
+        so that a window resize can take place if necessary.
+
+        """
+        self.size_hint_updated = True
 

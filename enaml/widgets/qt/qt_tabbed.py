@@ -56,6 +56,39 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
         """
         self._set_tab_position(tab_position)
 
+    def size_hint(self):
+        """ Returns a (width, height) tuple of integers which represent
+        the suggested size of the widget for its current state. This
+        value is used by the layout manager to determine how much
+        space to allocate the widget.
+
+        Override to add the content margins to the size hint.
+
+        """
+        width_hint, height_hint = super(QtTabbed, self).size_hint()
+        widget = self.widget
+        shell = self.shell_obj
+        # FIXME: This can get called before the tab_position has been
+        # synchronized with the widget. Ensure that it is synchronized. It would
+        # be better if the shell_*changed() methods could be given priority over
+        # other Trait change handlers.
+        tab_position = shell.tab_position
+        q_tab_position = _TAB_POSITION_MAP[tab_position]
+        if q_tab_position != widget.tabPosition():
+            widget.setTabPosition(q_tab_position)
+
+        style = widget.style()
+        opt = QtGui.QStyleOptionTabWidgetFrame()
+        widget.initStyleOption(opt)
+        tab_bar_size = opt.tabBarSize
+        if shell.tab_position in ('top', 'bottom'):
+            height_hint += tab_bar_size.height()
+            width_hint = max(width_hint, tab_bar_size.width())
+        else:
+            width_hint += opt.tabBarSize.width()
+            height_hint = max(height_hint, tab_bar_size.height())
+        return (width_hint, height_hint)
+
     #--------------------------------------------------------------------------
     # Event Handlers 
     #--------------------------------------------------------------------------
