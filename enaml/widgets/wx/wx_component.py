@@ -302,7 +302,15 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         'geometry()'.
 
         """
-        return widget.GetClientRect().asTuple()
+        # wx widget.GetClientRect() doesn't seem to be what we want.
+        # ofter, GetRect() and GetClientRect() are the same, but when
+        # they aren't GetRect() does the right thing. This is probably
+        # because of asymmetry between GetClientRect and SetDimensions. 
+        # Given that, the existing examples have been tested side by 
+        # side with Qt on Windows, and these current geometry handlers 
+        # "do the right thing" in most cases, plus or minus a pixel or
+        # two difference.
+        return widget.GetRect().asTuple()
 
     def _set_geometry(self, widget, x, y, width, height):
         """ Sets the geometry of the given widget. See also
