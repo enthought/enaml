@@ -61,7 +61,7 @@ class WXTabbed(WXStacked, AbstractTkTabbed):
 
         """
         width_hint, height_hint = super(WXTabbed, self).size_hint()
-
+                
         # Compute the size of the tab so we can offset the size hint.
         # On Windows, the return value of the height function is a hard
         # coded default of 20. This is close for the standard font but
@@ -71,7 +71,8 @@ class WXTabbed(WXStacked, AbstractTkTabbed):
         tab_length = self._estimate_tab_bar_length()
 
         # Offset the size hint by the tab bar size
-        if self.shell_obj.tab_position in ('top', 'bottom'):
+        style = self.widget.GetWindowStyle()
+        if (style & wx.NB_TOP) or (style & wx.NB_BOTTOM):
             height_hint += tab_size
             width_hint = max(width_hint, tab_length)
         else:
