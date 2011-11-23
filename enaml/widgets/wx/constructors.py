@@ -64,4 +64,6 @@ WX_CONSTRUCTORS = dict((
     constructor('progress_bar'),
     constructor('stacked'),
     constructor('scroll_area'),
+    constructor('tabbed'),
+    constructor('tab'),
 ))
