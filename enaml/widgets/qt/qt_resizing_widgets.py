@@ -97,3 +97,17 @@ class QResizingScrollArea(QtGui.QScrollArea):
     def resizeEvent(self, event):
         super(QResizingScrollArea, self).resizeEvent(event)
         self.resized.emit()
+
+
+class QResizingTabWidget(QtGui.QTabWidget):
+    """ A QTabWidget subclass that passes its resize events back to Enaml 
+    through a Qt signal.
+
+    """
+
+    resized = QtCore.Signal()
+
+    def resizeEvent(self, event):
+        super(QResizingTabWidget, self).resizeEvent(event)
+        self.resized.emit()
+
