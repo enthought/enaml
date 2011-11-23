@@ -26,17 +26,18 @@ DialogResult = Enum(('rejected', 'accepted'))
 #: ============== ======================
 Orientation = Enum(('horizontal', 'vertical'))
 
-#: The position of the tabs in a notebook.
+#: The position of the tabs in a Tabbed container.
 #:
 #: ========== =====================================================
 #: value      description
 #: ========== =====================================================
-#: ``left``   (default) Place tabs to the left of the main content.
-#: ``right``  Place tabs to the right of the main content.
-#: ``top``    Place tabs above the main content.
+#: ``top``    (default) Place tabs above the main content.
 #: ``bottom`` Place tabs below the main content.
+#: ``left``   Place tabs to the left of the main content.
+#: ``right``  Place tabs to the right of the main content.
 #: ========== =====================================================
-TabPosition = Enum(('left', 'right', 'top', 'bottom'))
+TabPosition = Enum(('top', 'bottom', 'left', 'right'))
+
 
 #: Horizontal alingment.
 #:
