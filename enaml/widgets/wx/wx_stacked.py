@@ -100,13 +100,24 @@ class WXStacked(WXContainer, AbstractTkStacked):
         children
 
         """
-        # FIXME: there should be a more efficient way to do this, but for 
-        # now just remove all present widgets and add the current ones.
+        # FIXME: there should be a more efficient way to do this, but 
+        # for now just remove all present widgets and add the current 
+        # ones. If we use DeleteAllPages(), then the child widgets would
+        # be destroyed, which is not the behavior we want.
+        shell = self.shell_obj
         widget = self.widget
         while widget.GetPageCount():
-            widget.RemovePage(widget.GetSelection())
-        shell = self.shell_obj
+            widget.RemovePage(0)
+        
+        # Reparent all of the child widgets to the new parent. This
+        # ensures that any new children are properly parented.
         for child in shell.children:
-            widget.AddPage(child.toolkit_widget, '')
+            child_widget = child.toolkit_widget
+            child_widget.Reparent(widget)
+            widget.AddPage(child_widget, '')
+
+        # Finally, update the selected index of the of the widget 
+        # and notify the layout of the size hint update
         self.set_index(shell.index)
+        shell.size_hint_updated = True
 
