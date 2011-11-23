@@ -56,7 +56,7 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
         """
         self._set_tab_position(tab_position)
         self.shell_obj.size_hint_updated = True
-        
+
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
         the suggested size of the widget for its current state. This
@@ -127,4 +127,5 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
         for child in shell.children:
             widget.addTab(child.toolkit_widget, child.title)
         self.set_index(shell.index)
+        shell.size_hint_updated = True
 

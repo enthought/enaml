@@ -88,11 +88,17 @@ class QtStacked(QtContainer, AbstractTkStacked):
         """
         # FIXME: there should be a more efficient way to do this, but for 
         # now just remove all present widgets and add the current ones.
+        shell = self.shell_obj
         widget = self.widget
         while widget.count():
             widget.removeWidget(widget.currentWidget())
-        shell = self.shell_obj
+
+        # Reparent all of the child widgets to the new parent.
         for child in shell.children:
             widget.addWidget(child.toolkit_widget)
+
+        # Finally, update the selected index of the of the widget 
+        # and notify the layout of the size hint update
         self.set_index(shell.index)
+        shell.size_hint_updated = True
 
