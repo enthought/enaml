@@ -36,6 +36,7 @@ defn MainWindow:
     Window:
         title = 'Tabbed'
         Tabbed -> tbd:
+            selected >> print('Selected Tab:', selected.title)
             Tab:
                 title = 'Spam'
                 GenForm('spam'):
