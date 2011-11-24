@@ -16,6 +16,31 @@ _ORIENTATION_MAP = {
 }
 
 
+class CustomSplitter(MultiSplitterWindow):
+    """ A wx.lib.splitter.MultiSplitterWindow subclass that changes
+    the behavior of resizing neighbors to be consisten with Qt.
+
+    """
+    def _OnMouse(self, event):
+        """ Overriden parent class mouse event handler which fakes the
+        state of the keyboard so that resize behavior is consistent
+        between wx and Qt.
+
+        """
+        # We modify the mouse event to "fake" like the shift key is
+        # always down. This causes the splitter to not adjust its 
+        # neighbor when dragging the sash. This behavior is consistent
+        # with Qt's behavior. This is not *the best* way to handle this,
+        # but it's the easiest and quickest at the moment. The proper 
+        # way would be to reimplement this method in its entirety and
+        # allow the adjustNeighbor computation to be based on keyboard
+        # state as well as attribute flags. 
+        #
+        # TODO implement this properly
+        event.m_shiftDown = True
+        return super(CustomSplitter, self)._OnMouse(event)
+
+
 class WXSplitter(WXContainer, AbstractTkSplitter):
     """ Wx implementation of the Splitter Container.
 
@@ -28,7 +53,7 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
 
         """
         style = wx.SP_LIVE_UPDATE
-        self.widget = MultiSplitterWindow(self.parent_widget(), style=style)
+        self.widget = CustomSplitter(self.parent_widget(), style=style)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
