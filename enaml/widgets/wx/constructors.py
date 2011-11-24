@@ -66,4 +66,5 @@ WX_CONSTRUCTORS = dict((
     constructor('scroll_area'),
     constructor('tabbed'),
     constructor('tab'),
+    constructor('splitter'),
 ))
