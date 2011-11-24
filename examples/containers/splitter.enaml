@@ -64,4 +64,5 @@ defn MainWindow:
                         pass
                 TableView:
                     item_model = table_model
-
+                TableView:
+                    item_model = table_model
