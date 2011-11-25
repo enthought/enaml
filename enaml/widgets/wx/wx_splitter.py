@@ -52,15 +52,16 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
         """ Creates the underlying QSplitter control.
 
         """
-        style = wx.SP_LIVE_UPDATE
-        self.widget = CustomSplitter(self.parent_widget(), style=style)
+        self.widget = CustomSplitter(self.parent_widget())
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
         super(WXSplitter, self).initialize()
-        self.set_orientation(self.shell_obj.orientation)
+        shell = self.shell_obj
+        self.set_orientation(shell.orientation)
+        self.set_live_drag(shell.live_drag)
         self.update_children()
 
     #--------------------------------------------------------------------------
@@ -71,6 +72,13 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
 
         """
         self.set_orientation(orientation)
+
+    def shell_live_drag_changed(self, live_drag):
+        """ The change handler for the 'live_drag' attribute of the
+        shell object.
+
+        """
+        self.set_live_drag(live_drag)
 
     def shell_children_changed(self, children):
         """ Update the widget with new children.
@@ -88,15 +96,23 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
     # Widget Update Methods 
     #--------------------------------------------------------------------------
     def set_orientation(self, orientation):
-        """ Update the orientation of the QSplitter.
+        """ Update the orientation of the splitter.
 
         """
         wx_orientation = _ORIENTATION_MAP[orientation]
         self.widget.SetOrientation(wx_orientation)
 
+    def set_live_drag(self, live_drag):
+        """ Updates the drag state of the splitter.
+
+        """
+        if live_drag:
+            self.widget.WindowStyle |= wx.SP_LIVE_UPDATE
+        else:
+            self.widget.WindowStyle &= ~wx.SP_LIVE_UPDATE
+            
     def update_children(self):
-        """ Update the QSplitter's children with the current 
-        children.
+        """ Update the splitter's children with the current children.
 
         """
         shell = self.shell_obj

@@ -33,18 +33,26 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
 
         """
         super(QtSplitter, self).initialize()
-        self.set_orientation(self.shell_obj.orientation)
+        shell = self.shell_obj
+        self.set_orientation(shell.orientation)
+        self.set_live_drag(shell.live_drag)
         self.update_children()
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-
     def shell_orientation_changed(self, orientation):
         """ Update the orientation of the widget.
 
         """
         self.set_orientation(orientation)
+
+    def shell_live_drag_changed(self, live_drag):
+        """ The change handler for the 'live_drag' attribut of the shell
+        object.
+
+        """
+        self.set_live_drag(live_drag)
 
     def shell_children_changed(self, children):
         """ Update the widget with new children.
@@ -61,7 +69,6 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
-
     def set_orientation(self, orientation):
         """ Update the orientation of the QSplitter.
 
@@ -69,6 +76,12 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
         q_orientation = _ORIENTATION_MAP[orientation]
         self.widget.setOrientation(q_orientation)
 
+    def set_live_drag(self, live_drag):
+        """ Update the dragging mode of the QSplitter.
+
+        """
+        self.widget.setOpaqueResize(live_drag)
+        
     def update_children(self):
         """ Update the QSplitter's children with the current 
         children.

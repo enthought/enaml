@@ -4,12 +4,13 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Range, Int, Constant, Property, on_trait_change, List
+from traits.api import Instance, on_trait_change, List, Bool
 
 from .container import Container, AbstractTkContainer
 from .component import Component
-from ..enums import Orientation
 from .layout.layout_manager import NullLayoutManager
+
+from ..enums import Orientation
 
 
 _SIZE_HINT_DEPS = ('children:size_hint_updated, children:hug_width, '
@@ -25,7 +26,6 @@ class AbstractTkSplitter(AbstractTkContainer):
     toolkit widget.
 
     """
-
     @abstractmethod
     def set_initial_sizes(self):
         """ Set the initial sizes for the children.
@@ -35,14 +35,34 @@ class AbstractTkSplitter(AbstractTkContainer):
 
     @abstractmethod
     def shell_orientation_changed(self, orientation):
+        """ The change handler for the 'orientation' attribute of the 
+        shell object.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
+    def shell_live_drag_changed(self, live_drag):
+        """ The change handler for the 'live_drag' attribute of the
+        shell object.
+
+        """
+        raise NotImplementedError
+        
+    @abstractmethod
     def shell_children_changed(self, children):
+        """ The change handler for the 'children' attribute of the 
+        shell object.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def shell_children_items_changed(self, event):
+        """ The change handler for the items event of the 'children'
+        attribute of the shell object.
+
+        """
         raise NotImplementedError
 
 
@@ -50,13 +70,18 @@ class Splitter(Container):
     """ A Container that displays just one of its children at a time.
 
     """
-
-    #: The orientation of the Splitter. 'horizontal' means the children are laid
-    #: out side-by-side.
+    #: The orientation of the Splitter. 'horizontal' means the children 
+    #: are laid out left to right, 'vertical' means top to bottom.
     orientation = Orientation('horizontal')
 
+    #: Whether the child widgets resize as a splitter is being dragged
+    #: (True), or if a simple indicator is drawn until the drag handle
+    #: is released (False). The default is True.
+    live_drag = Bool(True)
+
     #: An object that manages the layout of this component and its 
-    #: direct children. In this case, it does nothing.
+    #: direct children. In this case, it does nothing, since constraints
+    #: may not cross the boundaries of a splitter.
     layout = Instance(NullLayoutManager, ())
 
     #: How strongly a component hugs it's contents' width. A Splitter
@@ -91,3 +116,4 @@ class Splitter(Container):
 
         """
         self.size_hint_updated = True
+
