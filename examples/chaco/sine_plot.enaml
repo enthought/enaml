@@ -1,0 +1,53 @@
+from numpy import pi
+
+defn Range(minimum, maximum):
+    Container:
+        constraints = [
+            horizontal(left, 0, min_label, slider, max_label, 0, right),
+            vertical(top, 0, slider, 0, bottom),
+            align('v_center', min_label, slider, max_label),
+            slider.width == 100,
+        ]
+        Label -> min_label:
+            text = '{:.2f}'.format(minimum)
+        FloatSlider -> slider:
+            minimum = minimum
+            maximum = maximum
+        Label -> max_label:
+            text = '{:.2f}'.format(maximum)
+
+
+defn MainWindow(model):
+    Window:
+        constraints = [
+            hbox(plot, vbox(form, _space_)),
+            align('left', phase_slider, amp_slider, w_slider),
+            align('right', phase_slider, amp_slider, w_slider),
+            plot.width >= 500,
+            plot.height >= 500,
+        ]
+        SimplePlot -> plot:
+            data << dict(x=model.x, y_sin=model.y_sin, y_cos=model.y_cos)
+            commands = [
+                self.plot(('x', 'y_sin'), type='line', name='sin', color='black'),
+                self.plot(('x', 'y_cos'), type='line', name='cos', color='red'),
+                self.set_yrange(-4.0, 4.0),
+            ]
+            xtitle = 'X'
+            ytitle = 'sin and cos'
+            padding_right = 10
+            padding_top = 10
+        Form -> form:
+            Label:
+                text = "Phase:"
+            Range(0.0, 2*pi) -> slider as phase_slider:
+                phase_slider.value := model.phase
+            Label:
+                text = "Amplitude:"
+            Range(0.0, 3.0) -> slider as amp_slider:
+                amp_slider.value := model.amplitude
+            Label:
+                text = "Frequency:"
+            Range(0.0, 2*pi) -> slider as w_slider:
+                w_slider.value := model.w
+
