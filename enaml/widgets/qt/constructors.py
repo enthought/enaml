@@ -67,5 +67,6 @@ QT_CONSTRUCTORS = dict((
     constructor('tabbed'),
     constructor('tab'),
     constructor('splitter'),
+    constructor('float_slider'),
 ))
 
