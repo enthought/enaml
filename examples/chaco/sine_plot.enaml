@@ -31,7 +31,7 @@ defn MainWindow(model):
             commands = [
                 self.plot(('x', 'y_sin'), type='line', name='sin', color='black'),
                 self.plot(('x', 'y_cos'), type='line', name='cos', color='red'),
-                self.set_yrange(-4.0, 4.0),
+                self.yrange(low_setting= -4.0, high_setting=4.0),
             ]
             xtitle = 'X'
             ytitle = 'sin and cos'

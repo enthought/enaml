@@ -65,12 +65,6 @@ class SimplePlot(EnableCanvas):
     component = Instance(ScalyPlot)
     def _component_default(self):
         plot = ScalyPlot(self.plot_data)
-        existing_tools = [type(t) for t in (plot.tools + plot.overlays)]
-        if not PanTool in existing_tools:
-            plot.tools.append(PanTool(plot))
-        if not ZoomTool in existing_tools:
-            plot.overlays.append(ZoomTool(plot, tool_mode="box", always_on=True, drag_button="right"))
-
         return plot
 
     #: Delegates.
@@ -161,18 +155,20 @@ class SimplePlot(EnableCanvas):
         self.component.request_redraw()
 
     @plot_command
-    def set_xrange(self, low, high):
-        self.component.index_range.trait_set(
-            low = low,
-            high = high,
-        )
+    def xrange(self, **kwds):
+        self.component.index_range.trait_set(**kwds)
 
     @plot_command
-    def set_yrange(self, low, high):
-        self.component.value_range.trait_set(
-            low = low,
-            high = high,
-        )
+    def yrange(self, **kwds):
+        self.component.value_range.trait_set(**kwds)
+
+    @plot_command
+    def pan_tool(self, **kwds):
+        self.component.tools.append(PanTool(self.component, **kwds))
+
+    @plot_command
+    def zoom_tool(self, **kwds):
+        self.component.overlays.append(ZoomTool(self.component, **kwds))
 
     def _xtitle_changed(self, new):
         self.component.x_axis.title = new
