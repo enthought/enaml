@@ -28,6 +28,8 @@ class QtEnableCanvas(QtControl, AbstractTkEnableCanvas):
         component = self.shell_obj.component
         self.window = EnableWindow(self.parent_widget(), component=component)
         self.widget = self.window.control
+        # XXX Enable window doesn't parent on Qt (this is already fixed in Enable trunk)
+        self.widget.setParent(self.parent_widget())
 
     def shell_component_changed(self, component):
         """ The change handler for the 'component' attribute on the 
@@ -36,3 +38,5 @@ class QtEnableCanvas(QtControl, AbstractTkEnableCanvas):
         """
         raise NotImplementedError('changing components not yet supported')
 
+    def size_hint(self):
+        return self.shell_obj.component.get_preferred_size()
