@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Event
+from traits.api import Instance, Event, Bool
 
 from .control import Control, AbstractTkControl
 
@@ -17,6 +17,14 @@ class AbstractTkTableView(AbstractTkControl):
     def shell_item_model_changed(self, item_model):
         raise NotImplementedError
 
+    @abstractmethod
+    def shell_vertical_header_visible_changed(self, visible):
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_horizontal_header_visible_changed(self, visible):
+        raise NotImplementedError
+
 
 class TableView(Control):
     """ A view for tabular data.
@@ -24,6 +32,12 @@ class TableView(Control):
     """
     #: The model for which this table is a view.
     item_model = Instance(AbstractItemModel)
+
+    #: Whether or not the vertical header is shown. Defaults to True.
+    vertical_header_visible = Bool(True)
+
+    #: Whether or not the horizontal header is shown. Defaults to True.
+    horizontal_header_visible = Bool(True)
 
     #: The selected model index.
     selected = Instance(ModelIndex)

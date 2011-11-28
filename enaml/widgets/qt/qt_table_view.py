@@ -34,7 +34,10 @@ class QtTableView(QtControl, AbstractTkTableView):
 
         """
         super(QtTableView, self).initialize()
-        self.set_table_model(self.shell_obj.item_model)
+        shell = self.shell_obj
+        self.set_table_model(shell.item_model)
+        self.set_vertical_header_vis(shell.vertical_header_visible)
+        self.set_horizontal_header_vis(shell.horizontal_header_visible)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -44,6 +47,12 @@ class QtTableView(QtControl, AbstractTkTableView):
 
         """
         self.set_table_model(item_model)
+    
+    def shell_vertical_header_visible_changed(self, visible):
+        self.set_vertical_header_vis(visible)
+    
+    def shell_horizontal_header_visible_changed(self, visible):
+        self.set_horizontal_header_vis(visible)
 
     def set_table_model(self, model):
         """ Set the table view's model.
@@ -52,4 +61,17 @@ class QtTableView(QtControl, AbstractTkTableView):
         model_wrapper = AbstractItemModelWrapper(model)
         self.widget.setModel(model_wrapper)
         self.model_wrapper = model_wrapper
+
+    def set_vertical_header_vis(self, visible):
+        if visible:
+            self.widget.verticalHeader().show()
+        else:
+            self.widget.verticalHeader().hide()
+    
+    def set_horizontal_header_vis(self, visible):
+        if visible:
+            self.widget.horizontalHeader().show()
+        else:
+            self.widget.horizontalHeader().hide()
+        
 
