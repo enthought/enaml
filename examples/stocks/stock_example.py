@@ -4,14 +4,15 @@
 #------------------------------------------------------------------------------
 import datetime
 
-from traits.api import (HasTraits, List, Str, Date, Enum, Property, Array, Int,
-                       Tuple, on_trait_change, Instance, ReadOnly, Event,
-                       cached_property, DelegatesTo, Float)
+from traits.api import (
+    HasTraits, List, Str, Date, Enum, Property, Array, Int, Tuple, 
+    on_trait_change, Instance, Event, cached_property, DelegatesTo, Float,
+)
 
 import enaml
 from enaml.item_models.abstract_item_model import AbstractTableModel
-from enaml.enums import DataRole
-from enaml.color import Color
+from enaml.styling.color import Color
+from enaml.styling.brush import Brush
 
 import stock_data
 from plot_driver import PlotDriver
@@ -87,10 +88,6 @@ class GridDataAdapter(HasTraits):
 
     grid_columns = List(Str)
 
-    highlight = ReadOnly(Color.from_string('lightskyblue'))
-
-    text_color = ReadOnly(Color.from_string('darkgray'))
-
     thresh = Property(depends_on='data')
 
     grid_size = Property(depends_on=['data', 'grid_columns'])
@@ -119,6 +116,13 @@ class GridDataAdapter(HasTraits):
         return 0.9 * (max - min) + min
 
 
+HIGHLIGHT = Brush(Color.from_string('lightskyblue'), None)
+
+TEXTCOLOR = Brush(Color.from_string('darkgray'), None)
+
+NULLBRUSH = None
+
+
 class StockDataTable(AbstractTableModel):
 
     def __init__(self, adapter):
@@ -131,41 +135,47 @@ class StockDataTable(AbstractTableModel):
         self.end_reset_model()
 
     def column_count(self, parent=None):
-        return self.adapter.grid_size[1]
+        if parent is None:
+            return self.adapter.grid_size[1]
+        return 0
 
     def row_count(self, parent=None):
-        return self.adapter.grid_size[0]
-
-    def data(self, index, role):
+        if parent is None:
+            return self.adapter.grid_size[0]
+        return 0
+        
+    def data(self, index):
         adapter = self.adapter
         data = adapter.data
-        if role == DataRole.DISPLAY:
-            column = adapter.grid_columns[index.column]
-            data = data[column][index.row]
-            if data > 1e4:
-                res = '%.2E' % data
-            else:
-                res = '%.2f' % data
-            return res
-        elif role == DataRole.BACKGROUND:
-            data = data['close'][index.row]
-            if data > adapter.thresh:
-                return adapter.highlight
-            return Color.no_color
-        elif role == DataRole.FOREGROUND:
-            data = data['close'][index.row]
-            if data > adapter.thresh:
-                return Color.no_color
-            return adapter.text_color
+        column = adapter.grid_columns[index.column]
+        data = data[column][index.row]
+        if data > 1e4:
+            res = '%.2E' % data
+        else:
+            res = '%.2f' % data
+        return res
+    
+    def background(self, index):
+        adapter = self.adapter
+        data = adapter.data['close'][index.row]
+        if data > adapter.thresh:
+            return HIGHLIGHT
+        return NULLBRUSH
+    
+    def foreground(self, index):
+        adapter = self.adapter
+        data = adapter.data['close'][index.row]
+        if data > adapter.thresh:
+            return NULLBRUSH
+        return TEXTCOLOR
 
-    def header_data(self, section, orientation, role):
+    def vertical_header_data(self, section):
         data = self.adapter.data
-        if role == DataRole.DISPLAY:
-            if orientation == 'horizontal':
-                ts = data['dates'][section]
-                return str(datetime.date.fromtimestamp(ts))
-            else:
-                return self.adapter.grid_columns[section].capitalize()
+        ts = data['dates'][section]
+        return str(datetime.date.fromtimestamp(ts))
+    
+    def horizontal_header_data(self, section):
+        return self.adapter.grid_columns[section].capitalize()
 
 
 if __name__ == '__main__':
@@ -174,10 +184,6 @@ if __name__ == '__main__':
     adapter = GridDataAdapter(model=model)
     data_table = StockDataTable(adapter)
 
-    import time
-    t1 = time.time()
-    view = MainView(model, adapter, plot_driver, stock_data_table=data_table, pb_label='whatd')
-    t2 = time.time()
-    print t2 - t1
-    #view.show()
-    print view
+    view = MainView(model, adapter, plot_driver, stock_data_table=data_table)
+    view.show()
+
