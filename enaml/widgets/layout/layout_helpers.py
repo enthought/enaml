@@ -706,12 +706,12 @@ class FlexSpacer(Spacer):
             "constructor.")
 
     def _constrain(self, first_anchor, second_anchor):
-        """ Constraints of the form (anchor_1 + space >= anchor_2) and
+        """ Constraints of the form (anchor_1 + space <= anchor_2) and
         (anchor_1 + space == anchor_2)
 
         """
         return [
-            ((first_anchor + self.amt) >= second_anchor) | self.min_strength | self.min_weight,
+            ((first_anchor + self.amt) <= second_anchor) | self.min_strength | self.min_weight,
             ((first_anchor + self.amt) == second_anchor) | self.eq_strength | self.eq_weight,
         ]
 
