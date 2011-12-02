@@ -6,7 +6,7 @@ from traits.api import Instance, Str
 
 from casuarius import ConstraintVariable
 
-from .layout.layout_helpers import align_v_center, horizontal, vertical
+from .layout.layout_helpers import align_v_center, hbox, vbox
 from .container import AbstractTkContainer, Container
 
 
@@ -77,28 +77,15 @@ class Form(Container):
             constraints.append(cn)
 
         # Arrange each label/widget pair horizontally in the form
-        left = self.left
-        right = self.right
-        for label, widget in zip(labels, widgets):
-            constraints.extend([
-                # FIXME: pick a better margin.
-                horizontal(left, label, widget, right) | layout_strength,
-                # FIXME: baselines would be much better.
-                align_v_center(label, widget) | layout_strength,
-            ])
-
-        # Arrange the widgets vertically in the form
+        labels_widgets = zip(labels, widgets)
+        vbox_args = [hbox(label, widget) for label, widget in labels_widgets]
         if odd_child is not None:
-            widget_args = [self.top] + widgets + [odd_child, self.bottom]
-            constraints.append(vertical(*widget_args) | layout_strength)
-        else:
-            widget_args = [self.top] + widgets + [self.bottom]
-            constraints.append(vertical(*widget_args) | layout_strength)
+            vbox_args.append(odd_child)
+        constraints.append(vbox(*vbox_args) | layout_strength)
 
-        # Finally, handle the horizontal constraints of the odd child.
-        if odd_child is not None:
-            cn = horizontal(left, odd_child, right) | layout_strength
-            constraints.append(cn)
+        for label, widget in labels_widgets:
+            # FIXME: baselines would be much better.
+            constraints.append(align_v_center(label, widget) | layout_strength)
 
         return constraints
 
