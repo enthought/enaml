@@ -16,11 +16,11 @@ class QtContainer(QtComponent, AbstractTkContainer):
     container for widgets for layout purposes.
 
     """
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying Qt widget.
 
         """
-        self.widget = QResizingFrame(self.parent_widget())
+        self.widget = QResizingFrame(parent)
     
     def bind(self):
         """ Binds the signal handlers for the widget.

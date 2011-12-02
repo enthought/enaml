@@ -398,11 +398,11 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
     like Qt's QSpinBox.
 
     """
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying custom spin control.
 
         """
-        self.widget = CustomSpinCtrl(self.parent_widget())
+        self.widget = CustomSpinCtrl(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

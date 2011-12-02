@@ -79,12 +79,12 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QScrollAreacontrol.
 
         """
         style = wx.HSCROLL | wx.VSCROLL | wx.BORDER_SIMPLE 
-        self.widget = wx.ScrolledWindow(self.parent_widget(), style=style)
+        self.widget = wx.ScrolledWindow(parent, style=style)
     
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

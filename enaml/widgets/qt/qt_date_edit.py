@@ -24,11 +24,11 @@ class QtDateEdit(QtBoundedDate, AbstractTkDateEdit):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QDateEdit.
 
         """
-        self.widget = QtGui.QDateEdit(self.parent_widget())
+        self.widget = QtGui.QDateEdit(parent)
 
     def initialize(self):
         """ Initializes the attributes of the control.

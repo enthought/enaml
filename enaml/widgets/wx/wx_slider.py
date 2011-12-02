@@ -38,11 +38,11 @@ class WXSlider(WXControl, AbstractTkSlider):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.Slider control.
 
         """
-        self.widget = wx.Slider(parent=self.parent_widget())
+        self.widget = wx.Slider(parent=parent)
 
     def initialize(self):
         """ Initializes the attributes of the toolkit widget.

@@ -15,11 +15,11 @@ class QtStacked(QtContainer, AbstractTkStacked):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QStackedWidget control.
 
         """
-        self.widget = QResizingStackedWidget(self.parent_widget())
+        self.widget = QResizingStackedWidget(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

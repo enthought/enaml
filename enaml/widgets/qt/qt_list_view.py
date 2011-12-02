@@ -19,11 +19,11 @@ class QtListView(QtControl, AbstractTkListView):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underlying QTableView control.
 
         """
-        self.widget = QtGui.QListView(self.parent_widget())
+        self.widget = QtGui.QListView(parent)
 
     def initialize(self):
         """ Initialize the widget with the attributes of this instance.

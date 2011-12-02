@@ -15,11 +15,11 @@ class QtProgressBar(QtControl, AbstractTkProgressBar):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QProgressBar.
 
         """
-        self.widget = QtGui.QProgressBar(self.parent_widget())
+        self.widget = QtGui.QProgressBar(parent)
     
     def initialize(self):
         """ Initialize the attributes of the progress bar.

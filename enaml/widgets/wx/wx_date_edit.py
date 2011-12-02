@@ -33,11 +33,11 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.DatePickerCtrl.
 
         """
-        self.widget = wx.DatePickerCtrl(self.parent_widget())
+        self.widget = wx.DatePickerCtrl(parent)
 
     def bind(self):
         """ Binds the event handlers for the date widget.

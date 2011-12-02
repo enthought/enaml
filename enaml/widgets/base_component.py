@@ -40,13 +40,18 @@ class AbstractTkBaseComponent(object):
         raise NotImplementedError
 
     @abstractmethod
-    def create(self):
+    def create(self, parent):
         """ Create the underlying implementation object. 
 
         This method is called after the reference to the shell object
         has been set and is called in depth-first order. This means
         that by the time this method is called, the logical parent
         of this instance has already been created.
+
+        Parameters
+        ----------
+        parent : toolkit widget or None
+            The toolkit widget that will be the parent for widget.
 
         """
         raise NotImplementedError
@@ -252,13 +257,6 @@ class BaseComponent(HasStrictTraits):
     #: parent is None.
     parent = WeakRef('BaseComponent')
 
-    #: A toolkit widget that is this Component's parent if it is embedded in an
-    #: external framework. This should be None for top-level windows and for
-    #: Component's whose parents are other Enaml Components. This will usually
-    #: be set through the `.setup(parent=...)` call.
-    # FIXME: WeakRef?
-    external_parent_widget = Any()
-
     #: The list of children components for this component. Subclasses
     #: should redefine this trait to restrict which types of children
     #: they allow if necessary. This list should not be manipulated 
@@ -428,10 +426,9 @@ class BaseComponent(HasStrictTraits):
             to pass the appropriate toolkit widget that should be the parent.
 
         """
-        self.external_parent_widget = parent
         self.set_parent_refs()
         self.set_shell_refs()
-        self.create()
+        self.create(parent)
         self.initialize()
         self.bind()
         self.set_listeners()
@@ -457,15 +454,19 @@ class BaseComponent(HasStrictTraits):
             child.set_shell_refs()
         
     @setup_hook
-    def create(self):
+    def create(self, parent):
         """ A setup method that tells the abstract object to create its
         internal toolkit object. This should not normally be called by 
         user code.
 
         """
-        self.abstract_obj.create()
+        self.abstract_obj.create(parent)
+        # FIXME: toolkit_widget is defined on Component, not BaseComponent.
+        # FIXME: technically, we allow toolkit_widget to be something that is
+        # not precisely a real toolkit widget (e.g. a QLayout).
+        self_widget = self.toolkit_widget
         for child in self.children:
-            child.create()
+            child.create(self_widget)
 
     @setup_hook
     def initialize(self):

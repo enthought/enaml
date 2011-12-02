@@ -15,11 +15,11 @@ class QtLabel(QtControl, AbstractTkLabel):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QLabel control.
 
         """
-        self.widget = QtGui.QLabel(self.parent_widget())
+        self.widget = QtGui.QLabel(parent)
 
     def initialize(self):
         """ Initializes the attributes on the underlying control.

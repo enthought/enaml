@@ -23,14 +23,14 @@ class WXWindow(WXContainer, AbstractTkWindow):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.Frame control.
 
         """
         # FIXME: this is an ugly hack since the wx.Frame does not show
         # well. It is advised in the wxWidget documentation to add a
         # Panel or Window control before adding the children.
-        self._frame = wx.Frame(self.parent_widget())
+        self._frame = wx.Frame(parent)
         self.widget = wx.Panel(self._frame)
 
     def initialize(self):

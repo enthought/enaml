@@ -30,11 +30,11 @@ class WXStacked(WXContainer, AbstractTkStacked):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underyling wxStacked control.
 
         """
-        self.widget = wxStackedWidget(self.parent_widget())
+        self.widget = wxStackedWidget(parent)
 
     def initialize(self):
         """ Initialize the stacked widget.
