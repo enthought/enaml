@@ -19,11 +19,11 @@ class QtComboBox(QtControl, AbstractTkComboBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates a QComboBox.
 
         """
-        self.widget = QtGui.QComboBox(self.parent_widget())
+        self.widget = QtGui.QComboBox(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

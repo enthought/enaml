@@ -25,11 +25,11 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying Qt widget.
 
         """
-        self.widget = QtGui.QFrame(self.parent_widget())
+        self.widget = QtGui.QFrame(parent)
     
     def initialize(self):
         """ Initializes the attributes of the Qt widget.
@@ -261,26 +261,6 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
     #--------------------------------------------------------------------------
     # Convenienence methods
     #--------------------------------------------------------------------------
-    def parent_widget(self):
-        """ Returns the logical QWidget parent for this component.
-
-        Since some parents may wrap non-Widget objects, this method will
-        walk up the tree of components until a QWidget is found or None
-        if no QWidget is found.
-
-        Returns
-        -------
-        result : QWidget or None
-
-        """
-        # XXX do we need to do this still? i.e. can we now have a parent
-        # that doesn't create a widget???
-        shell_parent = self.shell_obj.parent
-        while shell_parent:
-            widget = shell_parent.toolkit_widget
-            if isinstance(widget, QtGui.QWidget):
-                return widget
-            shell_parent = shell_parent.parent
 
     def child_widgets(self):
         """ Iterates over the shell widget's children and yields the
@@ -308,7 +288,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         self._layout_margins = self._get_layout_margins(self.widget)
-        parent = self.parent_widget()
+        parent = self.widget.parent()
         if parent is not None:
             self._parent_margins = self._get_layout_margins(parent)
         else:

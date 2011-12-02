@@ -102,12 +102,12 @@ class WXTableView(WXControl, AbstractTkTableView):
     #---------------------------------------------------------------------------
     # ITableViewImpl interface
     #---------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underlying wx.grid.Grid control.
 
         """
         style = wx.WANTS_CHARS | wx.FULL_REPAINT_ON_RESIZE
-        self.widget = wx.grid.Grid(self.parent_widget(), style=style)
+        self.widget = wx.grid.Grid(parent, style=style)
 
     def initialize(self):
         """ Intialize the widget with the attributes of this instance.

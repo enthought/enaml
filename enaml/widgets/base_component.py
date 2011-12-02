@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from functools import wraps
 
 from traits.api import (
-    Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
+    Any, Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
 )
 
 from .setup_hooks import AbstractSetupHook
@@ -40,13 +40,18 @@ class AbstractTkBaseComponent(object):
         raise NotImplementedError
 
     @abstractmethod
-    def create(self):
+    def create(self, parent):
         """ Create the underlying implementation object. 
 
         This method is called after the reference to the shell object
         has been set and is called in depth-first order. This means
         that by the time this method is called, the logical parent
         of this instance has already been created.
+
+        Parameters
+        ----------
+        parent : toolkit widget or None
+            The toolkit widget that will be the parent for widget.
 
         """
         raise NotImplementedError
@@ -399,7 +404,7 @@ class BaseComponent(HasStrictTraits):
         """
         raise NotImplementedError('Implement me!')
 
-    def setup(self):
+    def setup(self, parent=None):
         """ Run the setup process for the ui tree.
 
         This method splits up the setup process into several passes:
@@ -414,10 +419,16 @@ class BaseComponent(HasStrictTraits):
         Each of these methods are performed top down. Setup hooks are 
         called for items 3, 4, and 5.
 
+        Parameters
+        ----------
+        parent : native toolkit widget, optional
+            If embedding this BaseComponent into a non-Enaml GUI, use this
+            to pass the appropriate toolkit widget that should be the parent.
+
         """
         self.set_parent_refs()
         self.set_shell_refs()
-        self.create()
+        self.create(parent)
         self.initialize()
         self.bind()
         self.set_listeners()
@@ -443,15 +454,19 @@ class BaseComponent(HasStrictTraits):
             child.set_shell_refs()
         
     @setup_hook
-    def create(self):
+    def create(self, parent):
         """ A setup method that tells the abstract object to create its
         internal toolkit object. This should not normally be called by 
         user code.
 
         """
-        self.abstract_obj.create()
+        self.abstract_obj.create(parent)
+        # FIXME: toolkit_widget is defined on Component, not BaseComponent.
+        # FIXME: technically, we allow toolkit_widget to be something that is
+        # not precisely a real toolkit widget (e.g. a QLayout).
+        self_widget = self.toolkit_widget
         for child in self.children:
-            child.create()
+            child.create(self_widget)
 
     @setup_hook
     def initialize(self):

@@ -16,11 +16,11 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the wx.calendar.CalendarCtrl.
 
         """
-        self.widget = CalendarCtrl(self.parent_widget())
+        self.widget = CalendarCtrl(parent)
 
     def bind(self):
         """ Binds the event handlers for the calendar widget.

@@ -24,11 +24,11 @@ class QtCalendar(QtBoundedDate, AbstractTkCalendar):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QtCalendarWidget.
 
         """
-        self.widget = QtGui.QCalendarWidget(self.parent_widget())
+        self.widget = QtGui.QCalendarWidget(parent)
 
     def bind(self):
         """ Binds the event handlers for the calendar widget.

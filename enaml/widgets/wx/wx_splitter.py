@@ -48,11 +48,11 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QSplitter control.
 
         """
-        self.widget = CustomSplitter(self.parent_widget())
+        self.widget = CustomSplitter(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

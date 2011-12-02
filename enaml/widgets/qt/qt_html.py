@@ -15,11 +15,11 @@ class QtHtml(QtControl, AbstractTkHtml):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying widget to display HTML.
 
         """
-        self.widget = QtGui.QTextEdit(self.parent_widget())
+        self.widget = QtGui.QTextEdit(parent)
 
     def initialize(self):
         """ Initializes the attributes of the control.

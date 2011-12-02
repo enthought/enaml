@@ -16,11 +16,11 @@ class WXLabel(WXControl, AbstractTkLabel):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.StaticText control.
 
         """
-        self.widget = wx.StaticText(self.parent_widget())
+        self.widget = wx.StaticText(parent)
 
     def initialize(self):
         """ Initializes the attributes on the underlying control.

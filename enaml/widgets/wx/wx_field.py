@@ -118,7 +118,7 @@ class WXField(WXControl, AbstractTkField):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.CustomTextCtrl.
 
         """
@@ -141,7 +141,7 @@ class WXField(WXControl, AbstractTkField):
         else:
             style |= wx.TE_PASSWORD
 
-        self.widget = CustomTextCtrl(parent=self.parent_widget(), style=style)
+        self.widget = CustomTextCtrl(parent=parent, style=style)
 
     def initialize(self):
         """ Initializes the attributes of the wx.CustomTextCtrl.
@@ -501,7 +501,7 @@ class WXField(WXControl, AbstractTkField):
 
         """
         widget = self.widget
-        new_widget = widget.Clone(parent=self.parent_widget(), style=style)
+        new_widget = widget.Clone(parent=widget.GetParent(), style=style)
         widget.Destroy()
         self.widget = new_widget
         self.bind()

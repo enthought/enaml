@@ -62,14 +62,14 @@ class Container(Component):
         """
         return ConstraintsLayout(self)
 
-    def setup(self):
+    def setup(self, parent=None):
         """ Run the setup process for the ui tree. This is overridden 
         from the parent class to add initialize_layout to the setup.
 
         """
         # XXX make layout setup a completely separate pass
         # probably handled by the view object.
-        super(Container, self).setup()
+        super(Container, self).setup(parent=parent)
         self.initialize_layout()
 
     def initialize_layout(self):

@@ -16,11 +16,11 @@ class WXPushButton(WXControl, AbstractTkPushButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.Button control.
 
         """
-        self.widget = wx.Button(self.parent_widget())
+        self.widget = wx.Button(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

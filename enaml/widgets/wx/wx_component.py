@@ -25,11 +25,11 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx widget.
 
         """
-        self.widget = wx.Panel(self.parent_widget())
+        self.widget = wx.Panel(parent)
 
     def initialize(self):
         """ Initializes the attributes of the wx widget.
@@ -195,26 +195,6 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
     #--------------------------------------------------------------------------
     # Convenience Methods 
     #--------------------------------------------------------------------------
-    def parent_widget(self):
-        """ Returns the logical wx.Window parent for this component.
-
-        Since some parents may wrap non-Window objects (like sizers),
-        this method will walk up the tree of parent components until a
-        wx.Window is found or None if no wx.Window is found.
-
-        Returns
-        -------
-        result : wx.Window or None
-
-        """
-        # FIXME: is this still necessary?
-        shell_parent = self.shell_obj.parent
-        while shell_parent:
-            widget = shell_parent.toolkit_widget
-            if isinstance(widget, wx.Window):
-                return widget
-            shell_parent = shell_parent.parent
-
     def child_widgets(self):
         """ Iterates over the parent's children and yields the
         toolkit widgets for those children.

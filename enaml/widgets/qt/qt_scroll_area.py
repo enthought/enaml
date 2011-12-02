@@ -23,11 +23,11 @@ class QtScrollArea(QtContainer, AbstractTkScrollArea):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QScrollAreacontrol.
 
         """
-        self.widget = QResizingScrollArea(self.parent_widget())
+        self.widget = QResizingScrollArea(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

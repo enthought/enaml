@@ -22,7 +22,7 @@ class WXTraitsUIItem(WXControl, AbstractTkTraitsUIItem):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying traits ui subpanel.
 
         """
@@ -30,8 +30,7 @@ class WXTraitsUIItem(WXControl, AbstractTkTraitsUIItem):
         model = shell.model
         view = shell.view
         handler = shell.handler
-        parent_widget = self.parent_widget()
-        self.ui = ui = model.edit_traits(parent=parent_widget, view=view,
+        self.ui = ui = model.edit_traits(parent=parent, view=view,
                                          handler=handler, kind='subpanel')
         self.widget = ui.control
 

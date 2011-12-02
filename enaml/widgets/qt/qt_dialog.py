@@ -24,11 +24,11 @@ class QtDialog(QtWindow, AbstractTkDialog):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QDialog control.
 
         """
-        self.widget = QResizingDialog(self.parent_widget())
+        self.widget = QResizingDialog(parent)
 
     def initialize(self):
         """ Intializes the attributes on the QDialog.
