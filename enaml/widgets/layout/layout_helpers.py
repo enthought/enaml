@@ -163,7 +163,9 @@ class AbutmentHelper(DeferredConstraints):
 
     def _get_constraint_list(self, container):
         items = clear_invisible(self.items)
-        cns = [f.constraint() for f in AbutmentCn.from_items(items, self.orientation)]
+        cns = []
+        for f in AbutmentCn.from_items(items, self.orientation):
+            cns.extend(f.constraints())
         return cns
 
     def __repr__(self):
@@ -183,7 +185,9 @@ class AlignmentHelper(DeferredConstraints):
         self.items = items
 
     def _get_constraint_list(self, container):
-        cns = [f.constraint() for f in AlignmentCn.from_items(self.items, self.anchor)]
+        cns = []
+        for f in AlignmentCn.from_items(self.items, self.anchor):
+            cns.extend(f.constraints())
         return cns
 
     def __repr__(self):
@@ -251,10 +255,12 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
             else:
                 constraints = [getattr(self, attr) == getattr(container, attr)
                     for attr in ('top', 'bottom', 'left', 'right')]
-            margin_spacer = EqSpacer()
+            ortho_amount = DEFAULT_SPACE
         else:
             constraints = []
-            margin_spacer = EqSpacer(0)
+            ortho_amount = 0
+
+        margin_spacer = EqSpacer(ortho_amount)
 
         if not is_spacer(items[0]):
             pre_along_args = [first_boundary, margin_spacer]
@@ -276,12 +282,12 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
             if isinstance(item, Constrainable):
                 helpers.append(AbutmentHelper(self.ortho_orientation,
                     first_ortho_boundary,
-                    margin_spacer|'medium'|1.5,
+                    FlexSpacer(ortho_amount),
                     item,
-                    margin_spacer|'medium'|1.25,
+                    FlexSpacer(ortho_amount),
                     last_ortho_boundary))
-            if isinstance(item, type(self)):
-                # This is a nested LinearBoxHelper.
+            if isinstance(item, DeferredConstraints):
+                # This is a nested helper, probably another LinearBoxLayout.
                 helpers.append(item)
 
         for helper in helpers:
@@ -349,9 +355,9 @@ class AbstractCnFactory(object):
             raise TypeError(msg % args)
 
     @abstractmethod
-    def constraint(self):
+    def constraints(self):
         """ An abstract method which must be implemented by subclasses.
-        It should return an instance of symbolics.LinearConstraint.
+        It should return a list of symbolics.LinearConstraint.
 
         """
         raise NotImplementedError
@@ -383,8 +389,8 @@ class BaseCnFactory(AbstractCnFactory):
         self.spacer = spacer
         self.second_anchor = second_anchor
 
-    def constraint(self):
-        """ Returns a LinearConstraint instance which is formed through
+    def constraints(self):
+        """ Returns LinearConstraint instance which is formed through
         an appropriate linear expression for the given space between 
         the anchors.
 
@@ -619,28 +625,29 @@ class BaseSpacer(object):
 
     @abstractmethod
     def _constrain(self, first_anchor, second_anchor):
-        """ An abstract method. Subclasses should implement this 
-        method to return a symbolics.LinearConstraint object that
-        is appropriate to separate the two anchors according to
-        the amount of space represented by the spacer.
+        """ An abstract method. Subclasses should implement this method to
+        return a list of symbolics.LinearConstraint objects that are appropriate
+        to separate the two anchors according to the amount of space represented
+        by the spacer.
 
         """
         raise NotImplementedError
 
     def constrain(self, first_anchor, second_anchor):
-        """ Return a LinearConstraint object that is appropriate to separate the
-        two anchors according to the amount of space represented by the spacer.
+        """ Return list of LinearConstraint objects that are appropriate to
+        separate the two anchors according to the amount of space represented by
+        the spacer.
 
         The LinearConstraint will have any strength or weight that has been
         provided by the | operator.
 
         """
-        constraint = self._constrain(first_anchor, second_anchor)
+        constraints = self._constrain(first_anchor, second_anchor)
         if self.strength is not None:
-            constraint = constraint | self.strength
+            constraints = [cn | self.strength for cn in constraints]
         if self.weight is not None:
-            constraint = constraint | self.weight
-        return constraint
+            constraints = [cn | self.weight for cn in constraints]
+        return constraints
 
 
 class Spacer(BaseSpacer):
@@ -676,6 +683,47 @@ class Spacer(BaseSpacer):
         return type(self)(amt=self.amt, strength=strength, weight=weight)
 
 
+class FlexSpacer(Spacer):
+    """ A spacer which represents a space with a hard minimum, but also a weaker
+    preference for being that minimum.
+
+    """
+    __slots__ = ('amt', 'min_strength', 'min_weight', 'eq_strength', 'eq_weight')
+
+    def __init__(self, amt=DEFAULT_SPACE, min_strength='medium', min_weight=1.5, eq_strength='medium', eq_weight=1.25):
+        self.amt = max(0, amt)
+        self.min_strength = min_strength
+        self.min_weight = min_weight
+        self.eq_strength = eq_strength
+        self.eq_weight = eq_weight
+
+    def __or__(self, other):
+        """ Do not allow resetting of the strength or weight since it is
+        ambiguous.
+
+        """
+        raise TypeError("FlexSpacers must have their strengths set in the "
+            "constructor.")
+
+    def _constrain(self, first_anchor, second_anchor):
+        """ Constraints of the form (anchor_1 + space <= anchor_2) and
+        (anchor_1 + space == anchor_2)
+
+        """
+        return [
+            ((first_anchor + self.amt) <= second_anchor) | self.min_strength | self.min_weight,
+            ((first_anchor + self.amt) == second_anchor) | self.eq_strength | self.eq_weight,
+        ]
+
+    def constrain(self, first_anchor, second_anchor):
+        """ Return list of LinearConstraint objects that are appropriate to
+        separate the two anchors according to the amount of space represented by
+        the spacer.
+
+        """
+        return self._constrain(first_anchor, second_anchor)
+
+
 class EqSpacer(Spacer):
     """ An spacer which represents a fixed amount of space.
 
@@ -686,7 +734,7 @@ class EqSpacer(Spacer):
         """ A constraint of the form (anchor_1 + space == anchor_2)
 
         """
-        return (first_anchor + self.amt == second_anchor)
+        return [(first_anchor + self.amt) == second_anchor]
 
 
 class LeSpacer(Spacer):
@@ -701,7 +749,7 @@ class LeSpacer(Spacer):
         given amount.
 
         """
-        return first_anchor + self.amt >= second_anchor
+        return [(first_anchor + self.amt) >= second_anchor]
 
 
 class GeSpacer(Spacer):
@@ -716,7 +764,7 @@ class GeSpacer(Spacer):
         the given amount.
 
         """
-        return first_anchor + self.amt <= second_anchor
+        return [(first_anchor + self.amt) <= second_anchor]
 
 
 class _space_(BaseSpacer):
