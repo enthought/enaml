@@ -26,11 +26,11 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underlying QTabWidget control.
 
         """
-        self.widget = QResizingTabWidget(self.parent_widget())
+        self.widget = QResizingTabWidget(parent)
 
     def initialize(self):
         """ Initialize the attributes of the Tabbed container.

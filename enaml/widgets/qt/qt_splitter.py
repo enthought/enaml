@@ -22,11 +22,11 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QSplitter control.
 
         """
-        self.widget = QResizingSplitter(self.parent_widget())
+        self.widget = QResizingSplitter(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

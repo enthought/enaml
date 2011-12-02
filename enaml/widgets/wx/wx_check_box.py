@@ -16,11 +16,11 @@ class WXCheckBox(WXToggleControl, AbstractTkCheckBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.CheckBox.
 
         """
-        self.widget = wx.CheckBox(self.parent_widget())
+        self.widget = wx.CheckBox(parent)
 
     def bind(self):
         """ Binds the event handlers for the check box.

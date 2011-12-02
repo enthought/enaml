@@ -86,11 +86,11 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying custom spin control.
 
         """
-        self.widget = EnamlQSpinBox(self.parent_widget())
+        self.widget = EnamlQSpinBox(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

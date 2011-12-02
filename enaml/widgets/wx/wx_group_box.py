@@ -202,11 +202,11 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying custom wxGroupBox control.
 
         """
-        self.widget = wxGroupBox(self.parent_widget())
+        self.widget = wxGroupBox(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

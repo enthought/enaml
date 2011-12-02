@@ -16,11 +16,11 @@ class QtPushButton(QtControl, AbstractTkPushButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QPushButton control.
 
         """
-        self.widget = QtGui.QPushButton(self.parent_widget())
+        self.widget = QtGui.QPushButton(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

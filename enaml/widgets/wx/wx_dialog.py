@@ -18,14 +18,14 @@ class WXDialog(WXWindow, AbstractTkDialog):
     #---------------------------------------------------------------------------
     # Setup methods
     #---------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.Dialog control.
 
         """
         # The parent WXWindow class expects there to be a _frame 
         # attribute available.
         style = wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER
-        self.widget = wx.Dialog(self.parent_widget(), style=style)
+        self.widget = wx.Dialog(parent, style=style)
         self._frame = self.widget
 
     def initialize(self):

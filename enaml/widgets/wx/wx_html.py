@@ -16,12 +16,12 @@ class WXHtml(WXControl, AbstractTkHtml):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.html.HtmlWindow.
 
         """
 
-        self.widget = wx.html.HtmlWindow(self.parent_widget())
+        self.widget = wx.html.HtmlWindow(parent)
 
     def initialize(self):
         """ Initializes the attributes of the control.

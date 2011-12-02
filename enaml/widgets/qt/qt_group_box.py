@@ -23,11 +23,11 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QGroupBox control.
 
         """
-        self.widget = QResizingGroupBox(self.parent_widget())
+        self.widget = QResizingGroupBox(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

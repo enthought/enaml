@@ -18,11 +18,11 @@ class WXComboBox(WXControl, AbstractTkComboBox):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates a wx.ComboBox.
 
         """
-        self.widget = wx.ComboBox(self.parent_widget(), style=wx.CB_READONLY)
+        self.widget = wx.ComboBox(parent, style=wx.CB_READONLY)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.

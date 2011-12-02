@@ -26,11 +26,11 @@ class QtField(QtControl, AbstractTkField):
     #--------------------------------------------------------------------------
     # SetupMethods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QLineEdit.
 
         """
-        self.widget = QtGui.QLineEdit(parent=self.parent_widget())
+        self.widget = QtGui.QLineEdit(parent=parent)
 
     def initialize(self):
         """ Initializes the attributes of the Qt widget.

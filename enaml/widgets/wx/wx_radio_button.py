@@ -103,11 +103,11 @@ class WXRadioButton(WXToggleControl, AbstractTkRadioButton):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying custom wx.RadioButton control.
 
         """
-        self.widget = CustomRadioButton(self.parent_widget())
+        self.widget = CustomRadioButton(parent)
 
     def bind(self):
         """ Binds the event handlers of the control.

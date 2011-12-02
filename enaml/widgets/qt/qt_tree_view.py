@@ -19,11 +19,11 @@ class QtTreeView(QtControl, AbstractTkTreeView):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underlying QTableView control.
 
         """
-        self.widget = QtGui.QTreeView(self.parent_widget())
+        self.widget = QtGui.QTreeView(parent)
 
     def initialize(self):
         """ Initialize the widget with the attributes of this instance.

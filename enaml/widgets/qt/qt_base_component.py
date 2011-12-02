@@ -29,7 +29,7 @@ class QtBaseComponent(AbstractTkBaseComponent):
     #: to the shell object
     shell_obj = property(_get_shell_obj, _set_shell_obj)
 
-    def create(self):
+    def create(self, parent):
         """ Create the underlying toolkit object. 
 
         This method is called after the reference to the shell object

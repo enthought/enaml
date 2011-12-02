@@ -25,7 +25,7 @@ class WXTabbed(WXStacked, AbstractTkTabbed):
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underlying QTabWidget control.
 
         """
@@ -33,7 +33,7 @@ class WXTabbed(WXStacked, AbstractTkTabbed):
         # supported by wx (the rendering gets all messed up). So, the
         # tab position must be set at creation time.
         style = _TAB_POSITION_MAP[self.shell_obj.tab_position]
-        self.widget = wx.Notebook(self.parent_widget(), style=style)
+        self.widget = wx.Notebook(parent, style=style)
     
     def bind(self):
         """ Bind to the events emitted by the underlying control.

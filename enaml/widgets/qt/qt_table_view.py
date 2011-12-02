@@ -23,11 +23,11 @@ class QtTableView(QtControl, AbstractTkTableView):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underlying QTableView control.
 
         """
-        self.widget = QtGui.QTableView(self.parent_widget())
+        self.widget = QtGui.QTableView(parent)
 
     def initialize(self):
         """ Initialize the widget with the attributes of this instance.

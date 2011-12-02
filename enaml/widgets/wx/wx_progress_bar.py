@@ -16,11 +16,11 @@ class WXProgressBar(WXControl, AbstractTkProgressBar):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.Gauge.
 
         """
-        self.widget = wx.Gauge(self.parent_widget())
+        self.widget = wx.Gauge(parent)
 
     def initialize(self):
         """ Initialize the attributes of the progress bar.

@@ -50,11 +50,11 @@ class QtSlider(QtControl, AbstractTkSlider):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QSlider widget.
 
         """
-        self.widget = QtGui.QSlider(parent=self.parent_widget())
+        self.widget = QtGui.QSlider(parent=parent)
 
     def initialize(self):
         """ Initializes the attributes of the toolkit widget.
