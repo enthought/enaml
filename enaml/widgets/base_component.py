@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 from functools import wraps
 
 from traits.api import (
-    Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
+    Any, Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
 )
 
 from .setup_hooks import AbstractSetupHook
@@ -252,6 +252,13 @@ class BaseComponent(HasStrictTraits):
     #: parent is None.
     parent = WeakRef('BaseComponent')
 
+    #: A toolkit widget that is this Component's parent if it is embedded in an
+    #: external framework. This should be None for top-level windows and for
+    #: Component's whose parents are other Enaml Components. This will usually
+    #: be set through the `.setup(parent=...)` call.
+    # FIXME: WeakRef?
+    external_parent_widget = Any()
+
     #: The list of children components for this component. Subclasses
     #: should redefine this trait to restrict which types of children
     #: they allow if necessary. This list should not be manipulated 
@@ -399,7 +406,7 @@ class BaseComponent(HasStrictTraits):
         """
         raise NotImplementedError('Implement me!')
 
-    def setup(self):
+    def setup(self, parent=None):
         """ Run the setup process for the ui tree.
 
         This method splits up the setup process into several passes:
@@ -414,7 +421,14 @@ class BaseComponent(HasStrictTraits):
         Each of these methods are performed top down. Setup hooks are 
         called for items 3, 4, and 5.
 
+        Parameters
+        ----------
+        parent : native toolkit widget, optional
+            If embedding this BaseComponent into a non-Enaml GUI, use this
+            to pass the appropriate toolkit widget that should be the parent.
+
         """
+        self.external_parent_widget = parent
         self.set_parent_refs()
         self.set_shell_refs()
         self.create()

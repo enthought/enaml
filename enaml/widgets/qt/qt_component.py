@@ -275,7 +275,10 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         # XXX do we need to do this still? i.e. can we now have a parent
         # that doesn't create a widget???
-        shell_parent = self.shell_obj.parent
+        shell = self.shell_obj
+        if shell.external_parent_widget is not None:
+            return shell.external_parent_widget
+        shell_parent = shell.parent
         while shell_parent:
             widget = shell_parent.toolkit_widget
             if isinstance(widget, QtGui.QWidget):
