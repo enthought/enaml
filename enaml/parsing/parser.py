@@ -95,22 +95,22 @@ def p_enaml1(p):
 def p_enaml2(p):
     ''' enaml : NEWLINE ENDMARKER
               | ENDMARKER '''
-    p[0] = enaml_ast.EnamlModule('', [])
+    p[0] = enaml_ast.Module('', [])
 
 
 def p_enaml3(p):
     ''' enaml : STRING NEWLINE ENDMARKER '''
-    p[0] = enaml_ast.EnamlModule(p[1], [])
+    p[0] = enaml_ast.Module(p[1], [])
 
 
 def p_enaml_module1(p):
     ''' enaml_module : enaml_module_body '''
-    p[0] = enaml_ast.EnamlModule('', p[1])
+    p[0] = enaml_ast.Module('', p[1])
 
 
 def p_enaml_module2(p):
     ''' enaml_module : STRING NEWLINE enaml_module_body '''
-    p[0] = enaml_ast.EnamlModule(p[1], p[3])
+    p[0] = enaml_ast.Module(p[1], p[3])
     
 
 #------------------------------------------------------------------------------
@@ -135,11 +135,16 @@ def p_enaml_module_item1(p):
 
 
 def p_enaml_module_item2(p):
-    ''' enaml_module_item : enaml_define '''
+    ''' enaml_module_item : defn '''
     p[0] = p[1]
 
 
 def p_enaml_module_item3(p):
+    ''' enaml_module_item : declaration '''
+    p[0] = p[1]
+
+
+def p_enaml_module_item4(p):
     ''' enaml_module_item : raw_python '''
     p[0] = p[1]
 
@@ -149,7 +154,10 @@ def p_enaml_module_item3(p):
 #------------------------------------------------------------------------------
 def p_enaml_raw_python(p):
     ''' raw_python : PY_BLOCK_START NEWLINE PY_BLOCK PY_BLOCK_END NEWLINE '''
-    p[0] = enaml_ast.EnamlRawPython(p[3])
+    # XXX update me to handle Python code without the tags
+    py_txt = p[3]
+    py_ast = ast.parse(py_txt, mode='exec')
+    p[0] = enaml_ast.RawPython(py_ast)
 
 
 #------------------------------------------------------------------------------
@@ -158,44 +166,195 @@ def p_enaml_raw_python(p):
 def p_enaml_import(p):
     ''' enaml_import : import_stmt '''
     mod = ast.Module(body=[p[1]])
-    enaml_import = enaml_ast.EnamlImport(mod)
-    p[0] = enaml_import
+    p[0] = enaml_ast.Import(mod)
 
 
 #------------------------------------------------------------------------------
-# Enaml Define
+# Declaration
 #------------------------------------------------------------------------------
-def p_enaml_define1(p):
-    ''' enaml_define : DEFN NAME COLON enaml_define_body '''
-    params = enaml_ast.EnamlParameters([], [])
-    doc, items = p[4]
-    p[0] = enaml_ast.EnamlDefine(p[2], params, doc, items)
+def p_declaration1(p):
+    ''' declaration : NAME LPAR test RPAR COLON declaration_body '''
+    doc, items = p[6]
+    p[0] = enaml_ast.Declaration(p[1], p[3], None, doc, items)
 
 
-def p_enaml_define2(p):
-    ''' enaml_define : DEFN NAME enaml_parameters COLON enaml_define_body '''
+def p_declaration2(p):
+    ''' declaration : NAME LPAR test RPAR NAME COLON declaration_body '''
+    doc, items = p[7]
+    p[0] = enaml_ast.Declaration(p[1], p[3], p[5], doc, items)
+
+
+def p_declaration_body1(p):
+    ''' declaration_body : NEWLINE INDENT declaration_body_items DEDENT '''
+    # Filter out any pass statements
+    items = filter(None, p[3])
+    p[0] = ('', items)
+
+
+def p_declaration_body2(p):
+    ''' declaration_body : NEWLINE INDENT STRING NEWLINE declaration_body_items DEDENT '''
+    # Filter out any pass statements
+    items = filter(None, p[5])
+    p[0] = (p[3], items)
+
+
+def p_declaration_body_items1(p):
+    ''' declaration_body_items : declaration_body_item '''
+    p[0] = [p[1]]
+
+
+def p_declaration_body_items2(p):
+    ''' declaration_body_items : declaration_body_items declaration_body_item '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_declaration_body_item1(p):
+    ''' declaration_body_item : var_declare '''
+    p[0] = p[1]
+
+
+def p_declaration_body_item2(p):
+    ''' declaration_body_item : instantiation '''
+    p[0] = p[1]
+
+
+def p_declaration_body_item3(p):
+    ''' declaration_body_item : enaml_call '''
+    p[0] = p[1]
+
+
+def p_declaration_body_item4(p):
+    ''' declaration_body_item : PASS NEWLINE '''
+    p[0] = None
+
+
+#------------------------------------------------------------------------------
+# Var Declare
+#------------------------------------------------------------------------------
+def p_var_declare(p):
+    ''' var_declare : NAME var_list NEWLINE '''
+    p[0] = enaml_ast.VarDeclare(p[1], p[3])
+
+
+def p_var_list1(p):
+    ''' var_list : var '''
+    p[0] = [p[1]]
+
+
+def p_var_list2(p):
+    ''' var_list : var COMMA '''
+    p[0] = [p[1]]
+
+
+def p_var_list3(p):
+    ''' var_list : var_list_list var '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_var_list4(p):
+    ''' var_list : var_list_list var COMMA '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_var_list_list1(p):
+    ''' var_list_list : var COMMA '''
+    p[0] = [p[1]]
+
+
+def p_var_list_list2(p):
+    ''' var_list_list : var_list_list var COMMA '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_var1(p):
+    ''' var : NAME '''
+    p[0] = enaml_ast.Var(p[1], None)
+
+
+def p_var2(p):
+    ''' var : NAME EQUAL test '''
+    expr = ast.Expression(body=p[3])
+    set_locations(expr, p.lineno(1), 1)
+    p[0] = enaml_ast.Var(p[1], expr)
+
+
+#------------------------------------------------------------------------------
+# Instantiation
+#------------------------------------------------------------------------------
+def p_instantiation1(p):
+    ''' instantiation : NAME COLON instantiation_body '''
+    p[0] = enaml_ast.Instantiation(p[1], None, p[3])
+
+
+def p_instantiation2(p):
+    ''' instantiation : NAME NAME COLON instantiation_body '''
+    p[0] = enaml_ast.Instantiation(p[1], p[2], p[4])
+
+
+def p_instantiation_body(p):
+    ''' instantiation_body : NEWLINE INDENT instantiation_body_items DEDENT '''
+    # Filter out any pass statements
+    items = filter(None, p[3])
+    p[0] = items
+
+
+def p_instantiation_body_items1(p):
+    ''' instantiation_body_items : instantiation_body_item '''
+    p[0] = [p[1]]
+
+
+def p_instantiation_body_items2(p):
+    ''' instantiation_body_items : instantiation_body_items instantiation_body_item '''
+    p[0] = p[1] + [p[2]]
+
+
+def p_instantiation_body_item1(p):
+    ''' instantiation_body_item : instantiation '''
+    p[0] = p[1]
+
+
+def p_instantiation_body_item2(p):
+    ''' instantiation_body_item : enaml_call '''
+    p[0] = p[1]
+
+
+def p_instantiation_body_item3(p):
+    ''' instantiation_body_item : attribute_binding '''
+    p[0] = p[1]
+
+
+def p_instantiation_body_item4(p):
+    ''' instantiation_body_item : PASS NEWLINE '''
+    p[0] = None
+
+
+#------------------------------------------------------------------------------
+# Defn
+#------------------------------------------------------------------------------
+def p_defn(p):
+    ''' defn : DEFN NAME defn_parameters COLON defn_body '''
     doc, items = p[5]
-    p[0] = enaml_ast.EnamlDefine(p[2], p[3], doc, items)
+    p[0] = enaml_ast.Defn(p[2], p[3], doc, items)
 
 
 #------------------------------------------------------------------------------
-# Enaml Parameters
+# Defn Parameters
 #------------------------------------------------------------------------------
-def p_enaml_parameters1(p):
-    ''' enaml_parameters : LPAR RPAR '''
-    p[0] = enaml_ast.EnamlParameters([], [])
+def p_defn_parameters1(p):
+    ''' defn_parameters : LPAR RPAR '''
+    p[0] = enaml_ast.Parameters([], [])
 
 
-def p_enaml_parameters2(p):
-    ''' enaml_parameters : LPAR enaml_parameters_list RPAR '''
-    args = []
+def p_defn_parameters2(p):
+    ''' defn_parameters : LPAR defn_parameters_list RPAR '''
+    names = []
     defaults = []
     for name, expr in p[2]:
-        if name in args:
+        if name in names:
             msg = 'duplicate parameter name `%s` in defn' % name
             lineno = p.lineno(1)
             raise_enaml_syntax_error(msg, lineno)
-        args.append(name)
+        names.append(name)
         if expr is not None:
             defaults.append(expr)
         else:
@@ -203,129 +362,111 @@ def p_enaml_parameters2(p):
                 msg = 'Non keyword parameter `%s` after keyword parameter'
                 lineno = p.lineno(1)
                 raise_enaml_syntax_error(msg % name, lineno)
-    p[0] = enaml_ast.EnamlParameters(args, defaults)
+    p[0] = enaml_ast.Parameters(names, defaults)
 
 
-def p_enaml_parameters_list1(p):
-    ''' enaml_parameters_list : enaml_parameter '''
+def p_defn_parameters_list1(p):
+    ''' defn_parameters_list : defn_parameter '''
     p[0] = [p[1]]
 
 
-def p_enaml_parameters_list2(p):
-    ''' enaml_parameters_list : enaml_parameter COMMA '''
+def p_defn_parameters_list2(p):
+    ''' defn_parameters_list : defn_parameter COMMA '''
     p[0] = [p[1]]
 
 
-def p_enaml_parameters_list3(p):
-    ''' enaml_parameters_list : enaml_parameters_list_list enaml_parameter '''
+def p_defn_parameters_list3(p):
+    ''' defn_parameters_list : defn_parameters_list_list defn_parameter '''
     p[0] = p[1] + [p[2]]
 
 
-def p_enaml_parameters_list4(p):
-    ''' enaml_parameters_list : enaml_parameters_list_list enaml_parameter COMMA '''
+def p_defn_parameters_list4(p):
+    ''' defn_parameters_list : defn_parameters_list_list defn_parameter COMMA '''
     p[0] = p[1] + [p[2]]
 
 
-def p_enaml_parameters_list_list1(p):
-    ''' enaml_parameters_list_list : enaml_parameter COMMA '''
+def p_defn_parameters_list_list1(p):
+    ''' defn_parameters_list_list : defn_parameter COMMA '''
     p[0] = [p[1]]
 
 
-def p_enaml_parameters_list_list2(p):
-    ''' enaml_parameters_list_list : enaml_parameters_list_list enaml_parameter COMMA '''
+def p_defn_parameters_list_list2(p):
+    ''' defn_parameters_list_list : defn_parameters_list_list defn_parameter COMMA '''
     p[0] = p[1] + [p[2]]
 
 
-def p_enaml_parameter1(p):
-    ''' enaml_parameter : enaml_name_parameter '''
+def p_defn_parameter1(p):
+    ''' defn_parameter : defn_name_parameter '''
     p[0] = p[1]
 
 
-def p_enaml_parameter2(p):
-    ''' enaml_parameter : enaml_keyword_parameter '''
+def p_defn_parameter2(p):
+    ''' defn_parameter : defn_keyword_parameter '''
     p[0] = p[1]
 
 
-def p_enaml_name_parameter(p):
-    ''' enaml_name_parameter : NAME '''
+def p_defn_name_parameter(p):
+    ''' defn_name_parameter : NAME '''
     p[0] = (p[1], None)
 
 
-def p_enaml_keyword_parameter(p):
-    ''' enaml_keyword_parameter : NAME EQUAL test '''
+def p_defn_keyword_parameter(p):
+    ''' defn_keyword_parameter : NAME EQUAL test '''
     expr = ast.Expression(body=p[3])
     set_locations(expr, p.lineno(1), 1)
     p[0] = (p[1], expr)
 
 
 #------------------------------------------------------------------------------
-# Enaml Define Body
+# Defn Body
 #------------------------------------------------------------------------------
-def p_enaml_define_body1(p):
-    ''' enaml_define_body : NEWLINE INDENT enaml_calls DEDENT '''
+def p_defn_body1(p):
+    ''' defn_body : NEWLINE INDENT defn_body_items DEDENT '''
     # Filter out any pass statements
-    calls = filter(None, p[3])
-    p[0] = ('', calls)
+    items = filter(None, p[3])
+    p[0] = ('', items)
 
 
-def p_enaml_defined_body2(p):
-    ''' enaml_define_body : NEWLINE INDENT STRING NEWLINE enaml_calls DEDENT '''
+def p_defn_body2(p):
+    ''' defn_body : NEWLINE INDENT STRING NEWLINE defn_body_items DEDENT '''
     # Filter out any pass statements
-    calls = filter(None, p[5])
-    p[0] = (p[3], calls)
+    items = filter(None, p[5])
+    p[0] = (p[3], items)
 
 
-#------------------------------------------------------------------------------
-# Enaml Calls
-#------------------------------------------------------------------------------
-def p_enaml_calls1(p):
-    ''' enaml_calls : enaml_call_or_pass '''
+def p_defn_body_items1(p):
+    ''' defn_body_items : defn_body_item '''
     p[0] = [p[1]]
 
 
-def p_enaml_calls2(p):
-    ''' enaml_calls : enaml_calls enaml_call_or_pass '''
+def p_defn_body_items2(p):
+    ''' defn_body_items : defn_body_items defn_body_item '''
     p[0] = p[1] + [p[2]]
 
 
-def p_enaml_call_or_pass1(p):
-    ''' enaml_call_or_pass : enaml_call '''
+def p_defn_body_item1(p):
+    ''' defn_body_item : enaml_call '''
     p[0] = p[1]
 
 
-def p_enaml_call_or_pass2(p):
-    ''' enaml_call_or_pass : PASS NEWLINE '''
+def p_defn_body_item2(p):
+    ''' defn_body_item : instantiation '''
+    p[0] = p[1]
+    
+
+def p_defn_body_item3(p):
+    ''' defn_body_item : PASS NEWLINE '''
     p[0] = None
 
 
 #------------------------------------------------------------------------------
 # Enaml Call
 #------------------------------------------------------------------------------
-def p_enaml_call1(p):
-    ''' enaml_call : NAME COLON enaml_call_body '''
-    p[0] = enaml_ast.EnamlCall(p[1], [], [], [], p[3])
+def p_enaml_call(p):
+    ''' enaml_call : NAME enaml_arguments NEWLINE '''
+    p[0] = enaml_ast.Call(p[1], p[2])
 
 
-def p_enaml_call2(p):
-    ''' enaml_call : NAME enaml_arguments COLON enaml_call_body '''
-    p[0] = enaml_ast.EnamlCall(p[1], p[2], [], [], p[4])
-
-
-def p_enaml_call3(p):
-    ''' enaml_call : NAME UNPACK enaml_unpack_items COLON enaml_call_body '''
-    unpacks, captures = p[3]
-    p[0] = enaml_ast.EnamlCall(p[1], [], unpacks, captures, p[5])
-
-
-def p_enaml_call4(p):
-    ''' enaml_call : NAME enaml_arguments UNPACK enaml_unpack_items COLON enaml_call_body '''
-    unpacks, captures = p[4]
-    p[0] = enaml_ast.EnamlCall(p[1], p[2], unpacks, captures, p[6])
-
-
-#------------------------------------------------------------------------------
-# Enaml Arguments
-#------------------------------------------------------------------------------
 def p_enaml_arguments1(p):
     ''' enaml_arguments : LPAR RPAR '''
     p[0] = []
@@ -338,7 +479,7 @@ def p_enaml_arguments2(p):
     kw_names = set()
     lineno = p.lineno(1)
     for argument in arguments:
-        if isinstance(argument, enaml_ast.EnamlArgument):
+        if isinstance(argument, enaml_ast.Argument):
             if seen_kwarg:
                 msg = 'non-keyword argument after keyword argument'
                 raise_enaml_syntax_error(msg, lineno)
@@ -347,13 +488,10 @@ def p_enaml_arguments2(p):
             name = argument.name
             if name in kw_names:
                 msg = 'keyword argument `%s` repeated' % name
-                lineno = p.lineno(1)
                 raise_enaml_syntax_error(msg, lineno)
             kw_names.add(name)
-        
         py_ast = argument.py_ast
         set_locations(py_ast, lineno, 1)
-                
     p[0] = arguments
 
 
@@ -390,161 +528,31 @@ def p_enaml_arguments_list_list2(p):
 def p_enaml_argument1(p):
     ''' enaml_argument : test '''
     expr = ast.Expression(body=p[1])
-    p[0] = enaml_ast.EnamlArgument(expr)
+    p[0] = enaml_ast.Argument(expr)
 
 
 def p_enaml_argument2(p):
     ''' enaml_argument : NAME EQUAL test '''
     expr = ast.Expression(body=p[3])
-    p[0] = enaml_ast.EnamlKeywordArgument(p[1], expr)
+    p[0] = enaml_ast.KeywordArgument(p[1], expr)
 
 
 #------------------------------------------------------------------------------
-# Enaml Unpack Items
+# Attribute Binding
 #------------------------------------------------------------------------------
-def p_enaml_upack_items(p):
-    ''' enaml_unpack_items : enaml_unpack_items_list '''
-    unpack_items = p[1]
-    unpacks = []
-    captures = []
-    for item in unpack_items:
-        if isinstance(item, enaml_ast.EnamlCapture):
-            captures.append(item)
-        else:
-            if captures:
-                msg = 'unpack name `%s` after namespace capture' % item
-                raise_enaml_syntax_error(msg, -1) # XXX fix this lineno
-            unpacks.append(item)
-    p[0] = (unpacks, captures)  
-    
-    
-def p_enaml_unpack_items_list1(p):
-    ''' enaml_unpack_items_list : enaml_unpack_item '''
-    p[0] = [p[1]]
+def p_attribute_binding(p):
+    ''' attribute_binding : NAME binding '''
+    p[0] = enaml_ast.AttributeBinding(p[1], p[2])
 
 
-def p_enaml_unpack_items_list2(p):
-    ''' enaml_unpack_items_list : enaml_unpack_item COMMA '''
-    p[0] = [p[1]]
-
-def p_enaml_upack_items_list3(p):
-    ''' enaml_unpack_items_list : enaml_unpack_items_list_list enaml_unpack_item '''
-    p[0] = p[1] + [p[2]]
-                
-
-def p_enaml_unpack_items_list4(p):
-    ''' enaml_unpack_items_list : enaml_unpack_items_list_list enaml_unpack_item COMMA '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_enaml_unpack_items_list_list1(p):
-    ''' enaml_unpack_items_list_list : enaml_unpack_item COMMA '''
-    p[0] = [p[1]]
-
-
-def p_enaml_unpack_items_list_list2(p):
-    ''' enaml_unpack_items_list_list : enaml_unpack_items_list_list enaml_unpack_item COMMA '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_enaml_unpack_item1(p):
-    ''' enaml_unpack_item : NAME '''
-    p[0] = p[1]
-
-
-def p_enaml_unpack_item2(p):
-    ''' enaml_unpack_item : NAME AS NAME 
-                          | STAR AS NAME '''
-    p[0] = enaml_ast.EnamlCapture(p[1], p[3])
-
-
-#------------------------------------------------------------------------------
-# Enaml Call Body 
-#------------------------------------------------------------------------------
-def p_enaml_call_body(p):
-    ''' enaml_call_body : NEWLINE INDENT enaml_call_body_items DEDENT '''
-    # Filter out the pass statements' None values
-    p[0] = filter(None, p[3])
-
-
-def p_enaml_call_body_items1(p):
-    ''' enaml_call_body_items : enaml_call_body_item '''
-    p[0] = [p[1]]
-
-
-def p_enaml_call_body_items2(p):
-    ''' enaml_call_body_items : enaml_call_body_items enaml_call_body_item '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_enaml_call_body_item1(p):
-    ''' enaml_call_body_item : enaml_assignment NEWLINE '''
-    p[0] = p[1]
-
-
-def p_enaml_call_body_item2(p):
-    ''' enaml_call_body_item : enaml_call '''
-    p[0] = p[1]
-
-
-def p_enaml_call_body_item3(p):
-    ''' enaml_call_body_item : PASS NEWLINE '''
-    p[0] = None
-
-
-#------------------------------------------------------------------------------
-# Enaml Assignment
-#------------------------------------------------------------------------------
-# XXX we need to make this lhs grammar more robust and allow more things
-# we could just make it a python ast node and eval it in the VM to 
-# get the object to which it refers...
-def p_enaml_assignment(p):
-    ''' enaml_assignment : enaml_assignment_lhs enaml_assignment_pair '''
-    op, expr = p[2]
-    p[0] = enaml_ast.EnamlAssignment(p[1], op, expr)
-
-
-def p_enaml_assignment_lhs1(p):
-    ''' enaml_assignment_lhs : NAME '''
-    p[0] = enaml_ast.EnamlName(p[1])
-
-
-def p_enaml_assignment_lhs2(p):
-    ''' enaml_assignment_lhs : NAME DOT NAME '''
-    name = enaml_ast.EnamlName(p[1])
-    get_attr = enaml_ast.EnamlGetattr(name, p[3])
-    p[0] = get_attr
-
-
-def p_enaml_assignment_lhs3(p):
-    ''' enaml_assignment_lhs : enaml_index DOT NAME '''
-    idx = p[1]
-    get_attr = enaml_ast.EnamlGetattr(idx, p[3])
-    p[0] = get_attr
-
-
-def p_enaml_index1(p):
-    ''' enaml_index : NAME LSQB NUMBER RSQB '''
-    idx = eval(p[3])
-    if not isinstance(idx, int):
-        raise TypeError('lhs index indices must be integers')
-    p[0] = enaml_ast.EnamlIndex(p[1], idx)
-
-
-def p_enaml_index2(p):
-    ''' enaml_index : NAME LSQB MINUS NUMBER RSQB '''
-    idx = eval(p[4])
-    if not isinstance(idx, int):
-        raise TypeError('lhs index indices must be integers')
-    p[0] = enaml_ast.EnamlIndex(p[1], -idx)
-
-
-def p_enaml_assignment_pair(p):
-    ''' enaml_assignment_pair : enaml_operator test '''
-    operator = translate_operator(p[1])
+def p_binding(p):
+    ''' binding : enaml_operator test NEWLINE '''
+    # XXX extend me to support code blocks
+    lineno, op = p[1]
+    operator = translate_operator(op)
     expr = ast.Expression(body=p[2])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = (operator, enaml_ast.EnamlExpression(expr))
+    set_locations(expr, lineno, 1)
+    p[0] = enaml_ast.BoundExpression(operator, expr)
 
 
 def p_enaml_operator(p):
@@ -576,7 +584,10 @@ def p_enaml_operator(p):
                        | OPERATOR '''
     # A custom operator can be any of the standard operators (overloaded)
     # as well as one that is custom defined.
-    p[0] = p[1]
+    # XXX - get rid of custom operators and make and handful of predefined
+    # ones
+    lineno = p.lineno(1)
+    p[0] = (lineno, p[1])
 
 
 #==============================================================================
