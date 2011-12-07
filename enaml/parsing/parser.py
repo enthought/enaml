@@ -95,22 +95,22 @@ def p_enaml1(p):
 def p_enaml2(p):
     ''' enaml : NEWLINE ENDMARKER
               | ENDMARKER '''
-    p[0] = enaml_ast.Module('', [])
+    p[0] = enaml_ast.Module('', [], -1)
 
 
 def p_enaml3(p):
     ''' enaml : STRING NEWLINE ENDMARKER '''
-    p[0] = enaml_ast.Module(p[1], [])
+    p[0] = enaml_ast.Module(p[1], [], -1)
 
 
 def p_enaml_module1(p):
     ''' enaml_module : enaml_module_body '''
-    p[0] = enaml_ast.Module('', p[1])
+    p[0] = enaml_ast.Module('', p[1], -1)
 
 
 def p_enaml_module2(p):
     ''' enaml_module : STRING NEWLINE enaml_module_body '''
-    p[0] = enaml_ast.Module(p[1], p[3])
+    p[0] = enaml_ast.Module(p[1], p[3], -1)
     
 
 #------------------------------------------------------------------------------
@@ -157,7 +157,8 @@ def p_enaml_raw_python(p):
     # XXX update me to handle Python code without the tags
     py_txt = p[3]
     py_ast = ast.parse(py_txt, mode='exec')
-    p[0] = enaml_ast.RawPython(py_ast)
+    py_code = compile(py_ast, 'Enaml', mode='exec')
+    p[0] = enaml_ast.Python(py_ast, py_code, p.lineno(1))
 
 
 #------------------------------------------------------------------------------
@@ -165,8 +166,10 @@ def p_enaml_raw_python(p):
 #------------------------------------------------------------------------------
 def p_enaml_import(p):
     ''' enaml_import : import_stmt '''
-    mod = ast.Module(body=[p[1]])
-    p[0] = enaml_ast.Import(mod)
+    imprt = p[1]
+    mod = ast.Module(body=[imprt])
+    mod_code = compile(mod, 'Enaml', mode='exec')
+    p[0] = enaml_ast.Import(mod, mod_code, imprt.lineno)
 
 
 #------------------------------------------------------------------------------
@@ -174,14 +177,24 @@ def p_enaml_import(p):
 #------------------------------------------------------------------------------
 def p_declaration1(p):
     ''' declaration : NAME LPAR test RPAR COLON declaration_body '''
+    lineno = p.lineno(1)
     doc, items = p[6]
-    p[0] = enaml_ast.Declaration(p[1], p[3], None, doc, items)
+    base = ast.Expression(body=p[3])
+    set_locations(base, lineno, 1)
+    code = compile(base, 'Enaml', mode='eval')
+    base_node = enaml_ast.Python(base, code, lineno)
+    p[0] = enaml_ast.Declaration(p[1], base_node, None, doc, items, lineno)
 
 
 def p_declaration2(p):
     ''' declaration : NAME LPAR test RPAR NAME COLON declaration_body '''
+    lineno = p.lineno(1)
     doc, items = p[7]
-    p[0] = enaml_ast.Declaration(p[1], p[3], p[5], doc, items)
+    base = ast.Expression(body=p[3])
+    set_locations(base, lineno, 1)
+    code = compile(base, 'Enaml', mode='eval')
+    base_node = enaml_ast.Python(base, code, lineno)
+    p[0] = enaml_ast.Declaration(p[1], base_node, p[5], doc, items, lineno)
 
 
 def p_declaration_body1(p):
@@ -209,7 +222,7 @@ def p_declaration_body_items2(p):
 
 
 def p_declaration_body_item1(p):
-    ''' declaration_body_item : var_declare '''
+    ''' declaration_body_item : attr_declare '''
     p[0] = p[1]
 
 
@@ -229,53 +242,56 @@ def p_declaration_body_item4(p):
 
 
 #------------------------------------------------------------------------------
-# Var Declare
+# Attr Declare
 #------------------------------------------------------------------------------
-def p_var_declare(p):
-    ''' var_declare : NAME var_list NEWLINE '''
-    p[0] = enaml_ast.VarDeclare(p[1], p[3])
+def p_attr_declare(p):
+    ''' attr_declare : ATTR attr_list NEWLINE '''
+    p[0] = enaml_ast.AttrDeclare(p[3], p.lineno(1))
 
 
-def p_var_list1(p):
-    ''' var_list : var '''
+def p_attr_list1(p):
+    ''' attr_list : attr '''
     p[0] = [p[1]]
 
 
-def p_var_list2(p):
-    ''' var_list : var COMMA '''
+def p_attr_list2(p):
+    ''' attr_list : attr COMMA '''
     p[0] = [p[1]]
 
 
-def p_var_list3(p):
-    ''' var_list : var_list_list var '''
+def p_attr_list3(p):
+    ''' attr_list : attr_list_list attr '''
     p[0] = p[1] + [p[2]]
 
 
-def p_var_list4(p):
-    ''' var_list : var_list_list var COMMA '''
+def p_attr_list4(p):
+    ''' attr_list : attr_list_list attr COMMA '''
     p[0] = p[1] + [p[2]]
 
 
-def p_var_list_list1(p):
-    ''' var_list_list : var COMMA '''
+def p_attr_list_list1(p):
+    ''' attr_list_list : attr COMMA '''
     p[0] = [p[1]]
 
 
-def p_var_list_list2(p):
-    ''' var_list_list : var_list_list var COMMA '''
+def p_attr_list_list2(p):
+    ''' attr_list_list : attr_list_list attr COMMA '''
     p[0] = p[1] + [p[2]]
 
 
-def p_var1(p):
-    ''' var : NAME '''
-    p[0] = enaml_ast.Var(p[1], None)
+def p_attr1(p):
+    ''' attr : NAME '''
+    p[0] = enaml_ast.Attr(p[1], None, p.lineno(1))
 
 
-def p_var2(p):
-    ''' var : NAME EQUAL test '''
-    expr = ast.Expression(body=p[3])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = enaml_ast.Var(p[1], expr)
+def p_attr2(p):
+    ''' attr : NAME EQUAL test '''
+    lineno = p.lineno(1)
+    default = ast.Expression(body=p[3])
+    set_locations(default, lineno, 1)
+    code = compile(default, 'Enaml', mode='eval')
+    default_node = enaml_ast.Python(default, code, lineno)
+    p[0] = enaml_ast.Attr(p[1], default_node, lineno)
 
 
 #------------------------------------------------------------------------------
@@ -283,12 +299,12 @@ def p_var2(p):
 #------------------------------------------------------------------------------
 def p_instantiation1(p):
     ''' instantiation : NAME COLON instantiation_body '''
-    p[0] = enaml_ast.Instantiation(p[1], None, p[3])
+    p[0] = enaml_ast.Instantiation(p[1], None, p[3], p.lineno(1))
 
 
 def p_instantiation2(p):
     ''' instantiation : NAME NAME COLON instantiation_body '''
-    p[0] = enaml_ast.Instantiation(p[1], p[2], p[4])
+    p[0] = enaml_ast.Instantiation(p[1], p[2], p[4], p.lineno(1))
 
 
 def p_instantiation_body(p):
@@ -334,7 +350,7 @@ def p_instantiation_body_item4(p):
 def p_defn(p):
     ''' defn : DEFN NAME defn_parameters COLON defn_body '''
     doc, items = p[5]
-    p[0] = enaml_ast.Defn(p[2], p[3], doc, items)
+    p[0] = enaml_ast.Defn(p[2], p[3], doc, items, p.lineno(1))
 
 
 #------------------------------------------------------------------------------
@@ -342,27 +358,26 @@ def p_defn(p):
 #------------------------------------------------------------------------------
 def p_defn_parameters1(p):
     ''' defn_parameters : LPAR RPAR '''
-    p[0] = enaml_ast.Parameters([], [])
+    p[0] = enaml_ast.Parameters([], [], p.lineno(1))
 
 
 def p_defn_parameters2(p):
     ''' defn_parameters : LPAR defn_parameters_list RPAR '''
     names = []
     defaults = []
-    for name, expr in p[2]:
+    lineno = p.lineno(1)
+    for name, node in p[2]:
         if name in names:
             msg = 'duplicate parameter name `%s` in defn' % name
-            lineno = p.lineno(1)
             raise_enaml_syntax_error(msg, lineno)
         names.append(name)
-        if expr is not None:
-            defaults.append(expr)
+        if node is not None:
+            defaults.append(node)
         else:
             if defaults:
                 msg = 'Non keyword parameter `%s` after keyword parameter'
-                lineno = p.lineno(1)
                 raise_enaml_syntax_error(msg % name, lineno)
-    p[0] = enaml_ast.Parameters(names, defaults)
+    p[0] = enaml_ast.Parameters(names, defaults, lineno)
 
 
 def p_defn_parameters_list1(p):
@@ -412,9 +427,12 @@ def p_defn_name_parameter(p):
 
 def p_defn_keyword_parameter(p):
     ''' defn_keyword_parameter : NAME EQUAL test '''
+    lineno = p.lineno(1)
     expr = ast.Expression(body=p[3])
-    set_locations(expr, p.lineno(1), 1)
-    p[0] = (p[1], expr)
+    set_locations(expr, lineno, 1)
+    code = compile(expr, 'Enaml', mode='eval')
+    expr_node = enaml_ast.Python(expr, code, lineno)
+    p[0] = (p[1], expr_node)
 
 
 #------------------------------------------------------------------------------
@@ -464,7 +482,8 @@ def p_defn_body_item3(p):
 #------------------------------------------------------------------------------
 def p_enaml_call(p):
     ''' enaml_call : NAME enaml_arguments NEWLINE '''
-    p[0] = enaml_ast.Call(p[1], p[2])
+    lineno = p.lineno(1)
+    p[0] = enaml_ast.Call(p[1], p[2], lineno)
 
 
 def p_enaml_arguments1(p):
@@ -483,6 +502,13 @@ def p_enaml_arguments2(p):
             if seen_kwarg:
                 msg = 'non-keyword argument after keyword argument'
                 raise_enaml_syntax_error(msg, lineno)
+            # Now that we have a lineno available, compile the code
+            # object for the argument and update the lineno.
+            expr = argument.py_ast
+            set_locations(expr, lineno)
+            code = compile(expr, 'Enaml', mode='eval')
+            argument.code = code
+            argument.lineno = lineno
         else:
             seen_kwarg = True
             name = argument.name
@@ -490,8 +516,6 @@ def p_enaml_arguments2(p):
                 msg = 'keyword argument `%s` repeated' % name
                 raise_enaml_syntax_error(msg, lineno)
             kw_names.add(name)
-        py_ast = argument.py_ast
-        set_locations(py_ast, lineno, 1)
     p[0] = arguments
 
 
@@ -527,14 +551,20 @@ def p_enaml_arguments_list_list2(p):
 
 def p_enaml_argument1(p):
     ''' enaml_argument : test '''
+    # The lineno and compilation will be handled by p_enaml_arguments2
+    # once a lineno becomes available
     expr = ast.Expression(body=p[1])
-    p[0] = enaml_ast.Argument(expr)
+    p[0] = enaml_ast.Argument(expr, None, -1)
 
 
 def p_enaml_argument2(p):
     ''' enaml_argument : NAME EQUAL test '''
+    lineno = p.lineno(1)
     expr = ast.Expression(body=p[3])
-    p[0] = enaml_ast.KeywordArgument(p[1], expr)
+    set_locations(expr, lineno, 1)
+    code = compile(expr, 'Enaml', mode='eval')
+    expr_node = enaml_ast.Argument(expr, code, lineno)
+    p[0] = enaml_ast.KeywordArgument(p[1], expr_node, lineno)
 
 
 #------------------------------------------------------------------------------
@@ -542,7 +572,7 @@ def p_enaml_argument2(p):
 #------------------------------------------------------------------------------
 def p_attribute_binding(p):
     ''' attribute_binding : NAME binding '''
-    p[0] = enaml_ast.AttributeBinding(p[1], p[2])
+    p[0] = enaml_ast.AttributeBinding(p[1], p[2], p.lineno(1))
 
 
 def p_binding(p):
@@ -552,7 +582,9 @@ def p_binding(p):
     operator = translate_operator(op)
     expr = ast.Expression(body=p[2])
     set_locations(expr, lineno, 1)
-    p[0] = enaml_ast.BoundExpression(operator, expr)
+    code = compile(expr, 'Enaml', mode='eval')
+    expr_node = enaml_ast.Python(expr, code, lineno)
+    p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
 
 
 def p_enaml_operator(p):
@@ -625,6 +657,7 @@ class Arguments(object):
 def p_import_stmt1(p):
     ''' import_stmt : import_name NEWLINE '''
     imprt = p[1]
+    imprt.lineno = p.lineno(2)
     ast.fix_missing_locations(imprt)
     p[0] = imprt
 
@@ -632,6 +665,7 @@ def p_import_stmt1(p):
 def p_import_stmt2(p):
     ''' import_stmt : import_from NEWLINE '''
     imprt = p[1]
+    imprt.lineno = p.lineno(2)
     ast.fix_missing_locations(imprt)
     p[0] = imprt
 
