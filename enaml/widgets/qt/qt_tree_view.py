@@ -3,19 +3,15 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_control import QtControl
-from .abstract_item_model_wrapper import AbstractItemModelWrapper
+from .qt_abstract_item_view import QtAbstractItemView
 
 from ..tree_view import AbstractTkTreeView
 
 
-class QtTreeView(QtControl, AbstractTkTreeView):
+class QtTreeView(QtAbstractItemView, AbstractTkTreeView):
     """ A Qt implementation of TreeView.
 
     """
-    #: The underlying model.
-    model_wrapper = None
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -30,22 +26,27 @@ class QtTreeView(QtControl, AbstractTkTreeView):
 
         """
         super(QtTreeView, self).initialize()
-        self.set_tree_model(self.shell_obj.item_model)
+        self.set_header_visible(self.shell_obj.header_visible)
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell_item_model_changed(self, item_model):
-        """ The change handler for the 'item_model' attribute.
+    def shell_header_visible_changed(self, visible):
+        """ The change handler for the 'header_visible' attribute of
+        the shell object.
 
         """
-        self.set_tree_model(item_model)
-
-    def set_tree_model(self, model):
-        """ Set the table view's model.
+        self.set_header_visible(visible)
+    
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_header_visible(self, visible):
+        """ Sets the visibility of the header for the widget.
 
         """
-        model_wrapper = AbstractItemModelWrapper(model)
-        self.widget.setModel(model_wrapper)
-        self.model_wrapper = model_wrapper
+        if visible:
+            self.widget.setHeaderHidden(False)
+        else:
+            self.widget.setHeaderHidden(True)
 

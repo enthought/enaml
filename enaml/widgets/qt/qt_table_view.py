@@ -3,23 +3,15 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_control import QtControl
-from .abstract_item_model_wrapper import AbstractItemModelWrapper
+from .qt_abstract_item_view import QtAbstractItemView
 
 from ..table_view import AbstractTkTableView
 
 
-class QtTableView(QtControl, AbstractTkTableView):
+class QtTableView(QtAbstractItemView, AbstractTkTableView):
     """ A Qt implementation of TableView.
 
-    See Also
-    --------
-    TableView
-
     """
-    #: The underlying model.
-    model_wrapper = None
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -35,43 +27,44 @@ class QtTableView(QtControl, AbstractTkTableView):
         """
         super(QtTableView, self).initialize()
         shell = self.shell_obj
-        self.set_table_model(shell.item_model)
-        self.set_vertical_header_vis(shell.vertical_header_visible)
-        self.set_horizontal_header_vis(shell.horizontal_header_visible)
+        self.set_vertical_header_visible(shell.vertical_header_visible)
+        self.set_horizontal_header_visible(shell.horizontal_header_visible)
 
     #--------------------------------------------------------------------------
     # Implementation
-    #--------------------------------------------------------------------------
-    def shell_item_model_changed(self, item_model):
-        """ The change handler for the 'item_model' attribute.
+    #-------------------------------------------------------------------------- 
+    def shell_vertical_header_visible_changed(self, visible):
+        """ The change handler for the 'vertical_header_visible' 
+        attribute of the shell object.
 
         """
-        self.set_table_model(item_model)
-    
-    def shell_vertical_header_visible_changed(self, visible):
-        self.set_vertical_header_vis(visible)
+        self.set_vertical_header_visible(visible)
     
     def shell_horizontal_header_visible_changed(self, visible):
-        self.set_horizontal_header_vis(visible)
-
-    def set_table_model(self, model):
-        """ Set the table view's model.
+        """ The change handler for the 'horizontal_header_visible'
+        attribute of the shell object.
 
         """
-        model_wrapper = AbstractItemModelWrapper(model)
-        self.widget.setModel(model_wrapper)
-        self.model_wrapper = model_wrapper
+        self.set_horizontal_header_visible(visible)
 
-    def set_vertical_header_vis(self, visible):
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_vertical_header_visible(self, visible):
+        """ Sets the vertical header visibility of the widget.
+
+        """
         if visible:
             self.widget.verticalHeader().show()
         else:
             self.widget.verticalHeader().hide()
     
-    def set_horizontal_header_vis(self, visible):
+    def set_horizontal_header_visible(self, visible):
+        """ Sets the horizontal header visibility of the widget.
+
+        """
         if visible:
             self.widget.horizontalHeader().show()
         else:
             self.widget.horizontalHeader().hide()
-        
 

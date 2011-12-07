@@ -3,19 +3,15 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_control import QtControl
-from .abstract_item_model_wrapper import AbstractItemModelWrapper
+from .qt_abstract_item_view import QtAbstractItemView
 
 from ..list_view import AbstractTkListView
 
 
-class QtListView(QtControl, AbstractTkListView):
+class QtListView(QtAbstractItemView, AbstractTkListView):
     """ A Qt implementation of ListView.
 
     """
-    #: The underlying model.
-    model_wrapper = None
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -24,28 +20,4 @@ class QtListView(QtControl, AbstractTkListView):
 
         """
         self.widget = QtGui.QListView(parent)
-
-    def initialize(self):
-        """ Initialize the widget with the attributes of this instance.
-
-        """
-        super(QtListView, self).initialize()
-        self.set_list_model(self.shell_obj.item_model)
-
-    #--------------------------------------------------------------------------
-    # Implementation
-    #--------------------------------------------------------------------------
-    def shell_item_model_changed(self, item_model):
-        """ The change handler for the 'item_model' attribute.
-
-        """
-        self.set_list_model(item_model)
-
-    def set_list_model(self, model):
-        """ Set the table view's model.
-
-        """
-        model_wrapper = AbstractItemModelWrapper(model)
-        self.widget.setModel(model_wrapper)
-        self.model_wrapper = model_wrapper
 
