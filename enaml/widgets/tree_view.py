@@ -4,36 +4,27 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Event
+from traits.api import Instance, Bool
 
-from .control import Control, AbstractTkControl
-
-from ..item_models.abstract_item_model import AbstractItemModel
+from .abstract_item_view import AbstractItemView, AbstractTkItemView
 
 
-class AbstractTkTreeView(AbstractTkControl):
+class AbstractTkTreeView(AbstractTkItemView):
     
     @abstractmethod
-    def shell_item_model_changed(self, item_model):
+    def shell_header_visible_changed(self, visible):
         raise NotImplementedError
 
 
-class TreeView(Control):
-    """ A view for tabular data.
+class TreeView(AbstractItemView):
+    """ A view for tree data.
     
     """
-    #: The model for which this table is a view.
-    item_model = Instance(AbstractItemModel)
+    #: Whether or not the tree header is visible. Defaults to True.
+    header_visible = Bool(True)
 
-    #: Fired after the left button is double-clicked.
-    left_dclick = Event
-    
-    #: How strongly a component hugs it's contents' width.
-    #: TableViews ignore the width hug by default, so they expand freely in width.
-    hug_width = 'ignore'
-    
-    #: How strongly a component hugs it's contents' height.
-    #: TableViews ignore the height hug by default, so they expand freely in height.
+    #: How strongly a component hugs it's contents' height. TreeViews 
+    #: ignore the height hug by default, so they expand freely in height.
     hug_height = 'ignore'
 
     #: Overridden parent class trait
