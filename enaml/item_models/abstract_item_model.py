@@ -587,7 +587,7 @@ class AbstractItemModel(HasTraits):
             A new index into this model.
 
         """
-        return ModelIndex(row, column, self, context)
+        return ModelIndex(row, column, context, self)
 
     def flags(self, index):
         """ Obtain the flags that specify user interaction with items.

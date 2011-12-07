@@ -13,7 +13,7 @@ class ModelIndex(tuple):
     """
     __slots__ = ()
     
-    def __new__(cls, row, column, model, context=None):
+    def __new__(cls, row, column, context, model):
         """ Construct a model index.
 
         Arguments
@@ -24,19 +24,19 @@ class ModelIndex(tuple):
         column : int
             The column index represented by this index
 
+        context : object
+            A user supplied object that aids in navigating the user's
+            model.
+
         model : AbstractItemModel
             The model in which this index is active. This is typically
             supplied by the create_index method of the AbstractItemModel.
 
-        context : object, optional
-            A user supplied object that aids in navigating the user's
-            model. Defaults to None.
-
         """
-        return tuple.__new__(cls, (row, column, model, context))
+        return tuple.__new__(cls, (row, column, context, model))
 
     def __repr__(self):
-        return 'ModelIndex(row=%s, col=%s, model=%s, context=%s)' % self
+        return 'ModelIndex(row=%s, col=%s, context=%s, model=%s)' % self
     
     def __str__(self):
         return self.__repr__()
@@ -50,60 +50,12 @@ class ModelIndex(tuple):
         return self[1]
     
     @property
-    def model(self):
-        return self[2]
-    
-    @property
     def context(self):
+        return self[2]
+
+    @property
+    def model(self):
         return self[3]
-
-    def __eq__(self, other):
-        """ Returns True if this index is functionally equivalent to
-        another. False otherwise.
-
-        """
-        if isinstance(other, ModelIndex):
-            return (self.row == other.row and
-                    self.column == other.column and
-                    self.context == other.context and
-                    self.model == other.model)
-        return False
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __lt__(self, other):
-        """ Returns True if this index is functionally less than another.
-        False otherwise.
-
-        """
-        if isinstance(other, ModelIndex):
-            if self.row < other.row:
-                return True
-            if self.row == other.row:
-                if self.column < other.column:
-                    return True
-                if self.column == other.column:
-                    # Rich comparing the user's objects has the potential
-                    # to throw a TypeError. Like when comparing a datetime
-                    # to a non-datetime.
-                    try:
-                        if self.context < other.context:
-                            return True
-                    except TypeError:
-                        return True
-                    if self.context == other.context:
-                        return self.model < other.model
-        return False
-
-    def __gt__(self, other):
-        return other < self
-    
-    def __le__(self, other):
-        return not other < self
-    
-    def __ge__(self, other):
-        return not self < other
         
     def parent(self):
         """ Returns the parent ModelIndex of this index.
