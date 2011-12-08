@@ -222,7 +222,7 @@ def p_declaration_body_items2(p):
 
 
 def p_declaration_body_item1(p):
-    ''' declaration_body_item : attr_declare '''
+    ''' declaration_body_item : attribute_binding '''
     p[0] = p[1]
 
 
@@ -244,54 +244,54 @@ def p_declaration_body_item4(p):
 #------------------------------------------------------------------------------
 # Attr Declare
 #------------------------------------------------------------------------------
-def p_attr_declare(p):
-    ''' attr_declare : ATTR attr_list NEWLINE '''
-    p[0] = enaml_ast.AttrDeclare(p[3], p.lineno(1))
+# def p_attr_declare(p):
+#     ''' attr_declare : ATTR attr_list NEWLINE '''
+#     p[0] = enaml_ast.AttrDeclare(p[2], p.lineno(1))
 
 
-def p_attr_list1(p):
-    ''' attr_list : attr '''
-    p[0] = [p[1]]
+# def p_attr_list1(p):
+#     ''' attr_list : attr '''
+#     p[0] = [p[1]]
 
 
-def p_attr_list2(p):
-    ''' attr_list : attr COMMA '''
-    p[0] = [p[1]]
+# def p_attr_list2(p):
+#     ''' attr_list : attr COMMA '''
+#     p[0] = [p[1]]
 
 
-def p_attr_list3(p):
-    ''' attr_list : attr_list_list attr '''
-    p[0] = p[1] + [p[2]]
+# def p_attr_list3(p):
+#     ''' attr_list : attr_list_list attr '''
+#     p[0] = p[1] + [p[2]]
 
 
-def p_attr_list4(p):
-    ''' attr_list : attr_list_list attr COMMA '''
-    p[0] = p[1] + [p[2]]
+# def p_attr_list4(p):
+#     ''' attr_list : attr_list_list attr COMMA '''
+#     p[0] = p[1] + [p[2]]
 
 
-def p_attr_list_list1(p):
-    ''' attr_list_list : attr COMMA '''
-    p[0] = [p[1]]
+# def p_attr_list_list1(p):
+#     ''' attr_list_list : attr COMMA '''
+#     p[0] = [p[1]]
 
 
-def p_attr_list_list2(p):
-    ''' attr_list_list : attr_list_list attr COMMA '''
-    p[0] = p[1] + [p[2]]
+# def p_attr_list_list2(p):
+#     ''' attr_list_list : attr_list_list attr COMMA '''
+#     p[0] = p[1] + [p[2]]
 
 
-def p_attr1(p):
-    ''' attr : NAME '''
-    p[0] = enaml_ast.Attr(p[1], None, p.lineno(1))
+# def p_attr1(p):
+#     ''' attr : NAME '''
+#     p[0] = enaml_ast.Attr(p[1], None, p.lineno(1))
 
 
-def p_attr2(p):
-    ''' attr : NAME EQUAL test '''
-    lineno = p.lineno(1)
-    default = ast.Expression(body=p[3])
-    set_locations(default, lineno, 1)
-    code = compile(default, 'Enaml', mode='eval')
-    default_node = enaml_ast.Python(default, code, lineno)
-    p[0] = enaml_ast.Attr(p[1], default_node, lineno)
+# def p_attr2(p):
+#     ''' attr : NAME EQUAL test '''
+#     lineno = p.lineno(1)
+#     default = ast.Expression(body=p[3])
+#     set_locations(default, lineno, 1)
+#     code = compile(default, 'Enaml', mode='eval')
+#     default_node = enaml_ast.Python(default, code, lineno)
+#     p[0] = enaml_ast.Attr(p[1], default_node, lineno)
 
 
 #------------------------------------------------------------------------------
