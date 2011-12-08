@@ -2,31 +2,15 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits import api as t_types
+import itertools
+from functools import wraps
+import types
 
 from . import enaml_ast
 from . import byteplay
 
 from .. import imports
-from ..toolkit import Toolkit, Constructor
-from ..widgets.base_component import BaseComponent
-
-
-#: Common Python builtin types mapped to their traits equivalent.
-_BUILTIN_TYPE_MAPPING = {
-    bool: t_types.Bool,
-    int: t_types.Int,
-    long: t_types.Long,
-    float: t_types.Float,
-    complex: t_types.Complex,
-    str: t_types.Str,
-    unicode: t_types.Unicode,
-    object: t_types.Any,
-    list: t_types.Instance(list, ()),
-    set: t_types.Instance(set, ()),
-    dict: t_types.Instance(dict, ()),
-    tuple: t_types.Instance(tuple, ()),
-}
+from ..toolkit import Toolkit
 
 
 #------------------------------------------------------------------------------
@@ -57,160 +41,214 @@ class _NodeVisitor(object):
 
 
 #------------------------------------------------------------------------------
-# Compiler Runtime Helper Functions
+# Declaration Compiler
 #------------------------------------------------------------------------------
-def _compiler_load_operator(operator_name):
-    """ A compiler runtime function which is used to lookup a named 
-    operator from the active toolkit.
-
-    """
-    tk = Toolkit.active_toolkit()
-    try:
-        operator = tk[operator_name]
-    except KeyError:
-        # XXX to an translation from operator name -> symbol
-        msg = 'The %s operator is not defined in the active toolkit.'
-        raise ValueError(msg % operator_name)
-    return operator
+def _decl_wrapper_gen(func):
+    @wraps(func)
+    def wrapper(identifiers=None, toolkit=None):
+        if identifiers is None:
+            identifiers = {}
+        if toolkit is None:
+            toolkit = Toolkit.active_toolkit()
+        return func(identifiers, toolkit)
+    return wrapper
 
 
-def _compiler_add_child(obj, child):
-    """ A compiler runtime function which add the child to the given 
-    object.
-
-    """
-    obj.add_child(child)
-
-
-def _compiler_add_children(obj, retval):
+def _compiler_add_children(obj, iterable):
     """ A compiler runtime function which adds the return values of a
     call in an enaml body as children of the given object.
 
     """
     add_child = obj.add_child
-    for item in retval:
+    for item in iterable:
         add_child(item)
 
 
-def _compiler_eval(code, f_globals, f_locals):
-    """ A compiler runtime function which evalues the given code object
-    in the given globals and locals.
-
-    """
-    return eval(code, f_globals, f_locals)
+def _var_name_generator():
+    count = itertools.count()
+    while True:
+        yield '_var_' + str(count.next())
 
 
-#------------------------------------------------------------------------------
-# Body Compiler
-#------------------------------------------------------------------------------
-class BodyCompiler(_NodeVisitor):
-    """ A visitor which compiles the body of Declaration or Defn.
+class DeclarationCompiler(_NodeVisitor):
+    """ A visitor which compiles a Declaration node into a code object.
 
     """
     def __init__(self):
         self.ops = []
-        self.identifiers = set()
-    
+        self.name_gen = _var_name_generator()
+        self.name_stack = []
+
     @classmethod
-    def compile(cls, body_items):
-        """ A classmethod that takes a list of Instantiation and Call 
-        nodes and returns a list of code ops. The list of ops will expect
-        a parent component to be at TOS.
-
-        """
+    def compile(cls, node):
+        #----------------------------------------------------------------------
+        # Given this sample declaration:
+        #   
+        #     FooWindow(Window) foo:
+        #         a = '12'
+        #         PushButton button:
+        #             text = 'clickme'
+        #
+        # We generate bytecode that would correspond to a function that 
+        # looks similar to this:
+        #
+        #     def FooWindow(identifiers, toolkit):
+        #         f_globals = globals()
+        #         foo = eval('Window', toolkit, f_globals)(identifiers, 
+        #                                                  toolkit)
+        #         identifiers['foo'] = foo
+        #         op = eval('__operator_Equal__', toolkit, f_globals)
+        #         op(foo, 'a', <ast for '12'>, <code for '12'>, 
+        #            f_globals, identifiers)
+        #         button = eval('PushButton', toolkit, f_globals)(identifiers, 
+        #                                                         toolkit)
+        #         identifiers['button'] = button
+        #         op = eval('__operator_Equal__', toolkit, f_globals)
+        #         op(item, 'text', <ast for 'clickme'>, <code for 'clickme'>, 
+        #            f_globals, identifiers)
+        #         foo.add_child(button)
+        #         return foo
+        #----------------------------------------------------------------------
         compiler = cls()
-        visit = compiler.visit
-        for item in body_items:
-            visit(item)
-        return compiler.ops
+        compiler.visit(node)
+        ops = compiler.ops
+        code = byteplay.Code(ops, [], ['identifiers', 'toolkit'], False, False,
+                             True, node.name, 'Enaml', node.lineno, node.doc)
+        return code.to_code()
 
-    def visit_Instantiation(self, node):
-        """ Create the bytecode ops for a component instantiation. The
-        TOS should be a component instance which is the parent of the
-        component being instantiated. The bytecode will not consume TOS.
-        
+    def visit_Declaration(self, node):
+        """ Creates the bytecode ops for a declaration node. This visitor
+        handles creating the component instance and storing it's identifer
+        if one is given.
+
         """
         bp = byteplay
         ops = self.ops
+        name_stack = self.name_stack
 
-        # Duplicate TOS which is the parent of the component we are 
-        # instantiating, this will be consumed at the end of this method.
-        ops.append((bp.DUP_TOP, None))
-
-        # Lookup the component type we are instantiating using the component
-        # scope lookup callable, and call the __enaml_call__ method on the
-        # returned component type. TOS will be an instance of that component.
+        name = self.name_gen.next()
+        name_stack.append(name)
         ops.extend([
-            (bp.LOAD_NAME, node.name),
-            (bp.LOAD_ATTR, '__enaml_call__'),
+            # f_globals = globals()
+            (bp.LOAD_GLOBAL, 'globals'),
             (bp.CALL_FUNCTION, 0x0000),
-        ])
-        
-        # If the instantiation is given an identifier, add the component
-        # instance which is TOS to the identifier scope, keeping the instance 
-        # on the TOS.
-        idn = node.identifier
-        identifiers = self.identifiers
-        if idn is not None:
-            if idn in identifiers:
-                raise SyntaxError('Duplicate identifier `%s`' % idn)
-            identifiers.add(idn)
-            ops.extend([
-                (bp.DUP_TOP, None),
-                (bp.LOAD_NAME, '__store_id_scope__'),
-                (bp.ROT_TWO, None),
-                (bp.CALL_FUNCTION, 0x0001),
-                (bp.POP_TOP, None),
-            ])
-        
-        visit = self.visit
-        for item in node.body:
-            visit(item)
-        
-        # Once the children have finished compiling, we can add this 
-        # instance as a child of the parent which was dup'd at the start
-        # of this method. TOS is (..., parent, child).
-        ops.extend([
-            (bp.LOAD_CONST, _compiler_add_child),
-            (bp.ROT_THREE, None),
+            (bp.STORE_FAST, 'f_globals'),
+
+            # foo = eval('Window', toolkit, f_globals)(identifiers, toolkit)
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, node.base.code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_FAST, 'identifiers'),
+            (bp.LOAD_FAST, 'toolkit'),
             (bp.CALL_FUNCTION, 0x0002),
-            (bp.POP_TOP, None),
+            (bp.STORE_FAST, name),
         ])
+
+        if node.identifier:
+            ops.extend([
+                # identifiers['foo'] = foo
+                (bp.LOAD_FAST, name),
+                (bp.LOAD_FAST, 'identifiers'),
+                (bp.LOAD_CONST, node.identifier),
+                (bp.STORE_SUBSCR, None),
+            ])
+
+        for item in node.body:
+            self.visit(item)
+        
+        ops.extend([
+            # return foo
+            (bp.LOAD_FAST, name),
+            (bp.RETURN_VALUE, None),
+        ])
+
+        name_stack.pop()
 
     def visit_AttributeBinding(self, node):
-        """ Create the bytecode ops for binding an expression to an 
-        attribute. The TOS should be the component instance which has
-        the attribute to which the expression is being bound. The code
-        will not consume TOS.
+        """ Creates the bytecode ops for an attribute binding. This
+        visitor handles loading and calling the appropriate operator.
 
         """
         # XXX handle BoundCodeBlock instead of just BoundExpression
         bp = byteplay
         ops = self.ops
+        name_stack = self.name_stack
 
-        # Duplicate TOS which is the component to which we are binding 
-        # the expression, this will be consumed during the method.
-        ops.append((bp.DUP_TOP, None))
-
-        # Compile the expression code object. This will be passed to the 
-        # binding operator as an argument.
-        expr_ast = node.binding.expr
-        expr_code = compile(expr_ast, 'Enaml', model='eval')
+        # Grab the ast and code object for the expression. These will
+        # be passed to the binding operator.
+        expr_ast = node.binding.expr.py_ast
+        expr_code = node.binding.expr.code
+        op_code = compile(node.binding.op, 'Enaml', mode='eval')
 
         # A binding is accomplished by loading the appropriate binding
         # operator function and passing it the a number of arguments:
-        # (obj, name, expr_ast, expr_code, globals_closure, locals_closure)
+        #
+        # op = eval('__operator_Equal__', toolkit, f_globals)
+        # op(item, 'a', <ast>, <code>, f_globals, toolkit, identifiers)
         ops.extend([
-            (bp.LOAD_CONST, _compiler_load_operator),
-            (bp.LOAD_CONST, node.binding.op),
-            (bp.CALL_FUNCTION, 0x0001),
-            (bp.ROT_TWO, None),
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_FAST, name_stack[-1]),
             (bp.LOAD_CONST, node.name),
             (bp.LOAD_CONST, expr_ast),
             (bp.LOAD_CONST, expr_code),
-            (bp.LOAD_NAME, '__globals_closure__'),
-            (bp.LOAD_NAME, '__locals_closure__'),
-            (bp.CALL_FUNCTION, 0x0006),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'identifiers'),
+            (bp.CALL_FUNCTION, 0x0007),
+            (bp.POP_TOP, None),
+        ])
+
+    def visit_Instantiation(self, node):
+        """ Create the bytecode ops for a component instantiation. This 
+        visitor handles calling another derived component and storing
+        its identifier, if given.
+        
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # This is similar logic to visit_Declaration
+        name = self.name_gen.next()
+        name_stack.append(name)
+
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_FAST, 'identifiers'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.STORE_FAST, name),
+        ])
+        
+        if node.identifier:
+            ops.extend([
+                (bp.LOAD_FAST, name),
+                (bp.LOAD_FAST, 'identifiers'),
+                (bp.LOAD_CONST, node.identifier),
+                (bp.STORE_SUBSCR, None),
+            ])
+
+        for item in node.body:
+            self.visit(item)
+        
+        name_stack.pop()
+        ops.extend([
+            # foo.add_child(button)
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_ATTR, 'add_child'),
+            (bp.LOAD_FAST, name),
+            (bp.CALL_FUNCTION, 0x0001),
             (bp.POP_TOP, None),
         ])
 
@@ -223,31 +261,48 @@ class BodyCompiler(_NodeVisitor):
         """
         bp = byteplay
         ops = self.ops
+        name_stack = self.name_stack
 
-        # Duplicate TOS which is the parent of the component we are 
-        # instantiating, this will be consumed at the end of this method.
-        ops.append((bp.DUP_TOP, None))
-        
+        # Since we are adding multiple children to one parent, we need
+        # to load that parent on the stack before computing the children.
+        ops.append((bp.LOAD_FAST, name_stack[-1]))
+
         # To perform the call we need to load the callable and its args
         # and kwargs, call it, then use a compiler helper to handle the
         # return values.
-        ops.append((bp.LOAD_NAME, node.name))
+        #
+        # SomeDefn(foo, bar, baz=12)
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+        ])
+
         n_args = 0
         n_kwargs = 0
         for arg in node.arguments:
             if isinstance(arg, enaml_ast.Argument):
                 n_args += 1
+                arg_code = arg.code
             else:
                 ops.append((bp.LOAD_CONST, arg.name))
                 n_kwargs += 1
-            arg_code = compile(arg.py_ast, 'Enaml', mode='eval')
+                arg_code = arg.argument.code
             ops.extend([
-                (bp.LOAD_CONST, _compiler_eval),
+                (bp.LOAD_CONST, eval),
                 (bp.LOAD_CONST, arg_code),
-                (bp.LOAD_NAME, '__calling_globals__'),
-                (bp.LOAD_NAME, '__calling_locals__'),
+                (bp.LOAD_FAST, 'toolkit'),
+                (bp.LOAD_FAST, 'f_globals'),
                 (bp.CALL_FUNCTION, 0x0003),
             ])
+        
+        # Rather than emitting bytecode to run a FOR loop over the
+        # return results of the function call, we use a helper function
+        # which does it for us. This simplifies the bytecode generation
+        # at the cost of a very small overhead.
         ops.extend([
             (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
             (bp.LOAD_CONST, _compiler_add_children),
@@ -255,132 +310,99 @@ class BodyCompiler(_NodeVisitor):
             (bp.CALL_FUNCTION, 0x0002),
             (bp.POP_TOP, None),
         ])
- 
+
 
 #------------------------------------------------------------------------------
-# Enaml Declaration
+# Enaml Compiler
 #------------------------------------------------------------------------------
-class EnamlDeclaration(object):
-    """ An object which represents an enaml declaration. It manages
-    building the appropriate customized type component type on-demand
-    in an efficient manner.
+class EnamlCompiler(_NodeVisitor):
+    """ A compiler that will compile an enaml module ast node.
+    
+    The entry point is the `compile` classmethod which will compile
+    the ast into an appropriate python object and place the results 
+    in the provided module dictionary.
 
     """
-    def __init__(self, name, base_expr, module_dict, body_code):
-        # A dictionary which maps the base type of the created type
-        # to the actual created type. The mapping is needed because 
-        # the base type may change under a different toolkit context.
-        self._name = name
-        self._created_types = {}
-        self._base_expr = base_expr
-        self._module_dict = module_dict
-        self._body_code = body_code
+    @classmethod
+    def compile(cls, module_ast, module_dict):
+        """ The main entry point of the compiler.
 
-    def __call__(self):
-        """ Creates a new custom component type (if needed) and returns 
-        a new instance of that type.
-
-        """
-        # Lookup the base type using the using a scope which is the 
-        # union of the active toolkit and the module dict
-        scope = {}
-        scope.update(self._module_dict)
-        scope.update(Toolkit.active_toolkit())
-
-        try:
-            base_type = eval(self._base_expr, scope)
-        except NameError:
-            msg = 'Unable to load base type for %s declaration' % self._name
-            raise NameError(msg)
+        Parameters
+        ----------
+        module_ast : Instance(enaml_ast.Module)
+            The enaml module ast node that should be compiled.
         
-        # Make sure we have something valid from which to derive a new
-        # component type. It's only possible to derive from subclasses of
-        # BaseComponent, but the base may be retrieved from the toolkit
-        # in the form of a Constructor.
-        if isinstance(base_type, Constructor):
-            base_type = base_type.shell_loader()
+        module_dict : dict
+            The dictionary of the Python module into which we are
+            compiling the enaml code.
+        
+        """
+        compiler = cls(module_dict)
+        compiler.visit(module_ast)
 
-        if not issubclass(base_type, BaseComponent):
-            msg = 'Cannot derive a new component type from `%s`' % base_type
-            raise TypeError(msg)
+    def __init__(self, module_dict):
+        """ Initialize a compiler instance.
 
-        # If we've already created a type for this base component type,
-        # then return an instance of that. Otherwise, create the new type
-        # and return that.
-        created = self._created_types
-        if base_type in created:
-            cmpnt_type = created[base_type]
-        else:
-            cmpnt_type = self._create_type(base_type, scope)
-            created[base_type] = cmpnt_type
+        Parameters
+        ----------
+        module_dict : dict
+            The module dictionary into which the compiled objects are 
+            placed.
+        
+        """
+        # This ensures that the key '__builtins__' exists in the mod dict.
+        exec '' in module_dict
+        self.global_ns = module_dict
 
-        instance = cmpnt_type()
-        self._apply_var_defaults(instance, scope)
-
-        return instance
-    
-    def _create_type(self, base_type, scope):
-        """ Creates a new derived type for the given base type.
+    def visit_Module(self, node):
+        """ The module node visitory method. Used internally by the
+        compiler.
 
         """
-        cls_name = self._name
-        bases = (base_type,)
+        if node.doc:
+            self.global_ns['__doc__'] = node.doc
+        for item in node.body:
+            self.visit(item)
+    
+    def visit_Python(self, node):
+        """ A visitor which adds a chunk of raw Python into the module.
 
-        # Compute the new class traits for the new declared attribute
-        # variables.
-        new_traits = []
-        for var_decl in self._var_decls:
-            var_type_code = compile(var_decl.type, 'Enaml', mode='eval')
+        """
+        try:
+            exec node.code in self.global_ns
+        except Exception as e:
+            msg = ('Unable to evaluate raw Python code on lineno %. '
+                   'Original exception was %s.')
+            exc_type = type(e)
+            raise exc_type(msg % (node.lineno, e))
+        
+    def visit_Import(self, node):
+        """ The import statement visitor method. This ensures that imports
+        are performed with the enaml import hook in-place.
+
+        """
+        with imports():
             try:
-                var_type = eval(var_type_code, scope)
-            except NameError:
-                msg = 'Cannot resolve var type for %s declaration'
-                raise NameError(msg % self._name)
-            
-            if not isinstance(var_type, type):
-                msg = 'Variable type `%s` is not a proper type' % var_type
-                raise TypeError(msg)
+                exec node.code in self.global_ns
+            except Exception as e:
+                msg = ('Unable to evaluate import on lineno %. '
+                       'Original exception was %s.')
+                exc_type = type(e)
+                raise exc_type(msg % (node.lineno, e))
 
-            if var_type in _BUILTIN_TYPE_MAPPING:
-                trait_type = _BUILTIN_TYPE_MAPPING[var_type]
-            else:
-                trait_type = t_types.Instance(var_type)
-            
-            for var in var_decl.vars:
-                # We don't care about the default values at the moment,
-                # since those are evaluated and applied each time a
-                # instance of the new type is instantiated.
-                new_traits.append((var.name, trait_type))
-
-        cls_dict = dict(new_traits)
-
-        return type(cls_name, bases, cls_dict)
-
-    def _apply_var_defaults(self, instance, scope):
-        """ Evaluates and applies the variable defaults for the given
-        instance using the provided scope.
+    def visit_Declaration(self, node):
+        """ The declaration node visitor. This will add an instance
+        of EnamlDeclaration to the module.
 
         """
-        # XXX punting at the moment because I'm tired
-        return
+        func_code = DeclarationCompiler.compile(node)
+        func = types.FunctionType(func_code, self.global_ns)
+        wrapper = _decl_wrapper_gen(func)
+        self.global_ns[node.name] = wrapper
     
-    def _create_children(self, instance, scope):
-        """ Creates and adds the children to the given instance.
+    def visit_Defn(self, node):
+        """ The defn node visitor. This will add an instance of EnamlDefn
+        to the module.
 
         """
-        # XXX punting at the moment because I'm tired.
-        return 
-
-
-def build_declaration(node, module_dict):
-    """ A function which takes a declaration node and the module dict in
-    which it will live and builds a new class which implements the 
-    declaration. The new class is added to the module dict.
-
-    """
-    # XXX punting at the moment because I'm tired.
-    return 
-
-
-
-
+        pass

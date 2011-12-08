@@ -47,29 +47,11 @@ class Constructor(HasStrictTraits):
         self.shell_loader = shell_loader
         self.abstract_loader = abstract_loader
 
-    def __enaml_call__(self, *args, **kwargs):
-        """ Called by the vm to create the component(s) for this widget.
-        This should not typically be overridden by sublasses. To perform
-        specialized building behavior, override the `build` method.
-
-        """
-        component = self.build(*args, **kwargs)
-        return ((component,), {})
-
-    def build(self, *args, **kwargs):
+    def __call__(self, *args, **kwargs):
         """ Calls the loaders and assembles the component.
 
         Subclasses should override this method to implement custom
         construction behavior if the default is not sufficient.
-
-        Parameters
-        ----------
-        *args :
-            Positional arguments with which this constructor was called
-            from the enaml source code.
-        **kwargs :
-            Keyword arguments with which this constructor was called
-            from the enaml source code.
 
         """
         shell_cls = self.shell_loader()
