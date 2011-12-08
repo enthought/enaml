@@ -270,39 +270,39 @@ class KeywordArgument(ASTNode):
         self.argument = argument
 
 
-class AttrDeclare(ASTNode):
-    """ An AST node representing a line of attribute declarations.
+# class AttrDeclare(ASTNode):
+#     """ An AST node representing a line of attribute declarations.
 
-    Attributes
-    ----------
-    attrs : list
-        A list Attr nodes which are the attributes being declared.
+#     Attributes
+#     ----------
+#     attrs : list
+#         A list Attr nodes which are the attributes being declared.
     
-    """
-    __slots__ = ('attrs',)
+#     """
+#     __slots__ = ('attrs',)
 
-    def __init__(self, attrs, lineno):
-        super(AttrDeclare, self).__init__(lineno)
-        self.attrs = attrs
+#     def __init__(self, attrs, lineno):
+#         super(AttrDeclare, self).__init__(lineno)
+#         self.attrs = attrs
 
 
-class Attr(ASTNode):
-    """ An AST node representing an attribute declaration.
+# class Attr(ASTNode):
+#     """ An AST node representing an attribute declaration.
 
-    Attributes
-    ----------
-    name : str
-        The name of the attribute
+#     Attributes
+#     ----------
+#     name : str
+#         The name of the attribute
     
-    default : Python or None
-        A Python node representing the default value of the attribute,
-        if provided.
+#     default : Python or None
+#         A Python node representing the default value of the attribute,
+#         if provided.
 
-    """
-    __slots__ = ('name', 'default')
+#     """
+#     __slots__ = ('name', 'default')
 
-    def __init__(self, name, default, lineno):
-        super(Attr, self).__init__(lineno)
-        self.name = name
-        self.default = default
+#     def __init__(self, name, default, lineno):
+#         super(Attr, self).__init__(lineno)
+#         self.name = name
+#         self.default = default
 
