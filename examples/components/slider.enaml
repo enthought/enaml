@@ -4,24 +4,24 @@
 #------------------------------------------------------------------------------
 """ Slider Example
 
-Demonstrates the use of a simple slider control which used to convert a 
-range of integer values into values on a log scale.
+Demonstrates the use of a simple slider control which is used to convert
+a range of integer values into values on a log scale.
 
 """
 import math
 
 
-defn MainWindow:
-    Window:
-        title = 'Slider Example'
-        Form:
-            Label:
-                text = 'Log Value'
-            Field:
-                value << math.log(val_slider.value)
-                read_only = True
-            Slider -> val_slider:
-                tick_interval = 50
-                maximum = 1000
-                minimum = 1
+MainWindow(Window):
+    title = 'Slider Example'
+    Form:
+        Label:
+            text = 'Log Value'
+        Field:
+            value << math.log(val_slider.value)
+            read_only = True
+        Slider:
+            id: val_slider
+            tick_interval = 50
+            maximum = 1000
+            minimum = 1
 
