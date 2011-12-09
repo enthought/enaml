@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 from enaml.item_models.standard_models import ListModel, TableModel
 from enaml.styling.brush import Brush
 from enaml.styling.color import Color
@@ -64,14 +68,15 @@ table_model = ColoredTable(table, data_setter=table_setter)
 # And once ListView and TreeView are implemented, will work just fine
 # there as well.
 
-defn MainWindow:
-    Window:
-        constraints = [
-            hbox(tv1, tv2),
-        ]
-        TableView -> tv1:
-            hug_width = 'strong'
-            item_model = list_model
-        TableView -> tv2:
-            item_model = table_model
+MainWindow(Window):
+    constraints = [
+        hbox(tv1, tv2),
+    ]
+    TableView: 
+        id: tv1
+        hug_width = 'strong'
+        item_model = list_model
+    TableView:
+        id: tv2
+        item_model = table_model
 
