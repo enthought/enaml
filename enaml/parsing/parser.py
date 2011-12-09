@@ -505,7 +505,7 @@ def p_enaml_arguments2(p):
             # Now that we have a lineno available, compile the code
             # object for the argument and update the lineno.
             expr = argument.py_ast
-            set_locations(expr, lineno)
+            set_locations(expr, lineno, 1)
             code = compile(expr, 'Enaml', mode='eval')
             argument.code = code
             argument.lineno = lineno
