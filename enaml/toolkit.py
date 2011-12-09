@@ -7,6 +7,9 @@ import os
 from traits.api import HasStrictTraits, Callable, Str, WeakRef
 
 
+#------------------------------------------------------------------------------
+# Constructor
+#------------------------------------------------------------------------------
 class Constructor(HasStrictTraits):
     """ The constructor class to use to populate the toolkit.
 
@@ -73,6 +76,9 @@ class Constructor(HasStrictTraits):
         return Constructor(shell_loader, abstract_loader)
 
 
+#------------------------------------------------------------------------------
+# Toolkit
+#------------------------------------------------------------------------------
 class Toolkit(dict):
     """ The Enaml toolkit object class which facilitates easy gui
     toolkit independent backend development and use. The Toolkit
@@ -246,6 +252,18 @@ class Toolkit(dict):
 
     invoke_later = property(_get_invoke_later, _set_invoke_later)
 
+    def _get_invoke_timer(self):
+        """ Returns the function for invoking a function some ms later in
+        the event loop.
+
+        """
+        return self.get('__invoke_timer__')
+
+    def _set_invoke_timer(self, val):
+        self['__invoke_timer__'] = val
+
+    invoke_timer = property(_get_invoke_timer, _set_invoke_timer)
+
     def _get_control_exception_handler(self):
         """ Returns the function for handling exceptions on a control object
         that would otherwise be swallowed.
@@ -256,8 +274,13 @@ class Toolkit(dict):
     def _set_control_exception_handler(self, val):
         self['__control_exception_handler__'] = val
         
-    control_exception_handler = property(_get_control_exception_handler, _set_control_exception_handler)
+    control_exception_handler = property(_get_control_exception_handler, 
+                                         _set_control_exception_handler)
 
+
+#------------------------------------------------------------------------------
+# Toolkit Factory Functions
+#------------------------------------------------------------------------------
 def default_toolkit():
     """ Creates an returns the default toolkit object based on
     the user's current ETS_TOOLKIT environment variables.
@@ -282,7 +305,7 @@ def qt_toolkit():
     from .widgets.qt.constructors import QT_CONSTRUCTORS
     from .util.guisupport import get_app_qt4, start_event_loop_qt4
     from .widgets.qt.styling import QT_STYLE_SHEET
-    from .widgets.qt.utils import invoke_later
+    from .widgets.qt.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
 
     utils = {}
@@ -293,6 +316,7 @@ def qt_toolkit():
     toolkit.start_app = start_event_loop_qt4
     toolkit.style_sheet = QT_STYLE_SHEET
     toolkit.invoke_later = invoke_later
+    toolkit.invoke_timer = invoke_timer
     toolkit.control_exception_handler = None
     toolkit.update(utils)
     toolkit.update(OPERATORS)
@@ -309,7 +333,7 @@ def wx_toolkit():
     from .widgets.wx.constructors import WX_CONSTRUCTORS
     from .util.guisupport import get_app_wx, start_event_loop_wx
     from .widgets.wx.styling import WX_STYLE_SHEET
-    from .widgets.wx.utils import invoke_later
+    from .widgets.wx.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
 
     utils = {}
@@ -320,6 +344,7 @@ def wx_toolkit():
     toolkit.start_app = start_event_loop_wx
     toolkit.style_sheet = WX_STYLE_SHEET
     toolkit.invoke_later = invoke_later
+    toolkit.invoke_timer = invoke_timer
     toolkit.control_exception_handler = None
     toolkit.update(utils)
     toolkit.update(OPERATORS)
