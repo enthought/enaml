@@ -80,167 +80,9 @@ def _decl_wrapper_gen(func):
 
 
 #------------------------------------------------------------------------------
-# Body Compiler Mixin
-#------------------------------------------------------------------------------
-class BodyCompilerMixin(object):
-    """ A compiler mixin that can compile the nodes common between
-    Declaration and Defn nodes. The mixin expects the instance to 
-    have attributes 'ops', 'name_gen', and 'name_stack'
-
-    """
-    def visit_Call(self, node):
-        """ Create the bytecode ops for performing a call in the body
-        of a declaration or defn. The calls are expected to return 
-        iterables of children.
-
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        # Since we are adding multiple children to one parent, we need
-        # to load that parent on the stack before computing the children.
-        ops.append((bp.LOAD_FAST, name_stack[-1]))
-
-        # To perform the call we need to load the callable and its args
-        # and kwargs, call it, then use a compiler helper to handle the
-        # return values.
-        #
-        # SomeDefn(foo, bar, baz=12)
-        op_code = compile(node.name, 'Enaml', mode='eval')
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-        ])
-
-        n_args = 0
-        n_kwargs = 0
-        for arg in node.arguments:
-            if isinstance(arg, enaml_ast.Argument):
-                n_args += 1
-                arg_code = arg.code
-            else:
-                ops.append((bp.LOAD_CONST, arg.name))
-                n_kwargs += 1
-                arg_code = arg.argument.code
-            ops.extend([
-                (bp.LOAD_CONST, eval),
-                (bp.LOAD_CONST, arg_code),
-                (bp.LOAD_FAST, 'toolkit'),
-                (bp.LOAD_FAST, 'f_globals'),
-                (bp.CALL_FUNCTION, 0x0003),
-            ])
-        
-        # Rather than emitting bytecode to run a FOR loop over the
-        # return results of the function call, we use a helper function
-        # which does it for us. This simplifies the bytecode generation
-        # at the cost of a very small overhead.
-        ops.extend([
-            (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
-            (bp.LOAD_CONST, _compiler_add_children),
-            (bp.ROT_THREE, None),
-            (bp.CALL_FUNCTION, 0x0002),
-            (bp.POP_TOP, None),
-        ])
-
-    def visit_AttributeBinding(self, node):
-        """ Creates the bytecode ops for an attribute binding. This
-        visitor handles loading and calling the appropriate operator.
-
-        """
-        # XXX handle BoundCodeBlock instead of just BoundExpression
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        # Grab the ast and code object for the expression. These will
-        # be passed to the binding operator.
-        expr_ast = node.binding.expr.py_ast
-        expr_code = node.binding.expr.code
-        op_code = compile(node.binding.op, 'Enaml', mode='eval')
-
-        # A binding is accomplished by loading the appropriate binding
-        # operator function and passing it the a number of arguments:
-        #
-        # op = eval('__operator_Equal__', toolkit, f_globals)
-        # op(item, 'a', <ast>, <code>, f_globals, toolkit, identifiers)
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-            (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_CONST, node.name),
-            (bp.LOAD_CONST, expr_ast),
-            (bp.LOAD_CONST, expr_code),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'identifiers'),
-            (bp.CALL_FUNCTION, 0x0007),
-            (bp.POP_TOP, None),
-        ])
-
-    def visit_Instantiation(self, node):
-        """ Create the bytecode ops for a component instantiation. This 
-        visitor handles calling another derived component and storing
-        its identifier, if given.
-        
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        # This is similar logic to visit_Declaration
-        name = self.name_gen.next()
-        name_stack.append(name)
-
-        op_code = compile(node.name, 'Enaml', mode='eval')
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-            # When instantiating a Declaration, it is called without
-            # identifiers, so that it creates it's own new identifier
-            # scope. This means that derived declarations share ids,
-            # but the composed children have an isolated id space.
-            (bp.LOAD_CONST, None),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.CALL_FUNCTION, 0x0002),
-            (bp.STORE_FAST, name),
-        ])
-        
-        if node.identifier:
-            ops.extend([
-                (bp.LOAD_FAST, name),
-                (bp.LOAD_FAST, 'identifiers'),
-                (bp.LOAD_CONST, node.identifier),
-                (bp.STORE_SUBSCR, None),
-            ])
-
-        for item in node.body:
-            self.visit(item)
-        
-        name_stack.pop()
-        ops.extend([
-            # foo.add_child(button)
-            (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_child'),
-            (bp.LOAD_FAST, name),
-            (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
-        ])
-
-
-#------------------------------------------------------------------------------
 # Declaration Compiler
 #------------------------------------------------------------------------------
-class DeclarationCompiler(_NodeVisitor, BodyCompilerMixin):
+class DeclarationCompiler(_NodeVisitor):
     """ A visitor which compiles a Declaration node into a code object.
 
     """
@@ -336,6 +178,154 @@ class DeclarationCompiler(_NodeVisitor, BodyCompilerMixin):
 
         name_stack.pop()
 
+    def visit_AttributeBinding(self, node):
+        """ Creates the bytecode ops for an attribute binding. This
+        visitor handles loading and calling the appropriate operator.
+
+        """
+        # XXX handle BoundCodeBlock instead of just BoundExpression
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # Grab the ast and code object for the expression. These will
+        # be passed to the binding operator.
+        expr_ast = node.binding.expr.py_ast
+        expr_code = node.binding.expr.code
+        op_code = compile(node.binding.op, 'Enaml', mode='eval')
+
+        # A binding is accomplished by loading the appropriate binding
+        # operator function and passing it the a number of arguments:
+        #
+        # op = eval('__operator_Equal__', toolkit, f_globals)
+        # op(item, 'a', <ast>, <code>, f_globals, toolkit, identifiers)
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_CONST, node.name),
+            (bp.LOAD_CONST, expr_ast),
+            (bp.LOAD_CONST, expr_code),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'identifiers'),
+            (bp.CALL_FUNCTION, 0x0007),
+            (bp.POP_TOP, None),
+        ])
+
+    def visit_Instantiation(self, node):
+        """ Create the bytecode ops for a component instantiation. This 
+        visitor handles calling another derived component and storing
+        its identifier, if given.
+        
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # This is similar logic to visit_Declaration
+        name = self.name_gen.next()
+        name_stack.append(name)
+
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            # When instantiating a Declaration, it is called without
+            # identifiers, so that it creates it's own new identifier
+            # scope. This means that derived declarations share ids,
+            # but the composed children have an isolated id space.
+            (bp.LOAD_CONST, None),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.STORE_FAST, name),
+        ])
+        
+        if node.identifier:
+            ops.extend([
+                (bp.LOAD_FAST, name),
+                (bp.LOAD_FAST, 'identifiers'),
+                (bp.LOAD_CONST, node.identifier),
+                (bp.STORE_SUBSCR, None),
+            ])
+
+        for item in node.body:
+            self.visit(item)
+        
+        name_stack.pop()
+        ops.extend([
+            # foo.add_child(button)
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_ATTR, 'add_child'),
+            (bp.LOAD_FAST, name),
+            (bp.CALL_FUNCTION, 0x0001),
+            (bp.POP_TOP, None),
+        ])
+
+    def visit_Call(self, node):
+        """ Create the bytecode ops for performing a call in the body
+        of a declaration or defn. The calls are expected to return 
+        iterables of children.
+
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # Since we are adding multiple children to one parent, we need
+        # to load that parent on the stack before computing the children.
+        ops.append((bp.LOAD_FAST, name_stack[-1]))
+
+        # To perform the call we need to load the callable and its args
+        # and kwargs, call it, then use a compiler helper to handle the
+        # return values.
+        #
+        # SomeDefn(foo, bar, baz=12)
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+        ])
+
+        n_args = 0
+        n_kwargs = 0
+        for arg in node.arguments:
+            if isinstance(arg, enaml_ast.Argument):
+                n_args += 1
+                arg_code = arg.code
+            else:
+                ops.append((bp.LOAD_CONST, arg.name))
+                n_kwargs += 1
+                arg_code = arg.argument.code
+            ops.extend([
+                (bp.LOAD_CONST, eval),
+                (bp.LOAD_CONST, arg_code),
+                (bp.LOAD_FAST, 'toolkit'),
+                (bp.LOAD_FAST, 'f_globals'),
+                (bp.CALL_FUNCTION, 0x0003),
+            ])
+        
+        # Rather than emitting bytecode to run a FOR loop over the
+        # return results of the function call, we use a helper function
+        # which does it for us. This simplifies the bytecode generation
+        # at the cost of a very small overhead.
+        ops.extend([
+            (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
+            (bp.LOAD_CONST, _compiler_add_children),
+            (bp.ROT_THREE, None),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.POP_TOP, None),
+        ])
+
 
 #------------------------------------------------------------------------------
 # Defn Compiler
@@ -352,7 +342,7 @@ class _DefnCollector(object):
         return tuple(self.children)
 
 
-class DefnCompiler(_NodeVisitor, BodyCompilerMixin):
+class DefnCompiler(_NodeVisitor):
 
     def __init__(self):
         self.ops = []
@@ -376,19 +366,59 @@ class DefnCompiler(_NodeVisitor, BodyCompilerMixin):
         name = self.name_gen.next()
         name_stack.append(name)
 
+        # defn FooBar(a, b, c):
+        #     f_locals = locals()
+        #     identifiers = {}
+        #     identifiers.update(f_locals)
+        #     f_globals = globals()
+        #     toolkit = Toolkit.active_toolkit()
+        #     merged_globals = {}
+        #     merged_globals.update(toolkit)
+        #     merged_globals.update(f_globals)
+        #     root = _DefnCollector()
         ops.extend([
+            # f_locals = locals()
             (bp.LOAD_GLOBAL, 'locals'),
             (bp.CALL_FUNCTION, 0x0000),
-            (bp.LOAD_ATTR, 'copy'),
-            (bp.CALL_FUNCTION, 0x0000),
+            (bp.STORE_FAST, 'f_locals'),
+
+            # identifiers = {}
+            # identifiers.update(f_locals)
+            (bp.BUILD_MAP, 0),
+            (bp.DUP_TOP, 0),
+            (bp.LOAD_ATTR, 'update'),
+            (bp.LOAD_FAST, 'f_locals'),
+            (bp.CALL_FUNCTION, 0x0001),
+            (bp.POP_TOP, None),
             (bp.STORE_FAST, 'identifiers'),
+
+            # f_globals = globals()
             (bp.LOAD_GLOBAL, 'globals'),
             (bp.CALL_FUNCTION, 0x0000),
             (bp.STORE_FAST, 'f_globals'),
+
+            # toolkit = Toolkit.active_toolkit()
             (bp.LOAD_CONST, Toolkit),
             (bp.LOAD_ATTR, 'active_toolkit'),
             (bp.CALL_FUNCTION, 0x0000),
             (bp.STORE_FAST, 'toolkit'),
+
+            # eval_globals = {}
+            # eval_globals.update(toolkit)
+            # eval_globals.update(f_globals)
+            (bp.BUILD_MAP, 0),
+            (bp.DUP_TOP, None),
+            (bp.LOAD_ATTR, 'update'),
+            (bp.DUP_TOP, None),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0001),
+            (bp.POP_TOP, None),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0001),
+            (bp.POP_TOP, None),
+            (bp.STORE_FAST, 'merged_globals'),
+
+            # root = _DefnCollector()
             (bp.LOAD_CONST, _DefnCollector),
             (bp.CALL_FUNCTION, 0x0000),
             (bp.STORE_FAST, name),
@@ -404,6 +434,151 @@ class DefnCompiler(_NodeVisitor, BodyCompilerMixin):
             (bp.LOAD_ATTR, 'get_children'),
             (bp.CALL_FUNCTION, 0x0000),
             (bp.RETURN_VALUE, None)
+        ])
+
+    def visit_AttributeBinding(self, node):
+        """ Creates the bytecode ops for an attribute binding. This
+        visitor handles loading and calling the appropriate operator.
+
+        """
+        # XXX handle BoundCodeBlock instead of just BoundExpression
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # Grab the ast and code object for the expression. These will
+        # be passed to the binding operator.
+        expr_ast = node.binding.expr.py_ast
+        expr_code = node.binding.expr.code
+        op_code = compile(node.binding.op, 'Enaml', mode='eval')
+
+        # A binding is accomplished by loading the appropriate binding
+        # operator function and passing it the a number of arguments:
+        #
+        # op = eval('__operator_Equal__', merged_globals, f_locals)
+        # op(item, 'a', <ast>, <code>, f_globals, toolkit, identifiers)
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'merged_globals'),
+            (bp.LOAD_FAST, 'f_locals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_CONST, node.name),
+            (bp.LOAD_CONST, expr_ast),
+            (bp.LOAD_CONST, expr_code),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'identifiers'),
+            (bp.CALL_FUNCTION, 0x0007),
+            (bp.POP_TOP, None),
+        ])
+
+    def visit_Instantiation(self, node):
+        """ Create the bytecode ops for a component instantiation. This 
+        visitor handles calling another derived component and storing
+        its identifier, if given.
+        
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # This is similar logic to visit_Declaration
+        name = self.name_gen.next()
+        name_stack.append(name)
+
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            # item = eval('Foo', merged_globals, f_locals)(None, toolkit)
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'merged_globals'),
+            (bp.LOAD_FAST, 'f_locals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_CONST, None),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.STORE_FAST, name),
+        ])
+        
+        if node.identifier:
+            ops.extend([
+                (bp.LOAD_FAST, name),
+                (bp.LOAD_FAST, 'identifiers'),
+                (bp.LOAD_CONST, node.identifier),
+                (bp.STORE_SUBSCR, None),
+            ])
+
+        for item in node.body:
+            self.visit(item)
+        
+        name_stack.pop()
+        ops.extend([
+            # foo.add_child(button)
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_ATTR, 'add_child'),
+            (bp.LOAD_FAST, name),
+            (bp.CALL_FUNCTION, 0x0001),
+            (bp.POP_TOP, None),
+        ])
+
+    def visit_Call(self, node):
+        """ Create the bytecode ops for performing a call in the body
+        of a declaration or defn. The calls are expected to return 
+        iterables of children.
+
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # Since we are adding multiple children to one parent, we need
+        # to load that parent on the stack before computing the children.
+        ops.append((bp.LOAD_FAST, name_stack[-1]))
+
+        # To perform the call we need to load the callable and its args
+        # and kwargs, call it, then use a compiler helper to handle the
+        # return values.
+        #
+        # SomeDefn(foo, bar, baz=12)
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'merged_globals'),
+            (bp.LOAD_FAST, 'f_locals'),
+            (bp.CALL_FUNCTION, 0x0003),
+        ])
+
+        n_args = 0
+        n_kwargs = 0
+        for arg in node.arguments:
+            if isinstance(arg, enaml_ast.Argument):
+                n_args += 1
+                arg_code = arg.code
+            else:
+                ops.append((bp.LOAD_CONST, arg.name))
+                n_kwargs += 1
+                arg_code = arg.argument.code
+            ops.extend([
+                (bp.LOAD_CONST, eval),
+                (bp.LOAD_CONST, arg_code),
+                (bp.LOAD_FAST, 'merged_globals'),
+                (bp.LOAD_FAST, 'f_locals'),
+                (bp.CALL_FUNCTION, 0x0003),
+            ])
+        
+        # Rather than emitting bytecode to run a FOR loop over the
+        # return results of the function call, we use a helper function
+        # which does it for us. This simplifies the bytecode generation
+        # at the cost of a very small overhead.
+        ops.extend([
+            (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
+            (bp.LOAD_CONST, _compiler_add_children),
+            (bp.ROT_THREE, None),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.POP_TOP, None),
         ])
 
 
@@ -500,6 +675,8 @@ class EnamlCompiler(_NodeVisitor):
         to the module.
 
         """
+        # XXX Handle arg defaults
         func_code = DefnCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
         self.global_ns[node.name] = func
+
