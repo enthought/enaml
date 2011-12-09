@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 import ast
 from abc import ABCMeta, abstractmethod
-from collections import namedtuple
 import weakref
 
 from traits.api import HasTraits
@@ -26,8 +25,11 @@ class ExpressionLocals(object):
 
     Notes
     -----
-    Setting items on this mapping is not supported since it's intended
-    to be used with expressions and not statements.
+    When setting items on this mapping, the values are stored in an 
+    internal dictionary. Modifying the f_locals is not desired since
+    that would effect all other expressions that operate with those
+    locals. However, we must support assignment since that's required
+    to make list comprehensions work.
 
     Strong references are kept to all objects passed to the constructor,
     so care should be taken in managing the lifetime of these scope
@@ -35,7 +37,7 @@ class ExpressionLocals(object):
     (It's probably best to create these objects on-the-fly when needed)
 
     """
-    __slots__ = ('obj', 'f_locals')
+    __slots__ = ('obj', 'f_locals', 'temp_locals')
 
     def __init__(self, obj, f_locals):
         """ Initialize an expression locals instance.
@@ -52,6 +54,7 @@ class ExpressionLocals(object):
         """
         self.obj = obj
         self.f_locals = f_locals
+        self.temp_locals = {}
 
     def __getitem__(self, name):
         """ Lookup an item from the namespace.
@@ -72,22 +75,32 @@ class ExpressionLocals(object):
 
         """
         try:
-            res = self.f_locals[name]
+            res = self.temp_locals[name]
         except KeyError:
-            parent = self.obj
-            while True:
-                try:
-                    res = getattr(parent, name)
-                    break
-                except AttributeError:
+            try:
+                res = self.f_locals[name]
+            except KeyError:
+                parent = self.obj
+                while True:
                     try:
-                        parent = parent.parent
+                        res = getattr(parent, name)
+                        break
                     except AttributeError:
-                        raise KeyError(name)
-                    else:
-                        if parent is None:
+                        try:
+                            parent = parent.parent
+                        except AttributeError:
                             raise KeyError(name)
+                        else:
+                            if parent is None:
+                                raise KeyError(name)
         return res
+
+    def __setitem__(self, name, val):
+        """ Stores the value in the internal locals dictionary. This
+        allows list comprehension expressions to work properly.
+
+        """
+        self.temp_locals[name] = val
 
 
 #------------------------------------------------------------------------------
