@@ -11,73 +11,73 @@ widget.
 """
 
 
-defn MainWindow:
-    Window:
-        title = "Scroll Area"
-        ScrollArea:
-            preferred_size = (None, 100)
-            Form:
-                Label:
-                    text = "First name:"
-                Field:
-                    pass
-                Label:
-                    text = "Last name:"
-                Field:
-                    pass
-                Label:
-                    text = "Address:"
-                Field:
-                    pass
-                Label:
-                    text = ""
-                Field:
-                    pass
-                Label:
-                    text = "City:"
-                Field:
-                    pass
-                Label:
-                    text = "State:"
-                Field:
-                    pass
-                Label:
-                    text = "Postal Code:"
-                Field:
-                    pass
-                Label:
-                    text = "Country:"
-                Field:
-                    pass
-                Label:
-                    text = "Phone number:"
-                Field:
-                    pass
-                Label:
-                    text = "Email:"
-                Field:
-                    pass
-                Label:
-                    text = "Confirm email:"
-                Field:
-                    pass
-                Label:
-                    text = "Confirm email:"
-                Field:
-                    pass
-                Label:
-                    text = "Confirm email:"
-                Field:
-                    pass
-                Label:
-                    text = "Confirm email:"
-                Field:
-                    pass
-                Label:
-                    text = "Confirm email:"
-                Field:
-                    pass
-                Label:
-                    text = "Confirm email:"
-                Field:
-                    pass
+MainWindow(Window):
+    title = "Scroll Area"
+    ScrollArea:
+        preferred_size = (None, 100)
+        Form:
+            Label:
+                text = "First name:"
+            Field:
+                pass
+            Label:
+                text = "Last name:"
+            Field:
+                pass
+            Label:
+                text = "Address:"
+            Field:
+                pass
+            Label:
+                text = ""
+            Field:
+                pass
+            Label:
+                text = "City:"
+            Field:
+                pass
+            Label:
+                text = "State:"
+            Field:
+                pass
+            Label:
+                text = "Postal Code:"
+            Field:
+                pass
+            Label:
+                text = "Country:"
+            Field:
+                pass
+            Label:
+                text = "Phone number:"
+            Field:
+                pass
+            Label:
+                text = "Email:"
+            Field:
+                pass
+            Label:
+                text = "Confirm email:"
+            Field:
+                pass
+            Label:
+                text = "Confirm email:"
+            Field:
+                pass
+            Label:
+                text = "Confirm email:"
+            Field:
+                pass
+            Label:
+                text = "Confirm email:"
+            Field:
+                pass
+            Label:
+                text = "Confirm email:"
+            Field:
+                pass
+            Label:
+                text = "Confirm email:"
+            Field:
+                pass
+
