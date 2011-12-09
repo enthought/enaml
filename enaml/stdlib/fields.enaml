@@ -2,39 +2,29 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.converters import IntConverter, FloatConverter
+from enaml.converters import IntConverter, FloatConverter, LongConverter, ComplexConverter
 
 
-defn ErrorField:
-    Field:
-        bg_color << 'error' if error else 'none'
+ErrorField(Field):
+    bg_color << 'error' if error else 'none'
 
 
-defn IntField:
-    ErrorField:
-        converter = IntConverter()
-        #alignment = 'right'
+IntField(ErrorField):
+    converter = IntConverter()
 
 
-defn LongField:
-    ErrorField:
-        converter = LongConverter()
-        #alignment = 'right'
+LongField(ErrorField):
+    converter = LongConverter()
 
 
-defn FloatField:
-    ErrorField:
-        converter = FloatConverter()
-        #alignment = 'right'
+FloatField(ErrorField):
+    converter = FloatConverter()
 
 
-defn ComplexField:
-    ErrorField:
-        converter = ComplexConverter()
-        #alignment = 'right'
+ComplexField(ErrorField):
+    converter = ComplexConverter()
 
 
-defn PasswordField:
-    Field:
-        password_mode = 'password'
+PasswordField(Field):
+    password_mode = 'password'
 
