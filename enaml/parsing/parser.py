@@ -175,40 +175,43 @@ def p_enaml_import(p):
 #------------------------------------------------------------------------------
 # Declaration
 #------------------------------------------------------------------------------
-def p_declaration1(p):
+def p_declaration(p):
     ''' declaration : NAME LPAR test RPAR COLON declaration_body '''
     lineno = p.lineno(1)
-    doc, items = p[6]
+    doc, idn, items = p[6]
     base = ast.Expression(body=p[3])
     set_locations(base, lineno, 1)
     code = compile(base, 'Enaml', mode='eval')
     base_node = enaml_ast.Python(base, code, lineno)
-    p[0] = enaml_ast.Declaration(p[1], base_node, None, doc, items, lineno)
-
-
-def p_declaration2(p):
-    ''' declaration : NAME LPAR test RPAR NAME COLON declaration_body '''
-    lineno = p.lineno(1)
-    doc, items = p[7]
-    base = ast.Expression(body=p[3])
-    set_locations(base, lineno, 1)
-    code = compile(base, 'Enaml', mode='eval')
-    base_node = enaml_ast.Python(base, code, lineno)
-    p[0] = enaml_ast.Declaration(p[1], base_node, p[5], doc, items, lineno)
+    p[0] = enaml_ast.Declaration(p[1], base_node, idn, doc, items, lineno)
 
 
 def p_declaration_body1(p):
     ''' declaration_body : NEWLINE INDENT declaration_body_items DEDENT '''
     # Filter out any pass statements
     items = filter(None, p[3])
-    p[0] = ('', items)
+    p[0] = ('', None, items)
 
 
 def p_declaration_body2(p):
+    ''' declaration_body : NEWLINE INDENT identifier declaration_body_items DEDENT '''
+    # Filter out any pass statements
+    items = filter(None, p[4])
+    p[0] = ('', p[3], items)
+
+
+def p_declaration_body3(p):
     ''' declaration_body : NEWLINE INDENT STRING NEWLINE declaration_body_items DEDENT '''
     # Filter out any pass statements
     items = filter(None, p[5])
-    p[0] = (p[3], items)
+    p[0] = (p[3], None, items)
+
+
+def p_declaration_body4(p):
+    ''' declaration_body : NEWLINE INDENT STRING NEWLINE identifier declaration_body_items DEDENT '''
+    # Filter out any pass statements
+    items = filter(None, p[6])
+    p[0] = (p[3], p[5], items)
 
 
 def p_declaration_body_items1(p):
@@ -242,76 +245,38 @@ def p_declaration_body_item4(p):
 
 
 #------------------------------------------------------------------------------
-# Attr Declare
+# Identifier
 #------------------------------------------------------------------------------
-# def p_attr_declare(p):
-#     ''' attr_declare : ATTR attr_list NEWLINE '''
-#     p[0] = enaml_ast.AttrDeclare(p[2], p.lineno(1))
-
-
-# def p_attr_list1(p):
-#     ''' attr_list : attr '''
-#     p[0] = [p[1]]
-
-
-# def p_attr_list2(p):
-#     ''' attr_list : attr COMMA '''
-#     p[0] = [p[1]]
-
-
-# def p_attr_list3(p):
-#     ''' attr_list : attr_list_list attr '''
-#     p[0] = p[1] + [p[2]]
-
-
-# def p_attr_list4(p):
-#     ''' attr_list : attr_list_list attr COMMA '''
-#     p[0] = p[1] + [p[2]]
-
-
-# def p_attr_list_list1(p):
-#     ''' attr_list_list : attr COMMA '''
-#     p[0] = [p[1]]
-
-
-# def p_attr_list_list2(p):
-#     ''' attr_list_list : attr_list_list attr COMMA '''
-#     p[0] = p[1] + [p[2]]
-
-
-# def p_attr1(p):
-#     ''' attr : NAME '''
-#     p[0] = enaml_ast.Attr(p[1], None, p.lineno(1))
-
-
-# def p_attr2(p):
-#     ''' attr : NAME EQUAL test '''
-#     lineno = p.lineno(1)
-#     default = ast.Expression(body=p[3])
-#     set_locations(default, lineno, 1)
-#     code = compile(default, 'Enaml', mode='eval')
-#     default_node = enaml_ast.Python(default, code, lineno)
-#     p[0] = enaml_ast.Attr(p[1], default_node, lineno)
+def p_identifier(p):
+    ''' identifier : NAME COLON NAME NEWLINE '''
+    lhs = p[1]
+    if lhs != 'id':
+        msg = "'id' required. Got '%s' instead." % lhs
+        raise_enaml_syntax_error(msg, p.lineno(1))
+    p[0] = p[3]
 
 
 #------------------------------------------------------------------------------
 # Instantiation
 #------------------------------------------------------------------------------
-def p_instantiation1(p):
+def p_instantiation(p):
     ''' instantiation : NAME COLON instantiation_body '''
-    p[0] = enaml_ast.Instantiation(p[1], None, p[3], p.lineno(1))
+    identifier, items = p[3]
+    p[0] = enaml_ast.Instantiation(p[1], identifier, items, p.lineno(1))
 
 
-def p_instantiation2(p):
-    ''' instantiation : NAME NAME COLON instantiation_body '''
-    p[0] = enaml_ast.Instantiation(p[1], p[2], p[4], p.lineno(1))
-
-
-def p_instantiation_body(p):
+def p_instantiation_body1(p):
     ''' instantiation_body : NEWLINE INDENT instantiation_body_items DEDENT '''
     # Filter out any pass statements
     items = filter(None, p[3])
-    p[0] = items
+    p[0] = (None, items)
+
+
+def p_instantiation_body2(p):
+    ''' instantiation_body : NEWLINE INDENT identifier instantiation_body_items DEDENT '''
+    # Filter out any pass statements
+    items = filter(None, p[4])
+    p[0] = (p[3], items)
 
 
 def p_instantiation_body_items1(p):
