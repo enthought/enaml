@@ -9,7 +9,6 @@ using group-style layout constraints. The scrollbars appear as needed
 for the various components.
 
 """
-
 :: python ::
 
 from enaml.item_models.abstract_item_model import AbstractTableModel
@@ -36,95 +35,96 @@ class MyModel(AbstractTableModel):
 :: end ::
 
 
-defn LargeForm:
-    Form:
-        Label:
-            text = "First name:"
-        Field:
-            pass
-        Label:
-            text = "Last name:"
-        Field:
-            pass
-        Label:
-            text = "Address:"
-        Field:
-            pass
-        Label:
-            text = ""
-        Field:
-            pass
-        Label:
-            text = "City:"
-        Field:
-            pass
-        Label:
-            text = "State:"
-        Field:
-            pass
-        Label:
-            text = "Postal Code:"
-        Field:
-            pass
-        Label:
-            text = "Country:"
-        Field:
-            pass
-        Label:
-            text = "Phone number:"
-        Field:
-            pass
-        Label:
-            text = "Email:"
-        Field:
-            pass
-        Label:
-            text = "Confirm email:"
-        Field:
-            pass
-        Label:
-            text = "Confirm email:"
-        Field:
-            pass
-        Label:
-            text = "Confirm email:"
-        Field:
-            pass
-        Label:
-            text = "Confirm email:"
-        Field:
-            pass
-        Label:
-            text = "Confirm email:"
-        Field:
-            pass
-        Label:
-            text = "Confirm email:"
-        Field:
-            pass
+LargeForm(Form):
+    Label:
+        text = "First name:"
+    Field:
+        pass
+    Label:
+        text = "Last name:"
+    Field:
+        pass
+    Label:
+        text = "Address:"
+    Field:
+        pass
+    Label:
+        text = ""
+    Field:
+        pass
+    Label:
+        text = "City:"
+    Field:
+        pass
+    Label:
+        text = "State:"
+    Field:
+        pass
+    Label:
+        text = "Postal Code:"
+    Field:
+        pass
+    Label:
+        text = "Country:"
+    Field:
+        pass
+    Label:
+        text = "Phone number:"
+    Field:
+        pass
+    Label:
+        text = "Email:"
+    Field:
+        pass
+    Label:
+        text = "Confirm email:"
+    Field:
+        pass
+    Label:
+        text = "Confirm email:"
+    Field:
+        pass
+    Label:
+        text = "Confirm email:"
+    Field:
+        pass
+    Label:
+        text = "Confirm email:"
+    Field:
+        pass
+    Label:
+        text = "Confirm email:"
+    Field:
+        pass
+    Label:
+        text = "Confirm email:"
+    Field:
+        pass
 
 
-defn MainWindow:
-    Window:
-        title = "Multi Scroll Area"
-        constraints = [
-            vbox(
-                hbox(area1, area2),
-                area3,
-            ),
-            # A couple extra constraints to more explicitly constrain
-            # the widths and heights instead of using the *box(...)
-            # computed defaults.
-            area1.width == 0.75 * area2.width,
-            area3.height == area1.height,
-        ]
-        ScrollArea -> area1:
-            preferred_size = (100, 100)
-            LargeForm:
-                pass
-        TableView -> area2:
-            item_model = MyModel()
-        ScrollArea -> area3:
-            LargeForm:
-                pass
+MainWindow(Window):
+    title = "Multi Scroll Area"
+    constraints = [
+        vbox(
+            hbox(area1, area2),
+            area3,
+        ),
+        # A couple extra constraints to more explicitly constrain
+        # the widths and heights instead of using the *box(...)
+        # computed defaults.
+        area1.width == 0.75 * area2.width,
+        area3.height == area1.height,
+    ]
+    ScrollArea:
+        id: area1
+        preferred_size = (100, 100)
+        LargeForm:
+            pass
+    TableView:
+        id: area2
+        item_model = MyModel()
+    ScrollArea:
+        id: area3
+        LargeForm:
+            pass
 
