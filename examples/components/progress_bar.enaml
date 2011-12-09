@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ ProgressBar component
 
 In this example, we demonstrate connecting a ProgressBar up to a model.
@@ -17,8 +21,8 @@ from traits.api import HasTraits, Int
 
 class Model(HasTraits):
     """ Model a process that does some work on command.
-    """
 
+    """
     # The total units of work to do.
     work_units = Int(1000)
 
@@ -27,6 +31,7 @@ class Model(HasTraits):
 
     def do_work(self):
         """ Do a random amount of work.
+
         """
         nunits = random.randint(10, 100)
         nunits = min(nunits, self.work_units - self.units_done)
@@ -34,12 +39,14 @@ class Model(HasTraits):
 
     def reset(self):
         """ Reset the work done back to 0.
+        
         """
         self.units_done = 0
 
 :: end ::
 
-defn MainWindow(model):
+
+defn ModelView(model):
     Window:
         title = 'Progress Bar'
         constraints = [
@@ -49,21 +56,25 @@ defn MainWindow(model):
                 _space_),
             align('h_center', progress, label, work_button),
         ]
-        ProgressBar -> progress:
+        ProgressBar:
+            id: progress
             value := model.units_done
             maximum := model.work_units
-        Label -> label:
+        Label:
+            id: label
             text << '{0}% ({1}/{2})'.format(progress.percentage, progress.value, progress.maximum)
-        PushButton -> work_button:
+        PushButton:
+            id: work_button
             text << "Do Some Work" if progress.percentage < 100 else "Reset"
             clicked >> model.do_work() if progress.percentage < 100 else model.reset()
 
+
 :: python ::
 
-# The main function is special cased as the entry point by the enaml-run script
+# A 'main' function is special cased as an entry point by the enaml-run script
 def main():
     model = Model()
-    window = MainWindow(model=model)
+    window, = ModelView(model)
     window.show()
 
 :: end ::
