@@ -13,40 +13,21 @@ from .parsing.analyzer import AttributeVisitor
 from .guard import guard
 
 
-#------------------------------------------------------------------------------
-# Custom mapping type for namespace type checking
-#------------------------------------------------------------------------------
-class MappingType(object):
-    """ An abstract class used for type checking on instances to ensure
-    that they provide a __getitem__ and __setitem__ method.
-
-    """
-    __metaclass__ = ABCMeta
-
-    @classmethod
-    def __subclasshook__(cls, C):
-        """ Returns True if the class has a __getitem__ and __setitem__
-        method. Otherwise, returns NotImplemented.
-
-        """
-        if cls is MappingType:
-            if hasattr(C, '__getitem__') and hasattr(C, '__setitem__'):
-                return True
-        return NotImplemented
-
+# XXX clean up the expression binders. We need more powerful visitors which
+# perform more intelligent binding.
 
 #------------------------------------------------------------------------------
 # Express Locals
 #------------------------------------------------------------------------------
 class ExpressionLocals(object):
-    """ A mapping object that will first look in the provided overrides,
-    then in the given locals mapping, and finally in the attribute space
-    of the given object.
+    """ A mapping object that will first look in the provided locals
+    dictionary and finally by walking up the tree of components looking
+    for attributes.
 
     Notes
     -----
-    Setting items on this object will delegate the operation to the
-    provided locals mapping.
+    Setting items on this mapping is not supported since it's intended
+    to be used with expressions and not statements.
 
     Strong references are kept to all objects passed to the constructor,
     so care should be taken in managing the lifetime of these scope
@@ -54,40 +35,30 @@ class ExpressionLocals(object):
     (It's probably best to create these objects on-the-fly when needed)
 
     """
-    __slots__ = ('local_ns', 'obj', 'overrides')
+    __slots__ = ('obj', 'f_locals')
 
-    def __init__(self, local_ns, obj, overrides):
+    def __init__(self, obj, f_locals):
         """ Initialize an expression locals instance.
 
         Parameters
         ----------
-        local_ns : dict
+        obj : object
+            The python object on which to start looking for attributes.
+
+        f_locals : dict
             The locals dict to check before checking the attribute space
             of the given object.
 
-        obj : object
-            The python object on which to attempt the getattr.
-
-        overrides : dict
-            Objects that should take complete precedent in the scope
-            lookup.
-
-            .. note:: This is a dict instead of ``**overrides``, so
-            that 'self' can be added to the namespace. If we didn't do
-            this, 'self' would clash with this method definition.
-
         """
-        self.local_ns = local_ns
         self.obj = obj
-        self.overrides = overrides
+        self.f_locals = f_locals
 
     def __getitem__(self, name):
         """ Lookup an item from the namespace.
 
         Returns the named item from the namespace by first looking in
-        the overrides, then the provided locals namespace, and finally
-        the attribute space of the object. If the value is not found,
-        a KeyError is raised.
+        the provided locals namespace, and finally the attribute space 
+        of the object. If the value is not found, a KeyError is raised.
 
         Parameters
         ----------
@@ -101,33 +72,74 @@ class ExpressionLocals(object):
 
         """
         try:
-            res = self.overrides[name]
+            res = self.f_locals[name]
         except KeyError:
-            try:
-                res = self.local_ns[name]
-            except KeyError:
+            parent = self.obj
+            while True:
                 try:
-                    res = getattr(self.obj, name)
+                    res = getattr(parent, name)
+                    break
                 except AttributeError:
-                    raise KeyError(name)
+                    try:
+                        parent = parent.parent
+                    except AttributeError:
+                        raise KeyError(name)
+                    else:
+                        if parent is None:
+                            raise KeyError(name)
         return res
 
-    def __setitem__(self, name, val):
-        """ Set the value in the local namespace.
 
-        This operation delegates the setting to the local namespace that
-        was provided during instantiation.
+#------------------------------------------------------------------------------
+# Ast walking helpers
+#------------------------------------------------------------------------------
+def parse_attr_names(py_ast, obj, f_locals):
+    """ Parses an expression ast, looking for attributes references in
+    the objects attribute space.
 
-        Parameters
-        ----------
-        name : string
-            The name to set in the namespace.
+    Given an ast.Expression node and an objet, returns the set of tuples
+    which are (name, object) parents. The name is an attribute name an
+    the object is the object which contains the trait attribute and is
+    either 'obj' itself or some ancestor of obj.
 
-        val : object
-            The value to set in the namespace.
+    Parameters
+    ----------
+    py_ast : Instance(ast.Expresssion)
+        The ast Expression node to parse.
 
-        """
-        self.local_ns[name] = val
+    obj : HasTraits object
+        The HasTraits instance object we are querrying for attributes.
+
+    f_locals : dict
+        The local dictionary whose names override those of the attribute
+        space.
+
+    Returns
+    -------
+    result : set
+        The set of (name, object) pairs referred to in the expression that 
+        are trait attributes on some ancestor of obj.
+
+    """
+    pairs = set()
+    name_node = ast.Name
+    for node in ast.walk(py_ast):
+        if isinstance(node, name_node):
+            name = node.id
+            if name not in f_locals:
+                parent = obj
+                while parent is not None:
+                    # XXX I don't particularly like this way of testing
+                    # whether or not an object has a trait defined.
+                    # Calling obj.trait(name) doesn't work because the
+                    # parent class is HasStrictTraits, so we get a trait
+                    # returned which is the Disallow trait type.
+                    if (name in parent._instance_traits() or 
+                        name in parent.class_traits()):
+                        pairs.add((name, parent))
+                        break
+                    parent = parent.parent
+    return pairs
 
 
 #------------------------------------------------------------------------------
@@ -137,10 +149,10 @@ class AbstractExpression(object):
 
     __metaclass__ = ABCMeta
 
-    __slots__ = ('obj_ref', 'attr_name', 'py_ast', 'code', 'globals_f',
-                 'locals_f', '__weakref__')
+    __slots__ = ('obj_ref', 'attr', 'expr_ast', 'code', 'f_globals',
+                 'toolkit', 'f_locals', '__weakref__')
 
-    def __init__(self, obj, attr_name, py_ast, code, globals_f, locals_f):
+    def __init__(self, obj, attr, expr_ast, code, f_globals, toolkit, f_locals):
         """ Initializes and expression object.
 
         Parameters
@@ -148,31 +160,35 @@ class AbstractExpression(object):
         obj : HasTraits instance
             The HasTraits instance to which we are binding the expression.
 
-        attr_name : string
+        attr : string
             The attribute name on `obj` to which this expression is bound.
 
-        py_ast : ast.Expression instance
-            An ast.Expression node instance.
+        expr_ast : ast.Expression instance
+            An ast.Expression node instance which is the rhs expression.
 
         code : types.CodeType object
-            The compile code object for the provided ast node.
+            The compiled code object for the provided ast node.
 
-        globals_f : callable
-            A callable that will return the global namespace for the
+        f_globals : dict
+            The globals dictionary in which the expression should execute.
+
+        toolkit : Toolkit
+            The toolkit that was used to create the object and in which
+            the expression should execute.
+        
+        f_locals : dict
+            The dictionary of objects that form the local scope for the
             expression.
-
-        locals_f : callable
-            A callable that will return the local namespace for the
-            expression. (excluding 'self' and 'self' attributes)
 
         """
         # We keep a weakref to obj to avoid ref cycles
         self.obj_ref = weakref.ref(obj)
-        self.attr_name = attr_name
-        self.py_ast = py_ast
+        self.attr = attr
+        self.expr_ast = expr_ast
         self.code = code
-        self.globals_f = globals_f
-        self.locals_f = locals_f
+        self.f_globals = f_globals
+        self.toolkit = toolkit
+        self.f_locals = f_locals
 
     @property
     def obj(self):
@@ -196,43 +212,6 @@ class AbstractExpression(object):
 
         """
         raise NotImplementedError
-
-
-#------------------------------------------------------------------------------
-# Ast walking helpers
-#------------------------------------------------------------------------------
-def parse_attr_names(py_ast, obj):
-    """ Parses an expression ast for attributes on the given obj.
-
-    Given an ast.Expression node and an objet, returns the set of ast
-    Name nodes that are trait attributes on the object. This treats the
-    expression as if 'self' were implicit (ala c++) and we want to find
-    all the traited attributes referred to implicitly in the expression
-    for the purposes of hooking up notifiers.
-
-    Parameters
-    ----------
-    py_ast : Instance(ast.Expresssion)
-        The ast Expression node to parse.
-
-    obj : HasTraits object
-        The HasTraits instance object we are querrying for attributes.
-
-    Returns
-    -------
-    result : set
-        The set of names referred to in the expression that are trait
-        attributes on the object.
-
-    """
-    names = set()
-    name_node = ast.Name
-    for node in ast.walk(py_ast):
-        if isinstance(node, name_node):
-            name = node.id
-            if obj.trait(name) is not None:
-                names.add(name)
-    return names
 
 
 #------------------------------------------------------------------------------
@@ -261,35 +240,28 @@ class SimpleExpression(AbstractExpression):
 
         """
         f_globals = self.get_globals()
-        f_locals = self.get_locals({'self': self.obj})
+        f_locals = self.get_locals()
         val = eval(self.code, f_globals, f_locals)
         return val
 
     def get_globals(self):
-        """ Returns the global namespace dictionary.
-
-        Returns the dict created by the `global_ns` callable attribute,
-        or raises a TypeError if the value is not a dict.
+        """ Returns the global namespace dictionary which is the union
+        of f_globals and the toolkit, f_globals taking precedence.
 
         """
-        global_ns = self.globals_f()
-        if type(global_ns) is not dict:
-            raise TypeError('The type of the global namespace must be dict')
-        return global_ns
+        d = {}
+        d.update(self.toolkit)
+        d.update(self.f_globals)
+        return d
 
-    def get_locals(self, overrides):
-        """ Returns the local namespace mapping.
-
-        Returns the mapping object created by the `local_ns` callable
-        attribute, or raises a TypeError if the value is not a mapping.
-        A dictionary of overrides can be supplied to inject items into
-        the local namespace.
+    def get_locals(self):
+        """ Returns the local namespace mapping object. The mapping
+        object first attempts to lookup the value in f_locals, then
+        continues by walking up the tree checking the attributes of
+        all the parents.
 
         """
-        local_ns = self.locals_f()
-        if not isinstance(local_ns, MappingType):
-            raise TypeError('The local namespace must be a mapping type')
-        return ExpressionLocals(local_ns, self.obj, overrides)
+        return ExpressionLocals(self.obj, self.f_locals)
 
 
 class UpdatingExpression(SimpleExpression):
@@ -312,14 +284,14 @@ class UpdatingExpression(SimpleExpression):
 
         obj = self.obj
         global_ns = self.get_globals()
-        local_ns = self.get_locals({'self': obj})
-        py_ast = self.py_ast
+        local_ns = self.get_locals()
+        expr_ast = self.expr_ast
 
         # The attribute visitor parses the expression looking for any
         # `foo.bar` style attribute sub-expressions. The results value
         # is a list of ('foo', 'bar') style tuples.
         visitor = AttributeVisitor()
-        visitor.visit(py_ast)
+        visitor.visit(expr_ast)
 
         update_method = self.update_object
         for dep_name, attr in visitor.results():
@@ -334,9 +306,9 @@ class UpdatingExpression(SimpleExpression):
                 dep.on_trait_change(update_method, attr)
 
         # This portion binds any trait attributes that are being
-        # reference via the implicit 'self' feature.
-        for name in parse_attr_names(py_ast, obj):
-            obj.on_trait_change(update_method, name)
+        # referenced via implicit attribute access.
+        for name, owner in parse_attr_names(expr_ast, obj, self.f_locals):
+            owner.on_trait_change(update_method, name)
 
     def update_object(self):
         """ The notification handler to update the component object.
@@ -346,7 +318,7 @@ class UpdatingExpression(SimpleExpression):
         object.
 
         """
-        setattr(self.obj, self.attr_name, self.eval_expression())
+        setattr(self.obj, self.attr, self.eval_expression())
 
 
 class DelegatingExpression(SimpleExpression):
@@ -364,38 +336,42 @@ class DelegatingExpression(SimpleExpression):
         super(DelegatingExpression, self).bind()
         obj = self.obj
         global_ns = self.get_globals()
-        local_ns = self.get_locals({'self': obj})
+        local_ns = self.get_locals()
 
-        # The attribute visitor parses the expression looking for any
-        # `foo.bar` style attribute sub-expressions. The results value
-        # is a list of ('foo', 'bar') style tuples.
-        visitor = AttributeVisitor()
-        visitor.visit(self.py_ast)
-        deps = visitor.results()
-
-        if len(deps) > 1:
-            msg = 'Invalid expression for delegation - lineno (%s)'
-            raise TypeError(msg % self.py_ast.lineno)
-
-        dlgt_name, dlgt_attr_name = deps[0]
-
-        try:
-            dlgt = local_ns[dlgt_name]
-        except KeyError:
+        # There are two options for a delegating expression, those
+        # of the form 'foo.bar' and those of the form 'foo'.
+        if isinstance(self.expr_ast.body, ast.Name):
+            pairs = parse_attr_names(self.expr_ast, obj, self.f_locals)
+            if len(pairs) != 1:
+                msg = 'Delegation expression does not resolve - lineno (%s)'
+                raise TypeError(msg % self.expr_ast.lineno)
+            dlgt_attr_name, dlgt = pairs.pop()
+        else:
+            # The attribute visitor parses the expression looking for any
+            # `foo.bar` style attribute sub-expressions. The results value
+            # is a list of ('foo', 'bar') style tuples.
+            visitor = AttributeVisitor()
+            visitor.visit(self.expr_ast)
+            deps = visitor.results()
+            if len(deps) > 1:
+                msg = 'Invalid expression for delegation - lineno (%s)'
+                raise TypeError(msg % self.expr_ast.lineno)
+            dlgt_name, dlgt_attr_name = deps[0]
             try:
-                dlgt = global_ns[dlgt_name]
+                dlgt = local_ns[dlgt_name]
             except KeyError:
-                raise NameError('name `%s` is not defined' % dlgt_name)
+                try:
+                    dlgt = global_ns[dlgt_name]
+                except KeyError:
+                    raise NameError('name `%s` is not defined' % dlgt_name)
 
         self.lookup_info = (dlgt, dlgt_attr_name)
 
         if isinstance(dlgt, HasTraits):
             dlgt.on_trait_change(self.update_object, dlgt_attr_name)
 
-        obj.on_trait_change(self.update_delegate, self.attr_name)
+        obj.on_trait_change(self.update_delegate, self.attr)
 
-
-    # XXX can we do this with a trait set(..., trait_change_notify=False)?
     def update_object(self, val):
         """ The notification handler to update the component object.
 
@@ -409,22 +385,23 @@ class DelegatingExpression(SimpleExpression):
 
         """
         dlgt_obj, dlgt_attr_name = self.lookup_info
-        
         # guard against re-setting the object on a change
-        with guard(self.obj, self.attr_name):
-            if not guard.guarded(dlgt_obj, dlgt_attr_name):
-                setattr(self.obj, self.attr_name, val)
-
-                new_val = getattr(self.obj, self.attr_name)
+        with guard(self.obj, self.attr):
+            # We add "self" to the guard signature since multiple expressions
+            # may delegate to the same dlgt_obj, dlgt_attr_name pair. If
+            # we didn't include "self", then only one of these multiple 
+            # expressions would be updated since the first one to grab the
+            # guard would lock out all the others.
+            if not guard.guarded(self, dlgt_obj, dlgt_attr_name):
+                setattr(self.obj, self.attr, val)
+                new_val = getattr(self.obj, self.attr)
                 if new_val != val:
                     # we ended up with a different value on the object than we have
                     # on the delegate.  We need to push this back to the delegate,
                     # and we want to guard against further changes
-                    with guard(dlgt_obj, dlgt_attr_name):
+                    with guard(self, dlgt_obj, dlgt_attr_name):
                         setattr(dlgt_obj, dlgt_attr_name, new_val)
 
-
-    # XXX can we do this with a trait set(..., trait_change_notify=False)?
     def update_delegate(self, val):
         """ The notification handler to update the delegate object.
 
@@ -437,34 +414,30 @@ class DelegatingExpression(SimpleExpression):
 
         """
         dlgt_obj, dlgt_attr_name = self.lookup_info
-
         # guard against re-setting the delegate on a change
-        with guard(dlgt_obj, dlgt_attr_name):
-            if not guard.guarded(self.obj, self.attr_name):
+        # We add "self" to the guard signature since multiple expressions
+        # may delegate to the same dlgt_obj, dlgt_attr_name pair. If
+        # we didn't include "self", then only one of these multiple 
+        # expressions would be updated since the first one to grab the
+        # guard would lock out all the others.
+        with guard(self, dlgt_obj, dlgt_attr_name):
+            if not guard.guarded(self.obj, self.attr):
                 setattr(dlgt_obj, dlgt_attr_name, val)
-                
                 new_val = getattr(dlgt_obj, dlgt_attr_name)
                 if new_val != val:
                     # we ended up with a different value on the delegate than we have
                     # on the object.  We need to push this back to the object,
                     # and we want to guard against further changes
-                    with guard(self.obj, self.attr_name):
-                        setattr(self.obj, self.attr_name, new_val)
+                    with guard(self.obj, self.attr):
+                        setattr(self.obj, self.attr, new_val)
 
 
 class NotifyingExpression(SimpleExpression):
     """ A concrete expression object that will eval an expression when
     the attribute on the object changes.
 
-    An arguments object will be added to the local namespace of the
-    expression at the 'args' name. This allows the expression to accept
-    argument information from the attribute change notification, instead
-    of needing to do additional attribute lookups.
-
     """
     __slots__ = ()
-
-    arguments = namedtuple('Arguments', ('obj', 'name', 'old', 'new'))
 
     def bind(self):
         """ Overridden from the parent class to hookup a notifier on
@@ -472,28 +445,5 @@ class NotifyingExpression(SimpleExpression):
 
         """
         super(NotifyingExpression, self).bind()
-        self.obj.on_trait_change(self.notify, self.attr_name)
-
-    def eval_expression(self):
-        """ Overridden from the parent class to add an arguments object
-        to the local namespace.
-
-        """
-        obj = self.obj
-        name = self.attr_name
-        val = getattr(obj, name)
-        args = self.arguments(obj, name, None, val)
-        f_globals = self.get_globals()
-        f_locals = self.get_locals({'self': self.obj, 'args': args})
-        return eval(self.code, f_globals, f_locals)
-
-    def notify(self, obj, name, old, new):
-        """ The notification handler that evals the expression in
-        appropriate contexts.
-
-        """
-        args = self.arguments(obj, name, old, new)
-        f_globals = self.get_globals()
-        f_locals = self.get_locals({'self': self.obj, 'args': args})
-        eval(self.code, f_globals, f_locals)
+        self.obj.on_trait_change(self.eval_expression, self.attr)
 

@@ -14,17 +14,16 @@ def operator_factory(expression_class, eval_default=True):
     component so that the expression is properly bound at run time.
 
     """
-    def operator(component, attr_name, py_ast, code, globals_f, locals_f):
+    def operator(component, attr, ast, code, f_globals, toolkit, f_locals):
         """ The default Enaml expression operator. It uses an implementor
         of AbstractExpression to bind a python expression to a component
         at run time.
 
         """
-        expression = expression_class(component, attr_name, py_ast, code,
-                                      globals_f, locals_f)
-        hook = ExpressionSetupHook(attr_name, expression, eval_default)
+        expression = expression_class(component, attr, ast, code,
+                                      f_globals, toolkit, f_locals)
+        hook = ExpressionSetupHook(attr, expression, eval_default)
         component.setup_hooks.append(hook)
-    
     return operator
 
 
