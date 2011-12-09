@@ -3,6 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
+# XXX this example is not yet updated to the new grammar!
+
 defn MainView(model, adapter, plot, stock_data_table):
     Window:
         title << ("Enaml Stock Viewer - %s - %s - %s" % 
