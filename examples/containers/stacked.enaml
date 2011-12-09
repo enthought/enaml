@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2011, Enthought, Inc.
+# All rights reserved.
+#------------------------------------------------------------------------------
 """ Stacked Container
 
 A Stacked Container holds a list of child widgets (themselves usually Containers
@@ -5,40 +9,42 @@ of some sort) and displays only one of them at a time. The displayed widget can
 be changed by through its `index` attribute. Usually, this is controlled by some
 other widget. In this example, a ComboBox describing the contents of each child
 switches between the two child Forms.
+
 """
 
 
-defn MainWindow():
-    Window:
-        title = "Stacked Container"
-        constraints = [
-            vbox(hbox(selector, _space_), stack)
-        ]
-        ComboBox -> selector:
-            items = ["Personal Details", "Employer Details"]
-            value = "Personal Details"
-        Stacked -> stack:
-            index << selector.index
-            Form:
-                Label:
-                    text = "First name:"
-                Field:
-                    pass
-                Label:
-                    text = "Last name:"
-                Field:
-                    pass
-                Label:
-                    text = "Home phone:"
-                Field:
-                    pass
-            Form:
-                Label:
-                    text = "Employer:"
-                Field:
-                    pass
-                Label:
-                    text = "Office or Desk phone:"
-                Field:
-                    pass
+MainWindow(Window):
+    title = "Stacked Container"
+    constraints = [
+        vbox(hbox(selector, _space_), stack)
+    ]
+    ComboBox:
+        id: selector
+        items = ["Personal Details", "Employer Details"]
+        value = "Personal Details"
+    Stacked:
+        id: stack
+        index << selector.index
+        Form:
+            Label:
+                text = "First name:"
+            Field:
+                pass
+            Label:
+                text = "Last name:"
+            Field:
+                pass
+            Label:
+                text = "Home phone:"
+            Field:
+                pass
+        Form:
+            Label:
+                text = "Employer:"
+            Field:
+                pass
+            Label:
+                text = "Office or Desk phone:"
+            Field:
+                pass
 
