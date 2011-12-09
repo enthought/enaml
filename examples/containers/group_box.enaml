@@ -1,11 +1,15 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ Group boxes.
 
 We create two GroupBoxes containing Form layouts. The GroupBoxes have
-informative titles. CheckBoxes on the bottom of the window allow you to toggle
-the presence of the titles and whether they should be shown in a "flat" style or
-the default style.
-"""
+informative titles. CheckBoxes on the bottom of the window allow you to 
+toggle the presence of the titles and whether they should be shown in a 
+"flat" style or the default style.
 
+"""
 :: python ::
 
 def toggle_title(top_box, bottom_box):
@@ -30,46 +34,55 @@ def toggle_flat(*boxes):
 
 :: end ::
 
-defn MainWindow:
-    Window:
-        title = "Group Boxes"
-        constraints = [
-            vbox(top_box,
-                bottom_box,
-                hbox(_space_, title_check, flat_check)),
-            align('midline', top_form, bottom_form),
-        ]
-        GroupBox -> top_box:
-            title = "Personal Details"
-            Form -> top_form:
-                Label:
-                    text = "First name:"
-                Field:
-                    pass
-                Label:
-                    text = "Last name:"
-                Field:
-                    pass
-                Label:
-                    text = "Home phone:"
-                Field:
-                    pass
-        GroupBox -> bottom_box:
-            title = "Employment Details"
-            Form -> bottom_form:
-                Label:
-                    text = "Employer:"
-                Field:
-                    pass
-                Label:
-                    text = "Office or Desk phone:"
-                Field:
-                    pass
-        CheckBox -> title_check:
-            text = "Show titles"
-            checked = True
-            toggled >> toggle_title(top_box, bottom_box)
-        CheckBox -> flat_check:
-            text = "Flat"
-            checked = False
-            toggled >> toggle_flat(top_box, bottom_box)
+
+MainWindow(Window):
+    title = "Group Boxes"
+    constraints = [
+        vbox(
+            top_box,
+            bottom_box,
+            hbox(_space_, title_check, flat_check),
+        ),
+        align('midline', top_form, bottom_form),
+    ]
+    GroupBox:
+        id: top_box
+        title = "Personal Details"
+        Form:
+            id: top_form
+            Label:
+                text = "First name:"
+            Field:
+                pass
+            Label:
+                text = "Last name:"
+            Field:
+                pass
+            Label:
+                text = "Home phone:"
+            Field:
+                pass
+    GroupBox:
+        id: bottom_box
+        title = "Employment Details"
+        Form:
+            id: bottom_form
+            Label:
+                text = "Employer:"
+            Field:
+                pass
+            Label:
+                text = "Office or Desk phone:"
+            Field:
+                pass
+    CheckBox:
+        id: title_check
+        text = "Show titles"
+        checked = True
+        toggled >> toggle_title(top_box, bottom_box)
+    CheckBox:
+        id: flat_check
+        text = "Flat"
+        checked = False
+        toggled >> toggle_flat(top_box, bottom_box)
+
