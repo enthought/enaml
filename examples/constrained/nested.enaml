@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ An example showing the unified layout across nested Containers.
 
 We have three Containers under the window, two sharing space on top and one
@@ -11,56 +15,62 @@ a nested Container, too.
 
 FIXME: Occasionally, this example fails with a solver error stating that the
 objective function is unbounded.
+
 """
+LabeledField(Container):
+    label_text = 'Label'
+    constraints = [
+        horizontal(left, label, field, right),
+        vertical(top, label, bottom),
+        align('v_center', label, field)
+    ]
+    Label:
+        id: label
+        text = label_text
+    Field:
+        id: field
+        resist_clip_width = 'weak'
 
 
-defn LabeledField(label_text):
-    Container -> container:
+MainWindow(Window):
+    title = "Nested Containers"
+    constraints = [
+        horizontal(left, top_left_cntr, top_right_cntr, right),
+        vertical(top, top_left_cntr, bottom_cntr, bottom),
+        horizontal(left, bottom_cntr, right),
+        align('v_center', top_left_cntr, top_right_cntr),
+        top_left_cntr.width == 1.1 * top_right_cntr.width,
+    ]
+    LabeledField:
+        id: top_left_cntr
+        label_text = "Left:"
+    LabeledField:
+        id: top_right_cntr 
+        label_text = "Right:"
+    Container:
+        id: bottom_cntr
         constraints = [
-            horizontal(left, label, field, right),
-            vertical(top, label, bottom),
-            align('v_center', label, field)
+            vertical(top, frame, add_button, bottom),
+            horizontal(left, frame, right),
+            horizontal(left, add_button, remove_button, _space_, change_mode_button, _space_, share_button, right),
+            align('v_center', add_button, remove_button, change_mode_button, share_button),
+            align('h_center', bottom_cntr, change_mode_button) | 'weak',
+            frame.height >= 100,
+            frame.width >= 200,
         ]
-        Label -> label:
-            text = label_text
-        Field -> field:
-            pass
-
-
-defn MainWindow:
-    Window:
-        title = "Nested Containers"
-        constraints = [
-            horizontal(left, top_left_cntr, top_right_cntr, right),
-            vertical(top, top_left_cntr, bottom_cntr, bottom),
-            horizontal(left, bottom_cntr, right),
-            align('v_center', top_left_cntr, top_right_cntr),
-            top_left_cntr.width == 1.1 * top_right_cntr.width,
-        ]
-        LabeledField("Left:") -> container as top_left_cntr:
-            pass
-        LabeledField("Right:") -> container as top_right_cntr:
-            pass
-        Container -> bottom_cntr:
-            constraints = [
-                vertical(top, frame, add_button, bottom),
-                horizontal(left, frame, right),
-                horizontal(left, add_button, remove_button, _space_, change_mode_button, _space_, share_button, right),
-                align('v_center', add_button, remove_button, change_mode_button, share_button),
-                align('h_center', self, change_mode_button) | 'weak',
-                frame.height >= 100,
-                frame.width >= 200,
-            ]
-            PushButton -> frame:
-                text = 'Frame'
-                hug_width = 'ignore'
-                hug_height = 'ignore'
-            PushButton -> add_button:
-                text = 'Add'
-            PushButton -> remove_button:
-                text = 'Remove'
-            PushButton -> change_mode_button:
-                text = 'Change Mode'
-            PushButton -> share_button:
-                text = 'Share...'
+        Html:
+            id: frame
+            source = '<center><h1>Hello Enaml!</h1></center>'
+        PushButton:
+            id: add_button
+            text = 'Add'
+        PushButton:
+            id: remove_button
+            text = 'Remove'
+        PushButton:
+            id: change_mode_button
+            text = 'Change Mode'
+        PushButton:
+            id: share_button
+            text = 'Share...'
 
