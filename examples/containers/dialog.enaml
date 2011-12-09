@@ -1,68 +1,80 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ Dialogs
 
 In this example, the MainWindow displays a PushButton prompting you to press
-it. It will raise a modal confirmation Dialog asking you if you really want to do
-it. Once you select OK or Cancel on the confirmation Dialog, an information
-Dialog will be raised to tell you the result of your action.
-"""
+it. It will raise a modal confirmation Dialog asking you if you really want 
+to do it. Once you select OK or Cancel on the confirmation Dialog, an 
+information Dialog will be raised to tell you the result of your action.
 
+"""
 :: python ::
 
 def raise_dialog():
-    cdlg = ConfirmDialog("Do you really want to do something rash?").root
+    cdlg, = ConfirmDialog('Do you really want to do something rash?')
     cdlg.show()
 
     if cdlg.result == 'accepted':
-        idlg = InformDialog("You confirmed that you DID want to do something rash.")
+        idlg, = InformDialog('You confirmed that you DID want to do something rash.')
     else:
-        idlg = InformDialog("You confirmed that you DID NOT want to do something rash.")
+        idlg, = InformDialog('You confirmed that you DID NOT want to do something rash.')
     idlg.show()
 
 :: end ::
 
 
 defn InformDialog(message):
-    Dialog -> dialog:
+    Dialog:
+        id: dialog
         title = "Inform"
         modality = "application_modal"
         constraints = [
-            vbox(label,
-                hbox(_space_, ok_button)),
+            vbox(
+                label,
+                hbox(_space_, ok_button),
+            ),
         ]
-        Label -> label:
+        Label:
+            id: label
             text = message
             bg_color = "red"
             fg_color = 'blue'
             font = 'times 18 bold'
-        PushButton -> ok_button:
+        PushButton:
+            id: ok_button
             text = "OK"
             clicked >> dialog.accept()
 
 
 defn ConfirmDialog(message):
-    Dialog -> dialog:
+    Dialog:
+        id: dialog
         title = "Confirm"
         modality = "application_modal"
         constraints = [
-            vbox(label,
-                hbox(_space_, ok_button, cancel_button)),
+            vbox(
+                label,
+                hbox(_space_, ok_button, cancel_button),
+            ),
         ]
-        Label -> label:
+        Label:
+            id: label
             text = message
-        PushButton -> ok_button:
+        PushButton:
+            id: ok_button
             text = "OK"
             clicked >> dialog.accept()
-        PushButton -> cancel_button:
+        PushButton:
+            id: cancel_button
             text = "Cancel"
             clicked >> dialog.reject()
 
 
-defn MainWindow():
-    Window:
-        constraints = [
-            vbox(dlg_button),
-        ]
-        PushButton -> dlg_button:
-            text = "Do Something Rash"
-            clicked >> raise_dialog()
+MainWindow(Window):
+    PushButton:
+        id: dlg_button
+        text = "Do Something Rash"
+        clicked >> raise_dialog()
 
