@@ -20,8 +20,7 @@ objective function is unbounded.
 LabeledField(Container):
     label_text = 'Label'
     constraints = [
-        horizontal(left, label, field, right),
-        vertical(top, label, bottom),
+        hbox(label, field),
         align('v_center', label, field)
     ]
     Label:
@@ -35,11 +34,11 @@ LabeledField(Container):
 MainWindow(Window):
     title = "Nested Containers"
     constraints = [
-        horizontal(left, top_left_cntr, top_right_cntr, right),
-        vertical(top, top_left_cntr, bottom_cntr, bottom),
-        horizontal(left, bottom_cntr, right),
-        align('v_center', top_left_cntr, top_right_cntr),
-        top_left_cntr.width == 1.1 * top_right_cntr.width,
+        vbox(
+            hbox(top_left_cntr, top_right_cntr),
+            bottom_cntr,
+        ),
+        top_left_cntr.width == 1.2 * top_right_cntr.width,
     ]
     LabeledField:
         id: top_left_cntr
@@ -50,16 +49,18 @@ MainWindow(Window):
     Container:
         id: bottom_cntr
         constraints = [
-            vertical(top, frame, add_button, bottom),
-            horizontal(left, frame, right),
-            horizontal(left, add_button, remove_button, _space_, change_mode_button, _space_, share_button, right),
-            align('v_center', add_button, remove_button, change_mode_button, share_button),
-            align('h_center', bottom_cntr, change_mode_button) | 'weak',
-            frame.height >= 100,
-            frame.width >= 200,
+            vbox(
+                html_frame, 
+                hbox(
+                    add_button, remove_button, _space_, 
+                    change_mode_button, _space_, share_button,
+                ),
+            ),
+            align('h_center', html_frame, change_mode_button) | 'weak',
+            html_frame.height >= 150,
         ]
         Html:
-            id: frame
+            id: html_frame
             source = '<center><h1>Hello Enaml!</h1></center>'
         PushButton:
             id: add_button
