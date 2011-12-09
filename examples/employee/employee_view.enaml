@@ -71,7 +71,7 @@ defn EmployeeView(employee):
                                                   employee.first_name)
         constraints = [
             vbox(top_box, bottom_box),
-            # align('midline', top_form, bottom_form),
+            align('midline', top_form, bottom_form),
         ]
         GroupBox:
             id: top_box
