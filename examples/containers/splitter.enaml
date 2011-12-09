@@ -9,7 +9,6 @@ several large space-consuming widgets in a manner that allows the
 user to interactively resize the space allocated to each widget.
 
 """
-
 :: python ::
 
 from enaml.item_models.standard_models import TableModel
@@ -23,47 +22,47 @@ table_model = TableModel(table)
 :: end ::
 
 
-defn MainWindow:
-    Window:
+MainWindow(Window):
+    Splitter:
+        orientation = 'vertical'
+        TableView:
+            item_model = table_model
         Splitter:
-            orientation = 'vertical'
+            Form:
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Address:"
+                Field:
+                    pass
+                Label:
+                    text = ""
+                Field:
+                    pass
+                Label:
+                    text = "City:"
+                Field:
+                    pass
+                Label:
+                    text = "State:"
+                Field:
+                    pass
+                Label:
+                    text = "Postal Code:"
+                Field:
+                    pass
+                Label:
+                    text = "Country:"
+                Field:
+                    pass
             TableView:
                 item_model = table_model
-            Splitter:
-                Form:
-                    Label:
-                        text = "First name:"
-                    Field:
-                        pass
-                    Label:
-                        text = "Last name:"
-                    Field:
-                        pass
-                    Label:
-                        text = "Address:"
-                    Field:
-                        pass
-                    Label:
-                        text = ""
-                    Field:
-                        pass
-                    Label:
-                        text = "City:"
-                    Field:
-                        pass
-                    Label:
-                        text = "State:"
-                    Field:
-                        pass
-                    Label:
-                        text = "Postal Code:"
-                    Field:
-                        pass
-                    Label:
-                        text = "Country:"
-                    Field:
-                        pass
-                TableView:
-                    item_model = table_model
-                TableView:
-                    item_model = table_model
+            TableView:
+                item_model = table_model
+
