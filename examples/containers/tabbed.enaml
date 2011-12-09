@@ -11,7 +11,6 @@ representation.
 Note: Dynamically changing the tab position on wx is not supported.
 
 """
-
 :: python ::
 
 # A litte bit of Python code to make it easy to cycle tab positions.
@@ -23,40 +22,44 @@ tab_pos.next()
 :: end ::
 
 
-defn GenForm(button_text):
-    Form:
-        Label:
-            text = 'First'
-        Field:
-            pass
-        Label:
-            text = 'Last'
-        Field:
-            pass
-        Label:
-            text = 'Phone'
-        Field:
-            pass
-        PushButton -> pb:
-            text = button_text
+TabForm(Form):
+    button_text = 'Click Me!'
+    # XXX we would like a way to proxy an event rather 
+    # than needing to cycle the value of a Boolean
+    button_clicked = False
+    Label:
+        text = 'First'
+    Field:
+        pass
+    Label:
+        text = 'Last'
+    Field:
+        pass
+    Label:
+        text = 'Phone'
+    Field:
+        pass
+    PushButton:
+        text = button_text
+        clicked >> setattr(parent, 'button_clicked', not button_clicked) 
 
 
-defn MainWindow:
-    Window:
-        title = 'Tabbed'
-        Tabbed -> tbd:
-            selected >> print('Selected Tab:', selected.title)
-            Tab:
-                title = 'Spam'
-                GenForm('spam'):
-                    pass
-            Tab:
-                title = 'Ham'
-                GenForm('ham'):
-                    pass
-            Tab:
-                title = 'Toggle'
-                GenForm('toggle') -> pb as pb:
-                    pb.text = 'Cycle Tab Position'
-                    pb.clicked >> setattr(tbd, 'tab_position', tab_pos.next())
+MainWindow(Window):
+    title = 'Tabbed'
+    Tabbed:
+        id: tbd
+        selected >> print('Selected Tab:', selected.title)
+        Tab:
+            title = 'Spam'
+            TabForm:
+                button_text = 'spam'
+        Tab:
+            title = 'Ham'
+            TabForm:
+                button_text = 'ham'
+        Tab:
+            title = 'Toggle'
+            TabForm:
+                button_text = 'Cycle Tab Position'
+                button_clicked >> setattr(tbd, 'tab_position', tab_pos.next())
 
