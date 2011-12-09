@@ -1,0 +1,24 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from enaml.converters import IntConverter
+
+
+defn PersonView(person):
+    Window:
+        Form:
+            Label:
+                text = 'First Name'
+            Field:
+                value := person.first_name
+            Label:
+                text = 'Last Name'
+            Field:
+                value := person.last_name
+            Label:
+                text = 'Age'
+            Field:
+                value := person.age
+                converter = IntConverter()
+
