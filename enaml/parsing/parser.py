@@ -27,24 +27,15 @@ tokens = EnamlLexer.tokens
 
 # The translation table for expression operators
 operator_table = {
-    '~': 'Tilde',
-    '!': 'Bang',
     '@': 'At',
-    '%': 'Percent',
-    '^': 'Caret',
     '&': 'Amper',
     '-': 'Minus',
-    '+': 'Plus',
     '=': 'Equal',
-    '/': 'Slash',
     '<': 'Less',
     '>': 'Greater',
-    ':': 'Colon',
     '$': 'Dollar',
-    '*': 'Star',
-    '?': 'Question',
     '|': 'Bar',
-    '.': 'Dot',
+    ':': 'Colon',
 }
 
 
@@ -553,36 +544,18 @@ def p_binding(p):
 
 
 def p_enaml_operator(p):
-    ''' enaml_operator : AMPER
-                       | CIRCUMFLEX
-                       | COLON
-                       | DOT
-                       | DOUBLESLASH
-                       | DOUBLESTAR
-                       | EQEQUAL
-                       | EQUAL
-                       | GREATER
-                       | GREATEREQUAL
+    ''' enaml_operator : EQUAL
+                       | COLONEQUAL
                        | LEFTSHIFT
-                       | LESS
-                       | LESSEQUAL
-                       | MINUS
-                       | NOTEQUAL
-                       | PERCENT
-                       | PLUS
                        | RIGHTSHIFT
-                       | SLASH
-                       | STAR
-                       | TILDE
-                       | VBAR
-                       | UNPACK
-                       | DOUBLECOLON
-                       | ELLIPSIS
-                       | OPERATOR '''
-    # A custom operator can be any of the standard operators (overloaded)
-    # as well as one that is custom defined.
-    # XXX - get rid of custom operators and make and handful of predefined
-    # ones
+                       | ATEQUAL
+                       | AMPEREQUAL
+                       | DOLLAREQUAL
+                       | VBAREQUAL
+                       | LESSMINUS
+                       | MINUSGREATER
+                       | VBARGREATER
+                       | LESSVBAR '''
     lineno = p.lineno(1)
     p[0] = (lineno, p[1])
 
@@ -2161,5 +2134,4 @@ def parse(tml):
     # Need to create a new lexer each time, or line numbers get screwy.
     _lexer = EnamlLexer()
     return _parser.parse(tml, lexer=_lexer)
-
 
