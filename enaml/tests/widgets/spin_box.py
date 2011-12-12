@@ -44,9 +44,10 @@ class TestSpinBox(EnamlTestCase):
 
         enaml_source = """
 from enaml.converters import IntConverter
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        SpinBox -> spinbox:
+        SpinBox:
+            name = 'spinbox'
             low = -10
             high = 21
             step = 2
@@ -55,7 +56,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, events=self.events)
+        self.view = self.parse_and_create(enaml_source, self.events)
         self.component = self.component_by_name(self.view, 'spinbox')
         self.widget = self.component.toolkit_widget
 
@@ -183,7 +184,7 @@ defn MainWindow(events):
         self.assertEqual(self.get_text(self.widget), '-4')
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
     @required_method
     def get_value(self, widget):

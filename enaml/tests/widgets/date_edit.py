@@ -38,13 +38,14 @@ class TestDateEdit(EnamlTestCase):
 
         """
         enaml_source = """
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        DateEdit -> test:
+        DateEdit:
+            name = 'test'
             date_changed >> events.append(('date_changed', args.new))
 """
         self.events = []
-        self.view = self.parse_and_create(enaml_source, events=self.events)
+        self.view = self.parse_and_create(enaml_source, self.events)
         self.component = self.component_by_name(self.view, 'test')
         self.widget = self.component.toolkit_widget
 
@@ -87,7 +88,7 @@ defn MainWindow(events):
         self.assertEqual(self.events, [])
 
     def test_change_date_in_ui(self):
-        """ Test changing the current date thought the ui
+        """ Test changing the current date through the ui.
 
         """
         component = self.component
@@ -178,9 +179,10 @@ defn MainWindow(events):
         """
         enaml_source = """
 import datetime
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        DateEdit -> test:
+        DateEdit:
+            name = 'test'
             date = datetime.date(2010, 1, 1)
             min_date = datetime.date(1990, 1, 1)
             max_date = datetime.date(2000, 1, 1)
@@ -189,7 +191,7 @@ defn MainWindow(events):
         events = []
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            self.parse_and_create(enaml_source, events=events)
+            self.parse_and_create(enaml_source, events)
 
     def test_initial_too_early(self):
         """ Check initialization with an invalid early date.
@@ -197,9 +199,10 @@ defn MainWindow(events):
         """
         enaml_source = """
 import datetime
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        DateEdit -> test:
+        DateEdit:
+            name = 'test'
             min_date = datetime.date(1990, 1, 1)
             max_date = datetime.date(2000, 1, 1)
             date = datetime.date(1980, 1, 1)
@@ -208,10 +211,10 @@ defn MainWindow(events):
         events = []
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            self.parse_and_create(enaml_source, events=events)
+            self.parse_and_create(enaml_source, events)
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
     @required_method
     def get_date(self, widget):

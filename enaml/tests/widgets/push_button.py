@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .enaml_test_case import EnamlTestCase, required_method
 
+
 class TestPushButton(EnamlTestCase):
     """ Logic for testing push buttons.
 
@@ -28,9 +29,10 @@ class TestPushButton(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        PushButton -> pb1:
+        PushButton:
+            name = 'pb1'
             text = 'foo'
             clicked >> events.append('clicked')
             pressed >> events.append('pressed')
@@ -38,7 +40,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, events=self.events)
+        self.view = self.parse_and_create(enaml_source, self.events)
         self.component = self.component_by_name(self.view, 'pb1')
         self.widget = self.component.toolkit_widget
 
@@ -115,9 +117,8 @@ defn MainWindow(events):
         self.assertFalse(component.down)
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def button_pressed(self):
         """ Press the button programmatically.

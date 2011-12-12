@@ -24,9 +24,10 @@ class TestHtml(EnamlTestCase):
 
         """
         enaml_source = """
-defn MainWindow():
+defn MainView():
     Window:
-        Html -> html:
+        Html:
+            name = 'html'
             source = '<b>{0}</b>'
 """.format(self.text)
 
@@ -52,12 +53,12 @@ defn MainWindow():
         self.assertEqual(widget_source, new_text)
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_source(self, widget):
         """ Get the source of an Html widget.
 
         """
         pass
+

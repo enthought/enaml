@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from .enaml_test_case import EnamlTestCase, required_method
 
-class TestCheckBox(EnamlTestCase):
 
+class TestCheckBox(EnamlTestCase):
     """ Logic for testing push buttons.
 
     Tooklit testcases need to provide the following functions
@@ -28,19 +28,17 @@ class TestCheckBox(EnamlTestCase):
         Toggle the button programmatically.
 
     """
-
-
     def setUp(self):
         """ Setup enaml component for testing
 
         """
-
         self.check_box_label = 'checkbox label'
 
         enaml_source = """
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        CheckBox -> checkb1:
+        CheckBox:
+            name = 'checkb1'
             text = 'checkbox label'
             checked = True
             toggled >> events.append('toggled')
@@ -49,7 +47,7 @@ defn MainWindow(events):
 """.format(self.check_box_label)
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, events=self.events)
+        self.view = self.parse_and_create(enaml_source, self.events)
         self.component = self.component_by_name(self.view, 'checkb1')
         self.widget = self.component.toolkit_widget
 
@@ -62,9 +60,8 @@ defn MainWindow(events):
         self.assertEnamlInSync(component, 'checked', True)
         self.assertEnamlInSync(component, 'text', self.check_box_label)
 
-
     def testLabelChange(self):
-        """Test changing the label of a check box
+        """ Test changing the label of a check box
 
         """
         component = self.component
@@ -73,7 +70,9 @@ defn MainWindow(events):
         self.assertEnamlInSync(component, 'text', new_label)
 
     def testSettingChecked(self):
-        """Test selecting a WXCheckBox"""
+        """ Test selecting a WXCheckBox
+
+        """
         component = self.component
         # un-check
         self.component.checked = False
@@ -110,8 +109,8 @@ defn MainWindow(events):
         self.assertEqual(events, [])
 
     def test_press_release_sequence(self):
-        """ Verify the even firing when the press-release (nornal) sequence
-        is applied.
+        """ Verify the even firing when the press-release (nornal) 
+        sequence is applied.
 
         """
         component = self.component
@@ -134,11 +133,9 @@ defn MainWindow(events):
         events = self.events
         self.assertEqual(events, ['pressed', 'released', 'toggled'])
 
-
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_text(self, widget):
         """ Returns the text from the tookit widget.

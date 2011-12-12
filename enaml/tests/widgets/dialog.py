@@ -23,8 +23,9 @@ class TestDialog(TestWindow):
         """
 
         enaml_source = """
-defn MainWindow():
-    Dialog -> dialog:
+defn MainView():
+    Dialog:
+        name = 'dialog'
         title = 'foo'
 """
 
@@ -102,3 +103,4 @@ defn MainWindow():
 
         """
         self.event_log.append((name, new))
+

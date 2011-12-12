@@ -19,8 +19,6 @@ class TestRadioButton(EnamlTestCase):
         Get the label of a button.
 
     """
-
-
     def setUp(self):
         """ Finalise set up before the Radio button tests
 
@@ -30,12 +28,14 @@ class TestRadioButton(EnamlTestCase):
         label_2 = 'Label 2'
 
         enaml_source = """
-defn MainWindow():
+defn MainView():
     Window:
-        RadioButton -> radio1:
+        RadioButton:
+            name = 'radio1'
             text = '{0}'
             checked = True
-        RadioButton -> radio2:
+        RadioButton:
+            name = 'radio2'
             text = '{1}'
 """.format(label_1, label_2)
 
@@ -45,7 +45,6 @@ defn MainWindow():
         self.widget1 = self.radio1.toolkit_widget
         self.radio2 = self.component_by_name(self.view, 'radio2')
         self.widget2 = self.radio2.toolkit_widget
-
 
     def test_initial_value(self):
         """ Test the initial checked state of the radio buttons.
@@ -121,7 +120,6 @@ defn MainWindow():
     #--------------------------------------------------------------------------
     # absrtact methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_value(self, button):
         """ Get the checked state of a radio button.
@@ -135,3 +133,4 @@ defn MainWindow():
 
         """
         pass
+

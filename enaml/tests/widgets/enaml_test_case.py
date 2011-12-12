@@ -32,41 +32,39 @@ class EnamlTestCase(unittest.TestCase):
     the testing of enaml components
 
     """
-
     #: default toolkit to use for the enaml source parsing
     toolkit = default_toolkit()
 
-    def component_by_name(self, view, name):
-        """ Find an item in the view with a given name.
+    def component_by_name(self, component, name):
+        """ Find an item in the view with a given name. The component
+        should have the name set its 'name' attribute.
 
         Arguments
         ---------
-        view :
-            The enaml based View object
+        component :
+            The enaml based BaseComponent object
 
         name :
-            The enaml component name.
+            The name of the enaml component to find in the tree.
 
         Returns
         -------
             The corresponding component or None.
 
         """
-        return view.ns[name]
+        return component.find_by_name(name)
 
-    def parse_and_create(self, source, **kwargs):
-        """ Parses and compiles the source and returns the enaml View object.
+    def parse_and_create(self, source, *args):
+        """ Parses and compiles the source. The source should have defn 
+        defined with the name 'MainView' that returns a single component. 
 
         Arguments
         ---------
         enaml_source : str
             The enaml source file
 
-        kwargs :
-            The models to pass and associate with the view.
-
-        The method parses the enaml_source and creates the enaml View object
-        using the desired toolkit and model
+        *args :
+            The arguments to pass to the defn.
 
         """
         enaml_ast = parse(source)
@@ -76,12 +74,12 @@ class EnamlTestCase(unittest.TestCase):
         toolkit = self.toolkit
 
         with toolkit:
-            defn = enaml_module['MainWindow']
-            view = defn(**kwargs)
+            defn = enaml_module['MainView']
+            cmpnt, = defn(*args)
 
         self.app = toolkit.create_app()
-        view.root.setup()
-        return view
+        cmpnt.setup()
+        return cmpnt
 
     def assertEnamlInSync(self, component, attribute_name, value):
         """ Verify that the requested attribute is properly set

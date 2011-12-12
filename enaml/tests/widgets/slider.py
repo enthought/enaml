@@ -6,9 +6,11 @@ from traits.api import TraitError
 
 from .enaml_test_case import EnamlTestCase, required_method
 
-class TestEvents(object):
-    """ Events required by the testcase. """
 
+class TestEvents(object):
+    """ Events required by the testcase. 
+
+    """
     #: The left button is pressed
     PRESSED = 0x0
 
@@ -74,16 +76,17 @@ class TestSlider(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        Slider -> slider:
+        Slider:
+            name = 'slider'
             moved >> events.append(('moved', args.new))
             pressed >> events.append('pressed')
             released >> events.append('released')
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, events=self.events)
+        self.view = self.parse_and_create(enaml_source, self.events)
         self.component = self.component_by_name(self.view, 'slider')
         self.widget = self.component.toolkit_widget
 
@@ -139,7 +142,8 @@ defn MainWindow(events):
         self.assertEqual(self.events, [])
 
     def test_change_maximum_invalid(self):
-        """ Test attempting to set an invalid value to the maximum range of the slider.
+        """ Test attempting to set an invalid value to the maximum range 
+        of the slider.
 
         """
         component = self.component
@@ -151,7 +155,8 @@ defn MainWindow(events):
         self.assertEqual(self.events, [])
 
     def test_change_minimum_invalid(self):
-        """ Test attempting to set an invalid value to the minimum range of the slider.
+        """ Test attempting to set an invalid value to the minimum range 
+        of the slider.
 
         """
         component = self.component
@@ -183,7 +188,7 @@ defn MainWindow(events):
         self.assertEqual(self.events, [])
 
     def test_value_change(self):
-        """Test changing the value programmaticaly.
+        """ Test changing the value programmaticaly.
 
         """
         component = self.component
@@ -198,6 +203,7 @@ defn MainWindow(events):
 
         when invalid, check that it has not changed the values and the
         errors are updated.
+
         """
         component = self.component
 
@@ -254,7 +260,6 @@ defn MainWindow(events):
         This is in sync with how the QSlider behaves.
 
         """
-
         component = self.component
 
         component.tick_position = 'left'
@@ -341,7 +346,8 @@ defn MainWindow(events):
         self.assertEqual(events, [])
 
     def test_move_down_by_one_step(self):
-        """ Test firing events and value when the thumb is moved by one step down.
+        """ Test firing events and value when the thumb is moved by one 
+        step down.
 
         """
         component = self.component
@@ -352,7 +358,8 @@ defn MainWindow(events):
         self.assertEqual(events, [])
 
     def test_move_up_by_one_step(self):
-        """ Test firing events and value when the thumb is moved by one step up.
+        """ Test firing events and value when the thumb is moved by one 
+        step up.
 
         """
         component = self.component
@@ -363,7 +370,8 @@ defn MainWindow(events):
         self.assertEqual(events, [])
 
     def test_move_down_by_one_page(self):
-        """ Test firing events and value when the thumb is moved by one page down.
+        """ Test firing events and value when the thumb is moved by one 
+        page down.
 
         """
         component = self.component
@@ -374,7 +382,8 @@ defn MainWindow(events):
         self.assertEqual(events, [])
 
     def test_move_up_by_one_page(self):
-        """ Test firing events and value when the thumb is moved by one page up.
+        """ Test firing events and value when the thumb is moved by one 
+        page up.
 
         """
         component = self.component
@@ -385,9 +394,8 @@ defn MainWindow(events):
         self.assertEqual(events, [])
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_value(self, widget):
         """ Get the Slider's value.
@@ -465,3 +473,4 @@ defn MainWindow(events):
 
         """
         pass
+

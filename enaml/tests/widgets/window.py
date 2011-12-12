@@ -9,15 +9,15 @@ class TestWindow(EnamlTestCase):
     """ Logic for testing Windows.
 
     """
-
     def setUp(self):
         """ Set up Window tests.
 
         """
 
         enaml_source = """
-defn MainWindow():
-    Window -> window:
+defn MainView():
+    Window:
+        name = 'window'
         title = 'foo'
 """
 
@@ -39,7 +39,7 @@ defn MainWindow():
         self.assertEnamlInSync(self.component, 'title', 'bar')
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
     @required_method
     def get_title(self, widget):

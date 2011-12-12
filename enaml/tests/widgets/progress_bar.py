@@ -31,10 +31,10 @@ class TestProgressBar(EnamlTestCase):
         """
 
         enaml = """
-defn MainWindow():
+defn MainView():
     Window:
-        ProgressBar -> test:
-            pass
+        ProgressBar:
+            name = 'test'
 """
 
         self.view = self.parse_and_create(enaml)
@@ -127,23 +127,23 @@ defn MainWindow():
     #--------------------------------------------------------------------------
     # Special initialization tests
     #--------------------------------------------------------------------------
-
     def test_initial_too_large(self):
         """ Check initialization with a value too large for the specified
         maximum.
 
         """
         enaml = """
-defn MainWindow():
+defn MainView():
     Window:
-        ProgressBar -> test:
+        ProgressBar:
+            name = 'test'
             value = 95
             minimum = 10
             maximum = 90
 """
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml)
+            self.parse_and_create(enaml)
 
     def test_initial_too_small(self):
         """ Check initialization with a value too small for the specified
@@ -152,9 +152,10 @@ defn MainWindow():
         """
 
         enaml = """
-defn MainWindow():
+defn MainView():
     Window:
-        ProgressBar -> test:
+        ProgressBar:
+            name = 'test'
             value = 5
             minimum = 10
             maximum = 90
@@ -162,7 +163,7 @@ defn MainWindow():
 
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            view = self.parse_and_create(enaml)
+            self.parse_and_create(enaml)
 
     def test_percentage(self):
         """ Test that the percentage is computed accurately.
@@ -185,11 +186,9 @@ defn MainWindow():
         self.component.value = -1
         self.assertEquals(self.component.percentage, 99)
 
-
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_value(self, widget):
         """  Get the toolkits widget's active value.

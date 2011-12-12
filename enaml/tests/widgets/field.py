@@ -25,9 +25,10 @@ class TestField(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        Field -> field:
+        Field:
+            name = 'field'
             max_length = 8
             cursor_position = 1
             placeholder_text = 'hold'
@@ -37,7 +38,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, events=self.events)
+        self.view = self.parse_and_create(enaml_source, self.events)
         self.component = self.component_by_name(self.view, 'field')
         self.gain_focus_if_needed(self.widget)
 
@@ -140,7 +141,12 @@ defn MainWindow(events):
          field thought the ui.
 
          .. note:: Currently this test is an ``expected failure`` until
-            we can find a way to simulate the keystrokes.
+            we can find a way to simulate the keystrokes. 
+            
+            Note: there may not ever be a way to test this automatically.
+            The read_only flag should only apply to the user attempting
+            to type something in to the ui. The text should always be 
+            modifiable programmatically. - SCC
 
          """
          initial = 'abc'
@@ -251,7 +257,7 @@ defn MainWindow(events):
         # debugging it after 1.5 hours. For now, just trigger 
         # an explicit change. It will probably never show up 
         # as a problem in practice since as soon as you click
-        # in the field, the cursor will change.
+        # in the field, the cursor will change. - SCC
         self.component.home()
         self.component.end()
         self.assertEnamlInSync(self.component, 'cursor_position', 3)

@@ -35,17 +35,22 @@ class TestGroupBox(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainWindow():
-    Window -> win:
+defn MainView():
+    Window:
+        name = 'win'
         contrains = [horizontal(left, gb, right), vertical(top, gb, bottom),
                     vertical(label1, label2), align_left(label1, label2)]
-        GroupBox -> gb:
+        GroupBox:
+            id: gb
+            name = 'gb'
             title = 'MyGroup'
             flat = True
             title_align = 'center'
-            Label -> label1:
+            Label:
+                id: label1
                 text = 'foofoofoofoofoofoofoofoofoofoofoofoo'
-            Label -> label2:
+            Label:
+                id: label2
                 text = 'barbarbarbarbarbarbarbarbarbar'
 """
         self.view = self.parse_and_create(enaml_source)
@@ -103,7 +108,7 @@ defn MainWindow():
         self.assertEnamlInSync(component, 'title_align', 'center')
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
     @required_method
     def get_title(self, widget):
