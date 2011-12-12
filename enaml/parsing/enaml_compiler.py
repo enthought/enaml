@@ -655,7 +655,7 @@ class EnamlCompiler(_NodeVisitor):
             try:
                 exec node.code in self.global_ns
             except Exception as e:
-                msg = ('Unable to evaluate import on lineno %. '
+                msg = ('Unable to evaluate import on lineno %s. '
                        'Original exception was %s.')
                 exc_type = type(e)
                 raise exc_type(msg % (node.lineno, e))
