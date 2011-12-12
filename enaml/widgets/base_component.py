@@ -7,7 +7,7 @@ from collections import deque
 from functools import wraps
 
 from traits.api import (
-    Any, Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
+    Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
 )
 
 from .setup_hooks import AbstractSetupHook
