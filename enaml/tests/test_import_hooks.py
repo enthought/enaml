@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 import sys
 import unittest
 
@@ -7,6 +11,7 @@ from .. import import_hooks
 class FakeSys(object):
     def __init__(self):
         self.meta_path = []
+
 
 class TestImportHooks(unittest.TestCase):
 
@@ -19,8 +24,8 @@ class TestImportHooks(unittest.TestCase):
 
     def test_install_count(self):
         """ Test that EnamlImporter can be installed in a nested manner.
-        """
 
+        """
         self.assertEquals(import_hooks.EnamlImporter.install_count, 0)
         self.assertEquals(len(import_hooks.sys.meta_path), 0)
 
