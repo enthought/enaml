@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ Toolkit independed abstract testing classes
 
 The tests.widgets package contains a set of abstract classes that simplify

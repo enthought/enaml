@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
 from unittest import TestCase
 
 from traits.api import TraitError
@@ -14,7 +13,6 @@ class TestComponent(TestCase):
     """ Test basic operations on Components.
 
     """
-
     def test_hug_property(self):
         """ Test that the hug property works correctly.
 
