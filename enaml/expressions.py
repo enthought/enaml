@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import ast
 from abc import ABCMeta, abstractmethod
+from collections import namedtuple
 import weakref
 
 from traits.api import HasTraits
@@ -37,9 +38,9 @@ class ExpressionLocals(object):
     (It's probably best to create these objects on-the-fly when needed)
 
     """
-    __slots__ = ('obj', 'f_locals', 'temp_locals')
+    __slots__ = ('obj', 'f_locals', 'overrides', 'temp_locals')
 
-    def __init__(self, obj, f_locals):
+    def __init__(self, obj, f_locals, overrides=None):
         """ Initialize an expression locals instance.
 
         Parameters
@@ -51,9 +52,13 @@ class ExpressionLocals(object):
             The locals dict to check before checking the attribute space
             of the given object.
 
+        overrides : dict or None
+            A dictionary of override values to check before locals.
+
         """
         self.obj = obj
         self.f_locals = f_locals
+        self.overrides = overrides
         self.temp_locals = {}
 
     def __getitem__(self, name):
@@ -74,26 +79,36 @@ class ExpressionLocals(object):
             The value associated with the name, if found.
 
         """
+        # Try temp locals first so that list comps work properly
         try:
-            res = self.temp_locals[name]
+            return self.temp_locals[name]
         except KeyError:
+            pass
+
+        # Next, check the overrides if given
+        overrides = self.overrides
+        if overrides is not None:
             try:
-                res = self.f_locals[name]
+                return overrides[name]
             except KeyError:
-                parent = self.obj
-                while True:
-                    try:
-                        res = getattr(parent, name)
-                        break
-                    except AttributeError:
-                        try:
-                            parent = parent.parent
-                        except AttributeError:
-                            raise KeyError(name)
-                        else:
-                            if parent is None:
-                                raise KeyError(name)
-        return res
+                pass
+        
+        # Next, check locals dict
+        try:
+            return self.f_locals[name]
+        except KeyError:
+            pass
+
+        # Finally, walk up the ancestor tree starting at self.obj
+        # looking for attributes of the given name.
+        parent = self.obj
+        while True:
+            try:
+                return getattr(parent, name)
+            except AttributeError:
+                parent = parent.parent
+                if parent is None:
+                    raise KeyError(name)
 
     def __setitem__(self, name, val):
         """ Stores the value in the internal locals dictionary. This
@@ -452,6 +467,8 @@ class NotifyingExpression(SimpleExpression):
     """
     __slots__ = ()
 
+    arguments = namedtuple('arguments', 'obj name old new')
+
     def bind(self):
         """ Overridden from the parent class to hookup a notifier on
         the component attribute.
@@ -459,4 +476,16 @@ class NotifyingExpression(SimpleExpression):
         """
         super(NotifyingExpression, self).bind()
         self.obj.on_trait_change(self.eval_expression, self.attr)
+
+    def eval_expression(self, obj, name, old, new):
+        """ Overridden from the parent class to add the arguments object
+        to the expression locals.
+
+        """
+        args = self.arguments(obj, name, old, new)
+        f_globals = self.get_globals()
+        f_locals = self.get_locals()
+        f_locals.overrides = {'args': args}
+        val = eval(self.code, f_globals, f_locals)
+        return val
 
