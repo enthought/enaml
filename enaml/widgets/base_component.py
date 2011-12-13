@@ -3,8 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod, abstractproperty
-from collections import deque
-from functools import wraps
+from collections import deque, namedtuple
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
@@ -126,124 +125,7 @@ class AbstractTkBaseComponent(object):
         raise NotImplementedError
 
 
-class NullContext(object):
-    """ A do-nothing context object that is created by the __call__
-    method of SetupContext when that context is being used by a 
-    non-toplevel call.
-
-    """
-    def __enter__(self):
-        pass
-    
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        pass
-
-
-class SetupContext(object):
-    """ A context object that will compute and run a set of generators
-    before and after yielding control to user code. An instance of this
-    context manager cannot be entered recursively.
-
-    """
-    def __init__(self, method_name):
-        """ Initialize a SetupContext.
-
-        Parameters
-        ----------
-        method_name : string
-            The name of the method on the setup hooks to call in order
-            to create the setup generators.
-
-        """
-        self.method_name = method_name
-        self.component = None
-        self.gens = None
-
-    def __call__(self, component):
-        """ Prime the context manager for use.
-
-        Parameters
-        ----------
-        component : Instance(BaseComponent)
-            A component which has SetupHooks installed.
-
-        Returns
-        -------
-        result : NullContext or self.
-            If this manager is not in use, it will be primed and 
-            returned, otherwise a NullContext instance will be returned.
-
-        """
-        if self.component is not None:
-            return NullContext()
-        self.component = component
-        return self
-
-    def __enter__(self):
-        """ Collects the setuphook generators for the tree starting at
-        the current node and iterates the generators as a pre-processing
-        step.
-
-        """
-        # Walk the tree of components from this point down and collect
-        # a flat list of all of the setup hook generators.
-        gens = []
-        gens_extend = gens.extend
-        stack = [self.component]
-        stack_extend = stack.extend
-        stack_pop = stack.pop
-        while stack:
-            cmpnt = stack_pop()
-            gens_extend((getattr(hook, self.method_name)(cmpnt) 
-                         for hook in cmpnt.setup_hooks))
-            stack_extend(cmpnt.children)
-        
-        # Iterate the generators as a pre-processing step
-        for gen in gens:
-            gen.next()
-        
-        # Store the generators until the exit method, 
-        # so they can be iterated a second time.
-        self.gens = gens
-    
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        """ Iterates the collected generates a second time as a post
-        processing step, provided that the user code did not raise 
-        any exceptions.
-
-        """
-        # The user functions have now already run, and possibly
-        # raised an exception. In any case, we need to reset the
-        # internal state of this context manager and then iterate
-        # the generators a second time if no exception was raise
-        # by the user code.
-        self.component = None
-        gens = self.gens
-        self.gens = None
-        if exc_type is None:
-            for gen in gens:
-                try:
-                    gen.next()
-                except StopIteration:
-                    pass
-
-
-def setup_hook(func):
-    """ A decorator for methods involved in the setup process of a 
-    BaseComponent tree. It handles the calling of the setup hooks at 
-    the right places. The methods of a setup hook are generators that 
-    can yield back to this decorator so that a single method can be 
-    used to do pre- and post- processing of a setup method.
-
-    """
-    setup_context = SetupContext(func.__name__)
-
-    @wraps(func)
-    def closure(self, *args, **kwargs):
-        with setup_context(self):
-            func(self, *args, **kwargs)
-
-    return closure
+DelegateEntry = namedtuple('DelegateEntry', 'idx delegate')
 
 
 class BaseComponent(HasStrictTraits):
@@ -258,12 +140,17 @@ class BaseComponent(HasStrictTraits):
     #: parent is None.
     parent = WeakRef('BaseComponent')
 
-    #: The list of children components for this component. Subclasses
-    #: should redefine this trait to restrict which types of children
-    #: they allow if necessary. This list should not be manipulated 
-    #: outside of the ``*_child(...)`` methods so that the ui may be 
-    #: properly updated when the children change.
+    #: A readonly property which returns a list of children for this 
+    #: component. The list will contain any children that are created
+    #: by Delegate leaves.
     children = List(Instance('BaseComponent'))
+
+    #: The private list of children components for this component. A
+    #: subclass should redefine this trait as necessary to restrict 
+    #: which types of children they allow. This list should not be
+    #: manipulated directly so that the tree can be properly updated
+    #: when the children or delegates change.
+    #_children = List(Instance('BaseComponent'))
 
     #: The toolkit specific object that implements the behavior of
     #: this component and manages the gui toolkit object. Subclasses
@@ -337,7 +224,7 @@ class BaseComponent(HasStrictTraits):
     #: An optional name to give to this component to assist in finding
     #: it in the tree.
     name = Str
-    
+
     def add_child(self, child):
         """ Add the child to this component.
 
@@ -348,61 +235,6 @@ class BaseComponent(HasStrictTraits):
 
         """
         self.children.append(child)
-
-    def remove_child(self, child):
-        """ Remove the child from this component.
-
-        Arguments
-        ---------
-        child : Instance(BaseComponent)
-            The child to remove from the container.
-
-        """
-        try:
-            self.children.remove(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-
-    def replace_child(self, child, other_child):
-        """ Replace a child with another child.
-
-        Arguments
-        ---------
-        child : Instance(BaseComponent)
-            The child being replaced.
-
-        other_child : Instance(BaseComponent)
-            The child taking the place of the removed child.
-
-        """
-        try:
-            idx = self.children.index(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-        self.children[idx] = other_child
-
-    def swap_children(self, child, other_child):
-        """ Swap the position of the two children.
-
-        Arguments
-        ---------
-        child : Instance(BaseComponent)
-            The first child in the swap.
-
-        other_child : Instance(BaseComponent)
-            The second child in the swap.
-
-        """
-        try:
-            idx = self.children.index(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-        try:
-            other_idx = self.children.index(other_child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % other_child)
-        self.children[idx] = other_child
-        self.children[other_idx] = child
 
     def traverse(self):
         """ Yields all of the nodes in the tree in breadth first order.
@@ -473,14 +305,47 @@ class BaseComponent(HasStrictTraits):
             to pass the appropriate toolkit widget that should be the parent.
 
         """
+        self.initialize_hooks()
         self.set_parent_refs()
         self.set_shell_refs()
         self.create(parent)
+        self.finalize_hooks()
         self.initialize()
         self.bind()
+        self.bind_hooks()
         self.set_listeners()
-
         self.initialized = True
+
+    def initialize_hooks(self):
+        """ A setup hook method which is the very first method called
+        during the setup process. The hook should make their expressions
+        available for use at this time.
+
+        """
+        for hook in self.setup_hooks:
+            hook.initialize(self)
+        for child in self.children:
+            child.initialize_hooks()
+    
+    def finalize_hooks(self):
+        """ A setup hook method which is called after all of the widgets
+        in the tree have been created.
+
+        """
+        for hook in self.setup_hooks:
+            hook.finalize(self)
+        for child in self.children:
+            child.finalize_hooks()
+    
+    def bind_hooks(self):
+        """ A setup hook method which is called after all of the event
+        handlers for the toolkit widgets have been bound.
+
+        """
+        for hook in self.setup_hooks:
+            hook.bind(self)
+        for child in self.children:
+            child.bind_hooks()
 
     def set_parent_refs(self):
         """ Assigns a reference to self for every child in children and 
@@ -502,7 +367,6 @@ class BaseComponent(HasStrictTraits):
         for child in self.children:
             child.set_shell_refs()
         
-    @setup_hook
     def create(self, parent):
         """ A setup method that tells the abstract object to create its
         internal toolkit object. This should not normally be called by 
@@ -517,7 +381,6 @@ class BaseComponent(HasStrictTraits):
         for child in self.children:
             child.create(self_widget)
 
-    @setup_hook
     def initialize(self):
         """ A setup method that tells the abstract object to initialize
         its internal toolkit object. This should not normally be called 
@@ -528,7 +391,6 @@ class BaseComponent(HasStrictTraits):
         for child in self.children:
             child.initialize()
 
-    @setup_hook
     def bind(self):
         """ A setup method that tells the abstract object to bind its
         event handlers to its internal toolkit object. This should not

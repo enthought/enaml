@@ -57,8 +57,8 @@ class ExpressionDefaultTrait(TraitType):
 #------------------------------------------------------------------------------
 class AbstractSetupHook(object):
     """ An abstract base class that defines the methods that need to 
-    be implemented by a setup hook that is used by a Component during
-    the setup process.
+    be implemented by a setup hook that is used by a BaseComponent 
+    during the setup process.
 
     """
     __metaclass__ = ABCMeta
@@ -66,11 +66,11 @@ class AbstractSetupHook(object):
     __slots__ = ()
     
     @abstractmethod
-    def create(self, component):
+    def initialize(self, component):
         raise NotImplementedError
     
     @abstractmethod
-    def initialize(self, component):
+    def finalize(self, component):
         raise NotImplementedError
 
     @abstractmethod
@@ -78,26 +78,11 @@ class AbstractSetupHook(object):
         raise NotImplementedError
 
 
-class NullSetupHook(AbstractSetupHook):
-    """ An AbstractSetupHook implementation that does nothing. This 
-    makes is easy for hooks that only need to implement a few methods 
-    to subclass from this and implement only what is needed.
+class ExpressionSetupHook(AbstractSetupHook):
+    """ A SetupHook for binding expressions to attributes on an instance
+    of BaseComponent.
 
     """
-    __slots__ = ()
-    
-    def create(self, component):
-        yield
-
-    def initialize(self, component):
-        yield
-
-    def bind(self, component):
-        yield
-
-
-class ExpressionSetupHook(NullSetupHook):
-
     __slots__ = ('name', 'expression', 'eval_default')
 
     def __init__(self, name, expression, eval_default=True):
@@ -105,10 +90,10 @@ class ExpressionSetupHook(NullSetupHook):
         self.expression = expression
         self.eval_default = eval_default
 
-    def create(self, component):
-        """ A setup hook method which sets up the expression yields
-        back to the framework for widget creation, and then finalizes
-        the expression.
+    def initialize(self, component):
+        """ A setup hook method which sets up the expression before the
+        'create' method on a component is called. This initialization
+        allows the expression to be used during the call to 'create'.
 
         """
         # We want to setup the expressions before we create and
@@ -116,12 +101,13 @@ class ExpressionSetupHook(NullSetupHook):
         # expression can be used to select an appropriate widget
         # if necessary.
         self.setup_expression(component)
-        
-        # Yield back to the framework so it can create the widgets in 
-        # the tree. By the time this function is resumed, all of the
-        # widgets in the tree will have been created.
-        yield
 
+    def finalize(self, component):
+        """ A setup hook method which finalizes the expression by
+        evaluating it and assigning the value as the default value
+        of the component attribute if necessary.
+
+        """
         # Now that all of the widgets have been created, we are done
         # with the process of creating objects in the tree. So, we
         # can safetly evaluate our expression and assign its value
@@ -130,14 +116,13 @@ class ExpressionSetupHook(NullSetupHook):
         self.finalize_expression(component)
 
     def bind(self, component):
-        """ A setup hook method which allows the widget event handlers
-        to be bound, then sets up the notifiers for the expression.
+        """ A setup hook method which binds the expression listeners
+        after all of the widget event handlers have been set up.
 
         """
         # The last thing we need to do in the setup process is parse the
         # expression and bind the updated listeners. We do this after 
         # the ui toolkit has finished binding its own event handlers.
-        yield
         self.expression.bind()
         
     def setup_expression(self, component):
