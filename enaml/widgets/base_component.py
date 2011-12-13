@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod, abstractproperty
-from collections import deque, namedtuple
+from collections import deque
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, Tuple, WeakRef,
@@ -125,9 +125,6 @@ class AbstractTkBaseComponent(object):
         raise NotImplementedError
 
 
-DelegateEntry = namedtuple('DelegateEntry', 'idx delegate')
-
-
 class BaseComponent(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy.
 
@@ -140,17 +137,9 @@ class BaseComponent(HasStrictTraits):
     #: parent is None.
     parent = WeakRef('BaseComponent')
 
-    #: A readonly property which returns a list of children for this 
-    #: component. The list will contain any children that are created
-    #: by Delegate leaves.
+    #: The list of child for this component. This should normally not
+    #: be manipulated directly.
     children = List(Instance('BaseComponent'))
-
-    #: The private list of children components for this component. A
-    #: subclass should redefine this trait as necessary to restrict 
-    #: which types of children they allow. This list should not be
-    #: manipulated directly so that the tree can be properly updated
-    #: when the children or delegates change.
-    #_children = List(Instance('BaseComponent'))
 
     #: The toolkit specific object that implements the behavior of
     #: this component and manages the gui toolkit object. Subclasses
@@ -305,16 +294,16 @@ class BaseComponent(HasStrictTraits):
             to pass the appropriate toolkit widget that should be the parent.
 
         """
-        self.initialize_hooks()
         self.set_parent_refs()
         self.set_shell_refs()
+        self.initialize_hooks()
         self.create(parent)
         self.finalize_hooks()
         self.initialize()
         self.bind()
         self.bind_hooks()
         self.set_listeners()
-        self.initialized = True
+        self.set_initialized()
 
     def initialize_hooks(self):
         """ A setup hook method which is the very first method called
@@ -367,6 +356,15 @@ class BaseComponent(HasStrictTraits):
         for child in self.children:
             child.set_shell_refs()
         
+    def set_initialized(self):
+        """ Sets the initialized attribute to True and proxies the call
+        down the tree of components.
+
+        """
+        self.initialized = True
+        for child in self.children:
+            child.set_initialized()
+
     def create(self, parent):
         """ A setup method that tells the abstract object to create its
         internal toolkit object. This should not normally be called by 
