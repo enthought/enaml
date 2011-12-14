@@ -288,6 +288,6 @@ epub_copyright = u'2011, Enthought, Inc.'
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'python' : ('http://docs.python.org/', None),
-                       'traits' : ('http://github.enthought.com/traits/'
-                                   'traits_user_manual/', None)}
+                       'traits' : ('http://github.enthought.com/traits/',
+                                   None)}
 
