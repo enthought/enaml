@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtCore, QtGui
+from .qt import QtGui
 from .qt_base_component import QtBaseComponent
 from .styling import q_color_from_color, q_font_from_font
 
@@ -12,31 +12,28 @@ from ..component import AbstractTkComponent
 class QtComponent(QtBaseComponent, AbstractTkComponent):
     """ A Qt4 implementation of Component.
 
-    A QtComponent is not meant to be used directly. It provides some
-    common functionality that is useful to all widgets and should
-    serve as the base class for all other classes.
-
-    .. note:: This is not a HasTraits class.
-
     """
-    #: The Qt widget created by the component
-    widget = None
+    #: A reference to the Qt layout item used determine various aspects
+    #: of the layout geometry of the widget.
+    _layout_item = None
+
+    #: A tuple of margins which are the offsets from the widget rect
+    #: to the widget layout rect
+    _layout_margins = None
+
+    #: A tuple of layout margins for the parent of the instances 
+    #: toolkit widget
+    _parent_margins = None
 
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self, parent):
-        """ Creates the underlying Qt widget.
-
-        """
-        self.widget = QtGui.QFrame(parent)
-    
     def initialize(self):
         """ Initializes the attributes of the Qt widget.
 
         """
         super(QtComponent, self).initialize()
-        self.layout_item = QtGui.QWidgetItem(self.widget)
+        self._layout_item = QtGui.QWidgetItem(self.widget)
         self._reset_layout_margins()
         shell = self.shell_obj
         if shell.bg_color:
@@ -46,31 +43,17 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         if shell.font:
             self.set_font(shell.font)
         self.set_enabled(shell.enabled)
-        if not shell.visible:
-            # Some QtContainers will turn off the visibility of their 
-            # children entirely on the Qt side when the parent-child 
-            # relationship is made. They have probably already done 
-            # their work, so don't override it in the default case of 
-            # visible=True.
-            self.set_visible(shell.visible)
+        self.set_visible(shell.visible)
 
     #--------------------------------------------------------------------------
     # Abstract Implementation
     #--------------------------------------------------------------------------
-    @property
-    def toolkit_widget(self):
-        """ A property that returns the toolkit specific widget for this
-        component.
-
-        """
-        return self.widget
-
     def size(self):
         """ Returns the size of the internal toolkit widget, ignoring any
         windowing decorations, as a (width, height) tuple of integers.
 
         """
-        geom = self.layout_item.geometry()
+        geom = self._layout_item.geometry()
         return (geom.width(), geom.height())
 
     def size_hint(self):
@@ -80,7 +63,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         manager to determine how much space to allocate the widget.
 
         """
-        size_hint = self.layout_item.sizeHint()
+        size_hint = self._layout_item.sizeHint()
         return (size_hint.width(), size_hint.height())
 
     def resize(self, width, height):
@@ -143,7 +126,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         pdx, pdy, pdr, pdb = self._parent_margins
-        geom = self.layout_item.geometry()
+        geom = self._layout_item.geometry()
         return (geom.x()-pdx, geom.y()-pdy, geom.width(), geom.height())
 
     def set_geometry(self, x, y, width, height):
@@ -209,7 +192,6 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """ Show or hide the widget.
 
         """
-        self.shell_obj.parent.set_needs_update_constraints()
         self.widget.setVisible(visible)
 
     def set_bg_color(self, color):
@@ -259,20 +241,11 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         self.widget.setFont(q_font)
 
     #--------------------------------------------------------------------------
-    # Convenienence methods
+    # Auxiliary Methods
     #--------------------------------------------------------------------------
-
-    def child_widgets(self):
-        """ Iterates over the shell widget's children and yields the
-        toolkit widgets for those children.
-
-        """
-        for child in self.shell_obj.children:
-            yield child.toolkit_widget
-
     def _get_layout_margins(self, widget):
-        """ Compute the size of the margins between the layout rectangle and the
-        widget drawing rectangle.
+        """ Compute the size of the margins between the layout rectangle 
+        and the widget drawing rectangle.
 
         """
         layout_geom = QtGui.QWidgetItem(widget).geometry()
@@ -293,3 +266,4 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
             self._parent_margins = self._get_layout_margins(parent)
         else:
             self._parent_margins = (0, 0, 0, 0)
+
