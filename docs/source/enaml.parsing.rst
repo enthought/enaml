@@ -35,8 +35,3 @@ parsing Package
 ----------------------------
 
 .. automodule:: enaml.parsing.enaml_compiler
-
-:mod:`virtual_machine` Module
------------------------------
-
-.. automodule:: enaml.parsing.virtual_machine
