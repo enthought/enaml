@@ -69,18 +69,18 @@ thin layer over backend widgets and produce the traits View objects.</p>
 <div class="section" id="enums-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">enums</span></tt> Module<a class="headerlink" href="#enums-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="_images/inheritance-21ce52d0699cee50e4c519b40b9ef95297b20303.png" alt="Inheritance diagram of enaml.enums" usemap="#inheritance8c09fb9196" class="inheritance"/>
+<img src="_images/inheritance-2d761c07b3af79835ddb1d3704317ec0d2ed83e3.png" alt="Inheritance diagram of enaml.enums" usemap="#inheritance8c09fb9196" class="inheritance"/>
 <map id="inheritance8c09fb9196" name="inheritance8c09fb9196">
-<area shape="rect" id="node1" href="#enaml.enums.DataRole" title="DataRole" alt="" coords="129,5,207,35"/>
+<area shape="rect" id="node1" href="#enaml.enums.ItemFlags" title="ItemFlags" alt="" coords="126,5,210,35"/>
 <area shape="rect" id="node2" href="enaml.util.html#enaml.util.enum.Enum" title="Enum" alt="" coords="5,85,77,115"/>
-<area shape="rect" id="node4" href="#enaml.enums.Buttons" title="Buttons" alt="" coords="132,59,204,88"/>
-<area shape="rect" id="node6" href="#enaml.enums.Match" title="Match" alt="" coords="132,112,204,141"/>
-<area shape="rect" id="node8" href="#enaml.enums.ItemFlags" title="ItemFlags" alt="" coords="126,165,210,195"/>
+<area shape="rect" id="node4" href="#enaml.enums.DataRole" title="DataRole" alt="" coords="129,59,207,88"/>
+<area shape="rect" id="node6" href="#enaml.enums.Buttons" title="Buttons" alt="" coords="132,112,204,141"/>
+<area shape="rect" id="node8" href="#enaml.enums.Match" title="Match" alt="" coords="132,165,204,195"/>
 </map>
 </p>
 <span class="target" id="module-enaml.enums"></span><dl class="data">
 <dt id="enaml.enums.DialogResult">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">DialogResult</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x4226ed0&gt;</em><a class="headerlink" href="#enaml.enums.DialogResult" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">DialogResult</tt><em class="property"> = Enum(rejected, accepted)</em><a class="headerlink" href="#enaml.enums.DialogResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dialog&#8217;s result (depending on how it was closed)</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -105,7 +105,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.Orientation">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Orientation</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x4226f10&gt;</em><a class="headerlink" href="#enaml.enums.Orientation" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Orientation</tt><em class="property"> = Enum(horizontal, vertical)</em><a class="headerlink" href="#enaml.enums.Orientation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic orientation values.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -130,7 +130,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.TabPosition">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">TabPosition</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x4226f70&gt;</em><a class="headerlink" href="#enaml.enums.TabPosition" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">TabPosition</tt><em class="property"> = Enum(top, bottom, left, right)</em><a class="headerlink" href="#enaml.enums.TabPosition" title="Permalink to this definition">¶</a></dt>
 <dd><p>The position of the tabs in a Tabbed container.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -161,7 +161,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.HorizontalAlign">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">HorizontalAlign</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x4226f90&gt;</em><a class="headerlink" href="#enaml.enums.HorizontalAlign" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">HorizontalAlign</tt><em class="property"> = Enum(left, right, center)</em><a class="headerlink" href="#enaml.enums.HorizontalAlign" title="Permalink to this definition">¶</a></dt>
 <dd><p>Horizontal alingment.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -189,7 +189,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.Direction">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Direction</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x4226fb0&gt;</em><a class="headerlink" href="#enaml.enums.Direction" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Direction</tt><em class="property"> = Enum(left_to_right, right_to_left, top_to_bottom, bottom_to_top)</em><a class="headerlink" href="#enaml.enums.Direction" title="Permalink to this definition">¶</a></dt>
 <dd><p>A container&#8217;s layout style, based on the order of insertion.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -220,7 +220,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.Modality">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Modality</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x422d050&gt;</em><a class="headerlink" href="#enaml.enums.Modality" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Modality</tt><em class="property"> = Enum(application_modal, window_modal)</em><a class="headerlink" href="#enaml.enums.Modality" title="Permalink to this definition">¶</a></dt>
 <dd><p>A window&#8217;s modality specifies whether it captures focus.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -250,7 +250,7 @@ the application.</td>
 
 <dl class="data">
 <dt id="enaml.enums.TickPosition">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">TickPosition</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x422d070&gt;</em><a class="headerlink" href="#enaml.enums.TickPosition" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">TickPosition</tt><em class="property"> = Enum(no_ticks, left, right, top, bottom, both)</em><a class="headerlink" href="#enaml.enums.TickPosition" title="Permalink to this definition">¶</a></dt>
 <dd><p>The position of ticks for a control.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -289,7 +289,7 @@ both the left and the right. This might vary with
 
 <dl class="data">
 <dt id="enaml.enums.Sorted">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Sorted</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x422d090&gt;</em><a class="headerlink" href="#enaml.enums.Sorted" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Sorted</tt><em class="property"> = Enum(ascending, descending)</em><a class="headerlink" href="#enaml.enums.Sorted" title="Permalink to this definition">¶</a></dt>
 <dd><p>The ordering of a sort.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -314,7 +314,7 @@ both the left and the right. This might vary with
 
 <dl class="data">
 <dt id="enaml.enums.Validity">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Validity</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x422d0b0&gt;</em><a class="headerlink" href="#enaml.enums.Validity" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Validity</tt><em class="property"> = Enum(invalid, indermediate, acceptable)</em><a class="headerlink" href="#enaml.enums.Validity" title="Permalink to this definition">¶</a></dt>
 <dd><p>The result of a validation function.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -343,7 +343,7 @@ valid.</td>
 
 <dl class="data">
 <dt id="enaml.enums.PolicyEnum">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">PolicyEnum</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x422d0d0&gt;</em><a class="headerlink" href="#enaml.enums.PolicyEnum" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">PolicyEnum</tt><em class="property"> = Enum(ignore, weak, strong, required)</em><a class="headerlink" href="#enaml.enums.PolicyEnum" title="Permalink to this definition">¶</a></dt>
 <dd><p>The strength of widget expand and clip preferences for hug and resist_clip.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -722,20 +722,20 @@ valid.</td>
 <div class="section" id="converters-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">converters</span></tt> Module<a class="headerlink" href="#converters-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="_images/inheritance-96e2ba9dc59489944fa4d127d78a1c5571c1cb18.png" alt="Inheritance diagram of enaml.converters" usemap="#inheritancec016d6e32c" class="inheritance"/>
+<img src="_images/inheritance-e66853d34bed746dca5668b7e086fc1347d1baff.png" alt="Inheritance diagram of enaml.converters" usemap="#inheritancec016d6e32c" class="inheritance"/>
 <map id="inheritancec016d6e32c" name="inheritancec016d6e32c">
-<area shape="rect" id="node1" href="#enaml.converters.HexConverter" title="HexConverter" alt="" coords="356,5,466,35"/>
-<area shape="rect" id="node2" href="#enaml.converters.BaseStringConverter" title="BaseStringConverter" alt="" coords="139,165,291,195"/>
-<area shape="rect" id="node4" href="#enaml.converters.IntConverter" title="IntConverter" alt="" coords="360,59,462,88"/>
-<area shape="rect" id="node9" href="#enaml.converters.ComplexConverter" title="ComplexConverter" alt="" coords="339,112,482,141"/>
-<area shape="rect" id="node13" href="#enaml.converters.LongConverter" title="LongConverter" alt="" coords="352,165,469,195"/>
-<area shape="rect" id="node18" href="#enaml.converters.StringConverter" title="StringConverter" alt="" coords="349,219,472,248"/>
-<area shape="rect" id="node20" href="#enaml.converters.FloatConverter" title="FloatConverter" alt="" coords="353,272,469,301"/>
-<area shape="rect" id="node22" href="#enaml.converters.OctalConverter" title="OctalConverter" alt="" coords="352,325,470,355"/>
-<area shape="rect" id="node6" href="#enaml.converters.NullConverter" title="NullConverter" alt="" coords="159,219,270,248"/>
-<area shape="rect" id="node7" href="#enaml.converters.Converter" title="Converter" alt="" coords="6,245,90,275"/>
-<area shape="rect" id="node11" href="#enaml.converters.DateConverter" title="DateConverter" alt="" coords="157,272,272,301"/>
-<area shape="rect" id="node16" href="#enaml.converters.DateTimeConverter" title="DateTimeConverter" alt="" coords="141,325,288,355"/>
+<area shape="rect" id="node1" href="#enaml.converters.DateTimeConverter" title="DateTimeConverter" alt="" coords="141,112,288,141"/>
+<area shape="rect" id="node2" href="#enaml.converters.Converter" title="Converter" alt="" coords="6,192,90,221"/>
+<area shape="rect" id="node4" href="#enaml.converters.BaseStringConverter" title="BaseStringConverter" alt="" coords="139,165,291,195"/>
+<area shape="rect" id="node16" href="#enaml.converters.DateConverter" title="DateConverter" alt="" coords="157,219,272,248"/>
+<area shape="rect" id="node18" href="#enaml.converters.NullConverter" title="NullConverter" alt="" coords="159,272,270,301"/>
+<area shape="rect" id="node6" href="#enaml.converters.StringConverter" title="StringConverter" alt="" coords="349,5,472,35"/>
+<area shape="rect" id="node8" href="#enaml.converters.FloatConverter" title="FloatConverter" alt="" coords="353,59,469,88"/>
+<area shape="rect" id="node10" href="#enaml.converters.OctalConverter" title="OctalConverter" alt="" coords="352,112,470,141"/>
+<area shape="rect" id="node12" href="#enaml.converters.IntConverter" title="IntConverter" alt="" coords="360,165,462,195"/>
+<area shape="rect" id="node14" href="#enaml.converters.ComplexConverter" title="ComplexConverter" alt="" coords="339,219,482,248"/>
+<area shape="rect" id="node20" href="#enaml.converters.LongConverter" title="LongConverter" alt="" coords="352,272,469,301"/>
+<area shape="rect" id="node22" href="#enaml.converters.HexConverter" title="HexConverter" alt="" coords="356,325,466,355"/>
 </map>
 </p>
 <span class="target" id="module-enaml.converters"></span><dl class="class">
@@ -954,14 +954,14 @@ method is needed.</p>
 <div class="section" id="expressions-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">expressions</span></tt> Module<a class="headerlink" href="#expressions-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="_images/inheritance-edc90e28afb813e76568f85eb63728e425105e6b.png" alt="Inheritance diagram of enaml.expressions" usemap="#inheritanceed4a18a838" class="inheritance"/>
+<img src="_images/inheritance-1fe5d14eb27ebeea057ce68f30cbc5f3a8531a7f.png" alt="Inheritance diagram of enaml.expressions" usemap="#inheritanceed4a18a838" class="inheritance"/>
 <map id="inheritanceed4a18a838" name="inheritanceed4a18a838">
-<area shape="rect" id="node1" href="#enaml.expressions.SimpleExpression" title="SimpleExpression" alt="" coords="200,940,336,969"/>
-<area shape="rect" id="node5" href="#enaml.expressions.DelegatingExpression" title="DelegatingExpression" alt="" coords="384,887,546,916"/>
-<area shape="rect" id="node7" href="#enaml.expressions.NotifyingExpression" title="NotifyingExpression" alt="" coords="390,940,541,969"/>
-<area shape="rect" id="node9" href="#enaml.expressions.UpdatingExpression" title="UpdatingExpression" alt="" coords="390,993,541,1023"/>
-<area shape="rect" id="node2" href="#enaml.expressions.AbstractExpression" title="AbstractExpression" alt="" coords="6,940,152,969"/>
-<area shape="rect" id="node4" href="#enaml.expressions.ExpressionLocals" title="ExpressionLocals" alt="" coords="13,5,145,35"/>
+<area shape="rect" id="node1" href="#enaml.expressions.DelegatingExpression" title="DelegatingExpression" alt="" coords="384,887,546,916"/>
+<area shape="rect" id="node2" href="#enaml.expressions.SimpleExpression" title="SimpleExpression" alt="" coords="200,940,336,969"/>
+<area shape="rect" id="node6" href="#enaml.expressions.UpdatingExpression" title="UpdatingExpression" alt="" coords="390,940,541,969"/>
+<area shape="rect" id="node9" href="#enaml.expressions.NotifyingExpression" title="NotifyingExpression" alt="" coords="390,993,541,1023"/>
+<area shape="rect" id="node4" href="#enaml.expressions.AbstractExpression" title="AbstractExpression" alt="" coords="6,940,152,969"/>
+<area shape="rect" id="node5" href="#enaml.expressions.ExpressionLocals" title="ExpressionLocals" alt="" coords="13,5,145,35"/>
 </map>
 </p>
 <span class="target" id="module-enaml.expressions"></span><dl class="class">
@@ -1260,13 +1260,13 @@ to the expression locals.</p>
 <div class="section" id="exceptions-module">
 <h2><a class="reference external" href="http://docs.python.org/library/exceptions.html#module-exceptions" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">exceptions</span></tt></a> Module<a class="headerlink" href="#exceptions-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="_images/inheritance-6bfca9c1bc451a6f1169278e2693e43b18eecdc7.png" alt="Inheritance diagram of enaml.exceptions" usemap="#inheritancec8455e7019" class="inheritance"/>
+<img src="_images/inheritance-c992c8fb455f581f586d8f18d88db1e5897edcd1.png" alt="Inheritance diagram of enaml.exceptions" usemap="#inheritancec8455e7019" class="inheritance"/>
 <map id="inheritancec8455e7019" name="inheritancec8455e7019">
 <area shape="rect" id="node1" href="#enaml.exceptions.ShellNotificationContext" title="ShellNotificationContext" alt="" coords="222,552,400,581"/>
 <area shape="rect" id="node2" href="#enaml.exceptions.ShellExceptionContext" title="ShellExceptionContext" alt="" coords="6,552,173,581"/>
-<area shape="rect" id="node4" href="#enaml.exceptions.EnamlSyntaxError" title="EnamlSyntaxError" alt="" coords="243,5,378,35"/>
+<area shape="rect" id="node4" href="#enaml.exceptions.EnamlRuntimeError" title="EnamlRuntimeError" alt="" coords="238,5,384,35"/>
 <area shape="rect" id="node5" href="#enaml.exceptions.EnamlError" title="EnamlError" alt="" coords="43,32,135,61"/>
-<area shape="rect" id="node7" href="#enaml.exceptions.EnamlRuntimeError" title="EnamlRuntimeError" alt="" coords="238,59,384,88"/>
+<area shape="rect" id="node7" href="#enaml.exceptions.EnamlSyntaxError" title="EnamlSyntaxError" alt="" coords="243,59,378,88"/>
 </map>
 </p>
 <span class="target" id="module-enaml.exceptions"></span><dl class="exception">
@@ -1322,7 +1322,7 @@ will get swallowed and set into the exception trait of the shell object.</p>
 
 <dl class="class">
 <dt id="enaml.exceptions.ShellNotificationContext">
-<em class="property">class </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">ShellNotificationContext</tt><big>(</big><em>shell_obj</em>, <em>handler=&lt;function null_handler at 0x42868b0&gt;</em>, <em>reraise_exceptions=True</em>, <em>main=False</em>, <em>locked=False</em><big>)</big><a class="reference internal" href="_modules/enaml/exceptions.html#ShellNotificationContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.ShellNotificationContext" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">ShellNotificationContext</tt><big>(</big><em>shell_obj</em>, <em>handler=&lt;function null_handler at 0x4103db0&gt;</em>, <em>reraise_exceptions=True</em>, <em>main=False</em>, <em>locked=False</em><big>)</big><a class="reference internal" href="_modules/enaml/exceptions.html#ShellNotificationContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.ShellNotificationContext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#enaml.exceptions.ShellExceptionContext" title="enaml.exceptions.ShellExceptionContext"><tt class="xref py py-class docutils literal"><span class="pre">enaml.exceptions.ShellExceptionContext</span></tt></a></p>
 <p>Combination of a ShellExceptionContext and a notification_context</p>
 <p>Default behaviour is to use the null_handler with exceptions re-raised,

@@ -1,0 +1,8 @@
+<map id="inheritance8c09fb9196" name="inheritance8c09fb9196">
+<area shape="rect" id="node4" href="#enaml.enums.Match" title="Match" alt="" coords="577,5,649,35"/>
+<area shape="rect" id="node5" href="enaml.util.html#enaml.util.enum.Enum" title="Enum" alt="" coords="451,112,523,141"/>
+<area shape="rect" id="node7" href="#enaml.enums.my_Enum" title="my_Enum" alt="" coords="572,59,655,88"/>
+<area shape="rect" id="node9" href="#enaml.enums.Buttons" title="Buttons" alt="" coords="577,112,649,141"/>
+<area shape="rect" id="node11" href="#enaml.enums.DataRole" title="DataRole" alt="" coords="574,165,653,195"/>
+<area shape="rect" id="node13" href="#enaml.enums.ItemFlags" title="ItemFlags" alt="" coords="572,219,655,248"/>
+</map>
