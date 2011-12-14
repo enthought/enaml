@@ -2,12 +2,15 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import abstractmethod, abstractproperty
+from abc import abstractmethod
 
-from traits.api import Instance, Property, Tuple, Event, Enum
+from traits.api import Instance, Property, Tuple, Event, Enum, Bool
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
+
+from ..styling.color import ColorTrait
+from ..styling.font import FontTrait
 
 
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
@@ -21,14 +24,6 @@ class AbstractTkComponent(AbstractTkBaseComponent):
     widget.
 
     """
-    @abstractproperty
-    def toolkit_widget(self):
-        """ An abstract property that should return the gui toolkit 
-        widget being managed by the object.
-
-        """
-        raise NotImplementedError
-
     @abstractmethod
     def size(self):
         """ Returns the size of the internal toolkit widget, ignoring any
@@ -119,27 +114,70 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         """
         raise NotImplementedError
 
-    def set_solved_geometry(self, root):
-        """ Makes the component take the solved geometry and other constrained
-        variables and set its internal values.
+    @abstractmethod
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell
+        object. Sets the enabled/disabled state of the widget.
 
-        This method can assume that all of its parents have had their geometry
-        set correctly.
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the shell
+        object. Sets the visibility state of the widget.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the shell
+        object. Sets the foreground color of the internal widget to the 
+        given color. For some widgets this may do nothing.
+
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell
+        object. Sets the font of the internal widget to the given font.
+        For some widgets this may do nothing.
+
+        """
+        raise NotImplementedError
+
+    def set_solved_geometry(self, root):
+        """ Makes the component take the solved geometry and other 
+        constrained variables and set its internal values.
+
+        This method can assume that all of its parents have had their 
+        geometry set correctly.
 
         Parameters
         ----------
         root : Container
-            The root container that actually performed the layout for this
-            component. Implementations will need this to know how to transform
-            the global solved (x,y) values to local values relative to their
-            immediate parent.
+            The root container that actually performed the layout for 
+            this component. Implementations will need this to know how 
+            to transform the global solved (x,y) values to local values 
+            relative to their immediate parent.
 
         Returns
         -------
         dx, dy : int
-            The offsets needed to convert (x,y) variable values into local
-            positions. These are mostly used in overrides of this method that
-            handle additional variables.
+            The offsets needed to convert (x, y) variable values into 
+            local positions. These are mostly used in overrides of this 
+            method that handle additional variables.
 
         """
         shell = self.shell_obj
@@ -148,9 +186,9 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         width = shell.width.value
         height = shell.height.value
         x, y, width, height = (int(round(z)) for z in (x, y, width, height))
-        # This is offset against the root Container. Each Component's geometry
-        # actually needs to be offset against its parent. Walk up the tree and
-        # subtract out the parent's offset.
+        # This is offset against the root Container. Each Component's 
+        # geometry actually needs to be offset against its parent. Walk 
+        # up the tree and subtract out the parent's offset.
         dx = 0
         dy = 0
         for ancestor in shell.walk_up_containers(root):
@@ -186,7 +224,8 @@ class Component(BaseComponent):
     hug_height = PolicyEnum('strong')
 
     #: The combination of (hug_width, hug_height).
-    hug = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['hug_width', 'hug_height'])
+    hug = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['hug_width', 
+                                                              'hug_height'])
 
     #: How strongly a component resists clipping its contents. Valid 
     #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
@@ -199,7 +238,9 @@ class Component(BaseComponent):
     resist_clip_height = PolicyEnum('strong')
 
     #: The combination of (resist_clip_width, resist_clip_height).
-    resist_clip = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['resist_clip_width', 'resist_clip_height'])
+    resist_clip = Property(Tuple(PolicyEnum, PolicyEnum), 
+                           depends_on=['resist_clip_width', 
+                                       'resist_clip_height'])
 
     #: An event that should be emitted by the abstract obj when its size 
     #: hint has updated do to some change.
@@ -237,9 +278,20 @@ class Component(BaseComponent):
     #: center of the component
     h_center = Property
 
-    #: A read-only property that returns the toolkit specific widget
-    #: being managed by the abstract widget.
-    toolkit_widget = Property
+    #: The background color of the widget
+    bg_color = ColorTrait
+    
+    #: The foreground color of the widget
+    fg_color = ColorTrait
+    
+    #: The foreground color of the widget
+    font = FontTrait
+
+    #: Whether or not the widget is enabled.
+    enabled = Bool(True)
+
+    #: Whether or not the widget is visible.
+    visible = Bool(True)
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkComponent)
@@ -385,28 +437,22 @@ class Component(BaseComponent):
         self.abstract_obj.set_geometry(x, y, width, height)
 
     def set_solved_geometry(self, root):
-        """ Makes the component take the solved geometry and other constrained
-        variables and set its internal values.
+        """ Makes the component take the solved geometry and other 
+        constrained variables and set its internal values.
 
-        This method can assume that all of its parents have had their geometry
-        set correctly.
+        This method can assume that all of its parents have had their 
+        geometry set correctly.
 
         """
         return self.abstract_obj.set_solved_geometry(root)
 
     def walk_up_containers(self, root):
-        """ Walk up the component hierarchy from this component and yield the
-        parent Containers, excepting the given root Container.
+        """ Walk up the component hierarchy from this component and yield
+        the parent Containers, excepting the given root Container.
 
         """
         parent = self.parent
         while parent is not root and parent is not None:
             yield parent
             parent = parent.parent
-
-    def _get_toolkit_widget(self):
-        """ Property getter for the 'toolkit_widget' property.
-
-        """
-        return self.abstract_obj.toolkit_widget
 
