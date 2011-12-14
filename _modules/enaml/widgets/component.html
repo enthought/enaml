@@ -1,0 +1,518 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.component &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.component</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.component</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">abstractproperty</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Enum</span>
+
+<span class="kn">from</span> <span class="nn">.base_component</span> <span class="kn">import</span> <span class="n">BaseComponent</span><span class="p">,</span> <span class="n">AbstractTkBaseComponent</span>
+<span class="kn">from</span> <span class="nn">.layout.box_model</span> <span class="kn">import</span> <span class="n">BoxModel</span>
+
+
+<span class="n">PolicyEnum</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="s">&#39;weak&#39;</span><span class="p">,</span> <span class="s">&#39;medium&#39;</span><span class="p">,</span> <span class="s">&#39;strong&#39;</span><span class="p">,</span> <span class="s">&#39;required&#39;</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractTkComponent</span><span class="p">(</span><span class="n">AbstractTkBaseComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit Component interface.</span>
+
+<span class="sd">    A toolkit component is responsible for handling changes on a shell </span>
+<span class="sd">    Component and proxying those changes to and from its internal toolkit</span>
+<span class="sd">    widget.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractproperty</span>
+    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An abstract property that should return the gui toolkit </span>
+<span class="sd">        widget being managed by the object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the size of the internal toolkit widget, ignoring any</span>
+<span class="sd">        windowing decorations, as a (width, height) tuple of integers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a (width, height) tuple of integers which represent</span>
+<span class="sd">        the suggested size of the widget for its current state, ignoring</span>
+<span class="sd">        any windowing decorations. This value is used by the layout </span>
+<span class="sd">        manager to determine how much space to allocate the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Resizes the internal toolkit widget according the given</span>
+<span class="sd">        width and height integers, ignoring any windowing decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the hard minimum (width, height) of the widget, </span>
+<span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
+<span class="sd">        to be resized smaller than this value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the hard minimum width and height of the widget, ignoring</span>
+<span class="sd">        any windowing decorations. A widget will not be able to be resized </span>
+<span class="sd">        smaller than this value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the position of the internal toolkit widget as an</span>
+<span class="sd">        (x, y) tuple of integers, including any windowing decorations. </span>
+<span class="sd">        The coordinates should be relative to the origin of the widget&#39;s </span>
+<span class="sd">        parent, or to the screen if the widget is toplevel.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the internal toolkit widget according to the given</span>
+<span class="sd">        x and y integers which are relative to the origin of the</span>
+<span class="sd">        widget&#39;s parent and includes any windowing decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
+<span class="sd">        for the internal toolkit widget, including any windowing</span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
+<span class="sd">        for the internal toolkit widget, ignoring any windowing</span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the geometry of the internal widget to the given</span>
+<span class="sd">        x, y, width, and height values, ignoring any windowing </span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="nf">set_solved_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Makes the component take the solved geometry and other constrained</span>
+<span class="sd">        variables and set its internal values.</span>
+
+<span class="sd">        This method can assume that all of its parents have had their geometry</span>
+<span class="sd">        set correctly.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        root : Container</span>
+<span class="sd">            The root container that actually performed the layout for this</span>
+<span class="sd">            component. Implementations will need this to know how to transform</span>
+<span class="sd">            the global solved (x,y) values to local values relative to their</span>
+<span class="sd">            immediate parent.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dx, dy : int</span>
+<span class="sd">            The offsets needed to convert (x,y) variable values into local</span>
+<span class="sd">            positions. These are mostly used in overrides of this method that</span>
+<span class="sd">            handle additional variables.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">left</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">top</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">width</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">height</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+        <span class="c"># This is offset against the root Container. Each Component&#39;s geometry</span>
+        <span class="c"># actually needs to be offset against its parent. Walk up the tree and</span>
+        <span class="c"># subtract out the parent&#39;s offset.</span>
+        <span class="n">dx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ancestor</span> <span class="ow">in</span> <span class="n">shell</span><span class="o">.</span><span class="n">walk_up_containers</span><span class="p">(</span><span class="n">root</span><span class="p">):</span>
+            <span class="n">adx</span><span class="p">,</span> <span class="n">ady</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ancestor</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+            <span class="n">dx</span> <span class="o">+=</span> <span class="n">adx</span>
+            <span class="n">dy</span> <span class="o">+=</span> <span class="n">ady</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">x</span><span class="o">-</span><span class="n">dx</span><span class="p">,</span> <span class="n">y</span><span class="o">-</span><span class="n">dy</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Component"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component">[docs]</a><span class="k">class</span> <span class="nc">Component</span><span class="p">(</span><span class="n">BaseComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A BaseComponent subclass that adds a box model and support</span>
+<span class="sd">    for constraints specification. This class represents the most</span>
+<span class="sd">    basic visible widget in Enaml.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A private attribute that holds the box model instance</span>
+    <span class="c">#: for this component. </span>
+    <span class="n">_box_model</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">BoxModel</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__box_model_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">BoxModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width. Valid strengths</span>
+    <span class="c">#: are &#39;weak&#39;, &#39;medium&#39;, &#39;strong&#39;, &#39;required&#39; and &#39;ignore&#39;. Default is </span>
+    <span class="c">#: &#39;strong&#39;. This trait should be overridden on a per-control basis to</span>
+    <span class="c">#: specify  a logical default for the given control.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="n">PolicyEnum</span><span class="p">(</span><span class="s">&#39;strong&#39;</span><span class="p">)</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; height. Valid strengths</span>
+    <span class="c">#: are &#39;weak&#39;, &#39;medium&#39;, &#39;strong&#39;, &#39;required&#39; and &#39;ignore&#39;. Default is</span>
+    <span class="c">#: &#39;strong&#39;. This trait should be overridden on a per-control basis to </span>
+    <span class="c">#: specify  a logical default for the given control.</span>
+    <span class="n">hug_height</span> <span class="o">=</span> <span class="n">PolicyEnum</span><span class="p">(</span><span class="s">&#39;strong&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The combination of (hug_width, hug_height).</span>
+    <span class="n">hug</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Tuple</span><span class="p">(</span><span class="n">PolicyEnum</span><span class="p">,</span> <span class="n">PolicyEnum</span><span class="p">),</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;hug_width&#39;</span><span class="p">,</span> <span class="s">&#39;hug_height&#39;</span><span class="p">])</span>
+
+    <span class="c">#: How strongly a component resists clipping its contents. Valid </span>
+    <span class="c">#: strengths are &#39;weak&#39;, &#39;medium&#39;, &#39;strong&#39;, &#39;required&#39; and &#39;ignore&#39;. </span>
+    <span class="c">#: The default is &#39;strong&#39; for width.</span>
+    <span class="n">resist_clip_width</span> <span class="o">=</span> <span class="n">PolicyEnum</span><span class="p">(</span><span class="s">&#39;strong&#39;</span><span class="p">)</span>
+
+    <span class="c">#: How strongly a component resists clipping its contents. Valid </span>
+    <span class="c">#: strengths are &#39;weak&#39;, &#39;medium&#39;, &#39;strong&#39;, &#39;required&#39; and &#39;ignore&#39;. </span>
+    <span class="c">#: The default is &#39;strong&#39; for height.</span>
+    <span class="n">resist_clip_height</span> <span class="o">=</span> <span class="n">PolicyEnum</span><span class="p">(</span><span class="s">&#39;strong&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The combination of (resist_clip_width, resist_clip_height).</span>
+    <span class="n">resist_clip</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Tuple</span><span class="p">(</span><span class="n">PolicyEnum</span><span class="p">,</span> <span class="n">PolicyEnum</span><span class="p">),</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;resist_clip_width&#39;</span><span class="p">,</span> <span class="s">&#39;resist_clip_height&#39;</span><span class="p">])</span>
+
+    <span class="c">#: An event that should be emitted by the abstract obj when its size </span>
+    <span class="c">#: hint has updated do to some change.</span>
+    <span class="n">size_hint_updated</span> <span class="o">=</span> <span class="n">Event</span>
+
+    <span class="c">#: A read-only symbolic object that represents the left boundary of </span>
+    <span class="c">#: the component</span>
+    <span class="n">left</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only symbolic object that represents the top boundary of </span>
+    <span class="c">#: the component</span>
+    <span class="n">top</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only symbolic object that represents the width of the </span>
+    <span class="c">#: component</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only symbolic object that represents the height of the </span>
+    <span class="c">#: component</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only symbolic object that represents the right boundary </span>
+    <span class="c">#: of the component</span>
+    <span class="n">right</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only symbolic object that represents the bottom boundary </span>
+    <span class="c">#: of the component</span>
+    <span class="n">bottom</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only symbolic object that represents the vertical center </span>
+    <span class="c">#: of the component</span>
+    <span class="n">v_center</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only symbolic object that represents the horizontal </span>
+    <span class="c">#: center of the component</span>
+    <span class="n">h_center</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: A read-only property that returns the toolkit specific widget</span>
+    <span class="c">#: being managed by the abstract widget.</span>
+    <span class="n">toolkit_widget</span> <span class="o">=</span> <span class="n">Property</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkComponent</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_left</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;left&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">left</span>
+    
+    <span class="k">def</span> <span class="nf">_get_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;top&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">top</span>
+    
+    <span class="k">def</span> <span class="nf">_get_width</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;width&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">width</span>
+    
+    <span class="k">def</span> <span class="nf">_get_height</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;height&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">height</span>
+    
+    <span class="k">def</span> <span class="nf">_get_right</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;right&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">right</span>
+    
+    <span class="k">def</span> <span class="nf">_get_bottom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;bottom&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">bottom</span>
+    
+    <span class="k">def</span> <span class="nf">_get_v_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;v_center&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">v_center</span>
+    
+    <span class="k">def</span> <span class="nf">_get_h_center</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;h_center&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="o">.</span><span class="n">h_center</span>
+
+    <span class="k">def</span> <span class="nf">_get_hug</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;hug&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hug_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hug_height</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_hug</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property setter for the &#39;hug&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trait_set</span><span class="p">(</span>
+            <span class="n">hug_width</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">hug_height</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_resist_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;resist_clip&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">resist_clip_width</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">resist_clip_height</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_resist_clip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property setter for the &#39;resist_clip&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">trait_set</span><span class="p">(</span>
+            <span class="n">resist_clip_width</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+            <span class="n">resist_clip_height</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Component.size"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the size tuple as given by the abstract widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Component.size_hint"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the size hint tuple as given by the abstract widget</span>
+<span class="sd">        for its current state.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">size_hint</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Component.resize"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Resize the abstract widget as specified by the given</span>
+<span class="sd">        width and height integers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Component.min_size"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the hard minimum (width, height) of the widget, </span>
+<span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
+<span class="sd">        to be resized smaller than this value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">min_size</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Component.set_min_size"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the hard minimum width and height of the widget. A widget</span>
+<span class="sd">        should not be able to be resized smaller than this value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_min_size</span><span class="p">(</span><span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Component.pos"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the position tuple as given by the abstract widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Component.move"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the abstract widget to the given x and y integer</span>
+<span class="sd">        coordinates which are given relative to the parent origin.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Component.geometry"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the (x, y, width, height) geometry tuple as given</span>
+<span class="sd">        by the abstract widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Component.set_geometry"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the geometry of the abstract widget with the given</span>
+<span class="sd">        integer values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Component.set_solved_geometry"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_solved_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_solved_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Makes the component take the solved geometry and other constrained</span>
+<span class="sd">        variables and set its internal values.</span>
+
+<span class="sd">        This method can assume that all of its parents have had their geometry</span>
+<span class="sd">        set correctly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_solved_geometry</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Component.walk_up_containers"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.walk_up_containers">[docs]</a>    <span class="k">def</span> <span class="nf">walk_up_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Walk up the component hierarchy from this component and yield the</span>
+<span class="sd">        parent Containers, excepting the given root Container.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span>
+        <span class="k">while</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">root</span> <span class="ow">and</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">parent</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+</div>
+    <span class="k">def</span> <span class="nf">_get_toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Property getter for the &#39;toolkit_widget&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">toolkit_widget</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.component</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

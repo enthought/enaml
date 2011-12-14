@@ -1,0 +1,918 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>refactor_doc &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Module code" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">refactor_doc</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for refactor_doc</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  file: refactor_doc.py</span>
+<span class="c">#  License: LICENSE.TXT</span>
+<span class="c">#</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">.. warning::</span>
+<span class="sd">        This is a smelly module (i.e. architecture and speed) but the</span>
+<span class="sd">        first working implementation of my view on refactoring the source rst</span>
+<span class="sd">        documentation so that is shpinx friendly.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Precompiled regexes</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="n">indent_regex</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;\s+&#39;</span><span class="p">)</span>
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Functions to manage indention</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+
+<span class="k">def</span> <span class="nf">add_indent</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Add spaces to indent a list of lines.</span>
+
+<span class="sd">    Arguments</span>
+<span class="sd">    ---------</span>
+<span class="sd">    lines : list</span>
+<span class="sd">        The list of strings to indent.</span>
+
+<span class="sd">    indent : int</span>
+<span class="sd">        The number of spaces to add.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lines : list</span>
+<span class="sd">        The indented strings (lines).</span>
+
+<span class="sd">    .. note:: Empty strings are not changed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indent_str</span> <span class="o">=</span> <span class="s">&#39; &#39;</span> <span class="o">*</span> <span class="n">indent</span>
+    <span class="n">output</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">output</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent_str</span> <span class="o">+</span> <span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">output</span>
+
+<span class="k">def</span> <span class="nf">remove_indent</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Remove all indentation from the lines.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">lstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">get_indent</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return the indent portion of the line.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">indent</span> <span class="o">=</span> <span class="n">indent_regex</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">indent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">indent</span><span class="o">.</span><span class="n">group</span><span class="p">()</span>
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Functions to detect line type</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+
+<span class="k">def</span> <span class="nf">is_variable_field</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">+</span> <span class="s">r&#39;\*?\*?\w+\s:\s*&#39;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">match</span>
+
+<span class="k">def</span> <span class="nf">is_method_field</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+    <span class="n">regex</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">+</span> <span class="s">r&#39;\w+\(.*\)\s*&#39;</span>
+    <span class="n">match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">match</span>
+
+<span class="k">def</span> <span class="nf">is_empty</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+    <span class="k">return</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Functions to adjust strings</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+
+<span class="k">def</span> <span class="nf">fix_name</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;*&#39;</span><span class="p">,</span><span class="s">&#39;\*&#39;</span><span class="p">)</span>
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Classes</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="k">class</span> <span class="nc">BaseDocstring</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base abstract docstring refactoring class.</span>
+
+<span class="sd">    The class&#39; main purpose is to parse the dosctring and find the</span>
+<span class="sd">    sections that need to be refactored. It also provides a number of</span>
+<span class="sd">    methods to help with the refactoring. Subclasses should provide</span>
+<span class="sd">    the methods responsible for refactoring the sections.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    docstring : list</span>
+<span class="sd">        A list of strings (lines) that holds docstrings</span>
+
+<span class="sd">    index : int</span>
+<span class="sd">        The current zero-based line number of the docstring that is</span>
+<span class="sd">        proccessed.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        When set the class prints a lot of info about the proccess</span>
+<span class="sd">        during runtime.</span>
+
+<span class="sd">    headers : dict</span>
+<span class="sd">        The sections that the class refactors. Each entry in the</span>
+<span class="sd">        dictionary should have as key the name of the section in the</span>
+<span class="sd">        form that it appears in the docstrings. The value should be</span>
+<span class="sd">        the postfix of the method, in the subclasses, that is</span>
+<span class="sd">        responsible for refactoring (e.g. {&#39;Methods&#39;: &#39;method&#39;}).</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    extract_fields(indent=&#39;&#39;, field_check=None)</span>
+<span class="sd">        Extract the fields from the docstring</span>
+
+<span class="sd">    get_field()</span>
+<span class="sd">        Get the field description.</span>
+
+<span class="sd">    get_next_paragraph()</span>
+<span class="sd">        Get the next paragraph designated by an empty line.</span>
+
+<span class="sd">    is_section()</span>
+<span class="sd">        Check if the line defines a section.</span>
+
+<span class="sd">    parse_field(lines)</span>
+<span class="sd">        Parse a field description.</span>
+
+<span class="sd">    peek(count=0)</span>
+<span class="sd">        Peek ahead</span>
+
+<span class="sd">    read()</span>
+<span class="sd">        Return the next line and advance the index.</span>
+
+<span class="sd">    insert_lines(lines, index)</span>
+<span class="sd">        Insert refactored lines</span>
+
+<span class="sd">    remove_lines(index, count=1)</span>
+<span class="sd">        Removes the lines for the docstring</span>
+
+<span class="sd">    seek_to_next_non_empty_line()</span>
+<span class="sd">        Goto the next non_empty line</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the class</span>
+
+<span class="sd">        The method setups the class attributes and starts parsing the</span>
+<span class="sd">        docstring to find and refactor the sections.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        lines : list of strings</span>
+<span class="sd">            The docstring to refactor</span>
+
+<span class="sd">        headers : dict</span>
+<span class="sd">            The sections for which the class has custom refactor methods.</span>
+<span class="sd">            Each entry in the dictionary should have as key the name of</span>
+<span class="sd">            the section in the form that it appears in the docstrings.</span>
+<span class="sd">            The value should be the postfix of the method, in the</span>
+<span class="sd">            subclasses, that is responsible for refactoring (e.g.</span>
+<span class="sd">            {&#39;Methods&#39;: &#39;method&#39;}).</span>
+
+<span class="sd">        verbose : bool</span>
+<span class="sd">            When set the class prints a lot of info about the proccess</span>
+<span class="sd">            during runtime.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_docstring</span> <span class="o">=</span> <span class="n">lines</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_docstring</span> <span class="o">=</span> <span class="n">lines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">headers</span> <span class="o">=</span> <span class="n">headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;INPUT DOCSTRING&#39;</span>
+            <span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;OUTPUT DOCSTRING&#39;</span>
+            <span class="k">print</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the docstring.</span>
+
+<span class="sd">        The docstring is parsed for sections. If a section is found then</span>
+<span class="sd">        the corresponding refactoring method is called.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seek_to_next_non_empty_line</span><span class="p">()</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">eol</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&#39;current index is&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_section</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_refactor</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">seek_to_next_non_empty_line</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_refactor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Call the heading refactor method.</span>
+
+<span class="sd">        The name of the refctoring method is constructed using the form</span>
+<span class="sd">        _refactor_&lt;header&gt;. Where &lt;header&gt; is the value corresponding to</span>
+<span class="sd">        ``self.headers[header]``. If there is no custom method for the</span>
+<span class="sd">        section then the self._refactor_header() is called with the</span>
+<span class="sd">        found header name as input.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Header is&#39;</span><span class="p">,</span> <span class="n">header</span>
+            <span class="k">print</span> <span class="s">&#39;Line is&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+
+        <span class="n">refactor_postfix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="s">&#39;header&#39;</span><span class="p">)</span>
+        <span class="n">method_name</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s">&#39;_refactor_&#39;</span><span class="p">,</span> <span class="n">refactor_postfix</span><span class="p">))</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method_name</span><span class="p">)</span>
+        <span class="n">method</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Refactor the header section using the rubric directive.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Refactoring {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;.. rubric:: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">))</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">descriptions</span>
+
+
+    <span class="k">def</span> <span class="nf">extract_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">field_check</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Extract the fields from the docstring</span>
+
+<span class="sd">        Parse the fields into tuples of name, type and description in a</span>
+<span class="sd">        list of strings. The strings are also removed from the list.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        indent : str, optional</span>
+<span class="sd">            the indent argument is used to make sure that only the lines</span>
+<span class="sd">            with the same indent are considered when checking for a</span>
+<span class="sd">            field header line. The value is used to define the field</span>
+<span class="sd">            checking function.</span>
+
+<span class="sd">        field_check : function</span>
+<span class="sd">            Optional function to use for checking if the next line is a</span>
+<span class="sd">            field. The signature of the function is ``foo(line)`` and it</span>
+<span class="sd">            should return ``True`` if the line contains a valid field</span>
+<span class="sd">            The default function is checking for fields of the following</span>
+<span class="sd">            formats::</span>
+
+<span class="sd">                &lt;name&gt; : &lt;type&gt;</span>
+
+<span class="sd">            or::</span>
+
+<span class="sd">                &lt;name&gt; :</span>
+
+<span class="sd">            Where the name has to be one word.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        parameters : list of tuples</span>
+<span class="sd">            list of parsed parameter tuples as returned from the</span>
+<span class="sd">            :meth:`~BaseDocstring.parse_field` method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c">#TODO raise error when there is no parameter</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;PARSING PARAMETERS&quot;</span>
+
+        <span class="k">if</span> <span class="n">field_check</span><span class="p">:</span>
+            <span class="n">is_field</span> <span class="o">=</span> <span class="n">field_check</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">is_field</span> <span class="o">=</span> <span class="n">is_variable_field</span>
+
+        <span class="n">parameters</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">eol</span><span class="p">)</span> <span class="ow">and</span> <span class="n">is_field</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">(),</span> <span class="n">indent</span><span class="p">):</span>
+            <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_field</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;next field is: &quot;</span><span class="p">,</span> <span class="n">field</span>
+            <span class="n">parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parse_field</span><span class="p">(</span><span class="n">field</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">parameters</span>
+
+    <span class="k">def</span> <span class="nf">parse_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Parse a field description.</span>
+
+<span class="sd">        The field is assumed to be in the following formats::</span>
+
+<span class="sd">            &lt;name&gt; : &lt;type&gt;</span>
+<span class="sd">                &lt;description&gt;</span>
+
+<span class="sd">            &lt;name&gt; :</span>
+<span class="sd">                &lt;description&gt;</span>
+
+<span class="sd">            &lt;name&gt;</span>
+<span class="sd">                &lt;description&gt;</span>
+
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        lines :</span>
+<span class="sd">            docstring lines to parse for the field.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        arg_name : str</span>
+<span class="sd">            The name of the parameter.</span>
+
+<span class="sd">        arg_type : str</span>
+<span class="sd">            The type of the parameter (if defined).</span>
+
+<span class="sd">        desc : list</span>
+<span class="sd">            A list of the strings that make up the description.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">header</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">if</span> <span class="s">&#39; :&#39;</span> <span class="ow">in</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; \:\s?&#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span> <span class="o">=</span> <span class="n">header</span><span class="p">,</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;name is:&quot;</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">,</span> <span class="s">&quot; type is:&quot;</span><span class="p">,</span> <span class="n">arg_type</span>
+            <span class="k">print</span> <span class="s">&quot;the output of &#39;re.split(&#39; \:\s?&#39;, header)&#39; was&quot;</span><span class="p">,</span> \
+                        <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39; \:\s?&#39;</span><span class="p">,</span> <span class="n">header</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">arg_name</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">arg_type</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">lines</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">arg_name</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="n">arg_type</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span> <span class="p">[</span><span class="s">&#39;&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_field</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the field description.</span>
+
+<span class="sd">        The method reads lines (staring with the first line of the field)</span>
+<span class="sd">        until a line with the same indent appears.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docstring</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">field</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+        <span class="n">initial_indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_indent</span><span class="p">(</span><span class="n">field</span><span class="p">))</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">field</span><span class="p">]</span>
+        <span class="n">empty_lines</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">docstring</span><span class="p">[(</span><span class="n">index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):]:</span>
+            <span class="n">indent</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_indent</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="n">empty_lines</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">empty_lines</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">indent</span> <span class="o">&lt;=</span> <span class="n">initial_indent</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="k">if</span> <span class="n">empty_lines</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="n">docstring</span><span class="p">[</span><span class="n">index</span><span class="p">:(</span><span class="n">index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">))]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="k">return</span> <span class="n">lines</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">is_section</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check if the line defines a section.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">eol</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="n">header</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">()</span>
+        <span class="n">line2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;current line is: {0} at index {1}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="c"># check for underline type format</span>
+        <span class="n">underline</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="s">r&#39;\s*\S+\s*\Z&#39;</span><span class="p">,</span> <span class="n">line2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">underline</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="c"># is the nextline an rst underline?</span>
+        <span class="n">striped_header</span> <span class="o">=</span> <span class="n">header</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
+        <span class="n">expected_underline1</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;[A-Za-z]|\b\s&#39;</span><span class="p">,</span> <span class="s">&#39;-&#39;</span><span class="p">,</span> <span class="n">striped_header</span><span class="p">)</span>
+        <span class="n">expected_underline2</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s">r&#39;[A-Za-z]|\b\s&#39;</span><span class="p">,</span> <span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="n">striped_header</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">((</span><span class="n">underline</span><span class="o">.</span><span class="n">group</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">==</span> <span class="n">expected_underline1</span><span class="p">)</span> <span class="ow">or</span>
+            <span class="p">(</span><span class="n">underline</span><span class="o">.</span><span class="n">group</span><span class="p">()</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span> <span class="o">==</span> <span class="n">expected_underline2</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">header</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+    <span class="k">def</span> <span class="nf">insert_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Insert refactored lines</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        new_lines : list</span>
+<span class="sd">            The list of lines to insert</span>
+
+<span class="sd">        index : int</span>
+<span class="sd">            Index to start the insertion</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docstring</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="n">docstring</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">line</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">seek_to_next_non_empty_line</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Goto the next non_empty line</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docstring</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">docstring</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+
+    <span class="k">def</span> <span class="nf">get_next_paragraph</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the next paragraph designated by an empty line.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docstring</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">docstring</span><span class="p">[</span><span class="n">index</span><span class="p">:]:</span>
+            <span class="k">if</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">line</span><span class="p">):</span>
+                <span class="k">break</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="n">docstring</span><span class="p">[</span><span class="n">index</span><span class="p">:(</span><span class="n">index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">))]</span>
+        <span class="k">return</span> <span class="n">lines</span>
+
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the next line and advance the index.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docstring</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">line</span>
+
+    <span class="k">def</span> <span class="nf">remove_lines</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Removes the lines for the docstring</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">docstring</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docstring</span>
+        <span class="k">del</span> <span class="n">docstring</span><span class="p">[</span><span class="n">index</span><span class="p">:(</span><span class="n">index</span> <span class="o">+</span> <span class="n">count</span><span class="p">)]</span>
+
+    <span class="k">def</span> <span class="nf">peek</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ahead</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Peek ahead a number of lines</span>
+
+<span class="sd">        The function retrieves the line that is ahead of the current</span>
+<span class="sd">        index. If the index is at the end of the list then it returns an</span>
+<span class="sd">        empty string.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        ahead : int</span>
+<span class="sd">            The number of lines to look ahead.</span>
+
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+</span> <span class="n">ahead</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">docstring</span><span class="p">[</span><span class="n">position</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">line</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">eol</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">docstring</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">docstring</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the docstring lines.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_docstring</span>
+
+
+<span class="k">class</span> <span class="nc">FunctionDocstring</span><span class="p">(</span><span class="n">BaseDocstring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Docstring refactoring for functions&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Returns&#39;</span><span class="p">:</span> <span class="s">&#39;returns&#39;</span><span class="p">,</span> <span class="s">&#39;Arguments&#39;</span><span class="p">:</span> <span class="s">&#39;arguments&#39;</span><span class="p">,</span>
+                       <span class="s">&#39;Parameters&#39;</span><span class="p">:</span> <span class="s">&#39;arguments&#39;</span><span class="p">,</span> <span class="s">&#39;Raises&#39;</span><span class="p">:</span> <span class="s">&#39;raises&#39;</span><span class="p">,</span>
+                       <span class="s">&#39;Yields&#39;</span><span class="p">:</span> <span class="s">&#39;returns&#39;</span><span class="p">,</span> <span class="s">&#39;Notes&#39;</span><span class="p">:</span><span class="s">&#39;notes&#39;</span><span class="p">}</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">FunctionDocstring</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_returns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refactor the return section to sphinx friendly format&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Returns section refactoring&#39;</span>
+
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_fields</span><span class="p">(</span><span class="n">indent</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Return items&#39;</span>
+            <span class="k">print</span> <span class="n">fields</span>
+
+        <span class="c"># generate sphinx friendly rst</span>
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;:returns:&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">name_format</span> <span class="o">=</span> <span class="s">&#39;**{0}** &#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name_format</span> <span class="o">=</span> <span class="s">&#39;- **{0}** &#39;</span>
+
+        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">,</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="n">arg_name</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;    &#39;</span> <span class="o">+</span> <span class="n">name_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">arg_type</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="s">&#39;({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_type</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">desc</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="n">arg_type</span> <span class="o">+</span> <span class="s">&#39; - &#39;</span>
+            <span class="n">paragraph</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remove_indent</span><span class="p">(</span><span class="n">desc</span><span class="p">))</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span> <span class="o">+</span> <span class="n">arg_type</span> <span class="o">+</span> <span class="n">paragraph</span><span class="p">)</span>
+
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_raises</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refactor the raises section to sphinx friendly format&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Raised section refactoring&#39;</span>
+
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_fields</span><span class="p">(</span><span class="n">indent</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Raised Errors&#39;</span>
+            <span class="k">print</span> <span class="n">fields</span>
+
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;:raises:&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">name_format</span> <span class="o">=</span> <span class="s">&#39;**{0}** &#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">name_format</span> <span class="o">=</span> <span class="s">&#39;- **{0}** &#39;</span>
+
+        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">,</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">is_empty</span><span class="p">(</span><span class="n">desc</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
+                <span class="n">arg_name</span> <span class="o">=</span> <span class="n">name_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span> <span class="o">+</span> <span class="s">&#39;- &#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arg_name</span> <span class="o">=</span> <span class="n">name_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+            <span class="n">arg_name</span> <span class="o">=</span> <span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;    &#39;</span> <span class="o">+</span> <span class="n">arg_name</span>
+            <span class="n">paragraph</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">remove_indent</span><span class="p">(</span><span class="n">desc</span><span class="p">))</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_name</span> <span class="o">+</span> <span class="n">paragraph</span><span class="p">)</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refactor the argument section to sphinx friendly format&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;{0} Section&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_fields</span><span class="p">(</span><span class="n">indent</span><span class="p">)</span>
+
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">,</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="n">arg_name</span> <span class="o">=</span> <span class="n">fix_name</span><span class="p">(</span><span class="n">arg_name</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;:param {0}: {1}&#39;</span><span class="o">.</span>\
+                                <span class="n">format</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="n">desc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()))</span>
+            <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">desc</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+                <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;{0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">line</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arg_type</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;:type {0}: {1}&#39;</span><span class="o">.</span>\
+                                    <span class="n">format</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">))</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refactor the argument section to sphinx friendly format&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;Refactoring Notes&#39;</span>
+
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="n">paragraph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_paragraph</span><span class="p">()</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;.. note::&#39;</span><span class="p">)</span>
+        <span class="n">descriptions</span> <span class="o">+=</span> <span class="n">add_indent</span><span class="p">(</span><span class="n">paragraph</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">descriptions</span>
+
+
+<span class="k">class</span> <span class="nc">ClassDocstring</span><span class="p">(</span><span class="n">BaseDocstring</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Docstring refactoring for classes&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lines</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;Attributes&#39;</span><span class="p">:</span> <span class="s">&#39;attributes&#39;</span><span class="p">,</span> <span class="s">&#39;Methods&#39;</span><span class="p">:</span> <span class="s">&#39;methods&#39;</span><span class="p">,</span>
+                       <span class="s">&#39;See Also&#39;</span><span class="p">:</span> <span class="s">&#39;header&#39;</span><span class="p">,</span> <span class="s">&#39;Abstract Methods&#39;</span><span class="p">:</span> <span class="s">&#39;methods&#39;</span><span class="p">,</span>
+                       <span class="s">&#39;Notes&#39;</span><span class="p">:</span><span class="s">&#39;notes&#39;</span><span class="p">}</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClassDocstring</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refactor the attributes section to sphinx friendly format&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;{0} Section&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_fields</span><span class="p">(</span><span class="n">indent</span><span class="p">)</span>
+
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">,</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;.. attribute:: {0}&#39;</span><span class="o">.</span>\
+                                <span class="n">format</span><span class="p">(</span><span class="n">arg_name</span><span class="p">))</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">description_indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="n">desc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">arg_type</span> <span class="o">!=</span> <span class="s">&#39;&#39;</span><span class="p">:</span>
+                <span class="n">arg_type</span> <span class="o">=</span> <span class="n">description_indent</span> <span class="o">+</span> <span class="s">&#39;*({0})*&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_type</span><span class="p">)</span>
+                <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_type</span><span class="p">)</span>
+            <span class="n">paragraph</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">paragraph</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refactor the attributes section to sphinx friendly format&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;{0} section&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_fields</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="n">is_method_field</span><span class="p">)</span>
+
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="p">:</span>
+            <span class="n">max_name_length</span><span class="p">,</span> <span class="n">max_method_length</span><span class="p">,</span> <span class="n">max_desc_length</span> <span class="o">=</span> \
+                                                    <span class="bp">self</span><span class="o">.</span><span class="n">max_lengths</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+            <span class="n">max_method_length</span> <span class="o">+=</span> <span class="mi">11</span> <span class="o">+</span> <span class="n">max_name_length</span>  <span class="c"># to account for the</span>
+                                                       <span class="c"># additional rst directives</span>
+            <span class="n">first_column</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">indent</span><span class="p">)</span>
+            <span class="n">second_column</span> <span class="o">=</span> <span class="n">first_column</span> <span class="o">+</span> <span class="n">max_method_length</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">table_line</span> <span class="o">=</span> <span class="s">&#39;{0}{1} {2}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">indent</span><span class="p">,</span> <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="n">max_method_length</span><span class="p">,</span>
+                                             <span class="s">&#39;=&#39;</span> <span class="o">*</span> <span class="n">max_desc_length</span><span class="p">)</span>
+            <span class="n">empty_line</span> <span class="o">=</span> <span class="n">table_line</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;=&#39;</span><span class="p">,</span> <span class="s">&#39; &#39;</span><span class="p">)</span>
+            <span class="n">headings_line</span> <span class="o">=</span> <span class="n">empty_line</span><span class="p">[:]</span>
+            <span class="n">headings_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_at</span><span class="p">(</span><span class="s">&#39;Methods&#39;</span><span class="p">,</span> <span class="n">headings_line</span><span class="p">,</span>
+                                            <span class="n">first_column</span><span class="p">)</span>
+            <span class="n">headings_line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_at</span><span class="p">(</span><span class="s">&#39;Description&#39;</span><span class="p">,</span> <span class="n">headings_line</span><span class="p">,</span>
+                                            <span class="n">second_column</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_line</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">headings_line</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_line</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">arg_name</span><span class="p">,</span> <span class="n">arg_type</span><span class="p">,</span> <span class="n">desc</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+                <span class="n">split_result</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;\((.*)\)&#39;</span><span class="p">,</span> <span class="n">arg_name</span><span class="p">)</span>
+                <span class="n">name</span> <span class="o">=</span> <span class="n">split_result</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">method_text</span> <span class="o">=</span> <span class="s">&#39;:meth:`{0} &lt;{1}&gt;`&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">arg_name</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="n">summary</span> <span class="o">=</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">desc</span><span class="p">)</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="n">empty_line</span><span class="p">[:]</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_at</span><span class="p">(</span><span class="n">method_text</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">first_column</span><span class="p">)</span>
+                <span class="n">line</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">replace_at</span><span class="p">(</span><span class="n">summary</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">second_column</span><span class="p">)</span>
+                <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">table_line</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;|&#39;</span><span class="p">)</span>
+            <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">_refactor_notes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Refactor the note section to use the rst ``.. note`` directive.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&#39;{0} Section&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        <span class="n">descriptions</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">remove_lines</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">indent</span> <span class="o">=</span> <span class="n">get_indent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">peek</span><span class="p">())</span>
+        <span class="n">paragraph</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_paragraph</span><span class="p">()</span>
+        <span class="n">descriptions</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">indent</span> <span class="o">+</span> <span class="s">&#39;.. note::&#39;</span><span class="p">)</span>
+        <span class="n">descriptions</span> <span class="o">+=</span> <span class="n">add_indent</span><span class="p">(</span><span class="n">paragraph</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">insert_lines</span><span class="p">(</span><span class="n">descriptions</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">descriptions</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">descriptions</span>
+
+    <span class="c"># FIXME: I do not like this function.</span>
+    <span class="k">def</span> <span class="nf">max_lengths</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Find the max lenght of the name and discription in the</span>
+<span class="sd">        parameters.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        parameters : list of tuples</span>
+<span class="sd">            list of parsed parameter tuples as returned from the</span>
+<span class="sd">            :meth:`~_FunctionDocString._parse_parameter` function.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">max_name_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="n">parameter</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s">&#39;(&#39;</span><span class="p">)</span>
+                               <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">])</span>
+        <span class="n">max_method_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">parameter</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                               <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">])</span>
+        <span class="n">max_desc_length</span> <span class="o">=</span> <span class="nb">max</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parameter</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+                               <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">max_name_length</span><span class="p">,</span> <span class="n">max_method_length</span><span class="p">,</span> <span class="n">max_desc_length</span>
+
+    <span class="k">def</span> <span class="nf">replace_at</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">word</span><span class="p">,</span> <span class="n">line</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Replace the text in line</span>
+
+<span class="sd">        The text in line is replaced with the word without changing the</span>
+<span class="sd">        size of the line (in most cases). The replacement starts at the</span>
+<span class="sd">        provided index.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        word : str</span>
+<span class="sd">            The text to copy into the line.</span>
+
+<span class="sd">        line : str</span>
+<span class="sd">            The line where the copy takes place.</span>
+
+<span class="sd">        index : int</span>
+<span class="sd">            The index to start coping.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : str</span>
+<span class="sd">            line of text with the text replaced.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">word_length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="n">line_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="n">line_list</span><span class="p">[</span><span class="n">index</span><span class="p">:</span> <span class="p">(</span><span class="n">index</span> <span class="o">+</span> <span class="n">word_length</span><span class="p">)]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">word</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">line_list</span><span class="p">)</span>
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Extension definition</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">refactor_docstring</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">what</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">options</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
+
+    <span class="n">verbose</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="c"># if &#39;component.Component&#39; in name:</span>
+        <span class="c"># verbose = True</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="s">&#39;class&#39;</span> <span class="ow">in</span> <span class="n">what</span><span class="p">):</span>
+        <span class="n">ClassDocstring</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="s">&#39;function&#39;</span> <span class="ow">in</span> <span class="n">what</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s">&#39;method&#39;</span> <span class="ow">in</span> <span class="n">what</span><span class="p">):</span>
+        <span class="n">FunctionDocstring</span><span class="p">(</span><span class="n">lines</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="n">app</span><span class="p">):</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">setup_extension</span><span class="p">(</span><span class="s">&#39;sphinx.ext.autodoc&#39;</span><span class="p">)</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">&#39;autodoc-process-docstring&#39;</span><span class="p">,</span> <span class="n">refactor_docstring</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">refactor_doc</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

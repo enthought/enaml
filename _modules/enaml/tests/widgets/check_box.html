@@ -1,0 +1,279 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.tests.widgets.check_box &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.widgets.check_box</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.tests.widgets.check_box</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
+
+
+<div class="viewcode-block" id="TestCheckBox"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox">[docs]</a><span class="k">class</span> <span class="nc">TestCheckBox</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Logic for testing push buttons.</span>
+
+<span class="sd">    Tooklit testcases need to provide the following functions</span>
+
+<span class="sd">    Abstract Methods</span>
+<span class="sd">    ----------------</span>
+<span class="sd">    get_text(widget)</span>
+<span class="sd">        Returns the text from the tookit widget.</span>
+
+<span class="sd">    checked_status(widget)</span>
+<span class="sd">        Returns the checked status of the toolkit widget.</span>
+
+<span class="sd">    Checkbox_pressed(self)</span>
+<span class="sd">        Press the checkbox programmatically.</span>
+
+<span class="sd">    Checkbox_released(self)</span>
+<span class="sd">        Release the checkbox programmatically.</span>
+
+<span class="sd">    Checkbox_toggled(self)</span>
+<span class="sd">        Toggle the button programmatically.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestCheckBox.setUp"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Setup enaml component for testing</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_box_label</span> <span class="o">=</span> <span class="s">&#39;checkbox label&#39;</span>
+
+        <span class="n">enaml_source</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
+<span class="s">defn MainView(events):</span>
+<span class="s">    Window:</span>
+<span class="s">        CheckBox:</span>
+<span class="s">            name = &#39;checkb1&#39;</span>
+<span class="s">            text = &#39;checkbox label&#39;</span>
+<span class="s">            checked = True</span>
+<span class="s">            toggled &gt;&gt; events.append(&#39;toggled&#39;)</span>
+<span class="s">            pressed &gt;&gt; events.append(&#39;pressed&#39;)</span>
+<span class="s">            released &gt;&gt; events.append(&#39;released&#39;)</span>
+<span class="s">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">check_box_label</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_and_create</span><span class="p">(</span><span class="n">enaml_source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;checkb1&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.test_box_initialization"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.test_box_initialization">[docs]</a>    <span class="k">def</span> <span class="nf">test_box_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Test the initialization of the widget</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="c"># checked</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;checked&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_box_label</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.testLabelChange"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.testLabelChange">[docs]</a>    <span class="k">def</span> <span class="nf">testLabelChange</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Test changing the label of a check box</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="n">new_label</span> <span class="o">=</span> <span class="s">&#39;new_label&#39;</span>
+        <span class="n">component</span><span class="o">.</span><span class="n">text</span> <span class="o">=</span> <span class="n">new_label</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;text&#39;</span><span class="p">,</span> <span class="n">new_label</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.testSettingChecked"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.testSettingChecked">[docs]</a>    <span class="k">def</span> <span class="nf">testSettingChecked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Test selecting a WXCheckBox</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="c"># un-check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">checked</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;checked&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="c"># check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">checked</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;checked&#39;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.test_checkbox_pressed"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.test_checkbox_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">test_checkbox_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; React to a checkbox press event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_pressed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">down</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;pressed&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.test_checkbox_toggled"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.test_checkbox_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">test_checkbox_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Test a checkbox toggled event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_toggle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">down</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;toggled&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.test_checkbox_released"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.test_checkbox_released">[docs]</a>    <span class="k">def</span> <span class="nf">test_checkbox_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Test a checkbox release event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span>
+        <span class="c"># Release events are ignored if the button was not already down</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_released</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.test_press_release_sequence"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.test_press_release_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">test_press_release_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Verify the even firing when the press-release (nornal) </span>
+<span class="sd">        sequence is applied.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_pressed</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">down</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_released</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">down</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;pressed&#39;</span><span class="p">,</span> <span class="s">&#39;released&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="TestCheckBox.test_checkbox_all_events"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.test_checkbox_all_events">[docs]</a>    <span class="k">def</span> <span class="nf">test_checkbox_all_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Test press, release, and click events.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_pressed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_released</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">checkbox_toggle</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+
+        <span class="n">events</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[</span><span class="s">&#39;pressed&#39;</span><span class="p">,</span> <span class="s">&#39;released&#39;</span><span class="p">,</span> <span class="s">&#39;toggled&#39;</span><span class="p">])</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@required_method</span>
+<div class="viewcode-block" id="TestCheckBox.get_text"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the text from the tookit widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+    <span class="nd">@required_method</span>
+<div class="viewcode-block" id="TestCheckBox.get_checked"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.get_checked">[docs]</a>    <span class="k">def</span> <span class="nf">get_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the checked status of the toolkit widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+    <span class="nd">@required_method</span>
+<div class="viewcode-block" id="TestCheckBox.checkbox_pressed"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.checkbox_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">checkbox_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Press the checkbox programmatically.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+    <span class="nd">@required_method</span>
+<div class="viewcode-block" id="TestCheckBox.checkbox_released"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.checkbox_released">[docs]</a>    <span class="k">def</span> <span class="nf">checkbox_released</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Release the button programmatically.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+    <span class="nd">@required_method</span>
+<div class="viewcode-block" id="TestCheckBox.checkbox_toggle"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox.checkbox_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">checkbox_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Toggle the button programmatically.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.widgets.check_box</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,597 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.expressions &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.expressions</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.expressions</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span>
+
+<span class="kn">from</span> <span class="nn">.parsing.analyzer</span> <span class="kn">import</span> <span class="n">AttributeVisitor</span>
+<span class="kn">from</span> <span class="nn">.guard</span> <span class="kn">import</span> <span class="n">guard</span>
+
+
+<span class="c"># XXX clean up the expression binders. We need more powerful visitors which</span>
+<span class="c"># perform more intelligent binding.</span>
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Express Locals</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="ExpressionLocals"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.ExpressionLocals">[docs]</a><span class="k">class</span> <span class="nc">ExpressionLocals</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A mapping object that will first look in the provided locals</span>
+<span class="sd">    dictionary and finally by walking up the tree of components looking</span>
+<span class="sd">    for attributes.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    When setting items on this mapping, the values are stored in an </span>
+<span class="sd">    internal dictionary. Modifying the f_locals is not desired since</span>
+<span class="sd">    that would effect all other expressions that operate with those</span>
+<span class="sd">    locals. However, we must support assignment since that&#39;s required</span>
+<span class="sd">    to make list comprehensions work.</span>
+
+<span class="sd">    Strong references are kept to all objects passed to the constructor,</span>
+<span class="sd">    so care should be taken in managing the lifetime of these scope</span>
+<span class="sd">    objects since their use is likely to create reference cycles.</span>
+<span class="sd">    (It&#39;s probably best to create these objects on-the-fly when needed)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;obj&#39;</span><span class="p">,</span> <span class="s">&#39;f_locals&#39;</span><span class="p">,</span> <span class="s">&#39;overrides&#39;</span><span class="p">,</span> <span class="s">&#39;temp_locals&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">,</span> <span class="n">overrides</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an expression locals instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : object</span>
+<span class="sd">            The python object on which to start looking for attributes.</span>
+
+<span class="sd">        f_locals : dict</span>
+<span class="sd">            The locals dict to check before checking the attribute space</span>
+<span class="sd">            of the given object.</span>
+
+<span class="sd">        overrides : dict or None</span>
+<span class="sd">            A dictionary of override values to check before locals.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span> <span class="o">=</span> <span class="n">f_locals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">overrides</span> <span class="o">=</span> <span class="n">overrides</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_locals</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Lookup an item from the namespace.</span>
+
+<span class="sd">        Returns the named item from the namespace by first looking in</span>
+<span class="sd">        the provided locals namespace, and finally the attribute space </span>
+<span class="sd">        of the object. If the value is not found, a KeyError is raised.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : string</span>
+<span class="sd">            The name that should be looked up in the namespace.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : object</span>
+<span class="sd">            The value associated with the name, if found.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Try temp locals first so that list comps work properly</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">temp_locals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c"># Next, check the overrides if given</span>
+        <span class="n">overrides</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">overrides</span>
+        <span class="k">if</span> <span class="n">overrides</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">overrides</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">pass</span>
+        
+        <span class="c"># Next, check locals dict</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+        <span class="c"># Finally, walk up the ancestor tree starting at self.obj</span>
+        <span class="c"># looking for attributes of the given name.</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span>
+        <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+                <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Stores the value in the internal locals dictionary. This</span>
+<span class="sd">        allows list comprehension expressions to work properly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">temp_locals</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Ast walking helpers</span>
+<span class="c">#------------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="parse_attr_names"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.parse_attr_names">[docs]</a><span class="k">def</span> <span class="nf">parse_attr_names</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Parses an expression ast, looking for attributes references in</span>
+<span class="sd">    the objects attribute space.</span>
+
+<span class="sd">    Given an ast.Expression node and an objet, returns the set of tuples</span>
+<span class="sd">    which are (name, object) parents. The name is an attribute name an</span>
+<span class="sd">    the object is the object which contains the trait attribute and is</span>
+<span class="sd">    either &#39;obj&#39; itself or some ancestor of obj.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    py_ast : Instance(ast.Expresssion)</span>
+<span class="sd">        The ast Expression node to parse.</span>
+
+<span class="sd">    obj : HasTraits object</span>
+<span class="sd">        The HasTraits instance object we are querrying for attributes.</span>
+
+<span class="sd">    f_locals : dict</span>
+<span class="sd">        The local dictionary whose names override those of the attribute</span>
+<span class="sd">        space.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : set</span>
+<span class="sd">        The set of (name, object) pairs referred to in the expression that </span>
+<span class="sd">        are trait attributes on some ancestor of obj.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pairs</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">name_node</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span>
+    <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">ast</span><span class="o">.</span><span class="n">walk</span><span class="p">(</span><span class="n">py_ast</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">name_node</span><span class="p">):</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">f_locals</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="n">obj</span>
+                <span class="k">while</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="c"># XXX I don&#39;t particularly like this way of testing</span>
+                    <span class="c"># whether or not an object has a trait defined.</span>
+                    <span class="c"># Calling obj.trait(name) doesn&#39;t work because the</span>
+                    <span class="c"># parent class is HasStrictTraits, so we get a trait</span>
+                    <span class="c"># returned which is the Disallow trait type.</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">name</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">_instance_traits</span><span class="p">()</span> <span class="ow">or</span> 
+                        <span class="n">name</span> <span class="ow">in</span> <span class="n">parent</span><span class="o">.</span><span class="n">class_traits</span><span class="p">()):</span>
+                        <span class="n">pairs</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">parent</span><span class="p">))</span>
+                        <span class="k">break</span>
+                    <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+    <span class="k">return</span> <span class="n">pairs</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Expression</span>
+<span class="c">#------------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="AbstractExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression">[docs]</a><span class="k">class</span> <span class="nc">AbstractExpression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;obj_ref&#39;</span><span class="p">,</span> <span class="s">&#39;attr&#39;</span><span class="p">,</span> <span class="s">&#39;expr_ast&#39;</span><span class="p">,</span> <span class="s">&#39;code&#39;</span><span class="p">,</span> <span class="s">&#39;f_globals&#39;</span><span class="p">,</span>
+                 <span class="s">&#39;toolkit&#39;</span><span class="p">,</span> <span class="s">&#39;f_locals&#39;</span><span class="p">,</span> <span class="s">&#39;__weakref__&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">expr_ast</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">toolkit</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes and expression object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : HasTraits instance</span>
+<span class="sd">            The HasTraits instance to which we are binding the expression.</span>
+
+<span class="sd">        attr : string</span>
+<span class="sd">            The attribute name on `obj` to which this expression is bound.</span>
+
+<span class="sd">        expr_ast : ast.Expression instance</span>
+<span class="sd">            An ast.Expression node instance which is the rhs expression.</span>
+
+<span class="sd">        code : types.CodeType object</span>
+<span class="sd">            The compiled code object for the provided ast node.</span>
+
+<span class="sd">        f_globals : dict</span>
+<span class="sd">            The globals dictionary in which the expression should execute.</span>
+
+<span class="sd">        toolkit : Toolkit</span>
+<span class="sd">            The toolkit that was used to create the object and in which</span>
+<span class="sd">            the expression should execute.</span>
+<span class="sd">        </span>
+<span class="sd">        f_locals : dict</span>
+<span class="sd">            The dictionary of objects that form the local scope for the</span>
+<span class="sd">            expression.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We keep a weakref to obj to avoid ref cycles</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj_ref</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">attr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">expr_ast</span> <span class="o">=</span> <span class="n">expr_ast</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_globals</span> <span class="o">=</span> <span class="n">f_globals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span> <span class="o">=</span> <span class="n">toolkit</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span> <span class="o">=</span> <span class="n">f_locals</span>
+
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="AbstractExpression.obj"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression.obj">[docs]</a>    <span class="k">def</span> <span class="nf">obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_ref</span><span class="p">()</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the expression to the `name` attribute on `object`.</span>
+
+<span class="sd">        This method will be called after the appropriate items in the</span>
+<span class="sd">        ui tree have been built such that the namespaces will be</span>
+<span class="sd">        fully populated.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractExpression.eval_expression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluate the expression and return the result. This will be</span>
+<span class="sd">        called only after `bind` has been called.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Standard Expression Classes</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="SimpleExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression">[docs]</a><span class="k">class</span> <span class="nc">SimpleExpression</span><span class="p">(</span><span class="n">AbstractExpression</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractExpression that provides</span>
+<span class="sd">    a default attribute value by evaluating the expression.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    AbstractExpression</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+<div class="viewcode-block" id="SimpleExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the expression to the `name` attribute on `object`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Nothing to do for simple expression</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="SimpleExpression.eval_expression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Evaluates and returns the results of the expression.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">f_globals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_globals</span><span class="p">()</span>
+        <span class="n">f_locals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_locals</span><span class="p">()</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+</div>
+<div class="viewcode-block" id="SimpleExpression.get_globals"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.get_globals">[docs]</a>    <span class="k">def</span> <span class="nf">get_globals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the global namespace dictionary which is the union</span>
+<span class="sd">        of f_globals and the toolkit, f_globals taking precedence.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="p">)</span>
+        <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f_globals</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">d</span>
+</div>
+<div class="viewcode-block" id="SimpleExpression.get_locals"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.get_locals">[docs]</a>    <span class="k">def</span> <span class="nf">get_locals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the local namespace mapping object. The mapping</span>
+<span class="sd">        object first attempts to lookup the value in f_locals, then</span>
+<span class="sd">        continues by walking up the tree checking the attributes of</span>
+<span class="sd">        all the parents.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ExpressionLocals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="UpdatingExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.UpdatingExpression">[docs]</a><span class="k">class</span> <span class="nc">UpdatingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A dynamically updating concrete expression object.</span>
+
+<span class="sd">    The expression is parsed for trait attribute references and when any</span>
+<span class="sd">    of those traits in the expression change, the expression is evaluated</span>
+<span class="sd">    and the value of the component attribute is updated.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+<div class="viewcode-block" id="UpdatingExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.UpdatingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the expression for any trait attribute references. A</span>
+<span class="sd">        notifier is attached to each trait reference that will update</span>
+<span class="sd">        the expression value upon change.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UpdatingExpression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span>
+        <span class="n">global_ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_globals</span><span class="p">()</span>
+        <span class="n">local_ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_locals</span><span class="p">()</span>
+        <span class="n">expr_ast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">expr_ast</span>
+
+        <span class="c"># The attribute visitor parses the expression looking for any</span>
+        <span class="c"># `foo.bar` style attribute sub-expressions. The results value</span>
+        <span class="c"># is a list of (&#39;foo&#39;, &#39;bar&#39;) style tuples.</span>
+        <span class="n">visitor</span> <span class="o">=</span> <span class="n">AttributeVisitor</span><span class="p">()</span>
+        <span class="n">visitor</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">expr_ast</span><span class="p">)</span>
+
+        <span class="n">update_method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_object</span>
+        <span class="k">for</span> <span class="n">dep_name</span><span class="p">,</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">visitor</span><span class="o">.</span><span class="n">results</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dep</span> <span class="o">=</span> <span class="n">local_ns</span><span class="p">[</span><span class="n">dep_name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dep</span> <span class="o">=</span> <span class="n">global_ns</span><span class="p">[</span><span class="n">dep_name</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s">&#39;name `</span><span class="si">%s</span><span class="s">` is not defined&#39;</span> <span class="o">%</span> <span class="n">dep_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dep</span><span class="p">,</span> <span class="n">HasTraits</span><span class="p">):</span>
+                <span class="n">dep</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="n">update_method</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+        <span class="c"># This portion binds any trait attributes that are being</span>
+        <span class="c"># referenced via implicit attribute access.</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">owner</span> <span class="ow">in</span> <span class="n">parse_attr_names</span><span class="p">(</span><span class="n">expr_ast</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span><span class="p">):</span>
+            <span class="n">owner</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="n">update_method</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="UpdatingExpression.update_object"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.UpdatingExpression.update_object">[docs]</a>    <span class="k">def</span> <span class="nf">update_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The notification handler to update the component object.</span>
+
+<span class="sd">        When this method is called, the expression is re-evaluated, and</span>
+<span class="sd">        the results are assigned to the proper attribute on the component</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_expression</span><span class="p">())</span>
+
+</div></div>
+<div class="viewcode-block" id="DelegatingExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression">[docs]</a><span class="k">class</span> <span class="nc">DelegatingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete expression object that performs two-way binding on</span>
+<span class="sd">    constructs of the from &#39;foo.bar&#39;</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;lookup_info&#39;</span><span class="p">,)</span>
+
+<div class="viewcode-block" id="DelegatingExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parses the expression object for the appropriate</span>
+<span class="sd">        lookup names.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">DelegatingExpression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj</span>
+        <span class="n">global_ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_globals</span><span class="p">()</span>
+        <span class="n">local_ns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_locals</span><span class="p">()</span>
+
+        <span class="c"># There are two options for a delegating expression, those</span>
+        <span class="c"># of the form &#39;foo.bar&#39; and those of the form &#39;foo&#39;.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expr_ast</span><span class="o">.</span><span class="n">body</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
+            <span class="n">pairs</span> <span class="o">=</span> <span class="n">parse_attr_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expr_ast</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pairs</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Delegation expression does not resolve - lineno (</span><span class="si">%s</span><span class="s">)&#39;</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">expr_ast</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+            <span class="n">dlgt_attr_name</span><span class="p">,</span> <span class="n">dlgt</span> <span class="o">=</span> <span class="n">pairs</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># The attribute visitor parses the expression looking for any</span>
+            <span class="c"># `foo.bar` style attribute sub-expressions. The results value</span>
+            <span class="c"># is a list of (&#39;foo&#39;, &#39;bar&#39;) style tuples.</span>
+            <span class="n">visitor</span> <span class="o">=</span> <span class="n">AttributeVisitor</span><span class="p">()</span>
+            <span class="n">visitor</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">expr_ast</span><span class="p">)</span>
+            <span class="n">deps</span> <span class="o">=</span> <span class="n">visitor</span><span class="o">.</span><span class="n">results</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">deps</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Invalid expression for delegation - lineno (</span><span class="si">%s</span><span class="s">)&#39;</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">expr_ast</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+            <span class="n">dlgt_name</span><span class="p">,</span> <span class="n">dlgt_attr_name</span> <span class="o">=</span> <span class="n">deps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dlgt</span> <span class="o">=</span> <span class="n">local_ns</span><span class="p">[</span><span class="n">dlgt_name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">dlgt</span> <span class="o">=</span> <span class="n">global_ns</span><span class="p">[</span><span class="n">dlgt_name</span><span class="p">]</span>
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">NameError</span><span class="p">(</span><span class="s">&#39;name `</span><span class="si">%s</span><span class="s">` is not defined&#39;</span> <span class="o">%</span> <span class="n">dlgt_name</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">lookup_info</span> <span class="o">=</span> <span class="p">(</span><span class="n">dlgt</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dlgt</span><span class="p">,</span> <span class="n">HasTraits</span><span class="p">):</span>
+            <span class="n">dlgt</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_object</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">)</span>
+
+        <span class="n">obj</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_delegate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="DelegatingExpression.update_object"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression.update_object">[docs]</a>    <span class="k">def</span> <span class="nf">update_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The notification handler to update the component object.</span>
+
+<span class="sd">        When this method is called, the delegate expression is evaluated</span>
+<span class="sd">        and the results are assigned to the appropriate attribute on</span>
+<span class="sd">        the component.</span>
+
+<span class="sd">        We guard against circular notifications, but try to ensure that we</span>
+<span class="sd">        end up in a consistent state, ie. when all is said and done, the</span>
+<span class="sd">        object and the delegate end up with the same value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_info</span>
+        <span class="c"># guard against re-setting the object on a change</span>
+        <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">):</span>
+            <span class="c"># We add &quot;self&quot; to the guard signature since multiple expressions</span>
+            <span class="c"># may delegate to the same dlgt_obj, dlgt_attr_name pair. If</span>
+            <span class="c"># we didn&#39;t include &quot;self&quot;, then only one of these multiple </span>
+            <span class="c"># expressions would be updated since the first one to grab the</span>
+            <span class="c"># guard would lock out all the others.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                <span class="n">new_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">new_val</span> <span class="o">!=</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="c"># we ended up with a different value on the object than we have</span>
+                    <span class="c"># on the delegate.  We need to push this back to the delegate,</span>
+                    <span class="c"># and we want to guard against further changes</span>
+                    <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">):</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">,</span> <span class="n">new_val</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="DelegatingExpression.update_delegate"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression.update_delegate">[docs]</a>    <span class="k">def</span> <span class="nf">update_delegate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The notification handler to update the delegate object.</span>
+
+<span class="sd">        When this method is called, the delegate expression is updated</span>
+<span class="sd">        with the appropriate value from the component.</span>
+
+<span class="sd">        We guard against circular notifications, but try to ensure that we</span>
+<span class="sd">        end up in a consistent state, ie. when all is said and done, the</span>
+<span class="sd">        object and the delegate end up with the same value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lookup_info</span>
+        <span class="c"># guard against re-setting the delegate on a change</span>
+        <span class="c"># We add &quot;self&quot; to the guard signature since multiple expressions</span>
+        <span class="c"># may delegate to the same dlgt_obj, dlgt_attr_name pair. If</span>
+        <span class="c"># we didn&#39;t include &quot;self&quot;, then only one of these multiple </span>
+        <span class="c"># expressions would be updated since the first one to grab the</span>
+        <span class="c"># guard would lock out all the others.</span>
+        <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">):</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+                <span class="n">new_val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">new_val</span> <span class="o">!=</span> <span class="n">val</span><span class="p">:</span>
+                    <span class="c"># we ended up with a different value on the delegate than we have</span>
+                    <span class="c"># on the object.  We need to push this back to the object,</span>
+                    <span class="c"># and we want to guard against further changes</span>
+                    <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">):</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span> <span class="n">new_val</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="NotifyingExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.NotifyingExpression">[docs]</a><span class="k">class</span> <span class="nc">NotifyingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete expression object that will eval an expression when</span>
+<span class="sd">    the attribute on the object changes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="n">arguments</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;arguments&#39;</span><span class="p">,</span> <span class="s">&#39;obj name old new&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NotifyingExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.NotifyingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden from the parent class to hookup a notifier on</span>
+<span class="sd">        the component attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NotifyingExpression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_expression</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="NotifyingExpression.eval_expression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.NotifyingExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden from the parent class to add the arguments object</span>
+<span class="sd">        to the expression locals.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+        <span class="n">f_globals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_globals</span><span class="p">()</span>
+        <span class="n">f_locals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_locals</span><span class="p">()</span>
+        <span class="n">f_locals</span><span class="o">.</span><span class="n">overrides</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;args&#39;</span><span class="p">:</span> <span class="n">args</span><span class="p">}</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.expressions</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

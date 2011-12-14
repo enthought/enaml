@@ -1,0 +1,196 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.wx.wx_combo_box &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.wx.wx_combo_box</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.wx.wx_combo_box</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_control</span> <span class="kn">import</span> <span class="n">WXControl</span>
+
+<span class="kn">from</span> <span class="nn">..combo_box</span> <span class="kn">import</span> <span class="n">AbstractTkComboBox</span>
+
+
+<div class="viewcode-block" id="WXComboBox"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox">[docs]</a><span class="k">class</span> <span class="nc">WXComboBox</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkComboBox</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wxPython implementation of ComboBox.</span>
+
+<span class="sd">    Use a combo box to select a single item from a collection of items.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXComboBox.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates a wx.ComboBox.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">ComboBox</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">wx</span><span class="o">.</span><span class="n">CB_READONLY</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComboBox.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXComboBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_items</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComboBox.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Binds the event handlers for the combo box.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXComboBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_COMBOBOX</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_selected</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXComboBox.shell_index_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.shell_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;_index&#39; attribute on the enaml</span>
+<span class="sd">        shell.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComboBox.shell_labels_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.shell_labels_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;labels&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_items</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComboBox.on_selected"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.on_selected">[docs]</a>    <span class="k">def</span> <span class="nf">on_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for a combo box selection event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">curr_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetCurrentSelection</span><span class="p">()</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">curr_index</span>
+
+        <span class="c"># Only fire the selected event if we have a valid selection</span>
+        <span class="k">if</span> <span class="n">curr_index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WXComboBox.set_items"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.set_items">[docs]</a>    <span class="k">def</span> <span class="nf">set_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_items</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the items in the combo box.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># wx does not emit events on SetItems or SetSelection, so we</span>
+        <span class="c"># do not need any feedback guards here.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetItems</span><span class="p">(</span><span class="n">str_items</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetSelection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComboBox.set_selection"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.wx.wx_combo_box.WXComboBox.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the selected value in the toolkit widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># wx does not emit events on SetSelection, so we do </span>
+        <span class="c"># not need any feedback guards here.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetSelection</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="c"># deselects if -1</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.wx.wx_combo_box</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

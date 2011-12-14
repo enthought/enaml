@@ -1,0 +1,308 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.container &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.container</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.container</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Either</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">on_trait_change</span>
+
+<span class="kn">from</span> <span class="nn">.component</span> <span class="kn">import</span> <span class="n">Component</span><span class="p">,</span> <span class="n">AbstractTkComponent</span>
+<span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">Control</span>
+<span class="kn">from</span> <span class="nn">.layout.constraints_layout</span> <span class="kn">import</span> <span class="n">ConstraintsLayout</span>
+<span class="kn">from</span> <span class="nn">.layout.layout_manager</span> <span class="kn">import</span> <span class="n">AbstractLayoutManager</span>
+
+
+<span class="n">_SIZE_HINT_DEPS</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;children:size_hint_updated, children:hug_width, &#39;</span>
+                   <span class="s">&#39;children:hug_height, children:resist_clip_width, &#39;</span>
+                   <span class="s">&#39;children:resist_clip_height&#39;</span><span class="p">)</span>
+
+
+<span class="n">_CONSTRAINT_DEPS</span> <span class="o">=</span> <span class="s">&#39;constraints, constraints_items&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractTkContainer</span><span class="p">(</span><span class="n">AbstractTkComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit Container interface.</span>
+
+<span class="sd">    A toolkit container is responsible for handling changes on a shell</span>
+<span class="sd">    Container object and proxying those changes to and from its internal </span>
+<span class="sd">    toolkit widget.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+
+<div class="viewcode-block" id="Container"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container">[docs]</a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Component subclass that provides for laying out child </span>
+<span class="sd">    Components.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: An object that manages the layout of this component and its</span>
+    <span class="c">#: direct children. The default is simple constraints based</span>
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractLayoutManager</span><span class="p">)</span>
+
+    <span class="c">#: A list of user-specified linear constraints defined for this </span>
+    <span class="c">#: container.</span>
+    <span class="n">constraints</span> <span class="o">=</span> <span class="n">List</span><span class="p">()</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkContainer</span><span class="p">)</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">children</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Either</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Control</span><span class="p">),</span> <span class="n">Instance</span><span class="p">(</span><span class="s">&#39;Container&#39;</span><span class="p">)))</span>
+    
+    <span class="c">#: A private boolean indicating if the contraints have changed</span>
+    <span class="c">#: and need to be updated on the next pass.</span>
+    <span class="n">_needs_update_constraints</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: A private boolean indicating if the component needs to relayout</span>
+    <span class="c">#: its children</span>
+    <span class="n">_needs_layout</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_layout_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Default value for the layout manager.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">ConstraintsLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Container.setup"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Run the setup process for the ui tree. This is overridden </span>
+<span class="sd">        from the parent class to add initialize_layout to the setup.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX make layout setup a completely separate pass</span>
+        <span class="c"># probably handled by the view object.</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_layout</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Container.initialize_layout"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.initialize_layout">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the layout for the first time.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="Container.default_user_constraints"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.default_user_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">default_user_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constraints to use if the constraints trait is an empty list.</span>
+<span class="sd">        </span>
+<span class="sd">        Default behaviour is to put the children into a vertical layout.</span>
+<span class="sd">        Subclasses of Container which implement container_constraints will</span>
+<span class="sd">        probably want to override this (possibly to return an empty list).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">.layout.layout_helpers</span> <span class="kn">import</span> <span class="n">vbox</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">vbox</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)]</span>
+</div>
+<div class="viewcode-block" id="Container.container_constraints"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.container_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">container_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A set of constraints that should always be applied to this</span>
+<span class="sd">        type of container. This should be implemented by subclasses</span>
+<span class="sd">        such as Form to set up their standard constraints.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</div>
+<div class="viewcode-block" id="Container.update_constraints_if_needed"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.update_constraints_if_needed">[docs]</a>    <span class="k">def</span> <span class="nf">update_constraints_if_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the constraints of this component if necessary. This</span>
+<span class="sd">        is typically the case when a constraint has been changed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_update_constraints</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_later</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_constraints</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Container.set_needs_update_constraints"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.set_needs_update_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">set_needs_update_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">needs</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Indicate that the constraints for this component should be</span>
+<span class="sd">        updated some time later.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Our layout is being managed by an ancestor.</span>
+            <span class="k">if</span> <span class="n">needs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">set_needs_update_constraints</span><span class="p">(</span><span class="n">needs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_needs_update_constraints</span> <span class="o">=</span> <span class="n">needs</span>
+            <span class="k">if</span> <span class="n">needs</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_later</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_constraints</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Container.update_constraints"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.update_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">update_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the constraints for this component.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">update_constraints</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_needs_layout</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_needs_update_constraints</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="Container.layout_if_needed"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.layout_if_needed">[docs]</a>    <span class="k">def</span> <span class="nf">layout_if_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Refreshes the layout of this component if necessary. This</span>
+<span class="sd">        will typically be needed if this component has been resized or</span>
+<span class="sd">        the sizes of any of its children have been changed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_layout</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_later</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">do_layout</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Container.set_needs_layout"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.set_needs_layout">[docs]</a>    <span class="k">def</span> <span class="nf">set_needs_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">needs</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Indicate that the layout should be refreshed some time later.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Our layout is being managed by an ancestor.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">set_needs_layout</span><span class="p">(</span><span class="n">needs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_needs_layout</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_needs_layout</span> <span class="o">=</span> <span class="n">needs</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">old</span> <span class="ow">and</span> <span class="n">needs</span><span class="p">:</span>
+                <span class="c"># Only invoke the do_layout() once, when _needs_layout </span>
+                <span class="c"># changes from False to True, but not when it was already </span>
+                <span class="c"># True. This makes sure that we only update the layout once </span>
+                <span class="c"># even if we set multiple traits that request a new layout.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_later</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">do_layout</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Container.do_layout"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.do_layout">[docs]</a>    <span class="k">def</span> <span class="nf">do_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the layout of this component.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_needs_layout</span> <span class="o">=</span> <span class="bp">False</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="n">_SIZE_HINT_DEPS</span><span class="p">)</span>
+<div class="viewcode-block" id="Container.handle_size_hint_changed"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.handle_size_hint_changed">[docs]</a>    <span class="k">def</span> <span class="nf">handle_size_hint_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A change handler for updaing the layout when the size hint</span>
+<span class="sd">        of any of the container&#39;s children have changed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># Our layout is managed by an ancestor, so pass up </span>
+            <span class="c"># the notification.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">handle_size_hint_changed</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Update the constraints in the solver immediately since</span>
+            <span class="c"># there may be more than one widget during a pass that</span>
+            <span class="c"># will the size hint updated, and multiple calls to </span>
+            <span class="c"># set_needs_layout get collapsed to a single call. If we</span>
+            <span class="c"># were to update the size hint cns via invoke_later, some</span>
+            <span class="c"># of the updates may occur after the layout pass has already</span>
+            <span class="c"># taken place.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">update_size_cns</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_needs_layout</span><span class="p">()</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="n">_CONSTRAINT_DEPS</span><span class="p">)</span>
+<div class="viewcode-block" id="Container.handle_constraints_changed"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.handle_constraints_changed">[docs]</a>    <span class="k">def</span> <span class="nf">handle_constraints_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A handler for updating the layout when the constraints of the</span>
+<span class="sd">        container change.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_needs_update_constraints</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_needs_layout</span><span class="p">()</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;children:visible&#39;</span><span class="p">)</span>
+<div class="viewcode-block" id="Container.handle_visible_changed"><a class="viewcode-back" href="../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container.handle_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">handle_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">child</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout</span><span class="o">.</span><span class="n">_initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_needs_update_constraints</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_needs_layout</span><span class="p">()</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.container</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

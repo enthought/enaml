@@ -1,0 +1,1704 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>item_models Package &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="shortcut icon" href="_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="index.html" />
+    <link rel="up" title="Enaml Reference" href="modules.html" />
+    <link rel="next" title="util Package" href="enaml.util.html" />
+    <link rel="prev" title="TableView" href="widgets/enaml.widgets.table_view.TableView.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.util.html" title="util Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="widgets/enaml.widgets.table_view.TableView.html" title="TableView"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="modules.html" accesskey="U">Enaml Reference</a> &raquo;</li>
+  
+    <li><a href="#">item_models Package</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="item-models-package">
+<h1>item_models Package<a class="headerlink" href="#item-models-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="abstract-item-model-module">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">abstract_item_model</span></tt> Module<a class="headerlink" href="#abstract-item-model-module" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex">
+<em class="property">class </em><tt class="descclassname">enaml.item_models.abstract_item_model.</tt><tt class="descname">ModelIndex</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></p>
+<p>ModelIndexes are used to navigate an AbstractItemModel.</p>
+<p>A ModelIndex is a lightweight object and should be created on the
+fly, rather than attempting some form of caching. The user will
+not normally need to create indexes manually. Instead, use the
+create_index method on an AbstractItemModel.</p>
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.row">
+<tt class="descname">row</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.row" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.column">
+<tt class="descname">column</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.column" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.context">
+<tt class="descname">context</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.context" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.model">
+<tt class="descname">model</tt><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.model" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.parent">
+<tt class="descname">parent</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the parent ModelIndex of this index.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.sibling">
+<tt class="descname">sibling</tt><big>(</big><em>row</em>, <em>column</em><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.sibling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the sibling ModelIndex of this index for the given
+row and column indexes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.child">
+<tt class="descname">child</tt><big>(</big><em>row</em>, <em>column</em><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.child" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the child ModelIndex of this index for the given
+row and column indexes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.ModelIndex.flags">
+<tt class="descname">flags</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.item_models.abstract_item_model.ModelIndex.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the flags for this index.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel">
+<em class="property">class </em><tt class="descclassname">enaml.item_models.abstract_item_model.</tt><tt class="descname">AbstractItemModel</tt><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
+<p>An abstract model for supplying information to heierarchical
+widgets.</p>
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.columns_about_to_be_inserted">
+<tt class="descname">columns_about_to_be_inserted</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.columns_about_to_be_inserted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_insert_columns method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.columns_about_to_be_moved">
+<tt class="descname">columns_about_to_be_moved</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.columns_about_to_be_moved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_move_columns method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.columns_about_to_be_removed">
+<tt class="descname">columns_about_to_be_removed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.columns_about_to_be_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_remove_columns method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.columns_inserted">
+<tt class="descname">columns_inserted</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.columns_inserted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_insert_columns method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.columns_moved">
+<tt class="descname">columns_moved</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.columns_moved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_move_columns method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.columns_removed">
+<tt class="descname">columns_removed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.columns_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_remove_rows method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.rows_about_to_be_inserted">
+<tt class="descname">rows_about_to_be_inserted</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.rows_about_to_be_inserted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_insert_rows method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.rows_about_to_be_moved">
+<tt class="descname">rows_about_to_be_moved</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.rows_about_to_be_moved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_move_rows method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.rows_about_to_be_removed">
+<tt class="descname">rows_about_to_be_removed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.rows_about_to_be_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_remove_columns method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.rows_inserted">
+<tt class="descname">rows_inserted</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.rows_inserted" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_insert_rows method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.rows_moved">
+<tt class="descname">rows_moved</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.rows_moved" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_move_rows method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.rows_removed">
+<tt class="descname">rows_removed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.rows_removed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_remove_rows method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.layout_about_to_be_changed">
+<tt class="descname">layout_about_to_be_changed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.layout_about_to_be_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_change_layout method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.layout_changed">
+<tt class="descname">layout_changed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.layout_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_change_layout method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.model_about_to_be_reset">
+<tt class="descname">model_about_to_be_reset</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.model_about_to_be_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the begin_reset_model method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.model_reset">
+<tt class="descname">model_reset</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.model_reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the end_reset_model method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.data_changed">
+<tt class="descname">data_changed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.data_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the notify_data_changed method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_data_changed">
+<tt class="descname">horizontal_header_data_changed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_data_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the notify_horizontal_header_data_changed method</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_data_changed">
+<tt class="descname">vertical_header_data_changed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_data_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired by the notify_vertical_header_data_changed method</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_columns">
+<tt class="descname">begin_insert_columns</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_insert_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins inserting a column.</p>
+<p>This method must be called before inserting data into
+the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The parent into which the new columns will be inserted.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column position at which insertion will begin.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column position at which insertion will end.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_columns">
+<tt class="descname">begin_move_columns</tt><big>(</big><em>src_parent</em>, <em>src_first</em>, <em>src_last</em>, <em>dst_parent</em>, <em>dst_child</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_move_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins to move a column.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>src_parent</strong> (<em>ModelIndex</em>) &#8211; The item from which columns will be moved.</li>
+<li><strong>src_first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first column to be moved.</li>
+<li><strong>src_last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last column to be moved.</li>
+<li><strong>dst_parent</strong> (<em>ModelIndex</em>) &#8211; The item into which the columns will be moved.</li>
+<li><strong>dst_child</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number to which the columns will be moved.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_columns">
+<tt class="descname">begin_remove_columns</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_remove_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins to remove columns.</p>
+<p>This method must be called before removing data from the
+model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The item from which the columns will be removed.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first column to remove.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last column to remove.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_columns">
+<tt class="descname">end_insert_columns</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_insert_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish inserting columns.</p>
+<p>This method must be called after inserting data into
+the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The parent into which the new columns will be inserted.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column position at which insertion will begin.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column position at which insertion will end.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_move_columns">
+<tt class="descname">end_move_columns</tt><big>(</big><em>src_parent</em>, <em>src_first</em>, <em>src_last</em>, <em>dst_parent</em>, <em>dst_child</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_move_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_move_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish moving columns.</p>
+<p>This method must be called after moving data in a model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>src_parent</strong> (<em>ModelIndex</em>) &#8211; The item from which columns will be moved.</li>
+<li><strong>src_first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first column to be moved.</li>
+<li><strong>src_last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last column to be moved.</li>
+<li><strong>dst_parent</strong> (<em>ModelIndex</em>) &#8211; The item into which the columns will be moved.</li>
+<li><strong>dst_child</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number to which the columns will be moved.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_columns">
+<tt class="descname">end_remove_columns</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_remove_columns"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_columns" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish removing columns.</p>
+<p>This method must be called after removing data from a model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The item from which the columns will be removed.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first column to remove.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last column to remove.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_rows">
+<tt class="descname">begin_insert_rows</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_insert_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins a row insertion.</p>
+<p>This method must be called before inserting data into
+the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The item into which the new rows will be inserted.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row position at which insertion will begin.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row position at which insertion will end.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_rows">
+<tt class="descname">begin_move_rows</tt><big>(</big><em>src_parent</em>, <em>src_first</em>, <em>src_last</em>, <em>dst_parent</em>, <em>dst_child</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_move_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins to move a row.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>src_parent</strong> (<em>ModelIndex</em>) &#8211; The item from which rows will be moved.</li>
+<li><strong>src_first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first row to be moved.</li>
+<li><strong>src_last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last row to be moved.</li>
+<li><strong>dst_parent</strong> (<em>ModelIndex</em>) &#8211; The item into which the rows will be moved.</li>
+<li><strong>dst_child</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number to which the rows will be moved.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_rows">
+<tt class="descname">begin_remove_rows</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_remove_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begins to remove rows.</p>
+<p>This method must be called before removing data from the
+model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The item from which the rows will be removed.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first row to remove.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last row to remove.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_rows">
+<tt class="descname">end_insert_rows</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_insert_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish inserting rows.</p>
+<p>This method must be called after inserting data into
+the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The item into which the new rows will be inserted.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row position at which insertion will begin.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row position at which insertion will end.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_move_rows">
+<tt class="descname">end_move_rows</tt><big>(</big><em>src_parent</em>, <em>src_first</em>, <em>src_last</em>, <em>dst_parent</em>, <em>dst_child</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_move_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_move_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish moving rows</p>
+<p>This method must be called after moving data in a model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>src_parent</strong> (<em>ModelIndex</em>) &#8211; The item from which rows will be moved.</li>
+<li><strong>src_first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first row to be moved.</li>
+<li><strong>src_last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last row to be moved.</li>
+<li><strong>dst_parent</strong> (<em>ModelIndex</em>) &#8211; The item into which the rows will be moved.</li>
+<li><strong>dst_child</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number to which the rows will be moved.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_rows">
+<tt class="descname">end_remove_rows</tt><big>(</big><em>parent</em>, <em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_remove_rows"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_rows" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish removing rows.</p>
+<p>This method must be called after moving data in a model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>parent</strong> (<em>ModelIndex</em>) &#8211; The item from which the rows will be removed.</li>
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the first row to remove.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The number of the last row to remove.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_change_layout">
+<tt class="descname">begin_change_layout</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_change_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_change_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin a change to the layout of the model &#8211; e.g., sort it.</p>
+<p>This method must be called before rearranging data in a model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_change_layout">
+<tt class="descname">end_change_layout</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_change_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_change_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish a change to the layout of the model.</p>
+<p>This method must be called after rearranging data in a model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.begin_reset_model">
+<tt class="descname">begin_reset_model</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.begin_reset_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.begin_reset_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin to reset a model.</p>
+<p>Model indices must be recomputed, and any associated views will 
+also be reset.</p>
+<p>This method must be called before a model is reset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.end_reset_model">
+<tt class="descname">end_reset_model</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.end_reset_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.end_reset_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finish resetting a model.</p>
+<p>This method must be called after a model is reset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.notify_data_changed">
+<tt class="descname">notify_data_changed</tt><big>(</big><em>top_left</em>, <em>bottom_right</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.notify_data_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.notify_data_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a notification event for the model data has changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>top_left</strong> (<em>ModelIndex</em>) &#8211; The upper-left boundary of the changed items.</li>
+<li><strong>bottom_right</strong> (<em>ModelIndex</em>) &#8211; The bottom-right boundary of the changed items.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.notify_horizontal_header_data_changed">
+<tt class="descname">notify_horizontal_header_data_changed</tt><big>(</big><em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.notify_horizontal_header_data_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.notify_horizontal_header_data_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a notification that model horizontal header data 
+has changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The first horizontal/column header that has been modified.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The last horizontal/column header that has been modified.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.notify_vertical_header_data_changed">
+<tt class="descname">notify_vertical_header_data_changed</tt><big>(</big><em>first</em>, <em>last</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.notify_vertical_header_data_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.notify_vertical_header_data_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a notification that model vertical header data 
+has changed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>first</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The first vertical/row header that has been modified.</li>
+<li><strong>last</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The last vertical/row header that has been modified.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.sibling">
+<tt class="descname">sibling</tt><big>(</big><em>row</em>, <em>column</em>, <em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.sibling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.sibling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain an item with the same parent as <cite>index</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row of the new item.</li>
+<li><strong>column</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column of the new item.</li>
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; An item for which to find a &#8220;sibling&#8221;.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>index</strong> (ModelIndex) - An element with the same parent as the specified item.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.buddy">
+<tt class="descname">buddy</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.buddy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.buddy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Refers the caller to an item in the model to edit.</p>
+<p>Each item is its own buddy by default, but this is not required.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which the buddy index should be
+returned for editing.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>buddy</strong> (ModelIndex) - The item that should be edited.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.can_fetch_more">
+<tt class="descname">can_fetch_more</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.can_fetch_more"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.can_fetch_more" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <cite>True</cite> if items of <cite>parent</cite> can provide more data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>ModelIndex or None</em>) &#8211; A model index, possibly with more data that can be fetched.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>has_more</strong> (bool) - True if more data is available, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.fetch_more">
+<tt class="descname">fetch_more</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.fetch_more"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.fetch_more" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain data from model items, if more is available.</p>
+<p>This method is useful when incrementally adding data to a model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>ModelIndex or None</em>) &#8211; An index to query.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (AbstractItemModel) - Data that has yet to be received.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.has_index">
+<tt class="descname">has_index</tt><big>(</big><em>row</em>, <em>column</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.has_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.has_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine whether this model can provide a valid index with
+certain specifications.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; A row to be used in the index.</li>
+<li><strong>column</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; A column to be used in the index.</li>
+<li><strong>parent</strong> (<em>ModelIndex or None</em>) &#8211; A parent on which to base the new model index.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> (bool) - True if the inputs produce a valid index, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.has_children">
+<tt class="descname">has_children</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.has_children"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.has_children" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determines if an index has any child items.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>ModelIndex or None</em>) &#8211; A model index to check for children.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool) - True if the index has children, False otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.create_index">
+<tt class="descname">create_index</tt><big>(</big><em>row</em>, <em>column</em>, <em>context</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.create_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.create_index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new index into this model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; A row to specify the index</li>
+<li><strong>column</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; A column to specify the index.</li>
+<li><strong>context</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><em>object</em></a>) &#8211; A value that can be useful when working with a model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>index</strong> (ModelIndex) - A new index into this model.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.flags">
+<tt class="descname">flags</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.flags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.flags" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain the flags that specify user interaction with items.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; Items to query.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>item_flags</strong> (tuple of strings) - The ways in which a view can interact with the items.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.column_count">
+<tt class="descname">column_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.column_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.column_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count the number of columns in the children of an item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>ModelIndex or None</em>) &#8211; A model item with children.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>count</strong> (int) - The number of columns in the model.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.row_count">
+<tt class="descname">row_count</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.row_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.row_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Count the number of rows in the children of an item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>ModelIndex or None</em>) &#8211; A model item with children.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>count</strong> (int) - The number of rows in the model.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.index">
+<tt class="descname">index</tt><big>(</big><em>row</em>, <em>column</em>, <em>parent=None</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain an index coresponding to an item in the model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>row</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The sought-after item&#8217;s row.</li>
+<li><strong>column</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The sought-after item&#8217;s column.</li>
+<li><strong>parent</strong> (<em>ModelIndex or None</em>) &#8211; The parent item that is the base of this index.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>item</strong> (ModelIndex or None) - An index for the specified item.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.parent">
+<tt class="descname">parent</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.parent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.parent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain the parent of a model item.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; A model item, possibly with a valid parent.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>index</strong> (ModelIndex) - An index for the parent item.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.data">
+<tt class="descname">data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the data for a model index as a string for display.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (string) - The data as a string for display.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.decoration">
+<tt class="descname">decoration</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.decoration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an icon for the index</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the icon.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (icon??) - The icon to display for the cell.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.edit_data">
+<tt class="descname">edit_data</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.edit_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.edit_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the data for a model index as a string for editing.</p>
+<p>The default implementation returns &#8216;data(index)&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the data.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (string) - The data as a string for editing.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.tool_tip">
+<tt class="descname">tool_tip</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.tool_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.tool_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the tool tip string for a given model index.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the tool tip.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (string) - The tool tip string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.status_tip">
+<tt class="descname">status_tip</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.status_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.status_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the status tip string for a given model index.</p>
+<blockquote>
+<div>The default implementation returns None.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the status tip.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (string) - The status tip string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.whats_this">
+<tt class="descname">whats_this</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.whats_this"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.whats_this" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the what&#8217;s this? string for a given model index.</p>
+<blockquote>
+<div>The default implementation returns None.</div></blockquote>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the what&#8217;s this? string.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (string) - The what&#8217;s this? string.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.font">
+<tt class="descname">font</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the font for a given model index.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the font.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (Font) - The font to use for this model index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.alignment">
+<tt class="descname">alignment</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.alignment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the alignment of the text for a given model index.</p>
+<p>The default implementation returns ALIGN_VCENTER | ALIGN_RIGHT</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the alignment.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (int) - The OR&#8217;d alignment flags to use for the given model index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.background">
+<tt class="descname">background</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.background" title="Permalink to this definition">¶</a></dt>
+<dd><p>The background brush to use for the given index.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the brush.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (Brush) - The brush to use for the given model index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.foreground">
+<tt class="descname">foreground</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.foreground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.foreground" title="Permalink to this definition">¶</a></dt>
+<dd><p>The foreground brush to use for the given index.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the brush.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (Brush) - The brush to use for the given model index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.check_state">
+<tt class="descname">check_state</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.check_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.check_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the check state for the given index.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the check state.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> (string) - The check state to use for the given model index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the (width, height) size hint for the given index.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for which to return the size hint.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>value</strong> ((width, height)) - The size hint to use for the given model index.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_data">
+<tt class="descname">set_data</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s data. The default implementation does
+nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The user supplied value to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_decoration">
+<tt class="descname">set_decoration</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_decoration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s icon. The default implementation does
+nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#object" title="(in Python v2.7)"><em>object</em></a>) &#8211; The user supplied value to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_tool_tip">
+<tt class="descname">set_tool_tip</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_tool_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_tool_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s tool tip. The default implementation does
+nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The tool tip to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_status_tip">
+<tt class="descname">set_status_tip</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_status_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_status_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s status tip. The default implementation 
+does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The status tip to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_whats_this">
+<tt class="descname">set_whats_this</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_whats_this"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_whats_this" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s what&#8217;s this? The default implementation 
+does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The what&#8217;s this? to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_font">
+<tt class="descname">set_font</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s font. The default implementation 
+does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<em>Font</em>) &#8211; The font object to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_alignment">
+<tt class="descname">set_alignment</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_alignment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s alignment. The default implementation 
+does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The alignment to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_background">
+<tt class="descname">set_background</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_background" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s background brush. The default 
+implementation does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<em>Brush</em>) &#8211; The background brush to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_foreground">
+<tt class="descname">set_foreground</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_foreground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_foreground" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s foreground brush. The default 
+implementation does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<em>Brush</em>) &#8211; The background brush to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_check_state">
+<tt class="descname">set_check_state</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_check_state"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_check_state" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s check state. The default implementation 
+does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#module-string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The check state to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.set_size_hint">
+<tt class="descname">set_size_hint</tt><big>(</big><em>index</em>, <em>value</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.set_size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.set_size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update a model item&#8217;s size hint. The default implementation 
+does nothing and returns False.</p>
+<p>Implementations that allow editing must set the &#8216;editable&#8217; flag
+to True, and call notify_data_changed(...) explicity in order
+for the table to update.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>index</strong> (<em>ModelIndex</em>) &#8211; The model index for the item to update.</li>
+<li><strong>value</strong> (<em>(width, height)</em>) &#8211; The size hint to set in the model.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>success</strong> (bool) - True if the data was successfully set, False otherwise.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_data">
+<tt class="descname">horizontal_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal label for a particular header section.</p>
+<p>The default implementation returns the column number of the given 
+header. Subclasses should override this method to return 
+appropriate data for their model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested header label</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_data">
+<tt class="descname">vertical_header_data</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical label for a particular header section.</p>
+<p>The default implementation returns the row number of the given 
+header. Subclasses should override this method to return 
+appropriate data for their model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested header label</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_decoration">
+<tt class="descname">horizontal_header_decoration</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_decoration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal icon for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (icon??) - The requested icon for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_decoration">
+<tt class="descname">vertical_header_decoration</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_decoration"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_decoration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical icon for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (icon??) - The requested icon for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_tool_tip">
+<tt class="descname">horizontal_header_tool_tip</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_tool_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_tool_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal tool tip for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested tool tip for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_tool_tip">
+<tt class="descname">vertical_header_tool_tip</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_tool_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_tool_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical tool tip for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested tool tip for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_status_tip">
+<tt class="descname">horizontal_header_status_tip</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_status_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_status_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal status tip for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested status tip for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_status_tip">
+<tt class="descname">vertical_header_status_tip</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_status_tip"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_status_tip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical status tip for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested status tip for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_whats_this">
+<tt class="descname">horizontal_header_whats_this</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_whats_this"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_whats_this" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal whats this for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested what&#8217;s this? for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_whats_this">
+<tt class="descname">vertical_header_whats_this</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_whats_this"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_whats_this" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical whats this for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (string) - The requested what&#8217;s this? for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_font">
+<tt class="descname">horizontal_header_font</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal font for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (Font()) - The requested font for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_font">
+<tt class="descname">vertical_header_font</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_font"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_font" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical font for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (Font()) - The requested font for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_alignment">
+<tt class="descname">horizontal_header_alignment</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_alignment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal whats this for a particular header section.</p>
+<p>The default implementation returns ALIGN_CENTER.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (int) - The OR&#8217;d alignment flags for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_alignment">
+<tt class="descname">vertical_header_alignment</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_alignment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_alignment" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical whats this for a particular header section.</p>
+<p>The default implementation returns ALIGN_CENTER</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (int) - The OR&#8217;d alignment flags for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_background">
+<tt class="descname">horizontal_header_background</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_background" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal background brush for a particular 
+header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (Brush()) - The requested brush for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_background">
+<tt class="descname">vertical_header_background</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_background"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_background" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical background brush for a particular
+header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (Brush()) - The requested brush for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_foreground">
+<tt class="descname">horizontal_header_foreground</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_foreground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_foreground" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal foreground brush for a particular 
+header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (Brush()) - The requested brush for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_foreground">
+<tt class="descname">vertical_header_foreground</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_foreground"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_foreground" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical foreground brush for a particular
+header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The row number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (Brush()) - The requested brush for the header</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_size_hint">
+<tt class="descname">horizontal_header_size_hint</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.horizontal_header_size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the horizontal size hint for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (int) - The requested size hint for the width of the header.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_size_hint">
+<tt class="descname">vertical_header_size_hint</tt><big>(</big><em>section</em><big>)</big><a class="reference internal" href="_modules/enaml/item_models/abstract_item_model.html#AbstractItemModel.vertical_header_size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the vertical size hint for a particular header section.</p>
+<p>The default implementation returns None.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>section</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#int" title="(in Python v2.7)"><em>int</em></a>) &#8211; The column number of the header.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>data</strong> (int) - The requested size hint for the height of the header.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">item_models Package</a><ul>
+<li><a class="reference internal" href="#abstract-item-model-module"><tt class="docutils literal"><span class="pre">abstract_item_model</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/enaml.item_models.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.util.html" title="util Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="widgets/enaml.widgets.table_view.TableView.html" title="TableView"
+             >previous</a> |</li>
+        <li><a href="index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="modules.html" >Enaml Reference</a> &raquo;</li>
+  
+    <li><a href="#">item_models Package</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

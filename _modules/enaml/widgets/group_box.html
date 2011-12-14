@@ -1,0 +1,258 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.group_box &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.group_box</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.group_box</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Str</span>
+
+<span class="kn">from</span> <span class="nn">.container</span> <span class="kn">import</span> <span class="n">Container</span><span class="p">,</span> <span class="n">AbstractTkContainer</span>
+<span class="kn">from</span> <span class="nn">.layout.box_model</span> <span class="kn">import</span> <span class="n">MarginBoxModel</span>
+
+<span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">HorizontalAlign</span>
+
+
+<span class="k">def</span> <span class="nf">_get_from_box_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Property getter for all attributes that come from the </span>
+<span class="sd">    MarginBoxModel.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_box_model</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">AbstractTkGroupBox</span><span class="p">(</span><span class="n">AbstractTkContainer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract GroupBox interface.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the title of the group box with the new value from the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_flat_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the flat flag of the group box with the new value from </span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">shell_title_align_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">align</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the title alignment to the new value from the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_contents_margins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the (top, left, right, bottom) margin values for the </span>
+<span class="sd">        widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="GroupBox"><a class="viewcode-back" href="../../../widgets/enaml.widgets.group_box.GroupBox.html#enaml.widgets.group_box.GroupBox">[docs]</a><span class="k">class</span> <span class="nc">GroupBox</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The GroupBox container, which introduces a group of widgets with </span>
+<span class="sd">    a title and usually has a border.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The title displayed at the top of the box.</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">Str</span><span class="p">()</span>
+
+    <span class="c">#: The flat parameter determines if the GroupBox is displayed with </span>
+    <span class="c">#: just the title and a header line (True) or with a full border </span>
+    <span class="c">#: (False, the default).</span>
+    <span class="n">flat</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: The alignment of the title text.</span>
+    <span class="n">title_align</span> <span class="o">=</span> <span class="n">HorizontalAlign</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkGroupBox</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal left </span>
+    <span class="c">#: margin of the container.</span>
+    <span class="n">margin_left</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal right </span>
+    <span class="c">#: margin of the container.</span>
+    <span class="n">margin_right</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal top </span>
+    <span class="c">#: margin of the container.</span>
+    <span class="n">margin_top</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal bottom </span>
+    <span class="c">#: margin of the container.</span>
+    <span class="n">margin_bottom</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal left </span>
+    <span class="c">#: boundary of the content area of the container.</span>
+    <span class="n">contents_left</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal right </span>
+    <span class="c">#: boundary of the content area of the container.</span>
+    <span class="n">contents_right</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal top </span>
+    <span class="c">#: boundary of the content area of the container.</span>
+    <span class="n">contents_top</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal bottom </span>
+    <span class="c">#: boundary of the content area of the container.</span>
+    <span class="n">contents_bottom</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal width of</span>
+    <span class="c">#: the content area of the container.</span>
+    <span class="n">contents_width</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal height of</span>
+    <span class="c">#: the content area of the container.</span>
+    <span class="n">contents_height</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal center </span>
+    <span class="c">#: along the vertical direction the content area of the container.</span>
+    <span class="n">contents_v_center</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A read-only symbolic object that represents the internal center </span>
+    <span class="c">#: along the horizontal direction of the content area of the container.</span>
+    <span class="n">contents_h_center</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">fget</span><span class="o">=</span><span class="n">_get_from_box_model</span><span class="p">)</span>
+
+    <span class="c">#: A private attribute that holds the box model instance for this </span>
+    <span class="c">#: component.</span>
+    <span class="n">_box_model</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">MarginBoxModel</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__box_model_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">MarginBoxModel</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GroupBox.container_constraints"><a class="viewcode-back" href="../../../widgets/enaml.widgets.group_box.GroupBox.html#enaml.widgets.group_box.GroupBox.container_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">container_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A set of constraints that should always be applied to this </span>
+<span class="sd">        type of container.</span>
+
+<span class="sd">        This sets up the definitions of the margins between the outer </span>
+<span class="sd">        boundaries of the container and its content rectangle.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">top</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">get_contents_margins</span><span class="p">()</span>
+        <span class="c"># These are &#39;required&#39; constraints because they define immutable </span>
+        <span class="c"># things.</span>
+        <span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">margin_top</span> <span class="o">==</span> <span class="n">top</span><span class="p">)</span> <span class="o">|</span> <span class="s">&#39;required&#39;</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">margin_left</span> <span class="o">==</span> <span class="n">left</span><span class="p">)</span> <span class="o">|</span> <span class="s">&#39;required&#39;</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">margin_right</span> <span class="o">==</span> <span class="n">right</span><span class="p">)</span> <span class="o">|</span> <span class="s">&#39;required&#39;</span><span class="p">,</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">margin_bottom</span> <span class="o">==</span> <span class="n">bottom</span><span class="p">)</span> <span class="o">|</span> <span class="s">&#39;required&#39;</span><span class="p">,</span>
+        <span class="p">]</span>
+        <span class="k">return</span> <span class="n">constraints</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.group_box</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

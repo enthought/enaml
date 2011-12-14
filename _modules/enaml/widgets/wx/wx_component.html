@@ -1,0 +1,412 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.widgets.wx.wx_component &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.wx.wx_component</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.wx.wx_component</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_base_component</span> <span class="kn">import</span> <span class="n">WXBaseComponent</span>
+
+<span class="kn">from</span> <span class="nn">..component</span> <span class="kn">import</span> <span class="n">AbstractTkComponent</span>
+
+
+<div class="viewcode-block" id="WXComponent"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent">[docs]</a><span class="k">class</span> <span class="nc">WXComponent</span><span class="p">(</span><span class="n">WXBaseComponent</span><span class="p">,</span> <span class="n">AbstractTkComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wxPython implementation of Component.</span>
+
+<span class="sd">    A WXComponent is not meant to be used directly. It provides some</span>
+<span class="sd">    common functionality that is useful to all widgets and should</span>
+<span class="sd">    serve as the base class for all other classes.</span>
+
+<span class="sd">    .. note:: This is not a HasTraits class.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The WX widget created by the component</span>
+    <span class="n">widget</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXComponent.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying wx widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the attributes of the wx widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXComponent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">shell</span><span class="o">.</span><span class="n">visible</span><span class="p">:</span>
+            <span class="c"># Some Containers will turn off the visibility of their </span>
+            <span class="c"># children entirely on the Qt side when the parent-child </span>
+            <span class="c"># relationship is made. They have probably already done </span>
+            <span class="c"># their work, so don&#39;t override it in the default case of </span>
+            <span class="c"># visible=True.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">visible</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="WXComponent.toolkit_widget"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.toolkit_widget">[docs]</a>    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A property that returns the toolkit specific widget for this</span>
+<span class="sd">        component.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+</div>
+<div class="viewcode-block" id="WXComponent.size"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the size of the internal toolkit widget, ignoring any</span>
+<span class="sd">        windowing decorations, as a (width, height) tuple of integers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.size_hint"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a (width, height) tuple of integers which represent</span>
+<span class="sd">        the suggested size of the widget for its current state, ignoring</span>
+<span class="sd">        any windowing decorations. This value is used by the layout </span>
+<span class="sd">        manager to determine how much space to allocate the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.resize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Resizes the internal toolkit widget according the given</span>
+<span class="sd">        width and height integers, ignoring any windowing decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.min_size"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the hard minimum (width, height) of the widget, </span>
+<span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
+<span class="sd">        to be resized smaller than this value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.set_min_size"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the hard minimum width and height of the widget, ignoring</span>
+<span class="sd">        any windowing decorations. A widget will not be able to be resized </span>
+<span class="sd">        smaller than this value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.pos"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the position of the internal toolkit widget as an</span>
+<span class="sd">        (x, y) tuple of integers, including any windowing decorations. </span>
+<span class="sd">        The coordinates should be relative to the origin of the widget&#39;s </span>
+<span class="sd">        parent, or to the screen if the widget is toplevel.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.move"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the internal toolkit widget according to the given</span>
+<span class="sd">        x and y integers which are relative to the origin of the</span>
+<span class="sd">        widget&#39;s parent and includes any windowing decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.frame_geometry"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.frame_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
+<span class="sd">        for the internal toolkit widget, including any windowing</span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.geometry"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
+<span class="sd">        for the internal toolkit widget, ignoring any windowing</span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.set_geometry"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the geometry of the internal widget to the given</span>
+<span class="sd">        x, y, width, and height values, ignoring any windowing </span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Shell Object Change Handlers </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXComponent.shell_enabled_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;enabled&#39; attribute on the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.shell_visible_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;visible&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.shell_bg_color_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_bg_color_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_bg_color_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;bg_color&#39; attribute on the shell</span>
+<span class="sd">        object. Sets the background color of the internal widget to the </span>
+<span class="sd">        given color.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="WXComponent.shell_fg_color_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_fg_color_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_fg_color_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;fg_color&#39; attribute on the parent.</span>
+<span class="sd">        Sets the foreground color of the internal widget to the given color.</span>
+<span class="sd">        For some widgets this may do nothing.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="WXComponent.shell_font_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_font_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;font&#39; attribute on the shell </span>
+<span class="sd">        object. Sets the font of the internal widget to the given font.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXComponent.set_enabled"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_enabled">[docs]</a>    <span class="k">def</span> <span class="nf">set_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Enable or disable the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXComponent.set_visible"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Show or hide the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">set_needs_update_constraints</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Show</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Convenience Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXComponent.child_widgets"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.child_widgets">[docs]</a>    <span class="k">def</span> <span class="nf">child_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Iterates over the parent&#39;s children and yields the</span>
+<span class="sd">        toolkit widgets for those children.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">shell</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="n">child</span><span class="o">.</span><span class="n">toolkit_widget</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Indirection getters and setters </span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    
+    <span class="c"># These indirection methods allow subclasses to not need to repeat</span>
+    <span class="c"># code when they need to maintain two separate internal widgets</span>
+    <span class="c"># (See WXWindow for an example). Instead they can just call these</span>
+    <span class="c"># methods.</span>
+</div>
+    <span class="k">def</span> <span class="nf">_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the size of the given widget. See also &#39;size()&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the size hint of the given widget. See also </span>
+<span class="sd">        &#39;size_hint()&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetBestSizeTuple</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Resizes the given widget. See also &#39;resize(width, height)&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># SetClientSize completely breaks down on Windows, so it seems </span>
+        <span class="c"># there is no way to reliably set the client size. Instead we</span>
+        <span class="c"># just set the frame size and hope for the best.</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetSize</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the minimum size of the widget. See also</span>
+<span class="sd">        &#39;min_size()&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Wx really needs a GetMinClientSize function...</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">GetMinSize</span><span class="p">())</span>
+
+    <span class="k">def</span> <span class="nf">_set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the minimum size of the given widget. See also</span>
+<span class="sd">        &#39;set_min_size(min_width, min_height)&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Wx really needs a SetMinClientSize function...</span>
+        <span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetSizeTuple</span><span class="p">()</span>
+        <span class="n">client_width</span><span class="p">,</span> <span class="n">client_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span> 
+        <span class="n">min_width</span> <span class="o">=</span> <span class="n">min_width</span> <span class="o">+</span> <span class="p">(</span><span class="n">widget_width</span> <span class="o">-</span> <span class="n">client_width</span><span class="p">)</span>
+        <span class="n">min_height</span> <span class="o">=</span> <span class="n">min_height</span> <span class="o">+</span> <span class="p">(</span><span class="n">widget_height</span> <span class="o">-</span> <span class="n">client_height</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetMinSize</span><span class="p">((</span><span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">))</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">widget_width</span><span class="p">,</span> <span class="n">min_width</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">widget_height</span><span class="p">,</span> <span class="n">min_height</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">new_size</span> <span class="o">!=</span> <span class="p">(</span><span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetSize</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the position of the given widget. See also &#39;pos()&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetPositionTuple</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the widget to the given position. See also &#39;move(x, y)&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">Move</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the frame geometry of the given widget. See also</span>
+<span class="sd">        &#39;frame_geometry()&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetRect</span><span class="p">()</span><span class="o">.</span><span class="n">asTuple</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the geometry of the given widget. See also</span>
+<span class="sd">        &#39;geometry()&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># wx widget.GetClientRect() doesn&#39;t seem to be what we want.</span>
+        <span class="c"># ofter, GetRect() and GetClientRect() are the same, but when</span>
+        <span class="c"># they aren&#39;t GetRect() does the right thing. This is probably</span>
+        <span class="c"># because of asymmetry between GetClientRect and SetDimensions. </span>
+        <span class="c"># Given that, the existing examples have been tested side by </span>
+        <span class="c"># side with Qt on Windows, and these current geometry handlers </span>
+        <span class="c"># &quot;do the right thing&quot; in most cases, plus or minus a pixel or</span>
+        <span class="c"># two difference.</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetRect</span><span class="p">()</span><span class="o">.</span><span class="n">asTuple</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the geometry of the given widget. See also</span>
+<span class="sd">        &#39;set_geometry(x, y, width, height)&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># wx doesn&#39;t seem to have a SetClientDimensions function</span>
+        <span class="c"># or anything similar. SetClientRect *does not* do the right</span>
+        <span class="c"># thing. This SetDimensions *seems* to do the correct thing</span>
+        <span class="c"># but I&#39;m skeptical that it won&#39;t break down in certain </span>
+        <span class="c"># cirumstances and do the wrong thing wrt to window decorations.</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetDimensions</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.widgets.wx.wx_component</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

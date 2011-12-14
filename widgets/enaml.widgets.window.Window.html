@@ -1,0 +1,382 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Window &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Dialog" href="enaml.widgets.dialog.Dialog.html" />
+    <link rel="prev" title="ProgressBar" href="enaml.widgets.progress_bar.ProgressBar.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.dialog.Dialog.html" title="Dialog"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.progress_bar.ProgressBar.html" title="ProgressBar"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Window</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="window">
+<h1>Window<a class="headerlink" href="#window" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.window.Window">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.window.</tt><tt class="descname">Window</tt><a class="reference internal" href="../_modules/enaml/widgets/window.html#Window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="enaml.widgets.container.Container"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.Container</span></tt></a></p>
+<p>The base top-level Window widget.</p>
+<p>Window widgets are top-level components which provide window frame
+decorations and other window  related functionality. Only components
+which inherit from Window can be shown on the screen. A Window is
+not expected to have a parent in most cases.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.title">
+<tt class="descname">title</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.title" title="Permalink to this definition">¶</a></dt>
+<dd><p>The title displayed on the window frame.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.visible">
+<tt class="descname">visible</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether the widget is visible or not (windows are not visible by
+default).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.show">
+<tt class="descname">show</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/window.html#Window.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the window visible on the screen.</p>
+<p>If the &#8216;setup&#8217; method is not explicity called prior to calling
+this method, then the window will lay itself out prior to
+displaying itself to the screen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.hide">
+<tt class="descname">hide</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/window.html#Window.hide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.hide" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hide the window, but do not destroy the underlying widgets.</p>
+<p>Call this method to hide the window on the screen. This call
+will always succeed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.update_constraints">
+<tt class="descname">update_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/window.html#Window.update_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.update_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the constraints for this component.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="qt">
+<h2>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h2>
+<p class="graphviz">
+digraph inheritancebc2967eea7 {
+rankdir=LR;
+ratio=compress;
+fontsize=14;
+size=&quot;20.0, 20.0&quot;;
+  &quot;AbstractTkWindow&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkContainer&quot; -&gt; &quot;AbstractTkWindow&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;QtBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;QtBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;QtWindow&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.qt.qt_window.QtWindow&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;QtContainer&quot; -&gt; &quot;QtWindow&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkWindow&quot; -&gt; &quot;QtWindow&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkContainer&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;QtComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;QtBaseComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;QtContainer&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;QtComponent&quot; -&gt; &quot;QtContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkContainer&quot; -&gt; &quot;QtContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_window.QtWindow">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_window.</tt><tt class="descname">QtWindow</tt><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_window.html#QtWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="enaml.widgets.qt.qt_container.QtContainer"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_container.QtContainer</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.AbstractTkWindow</span></tt></p>
+<p>A Qt implementation of a Window.</p>
+<p>QtWindow uses a QFrame to create a simple top level window which
+contains other child widgets and layouts.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_window.html#QtWindow.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the attributes on the QWindow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.shell_title_changed">
+<tt class="descname">shell_title_changed</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_window.html#QtWindow.shell_title_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.shell_title_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;title&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.set_title">
+<tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_window.html#QtWindow.set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.set_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the title of the QFrame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_window.html#QtWindow.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden from the parent class to raise the window to
+the front if it should be shown.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h2>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h2>
+<p class="graphviz">
+digraph inheritance199fc6d954 {
+rankdir=LR;
+ratio=compress;
+fontsize=14;
+size=&quot;20.0, 20.0&quot;;
+  &quot;AbstractTkWindow&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkContainer&quot; -&gt; &quot;AbstractTkWindow&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkContainer&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;WXComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;WXBaseComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;WXBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;WXBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;WXContainer&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;WXComponent&quot; -&gt; &quot;WXContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkContainer&quot; -&gt; &quot;WXContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;WXWindow&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.wx.wx_window.WXWindow&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;WXContainer&quot; -&gt; &quot;WXWindow&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkWindow&quot; -&gt; &quot;WXWindow&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_window.WXWindow">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_window.</tt><tt class="descname">WXWindow</tt><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="enaml.widgets.wx.wx_container.WXContainer"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_container.WXContainer</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.AbstractTkWindow</span></tt></p>
+<p>A wxPython implementation of a Window.</p>
+<p>WXWindow uses a combined set of wx.Frame - wx.Window widget to create
+a simple top level window which contains other child widgets and
+layouts. Because of this dual behaviour some enaml calls need
+to be delegated to the wx.Frame and some to the wx.Window.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.Frame control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the attributes on the wx.Frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.shell_title_changed">
+<tt class="descname">shell_title_changed</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.shell_title_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.shell_title_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;title&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.set_title">
+<tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the title of the frame.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden from the parent class to raise the window to
+the front if it should be shown.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.resize">
+<tt class="descname">resize</tt><big>(</big><em>width</em>, <em>height</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.resize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.resize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to do the resize on the 
+internal wx.Frame object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.min_size">
+<tt class="descname">min_size</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.min_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.min_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to get the min size on 
+the internal wx.Frame object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.set_min_size">
+<tt class="descname">set_min_size</tt><big>(</big><em>min_width</em>, <em>min_height</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_min_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_min_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to set the min size on the
+internal wx.Frame object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.pos">
+<tt class="descname">pos</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.pos" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to get the position of
+the internal wx.Frame object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.move">
+<tt class="descname">move</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.move" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to do the move on the internal
+wx.Frame object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.frame_geometry">
+<tt class="descname">frame_geometry</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.frame_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.frame_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to get the frame geometry
+of the internal wx.Frame object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.geometry">
+<tt class="descname">geometry</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to get the geometry
+of the internal wx.Frame object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.set_geometry">
+<tt class="descname">set_geometry</tt><big>(</big><em>x</em>, <em>y</em>, <em>width</em>, <em>height</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_geometry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to set the geometry
+of the internal wx.Frame object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Window</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/widgets/enaml.widgets.window.Window.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.dialog.Dialog.html" title="Dialog"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.progress_bar.ProgressBar.html" title="ProgressBar"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Window</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

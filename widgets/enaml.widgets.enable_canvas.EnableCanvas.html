@@ -1,0 +1,292 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Enable Canvas &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="TableView" href="enaml.widgets.table_view.TableView.html" />
+    <link rel="prev" title="Traits UI Item" href="enaml.widgets.traitsui_item.TraitsUIItem.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.table_view.TableView.html" title="TableView"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.traitsui_item.TraitsUIItem.html" title="Traits UI Item"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Enable Canvas</a></li>
+  
+
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="enable-canvas">
+<h1>Enable Canvas<a class="headerlink" href="#enable-canvas" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.enable_canvas.EnableCanvas">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.enable_canvas.</tt><tt class="descname">EnableCanvas</tt><a class="reference internal" href="../_modules/enaml/widgets/enable_canvas.html#EnableCanvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.enable_canvas.EnableCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
+<p>An Enable canvas widget that will draw any Enable Component
+object.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.enable_canvas.EnableCanvas.component">
+<tt class="descname">component</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.enable_canvas.EnableCanvas.component" title="Permalink to this definition">¶</a></dt>
+<dd><p>The enable.component.Component instance to draw.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.enable_canvas.EnableCanvas.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.enable_canvas.EnableCanvas.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width.
+EnableCanvases ignore the width hug by default, so they expand freely in width.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.enable_canvas.EnableCanvas.hug_height">
+<tt class="descname">hug_height</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.enable_canvas.EnableCanvas.hug_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; height.
+EnableCanvases ignore the height hug by default, so they expand freely in height.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.enable_canvas.EnableCanvas.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.enable_canvas.EnableCanvas.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="qt">
+<h2>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h2>
+<p class="graphviz">
+digraph inheritancec22c66819a {
+rankdir=LR;
+ratio=compress;
+fontsize=14;
+size=&quot;20.0, 20.0&quot;;
+  &quot;QtBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;QtBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;QtEnableCanvas&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;QtControl&quot; -&gt; &quot;QtEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkEnableCanvas&quot; -&gt; &quot;QtEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkEnableCanvas&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;QtComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;QtBaseComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;QtControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;QtComponent&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkControl&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_enable_canvas.</tt><tt class="descname">QtEnableCanvas</tt><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_enable_canvas.html#QtEnableCanvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="enaml.widgets.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_control.QtControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.enable_canvas.AbstractTkEnableCanvas</span></tt></p>
+<p>A Qt implementation of EnableCanvas</p>
+<dl class="attribute">
+<dt id="enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.window">
+<tt class="descname">window</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>The EnableWindow that is created to hold the component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_enable_canvas.html#QtEnableCanvas.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an EnableWindow instance to hold the component and
+uses that instance control as the toolkit widget. This assumes
+that enable picks the appropriate toolkit backend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.shell_component_changed">
+<tt class="descname">shell_component_changed</tt><big>(</big><em>component</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_enable_canvas.html#QtEnableCanvas.shell_component_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.shell_component_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;component&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_enable_canvas.html#QtEnableCanvas.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h2>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h2>
+<p class="graphviz">
+digraph inheritance07af8befc5 {
+rankdir=LR;
+ratio=compress;
+fontsize=14;
+size=&quot;20.0, 20.0&quot;;
+  &quot;WXEnableCanvas&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;WXControl&quot; -&gt; &quot;WXEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkEnableCanvas&quot; -&gt; &quot;WXEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;WXComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;WXBaseComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;WXBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;WXBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkEnableCanvas&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
+  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;WXControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
+  &quot;WXComponent&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+  &quot;AbstractTkControl&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
+}
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_enable_canvas.</tt><tt class="descname">WXEnableCanvas</tt><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_enable_canvas.html#WXEnableCanvas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="enaml.widgets.wx.wx_control.WXControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_control.WXControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.enable_canvas.AbstractTkEnableCanvas</span></tt></p>
+<p>A wxPython implementation of EnableCanvas</p>
+<dl class="attribute">
+<dt id="enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas.window">
+<tt class="descname">window</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas.window" title="Permalink to this definition">¶</a></dt>
+<dd><p>The EnableWindow that is created to hold the component</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_enable_canvas.html#WXEnableCanvas.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an EnableWindow instance to hold the component and
+uses that instance control as the toolkit widget. This assumes
+that enable picks the appropriate toolkit backend.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas.shell_component_changed">
+<tt class="descname">shell_component_changed</tt><big>(</big><em>component</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_enable_canvas.html#WXEnableCanvas.shell_component_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas.shell_component_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;component&#8217; attribute on the 
+shell object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Enable Canvas</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/widgets/enaml.widgets.enable_canvas.EnableCanvas.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.table_view.TableView.html" title="TableView"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.traitsui_item.TraitsUIItem.html" title="Traits UI Item"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Enable Canvas</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>
