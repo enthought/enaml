@@ -222,25 +222,25 @@ class Parameters(ASTNode):
         self.defaults = defaults
         
 
-class Call(ASTNode):
-    """ An ast Node representing a defn call.
+# class Call(ASTNode):
+#     """ An ast Node representing a defn call.
 
-    Attributes
-    ----------
-    name : str
-        The name of the defn being called.
+#     Attributes
+#     ----------
+#     name : str
+#         The name of the defn being called.
     
-    arguments : list
-        A list of Argument or KeywordArgument nodes which are the 
-        arguments being passed to the defn.
+#     arguments : list
+#         A list of Argument or KeywordArgument nodes which are the 
+#         arguments being passed to the defn.
     
-    """
-    __slots__ = ('name', 'arguments')
+#     """
+#     __slots__ = ('name', 'arguments')
 
-    def __init__(self, name, arguments, lineno):
-        super(Call, self).__init__(lineno)
-        self.name = name
-        self.arguments = arguments
+#     def __init__(self, name, arguments, lineno):
+#         super(Call, self).__init__(lineno)
+#         self.name = name
+#         self.arguments = arguments
 
 
 class Argument(Python):
