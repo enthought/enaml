@@ -6,7 +6,6 @@ import itertools
 from functools import wraps
 import types
 
-from . import enaml_ast
 from . import byteplay
 
 from .. import imports
@@ -118,7 +117,7 @@ class DeclarationCompiler(_NodeVisitor):
         #         op = eval('__operator_Equal__', toolkit, f_globals)
         #         op(item, 'text', <ast for 'clickme'>, <code for 'clickme'>, 
         #            f_globals, identifiers)
-        #         foo.add_child(button)
+        #         foo._subcomponents.append(button)
         #         return foo
         #----------------------------------------------------------------------
         compiler = cls()
@@ -260,86 +259,83 @@ class DeclarationCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo.add_child(button)
+            # foo._subcomponents.append(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_child'),
+            (bp.LOAD_ATTR, '_subcomponents'),
+            (bp.LOAD_ATTR, 'append'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
             (bp.POP_TOP, None),
         ])
 
-    def visit_Call(self, node):
-        """ Create the bytecode ops for performing a call in the body
-        of a declaration or defn. The calls are expected to return 
-        iterables of children.
+    # def visit_Call(self, node):
+    #     """ Create the bytecode ops for performing a call in the body
+    #     of a declaration or defn. The calls are expected to return 
+    #     iterables of children.
 
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
+    #     """
+    #     bp = byteplay
+    #     ops = self.ops
+    #     name_stack = self.name_stack
 
-        # Since we are adding multiple children to one parent, we need
-        # to load that parent on the stack before computing the children.
-        ops.append((bp.LOAD_FAST, name_stack[-1]))
+    #     # Since we are adding multiple children to one parent, we need
+    #     # to load that parent on the stack before computing the children.
+    #     ops.append((bp.LOAD_FAST, name_stack[-1]))
 
-        # To perform the call we need to load the callable and its args
-        # and kwargs, call it, then use a compiler helper to handle the
-        # return values.
-        #
-        # SomeDefn(foo, bar, baz=12)
-        op_code = compile(node.name, 'Enaml', mode='eval')
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-        ])
+    #     # To perform the call we need to load the callable and its args
+    #     # and kwargs, call it, then use a compiler helper to handle the
+    #     # return values.
+    #     #
+    #     # SomeDefn(foo, bar, baz=12)
+    #     op_code = compile(node.name, 'Enaml', mode='eval')
+    #     ops.extend([
+    #         (bp.LOAD_CONST, eval),
+    #         (bp.LOAD_CONST, op_code),
+    #         (bp.LOAD_FAST, 'toolkit'),
+    #         (bp.LOAD_FAST, 'f_globals'),
+    #         (bp.CALL_FUNCTION, 0x0003),
+    #     ])
 
-        n_args = 0
-        n_kwargs = 0
-        for arg in node.arguments:
-            if isinstance(arg, enaml_ast.Argument):
-                n_args += 1
-                arg_code = arg.code
-            else:
-                ops.append((bp.LOAD_CONST, arg.name))
-                n_kwargs += 1
-                arg_code = arg.argument.code
-            ops.extend([
-                (bp.LOAD_CONST, eval),
-                (bp.LOAD_CONST, arg_code),
-                (bp.LOAD_FAST, 'toolkit'),
-                (bp.LOAD_FAST, 'f_globals'),
-                (bp.CALL_FUNCTION, 0x0003),
-            ])
+    #     n_args = 0
+    #     n_kwargs = 0
+    #     for arg in node.arguments:
+    #         if isinstance(arg, enaml_ast.Argument):
+    #             n_args += 1
+    #             arg_code = arg.code
+    #         else:
+    #             ops.append((bp.LOAD_CONST, arg.name))
+    #             n_kwargs += 1
+    #             arg_code = arg.argument.code
+    #         ops.extend([
+    #             (bp.LOAD_CONST, eval),
+    #             (bp.LOAD_CONST, arg_code),
+    #             (bp.LOAD_FAST, 'toolkit'),
+    #             (bp.LOAD_FAST, 'f_globals'),
+    #             (bp.CALL_FUNCTION, 0x0003),
+    #         ])
         
-        # Rather than emitting bytecode to run a FOR loop over the
-        # return results of the function call, we use a helper function
-        # which does it for us. This simplifies the bytecode generation
-        # at the cost of a very small overhead.
-        ops.extend([
-            (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
-            (bp.LOAD_CONST, _compiler_add_children),
-            (bp.ROT_THREE, None),
-            (bp.CALL_FUNCTION, 0x0002),
-            (bp.POP_TOP, None),
-        ])
+    #     # Rather than emitting bytecode to run a FOR loop over the
+    #     # return results of the function call, we use a helper function
+    #     # which does it for us. This simplifies the bytecode generation
+    #     # at the cost of a very small overhead.
+    #     ops.extend([
+    #         (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
+    #         (bp.LOAD_CONST, _compiler_add_children),
+    #         (bp.ROT_THREE, None),
+    #         (bp.CALL_FUNCTION, 0x0002),
+    #         (bp.POP_TOP, None),
+    #     ])
 
 
 #------------------------------------------------------------------------------
 # Defn Compiler
 #------------------------------------------------------------------------------
 class _DefnCollector(object):
+    
+    __slots__ = ('_subcomponents',)
 
     def __init__(self):
-        self.children = []
-    
-    def add_child(self, child):
-        self.children.append(child)
-
-    def get_children(self):
-        return tuple(self.children)
+        self._subcomponents = []
 
 
 class DefnCompiler(_NodeVisitor):
@@ -431,8 +427,7 @@ class DefnCompiler(_NodeVisitor):
 
         ops.extend([
             (bp.LOAD_FAST, name),
-            (bp.LOAD_ATTR, 'get_children'),
-            (bp.CALL_FUNCTION, 0x0000),
+            (bp.LOAD_ATTR, '_subcomponents'),
             (bp.RETURN_VALUE, None)
         ])
 
@@ -515,71 +510,72 @@ class DefnCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo.add_child(button)
+            # foo._subcomponents.append(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_child'),
+            (bp.LOAD_ATTR, '_subcomponents'),
+            (bp.LOAD_ATTR, 'append'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
             (bp.POP_TOP, None),
         ])
 
-    def visit_Call(self, node):
-        """ Create the bytecode ops for performing a call in the body
-        of a declaration or defn. The calls are expected to return 
-        iterables of children.
+    # def visit_Call(self, node):
+    #     """ Create the bytecode ops for performing a call in the body
+    #     of a declaration or defn. The calls are expected to return 
+    #     iterables of children.
 
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
+    #     """
+    #     bp = byteplay
+    #     ops = self.ops
+    #     name_stack = self.name_stack
 
-        # Since we are adding multiple children to one parent, we need
-        # to load that parent on the stack before computing the children.
-        ops.append((bp.LOAD_FAST, name_stack[-1]))
+    #     # Since we are adding multiple children to one parent, we need
+    #     # to load that parent on the stack before computing the children.
+    #     ops.append((bp.LOAD_FAST, name_stack[-1]))
 
-        # To perform the call we need to load the callable and its args
-        # and kwargs, call it, then use a compiler helper to handle the
-        # return values.
-        #
-        # SomeDefn(foo, bar, baz=12)
-        op_code = compile(node.name, 'Enaml', mode='eval')
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'merged_globals'),
-            (bp.LOAD_FAST, 'f_locals'),
-            (bp.CALL_FUNCTION, 0x0003),
-        ])
+    #     # To perform the call we need to load the callable and its args
+    #     # and kwargs, call it, then use a compiler helper to handle the
+    #     # return values.
+    #     #
+    #     # SomeDefn(foo, bar, baz=12)
+    #     op_code = compile(node.name, 'Enaml', mode='eval')
+    #     ops.extend([
+    #         (bp.LOAD_CONST, eval),
+    #         (bp.LOAD_CONST, op_code),
+    #         (bp.LOAD_FAST, 'merged_globals'),
+    #         (bp.LOAD_FAST, 'f_locals'),
+    #         (bp.CALL_FUNCTION, 0x0003),
+    #     ])
 
-        n_args = 0
-        n_kwargs = 0
-        for arg in node.arguments:
-            if isinstance(arg, enaml_ast.Argument):
-                n_args += 1
-                arg_code = arg.code
-            else:
-                ops.append((bp.LOAD_CONST, arg.name))
-                n_kwargs += 1
-                arg_code = arg.argument.code
-            ops.extend([
-                (bp.LOAD_CONST, eval),
-                (bp.LOAD_CONST, arg_code),
-                (bp.LOAD_FAST, 'merged_globals'),
-                (bp.LOAD_FAST, 'f_locals'),
-                (bp.CALL_FUNCTION, 0x0003),
-            ])
+    #     n_args = 0
+    #     n_kwargs = 0
+    #     for arg in node.arguments:
+    #         if isinstance(arg, enaml_ast.Argument):
+    #             n_args += 1
+    #             arg_code = arg.code
+    #         else:
+    #             ops.append((bp.LOAD_CONST, arg.name))
+    #             n_kwargs += 1
+    #             arg_code = arg.argument.code
+    #         ops.extend([
+    #             (bp.LOAD_CONST, eval),
+    #             (bp.LOAD_CONST, arg_code),
+    #             (bp.LOAD_FAST, 'merged_globals'),
+    #             (bp.LOAD_FAST, 'f_locals'),
+    #             (bp.CALL_FUNCTION, 0x0003),
+    #         ])
         
-        # Rather than emitting bytecode to run a FOR loop over the
-        # return results of the function call, we use a helper function
-        # which does it for us. This simplifies the bytecode generation
-        # at the cost of a very small overhead.
-        ops.extend([
-            (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
-            (bp.LOAD_CONST, _compiler_add_children),
-            (bp.ROT_THREE, None),
-            (bp.CALL_FUNCTION, 0x0002),
-            (bp.POP_TOP, None),
-        ])
+    #     # Rather than emitting bytecode to run a FOR loop over the
+    #     # return results of the function call, we use a helper function
+    #     # which does it for us. This simplifies the bytecode generation
+    #     # at the cost of a very small overhead.
+    #     ops.extend([
+    #         (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
+    #         (bp.LOAD_CONST, _compiler_add_children),
+    #         (bp.ROT_THREE, None),
+    #         (bp.CALL_FUNCTION, 0x0002),
+    #         (bp.POP_TOP, None),
+    #     ])
 
 
 #------------------------------------------------------------------------------
