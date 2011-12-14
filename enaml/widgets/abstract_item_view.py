@@ -9,7 +9,6 @@ from traits.api import Instance
 from .control import Control, AbstractTkControl
 
 from ..item_models.abstract_item_model import AbstractItemModel
-from ..item_models.selection_model import SelectionModel
 
 
 class AbstractTkItemView(AbstractTkControl):
@@ -30,9 +29,6 @@ class AbstractItemView(Control):
     """
     #: The AbstractItemModel instance being displayed by the view.
     item_model = Instance(AbstractItemModel)
-
-    #: The SelectionModel instance that should be used by the view.
-    selection_model = Instance(SelectionModel, ())
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkItemView)
