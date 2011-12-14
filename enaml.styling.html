@@ -101,24 +101,11 @@ fully opaque.</p>
 <div class="section" id="style-node-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">style_node</span></tt> Module<a class="headerlink" href="#style-node-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritancea5636f1228 {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;TraitType&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;BaseTraitHandler&quot; -&gt; &quot;TraitType&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;StyleNode&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_node.StyleNode&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;HasTraits&quot; -&gt; &quot;StyleNode&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;CHasTraits&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;StyleClassTrait&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_node.StyleClassTrait&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;BaseTuple&quot; -&gt; &quot;StyleClassTrait&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;HasTraits&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;CHasTraits&quot; -&gt; &quot;HasTraits&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;BaseTuple&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;TraitType&quot; -&gt; &quot;BaseTuple&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;BaseTraitHandler&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-}
+<img src="_images/inheritance-e7d414aba957792db2a70c7ee42b69c4fadcfe9c.png" alt="Inheritance diagram of enaml.styling.style_node" usemap="#inheritancea5636f1228" class="inheritance"/>
+<map id="inheritancea5636f1228" name="inheritancea5636f1228">
+<area shape="rect" id="node10" href="#enaml.styling.style_node.StyleClassTrait" title="StyleClassTrait" alt="" coords="451,512,567,541"/>
+<area shape="rect" id="node7" href="#enaml.styling.style_node.StyleNode" title="StyleNode" alt="" coords="316,5,401,35"/>
+</map>
 </p>
 <span class="target" id="module-enaml.styling.style_node"></span><dl class="class">
 <dt id="enaml.styling.style_node.StyleClassTrait">
@@ -201,37 +188,19 @@ size=&quot;20.0, 20.0&quot;;
 <div class="section" id="style-sheet-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">style_sheet</span></tt> Module<a class="headerlink" href="#style-sheet-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritancec23f0d1252 {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;style&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.style&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;CHasTraits&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;HasStrictTraits&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;HasTraits&quot; -&gt; &quot;HasStrictTraits&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;Selector&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.Selector&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;HasStrictTraits&quot; -&gt; &quot;Selector&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;StyleSheet&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.StyleSheet&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;HasStrictTraits&quot; -&gt; &quot;StyleSheet&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;IDSelector&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.IDSelector&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;Selector&quot; -&gt; &quot;IDSelector&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QualSelector&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.QualSelector&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;Selector&quot; -&gt; &quot;QualSelector&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;ClassSelector&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.ClassSelector&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;Selector&quot; -&gt; &quot;ClassSelector&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;HasTraits&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;CHasTraits&quot; -&gt; &quot;HasTraits&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;TypeSelector&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.TypeSelector&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;Selector&quot; -&gt; &quot;TypeSelector&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;IStyleNodeData&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.IStyleNodeData&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;Interface&quot; -&gt; &quot;IStyleNodeData&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;StyleValue&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.StyleValue&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;BoxedValue&quot; -&gt; &quot;StyleValue&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;BoxedValue&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.styling.style_sheet.BoxedValue&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;Interface&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;HasTraits&quot; -&gt; &quot;Interface&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="_images/inheritance-553216e421af05b2fd92028bd608e832365f22e4.png" alt="Inheritance diagram of enaml.styling.style_sheet" usemap="#inheritancec23f0d1252" class="inheritance"/>
+<map id="inheritancec23f0d1252" name="inheritancec23f0d1252">
+<area shape="rect" id="node1" href="#enaml.styling.style_sheet.style" title="style" alt="" coords="19,993,91,1023"/>
+<area shape="rect" id="node2" href="#enaml.styling.style_sheet.IStyleNodeData" title="IStyleNodeData" alt="" coords="454,913,573,943"/>
+<area shape="rect" id="node10" href="#enaml.styling.style_sheet.Selector" title="Selector" alt="" coords="477,967,550,996"/>
+<area shape="rect" id="node18" href="#enaml.styling.style_sheet.StyleSheet" title="StyleSheet" alt="" coords="470,1020,557,1049"/>
+<area shape="rect" id="node9" href="#enaml.styling.style_sheet.IDSelector" title="IDSelector" alt="" coords="631,887,718,916"/>
+<area shape="rect" id="node12" href="#enaml.styling.style_sheet.QualSelector" title="QualSelector" alt="" coords="623,940,726,969"/>
+<area shape="rect" id="node14" href="#enaml.styling.style_sheet.TypeSelector" title="TypeSelector" alt="" coords="623,993,727,1023"/>
+<area shape="rect" id="node24" href="#enaml.styling.style_sheet.ClassSelector" title="ClassSelector" alt="" coords="621,1047,728,1076"/>
+<area shape="rect" id="node20" href="#enaml.styling.style_sheet.StyleValue" title="StyleValue" alt="" coords="152,5,240,35"/>
+<area shape="rect" id="node21" href="#enaml.styling.style_sheet.BoxedValue" title="BoxedValue" alt="" coords="6,5,103,35"/>
+</map>
 </p>
 <span class="target" id="module-enaml.styling.style_sheet"></span><dl class="class">
 <dt id="enaml.styling.style_sheet.BoxedValue">
@@ -654,7 +623,7 @@ element being styled.</p>
 <span id="style-trait-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">style_trait</span></tt> Module<a class="headerlink" href="#module-enaml.styling.style_trait" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="enaml.styling.style_trait.StyleTrait">
-<em class="property">class </em><tt class="descclassname">enaml.styling.style_trait.</tt><tt class="descname">StyleTrait</tt><big>(</big><em>default_value=&lt;object object at 0x1fde020&gt;</em>, <em>factory=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="_modules/enaml/styling/style_trait.html#StyleTrait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_trait.StyleTrait" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.styling.style_trait.</tt><tt class="descname">StyleTrait</tt><big>(</big><em>default_value=&lt;object object at 0x1fcc038&gt;</em>, <em>factory=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="_modules/enaml/styling/style_trait.html#StyleTrait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_trait.StyleTrait" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
 <dl class="method">
 <dt id="enaml.styling.style_trait.StyleTrait.get">

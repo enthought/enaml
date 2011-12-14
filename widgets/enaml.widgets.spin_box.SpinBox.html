@@ -180,30 +180,12 @@ ignore the width hug by default, so they expand freely in width.</p>
 <div class="section" id="qt">
 <h2>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritance528ace3c6e {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;QtBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;QtBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;QtSpinBox&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.qt.qt_spin_box.QtSpinBox&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtControl&quot; -&gt; &quot;QtSpinBox&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkSpinBox&quot; -&gt; &quot;QtSpinBox&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkSpinBox&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkSpinBox&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtBaseComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtComponent&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-ae86bd96f540c1313dd8f65430eadcfdb9828cb8.png" alt="Inheritance diagram of enaml.widgets.qt.qt_spin_box.QtSpinBox" usemap="#inheritance528ace3c6e" class="inheritance"/>
+<map id="inheritance528ace3c6e" name="inheritance528ace3c6e">
+<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="686,5,770,35"/>
+<area shape="rect" id="node16" href="#enaml.widgets.qt.qt_spin_box.QtSpinBox" title="QtSpinBox" alt="" coords="848,32,936,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,5,593,35"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_spin_box.QtSpinBox">
@@ -331,30 +313,12 @@ object.</p>
 <div class="section" id="wx">
 <h2>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritance7ae99165b0 {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;WXSpinBox&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.wx.wx_spin_box.WXSpinBox&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXControl&quot; -&gt; &quot;WXSpinBox&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkSpinBox&quot; -&gt; &quot;WXSpinBox&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXBaseComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;WXBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkSpinBox&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkSpinBox&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXComponent&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-69970769b6d17ea755e0674ba72fc9f12aacb1b2.png" alt="Inheritance diagram of enaml.widgets.wx.wx_spin_box.WXSpinBox" usemap="#inheritance7ae99165b0" class="inheritance"/>
+<map id="inheritance7ae99165b0" name="inheritance7ae99165b0">
+<area shape="rect" id="node5" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="683,5,773,35"/>
+<area shape="rect" id="node14" href="#enaml.widgets.wx.wx_spin_box.WXSpinBox" title="WXSpinBox" alt="" coords="848,32,941,61"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_spin_box.WXSpinBox">

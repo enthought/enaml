@@ -109,30 +109,12 @@ children.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-digraph inheritanceaa4266d757 {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;QtBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;QtBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkContainer&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkForm&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkContainer&quot; -&gt; &quot;AbstractTkForm&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtForm&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.qt.qt_form.QtForm&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtContainer&quot; -&gt; &quot;QtForm&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkForm&quot; -&gt; &quot;QtForm&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtBaseComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtContainer&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtComponent&quot; -&gt; &quot;QtContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkContainer&quot; -&gt; &quot;QtContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-a3a8387264db13734a6d6adb8a81db24afcd44e5.png" alt="Inheritance diagram of enaml.widgets.qt.qt_form.QtForm" usemap="#inheritanceaa4266d757" class="inheritance"/>
+<map id="inheritanceaa4266d757" name="inheritanceaa4266d757">
+<area shape="rect" id="node1" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="682,5,782,35"/>
+<area shape="rect" id="node11" href="#enaml.widgets.qt.qt_form.QtForm" title="QtForm" alt="" coords="843,32,915,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="488,5,600,35"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_form.QtForm">
@@ -145,30 +127,12 @@ size=&quot;20.0, 20.0&quot;;
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-digraph inheritance471432f12f {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;AbstractTkContainer&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkForm&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkContainer&quot; -&gt; &quot;AbstractTkForm&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXBaseComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;WXBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXForm&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.wx.wx_form.WXForm&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXContainer&quot; -&gt; &quot;WXForm&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkForm&quot; -&gt; &quot;WXForm&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXContainer&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXComponent&quot; -&gt; &quot;WXContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkContainer&quot; -&gt; &quot;WXContainer&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-dea6777d4a85c22132d3028f10a13e87a302981a.png" alt="Inheritance diagram of enaml.widgets.wx.wx_form.WXForm" usemap="#inheritance471432f12f" class="inheritance"/>
+<map id="inheritance471432f12f" name="inheritance471432f12f">
+<area shape="rect" id="node13" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,5,602,35"/>
+<area shape="rect" id="node9" href="#enaml.widgets.wx.wx_form.WXForm" title="WXForm" alt="" coords="843,32,917,61"/>
+<area shape="rect" id="node10" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="680,5,784,35"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_form.WXForm">

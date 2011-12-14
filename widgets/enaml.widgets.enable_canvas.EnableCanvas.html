@@ -102,30 +102,12 @@ EnableCanvases ignore the height hug by default, so they expand freely in height
 <div class="section" id="qt">
 <h2>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritancec22c66819a {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;QtBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;QtBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;QtEnableCanvas&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtControl&quot; -&gt; &quot;QtEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkEnableCanvas&quot; -&gt; &quot;QtEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkEnableCanvas&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtBaseComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtComponent&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-3c165821221ac47b622193ef0efeb6ae2ea1ac02.png" alt="Inheritance diagram of enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas" usemap="#inheritancec22c66819a" class="inheritance"/>
+<map id="inheritancec22c66819a" name="inheritancec22c66819a">
+<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="704,5,789,35"/>
+<area shape="rect" id="node16" href="#enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas" title="QtEnableCanvas" alt="" coords="885,32,1011,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,5,593,35"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_enable_canvas.QtEnableCanvas">
@@ -164,30 +146,12 @@ shell object.</p>
 <div class="section" id="wx">
 <h2>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritance07af8befc5 {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;WXEnableCanvas&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXControl&quot; -&gt; &quot;WXEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkEnableCanvas&quot; -&gt; &quot;WXEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXBaseComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;WXBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkEnableCanvas&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkEnableCanvas&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXComponent&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-3f376ab8ee0513781a56489e6db0a047aef9ca81.png" alt="Inheritance diagram of enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas" usemap="#inheritance07af8befc5" class="inheritance"/>
+<map id="inheritance07af8befc5" name="inheritance07af8befc5">
+<area shape="rect" id="node5" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="702,5,791,35"/>
+<area shape="rect" id="node13" href="#enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas" title="WXEnableCanvas" alt="" coords="886,32,1015,61"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_enable_canvas.WXEnableCanvas">

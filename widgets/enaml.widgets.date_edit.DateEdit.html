@@ -109,35 +109,13 @@ ignore the width hug by default, so they expand freely in width.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-digraph inheritancedb24ee247c {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;QtBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;QtBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkDateEdit&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBoundedDate&quot; -&gt; &quot;AbstractTkDateEdit&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;QtBoundedDate&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.qt.qt_bounded_date.QtBoundedDate&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtControl&quot; -&gt; &quot;QtBoundedDate&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBoundedDate&quot; -&gt; &quot;QtBoundedDate&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtBaseComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtComponent&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBoundedDate&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkBoundedDate&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtDateEdit&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.qt.qt_date_edit.QtDateEdit&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtBoundedDate&quot; -&gt; &quot;QtDateEdit&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkDateEdit&quot; -&gt; &quot;QtDateEdit&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-599e4a7a875feaa197c0e72b696da0baf3dce7c3.png" alt="Inheritance diagram of enaml.widgets.qt.qt_date_edit.QtDateEdit" usemap="#inheritancedb24ee247c" class="inheritance"/>
+<map id="inheritancedb24ee247c" name="inheritancedb24ee247c">
+<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_date_edit.QtDateEdit" title="QtDateEdit" alt="" coords="1077,32,1168,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="894,5,1018,35"/>
+<area shape="rect" id="node8" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="703,5,788,35"/>
+<area shape="rect" id="node9" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,5,593,35"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_date_edit.QtDateEdit">
@@ -204,35 +182,13 @@ size=&quot;20.0, 20.0&quot;;
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-digraph inheritance7efb261168 {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;WXBoundedDate&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.wx.wx_bounded_date.WXBoundedDate&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXControl&quot; -&gt; &quot;WXBoundedDate&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBoundedDate&quot; -&gt; &quot;WXBoundedDate&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkDateEdit&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBoundedDate&quot; -&gt; &quot;AbstractTkDateEdit&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXBaseComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;WXBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBoundedDate&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkBoundedDate&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXDateEdit&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.wx.wx_date_edit.WXDateEdit&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXBoundedDate&quot; -&gt; &quot;WXDateEdit&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkDateEdit&quot; -&gt; &quot;WXDateEdit&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXComponent&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-2853244faa9e71e018ec1c51092a18b1d49cc270.png" alt="Inheritance diagram of enaml.widgets.wx.wx_date_edit.WXDateEdit" usemap="#inheritance7efb261168" class="inheritance"/>
+<map id="inheritance7efb261168" name="inheritance7efb261168">
+<area shape="rect" id="node9" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.wx.wx_bounded_date.WXBoundedDate" title="WXBoundedDate" alt="" coords="892,59,1020,88"/>
+<area shape="rect" id="node10" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="701,59,790,88"/>
+<area shape="rect" id="node18" href="#enaml.widgets.wx.wx_date_edit.WXDateEdit" title="WXDateEdit" alt="" coords="1078,32,1173,61"/>
+<area shape="rect" id="node13" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,59,596,88"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_date_edit.WXDateEdit">

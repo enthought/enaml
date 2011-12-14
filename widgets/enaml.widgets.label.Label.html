@@ -133,30 +133,12 @@ contents&#8217; width weakly by default.</p>
 <div class="section" id="qt">
 <h2>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritanceba39089ca7 {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;QtBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;QtBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkLabel&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkLabel&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtBaseComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;QtComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtComponent&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;QtControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;QtLabel&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.qt.qt_label.QtLabel&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;QtControl&quot; -&gt; &quot;QtLabel&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkLabel&quot; -&gt; &quot;QtLabel&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-9b7a767c8b9a2f929da595065489c675745aff0f.png" alt="Inheritance diagram of enaml.widgets.qt.qt_label.QtLabel" usemap="#inheritanceba39089ca7" class="inheritance"/>
+<map id="inheritanceba39089ca7" name="inheritanceba39089ca7">
+<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="676,5,761,35"/>
+<area shape="rect" id="node12" href="#enaml.widgets.qt.qt_label.QtLabel" title="QtLabel" alt="" coords="829,32,901,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,5,593,35"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_label.QtLabel">
@@ -193,30 +175,12 @@ size=&quot;20.0, 20.0&quot;;
 <div class="section" id="wx">
 <h2>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-digraph inheritance7933e2ac0c {
-rankdir=LR;
-ratio=compress;
-fontsize=14;
-size=&quot;20.0, 20.0&quot;;
-  &quot;AbstractTkControl&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;AbstractTkControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXComponent&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXBaseComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkComponent&quot; -&gt; &quot;WXComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXLabel&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;#enaml.widgets.wx.wx_label.WXLabel&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXControl&quot; -&gt; &quot;WXLabel&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkLabel&quot; -&gt; &quot;WXLabel&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;WXBaseComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkBaseComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkComponent&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkBaseComponent&quot; -&gt; &quot;AbstractTkComponent&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkLabel&quot; [shape=box,style=&quot;setlinewidth(0.5)&quot;,fontsize=10,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25];
-  &quot;AbstractTkControl&quot; -&gt; &quot;AbstractTkLabel&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;WXControl&quot; [style=&quot;setlinewidth(0.5)&quot;,URL=&quot;enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl&quot;,fontname=Vera Sans, DejaVu Sans, Liberation Sans, Arial, Helvetica, sans,height=0.25,shape=box,fontsize=10];
-  &quot;WXComponent&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-  &quot;AbstractTkControl&quot; -&gt; &quot;WXControl&quot; [arrowsize=0.5,style=&quot;setlinewidth(0.5)&quot;];
-}
+<img src="../_images/inheritance-34fbf790d7ed90df5364716855225bd6d02744e9.png" alt="Inheritance diagram of enaml.widgets.wx.wx_label.WXLabel" usemap="#inheritance7933e2ac0c" class="inheritance"/>
+<map id="inheritance7933e2ac0c" name="inheritance7933e2ac0c">
+<area shape="rect" id="node1" href="#enaml.widgets.wx.wx_label.WXLabel" title="WXLabel" alt="" coords="829,32,904,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="674,5,763,35"/>
+<area shape="rect" id="node9" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+</map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_label.WXLabel">
