@@ -4,11 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod, abstractproperty
 from collections import deque
-from itertools import izip_longest
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
-    cached_property, Event, on_trait_change
+    cached_property, Event
 )
 
 from .setup_hooks import AbstractSetupHook
@@ -119,7 +118,8 @@ class BaseComponent(HasStrictTraits):
 
     #: The list of child for this component. This is read-only cached
     #: property that is computed based on the list of static children
-    #: and the children contributed from any Include nodes.
+    #: and the children contributed from any Include nodes. This list
+    #: should not be directly manipulated
     children = Property(List, depends_on='_subcomponents:_components_updated')
 
     #: The list of include nodes for this component.
@@ -156,7 +156,8 @@ class BaseComponent(HasStrictTraits):
     
     #: The private internal list of sub components for this component. 
     #: This list should not be manipulated by the user, and should not 
-    #: be changed after initialization.
+    #: be changed after initialization. It can, however, be redefined
+    #: by subclasses to limit the type or number of subcomponents.
     _subcomponents = List(Instance('BaseComponent'))
 
     #: A private event that should be emitted by a component when the 
@@ -177,8 +178,7 @@ class BaseComponent(HasStrictTraits):
         '_subcomponents' which are not instances of Include.
 
         """
-        items = [item._get_components() for item in self._subcomponents]
-        return sum(items, [])
+        return sum([c.get_components() for c in self._subcomponents], [])
 
     def _get_toolkit_widget(self):
         """ The property getter for the 'toolkit_widget' attribute.
@@ -186,7 +186,7 @@ class BaseComponent(HasStrictTraits):
         """
         return self.abstract_obj.toolkit_widget
 
-    def _get_components(self):
+    def get_components(self):
         """ Returns the list of BaseComponent instance which should be
         included as proper children of our parent. By default this 
         simply returns [self]. This method should be overridden by 
@@ -197,21 +197,17 @@ class BaseComponent(HasStrictTraits):
         return [self]
     
     #--------------------------------------------------------------------------
-    # Setup Methods 
+    # Setup and Teardown Methods 
     #--------------------------------------------------------------------------
     def setup(self, parent=None):
         """ Run the setup process for the ui tree.
 
-        The setup process is split into two phases: static and dynamic
-        and each phase deals with the respective class of children.
-        The static children are set up first, followed by the dynamic
-        children. The reason for this order is that the static children
-        must be first since its highly likely that the dynamic children
-        will depend up the static children being properly initialized
-        in order to operate correctly.
+        The setup process is fairly complex and involves multiple steps.
+        The complexity is required in order to ensure a consistent state
+        of the object tree so that default values that are computed from
+        expressions have the necessary information available.
 
-        The setup process for both the static and dynamic children
-        is comprised of the following steps:
+        The setup process is comprised of the following steps:
         
         1)  Child shell objects are given a reference to their parent
         2)  Setup hooks are initialized
@@ -221,13 +217,9 @@ class BaseComponent(HasStrictTraits):
         6)  Abstract objects bind their event handlers
         7)  Setup hooks are bound
         8)  Abstract objects are added as a listeners to the shell object
-
-        After these steps are completed, the following final steps are
-        performed for all childrens:
-
-        1) Layout is initialized
-        2) Nodes are marked as initialized
-
+        9)  Nodes are marked as initialized
+        10) Layout is initialized
+        
         Each of the setup steps is performed in depth-first order. This 
         method should only be called on the root node of the tree.
 
@@ -239,7 +231,6 @@ class BaseComponent(HasStrictTraits):
             the parent for this component.
 
         """
-        # Static Normal Children
         self._setup_parent_refs()
         self._setup_init_hooks()
         self._setup_create_widgets(parent)
@@ -249,13 +240,8 @@ class BaseComponent(HasStrictTraits):
         self._setup_bind_hooks()
         self._setup_listeners()
         self._setup_set_initialized()
-
-        # Finalization
         self.initialize_layout()
     
-    #--------------------------------------------------------------------------
-    # Static Setup Methods 
-    #--------------------------------------------------------------------------
     def _setup_parent_refs(self):
         """ A setup method which assigns the parent reference to the
         static children.
@@ -337,9 +323,6 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child._setup_set_initialized()
 
-    #--------------------------------------------------------------------------
-    # Common Setup Methods
-    #--------------------------------------------------------------------------
     def initialize_layout(self):
         """ A setup method called at the end of the setup process, but 
         before the 'initialized' attribute it set to True. By default, 
@@ -375,6 +358,17 @@ class BaseComponent(HasStrictTraits):
 
         """
         pass
+
+    #--------------------------------------------------------------------------
+    # Change Handlers
+    #--------------------------------------------------------------------------
+    def _children_changed(self):
+        """ Handles the children being changed on this component by 
+        calling 'relayout()' if this component is already initialized.
+
+        """
+        if self.initialized:
+            self.relayout()
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
@@ -431,158 +425,4 @@ class BaseComponent(HasStrictTraits):
         for cmpnt in self.traverse():
             if cmpnt.name == name:
                 return cmpnt
-
-
-#------------------------------------------------------------------------------
-# Null Toolkit Base Component
-#------------------------------------------------------------------------------
-class NullTkBaseComponent(AbstractTkBaseComponent):
-
-    @property
-    def toolkit_widget(self):
-        return None
-
-    _shell_obj = None
-
-    def _get_shell_obj(self):
-        return self._shell_obj
-    
-    def _set_shell_obj(self, val):
-        pass
-    
-    shell_obj = property(_get_shell_obj, _set_shell_obj)
-
-    def create(self, parent):
-        pass
-    
-    def initialize(self):
-        pass
-
-    def bind(self):
-        pass
-
-    def destroy(self):
-        pass
-
-
-#------------------------------------------------------------------------------
-# Include Component
-#------------------------------------------------------------------------------
-class Include(BaseComponent):
-    """ A BaseComponent subclass which allows children to be dynamically
-    inserted into a parent.
-
-    """
-    #: The dynamic list of items that should be included in our parent
-    #: component. If this list changes dynamically at run time, then
-    #: the old widgets will be destroyed and new ones will be inserted
-    #: into the parent.
-    items = List(Instance('BaseComponent'))
-    
-    #: A private Boolean flag indicating if the dynamic items of this 
-    #: Include have been intialized for the first time. This should not 
-    #: be manipulated directly by the user.
-    _items_initialized = Bool(False)
-    #: Overridden parent class trait which restricts an Include
-    #: component to not have any subcomponents.
-    _subcomponents = List(Instance('BaseComponent'), maxlen=0)
-
-    #: Overridden parent class trait which restrict the type
-    #: of the abstract object to the Null type.
-    abstract_obj = Instance(NullTkBaseComponent)
-
-    def _setup_items(self):
-        """ An internal method used to setup the dynamic children.
-
-        """
-        items = self.items
-        parent_shell = self.parent
-        toolkit_parent = parent_shell.toolkit_widget
-        
-        for child in items:
-            child.parent = parent_shell
-            child._setup_parent_refs()
-        
-        for child in items:
-            child._setup_init_hooks()
-        
-        for child in items:
-            child._setup_create_widgets(toolkit_parent)
-        
-        for child in items:
-            child._setup_final_hooks()
-            
-        for child in items:
-            child._setup_init_widgets()
-
-        for child in items:
-            child._setup_bind_widgets()
-
-        for child in items:
-            child._setup_bind_hooks()
-                
-        for child in items:
-            child._setup_listeners()
-
-        for child in items:
-            child._setup_set_initialized()
-
-        self._items_initialized = True
-
-    def _get_components(self):
-        """ A reimplemented parent class method to include the dynamic
-        children of this Include in our parent's list of children.
-
-        """
-        if self._items_initialized:
-            # By calling _get_components here, we allow nested 
-            # Includes to be expanded as expected.
-            cmpnts = [item._get_components() for item in self.items]
-            res = sum(cmpnts, [])
-        else:
-            res = []
-        return res
-
-    @on_trait_change('items:_components_updated')
-    def handle_items_updated(self):
-        """ Reacts to a change in the components updated event of the
-        children items which proxies that change up to the parent.
-
-        """
-        # XXX we can probably do this more efficiently than just
-        # trashing everything.
-        print 'updated', self
-
-    @on_trait_change('initialized')
-    def handle_initialized(self, inited):
-        """ Reacts to this component being fully initialized by the
-        normal setup process. Once this Include object is fully 
-        initialized, it is safe to create and setup the dynamic 
-        children. This method runs that process when the 'initialized'
-        flag is flipped from False to True.
-
-        """
-        if inited:
-            self._setup_items()
-            self._components_updated = True
-    
-    @on_trait_change('items[]')
-    def handle_items_changed(self, obj, name, old, new):
-        """ Reacts to changes in the items list and sets up the new list
-        of children, making sure the parent is properly relayed out.
-
-        """
-        print 'items changed', self, new
-        if self.initialized:
-            # Old items must be destroyed before the new ones can be 
-            # setup.
-            for item in old:
-                item.destroy()
-            self._setup_items()
-            self._components_updated = True
-            self.parent.relayout()
-    
-    def destroy(self):
-        for item in self.items:
-            item.destroy()
 
