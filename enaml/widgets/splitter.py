@@ -4,10 +4,9 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, on_trait_change, List, Bool
+from traits.api import Instance, on_trait_change, Bool
 
 from .container import Container, AbstractTkContainer
-from .component import Component
 from .layout.layout_manager import NullLayoutManager
 
 from ..enums import Orientation
@@ -67,8 +66,9 @@ class AbstractTkSplitter(AbstractTkContainer):
 
 
 class Splitter(Container):
-    """ A Container that displays just one of its children at a time.
-
+    """ A Container that displays its children in separate resizable
+    compartements that are connected with a resizing bar.
+     
     """
     #: The orientation of the Splitter. 'horizontal' means the children 
     #: are laid out left to right, 'vertical' means top to bottom.
@@ -93,9 +93,6 @@ class Splitter(Container):
     #: container ignores its height hug by default, so it expands freely
     #: in height.
     hug_height = 'ignore'
-
-    #: Overridden parent class trait.
-    children = List(Instance(Component))
 
     def initialize_layout(self):
         """ Initialize the layout of the children. This is overridden

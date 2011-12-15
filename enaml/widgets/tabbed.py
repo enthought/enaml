@@ -4,10 +4,9 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import List, Instance, Property, on_trait_change
+from traits.api import Property, on_trait_change
 
 from .stacked import Stacked, AbstractTkStacked
-from .tab import Tab
 
 from ..enums import TabPosition
 
@@ -54,10 +53,6 @@ class Tabbed(Stacked):
     #: A get/set property for the currently selected tab object in 
     #: the container. Synchronized with :attr:`index`.
     selected = Property(depends_on='index')
-
-    #: Overridden parent class trait. Children of a Tabbed container
-    #: must be Tab instances.
-    children = List(Instance(Tab))
 
     #--------------------------------------------------------------------------
     # Property Handlers 
