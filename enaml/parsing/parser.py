@@ -225,12 +225,7 @@ def p_declaration_body_item2(p):
     p[0] = p[1]
 
 
-#def p_declaration_body_item3(p):
-#    ''' declaration_body_item : enaml_call '''
-#    p[0] = p[1]
-
-
-def p_declaration_body_item4(p):
+def p_declaration_body_item3(p):
     ''' declaration_body_item : PASS NEWLINE '''
     p[0] = None
 
@@ -285,17 +280,12 @@ def p_instantiation_body_item1(p):
     p[0] = p[1]
 
 
-#def p_instantiation_body_item2(p):
-#    ''' instantiation_body_item : enaml_call '''
-#    p[0] = p[1]
-
-
-def p_instantiation_body_item3(p):
+def p_instantiation_body_item2(p):
     ''' instantiation_body_item : attribute_binding '''
     p[0] = p[1]
 
 
-def p_instantiation_body_item4(p):
+def p_instantiation_body_item3(p):
     ''' instantiation_body_item : PASS NEWLINE '''
     p[0] = None
 
@@ -418,109 +408,14 @@ def p_defn_body_items2(p):
     p[0] = p[1] + [p[2]]
 
 
-#def p_defn_body_item1(p):
-#    ''' defn_body_item : enaml_call '''
-#    p[0] = p[1]
-
-
-def p_defn_body_item2(p):
+def p_defn_body_item1(p):
     ''' defn_body_item : instantiation '''
     p[0] = p[1]
     
 
-def p_defn_body_item3(p):
+def p_defn_body_item2(p):
     ''' defn_body_item : PASS NEWLINE '''
     p[0] = None
-
-
-#------------------------------------------------------------------------------
-# Enaml Call
-#------------------------------------------------------------------------------
-# def p_enaml_call(p):
-#     ''' enaml_call : NAME enaml_arguments NEWLINE '''
-#     lineno = p.lineno(1)
-#     p[0] = enaml_ast.Call(p[1], p[2], lineno)
-
-
-# def p_enaml_arguments1(p):
-#     ''' enaml_arguments : LPAR RPAR '''
-#     p[0] = []
-
-
-# def p_enaml_arguments2(p):
-#     ''' enaml_arguments : LPAR enaml_arguments_list RPAR '''
-#     arguments = p[2]
-#     seen_kwarg = False
-#     kw_names = set()
-#     lineno = p.lineno(1)
-#     for argument in arguments:
-#         if isinstance(argument, enaml_ast.Argument):
-#             if seen_kwarg:
-#                 msg = 'non-keyword argument after keyword argument'
-#                 raise_enaml_syntax_error(msg, lineno)
-#             # Now that we have a lineno available, compile the code
-#             # object for the argument and update the lineno.
-#             expr = argument.py_ast
-#             set_locations(expr, lineno, 1)
-#             code = compile(expr, 'Enaml', mode='eval')
-#             argument.code = code
-#             argument.lineno = lineno
-#         else:
-#             seen_kwarg = True
-#             name = argument.name
-#             if name in kw_names:
-#                 msg = 'keyword argument `%s` repeated' % name
-#                 raise_enaml_syntax_error(msg, lineno)
-#             kw_names.add(name)
-#     p[0] = arguments
-
-
-# def p_enaml_arguments_list1(p):
-#     ''' enaml_arguments_list : enaml_argument '''
-#     p[0] = [p[1]]
-
-
-# def p_enaml_arguments_list2(p):
-#     ''' enaml_arguments_list : enaml_argument COMMA '''
-#     p[0] = [p[1]]
-
-
-# def p_enaml_arguments_list3(p):
-#     ''' enaml_arguments_list : enaml_arguments_list_list enaml_argument '''
-#     p[0] = p[1] + [p[2]]
-
-
-# def p_enaml_arguments_list4(p):
-#     ''' enaml_arguments_list : enaml_arguments_list_list enaml_argument COMMA '''
-#     p[0] = p[1] + [p[2]]
-
-
-# def p_enaml_arguments_list_list1(p):
-#     ''' enaml_arguments_list_list : enaml_argument COMMA '''
-#     p[0] = [p[1]]
-
-
-# def p_enaml_arguments_list_list2(p):
-#     ''' enaml_arguments_list_list : enaml_arguments_list_list enaml_argument COMMA '''
-#     p[0] = p[1] + [p[2]]
-
-
-# def p_enaml_argument1(p):
-#     ''' enaml_argument : test '''
-#     # The lineno and compilation will be handled by p_enaml_arguments2
-#     # once a lineno becomes available
-#     expr = ast.Expression(body=p[1])
-#     p[0] = enaml_ast.Argument(expr, None, -1)
-
-
-# def p_enaml_argument2(p):
-#     ''' enaml_argument : NAME EQUAL test '''
-#     lineno = p.lineno(1)
-#     expr = ast.Expression(body=p[3])
-#     set_locations(expr, lineno, 1)
-#     code = compile(expr, 'Enaml', mode='eval')
-#     expr_node = enaml_ast.Argument(expr, code, lineno)
-#     p[0] = enaml_ast.KeywordArgument(p[1], expr_node, lineno)
 
 
 #------------------------------------------------------------------------------
