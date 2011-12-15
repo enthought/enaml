@@ -46,6 +46,11 @@ class QtBaseComponent(AbstractTkBaseComponent):
         """
         widget = self.widget
         if widget:
+            # On Windows, it's not sufficient to simply destroy the
+            # widget. It appears that this only schedules the widget 
+            # for destruction at a later time. So, we need to explicitly
+            # unparent the widget as well.
+            widget.setParent(None)
             widget.destroy()
 
     #--------------------------------------------------------------------------
