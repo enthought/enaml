@@ -158,7 +158,6 @@ class Container(Component):
         if self.layout is not None:
             self.layout.layout()
         self._needs_layout = False
-        self.toolkit_widget.setUpdatesEnabled(True)
 
     @on_trait_change(_SIZE_HINT_DEPS)
     def handle_size_hint_changed(self, child, name, old, new):
