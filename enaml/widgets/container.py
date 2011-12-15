@@ -2,10 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import List, Instance, Either, Bool, on_trait_change
+from traits.api import List, Instance, Bool, on_trait_change
 
 from .component import Component, AbstractTkComponent
-from .control import Control
 from .layout.constraints_layout import ConstraintsLayout
 from .layout.layout_manager import AbstractLayoutManager
 
@@ -37,6 +36,8 @@ class Container(Component):
     #: An object that manages the layout of this component and its
     #: direct children. The default is simple constraints based
     layout = Instance(AbstractLayoutManager)
+    def _layout_default(self):
+        return ConstraintsLayout(self)
 
     #: A list of user-specified linear constraints defined for this 
     #: container.
@@ -45,9 +46,6 @@ class Container(Component):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkContainer)
 
-    #: Overridden parent class trait
-    children = List(Either(Instance(Control), Instance('Container')))
-    
     #: A private boolean indicating if the contraints have changed
     #: and need to be updated on the next pass.
     _needs_update_constraints = Bool(True)
@@ -56,22 +54,9 @@ class Container(Component):
     #: its children
     _needs_layout = Bool(True)
 
-    def _layout_default(self):
-        """ Default value for the layout manager.
-
-        """
-        return ConstraintsLayout(self)
-
-    def setup(self, parent=None):
-        """ Run the setup process for the ui tree. This is overridden 
-        from the parent class to add initialize_layout to the setup.
-
-        """
-        # XXX make layout setup a completely separate pass
-        # probably handled by the view object.
-        super(Container, self).setup(parent=parent)
-        self.initialize_layout()
-
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
     def initialize_layout(self):
         """ Initialize the layout for the first time.
 
@@ -79,6 +64,17 @@ class Container(Component):
         if self.layout is not None:
             self.layout.initialize()
     
+    #--------------------------------------------------------------------------
+    # Layout Handling 
+    #--------------------------------------------------------------------------
+    def relayout(self):
+        """ Reimplemented parent class method which triggers an update
+        of the constraints and a layout refresh. This is called whenever
+        the children of the component change.
+
+        """
+        self.set_needs_update_constraints()
+
     def default_user_constraints(self):
         """ Constraints to use if the constraints trait is an empty list.
         
@@ -162,6 +158,7 @@ class Container(Component):
         if self.layout is not None:
             self.layout.layout()
         self._needs_layout = False
+        self.toolkit_widget.setUpdatesEnabled(True)
 
     @on_trait_change(_SIZE_HINT_DEPS)
     def handle_size_hint_changed(self, child, name, old, new):
