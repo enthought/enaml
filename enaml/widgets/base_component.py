@@ -109,8 +109,6 @@ class BaseComponent(HasStrictTraits):
     meant to be used directly.
 
     """
-    visible = Bool(True)
-
     #: The parent component of this component. It is stored as a weakref
     #: to mitigate issues with reference cycles. A top-level component's
     #: parent is None.
