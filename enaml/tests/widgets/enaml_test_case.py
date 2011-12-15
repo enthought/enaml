@@ -75,7 +75,7 @@ class EnamlTestCase(unittest.TestCase):
 
         with toolkit:
             defn = enaml_module['MainView']
-            cmpnt, = defn(*args)
+            cmpnt = defn(*args)
 
         self.app = toolkit.create_app()
         cmpnt.setup()
