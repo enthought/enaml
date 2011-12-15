@@ -339,6 +339,9 @@ class BaseComponent(HasStrictTraits):
         and no longer used.
 
         """
+        # Remove the abstract object as a trait listener so that it
+        # does not try to update after destroying its internal widget.
+        self.remove_trait_listener(self.abstract_obj, 'shell')
         self.abstract_obj.destroy()
         for child in self.children:
             child.destroy()
