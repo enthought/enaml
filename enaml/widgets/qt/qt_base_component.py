@@ -53,6 +53,22 @@ class QtBaseComponent(AbstractTkBaseComponent):
             widget.setParent(None)
             widget.destroy()
 
+    def disable_updates(self):
+        """ Disable rendering updates for the underlying Qt widget.
+
+        """
+        widget = self.widget
+        if widget:
+            widget.setUpdatesEnabled(False)
+
+    def enable_updates(self):
+        """ Enable rendering updates for the underlying Wx widget.
+
+        """
+        widget = self.widget
+        if widget:
+            widget.setUpdatesEnabled(True)
+
     #--------------------------------------------------------------------------
     # Abstract Implementation
     #--------------------------------------------------------------------------

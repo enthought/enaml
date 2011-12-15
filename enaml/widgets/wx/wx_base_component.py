@@ -48,6 +48,24 @@ class WXBaseComponent(AbstractTkBaseComponent):
         if widget:
             widget.Destroy()
 
+    def disable_updates(self):
+        """ Disable rendering updates for the underlying Wx widget.
+
+        """
+        widget = self.widget
+        if widget:
+            if not widget.IsFrozen():
+                widget.Freeze()
+    
+    def enable_updates(self):
+        """ Enable rendering updates for the underlying Wx widget.
+
+        """
+        widget = self.widget
+        if widget:
+            if widget.IsFrozen():
+                widget.Thaw()
+
     #--------------------------------------------------------------------------
     # Abstract Implementation 
     #--------------------------------------------------------------------------

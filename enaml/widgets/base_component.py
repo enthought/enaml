@@ -101,6 +101,28 @@ class AbstractTkBaseComponent(object):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def disable_updates(self):
+        """ Called when the widget should disable its rendering updates.
+
+        This is used before a large change occurs to a live ui so that
+        the widget can optimize/delay redrawing until all the updates
+        have been completed and 'enable_updates' is called.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def enable_updates(self):
+        """ Called when the widget should enable rendering updates.
+
+        This is used in conjunction with 'disable_updates' to allow
+        a widget to optimize/delay redrawing until all the updates
+        have been completed and this function is called.
+
+        """
+        raise NotImplementedError
+
 
 class BaseComponent(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy.
