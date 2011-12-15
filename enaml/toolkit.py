@@ -330,11 +330,13 @@ def wx_toolkit():
     from .widgets.wx.styling import WX_STYLE_SHEET
     from .widgets.wx.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
+    from .widgets.constructors import CONSTRUCTORS
 
     utils = {}
 
     toolkit = Toolkit(WX_CONSTRUCTORS)
-
+    toolkit.update(CONSTRUCTORS)
+    
     toolkit.create_app = get_app_wx
     toolkit.start_app = start_event_loop_wx
     toolkit.style_sheet = WX_STYLE_SHEET
