@@ -1392,9 +1392,15 @@ def p_subscript14(p):
 # parser.
 def p_exprlist1(p):
     ''' exprlist : expr '''
+    # expr will match a tuple or a name, so we need to handle 
+    # the store context for both.
     expr = p[1]
     if isinstance(expr, ast.Name):
         expr.ctx = ast.Store()
+    elif isinstance(expr, ast.Tuple):
+        expr.ctx = ast.Store()
+        for name in expr.elts:
+            name.ctx = ast.Store()
     p[0] = expr
 
 
@@ -1422,12 +1428,12 @@ def p_exprlist4(p):
     for expr in exprs:
         if isinstance(expr, ast.Name):
             expr.ctx = ast.Store()
-    p[0] = ast.Tuple(elts=[p[1]], ctx=ast.Store())
+    p[0] = ast.Tuple(elts=exprs, ctx=ast.Store())
 
 
 def p_exprlist_list1(p):
     ''' exprlist_list : COMMA expr '''
-    p[0] = [p[1]]
+    p[0] = [p[2]]
 
 
 def p_exprlist_list2(p):
