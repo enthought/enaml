@@ -13,13 +13,13 @@ information Dialog will be raised to tell you the result of your action.
 :: python ::
 
 def raise_dialog():
-    cdlg, = ConfirmDialog('Do you really want to do something rash?')
+    cdlg = ConfirmDialog('Do you really want to do something rash?')
     cdlg.show()
 
     if cdlg.result == 'accepted':
-        idlg, = InformDialog('You confirmed that you DID want to do something rash.')
+        idlg = InformDialog('You confirmed that you DID want to do something rash.')
     else:
-        idlg, = InformDialog('You confirmed that you DID NOT want to do something rash.')
+        idlg = InformDialog('You confirmed that you DID NOT want to do something rash.')
     idlg.show()
 
 :: end ::
