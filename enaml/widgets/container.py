@@ -70,10 +70,19 @@ class Container(Component):
     def relayout(self):
         """ Reimplemented parent class method which triggers an update
         of the constraints and a layout refresh. This is called whenever
-        the children of the component change.
+        the children of the component change. The constraints update and
+        relayout occur immediately and are completed before the method
+        returns.
 
         """
-        self.set_needs_update_constraints()
+        layout = self.layout
+        if layout is None:
+            self.parent.relayout()
+        else:
+            layout.update_constraints()
+            self._needs_update_constraints = False
+            layout.layout()
+            self._needs_layout = False
 
     def default_user_constraints(self):
         """ Constraints to use if the constraints trait is an empty list.
