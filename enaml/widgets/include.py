@@ -41,6 +41,12 @@ class NullTkInclude(AbstractTkBaseComponent):
 
     def destroy(self):
         pass
+    
+    def disable_updates(self):
+        pass
+    
+    def enable_updates(self):
+        pass
 
 
 class Include(BaseComponent):
@@ -205,11 +211,21 @@ class Include(BaseComponent):
 
         """
         if self.initialized:
-            for item in old:
-                item.destroy()
-            self._setup_components()
-            self._components_updated = True
-    
+            # Before we destroy and rebuild the children, we want to
+            # freeze the toplevel component from drawing any updates
+            # until we have fully completed the update. This helps
+            # to significantly reduce flicker during the update. We
+            # disable updates all the way at the root component since
+            # it seems to be a bit more reliable that just disabling
+            # it on our parent, likely because if the update causes
+            # the parent (non-root) to resize, that causes some flicker.
+            root = self.toplevel_component()
+            with root.freeze():
+                for item in old:
+                    item.destroy()
+                self._setup_components()
+                self._components_updated = True
+
     def _handle_subcomponents_updated(self):
         """ Handles a '_components_updated' event being fired by one 
         the dynamic components. The event is proxied up the tree by
