@@ -13,7 +13,7 @@ output in the form of selected item, index, and label.
 
 def _toggle_helper(rgroup, idx, label, checked):
     """ A helper function to handle the radio button toggle events
-    until we statement support in notification expressions.
+    until we have statement support in notification expressions.
 
     """
     if checked:
