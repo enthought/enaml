@@ -122,11 +122,16 @@ autosummary_generate = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 html_theme = 'default'
+#'agogo'
+#
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+## html_theme_options = {
+##     'pagewidth' : '70em',
+##     'sidebarwidth' : '20em'
+##     }
 
 # Add any paths that contain custom themes here, relative to this directory.
 #html_theme_path = []
@@ -154,7 +159,7 @@ html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -218,7 +223,7 @@ latex_documents = [
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+latex_use_parts = True
 
 # If true, show page references after internal links.
 #latex_show_pagerefs = False
@@ -233,7 +238,7 @@ latex_documents = [
 #latex_appendices = []
 
 # If false, no module index is generated.
-#latex_domain_indices = True
+latex_domain_indices = True
 
 
 # -- Options for manual page output --------------------------------------------
@@ -287,7 +292,11 @@ epub_copyright = u'2011, Enthought, Inc.'
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'python' : ('http://docs.python.org/', None),
-                       'traits' : ('http://github.enthought.com/traits/',
-                                   None)}
+intersphinx_mapping = {
+    'python' : ('http://docs.python.org/', None),
+    'traits' : ('http://github.enthought.com/traits/', None)
+    }
 
+rst_epilog = """
+.. |Enaml| replace:: Enaml
+"""
