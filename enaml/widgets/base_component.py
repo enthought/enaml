@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod, abstractproperty
-from collections import deque
+from collections import deque, defaultdict
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
@@ -13,6 +13,32 @@ from traits.api import (
 from .setup_hooks import AbstractSetupHook
 
 from ..toolkit import Toolkit
+
+
+class FreezeContext(object):
+    """ A context manager which disables rendering updates of a component
+    on enter, and re-enables them on exit. It may safely nested.
+
+    """
+    _counts = defaultdict(int)
+
+    def __init__(self, component):
+        self.component = component
+    
+    def __enter__(self):
+        counts = self._counts
+        cmpnt = self.component
+        if counts[cmpnt] == 0:
+            cmpnt.disable_updates()
+        counts[cmpnt] += 1
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        counts = self._counts
+        cmpnt = self.component
+        counts[cmpnt] -= 1
+        if counts[cmpnt] == 0:
+            del counts[cmpnt]
+            cmpnt.enable_updates()
 
 
 class AbstractTkBaseComponent(object):
@@ -373,11 +399,13 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     def relayout(self):
         """ A method called after the dynamic children have changed and
-        the new children have gone through the setup process. At the point
-        this method is called, the ui tree will be in a consistent state,
-        but the layout of the children will likely be incorrect. Any
-        subclasses that manage layout should reimplement this method
-        as needed in order to update the layout for the new children.
+        the new children have gone through the setup process. At the 
+        point this method is called, the ui tree will be in a consistent 
+        state, but the layout of the children will likely be incorrect. 
+        Subclasses that manage layout should reimplement this method as 
+        needed in order to update the layout for the new children. Any
+        reimplementation should ensure that the necessary operations take
+        place immediately and are complete before the method returns.
 
         """
         pass
@@ -448,4 +476,37 @@ class BaseComponent(HasStrictTraits):
         for cmpnt in self.traverse():
             if cmpnt.name == name:
                 return cmpnt
+
+    def toplevel_component(self):
+        """ Walks up the tree of components starting at this node and
+        returns the toplevel node, which is the first node encountered
+        without a parent.
+
+        """
+        cmpnt = self
+        while cmpnt:
+            res = cmpnt
+            cmpnt = cmpnt.parent
+        return res
+
+    def disable_updates(self):
+        """ Disables rendering updates for the underlying widget.
+
+        """
+        self.abstract_obj.disable_updates()
+
+    def enable_updates(self):
+        """ Enables rendering updates for the underlying widget.
+
+        """
+        self.abstract_obj.enable_updates()
+
+    def freeze(self):
+        """ A context manager which disables rendering updates on 
+        enter and restores them on exit. The context can be safetly
+        nested and updates will be applied when the top-most context
+        is exited.
+
+        """
+        return FreezeContext(self)
 
