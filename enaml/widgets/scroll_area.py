@@ -7,7 +7,7 @@ from abc import abstractmethod
 from traits.api import Instance, Either, Enum, List, Tuple, Int
 
 from .container import Container, AbstractTkContainer
-from .control import Control
+from .base_component import BaseComponent
 from .layout.layout_manager import NullLayoutManager
 
 
@@ -71,7 +71,7 @@ class ScrollArea(Container):
     hug_height = 'ignore'
 
     #: Overridden parent class trait. Only one child is allowed.
-    children = List(Either(Instance(Control), Instance(Container)), maxlen=1)
+    _subcomponents = List(Instance(BaseComponent), maxlen=1)
 
     def initialize_layout(self):
         """ Initialize the layout of the children. A scroll area does

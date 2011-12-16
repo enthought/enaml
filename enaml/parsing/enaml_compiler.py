@@ -6,7 +6,6 @@ import itertools
 from functools import wraps
 import types
 
-from . import enaml_ast
 from . import byteplay
 
 from .. import imports
@@ -43,16 +42,6 @@ class _NodeVisitor(object):
 #------------------------------------------------------------------------------
 # Compiler Helpers
 #------------------------------------------------------------------------------
-def _compiler_add_children(obj, iterable):
-    """ A compiler runtime function which adds the return values of a
-    call in an enaml body as children of the given object.
-
-    """
-    add_child = obj.add_child
-    for item in iterable:
-        add_child(item)
-
-
 def _var_name_generator():
     """ Returns a generator that generates sequential variable names for
     use in a code block.
@@ -93,34 +82,36 @@ class DeclarationCompiler(_NodeVisitor):
 
     @classmethod
     def compile(cls, node):
-        #----------------------------------------------------------------------
-        # Given this sample declaration:
-        #   
-        #     FooWindow(Window) foo:
-        #         a = '12'
-        #         PushButton button:
-        #             text = 'clickme'
-        #
-        # We generate bytecode that would correspond to a function that 
-        # looks similar to this:
-        #
-        #     def FooWindow(identifiers, toolkit):
-        #         f_globals = globals()
-        #         foo = eval('Window', toolkit, f_globals)(identifiers, 
-        #                                                  toolkit)
-        #         identifiers['foo'] = foo
-        #         op = eval('__operator_Equal__', toolkit, f_globals)
-        #         op(foo, 'a', <ast for '12'>, <code for '12'>, 
-        #            f_globals, identifiers)
-        #         button = eval('PushButton', toolkit, f_globals)(identifiers, 
-        #                                                         toolkit)
-        #         identifiers['button'] = button
-        #         op = eval('__operator_Equal__', toolkit, f_globals)
-        #         op(item, 'text', <ast for 'clickme'>, <code for 'clickme'>, 
-        #            f_globals, identifiers)
-        #         foo.add_child(button)
-        #         return foo
-        #----------------------------------------------------------------------
+        """ Compiles the given Declaration node into a code object.
+
+        Given this sample declaration:
+          
+            FooWindow(Window) foo:
+                a = '12'
+                PushButton button:
+                    text = 'clickme'
+        
+        We generate bytecode that would correspond to a function that 
+        looks similar to this:
+        
+            def FooWindow(identifiers, toolkit):
+                f_globals = globals()
+                foo = eval('Window', toolkit, f_globals)(identifiers, 
+                                                         toolkit)
+                identifiers['foo'] = foo
+                op = eval('__operator_Equal__', toolkit, f_globals)
+                op(foo, 'a', <ast for '12'>, <code for '12'>, 
+                   f_globals, identifiers)
+                button = eval('PushButton', toolkit, f_globals)(identifiers, 
+                                                                toolkit)
+                identifiers['button'] = button
+                op = eval('__operator_Equal__', toolkit, f_globals)
+                op(item, 'text', <ast for 'clickme'>, <code for 'clickme'>, 
+                   f_globals, identifiers)
+                foo._subcomponents.append(button)
+                return foo
+        
+        """
         compiler = cls()
         compiler.visit(node)
         ops = compiler.ops
@@ -260,69 +251,12 @@ class DeclarationCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo.add_child(button)
+            # foo._subcomponents.append(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_child'),
+            (bp.LOAD_ATTR, '_subcomponents'),
+            (bp.LOAD_ATTR, 'append'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
-        ])
-
-    def visit_Call(self, node):
-        """ Create the bytecode ops for performing a call in the body
-        of a declaration or defn. The calls are expected to return 
-        iterables of children.
-
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        # Since we are adding multiple children to one parent, we need
-        # to load that parent on the stack before computing the children.
-        ops.append((bp.LOAD_FAST, name_stack[-1]))
-
-        # To perform the call we need to load the callable and its args
-        # and kwargs, call it, then use a compiler helper to handle the
-        # return values.
-        #
-        # SomeDefn(foo, bar, baz=12)
-        op_code = compile(node.name, 'Enaml', mode='eval')
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-        ])
-
-        n_args = 0
-        n_kwargs = 0
-        for arg in node.arguments:
-            if isinstance(arg, enaml_ast.Argument):
-                n_args += 1
-                arg_code = arg.code
-            else:
-                ops.append((bp.LOAD_CONST, arg.name))
-                n_kwargs += 1
-                arg_code = arg.argument.code
-            ops.extend([
-                (bp.LOAD_CONST, eval),
-                (bp.LOAD_CONST, arg_code),
-                (bp.LOAD_FAST, 'toolkit'),
-                (bp.LOAD_FAST, 'f_globals'),
-                (bp.CALL_FUNCTION, 0x0003),
-            ])
-        
-        # Rather than emitting bytecode to run a FOR loop over the
-        # return results of the function call, we use a helper function
-        # which does it for us. This simplifies the bytecode generation
-        # at the cost of a very small overhead.
-        ops.extend([
-            (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
-            (bp.LOAD_CONST, _compiler_add_children),
-            (bp.ROT_THREE, None),
-            (bp.CALL_FUNCTION, 0x0002),
             (bp.POP_TOP, None),
         ])
 
@@ -331,19 +265,40 @@ class DeclarationCompiler(_NodeVisitor):
 # Defn Compiler
 #------------------------------------------------------------------------------
 class _DefnCollector(object):
+    """ A private class that is used by the DefnCompiler to collect the
+    components created when calling a defn. It also manages returning 
+    the proper results depending on how many items were created.
+
+    """
+    __slots__ = ('_subcomponents',)
 
     def __init__(self):
-        self.children = []
-    
-    def add_child(self, child):
-        self.children.append(child)
+        self._subcomponents = []
 
-    def get_children(self):
-        return tuple(self.children)
+    def results(self):
+        """ Computes the proper return results for a defn depending on
+        how many components were created:
+            
+            n == 0 -> None
+            n == 1 -> components
+            n > 1  -> list of components
+        
+        """
+        cmpnts = self._subcomponents
+        n = len(cmpnts)
+        if n == 0:
+            res = None
+        elif n == 1:
+            res = cmpnts[0]
+        else:
+            res = cmpnts
+        return res
 
 
 class DefnCompiler(_NodeVisitor):
+    """ A visitor which compiles a Defn node into a code object.
 
+    """
     def __init__(self):
         self.ops = []
         self.name_gen = _var_name_generator()
@@ -351,6 +306,12 @@ class DefnCompiler(_NodeVisitor):
 
     @classmethod
     def compile(cls, node):
+        """ Compiles the given Defn node into a code object. The bytecode
+        generated is similar to that for the Declaration node, with the
+        exception that a Defn introduces arguments into the scope that
+        need to be taken into account.
+
+        """
         compiler = cls()
         compiler.visit(node)
         ops = compiler.ops
@@ -359,6 +320,9 @@ class DefnCompiler(_NodeVisitor):
         return code.to_code()
 
     def visit_Defn(self, node):
+        """ Creates the bytecode ops for a defn node.
+
+        """
         bp = byteplay
         ops = self.ops
         name_stack = self.name_stack
@@ -429,11 +393,12 @@ class DefnCompiler(_NodeVisitor):
         
         name_stack.pop()
 
+        # return root.results()
         ops.extend([
             (bp.LOAD_FAST, name),
-            (bp.LOAD_ATTR, 'get_children'),
+            (bp.LOAD_ATTR, 'results'),
             (bp.CALL_FUNCTION, 0x0000),
-            (bp.RETURN_VALUE, None)
+            (bp.RETURN_VALUE, None),
         ])
 
     def visit_AttributeBinding(self, node):
@@ -515,69 +480,12 @@ class DefnCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo.add_child(button)
+            # foo._subcomponents.append(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_child'),
+            (bp.LOAD_ATTR, '_subcomponents'),
+            (bp.LOAD_ATTR, 'append'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
-        ])
-
-    def visit_Call(self, node):
-        """ Create the bytecode ops for performing a call in the body
-        of a declaration or defn. The calls are expected to return 
-        iterables of children.
-
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        # Since we are adding multiple children to one parent, we need
-        # to load that parent on the stack before computing the children.
-        ops.append((bp.LOAD_FAST, name_stack[-1]))
-
-        # To perform the call we need to load the callable and its args
-        # and kwargs, call it, then use a compiler helper to handle the
-        # return values.
-        #
-        # SomeDefn(foo, bar, baz=12)
-        op_code = compile(node.name, 'Enaml', mode='eval')
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'merged_globals'),
-            (bp.LOAD_FAST, 'f_locals'),
-            (bp.CALL_FUNCTION, 0x0003),
-        ])
-
-        n_args = 0
-        n_kwargs = 0
-        for arg in node.arguments:
-            if isinstance(arg, enaml_ast.Argument):
-                n_args += 1
-                arg_code = arg.code
-            else:
-                ops.append((bp.LOAD_CONST, arg.name))
-                n_kwargs += 1
-                arg_code = arg.argument.code
-            ops.extend([
-                (bp.LOAD_CONST, eval),
-                (bp.LOAD_CONST, arg_code),
-                (bp.LOAD_FAST, 'merged_globals'),
-                (bp.LOAD_FAST, 'f_locals'),
-                (bp.CALL_FUNCTION, 0x0003),
-            ])
-        
-        # Rather than emitting bytecode to run a FOR loop over the
-        # return results of the function call, we use a helper function
-        # which does it for us. This simplifies the bytecode generation
-        # at the cost of a very small overhead.
-        ops.extend([
-            (bp.CALL_FUNCTION, (n_kwargs << 8) + n_args),
-            (bp.LOAD_CONST, _compiler_add_children),
-            (bp.ROT_THREE, None),
-            (bp.CALL_FUNCTION, 0x0002),
             (bp.POP_TOP, None),
         ])
 
@@ -641,7 +549,7 @@ class EnamlCompiler(_NodeVisitor):
         try:
             exec node.code in self.global_ns
         except Exception as e:
-            msg = ('Unable to evaluate raw Python code on lineno %. '
+            msg = ('Unable to evaluate raw Python code on lineno %s. '
                    'Original exception was %s.')
             exc_type = type(e)
             raise exc_type(msg % (node.lineno, e))

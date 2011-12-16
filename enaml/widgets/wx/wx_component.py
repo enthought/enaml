@@ -12,25 +12,10 @@ from ..component import AbstractTkComponent
 class WXComponent(WXBaseComponent, AbstractTkComponent):
     """ A wxPython implementation of Component.
 
-    A WXComponent is not meant to be used directly. It provides some
-    common functionality that is useful to all widgets and should
-    serve as the base class for all other classes.
-
-    .. note:: This is not a HasTraits class.
-
     """
-    #: The WX widget created by the component
-    widget = None
-
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-    def create(self, parent):
-        """ Creates the underlying wx widget.
-
-        """
-        self.widget = wx.Panel(parent)
-
     def initialize(self):
         """ Initializes the attributes of the wx widget.
 
@@ -38,25 +23,11 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         super(WXComponent, self).initialize()
         shell = self.shell_obj
         self.set_enabled(shell.enabled)
-        if not shell.visible:
-            # Some Containers will turn off the visibility of their 
-            # children entirely on the Qt side when the parent-child 
-            # relationship is made. They have probably already done 
-            # their work, so don't override it in the default case of 
-            # visible=True.
-            self.set_visible(shell.visible)
+        self.set_visible(shell.visible)
 
     #--------------------------------------------------------------------------
     # Abstract Implementation
     #--------------------------------------------------------------------------
-    @property
-    def toolkit_widget(self):
-        """ A property that returns the toolkit specific widget for this
-        component.
-
-        """
-        return self.widget
-
     def size(self):
         """ Returns the size of the internal toolkit widget, ignoring any
         windowing decorations, as a (width, height) tuple of integers.
@@ -160,21 +131,21 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         given color.
         
         """
-        pass
+        self.set_bg_color(color)
 
     def shell_fg_color_changed(self, color):
         """ The change handler for the 'fg_color' attribute on the parent.
         Sets the foreground color of the internal widget to the given color.
         For some widgets this may do nothing.
         """
-        pass
+        self.set_fg_color(color)
 
     def shell_font_changed(self, font):
         """ The change handler for the 'font' attribute on the shell 
         object. Sets the font of the internal widget to the given font.
 
         """
-        pass
+        self.set_font(font)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods 
@@ -192,17 +163,28 @@ class WXComponent(WXBaseComponent, AbstractTkComponent):
         self.shell_obj.parent.set_needs_update_constraints()
         self.widget.Show(visible)
 
-    #--------------------------------------------------------------------------
-    # Convenience Methods 
-    #--------------------------------------------------------------------------
-    def child_widgets(self):
-        """ Iterates over the parent's children and yields the
-        toolkit widgets for those children.
+    def set_bg_color(self, color):
+        """ Set the background color of the widget.
 
         """
-        shell = self.shell_obj
-        for child in shell.children:
-            yield child.toolkit_widget
+        if not color:
+            wx_color = wx.NullColour
+        else:
+            wx_color = wx.Colour(*color)
+        self.widget.SetBackgroundColour(wx_color)
+
+    def set_fg_color(self, color):
+        """ Set the foreground color of the widget.
+
+        """
+        if not color:
+            wx_color = wx.NullColour
+        else:
+            wx_color = wx.Colour(*color)
+        self.widget.SetForegroundColour(wx_color)
+
+    def set_font(self, font):
+        pass
 
     #--------------------------------------------------------------------------
     # Indirection getters and setters 

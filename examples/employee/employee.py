@@ -75,6 +75,6 @@ if __name__ == '__main__':
         from employee_view import EmployeeView
     
     # Create a view and show it.
-    view, = EmployeeView(employee_mary)
+    view = EmployeeView(employee_mary)
     view.show()
 

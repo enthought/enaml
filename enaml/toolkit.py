@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import os
 
-from traits.api import HasStrictTraits, Callable, Str, WeakRef
+from traits.api import HasStrictTraits, Callable, WeakRef
 
 
 #------------------------------------------------------------------------------
@@ -21,11 +21,6 @@ class Constructor(HasStrictTraits):
     #: A callable object which returns the abstract implementation class
     #: to use for the widget.
     abstract_loader = Callable
-
-    #: The key with which this constructor was added to the toolkit.
-    #: It is set by the toolkit and used as the type name of the
-    #: instantiated component.
-    style_type = Str
 
     #: A reference (stored weakly) to the toolkit in which this
     #: constructor is contained. It is used to set the toolkit
@@ -53,16 +48,15 @@ class Constructor(HasStrictTraits):
     def __call__(self, *args, **kwargs):
         """ Calls the loaders and assembles the component.
 
-        Subclasses should override this method to implement custom
-        construction behavior if the default is not sufficient.
-
         """
         shell_cls = self.shell_loader()
         abstract_cls = self.abstract_loader()
-        component = shell_cls(style_type=self.style_type,
-                              toolkit=self.toolkit,
-                              abstract_obj=abstract_cls())
-        return component
+        shell_obj = shell_cls()
+        abstract_obj = abstract_cls()
+        shell_obj.abstract_obj = abstract_obj
+        shell_obj.toolkit = self.toolkit
+        abstract_obj.shell_obj = shell_obj
+        return shell_obj
 
     def clone(self, shell_loader=None, abstract_loader=None):
         """ Creates a clone of this constructor, optionally changing
@@ -127,8 +121,8 @@ class Toolkit(dict):
             self[key] = value
 
     def __setitem__(self, key, value):
-        """ Overridden dict.__setitem__ to apply style types to the
-        constructors.
+        """ Overridden dict.__setitem__ to apply the toolkit reference
+        to the item.
 
         """
         if isinstance(value, Constructor):
@@ -136,7 +130,6 @@ class Toolkit(dict):
             # being used by more than one toolkit and then having the
             # toolkit refs become out of sync.
             value = value.clone()
-            value.style_type = key
             value.toolkit = self
         super(Toolkit, self).__setitem__(key, value)
 
@@ -307,10 +300,12 @@ def qt_toolkit():
     from .widgets.qt.styling import QT_STYLE_SHEET
     from .widgets.qt.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
+    from .widgets.constructors import CONSTRUCTORS
 
     utils = {}
 
     toolkit = Toolkit(QT_CONSTRUCTORS)
+    toolkit.update(CONSTRUCTORS)
 
     toolkit.create_app = get_app_qt4
     toolkit.start_app = start_event_loop_qt4
@@ -335,11 +330,13 @@ def wx_toolkit():
     from .widgets.wx.styling import WX_STYLE_SHEET
     from .widgets.wx.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
+    from .widgets.constructors import CONSTRUCTORS
 
     utils = {}
 
     toolkit = Toolkit(WX_CONSTRUCTORS)
-
+    toolkit.update(CONSTRUCTORS)
+    
     toolkit.create_app = get_app_wx
     toolkit.start_app = start_event_loop_wx
     toolkit.style_sheet = WX_STYLE_SHEET
