@@ -32,7 +32,9 @@ class WXBaseComponent(AbstractTkBaseComponent):
         """ Initialize the attributes of the Wx widget.
 
         """
-        pass
+        shell = self.shell_obj
+        self.set_enabled(shell.enabled)
+        self.set_visible(shell.visible)
 
     def bind(self):
         """ Bind any event handlers for the Wx Widget.
@@ -92,4 +94,81 @@ class WXBaseComponent(AbstractTkBaseComponent):
     #: A property which gets a sets a reference (stored weakly)
     #: to the shell object
     shell_obj = property(_get_shell_obj, _set_shell_obj)
+
+    #--------------------------------------------------------------------------
+    # Shell Object Change Handlers 
+    #--------------------------------------------------------------------------
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell 
+        object.
+
+        """
+        self.set_enabled(enabled)
+
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the shell
+        object.
+
+        """
+        self.set_visible(visible)
+
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
+        """
+        self.set_bg_color(color)
+
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the parent.
+        Sets the foreground color of the internal widget to the given color.
+        For some widgets this may do nothing.
+        """
+        self.set_fg_color(color)
+
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell 
+        object. Sets the font of the internal widget to the given font.
+
+        """
+        self.set_font(font)
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods 
+    #--------------------------------------------------------------------------
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+
+        """
+        self.widget.Enable(enabled)
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+
+        """
+        self.widget.Show(visible)
+
+    def set_bg_color(self, color):
+        """ Set the background color of the widget.
+
+        """
+        if not color:
+            wx_color = wx.NullColour
+        else:
+            wx_color = wx.Colour(*color)
+        self.widget.SetBackgroundColour(wx_color)
+
+    def set_fg_color(self, color):
+        """ Set the foreground color of the widget.
+
+        """
+        if not color:
+            wx_color = wx.NullColour
+        else:
+            wx_color = wx.Colour(*color)
+        self.widget.SetForegroundColour(wx_color)
+
+    def set_font(self, font):
+        pass
 

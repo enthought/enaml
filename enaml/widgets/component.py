@@ -4,13 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Property, Tuple, Event, Enum, Bool
+from traits.api import Instance, Property, Tuple, Event, Enum
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 from .layout.box_model import BoxModel
-
-from ..styling.color import ColorTrait
-from ..styling.font import FontTrait
 
 
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
@@ -110,49 +107,6 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         """ Sets the geometry of the internal widget to the given
         x, y, width, and height values, ignoring any windowing 
         decorations.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_enabled_changed(self, enabled):
-        """ The change handler for the 'enabled' attribute on the shell
-        object. Sets the enabled/disabled state of the widget.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_visible_changed(self, visible):
-        """ The change handler for the 'visible' attribute on the shell
-        object. Sets the visibility state of the widget.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_bg_color_changed(self, color):
-        """ The change handler for the 'bg_color' attribute on the shell
-        object. Sets the background color of the internal widget to the 
-        given color.
-        
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_fg_color_changed(self, color):
-        """ The change handler for the 'fg_color' attribute on the shell
-        object. Sets the foreground color of the internal widget to the 
-        given color. For some widgets this may do nothing.
-
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_font_changed(self, font):
-        """ The change handler for the 'font' attribute on the shell
-        object. Sets the font of the internal widget to the given font.
-        For some widgets this may do nothing.
 
         """
         raise NotImplementedError
@@ -277,21 +231,6 @@ class Component(BaseComponent):
     #: A read-only symbolic object that represents the horizontal 
     #: center of the component
     h_center = Property
-
-    #: The background color of the widget
-    bg_color = ColorTrait
-    
-    #: The foreground color of the widget
-    fg_color = ColorTrait
-    
-    #: The foreground color of the widget
-    font = FontTrait
-
-    #: Whether or not the widget is enabled.
-    enabled = Bool(True)
-
-    #: Whether or not the widget is visible.
-    visible = Bool(True)
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkComponent)

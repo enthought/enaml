@@ -47,6 +47,21 @@ class NullTkInclude(AbstractTkBaseComponent):
     
     def enable_updates(self):
         pass
+    
+    def shell_enabled_changed(self, enabled):
+        pass
+
+    def shell_visible_changed(self, visible):
+        pass
+
+    def shell_bg_color_changed(self, color):
+        pass
+    
+    def shell_fg_color_changed(self, color):
+        pass
+    
+    def shell_font_changed(self, font):
+        pass
 
 
 class Include(BaseComponent):

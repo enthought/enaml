@@ -12,6 +12,8 @@ from traits.api import (
 
 from .setup_hooks import AbstractSetupHook
 
+from ..styling.color import ColorTrait
+from ..styling.font import FontTrait
 from ..toolkit import Toolkit
 
 
@@ -149,6 +151,49 @@ class AbstractTkBaseComponent(object):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell
+        object. Sets the enabled/disabled state of the widget.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_visible_changed(self, visible):
+        """ The change handler for the 'visible' attribute on the shell
+        object. Sets the visibility state of the widget.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the shell
+        object. Sets the foreground color of the internal widget to the 
+        given color. For some widgets this may do nothing.
+
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell
+        object. Sets the font of the internal widget to the given font.
+        For some widgets this may do nothing.
+
+        """
+        raise NotImplementedError
+
 
 class BaseComponent(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy.
@@ -200,6 +245,21 @@ class BaseComponent(HasStrictTraits):
     #: refs to the compoents that its constructors create.
     toolkit = Instance(Toolkit)
     
+    #: The background color of the widget
+    bg_color = ColorTrait
+    
+    #: The foreground color of the widget
+    fg_color = ColorTrait
+    
+    #: The foreground color of the widget
+    font = FontTrait
+
+    #: Whether or not the widget is enabled.
+    enabled = Bool(True)
+
+    #: Whether or not the widget is visible.
+    visible = Bool(True)
+
     #: The private internal list of sub components for this component. 
     #: This list should not be manipulated by the user, and should not 
     #: be changed after initialization. It can, however, be redefined
@@ -421,6 +481,18 @@ class BaseComponent(HasStrictTraits):
         if self.initialized:
             self.relayout()
 
+    def _visible_changed(self):
+        """ Handles the visibility of this component changing by telling
+        our parent to relayout. If this component is toplevel, this is
+        a no-op. The relayout is managed via a freeze context in order
+        to reduce flicker.
+
+        """
+        parent = self.parent
+        if parent is not None:
+            with parent.toplevel_component().freeze():
+                parent.relayout()
+
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
     #--------------------------------------------------------------------------
@@ -484,7 +556,7 @@ class BaseComponent(HasStrictTraits):
 
         """
         cmpnt = self
-        while cmpnt:
+        while cmpnt is not None:
             res = cmpnt
             cmpnt = cmpnt.parent
         return res
