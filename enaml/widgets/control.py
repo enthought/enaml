@@ -30,7 +30,7 @@ class Control(Component):
     abstract_obj = Instance(AbstractTkControl)
 
     #: Overridden parent class trait
-    children = List(BaseComponent, maxlen=0)
+    _subcomponents = List(Instance(BaseComponent), maxlen=0)
 
     def capture_exceptions(self):
         """ Return a ShellExceptionContext that will capture error state automatically.

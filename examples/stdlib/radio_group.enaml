@@ -1,0 +1,34 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" RadioGroup Example
+
+In this example, we show how to use one of the Enaml standard library
+components. The Enaml standard library is a collection of useful 
+widgets, which are themselves defined in Enaml.
+
+We create a main window with a SpinBox on the top which controls how
+many RadioButtons are created. Below the SpinBox is a ComboBox which
+constrols the layout orientation of the RadioGroup. Below the ComboBox 
+is the RadioGroup, which contains the number of buttons specified by the 
+'how_many' atribute. Whenever a new button in selected, the selection is 
+printed to the shell.
+
+"""
+from enaml.stdlib.radio_group import RadioGroup
+
+
+MainWindow(Window):
+    how_many = 10
+    SpinBox:
+        value := how_many
+    ComboBox:
+        id: switch
+        items = ['horizontal', 'vertical']
+        value = items[0]
+    RadioGroup:
+        orientation << switch.value
+        selected >> print(selected)
+        items << range(how_many)
+

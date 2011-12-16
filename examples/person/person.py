@@ -33,6 +33,6 @@ if __name__ == '__main__':
     
     john = Person(first_name='John', last_name='Doe', age=42)
     
-    view, = PersonView(john)
+    view = PersonView(john)
     view.show()
 
