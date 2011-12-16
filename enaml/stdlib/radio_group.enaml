@@ -1,0 +1,82 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" A custom RadioGroup component.
+
+A RadioGroup makes it easier to work with a group of radio buttons
+since it manages the various toggle behavior internally and yields
+output in the form of selected item, index, and label.
+
+"""
+:: python ::
+
+def _toggle_helper(rgroup, idx, label, checked):
+    """ A helper function to handle the radio button toggle events
+    until we statement support in notification expressions.
+
+    """
+    if checked:
+        rgroup.selected_label = label
+        rgroup.selected_index = idx
+        rgroup.selected = rgroup.items[idx]
+
+:: end ::
+
+
+defn _MakeButton(rgroup, idx, label):
+    """ A private defn which creates a properly bound RadioButton.
+
+    """
+    RadioButton:
+        text = label
+        toggled >> _toggle_helper(rgroup, idx, label, checked)
+
+
+RadioGroup(Container):
+    """ A Container that automatically generates a group of RadioButtons.
+
+    Input Attributes
+    ----------------
+    orientation : string
+        The orientation of the group of radio buttons, either
+        'horizontal' or 'vertical'. Defaults to 'horizontal'.
+    
+    items : list
+        The list of items which represent the underlying radio 
+        buttons.
+    
+    to_string : callable
+        A callable which get mapped across the list of items to 
+        generate the list of labels for the buttons.
+    
+    Output Attributes
+    -----------------
+    selected : object
+        An attribute which is updated with the item associated
+        with the currently selected radio button.
+    
+    selected_index : integer
+        An attribute which is updated with the index of the 
+        currently selected radio button.
+
+    selected_label : string
+        An attribute which is updated with the label of the 
+        currently selected radio button.
+
+    """
+    id: rgroup
+    orientation = 'horizontal'
+    items = []
+    to_string = str
+    selected = None
+    selected_index = None
+    selected_label = None
+    constraints << [
+        hbox(*children) if orientation == 'horizontal' else vbox(*children)
+    ]
+    _labels << map(to_string, items)
+    Include:
+        components << [_MakeButton(rgroup, idx, label) 
+                       for idx, label in enumerate(_labels)]
+
