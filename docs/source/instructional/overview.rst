@@ -1,25 +1,25 @@
 Overview
 --------
-An Enaml application consists of regular Python code, and *.enaml* files.
+An |Enaml| application consists of regular Python code, and *.enaml* files.
 
-A .enaml file is used to describe a GUI as a tree of elements. Each element
-can associated attributes, and an optional identifier. Attributes
-customize the layout and behaviour of an application, and identifiers allow
-Python code to access widgets by name.
+A .enaml file describes a GUI as a tree of elements. Each element has
+associated attributes and an optional identifier. **Attributes** customize the
+layout and behaviour of an application, and **identifiers** allow Python code
+to access widgets by name.
 
-Enaml parses a hierarchical file (.enaml), then renders it with an
-available GUI toolkit. Enaml abstracts away toolkit-specific details.
+|Enaml| parses a hierarchical file (.enaml), then renders it with an
+available GUI toolkit. |Enaml| abstracts away toolkit-specific details.
 
 
 Goals
 ^^^^^
 
-The goals of the Enaml project are to:
+The goals of the |Enaml| project are to:
 
 - Integrate well with `Traits <https://github.com/enthought/traits>`_ and
   `Chaco <http://code.enthought.com/chaco/>`_ .
 - Help **separate** the presentation and content (i.e., MVC)
-- A **single** script can work across *multiple* widget toolkits when
+- Allow a **single** script to work across *multiple* widget toolkits when
   using the default interfaces.
 - Be **extensible** and allow adaptation and addition of the base widgets
   with little effort.
@@ -63,3 +63,5 @@ To install the package please check out the source from
 Alternatively you can work in developing mode with::
 
     python setup.py develop
+
+Next, take a look at the :ref:`Tutorials.<tutorials-home>`
