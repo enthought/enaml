@@ -1,4 +1,4 @@
-.. _hello-john-doe
+.. _hello-john-doe:
 
 Hello John Doe tutorial
 ===============================================================================
@@ -26,7 +26,7 @@ example is shown here (and can be downloaded from the link above):
 The Python code to use the GUI is shown here (and can be downloaded from the
 other link above):
 
-.. literalinclude:: ../../../examples/person/person_view.enaml
+.. literalinclude:: ../../../examples/person/person.py
     :language: python
 
 The resulting GUI looks like this (in Mac OS):
@@ -38,6 +38,9 @@ Walk-through
 
 Let's take a closer look at the files.
 
+Comments
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 The file begins with some comment lines. As in Python code, `#` begins a
 comment line and is ignored during lexing and parsing.
 
@@ -48,11 +51,48 @@ comment line and is ignored during lexing and parsing.
  #  All rights reserved.
  #-----------------------------------------------------------------------------
 
-Imports also work as they do in Python. In this case, we are importing the
-integer field widget :py:class:`IntField`.
+Imports
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Imports similar to Python.
 
 ::
 
  from enaml.stdlib.fields import IntField
 
+In this case, we are importing the integer field widget IntField from the
+:ref:`standard component library.<std-library-ref>` This is the component that
+lets us assign an integer value in a text field, with validation and error
+checking. Note that this import points to a component declaration in a `.enaml`
+file. *The import statement looks like Python but imports from an .enaml file.*
+
+
+Component Declaration
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Next, we define an entry form using a *class-like* component hierarchy
+declaration:
+
+::
+
+ PersonForm(Form):
+     person = None
+     Label:
+         text = 'First Name'
+     Field:
+         value := person.first_name
+     Label:
+         text = 'Last Name'
+     Field:
+         value := person.last_name
+     Label:
+         text = 'Age'
+     IntField:
+         value := person.age 
+
+The syntax of Python is copied in several aspects of the declaration.
+ - `PersonForm(Form)` indicates that the new component `PersonForm` inherits from
+   the |Enaml| :ref:`built-in component <built-ins-ref>` `Form`.
+ - A colon (:) marks the end of a declaration header.
+ - Indentation is used to specify code block structure.
 
