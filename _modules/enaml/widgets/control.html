@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.control &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -70,7 +90,7 @@
     <span class="k">pass</span>
 
 
-<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../../widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
+<div class="viewcode-block" id="Control"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control">[docs]</a><span class="k">class</span> <span class="nc">Control</span><span class="p">(</span><span class="n">Component</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The base class of all leaf widgets in Enaml. Controls cannot</span>
 <span class="sd">    have children and attempts to add children to a control will</span>
 <span class="sd">    raise an exception.</span>
@@ -89,13 +109,13 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">children</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">BaseComponent</span><span class="p">,</span> <span class="n">maxlen</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Control.capture_exceptions"><a class="viewcode-back" href="../../../widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control.capture_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_exceptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Control.capture_exceptions"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control.capture_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_exceptions</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a ShellExceptionContext that will capture error state automatically.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ShellExceptionContext</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="Control.capture_notification_exceptions"><a class="viewcode-back" href="../../../widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control.capture_notification_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_notification_exceptions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reraise_exceptions</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<div class="viewcode-block" id="Control.capture_notification_exceptions"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control.capture_notification_exceptions">[docs]</a>    <span class="k">def</span> <span class="nf">capture_notification_exceptions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">reraise_exceptions</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
             <span class="n">main</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">locked</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return a ShellNotificationContext that will set error state automatically,</span>
 <span class="sd">        including TraitErrors in listeners.</span>
@@ -106,26 +126,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -149,6 +149,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

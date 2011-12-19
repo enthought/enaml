@@ -11,7 +11,7 @@
     
     <title>enaml.tests.widgets.push_button &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -62,7 +82,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestPushButton"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton">[docs]</a><span class="k">class</span> <span class="nc">TestPushButton</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton">[docs]</a><span class="k">class</span> <span class="nc">TestPushButton</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing push buttons.</span>
 
 <span class="sd">    Tooklit testcases need to provide the following methods</span>
@@ -80,7 +100,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TestPushButton.setUp"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up before push button tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -101,7 +121,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;pb1&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestPushButton.test_button_pressed"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.test_button_pressed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; React to a push button press event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -113,7 +133,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="s">&#39;released&#39;</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="s">&#39;clicked&#39;</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestPushButton.test_button_clicked"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.test_button_clicked"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test a push button click event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -124,7 +144,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="s">&#39;pressed&#39;</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="s">&#39;released&#39;</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestPushButton.test_button_released"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_released">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.test_button_released"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_released">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test a push button release event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -133,7 +153,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">button_released</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestPushButton.test_press_release_sequence"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_press_release_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">test_press_release_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.test_press_release_sequence"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_press_release_sequence">[docs]</a>    <span class="k">def</span> <span class="nf">test_press_release_sequence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Verify the even firing when the press-release (nornal) sequence</span>
 <span class="sd">        is applied.</span>
 
@@ -148,7 +168,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;released&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertNotIn</span><span class="p">(</span><span class="s">&#39;clicked&#39;</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestPushButton.test_button_all_events"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_all_events">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_all_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.test_button_all_events"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_all_events">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_all_events</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test press, release, and click events.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -161,7 +181,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;pressed&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s">&#39;released&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestPushButton.test_button_down"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_down">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.test_button_down"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.test_button_down">[docs]</a>    <span class="k">def</span> <span class="nf">test_button_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the button&#39;s `down` attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -177,21 +197,21 @@
     <span class="c"># Abstract methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestPushButton.button_pressed"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.button_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.button_pressed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.button_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">button_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Press the button programmatically.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestPushButton.button_released"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.button_released">[docs]</a>    <span class="k">def</span> <span class="nf">button_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.button_released"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.button_released">[docs]</a>    <span class="k">def</span> <span class="nf">button_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Release the button programmatically.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestPushButton.button_clicked"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.button_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPushButton.button_clicked"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton.button_clicked">[docs]</a>    <span class="k">def</span> <span class="nf">button_clicked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Click the button programmatically.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -199,26 +219,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -242,6 +242,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

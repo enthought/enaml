@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.wx.wx_calendar &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -66,20 +86,20 @@
 <span class="kn">from</span> <span class="nn">..calendar</span> <span class="kn">import</span> <span class="n">AbstractTkCalendar</span>
 
 
-<div class="viewcode-block" id="WXCalendar"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.wx.wx_calendar.WXCalendar">[docs]</a><span class="k">class</span> <span class="nc">WXCalendar</span><span class="p">(</span><span class="n">WXBoundedDate</span><span class="p">,</span> <span class="n">AbstractTkCalendar</span><span class="p">):</span>
+<div class="viewcode-block" id="WXCalendar"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.wx.wx_calendar.WXCalendar">[docs]</a><span class="k">class</span> <span class="nc">WXCalendar</span><span class="p">(</span><span class="n">WXBoundedDate</span><span class="p">,</span> <span class="n">AbstractTkCalendar</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of Calendar.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXCalendar.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.wx.wx_calendar.WXCalendar.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXCalendar.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.wx.wx_calendar.WXCalendar.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the wx.calendar.CalendarCtrl.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">CalendarCtrl</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXCalendar.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.wx.wx_calendar.WXCalendar.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXCalendar.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.wx.wx_calendar.WXCalendar.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers for the calendar widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -133,26 +153,6 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -174,6 +174,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

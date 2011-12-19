@@ -11,7 +11,7 @@
     
     <title>Writing .enaml Files &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -27,35 +27,29 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="index.html" />
-    <link rel="next" title="Design and Architecture" href="architecture.html" />
-    <link rel="prev" title="Overview" href="overview.html" /> 
+    <link rel="top" title="enaml 0.1alpha documentation" href="index.html" /> 
   </head>
   <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="index.html">
+            <img class="logo" src="_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
           <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="architecture.html" title="Design and Architecture"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="overview.html" title="Overview"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">enaml 0.1alpha documentation</a> &raquo;</li>
-  
-    <li><a href="#">Writing .enaml Files</a></li>
-  
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
 
-      </ul>
-    </div>  
-
-    <div class="document">
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
@@ -65,48 +59,7 @@
 <p>Enaml files contain a domain-specific language for specifying a user-interface
 and dynamically binding and computing values based on user interaction.</p>
 <p>A simple example of an Enaml file might look something like this:</p>
-<div class="highlight-python"><pre>from enaml.converters import IntConverter
-
-defn PersonWindow(model):
-    Window -&gt; main_window:
-        title &lt;&lt; model.name
-        Form -&gt; person_form:
-            Label:
-                text = 'Name:'
-            Field:
-                value := model.name
-                hug_width = 'ignore'
-            Label:
-                text = 'Age:'
-            Field:
-                value := model.age
-                converter = IntConverter()
-                hug_width = 'ignore'
-            Label:
-                text = 'Address:'
-            Field:
-                value := model.address
-                hug_width = 'ignore'
-            
-</pre>
-</div>
 <p>We could then use this with a Traits model as follows:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Int</span>
-<span class="kn">import</span> <span class="nn">enaml</span>
-
-<span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">person_example</span> <span class="kn">import</span> <span class="n">PersonWindow</span>
-
-<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
-    <span class="n">name</span> <span class="o">=</span> <span class="n">Str</span>
-    <span class="n">age</span> <span class="o">=</span> <span class="n">Int</span>
-    <span class="n">address</span> <span class="o">=</span> <span class="n">Str</span>
-
-<span class="n">p</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s">&#39;Bob&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
-<span class="n">view</span> <span class="o">=</span> <span class="n">PersonWindow</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-<span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
 <p>Looking at this example, you will see that an Enaml file consists of one or
 more <tt class="docutils literal"><span class="pre">defn</span></tt> blocks containing a widget tree that describes the layout of
 that part of the UI.  The widgets have attributes which are bound to expressions
@@ -240,11 +193,8 @@ natural.</li>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
+        </div>
+        <div class="sidebar">
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">Writing .enaml Files</a><ul>
@@ -255,53 +205,43 @@ natural.</li>
 </li>
 </ul>
 
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/enaml_file.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
         </div>
+        <div class="clearer"></div>
       </div>
-      <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="architecture.html" title="Design and Architecture"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="overview.html" title="Overview"
-             >previous</a> |</li>
-        <li><a href="index.html">enaml 0.1alpha documentation</a> &raquo;</li>
-  
-    <li><a href="#">Writing .enaml Files</a></li>
-  
 
-      </ul>
-    </div>
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="_sources/enaml_file.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
   </body>
 </html>

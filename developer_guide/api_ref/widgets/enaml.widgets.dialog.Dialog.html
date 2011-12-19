@@ -1,0 +1,321 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dialog &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Form" href="enaml.widgets.form.Form.html" />
+    <link rel="prev" title="Window" href="enaml.widgets.window.Window.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.form.Form.html" title="Form"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.window.Window.html" title="Window"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Dialog</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Dialog</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="dialog">
+<h1>Dialog<a class="headerlink" href="#dialog" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.dialog.Dialog">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.dialog.</tt><tt class="descname">Dialog</tt><a class="reference internal" href="../../../_modules/enaml/widgets/dialog.html#Dialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.dialog.Dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.widgets.window.Window" title="enaml.widgets.window.Window"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.Window</span></tt></a></p>
+<p>A basic dialog widget whose contents are user defined.</p>
+<p>The basic dialog has no buttons, but provides methods for the
+accept and reject behavior for the dialog.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.dialog.Dialog.active">
+<tt class="descname">active</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.dialog.Dialog.active" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which will be True when the dialog is open,
+False otherwise.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.dialog.Dialog.opened">
+<tt class="descname">opened</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.dialog.Dialog.opened" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the dialog is opened.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.dialog.Dialog.closed">
+<tt class="descname">closed</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.dialog.Dialog.closed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when the dialog is closed. The event payload will be the
+dialog result.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.dialog.Dialog.result">
+<tt class="descname">result</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.dialog.Dialog.result" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read only property which is set to the result of the dialog;
+&#8216;rejected&#8217; if rejected() was called or the window was closed via
+the &#8216;x&#8217; window button, &#8216;accepted&#8217; if accept() was called. The
+result is set before the &#8216;closed&#8217; event is fired.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.dialog.Dialog.modality">
+<tt class="descname">modality</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.dialog.Dialog.modality" title="Permalink to this definition">¶</a></dt>
+<dd><p>An enum which indicates the modality of the dialog. One of
+&#8216;application_modal&#8217; or &#8216;window_modal&#8217;. The default value is
+&#8216;application_modal&#8217;. Changes to this attribute <em>after</em> the
+dialog is shown will have no effect.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.dialog.Dialog.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.dialog.Dialog.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.dialog.Dialog.accept">
+<tt class="descname">accept</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/dialog.html#Dialog.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.dialog.Dialog.accept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the dialog and set the result to <cite>accepted</cite>.</p>
+<p>Call this method to trigger the same behavior as clicking
+on the Ok button.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.dialog.Dialog.reject">
+<tt class="descname">reject</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/dialog.html#Dialog.reject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.dialog.Dialog.reject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the dialog and set the result to <cite>rejected</cite>.</p>
+<p>Call this method to trigger the same behavior as clicking
+on the Cancel button.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-7d0189f83bab76bf8b89f828c53316b54777dc9d.png" alt="Inheritance diagram of enaml.widgets.qt.qt_dialog.QtDialog" usemap="#inheritanceb8e29c7c26" class="inheritance"/>
+<map id="inheritanceb8e29c7c26" name="inheritanceb8e29c7c26">
+<area shape="rect" id="node1" href="enaml.widgets.window.Window.html#enaml.widgets.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="882,59,969,88"/>
+<area shape="rect" id="node21" href="#enaml.widgets.qt.qt_dialog.QtDialog" title="QtDialog" alt="" coords="1041,32,1119,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="690,59,790,88"/>
+<area shape="rect" id="node8" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="488,59,600,88"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_dialog.QtDialog">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_dialog.</tt><tt class="descname">QtDialog</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_dialog.html#QtDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_dialog.QtDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.widgets.qt.qt_window.QtWindow" title="enaml.widgets.qt.qt_window.QtWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_window.QtWindow</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.dialog.AbstractTkDialog</span></tt></p>
+<p>A Qt implementation of a Dialog.</p>
+<p>This class creates a simple top-level dialog.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_dialog.QtDialog.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_dialog.html#QtDialog.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_dialog.QtDialog.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QDialog control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_dialog.QtDialog.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_dialog.html#QtDialog.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_dialog.QtDialog.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the attributes on the QDialog.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_dialog.QtDialog.accept">
+<tt class="descname">accept</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_dialog.html#QtDialog.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_dialog.QtDialog.accept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Accept and close the dialog, sending the &#8216;finished&#8217; signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_dialog.QtDialog.reject">
+<tt class="descname">reject</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_dialog.html#QtDialog.reject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_dialog.QtDialog.reject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reject and close the dialog, sending the &#8216;finished&#8217; signal.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_dialog.QtDialog.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_dialog.html#QtDialog.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_dialog.QtDialog.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden from the parent class to properly launch and close 
+the dialog.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-5fb5231df5acb94340b6c7b6e6341f6c8fff1af1.png" alt="Inheritance diagram of enaml.widgets.wx.wx_dialog.WXDialog" usemap="#inheritance83f8ef61aa" class="inheritance"/>
+<map id="inheritance83f8ef61aa" name="inheritance83f8ef61aa">
+<area shape="rect" id="node12" href="enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="880,59,971,88"/>
+<area shape="rect" id="node4" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="688,59,792,88"/>
+<area shape="rect" id="node5" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,59,602,88"/>
+<area shape="rect" id="node11" href="#enaml.widgets.wx.wx_dialog.WXDialog" title="WXDialog" alt="" coords="1040,32,1123,61"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_dialog.WXDialog">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_dialog.</tt><tt class="descname">WXDialog</tt><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_dialog.html#WXDialog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_dialog.WXDialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow" title="enaml.widgets.wx.wx_window.WXWindow"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_window.WXWindow</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.dialog.AbstractTkDialog</span></tt></p>
+<p>A wxPython implementation of a Dialog.</p>
+<p>WXDialog uses a wx.Dialog to create a simple top-level dialog.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_dialog.WXDialog.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_dialog.html#WXDialog.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_dialog.WXDialog.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.Dialog control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_dialog.WXDialog.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_dialog.html#WXDialog.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_dialog.WXDialog.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the attributes on the wx.Dialog.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_dialog.WXDialog.accept">
+<tt class="descname">accept</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_dialog.html#WXDialog.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_dialog.WXDialog.accept" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the dialog and set the result to &#8216;accepted&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_dialog.WXDialog.reject">
+<tt class="descname">reject</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_dialog.html#WXDialog.reject"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_dialog.WXDialog.reject" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the dialog and set the result to &#8216;rejected&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_dialog.WXDialog.set_visible">
+<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_dialog.html#WXDialog.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_dialog.WXDialog.set_visible" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden from the parent class to properly launch and close 
+the dialog.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.form.Form.html" title="Form"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.window.Window.html" title="Window"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Dialog</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

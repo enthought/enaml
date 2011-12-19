@@ -11,7 +11,7 @@
     
     <title>enaml.util.enum &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,71 +47,7 @@
   
 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <h1>Source code for enaml.util.enum</h1><div class="highlight"><pre>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="EnumMeta"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.enum.EnumMeta">[docs]</a><span class="k">class</span> <span class="nc">EnumMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The metaclass for Enum which supplies the class name and </span>
-<span class="sd">    attribute name to Constant instances and places them in a dict </span>
-<span class="sd">    at __values__. A tuple of names for the constants are placed at </span>
-<span class="sd">    __names__ in sorted order. The constants themselves are placed</span>
-<span class="sd">    in a set at __values_set__.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Cannot instantiate an Enum.&#39;</span><span class="p">)</span>
-    
-    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Cannot change the value of an Enum.&#39;</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="Enum"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.enum.Enum">[docs]</a><span class="k">class</span> <span class="nc">Enum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    
-    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">EnumMeta</span>
-
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Enum.values"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.enum.Enum.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Yields the values defined on the enum class.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">val</span>
     </div>
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Enum.names"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.enum.Enum.names">[docs]</a>    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Yields the names defined on the enum class.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">name</span>
-</div>
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Enum.items"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.enum.Enum.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Yields the items defined on the enum class.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
-            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span>
-</pre></div></div></div>
-
-          </div>
-        </div>
-      </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../../index.html">
@@ -130,6 +66,70 @@
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.util.enum</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="EnumMeta"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.enum.EnumMeta">[docs]</a><span class="k">class</span> <span class="nc">EnumMeta</span><span class="p">(</span><span class="nb">type</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The metaclass for Enum which supplies the class name and </span>
+<span class="sd">    attribute name to Constant instances and places them in a dict </span>
+<span class="sd">    at __values__. A tuple of names for the constants are placed at </span>
+<span class="sd">    __names__ in sorted order. The constants themselves are placed</span>
+<span class="sd">    in a set at __values_set__.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&#39;Cannot instantiate an Enum.&#39;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__setattr__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s">&#39;Cannot change the value of an Enum.&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="Enum"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.enum.Enum">[docs]</a><span class="k">class</span> <span class="nc">Enum</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">EnumMeta</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Enum.values"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.enum.Enum.values">[docs]</a>    <span class="k">def</span> <span class="nf">values</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yields the values defined on the enum class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">val</span>
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Enum.names"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.enum.Enum.names">[docs]</a>    <span class="k">def</span> <span class="nf">names</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yields the names defined on the enum class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">name</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Enum.items"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.enum.Enum.items">[docs]</a>    <span class="k">def</span> <span class="nf">items</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Yields the items defined on the enum class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span>
+</pre></div></div></div>
+
+          </div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -153,6 +153,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

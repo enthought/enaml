@@ -11,7 +11,7 @@
     
     <title>Component Testing &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -27,37 +27,29 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
-    <link rel="up" title="Enaml Testing" href="../enaml.tests.html" />
-    <link rel="next" title="TestCalendar" href="widgets/enaml.tests.widgets.calendar.TestCalendar.html" />
-    <link rel="prev" title="Enaml Testing" href="../enaml.tests.html" /> 
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" /> 
   </head>
   <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
           <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="widgets/enaml.tests.widgets.calendar.TestCalendar.html" title="TestCalendar"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="../enaml.tests.html" title="Enaml Testing"
-             accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
-          <li><a href="../enaml.tests.html" accesskey="U">Enaml Testing</a> &raquo;</li>
-  
-    <li><a href="#">Component Testing</a></li>
-  
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
 
-      </ul>
-    </div>  
-
-    <div class="document">
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
@@ -87,7 +79,7 @@ defined before the class can be created.</p>
 the testing of enaml components</p>
 <dl class="attribute">
 <dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.toolkit">
-<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x54f79b0&gt;, '__invoke_later__': &lt;function invoke_later at 0x10aa7f0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x55f1f90&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x55fb060&gt;, 'align_v_center': &lt;function align_v_center at 0x55f5bf0&gt;, 'align_right': &lt;function align_right at 0x55f5b30&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x54f7a30&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x55fb2a0&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x55fb210&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x55fb0f0&gt;, '__operator_ColonEqual__': &lt;function operator at 0x54f79f0&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x54efcb0&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x55fba80&gt;, 'align': &lt;function align at 0x55f5c70&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x3253bf8&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x55fb8d0&gt;, 'align_top': &lt;function align_top at 0x55f5b70&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x55f1b10&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x55f1ba0&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x55f1c30&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x55f1cc0&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x55f1de0&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x55f1e70&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x55f1f00&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x55fb180&gt;, 'hbox': &lt;function hbox at 0x55f5a70&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x55fb3c0&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x55fb450&gt;, 'align_h_center': &lt;function align_h_center at 0x55f5c30&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x55fb4e0&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x55fb600&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x52d26f0&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x55fb7b0&gt;, '__create_app__': &lt;function get_app_qt4 at 0x54efc30&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x55f19f0&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x55f1a80&gt;, 'vertical': &lt;function vertical at 0x55f5a30&gt;, 'align_left': &lt;function align_left at 0x55f5af0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x55f1d50&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x55fb690&gt;, 'horizontal': &lt;function horizontal at 0x55f59f0&gt;, 'align_bottom': &lt;function align_bottom at 0x55f5bb0&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x55fb330&gt;, '__operator_Equal__': &lt;function operator at 0x54f7970&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x55fb570&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x55fb720&gt;, 'vbox': &lt;function vbox at 0x55f5ab0&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x10aa8f0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x55fb840&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x55fb960&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x55fb9f0&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.toolkit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x4243c70&gt;, '__invoke_later__': &lt;function invoke_later at 0x10cfab0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x4619e10&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x4619ea0&gt;, 'align_v_center': &lt;function align_v_center at 0x461beb0&gt;, 'align_right': &lt;function align_right at 0x461bdf0&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x4243cf0&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x4623120&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x4623090&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x4619f30&gt;, '__operator_ColonEqual__': &lt;function operator at 0x4243cb0&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x420af70&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x4623900&gt;, 'align': &lt;function align at 0x461bf30&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1fe0190&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x4623750&gt;, 'align_top': &lt;function align_top at 0x461be30&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x4619990&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x4619a20&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x4619ab0&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x4619b40&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x4619c60&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x4619cf0&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x4619d80&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x4619fc0&gt;, 'hbox': &lt;function hbox at 0x461bd30&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x4623240&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x46232d0&gt;, 'align_h_center': &lt;function align_h_center at 0x461bef0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x4623360&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x4623480&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x4213570&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x4623630&gt;, '__create_app__': &lt;function get_app_qt4 at 0x420aef0&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x4619870&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x4619900&gt;, 'vertical': &lt;function vertical at 0x461bcf0&gt;, 'align_left': &lt;function align_left at 0x461bdb0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x4619bd0&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x4623510&gt;, 'horizontal': &lt;function horizontal at 0x461bcb0&gt;, 'align_bottom': &lt;function align_bottom at 0x461be70&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x46231b0&gt;, '__operator_Equal__': &lt;function operator at 0x4243c30&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x46233f0&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x46235a0&gt;, 'vbox': &lt;function vbox at 0x461bd70&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x10cfbb0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x46236c0&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x46237e0&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x4623870&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.toolkit" title="Permalink to this definition">¶</a></dt>
 <dd><p>default toolkit to use for the enaml source parsing</p>
 </dd></dl>
 
@@ -208,7 +200,7 @@ toolkit attribute and provides some useful methods to mock events in
 wx.</p>
 <dl class="attribute">
 <dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.toolkit">
-<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x54f79b0&gt;, '__invoke_later__': &lt;function invoke_later at 0x12682bb0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x128a4930&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x128a49c0&gt;, 'align_v_center': &lt;function align_v_center at 0x55f5bf0&gt;, 'align_right': &lt;function align_right at 0x55f5b30&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x54f7a30&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x128a4b70&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x128a4a50&gt;, '__operator_ColonEqual__': &lt;function operator at 0x54f79f0&gt;, '__start_app__': &lt;function start_event_loop_wx at 0x54efbf0&gt;, 'align': &lt;function align at 0x55f5c70&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x3253bf8&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x128a61e0&gt;, 'align_top': &lt;function align_top at 0x55f5b70&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x128a44b0&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x128a4540&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x128a45d0&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x128a4660&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x128a4780&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x128a4810&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x128a48a0&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x128a4ae0&gt;, 'hbox': &lt;function hbox at 0x55f5a70&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x128a4c90&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x128a4d20&gt;, 'align_h_center': &lt;function align_h_center at 0x55f5c30&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x128a4db0&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x128a4ed0&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x12681540&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x128a60c0&gt;, '__create_app__': &lt;function get_app_wx at 0x54efb70&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x128a4390&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x128a4420&gt;, 'vertical': &lt;function vertical at 0x55f5a30&gt;, 'align_left': &lt;function align_left at 0x55f5af0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x128a46f0&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x128a4f60&gt;, 'horizontal': &lt;function horizontal at 0x55f59f0&gt;, 'align_bottom': &lt;function align_bottom at 0x55f5bb0&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x128a4c00&gt;, '__operator_Equal__': &lt;function operator at 0x54f7970&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x128a4e40&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x128a6030&gt;, 'vbox': &lt;function vbox at 0x55f5ab0&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x12682bf0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x128a6150&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x128a6270&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x128a6300&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x4243c70&gt;, '__invoke_later__': &lt;function invoke_later at 0x101fedf0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x101fabd0&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x101fac60&gt;, 'align_v_center': &lt;function align_v_center at 0x461beb0&gt;, 'align_right': &lt;function align_right at 0x461bdf0&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x4243cf0&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x101fae10&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x101facf0&gt;, '__operator_ColonEqual__': &lt;function operator at 0x4243cb0&gt;, '__start_app__': &lt;function start_event_loop_wx at 0x420aeb0&gt;, 'align': &lt;function align at 0x461bf30&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1fe0190&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x101f2480&gt;, 'align_top': &lt;function align_top at 0x461be30&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x101fa750&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x101fa7e0&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x101fa870&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x101fa900&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x101faa20&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x101faab0&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x101fab40&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x101fad80&gt;, 'hbox': &lt;function hbox at 0x461bd30&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x101faf30&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x101fafc0&gt;, 'align_h_center': &lt;function align_h_center at 0x461bef0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x101f2090&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x101f21b0&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x101d27e0&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x101f2360&gt;, '__create_app__': &lt;function get_app_wx at 0x420ae30&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x101fa630&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x101fa6c0&gt;, 'vertical': &lt;function vertical at 0x461bcf0&gt;, 'align_left': &lt;function align_left at 0x461bdb0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x101fa990&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x101f2240&gt;, 'horizontal': &lt;function horizontal at 0x461bcb0&gt;, 'align_bottom': &lt;function align_bottom at 0x461be70&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x101faea0&gt;, '__operator_Equal__': &lt;function operator at 0x4243c30&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x101f2120&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x101f22d0&gt;, 'vbox': &lt;function vbox at 0x461bd70&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x101fee30&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x101f23f0&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x101f2510&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x101f25a0&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
@@ -247,7 +239,7 @@ toolkit attribute and (in the future) provide some useful methods for
 testin Qt based components.</p>
 <dl class="attribute">
 <dt id="enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.toolkit">
-<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x54f79b0&gt;, '__invoke_later__': &lt;function invoke_later at 0x10aa7f0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x128bc7b0&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x128bc840&gt;, 'align_v_center': &lt;function align_v_center at 0x55f5bf0&gt;, 'align_right': &lt;function align_right at 0x55f5b30&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x54f7a30&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x128bca80&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x128bc9f0&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x128bc8d0&gt;, '__operator_ColonEqual__': &lt;function operator at 0x54f79f0&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x54efcb0&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x128c12a0&gt;, 'align': &lt;function align at 0x55f5c70&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x3253bf8&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x128c10f0&gt;, 'align_top': &lt;function align_top at 0x55f5b70&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x128bc330&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x128bc3c0&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x128bc450&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x128bc4e0&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x128bc600&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x128bc690&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x128bc720&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x128bc960&gt;, 'hbox': &lt;function hbox at 0x55f5a70&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x128bcba0&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x128bcc30&gt;, 'align_h_center': &lt;function align_h_center at 0x55f5c30&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x128bccc0&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x128bcde0&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x52d26f0&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x128bcf90&gt;, '__create_app__': &lt;function get_app_qt4 at 0x54efc30&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x128bc210&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x128bc2a0&gt;, 'vertical': &lt;function vertical at 0x55f5a30&gt;, 'align_left': &lt;function align_left at 0x55f5af0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x128bc570&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x128bce70&gt;, 'horizontal': &lt;function horizontal at 0x55f59f0&gt;, 'align_bottom': &lt;function align_bottom at 0x55f5bb0&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x128bcb10&gt;, '__operator_Equal__': &lt;function operator at 0x54f7970&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x128bcd50&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x128bcf00&gt;, 'vbox': &lt;function vbox at 0x55f5ab0&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x10aa8f0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x128c1060&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x128c1180&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x128c1210&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x4243c70&gt;, '__invoke_later__': &lt;function invoke_later at 0x10cfab0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x101e4930&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x101e49c0&gt;, 'align_v_center': &lt;function align_v_center at 0x461beb0&gt;, 'align_right': &lt;function align_right at 0x461bdf0&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x4243cf0&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x101e4c00&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x101e4b70&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x101e4a50&gt;, '__operator_ColonEqual__': &lt;function operator at 0x4243cb0&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x420af70&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x101ea420&gt;, 'align': &lt;function align at 0x461bf30&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1fe0190&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x101ea270&gt;, 'align_top': &lt;function align_top at 0x461be30&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x101e4630&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x101e46c0&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x101f8f30&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x101f8ea0&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x101e4780&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x101e4810&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x101e48a0&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x101e4ae0&gt;, 'hbox': &lt;function hbox at 0x461bd30&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x101e4d20&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x101e4db0&gt;, 'align_h_center': &lt;function align_h_center at 0x461bef0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x101e4e40&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x101e4f60&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x4213570&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x101ea150&gt;, '__create_app__': &lt;function get_app_qt4 at 0x420aef0&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x101e4510&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x101e45a0&gt;, 'vertical': &lt;function vertical at 0x461bcf0&gt;, 'align_left': &lt;function align_left at 0x461bdb0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x101e4180&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x101ea030&gt;, 'horizontal': &lt;function horizontal at 0x461bcb0&gt;, 'align_bottom': &lt;function align_bottom at 0x461be70&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x101e4c90&gt;, '__operator_Equal__': &lt;function operator at 0x4243c30&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x101e4ed0&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x101ea0c0&gt;, 'vbox': &lt;function vbox at 0x461bd70&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x10cfbb0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x101ea1e0&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x101ea300&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x101ea390&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -307,11 +299,8 @@ testin Qt based components.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../index.html">
-              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
+        </div>
+        <div class="sidebar">
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">Component Testing</a><ul>
@@ -328,54 +317,43 @@ testin Qt based components.</p>
 </li>
 </ul>
 
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="../_sources/tests/components.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
         </div>
+        <div class="clearer"></div>
       </div>
-      <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="widgets/enaml.tests.widgets.calendar.TestCalendar.html" title="TestCalendar"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="../enaml.tests.html" title="Enaml Testing"
-             >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
-          <li><a href="../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
-  
-    <li><a href="#">Component Testing</a></li>
-  
 
-      </ul>
-    </div>
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="../_sources/tests/components.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
   </body>
 </html>

@@ -1,0 +1,352 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ComboBox &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="PushButton" href="enaml.widgets.push_button.PushButton.html" />
+    <link rel="prev" title="CheckBox" href="enaml.widgets.check_box.CheckBox.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../../index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
+          <a href="enaml.widgets.check_box.CheckBox.html" title="CheckBox"
+             accesskey="P">previous</a> |
+          <a href="enaml.widgets.push_button.PushButton.html" title="PushButton"
+             accesskey="N">next</a> |
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="combobox">
+<h1>ComboBox<a class="headerlink" href="#combobox" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.combo_box.ComboBox">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.combo_box.</tt><tt class="descname">ComboBox</tt><a class="reference internal" href="../../_modules/enaml/widgets/combo_box.html#ComboBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></p>
+<p>A drop-down list from which one item can be selected at a time.</p>
+<p>Use a combo box to select a single item from a collection of items.
+To select multiple items from a collection of items use a ListBox.</p>
+<p>The combo box works by first using the to_string callable to convert
+the value and the list of items into strings for display and then 
+using the index of the combo box to make appropriate selections.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>If a value is specified that does not exist in the list of
+items then the box is deselected and the index attribute will
+be set to -1. However, the value attribute will still be 
+assigned the invalid value.</li>
+<li>If list of items is changed then component will try to find
+the current value in the list and select it. If the value is
+not found then the index will be updated to -1.</li>
+<li>The selected event is only emitted when the user selects
+a valid value through the ui control, not when the value
+is changed programmatically.</li>
+</ul>
+</div>
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.items">
+<tt class="descname">items</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>The objects that compose the collection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.value">
+<tt class="descname">value</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently selected item from the collection. If this value
+is set to a value that is not in <tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt> then the computed
+<tt class="xref py py-attr docutils literal"><span class="pre">index</span></tt> will be -1.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.index">
+<tt class="descname">index</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The integer index of the current selection in items. If the index
+is out of range of <tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt> then the index it is set to -1,
+and the current <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt> is left unchanged.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.to_string">
+<tt class="descname">to_string</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>A callable which will convert the objects in the items list to
+strings for display. Defaults to str.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.labels">
+<tt class="descname">labels</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>A readonly property that holds the component items as a list of
+strings that are produced by the <tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt> attribute.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.selected_text">
+<tt class="descname">selected_text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.selected_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>A readonly property that will return the result of calling
+<tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt> on <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.selected">
+<tt class="descname">selected</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when a new selection is made by the user through the ui,
+but not when changed programatically. The args object will contain
+the selected value.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. ComboBoxes hug
+width weakly, by default.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-db1403de96700a4eb60eb8c1b8719e5fda89c229.png" alt="Inheritance diagram of enaml.widgets.qt.qt_combo_box.QtComboBox" class="inheritance"/>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_combo_box.</tt><tt class="descname">QtComboBox</tt><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_control.QtControl</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.combo_box.AbstractTkComboBox</span></tt></p>
+<p>A Qt implementation of ComboBox.</p>
+<p>Use a combo box to select a single item from a collection of items.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a QComboBox.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the widget with the attributes of this instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Connects the event handlers for the combo box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.shell_index_changed">
+<tt class="descname">shell_index_changed</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.shell_index_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.shell_index_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;index&#8217; attribute on the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.shell_labels_changed">
+<tt class="descname">shell_labels_changed</tt><big>(</big><em>labels</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.shell_labels_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.shell_labels_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;labels&#8217; attribute on the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.on_selected">
+<tt class="descname">on_selected</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.on_selected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.on_selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for a combo box selection event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.set_items">
+<tt class="descname">set_items</tt><big>(</big><em>str_items</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.set_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.set_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the items in the combo box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_combo_box.QtComboBox.set_selection">
+<tt class="descname">set_selection</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_combo_box.html#QtComboBox.set_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_combo_box.QtComboBox.set_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the value in the combo box, or resets the combo box
+if the value is not in the list of items.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-2e32cb8219f22985ea15a55856817a22eab733b7.png" alt="Inheritance diagram of enaml.widgets.wx.wx_combo_box.WXComboBox" class="inheritance"/>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_combo_box.</tt><tt class="descname">WXComboBox</tt><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_control.WXControl</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.combo_box.AbstractTkComboBox</span></tt></p>
+<p>A wxPython implementation of ComboBox.</p>
+<p>Use a combo box to select a single item from a collection of items.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a wx.ComboBox.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Intializes the widget with the attributes of this instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers for the combo box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.shell_index_changed">
+<tt class="descname">shell_index_changed</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.shell_index_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.shell_index_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;_index&#8217; attribute on the enaml
+shell.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.shell_labels_changed">
+<tt class="descname">shell_labels_changed</tt><big>(</big><em>labels</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.shell_labels_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.shell_labels_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;labels&#8217; attribute on the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.on_selected">
+<tt class="descname">on_selected</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.on_selected"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.on_selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>The event handler for a combo box selection event.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.set_items">
+<tt class="descname">set_items</tt><big>(</big><em>str_items</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.set_items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.set_items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the items in the combo box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_combo_box.WXComboBox.set_selection">
+<tt class="descname">set_selection</tt><big>(</big><em>index</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_combo_box.html#WXComboBox.set_selection"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_combo_box.WXComboBox.set_selection" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the selected value in the toolkit widget.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">ComboBox</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="enaml.widgets.check_box.CheckBox.html" title="CheckBox"
+             >previous</a> |
+          <a href="enaml.widgets.push_button.PushButton.html" title="PushButton"
+             >next</a> |
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../../genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="../../_sources/tech_ref/widgets/enaml.widgets.combo_box.ComboBox.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

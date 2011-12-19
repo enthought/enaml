@@ -1,0 +1,238 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CheckBox &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="checkbox">
+<h1>CheckBox<a class="headerlink" href="#checkbox" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.check_box.CheckBox">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.check_box.</tt><tt class="descname">CheckBox</tt><a class="reference internal" href="../_modules/enaml/widgets/check_box.html#CheckBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.check_box.CheckBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.toggle_control.ToggleControl" title="enaml.widgets.toggle_control.ToggleControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.toggle_control.ToggleControl</span></tt></a></p>
+<p>A check box widget.</p>
+<p>Use a check box when it&#8217;s necessary to toggle a boolean value
+independent of any other widgets in the group. For allowing the
+toggling of only one value in a group of values, use a group
+of radio buttons.</p>
+<p class="rubric">See Also</p>
+<p>ToggleControl</p>
+<dl class="attribute">
+<dt id="enaml.widgets.check_box.CheckBox.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.check_box.CheckBox.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="sample">
+<h2>Sample<a class="headerlink" href="#sample" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="docutils">
+<colgroup>
+<col width="7%" />
+<col width="30%" />
+<col width="31%" />
+<col width="32%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">System</th>
+<th class="head">Wx</th>
+<th class="head">Qt</th>
+<th class="head">Enaml</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Windows</td>
+<td><img alt="../_images/check_box.png" class="first last" src="../_images/check_box.png" />
+</td>
+<td><img alt="../_images/check_box1.png" class="first last" src="../_images/check_box1.png" />
+</td>
+<td><div class="first last highlight-python"><pre>defn MainWindow:
+    Window:
+        title = "CheckBox example"
+        constraints = [vertical(top, check1, check2, bottom),
+                       horizontal(left, check1, right),
+                       horizontal(left, check2, right),
+                       align_left(check1, check2)]
+        CheckBox -&gt; check1:
+            text = "I am a CheckBox"
+            checked = True
+        CheckBox -&gt; check2:
+            text = "I am another CheckBox"
+</pre>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="qt">
+<h2>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h2>
+<p class="graphviz">
+<img src="../_images/inheritance-59c2fd9617d92e5119121ebb7b1e68bb6a6670ff.png" alt="Inheritance diagram of enaml.widgets.qt.qt_check_box.QtCheckBox" usemap="#inheritancef8381afabf" class="inheritance"/>
+<map id="inheritancef8381afabf" name="inheritancef8381afabf">
+<area shape="rect" id="node16" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="706,59,790,88"/>
+<area shape="rect" id="node17" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,59,593,88"/>
+<area shape="rect" id="node10" href="enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl" title="QtToggleControl" alt="" coords="901,59,1030,88"/>
+<area shape="rect" id="node9" href="#enaml.widgets.qt.qt_check_box.QtCheckBox" title="QtCheckBox" alt="" coords="1091,32,1191,61"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_check_box.QtCheckBox">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_check_box.</tt><tt class="descname">QtCheckBox</tt><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_check_box.html#QtCheckBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_check_box.QtCheckBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl" title="enaml.widgets.qt.qt_toggle_control.QtToggleControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_toggle_control.QtToggleControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.check_box.AbstractTkCheckBox</span></tt></p>
+<p>A Qt implementation of CheckBox.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_check_box.QtCheckBox.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_check_box.html#QtCheckBox.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_check_box.QtCheckBox.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QCheckBox widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_check_box.QtCheckBox.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_check_box.html#QtCheckBox.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_check_box.QtCheckBox.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers for the check box.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h2>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h2>
+<p class="graphviz">
+<img src="../_images/inheritance-e1747bc07c1e963b1df3e3edce773b30ab7eb64c.png" alt="Inheritance diagram of enaml.widgets.wx.wx_check_box.WXCheckBox" usemap="#inheritance2b6855f114" class="inheritance"/>
+<map id="inheritance2b6855f114" name="inheritance2b6855f114">
+<area shape="rect" id="node1" href="enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.wx.wx_toggle_control.WXToggleControl" title="WXToggleControl" alt="" coords="898,5,1032,35"/>
+<area shape="rect" id="node14" href="#enaml.widgets.wx.wx_check_box.WXCheckBox" title="WXCheckBox" alt="" coords="1092,32,1196,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="703,5,793,35"/>
+<area shape="rect" id="node9" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_check_box.WXCheckBox">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_check_box.</tt><tt class="descname">WXCheckBox</tt><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_check_box.html#WXCheckBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_check_box.WXCheckBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.wx.wx_toggle_control.WXToggleControl" title="enaml.widgets.wx.wx_toggle_control.WXToggleControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_toggle_control.WXToggleControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.check_box.AbstractTkCheckBox</span></tt></p>
+<p>A wxPython implementation of CheckBox.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_check_box.WXCheckBox.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_check_box.html#WXCheckBox.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_check_box.WXCheckBox.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.CheckBox.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_check_box.WXCheckBox.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_check_box.html#WXCheckBox.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_check_box.WXCheckBox.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers for the check box.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">CheckBox</a><ul>
+<li><a class="reference internal" href="#sample">Sample</a></li>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="../_sources/#widgets/enaml.widgets.check_box.CheckBox.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

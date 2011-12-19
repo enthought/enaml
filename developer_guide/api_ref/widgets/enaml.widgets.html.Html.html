@@ -1,0 +1,273 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Html &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="TraitsUIItem" href="enaml.widgets.traitsui_item.TraitsUIItem.html" />
+    <link rel="prev" title="GroupBox" href="enaml.widgets.group_box.GroupBox.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.traitsui_item.TraitsUIItem.html" title="TraitsUIItem"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.group_box.GroupBox.html" title="GroupBox"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Html</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Html</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/api_ref/widgets/enaml.widgets.html.Html.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="html">
+<h1>Html<a class="headerlink" href="#html" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.html.Html">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.html.</tt><tt class="descname">Html</tt><a class="reference internal" href="../../../_modules/enaml/widgets/html.html#Html"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.html.Html" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
+<p>An extremely simple widget for displaying HTML.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.html.Html.source">
+<tt class="descname">source</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.html.Html.source" title="Permalink to this definition">¶</a></dt>
+<dd><p>The Html source code to be rendered.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.html.Html.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.html.Html.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. Html widgets</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.html.Html.hug_height">
+<tt class="descname">hug_height</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.html.Html.hug_height" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; height. Html widgets
+ignore the height hug by default, so they expand freely in height.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.html.Html.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.html.Html.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-d2310d25ba5e81be46c1201cab55719c64b3d3f3.png" alt="Inheritance diagram of enaml.widgets.qt.qt_html.QtHtml" usemap="#inheritanceab23ab4484" class="inheritance"/>
+<map id="inheritanceab23ab4484" name="inheritanceab23ab4484">
+<area shape="rect" id="node5" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,5,593,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="675,5,760,35"/>
+<area shape="rect" id="node16" href="#enaml.widgets.qt.qt_html.QtHtml" title="QtHtml" alt="" coords="827,32,899,61"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_html.QtHtml">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_html.</tt><tt class="descname">QtHtml</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_html.html#QtHtml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_html.QtHtml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="enaml.widgets.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_control.QtControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.html.AbstractTkHtml</span></tt></p>
+<p>A Qt implementation of Html.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_html.QtHtml.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_html.html#QtHtml.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_html.QtHtml.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying widget to display HTML.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_html.QtHtml.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_html.html#QtHtml.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_html.QtHtml.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the attributes of the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_html.QtHtml.shell_source_changed">
+<tt class="descname">shell_source_changed</tt><big>(</big><em>source</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_html.html#QtHtml.shell_source_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_html.QtHtml.shell_source_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;source&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_html.QtHtml.set_page_source">
+<tt class="descname">set_page_source</tt><big>(</big><em>source</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_html.html#QtHtml.set_page_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_html.QtHtml.set_page_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the page source for the underlying control.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-6995431695e97e1bce17b425d36bd6ba75405248.png" alt="Inheritance diagram of enaml.widgets.wx.wx_html.WXHtml" usemap="#inheritance745f1d8e81" class="inheritance"/>
+<map id="inheritance745f1d8e81" name="inheritance745f1d8e81">
+<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="673,5,762,35"/>
+<area shape="rect" id="node16" href="#enaml.widgets.wx.wx_html.WXHtml" title="WXHtml" alt="" coords="827,32,899,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_html.WXHtml">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_html.</tt><tt class="descname">WXHtml</tt><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_html.html#WXHtml"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_html.WXHtml" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="enaml.widgets.wx.wx_control.WXControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_control.WXControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.html.AbstractTkHtml</span></tt></p>
+<p>A wxPython implementation of Html</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_html.WXHtml.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_html.html#WXHtml.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_html.WXHtml.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.html.HtmlWindow.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_html.WXHtml.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_html.html#WXHtml.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_html.WXHtml.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initializes the attributes of the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_html.WXHtml.shell_source_changed">
+<tt class="descname">shell_source_changed</tt><big>(</big><em>source</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_html.html#WXHtml.shell_source_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_html.WXHtml.shell_source_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;source&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_html.WXHtml.set_page_source">
+<tt class="descname">set_page_source</tt><big>(</big><em>source</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_html.html#WXHtml.set_page_source"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_html.WXHtml.set_page_source" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the page source for the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_html.WXHtml.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_html.html#WXHtml.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_html.WXHtml.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to return a sensible size
+hint.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.traitsui_item.TraitsUIItem.html" title="TraitsUIItem"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.group_box.GroupBox.html" title="GroupBox"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Html</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

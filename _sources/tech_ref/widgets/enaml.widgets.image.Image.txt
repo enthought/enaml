@@ -1,0 +1,28 @@
+Image
+=========================
+
+.. currentmodule:: enaml.widgets.image
+
+.. autoclass:: Image
+
+
+Backends
+--------
+
+Qt
+^^
+
+.. inheritance-diagram::
+    enaml.widgets.qt.qt_image.QtImage
+    :parts: 1
+
+.. autoclass:: enaml.widgets.qt.qt_image.QtImage
+
+Wx
+^^
+
+.. inheritance-diagram::
+    enaml.widgets.wx.wx_image.WXImage
+    :parts: 1
+
+.. autoclass:: enaml.widgets.wx.wx_image.WXImage

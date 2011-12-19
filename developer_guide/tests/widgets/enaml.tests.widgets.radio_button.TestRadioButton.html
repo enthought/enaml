@@ -1,0 +1,209 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>TestRadioButton &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Component Testing" href="../components.html" />
+    <link rel="next" title="TestField" href="enaml.tests.widgets.field.TestField.html" />
+    <link rel="prev" title="TestPushButton" href="enaml.tests.widgets.push_button.TestPushButton.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.widgets.field.TestField.html" title="TestField"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.widgets.push_button.TestPushButton.html" title="TestPushButton"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" accesskey="U">Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestRadioButton</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/tests/widgets/enaml.tests.widgets.radio_button.TestRadioButton.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="testradiobutton">
+<h1>TestRadioButton<a class="headerlink" href="#testradiobutton" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton">
+<em class="property">class </em><tt class="descclassname">enaml.tests.widgets.radio_button.</tt><tt class="descname">TestRadioButton</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../components.html#enaml.tests.widgets.enaml_test_case.EnamlTestCase" title="enaml.tests.widgets.enaml_test_case.EnamlTestCase"><tt class="xref py py-class docutils literal"><span class="pre">enaml.tests.widgets.enaml_test_case.EnamlTestCase</span></tt></a></p>
+<p>Logic for testing radio buttons.</p>
+<p>Tooklit testcases need to provide the following methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Methods</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td><a class="reference internal" href="#enaml.tests.widgets.radio_button.TestRadioButton.get_value" title="enaml.tests.widgets.radio_button.TestRadioButton.get_value"><tt class="xref py py-meth docutils literal"><span class="pre">get_value(self,</span> <span class="pre">button)</span></tt></a></td>
+<td>Get the checked state of a radio button.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="#enaml.tests.widgets.radio_button.TestRadioButton.get_text" title="enaml.tests.widgets.radio_button.TestRadioButton.get_text"><tt class="xref py py-meth docutils literal"><span class="pre">get_text(self,</span> <span class="pre">button)</span></tt></a></td>
+<td>Get the label of a button.</td>
+</tr>
+</tbody>
+</table>
+<div class="line-block">
+<div class="line"><br /></div>
+</div>
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.setUp">
+<tt class="descname">setUp</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.setUp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.setUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Finalise set up before the Radio button tests</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.test_initial_value">
+<tt class="descname">test_initial_value</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.test_initial_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.test_initial_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test the initial checked state of the radio buttons.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.test_initial_labels">
+<tt class="descname">test_initial_labels</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.test_initial_labels"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.test_initial_labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test that the toolkit widget&#8217;s label reflects the Enaml text.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.test_change_label">
+<tt class="descname">test_change_label</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.test_change_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.test_change_label" title="Permalink to this definition">¶</a></dt>
+<dd><p>Change the label of a RadioButton at the Enaml level.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.test_set_checked">
+<tt class="descname">test_set_checked</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.test_set_checked"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.test_set_checked" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test setting the value of a radio button in a group.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.test_multiple_radio_buttons">
+<tt class="descname">test_multiple_radio_buttons</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.test_multiple_radio_buttons"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.test_multiple_radio_buttons" title="Permalink to this definition">¶</a></dt>
+<dd><p>Test selecting one of a set radiobuttons.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.get_value">
+<tt class="descname">get_value</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.get_value"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.get_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.radio_button.TestRadioButton.get_text">
+<tt class="descname">get_text</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/tests/widgets/radio_button.html#TestRadioButton.get_text"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.radio_button.TestRadioButton.get_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.widgets.field.TestField.html" title="TestField"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.widgets.push_button.TestPushButton.html" title="TestPushButton"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+          <li><a href="../components.html" >Component Testing</a> &raquo;</li>
+  
+    <li><a href="#">TestRadioButton</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

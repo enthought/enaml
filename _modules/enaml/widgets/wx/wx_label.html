@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.wx.wx_label &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,68 +47,7 @@
   
 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <h1>Source code for enaml.widgets.wx.wx_label</h1><div class="highlight"><pre>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">import</span> <span class="nn">wx</span>
-
-<span class="kn">from</span> <span class="nn">.wx_control</span> <span class="kn">import</span> <span class="n">WXControl</span>
-
-<span class="kn">from</span> <span class="nn">..label</span> <span class="kn">import</span> <span class="n">AbstractTkLabel</span>
-
-
-<div class="viewcode-block" id="WXLabel"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel">[docs]</a><span class="k">class</span> <span class="nc">WXLabel</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkLabel</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A wxPython implementation of Label.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Setup methods</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXLabel.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Creates the underlying wx.StaticText control.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">StaticText</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="WXLabel.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initializes the attributes on the underlying control.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">WXLabel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Implementation</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXLabel.shell_text_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="c"># If the text in the label changes, then the size hint of</span>
-        <span class="c"># label will have changed, and the layout system needs to</span>
-        <span class="c"># be informed.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span> <span class="o">=</span> <span class="bp">True</span>
-        </div>
-<div class="viewcode-block" id="WXLabel.set_label"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.set_label">[docs]</a>    <span class="k">def</span> <span class="nf">set_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the label on the underlying control.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetLabel</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-</pre></div></div></div>
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../../../index.html">
@@ -127,6 +66,67 @@
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.wx.wx_label</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_control</span> <span class="kn">import</span> <span class="n">WXControl</span>
+
+<span class="kn">from</span> <span class="nn">..label</span> <span class="kn">import</span> <span class="n">AbstractTkLabel</span>
+
+
+<div class="viewcode-block" id="WXLabel"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel">[docs]</a><span class="k">class</span> <span class="nc">WXLabel</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkLabel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wxPython implementation of Label.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXLabel.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying wx.StaticText control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">StaticText</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXLabel.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the attributes on the underlying control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXLabel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXLabel.shell_text_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="c"># If the text in the label changes, then the size hint of</span>
+        <span class="c"># label will have changed, and the layout system needs to</span>
+        <span class="c"># be informed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span> <span class="o">=</span> <span class="bp">True</span>
+        </div>
+<div class="viewcode-block" id="WXLabel.set_label"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.set_label">[docs]</a>    <span class="k">def</span> <span class="nf">set_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the label on the underlying control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetLabel</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -150,6 +150,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

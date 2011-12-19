@@ -1,0 +1,305 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ProgressBar &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Window" href="enaml.widgets.window.Window.html" />
+    <link rel="prev" title="DateEdit" href="enaml.widgets.date_edit.DateEdit.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.window.Window.html" title="Window"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.date_edit.DateEdit.html" title="DateEdit"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">ProgressBar</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">ProgressBar</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/api_ref/widgets/enaml.widgets.progress_bar.ProgressBar.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="progressbar">
+<h1>ProgressBar<a class="headerlink" href="#progressbar" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.progress_bar.ProgressBar">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.progress_bar.</tt><tt class="descname">ProgressBar</tt><a class="reference internal" href="../../../_modules/enaml/widgets/progress_bar.html#ProgressBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.progress_bar.ProgressBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
+<p>A progress bar.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.progress_bar.ProgressBar.minimum">
+<tt class="descname">minimum</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.progress_bar.ProgressBar.minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>The minimum value that the progress bar can take. Extra checks
+take place to make sure that the user does not programmatically
+set <a class="reference internal" href="#enaml.widgets.progress_bar.ProgressBar.minimum" title="enaml.widgets.progress_bar.ProgressBar.minimum"><tt class="xref py py-attr docutils literal"><span class="pre">minimum</span></tt></a> &gt; <a class="reference internal" href="#enaml.widgets.progress_bar.ProgressBar.maximum" title="enaml.widgets.progress_bar.ProgressBar.maximum"><tt class="xref py py-attr docutils literal"><span class="pre">maximum</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.progress_bar.ProgressBar.maximum">
+<tt class="descname">maximum</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.progress_bar.ProgressBar.maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum value that the progress bar can take. Extra checks
+take place to make sure that the user does not programmatically
+set <a class="reference internal" href="#enaml.widgets.progress_bar.ProgressBar.minimum" title="enaml.widgets.progress_bar.ProgressBar.minimum"><tt class="xref py py-attr docutils literal"><span class="pre">minimum</span></tt></a> &gt; <a class="reference internal" href="#enaml.widgets.progress_bar.ProgressBar.maximum" title="enaml.widgets.progress_bar.ProgressBar.maximum"><tt class="xref py py-attr docutils literal"><span class="pre">maximum</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.progress_bar.ProgressBar.value">
+<tt class="descname">value</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.progress_bar.ProgressBar.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The current value. Default is the minimum value. The value is
+bounded between <a class="reference internal" href="#enaml.widgets.progress_bar.ProgressBar.minimum" title="enaml.widgets.progress_bar.ProgressBar.minimum"><tt class="xref py py-attr docutils literal"><span class="pre">minimum</span></tt></a> and <a class="reference internal" href="#enaml.widgets.progress_bar.ProgressBar.maximum" title="enaml.widgets.progress_bar.ProgressBar.maximum"><tt class="xref py py-attr docutils literal"><span class="pre">maximum</span></tt></a>. Changing
+the boundary attributes might result in an update of <a class="reference internal" href="#enaml.widgets.progress_bar.ProgressBar.value" title="enaml.widgets.progress_bar.ProgressBar.value"><tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></a>
+to fit in the new range. Attempts to assign a value outside of
+these bounds will result in a TraitError.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.progress_bar.ProgressBar.percentage">
+<tt class="descname">percentage</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.progress_bar.ProgressBar.percentage" title="Permalink to this definition">¶</a></dt>
+<dd><p>The percentage completed, rounded to an integer. This is a
+readonly property for convenient use by other Components.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.progress_bar.ProgressBar.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.progress_bar.ProgressBar.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s content. ProgressBars expand
+to fill the available horizontal space by default.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.progress_bar.ProgressBar.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.progress_bar.ProgressBar.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-4da31a70c062bde951648086d02df08ed028b9c9.png" alt="Inheritance diagram of enaml.widgets.qt.qt_progress_bar.QtProgressBar" usemap="#inheritanceae0d0dab04" class="inheritance"/>
+<map id="inheritanceae0d0dab04" name="inheritanceae0d0dab04">
+<area shape="rect" id="node14" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar" title="QtProgressBar" alt="" coords="873,32,986,61"/>
+<area shape="rect" id="node8" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="698,59,782,88"/>
+<area shape="rect" id="node9" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,59,593,88"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_progress_bar.QtProgressBar">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_progress_bar.</tt><tt class="descname">QtProgressBar</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_progress_bar.html#QtProgressBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="enaml.widgets.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_control.QtControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.progress_bar.AbstractTkProgressBar</span></tt></p>
+<p>Qt implementation of ProgressBar.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_progress_bar.QtProgressBar.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_progress_bar.html#QtProgressBar.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying QProgressBar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_progress_bar.QtProgressBar.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_progress_bar.html#QtProgressBar.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the attributes of the progress bar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_progress_bar.QtProgressBar.shell_value_changed">
+<tt class="descname">shell_value_changed</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_progress_bar.html#QtProgressBar.shell_value_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar.shell_value_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;value&#8217; attribute of the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_progress_bar.QtProgressBar.shell_minimum_changed">
+<tt class="descname">shell_minimum_changed</tt><big>(</big><em>minimum</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_progress_bar.html#QtProgressBar.shell_minimum_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar.shell_minimum_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;minimum&#8217; attribute of the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_progress_bar.QtProgressBar.shell_maximum_changed">
+<tt class="descname">shell_maximum_changed</tt><big>(</big><em>maximum</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_progress_bar.html#QtProgressBar.shell_maximum_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar.shell_maximum_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;maximum&#8217; attribute of the shell
+object</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-83b20dd647e23e83cb9c96b09988a192a3323520.png" alt="Inheritance diagram of enaml.widgets.wx.wx_progress_bar.WXProgressBar" usemap="#inheritanceea72e27fcf" class="inheritance"/>
+<map id="inheritanceea72e27fcf" name="inheritanceea72e27fcf">
+<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="695,5,785,35"/>
+<area shape="rect" id="node6" href="#enaml.widgets.wx.wx_progress_bar.WXProgressBar" title="WXProgressBar" alt="" coords="872,32,989,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_progress_bar.WXProgressBar">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_progress_bar.</tt><tt class="descname">WXProgressBar</tt><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_progress_bar.html#WXProgressBar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_progress_bar.WXProgressBar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="enaml.widgets.wx.wx_control.WXControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_control.WXControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.progress_bar.AbstractTkProgressBar</span></tt></p>
+<p>WX implementation of ProgressBar.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_progress_bar.WXProgressBar.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_progress_bar.html#WXProgressBar.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_progress_bar.WXProgressBar.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying wx.Gauge.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_progress_bar.WXProgressBar.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_progress_bar.html#WXProgressBar.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_progress_bar.WXProgressBar.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize the attributes of the progress bar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_progress_bar.WXProgressBar.shell_value_changed">
+<tt class="descname">shell_value_changed</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_progress_bar.html#WXProgressBar.shell_value_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_progress_bar.WXProgressBar.shell_value_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;value&#8217; attribute of the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_progress_bar.WXProgressBar.shell_minimum_changed">
+<tt class="descname">shell_minimum_changed</tt><big>(</big><em>minimum</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_progress_bar.html#WXProgressBar.shell_minimum_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_progress_bar.WXProgressBar.shell_minimum_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;minimum&#8217; attribute of the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_progress_bar.WXProgressBar.shell_maximum_changed">
+<tt class="descname">shell_maximum_changed</tt><big>(</big><em>maximum</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_progress_bar.html#WXProgressBar.shell_maximum_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_progress_bar.WXProgressBar.shell_maximum_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;maximum&#8217; attribute of the shell
+object</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.window.Window.html" title="Window"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.date_edit.DateEdit.html" title="DateEdit"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">ProgressBar</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

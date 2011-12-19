@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.wx.wx_slider &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -88,20 +108,20 @@
 <span class="n">ADAPT_VERT_TICK</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;top&#39;</span><span class="p">:</span> <span class="s">&#39;left&#39;</span><span class="p">,</span> <span class="s">&#39;bottom&#39;</span><span class="p">:</span> <span class="s">&#39;right&#39;</span><span class="p">}</span>
 
 
-<div class="viewcode-block" id="WXSlider"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider">[docs]</a><span class="k">class</span> <span class="nc">WXSlider</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkSlider</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider">[docs]</a><span class="k">class</span> <span class="nc">WXSlider</span><span class="p">(</span><span class="n">WXControl</span><span class="p">,</span> <span class="n">AbstractTkSlider</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of Slider.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXSlider.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying wx.Slider control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Slider</span><span class="p">(</span><span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes of the toolkit widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -118,7 +138,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_single_step</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">single_step</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_page_step</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">page_step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers for the slider widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -137,28 +157,28 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXSlider.shell_minimum_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_minimum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_minimum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_minimum_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_minimum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_minimum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;minimum&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">maximum</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_maximum_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_maximum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_maximum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_maximum_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_maximum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_maximum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;maximum&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_value_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_value_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;value&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_tracking_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_tracking_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tracking&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
@@ -167,21 +187,21 @@
         <span class="c"># receive a scroll event.</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_single_step_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_single_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_single_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">single_step</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_single_step_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_single_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_single_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">single_step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;single_step&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 <span class="sd">        </span>
 <span class="sd">        &quot;&quot;&quot;</span>        
         <span class="bp">self</span><span class="o">.</span><span class="n">set_single_step</span><span class="p">(</span><span class="n">single_step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_page_step_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_page_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_page_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_step</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_page_step_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_page_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_page_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">page_step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;page_step&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_page_step</span><span class="p">(</span><span class="n">page_step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_tick_interval_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_tick_interval_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tick_interval_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_interval</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_tick_interval_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_tick_interval_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tick_interval_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_interval</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tick_interval&#39; attribute on the</span>
 <span class="sd">        shell object.</span>
 
@@ -194,7 +214,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_single_step</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">single_step</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_page_step</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">page_step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_tick_position_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_tick_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tick_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_position</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_tick_position_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_tick_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tick_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tick_position</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tick_position&#39; attribute on the</span>
 <span class="sd">        shell object.</span>
 
@@ -202,7 +222,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_tick_position</span><span class="p">(</span><span class="n">tick_position</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span> <span class="o">=</span> <span class="bp">True</span>
 </div>
-<div class="viewcode-block" id="WXSlider.shell_orientation_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.shell_orientation_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.shell_orientation_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_orientation_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;orientation&#39; attribute on the </span>
 <span class="sd">        shell object.</span>
 
@@ -291,19 +311,19 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXSlider.set_single_step"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_single_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.set_single_step"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_single_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the single step attribute in the wx widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetLineSize</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.set_page_step"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_page_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_page_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.set_page_step"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_page_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_page_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the page step attribute in the wx widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetPageSize</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.set_tick_position"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_tick_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_tick_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticks</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.set_tick_position"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_tick_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_tick_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ticks</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Apply the tick position in the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -332,7 +352,7 @@
         <span class="c"># to be applied again for it to appear properly</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">SetTickFreq</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">tick_interval</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.set_orientation"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.set_orientation"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">set_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the slider orientation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -350,19 +370,19 @@
         <span class="n">widget</span><span class="o">.</span><span class="n">SetWindowStyle</span><span class="p">(</span><span class="n">style</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_tick_position</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">tick_position</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.set_range"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_range">[docs]</a>    <span class="k">def</span> <span class="nf">set_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.set_range"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_range">[docs]</a>    <span class="k">def</span> <span class="nf">set_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the slider widget range.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetRange</span><span class="p">(</span><span class="n">minimum</span><span class="p">,</span> <span class="n">maximum</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.set_tick_frequency"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_tick_frequency">[docs]</a>    <span class="k">def</span> <span class="nf">set_tick_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.set_tick_frequency"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_tick_frequency">[docs]</a>    <span class="k">def</span> <span class="nf">set_tick_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interval</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the slider widget tick mark fequency.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetTickFreq</span><span class="p">(</span><span class="n">interval</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXSlider.set_position"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="WXSlider.set_position"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.slider.Slider.html#enaml.widgets.wx.wx_slider.WXSlider.set_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; set the position value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -370,26 +390,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -413,6 +413,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

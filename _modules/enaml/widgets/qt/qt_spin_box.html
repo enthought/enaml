@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.qt.qt_spin_box &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -136,20 +156,20 @@
         <span class="k">return</span> <span class="n">res</span>
 
 
-<div class="viewcode-block" id="QtSpinBox"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox">[docs]</a><span class="k">class</span> <span class="nc">QtSpinBox</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkSpinBox</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox">[docs]</a><span class="k">class</span> <span class="nc">QtSpinBox</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkSpinBox</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of SpinBox.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtSpinBox.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying custom spin control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">EnamlQSpinBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -163,7 +183,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_value</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_tracking</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">tracking</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers for the spin control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -173,49 +193,49 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtSpinBox.shell_value_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.shell_value_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;value&#39; attribute of the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_value</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.shell_low_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_low_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_low_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.shell_low_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_low_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_low_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;low&#39; attribute of the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_low</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.shell_high_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_high_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_high_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.shell_high_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_high_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_high_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;high&#39; attribute of the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_high</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.shell_step_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.shell_step_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_step_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_step_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;step&#39; attribute of the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_step</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.shell_converter_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_converter_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_converter_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">converter</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.shell_converter_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_converter_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_converter_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">converter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;converter&#39; attribute of the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_converter</span><span class="p">(</span><span class="n">converter</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.shell_wrap_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_wrap_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_wrap_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.shell_wrap_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_wrap_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_wrap_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;wrap&#39; attribute of the shell </span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_spin_wrap</span><span class="p">(</span><span class="n">wrap</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.shell_tracking_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.shell_tracking_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.shell_tracking_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tracking_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tracking&#39; attribute of the shell</span>
 <span class="sd">        object.</span>
 
@@ -225,7 +245,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Event Handlers</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtSpinBox.on_value_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.on_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.on_value_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.on_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">on_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the widget&#39;s spin event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -234,43 +254,43 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget update methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtSpinBox.set_spin_value"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.set_spin_value"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_value">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the value of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.set_spin_low"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_low">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_low</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.set_spin_low"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_low">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_low</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the minimum value of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setMinimum</span><span class="p">(</span><span class="n">low</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.set_spin_high"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_high">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_high</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.set_spin_high"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_high">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_high</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">high</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the maximum value of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setMaximum</span><span class="p">(</span><span class="n">high</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.set_spin_step"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.set_spin_step"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_step">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the step size of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setSingleStep</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.set_spin_converter"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_converter">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">converter</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.set_spin_converter"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_converter">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_converter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">converter</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the coverter for the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setConverter</span><span class="p">(</span><span class="n">converter</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.set_spin_wrap"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.set_spin_wrap"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_wrap">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_wrap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the wrap mode of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setWrapping</span><span class="p">(</span><span class="n">wrap</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtSpinBox.set_spin_tracking"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
+<div class="viewcode-block" id="QtSpinBox.set_spin_tracking"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.qt.qt_spin_box.QtSpinBox.set_spin_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">set_spin_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tracking</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the keyboard tracking of the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -278,26 +298,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -321,6 +321,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

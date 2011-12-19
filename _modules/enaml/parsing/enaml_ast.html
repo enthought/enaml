@@ -11,7 +11,7 @@
     
     <title>enaml.parsing.enaml_ast &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -59,7 +79,7 @@
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="ASTNode"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.ASTNode">[docs]</a><span class="k">class</span> <span class="nc">ASTNode</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ASTNode"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.ASTNode">[docs]</a><span class="k">class</span> <span class="nc">ASTNode</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The base Enaml AST node.</span>
 
 <span class="sd">    Attributes</span>
@@ -80,7 +100,7 @@
         <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
             
 </div>
-<div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="Module"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Module">[docs]</a><span class="k">class</span> <span class="nc">Module</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AST node representing an Enaml module.</span>
 
 <span class="sd">    Attributes</span>
@@ -100,7 +120,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
 
 </div>
-<div class="viewcode-block" id="Python"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Python">[docs]</a><span class="k">class</span> <span class="nc">Python</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="Python"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Python">[docs]</a><span class="k">class</span> <span class="nc">Python</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AST node representing a chunk of pure Python code.</span>
 
 <span class="sd">    Attributes</span>
@@ -120,14 +140,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
 
 </div>
-<div class="viewcode-block" id="Import"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Import">[docs]</a><span class="k">class</span> <span class="nc">Import</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
+<div class="viewcode-block" id="Import"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Import">[docs]</a><span class="k">class</span> <span class="nc">Import</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A _PyNode representing a normal Python import statement.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="Declaration"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Declaration">[docs]</a><span class="k">class</span> <span class="nc">Declaration</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="Declaration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Declaration">[docs]</a><span class="k">class</span> <span class="nc">Declaration</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AST node representing an Enaml declaration.</span>
 
 <span class="sd">    Attributes</span>
@@ -159,7 +179,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
 
 </div>
-<div class="viewcode-block" id="Instantiation"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Instantiation">[docs]</a><span class="k">class</span> <span class="nc">Instantiation</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="Instantiation"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Instantiation">[docs]</a><span class="k">class</span> <span class="nc">Instantiation</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AST node representing a declaration instantiation.</span>
 
 <span class="sd">    Attributes</span>
@@ -183,7 +203,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
 
 </div>
-<div class="viewcode-block" id="AttributeBinding"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.AttributeBinding">[docs]</a><span class="k">class</span> <span class="nc">AttributeBinding</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="AttributeBinding"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.AttributeBinding">[docs]</a><span class="k">class</span> <span class="nc">AttributeBinding</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AST node which represents an expression attribute binding.</span>
 
 <span class="sd">    Attributes</span>
@@ -203,7 +223,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">binding</span> <span class="o">=</span> <span class="n">binding</span>
 
 </div>
-<div class="viewcode-block" id="BoundExpression"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.BoundExpression">[docs]</a><span class="k">class</span> <span class="nc">BoundExpression</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="BoundExpression"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.BoundExpression">[docs]</a><span class="k">class</span> <span class="nc">BoundExpression</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An ast node which represents a bound expression.</span>
 
 <span class="sd">    Attributes</span>
@@ -223,14 +243,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">expr</span> <span class="o">=</span> <span class="n">expr</span>
 
 </div>
-<div class="viewcode-block" id="BoundCodeBlock"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.BoundCodeBlock">[docs]</a><span class="k">class</span> <span class="nc">BoundCodeBlock</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
+<div class="viewcode-block" id="BoundCodeBlock"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.BoundCodeBlock">[docs]</a><span class="k">class</span> <span class="nc">BoundCodeBlock</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An ast Node which represents a bound block of Python code.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="Defn"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Defn">[docs]</a><span class="k">class</span> <span class="nc">Defn</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="Defn"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Defn">[docs]</a><span class="k">class</span> <span class="nc">Defn</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An ast Node which represents a defn block.</span>
 
 <span class="sd">    Attributes</span>
@@ -258,7 +278,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
 
 </div>
-<div class="viewcode-block" id="Parameters"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Parameters">[docs]</a><span class="k">class</span> <span class="nc">Parameters</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="Parameters"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Parameters">[docs]</a><span class="k">class</span> <span class="nc">Parameters</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An ast Node representing the parameters definition of a defn.</span>
 
 <span class="sd">    Attributes</span>
@@ -279,7 +299,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="n">defaults</span>
         
 </div>
-<div class="viewcode-block" id="Call"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Call">[docs]</a><span class="k">class</span> <span class="nc">Call</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="Call"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Call">[docs]</a><span class="k">class</span> <span class="nc">Call</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An ast Node representing a defn call.</span>
 
 <span class="sd">    Attributes</span>
@@ -300,14 +320,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span>
 
 </div>
-<div class="viewcode-block" id="Argument"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.Argument">[docs]</a><span class="k">class</span> <span class="nc">Argument</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
+<div class="viewcode-block" id="Argument"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Argument">[docs]</a><span class="k">class</span> <span class="nc">Argument</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An ast node representing an argument passed to a defn.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>    
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
 </div>
-<div class="viewcode-block" id="KeywordArgument"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_ast.KeywordArgument">[docs]</a><span class="k">class</span> <span class="nc">KeywordArgument</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+<div class="viewcode-block" id="KeywordArgument"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.KeywordArgument">[docs]</a><span class="k">class</span> <span class="nc">KeywordArgument</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An ast node representing a keyword argument passed to a defn.</span>
 
 <span class="sd">    Attributes</span>
@@ -328,26 +348,6 @@
 </pre></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -371,6 +371,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.component &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -218,7 +238,7 @@
         <span class="k">return</span> <span class="p">(</span><span class="n">dx</span><span class="p">,</span> <span class="n">dy</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="Component"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component">[docs]</a><span class="k">class</span> <span class="nc">Component</span><span class="p">(</span><span class="n">BaseComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="Component"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component">[docs]</a><span class="k">class</span> <span class="nc">Component</span><span class="p">(</span><span class="n">BaseComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A BaseComponent subclass that adds a box model and support</span>
 <span class="sd">    for constraints specification. This class represents the most</span>
 <span class="sd">    basic visible widget in Enaml.</span>
@@ -379,27 +399,27 @@
             <span class="n">resist_clip_height</span><span class="o">=</span><span class="n">value</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="Component.size"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.size"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the size tuple as given by the abstract widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="Component.size_hint"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.size_hint"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the size hint tuple as given by the abstract widget</span>
 <span class="sd">        for its current state.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">size_hint</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Component.resize"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.resize"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resize the abstract widget as specified by the given</span>
 <span class="sd">        width and height integers.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="Component.min_size"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.min_size"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard minimum (width, height) of the widget, </span>
 <span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
 <span class="sd">        to be resized smaller than this value</span>
@@ -407,41 +427,41 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">min_size</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Component.set_min_size"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.set_min_size"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard minimum width and height of the widget. A widget</span>
 <span class="sd">        should not be able to be resized smaller than this value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_min_size</span><span class="p">(</span><span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Component.pos"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.pos"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the position tuple as given by the abstract widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">pos</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="Component.move"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.move"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the abstract widget to the given x and y integer</span>
 <span class="sd">        coordinates which are given relative to the parent origin.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="Component.geometry"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.geometry"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the (x, y, width, height) geometry tuple as given</span>
 <span class="sd">        by the abstract widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
     </div>
-<div class="viewcode-block" id="Component.set_geometry"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.set_geometry"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the geometry of the abstract widget with the given</span>
 <span class="sd">        integer values.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Component.set_solved_geometry"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_solved_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_solved_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.set_solved_geometry"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.set_solved_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_solved_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Makes the component take the solved geometry and other constrained</span>
 <span class="sd">        variables and set its internal values.</span>
 
@@ -451,7 +471,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_solved_geometry</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Component.walk_up_containers"><a class="viewcode-back" href="../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.walk_up_containers">[docs]</a>    <span class="k">def</span> <span class="nf">walk_up_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
+<div class="viewcode-block" id="Component.walk_up_containers"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component.walk_up_containers">[docs]</a>    <span class="k">def</span> <span class="nf">walk_up_containers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Walk up the component hierarchy from this component and yield the</span>
 <span class="sd">        parent Containers, excepting the given root Container.</span>
 
@@ -469,26 +489,6 @@
 </pre></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -512,6 +512,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

@@ -1,0 +1,225 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Form &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="GroupBox" href="enaml.widgets.group_box.GroupBox.html" />
+    <link rel="prev" title="Dialog" href="enaml.widgets.dialog.Dialog.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.group_box.GroupBox.html" title="GroupBox"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.dialog.Dialog.html" title="Dialog"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" accesskey="U">Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Form</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Form</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../../_sources/developer_guide/api_ref/widgets/enaml.widgets.form.Form.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="form">
+<h1>Form<a class="headerlink" href="#form" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.form.Form">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.form.</tt><tt class="descname">Form</tt><a class="reference internal" href="../../../_modules/enaml/widgets/form.html#Form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.form.Form" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="enaml.widgets.container.Container"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.Container</span></tt></a></p>
+<p>A Container subclass that arranges child Components as a two
+column form.</p>
+<p>The left column is typically Labels (but this is not a requirement).
+The right are the actual widgets for data entry. The children should
+be in alternating label/widget order. If there are an odd number
+of children, the last child will span both columns.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.form.Form.midline">
+<tt class="descname">midline</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.form.Form.midline" title="Permalink to this definition">¶</a></dt>
+<dd><p>The ConstraintVariable giving the midline along which the labels
+and widgets are aligned.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.form.Form.layout_strength">
+<tt class="descname">layout_strength</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.form.Form.layout_strength" title="Permalink to this definition">¶</a></dt>
+<dd><p>The strength for the form layout constraints.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.form.Form.default_user_constraints">
+<tt class="descname">default_user_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/form.html#Form.default_user_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.form.Form.default_user_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method which returns an empty list.
+All constraints are supplied by &#8216;container_constraints()&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.form.Form.container_constraints">
+<tt class="descname">container_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/form.html#Form.container_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.form.Form.container_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the current form constraints for the current
+children.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-3923551bc4f4cf7d4986277de6ef49f338dde4db.png" alt="Inheritance diagram of enaml.widgets.qt.qt_form.QtForm" usemap="#inheritanceaa4266d757" class="inheritance"/>
+<map id="inheritanceaa4266d757" name="inheritanceaa4266d757">
+<area shape="rect" id="node1" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="682,5,782,35"/>
+<area shape="rect" id="node14" href="#enaml.widgets.qt.qt_form.QtForm" title="QtForm" alt="" coords="843,32,915,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="488,5,600,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_form.QtForm">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_form.</tt><tt class="descname">QtForm</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_form.html#QtForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_form.QtForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="enaml.widgets.qt.qt_container.QtContainer"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_container.QtContainer</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.form.AbstractTkForm</span></tt></p>
+<p>A Qt4 implementation of Container.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../../_images/inheritance-0710eea3eeee24c2e47fbcf5419adfa1b61f1843.png" alt="Inheritance diagram of enaml.widgets.wx.wx_form.WXForm" usemap="#inheritance471432f12f" class="inheritance"/>
+<map id="inheritance471432f12f" name="inheritance471432f12f">
+<area shape="rect" id="node1" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="680,5,784,35"/>
+<area shape="rect" id="node6" href="#enaml.widgets.wx.wx_form.WXForm" title="WXForm" alt="" coords="843,32,917,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,5,602,35"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_form.WXForm">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_form.</tt><tt class="descname">WXForm</tt><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_form.html#WXForm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_form.WXForm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="enaml.widgets.wx.wx_container.WXContainer"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_container.WXContainer</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.form.AbstractTkForm</span></tt></p>
+<p>A wxPython implementation of Container.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.group_box.GroupBox.html" title="GroupBox"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.widgets.dialog.Dialog.html" title="Dialog"
+             >previous</a> |</li>
+        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="../modules.html" >Enaml Reference</a> &raquo;</li>
+          <li><a href="../enaml.widgets.html" >Widgets</a> &raquo;</li>
+  
+    <li><a href="#">Form</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

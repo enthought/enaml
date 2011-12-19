@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.qt.qt_combo_box &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -67,7 +87,7 @@
 <span class="kn">from</span> <span class="nn">...guard</span> <span class="kn">import</span> <span class="n">guard</span>
 
 
-<div class="viewcode-block" id="QtComboBox"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox">[docs]</a><span class="k">class</span> <span class="nc">QtComboBox</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkComboBox</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox">[docs]</a><span class="k">class</span> <span class="nc">QtComboBox</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkComboBox</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of ComboBox.</span>
 
 <span class="sd">    Use a combo box to select a single item from a collection of items.</span>
@@ -76,13 +96,13 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtComboBox.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates a QComboBox.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QComboBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtComboBox.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -91,7 +111,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">set_items</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">labels</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtComboBox.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Connects the event handlers for the combo box.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -101,21 +121,21 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtComboBox.shell_index_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.shell_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.shell_index_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.shell_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;index&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtComboBox.shell_labels_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.shell_labels_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.shell_labels_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.shell_labels_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;labels&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_items</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtComboBox.on_selected"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.on_selected">[docs]</a>    <span class="k">def</span> <span class="nf">on_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.on_selected"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.on_selected">[docs]</a>    <span class="k">def</span> <span class="nf">on_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for a combo box selection event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -128,7 +148,7 @@
             <span class="k">if</span> <span class="n">curr_index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
                 <span class="n">shell</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">value</span>
 </div>
-<div class="viewcode-block" id="QtComboBox.set_items"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.set_items">[docs]</a>    <span class="k">def</span> <span class="nf">set_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_items</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.set_items"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.set_items">[docs]</a>    <span class="k">def</span> <span class="nf">set_items</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">str_items</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the items in the combo box.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -145,7 +165,7 @@
             <span class="n">widget</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">str_items</span><span class="p">)</span>
             <span class="n">widget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtComboBox.set_selection"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="QtComboBox.set_selection"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.qt.qt_combo_box.QtComboBox.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the value in the combo box, or resets the combo box</span>
 <span class="sd">        if the value is not in the list of items.</span>
 
@@ -160,26 +180,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -203,6 +203,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

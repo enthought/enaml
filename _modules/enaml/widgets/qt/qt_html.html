@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.qt.qt_html &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,64 +47,7 @@
   
 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <h1>Source code for enaml.widgets.qt.qt_html</h1><div class="highlight"><pre>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">.qt_control</span> <span class="kn">import</span> <span class="n">QtControl</span>
-
-<span class="kn">from</span> <span class="nn">..html</span> <span class="kn">import</span> <span class="n">AbstractTkHtml</span>
-
-
-<div class="viewcode-block" id="QtHtml"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml">[docs]</a><span class="k">class</span> <span class="nc">QtHtml</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkHtml</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A Qt implementation of Html.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Setup methods</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtHtml.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Creates the underlying widget to display HTML.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextEdit</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="QtHtml.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initializes the attributes of the control.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">QtHtml</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_page_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
-
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Implementation</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtHtml.shell_source_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.shell_source_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_source_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;source&#39; attribute.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_page_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="QtHtml.set_page_source"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.set_page_source">[docs]</a>    <span class="k">def</span> <span class="nf">set_page_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the page source for the underlying control.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setHtml</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
-</pre></div></div></div>
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../../../index.html">
@@ -123,6 +66,63 @@
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.qt.qt_html</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">.qt_control</span> <span class="kn">import</span> <span class="n">QtControl</span>
+
+<span class="kn">from</span> <span class="nn">..html</span> <span class="kn">import</span> <span class="n">AbstractTkHtml</span>
+
+
+<div class="viewcode-block" id="QtHtml"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml">[docs]</a><span class="k">class</span> <span class="nc">QtHtml</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkHtml</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of Html.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtHtml.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying widget to display HTML.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTextEdit</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtHtml.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the attributes of the control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtHtml</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_page_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">source</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtHtml.shell_source_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.shell_source_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_source_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;source&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_page_source</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtHtml.set_page_source"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.html.Html.html#enaml.widgets.qt.qt_html.QtHtml.set_page_source">[docs]</a>    <span class="k">def</span> <span class="nf">set_page_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the page source for the underlying control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setHtml</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -146,6 +146,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

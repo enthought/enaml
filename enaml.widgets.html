@@ -11,7 +11,7 @@
     
     <title>Widgets &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/agogo.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -27,37 +27,29 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="shortcut icon" href="_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="index.html" />
-    <link rel="up" title="Enaml Reference" href="modules.html" />
-    <link rel="next" title="Component" href="widgets/enaml.widgets.component.Component.html" />
-    <link rel="prev" title="Styling Package" href="enaml.styling.html" /> 
+    <link rel="top" title="enaml 0.1alpha documentation" href="index.html" /> 
   </head>
   <body>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             accesskey="I">index</a></li>
-        <li class="right" >
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="index.html">
+            <img class="logo" src="_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
           <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="widgets/enaml.widgets.component.Component.html" title="Component"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="enaml.styling.html" title="Styling Package"
-             accesskey="P">previous</a> |</li>
-        <li><a href="index.html">enaml 0.1alpha documentation</a> &raquo;</li>
-          <li><a href="modules.html" accesskey="U">Enaml Reference</a> &raquo;</li>
-  
-    <li><a href="#">Widgets</a></li>
-  
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
 
-      </ul>
-    </div>  
-
-    <div class="document">
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
       <div class="documentwrapper">
         <div class="bodywrapper">
           <div class="body">
@@ -74,6 +66,37 @@ A widget interface is not tied to any particular implementation.</p>
 widget exposes as its API. Enaml orchestrates communication between
 user-facing views and the underlying graphical toolkits.</p>
 <p><em>Standard interfaces</em></p>
+<p class="graphviz">
+<img src="_images/inheritance-c3df8ad58e911265bfaa6556b0eb17771dd01140.png" alt="Inheritance diagram of enaml.widgets.base_component.BaseComponent, enaml.widgets.bounded_date.BoundedDate, enaml.widgets.bounded_datetime.BoundedDatetime, enaml.widgets.calendar.Calendar, enaml.widgets.check_box.CheckBox, enaml.widgets.combo_box.ComboBox, enaml.widgets.component.Component, enaml.widgets.container.Container, enaml.widgets.control.Control, enaml.widgets.date_edit.DateEdit, enaml.widgets.datetime_edit.DatetimeEdit, enaml.widgets.enable_canvas.EnableCanvas, enaml.widgets.field.Field, enaml.widgets.html.Html, enaml.widgets.image.Image, enaml.widgets.label.Label, enaml.widgets.push_button.PushButton, enaml.widgets.radio_button.RadioButton, enaml.widgets.slider.Slider, enaml.widgets.spin_box.SpinBox, enaml.widgets.table_view.TableView, enaml.widgets.toggle_control.ToggleControl, enaml.widgets.traitsui_item.TraitsUIItem, enaml.widgets.window.Window, enaml.widgets.form.Form, enaml.widgets.group_box.GroupBox, enaml.widgets.dialog.Dialog, enaml.widgets.progress_bar.ProgressBar" usemap="#inheritance86484ccc86" class="inheritance"/>
+<map id="inheritance86484ccc86" name="inheritance86484ccc86">
+<area shape="rect" id="node1" href="widgets/enaml.widgets.html.Html.html#enaml.widgets.html.Html" title="Html" alt="" coords="931,5,1003,35"/>
+<area shape="rect" id="node2" href="widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="Control" alt="" coords="772,405,844,435"/>
+<area shape="rect" id="node8" href="widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.toggle_control.ToggleControl" title="ToggleControl" alt="" coords="910,112,1024,141"/>
+<area shape="rect" id="node10" href="widgets/enaml.widgets.enable_canvas.EnableCanvas.html#enaml.widgets.enable_canvas.EnableCanvas" title="EnableCanvas" alt="" coords="912,165,1022,195"/>
+<area shape="rect" id="node16" href="widgets/enaml.widgets.push_button.PushButton.html#enaml.widgets.push_button.PushButton" title="PushButton" alt="" coords="919,219,1014,248"/>
+<area shape="rect" id="node19" href="widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate" title="BoundedDate" alt="" coords="913,272,1021,301"/>
+<area shape="rect" id="node28" href="widgets/enaml.widgets.image.Image.html#enaml.widgets.image.Image" title="Image" alt="" coords="931,379,1003,408"/>
+<area shape="rect" id="node31" href="widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field" title="Field" alt="" coords="931,432,1003,461"/>
+<area shape="rect" id="node33" href="widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.spin_box.SpinBox" title="SpinBox" alt="" coords="930,485,1003,515"/>
+<area shape="rect" id="node35" href="widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.combo_box.ComboBox" title="ComboBox" alt="" coords="921,539,1013,568"/>
+<area shape="rect" id="node37" href="widgets/enaml.widgets.slider.Slider.html#enaml.widgets.slider.Slider" title="Slider" alt="" coords="931,592,1003,621"/>
+<area shape="rect" id="node39" href="widgets/enaml.widgets.label.Label.html#enaml.widgets.label.Label" title="Label" alt="" coords="931,645,1003,675"/>
+<area shape="rect" id="node48" href="widgets/enaml.widgets.progress_bar.ProgressBar.html#enaml.widgets.progress_bar.ProgressBar" title="ProgressBar" alt="" coords="918,699,1015,728"/>
+<area shape="rect" id="node59" href="widgets/enaml.widgets.traitsui_item.TraitsUIItem.html#enaml.widgets.traitsui_item.TraitsUIItem" title="TraitsUIItem" alt="" coords="917,752,1017,781"/>
+<area shape="rect" id="node4" href="widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.table_view.TableView" title="TableView" alt="" coords="1091,59,1178,88"/>
+<area shape="rect" id="node7" href="widgets/enaml.widgets.check_box.CheckBox.html#enaml.widgets.check_box.CheckBox" title="CheckBox" alt="" coords="1092,112,1177,141"/>
+<area shape="rect" id="node57" href="widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.radio_button.RadioButton" title="RadioButton" alt="" coords="1085,165,1185,195"/>
+<area shape="rect" id="node12" href="widgets/enaml.widgets.form.Form.html#enaml.widgets.form.Form" title="Form" alt="" coords="931,805,1003,835"/>
+<area shape="rect" id="node13" href="widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="Container" alt="" coords="766,832,850,861"/>
+<area shape="rect" id="node21" href="widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window" title="Window" alt="" coords="931,859,1003,888"/>
+<area shape="rect" id="node61" href="widgets/enaml.widgets.group_box.GroupBox.html#enaml.widgets.group_box.GroupBox" title="GroupBox" alt="" coords="924,912,1009,941"/>
+<area shape="rect" id="node18" href="widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.calendar.Calendar" title="Calendar" alt="" coords="1095,219,1174,248"/>
+<area shape="rect" id="node52" href="widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.date_edit.DateEdit" title="DateEdit" alt="" coords="1097,272,1172,301"/>
+<area shape="rect" id="node41" href="widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog" title="Dialog" alt="" coords="1099,859,1171,888"/>
+<area shape="rect" id="node25" href="widgets/enaml.widgets.datetime_edit.DatetimeEdit.html#enaml.widgets.datetime_edit.DatetimeEdit" title="DatetimeEdit" alt="" coords="1083,325,1187,355"/>
+<area shape="rect" id="node46" href="widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="Component" alt="" coords="620,619,716,648"/>
+</map>
+</p>
 </div>
 <div class="section" id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
@@ -81,6 +104,9 @@ user-facing views and the underlying graphical toolkits.</p>
 interfaces. An interface utilizes an implementation-specific
 class, which wraps an actual toolkit widget.</p>
 <p><em>Standard Implementations</em></p>
+<p class="graphviz">
+<img src="_images/inheritance-5abac047504d4e883863812cb7a52a409288ff52.png" alt="Inheritance diagram of enaml.widgets.base_component.AbstractTkBaseComponent, enaml.widgets.bounded_date.AbstractTkBoundedDate, enaml.widgets.bounded_datetime.AbstractTkBoundedDatetime, enaml.widgets.calendar.AbstractTkCalendar, enaml.widgets.check_box.AbstractTkCheckBox, enaml.widgets.combo_box.AbstractTkComboBox, enaml.widgets.component.AbstractTkComponent, enaml.widgets.container.AbstractTkContainer, enaml.widgets.control.AbstractTkControl, enaml.widgets.date_edit.AbstractTkDateEdit, enaml.widgets.datetime_edit.AbstractTkDatetimeEdit, enaml.widgets.enable_canvas.AbstractTkEnableCanvas, enaml.widgets.field.AbstractTkField, enaml.widgets.html.AbstractTkHtml, enaml.widgets.image.AbstractTkImage, enaml.widgets.label.AbstractTkLabel, enaml.widgets.push_button.AbstractTkPushButton, enaml.widgets.radio_button.AbstractTkRadioButton, enaml.widgets.slider.AbstractTkSlider, enaml.widgets.spin_box.AbstractTkSpinBox, enaml.widgets.table_view.AbstractTkTableView, enaml.widgets.toggle_control.AbstractTkToggleControl, enaml.widgets.traitsui_item.AbstractTkTraitsUIItem, enaml.widgets.window.AbstractTkWindow, enaml.widgets.form.AbstractTkForm, enaml.widgets.group_box.AbstractTkGroupBox, enaml.widgets.dialog.AbstractTkDialog, enaml.widgets.progress_bar.AbstractTkProgressBar" class="inheritance"/>
+</p>
 </div>
 <div class="section" id="standard-widgets">
 <h2>Standard Widgets<a class="headerlink" href="#standard-widgets" title="Permalink to this headline">¶</a></h2>
@@ -201,7 +227,7 @@ class, which wraps an actual toolkit widget.</p>
 <td>An Enable canvas widget that will draw any Enable Component</td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.table_view.TableView" title="enaml.widgets.table_view.TableView"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.table_view.TableView</span></tt></a></td>
-<td></td>
+<td>A view for tabular data.</td>
 </tr>
 </tbody>
 </table>
@@ -213,11 +239,8 @@ class, which wraps an actual toolkit widget.</p>
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="index.html">
-              <img class="logo" src="_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
+        </div>
+        <div class="sidebar">
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">Widgets</a><ul>
@@ -242,54 +265,43 @@ class, which wraps an actual toolkit widget.</p>
 </li>
 </ul>
 
-  <h3>This Page</h3>
-  <ul class="this-page-menu">
-    <li><a href="_sources/enaml.widgets.txt"
-           rel="nofollow">Show Source</a></li>
-  </ul>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
         </div>
+        <div class="clearer"></div>
       </div>
-      <div class="clearer"></div>
     </div>
-    <div class="related">
-      <h3>Navigation</h3>
-      <ul>
-        <li class="right" style="margin-right: 10px">
-          <a href="genindex.html" title="General Index"
-             >index</a></li>
-        <li class="right" >
-          <a href="py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
-        <li class="right" >
-          <a href="widgets/enaml.widgets.component.Component.html" title="Component"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="enaml.styling.html" title="Styling Package"
-             >previous</a> |</li>
-        <li><a href="index.html">enaml 0.1alpha documentation</a> &raquo;</li>
-          <li><a href="modules.html" >Enaml Reference</a> &raquo;</li>
-  
-    <li><a href="#">Widgets</a></li>
-  
 
-      </ul>
-    </div>
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="_sources/enaml.widgets.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
   </body>
 </html>

@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.wx.wx_date_edit &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -83,20 +103,20 @@
         <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="WXDateEdit"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit">[docs]</a><span class="k">class</span> <span class="nc">WXDateEdit</span><span class="p">(</span><span class="n">WXBoundedDate</span><span class="p">,</span> <span class="n">AbstractTkDateEdit</span><span class="p">):</span>
+<div class="viewcode-block" id="WXDateEdit"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit">[docs]</a><span class="k">class</span> <span class="nc">WXDateEdit</span><span class="p">(</span><span class="n">WXBoundedDate</span><span class="p">,</span> <span class="n">AbstractTkDateEdit</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A WX implementation of DateEdit.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXDateEdit.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXDateEdit.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying wx.DatePickerCtrl.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">DatePickerCtrl</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXDateEdit.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXDateEdit.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers for the date widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -106,7 +126,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Component attribute notifiers</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXDateEdit.shell_date_format_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit.shell_date_format_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_date_format_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_format</span><span class="p">):</span>
+<div class="viewcode-block" id="WXDateEdit.shell_date_format_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.wx.wx_date_edit.WXDateEdit.shell_date_format_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_date_format_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_format</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;format&#39; attribute.</span>
 
 <span class="sd">        .. note:: Changing the format on wx is not supported.</span>
@@ -155,26 +175,6 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -196,6 +196,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

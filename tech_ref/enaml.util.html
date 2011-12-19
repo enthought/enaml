@@ -1,0 +1,357 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>util Package &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml Reference" href="modules.html" />
+    <link rel="next" title="Enaml Architecture Reference" href="../architecture/index.html" />
+    <link rel="prev" title="item_models Package" href="enaml.item_models.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
+          <a href="enaml.item_models.html" title="item_models Package"
+             accesskey="P">previous</a> |
+          <a href="../architecture/index.html" title="Enaml Architecture Reference"
+             accesskey="N">next</a> |
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="util-package">
+<h1>util Package<a class="headerlink" href="#util-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-enaml.util.enum">
+<span id="enum-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">enum</span></tt> Module<a class="headerlink" href="#module-enaml.util.enum" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.util.enum.EnumMeta">
+<em class="property">class </em><tt class="descclassname">enaml.util.enum.</tt><tt class="descname">EnumMeta</tt><a class="reference internal" href="../_modules/enaml/util/enum.html#EnumMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.enum.EnumMeta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">type</span></tt></p>
+<p>The metaclass for Enum which supplies the class name and 
+attribute name to Constant instances and places them in a dict 
+at __values__. A tuple of names for the constants are placed at 
+__names__ in sorted order. The constants themselves are placed
+in a set at __values_set__.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.util.enum.Enum">
+<em class="property">class </em><tt class="descclassname">enaml.util.enum.</tt><tt class="descname">Enum</tt><a class="reference internal" href="../_modules/enaml/util/enum.html#Enum"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.enum.Enum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="classmethod">
+<dt id="enaml.util.enum.Enum.values">
+<em class="property">classmethod </em><tt class="descname">values</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/util/enum.html#Enum.values"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.enum.Enum.values" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields the values defined on the enum class.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="enaml.util.enum.Enum.names">
+<em class="property">classmethod </em><tt class="descname">names</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/util/enum.html#Enum.names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.enum.Enum.names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields the names defined on the enum class.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="enaml.util.enum.Enum.items">
+<em class="property">classmethod </em><tt class="descname">items</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/util/enum.html#Enum.items"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.enum.Enum.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Yields the items defined on the enum class.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.util.trait_types">
+<span id="trait-types-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">trait_types</span></tt> Module<a class="headerlink" href="#module-enaml.util.trait_types" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.util.trait_types.SubClass">
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">SubClass</tt><big>(</big><em>cls</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#SubClass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.SubClass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
+<dl class="method">
+<dt id="enaml.util.trait_types.SubClass.validate">
+<tt class="descname">validate</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#SubClass.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.SubClass.validate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.util.trait_types.ReadOnlyConstruct">
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">ReadOnlyConstruct</tt><big>(</big><em>factory</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#ReadOnlyConstruct"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.ReadOnlyConstruct" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
+<dl class="method">
+<dt id="enaml.util.trait_types.ReadOnlyConstruct.get">
+<tt class="descname">get</tt><big>(</big><em>obj</em>, <em>name</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#ReadOnlyConstruct.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.ReadOnlyConstruct.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.util.trait_types.NamedLookup">
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">NamedLookup</tt><big>(</big><em>lookup_func_name</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#NamedLookup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.NamedLookup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
+<dl class="method">
+<dt id="enaml.util.trait_types.NamedLookup.get">
+<tt class="descname">get</tt><big>(</big><em>obj</em>, <em>name</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#NamedLookup.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.NamedLookup.get" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.util.trait_types.ORStr">
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">ORStr</tt><big>(</big><em>allowed</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#ORStr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.ORStr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
+<p>Allows a space-separated string of any combination of the
+constituents of the string passed to the constructor.</p>
+<p>i.e. StrFlags(&#8220;foo bar&#8221;) will validate only the following strings:</p>
+<blockquote>
+<div>&#8220;&#8221;, &#8220;foo&#8221;, &#8220;foo bar&#8221;, &#8220;bar&#8221;, &#8220;bar foo&#8221;</div></blockquote>
+<dl class="attribute">
+<dt id="enaml.util.trait_types.ORStr.default_value">
+<tt class="descname">default_value</tt><em class="property"> = ''</em><a class="headerlink" href="#enaml.util.trait_types.ORStr.default_value" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.util.trait_types.ORStr.is_valid">
+<tt class="descname">is_valid</tt><big>(</big><em>val</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#ORStr.is_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.ORStr.is_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.util.trait_types.Bounded">
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">Bounded</tt><big>(</big><em>value=None</em>, <em>low=None</em>, <em>high=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#Bounded"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.Bounded" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
+<p>Generic Bounded Trait class.</p>
+<p>The class defines a generic Trait where the value is validated
+on assigment to fall between low and high (static or dynamic) bounds.</p>
+<dl class="attribute">
+<dt id="enaml.util.trait_types.Bounded.info_text">
+<tt class="descname">info_text</tt><em class="property"> = 'Bounded value'</em><a class="headerlink" href="#enaml.util.trait_types.Bounded.info_text" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.util.trait_types.Bounded.validate_with_trait">
+<tt class="descname">validate_with_trait</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#Bounded.validate_with_trait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.Bounded.validate_with_trait" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the trait value.</p>
+<p>Validation takes place in two steps:
+#. The input value is validated based on the expected Trait type.
+#. The value it is between the static (or dynamic) bounds.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.util.trait_types.Bounded.validate_bounds">
+<tt class="descname">validate_bounds</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#Bounded.validate_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.Bounded.validate_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate that the value is in range.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Any exceptions that may take place are converted to
+TraitErrors.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.util.trait_types.Bounded.get_bounds">
+<tt class="descname">get_bounds</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/trait_types.html#Bounded.get_bounds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.Bounded.get_bounds" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the lower and upper bounds of the Trait.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The method supports dynamic values (class traits).</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.util.guisupport">
+<span id="guisupport-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">guisupport</span></tt> Module<a class="headerlink" href="#module-enaml.util.guisupport" title="Permalink to this headline">¶</a></h2>
+<p>Support for creating GUI apps and starting event loops.</p>
+<p>IPython&#8217;s GUI integration allows interative plotting and GUI usage in IPython
+session. IPython has two different types of GUI integration:</p>
+<ol class="arabic simple">
+<li>The terminal based IPython supports GUI event loops through Python&#8217;s
+PyOS_InputHook. PyOS_InputHook is a hook that Python calls periodically
+whenever raw_input is waiting for a user to type code. We implement GUI
+support in the terminal by setting PyOS_InputHook to a function that
+iterates the event loop for a short while. It is important to note that
+in this situation, the real GUI event loop is NOT run in the normal
+manner, so you can&#8217;t use the normal means to detect that it is running.</li>
+<li>In the two process IPython kernel/frontend, the GUI event loop is run in
+the kernel. In this case, the event loop is run in the normal manner by
+calling the function or method of the GUI toolkit that starts the event
+loop.</li>
+</ol>
+<p>In addition to starting the GUI event loops in one of these two ways, IPython
+will <em>always</em> create an appropriate GUI application object when GUi
+integration is enabled.</p>
+<p>If you want your GUI apps to run in IPython you need to do two things:</p>
+<ol class="arabic simple">
+<li>Test to see if there is already an existing main application object. If
+there is, you should use it. If there is not an existing application object
+you should create one.</li>
+<li>Test to see if the GUI event loop is running. If it is, you should not
+start it. If the event loop is not running you may start it.</li>
+</ol>
+<p>This module contains functions for each toolkit that perform these things
+in a consistent manner. Because of how PyOS_InputHook runs the event loop
+you cannot detect if the event loop is running using the traditional calls
+(such as <tt class="docutils literal"><span class="pre">wx.GetApp.IsMainLoopRunning()</span></tt> in wxPython). If PyOS_InputHook is
+set These methods will return a false negative. That is, they will say the
+event loop is not running, when is actually is. To work around this limitation
+we proposed the following informal protocol:</p>
+<ul class="simple">
+<li>Whenever someone starts the event loop, they <em>must</em> set the <tt class="docutils literal"><span class="pre">_in_event_loop</span></tt>
+attribute of the main application object to <tt class="docutils literal"><span class="pre">True</span></tt>. This should be done
+regardless of how the event loop is actually run.</li>
+<li>Whenever someone stops the event loop, they <em>must</em> set the <tt class="docutils literal"><span class="pre">_in_event_loop</span></tt>
+attribute of the main application object to <tt class="docutils literal"><span class="pre">False</span></tt>.</li>
+<li>If you want to see if the event loop is running, you <em>must</em> use <tt class="docutils literal"><span class="pre">hasattr</span></tt>
+to see if <tt class="docutils literal"><span class="pre">_in_event_loop</span></tt> attribute has been set. If it is set, you
+<em>must</em> use its value. If it has not been set, you can query the toolkit
+in the normal manner.</li>
+<li>If you want GUI support and no one else has created an application or
+started the event loop you <em>must</em> do this. We don&#8217;t want projects to
+attempt to defer these things to someone else if they themselves need it.</li>
+</ul>
+<p>The functions below implement this logic for each GUI toolkit. If you need
+to create custom application subclasses, you will likely have to modify this
+code for your own purposes. This code can be copied into your own project
+so you don&#8217;t have to depend on IPython.</p>
+<dl class="function">
+<dt id="enaml.util.guisupport.get_app_wx">
+<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">get_app_wx</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/guisupport.html#get_app_wx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.get_app_wx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new wx app or return an exiting one.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.util.guisupport.is_event_loop_running_wx">
+<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">is_event_loop_running_wx</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/guisupport.html#is_event_loop_running_wx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.is_event_loop_running_wx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the wx event loop running.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.util.guisupport.start_event_loop_wx">
+<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">start_event_loop_wx</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/guisupport.html#start_event_loop_wx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.start_event_loop_wx" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the wx event loop in a consistent manner.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.util.guisupport.get_app_qt4">
+<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">get_app_qt4</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/guisupport.html#get_app_qt4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.get_app_qt4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new qt4 app or return an existing one.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.util.guisupport.is_event_loop_running_qt4">
+<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">is_event_loop_running_qt4</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/guisupport.html#is_event_loop_running_qt4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.is_event_loop_running_qt4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the qt4 event loop running.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.util.guisupport.start_event_loop_qt4">
+<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">start_event_loop_qt4</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../_modules/enaml/util/guisupport.html#start_event_loop_qt4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.start_event_loop_qt4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the qt4 event loop in a consistent manner.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">util Package</a><ul>
+<li><a class="reference internal" href="#module-enaml.util.enum"><tt class="docutils literal"><span class="pre">enum</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.util.trait_types"><tt class="docutils literal"><span class="pre">trait_types</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.util.guisupport"><tt class="docutils literal"><span class="pre">guisupport</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="enaml.item_models.html" title="item_models Package"
+             >previous</a> |
+          <a href="../architecture/index.html" title="Enaml Architecture Reference"
+             >next</a> |
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="../_sources/tech_ref/enaml.util.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

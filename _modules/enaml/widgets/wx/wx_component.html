@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.wx.wx_component &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -66,7 +86,7 @@
 <span class="kn">from</span> <span class="nn">..component</span> <span class="kn">import</span> <span class="n">AbstractTkComponent</span>
 
 
-<div class="viewcode-block" id="WXComponent"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent">[docs]</a><span class="k">class</span> <span class="nc">WXComponent</span><span class="p">(</span><span class="n">WXBaseComponent</span><span class="p">,</span> <span class="n">AbstractTkComponent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent">[docs]</a><span class="k">class</span> <span class="nc">WXComponent</span><span class="p">(</span><span class="n">WXBaseComponent</span><span class="p">,</span> <span class="n">AbstractTkComponent</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of Component.</span>
 
 <span class="sd">    A WXComponent is not meant to be used directly. It provides some</span>
@@ -82,13 +102,13 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXComponent.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying wx widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes the attributes of the wx widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -107,21 +127,21 @@
     <span class="c"># Abstract Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
     <span class="nd">@property</span>
-<div class="viewcode-block" id="WXComponent.toolkit_widget"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.toolkit_widget">[docs]</a>    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.toolkit_widget"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.toolkit_widget">[docs]</a>    <span class="k">def</span> <span class="nf">toolkit_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A property that returns the toolkit specific widget for this</span>
 <span class="sd">        component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
 </div>
-<div class="viewcode-block" id="WXComponent.size"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.size"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the size of the internal toolkit widget, ignoring any</span>
 <span class="sd">        windowing decorations, as a (width, height) tuple of integers.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.size_hint"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.size_hint"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns a (width, height) tuple of integers which represent</span>
 <span class="sd">        the suggested size of the widget for its current state, ignoring</span>
 <span class="sd">        any windowing decorations. This value is used by the layout </span>
@@ -130,14 +150,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.resize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.resize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resizes the internal toolkit widget according the given</span>
 <span class="sd">        width and height integers, ignoring any windowing decorations.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.min_size"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.min_size"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the hard minimum (width, height) of the widget, </span>
 <span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
 <span class="sd">        to be resized smaller than this value</span>
@@ -145,7 +165,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.set_min_size"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.set_min_size"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set the hard minimum width and height of the widget, ignoring</span>
 <span class="sd">        any windowing decorations. A widget will not be able to be resized </span>
 <span class="sd">        smaller than this value.</span>
@@ -153,7 +173,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.pos"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.pos"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the position of the internal toolkit widget as an</span>
 <span class="sd">        (x, y) tuple of integers, including any windowing decorations. </span>
 <span class="sd">        The coordinates should be relative to the origin of the widget&#39;s </span>
@@ -162,7 +182,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.move"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.move"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the internal toolkit widget according to the given</span>
 <span class="sd">        x and y integers which are relative to the origin of the</span>
 <span class="sd">        widget&#39;s parent and includes any windowing decorations.</span>
@@ -170,7 +190,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.frame_geometry"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.frame_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.frame_geometry"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.frame_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
 <span class="sd">        for the internal toolkit widget, including any windowing</span>
 <span class="sd">        decorations.</span>
@@ -178,7 +198,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.geometry"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.geometry"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
 <span class="sd">        for the internal toolkit widget, ignoring any windowing</span>
 <span class="sd">        decorations.</span>
@@ -186,7 +206,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.set_geometry"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.set_geometry"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the geometry of the internal widget to the given</span>
 <span class="sd">        x, y, width, and height values, ignoring any windowing </span>
 <span class="sd">        decorations.</span>
@@ -197,21 +217,21 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Shell Object Change Handlers </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXComponent.shell_enabled_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.shell_enabled_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;enabled&#39; attribute on the shell </span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.shell_visible_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.shell_visible_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;visible&#39; attribute on the shell</span>
 <span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.shell_bg_color_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_bg_color_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_bg_color_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.shell_bg_color_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_bg_color_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_bg_color_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;bg_color&#39; attribute on the shell</span>
 <span class="sd">        object. Sets the background color of the internal widget to the </span>
 <span class="sd">        given color.</span>
@@ -219,14 +239,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="WXComponent.shell_fg_color_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_fg_color_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_fg_color_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.shell_fg_color_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_fg_color_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_fg_color_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;fg_color&#39; attribute on the parent.</span>
 <span class="sd">        Sets the foreground color of the internal widget to the given color.</span>
 <span class="sd">        For some widgets this may do nothing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="WXComponent.shell_font_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_font_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.shell_font_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.shell_font_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The change handler for the &#39;font&#39; attribute on the shell </span>
 <span class="sd">        object. Sets the font of the internal widget to the given font.</span>
 
@@ -236,13 +256,13 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXComponent.set_enabled"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_enabled">[docs]</a>    <span class="k">def</span> <span class="nf">set_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.set_enabled"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_enabled">[docs]</a>    <span class="k">def</span> <span class="nf">set_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Enable or disable the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXComponent.set_visible"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.set_visible"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Show or hide the widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -252,7 +272,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Convenience Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXComponent.child_widgets"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.child_widgets">[docs]</a>    <span class="k">def</span> <span class="nf">child_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXComponent.child_widgets"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent.child_widgets">[docs]</a>    <span class="k">def</span> <span class="nf">child_widgets</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Iterates over the parent&#39;s children and yields the</span>
 <span class="sd">        toolkit widgets for those children.</span>
 
@@ -365,26 +385,6 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -406,6 +406,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

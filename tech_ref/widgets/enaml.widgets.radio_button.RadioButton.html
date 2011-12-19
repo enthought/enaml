@@ -1,0 +1,213 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>RadioButton &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="up" title="Widgets" href="../enaml.widgets.html" />
+    <link rel="next" title="Field" href="enaml.widgets.field.Field.html" />
+    <link rel="prev" title="PushButton" href="enaml.widgets.push_button.PushButton.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../../index.html">
+            <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../../index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
+          <a href="enaml.widgets.push_button.PushButton.html" title="PushButton"
+             accesskey="P">previous</a> |
+          <a href="enaml.widgets.field.Field.html" title="Field"
+             accesskey="N">next</a> |
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="radiobutton">
+<h1>RadioButton<a class="headerlink" href="#radiobutton" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.radio_button.RadioButton">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.radio_button.</tt><tt class="descname">RadioButton</tt><a class="reference internal" href="../../_modules/enaml/widgets/radio_button.html#RadioButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.radio_button.RadioButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.toggle_control.ToggleControl</span></tt></p>
+<p>A radio button widget derived from IToggleElement</p>
+<p>Use a radio button to toggle the value of a boolean field. For a 
+group of radio buttons with the same widget parent, only one radio 
+button may be selected at a time. This makes groups of radio buttons 
+useful for selecting amongst a discrete set of values. For multiple 
+groups of independent radio buttons, place them in their own Container.</p>
+<p class="rubric">See Also</p>
+<p>ToggleControl</p>
+<dl class="attribute">
+<dt id="enaml.widgets.radio_button.RadioButton.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.radio_button.RadioButton.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-c5ce67ad2595efd3dabce0a1f0f2f26e5ee3f619.png" alt="Inheritance diagram of enaml.widgets.qt.qt_radio_button.QtRadioButton" class="inheritance"/>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_radio_button.QtRadioButton">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_radio_button.</tt><tt class="descname">QtRadioButton</tt><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_radio_button.html#QtRadioButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_radio_button.QtRadioButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_toggle_control.QtToggleControl</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.radio_button.AbstractTkRadioButton</span></tt></p>
+<p>A Qt implementation of RadioButton.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_radio_button.QtRadioButton.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_radio_button.html#QtRadioButton.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_radio_button.QtRadioButton.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying Qt widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_radio_button.QtRadioButton.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/qt/qt_radio_button.html#QtRadioButton.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_radio_button.QtRadioButton.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers for the radio button.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../../_images/inheritance-a55378b754aec2c7adcac5f196a6d523571b6836.png" alt="Inheritance diagram of enaml.widgets.wx.wx_radio_button.WXRadioButton" class="inheritance"/>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_radio_button.WXRadioButton">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_radio_button.</tt><tt class="descname">WXRadioButton</tt><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_radio_button.html#WXRadioButton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_radio_button.WXRadioButton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_toggle_control.WXToggleControl</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.radio_button.AbstractTkRadioButton</span></tt></p>
+<p>A wxPython implementation of RadioButton.</p>
+<p>WXRadioButton uses a custom wx.RadioButton control. Radio buttons
+with the same parent will be mutually exclusive. For independent
+groups, place them in their own parent compoenent.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_radio_button.WXRadioButton.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_radio_button.html#WXRadioButton.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_radio_button.WXRadioButton.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying custom wx.RadioButton control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_radio_button.WXRadioButton.bind">
+<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_radio_button.html#WXRadioButton.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_radio_button.WXRadioButton.bind" title="Permalink to this definition">¶</a></dt>
+<dd><p>Binds the event handlers of the control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_radio_button.WXRadioButton.on_simple_toggle">
+<tt class="descname">on_simple_toggle</tt><big>(</big><em>event</em><big>)</big><a class="reference internal" href="../../_modules/enaml/widgets/wx/wx_radio_button.html#WXRadioButton.on_simple_toggle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_radio_button.WXRadioButton.on_simple_toggle" title="Permalink to this definition">¶</a></dt>
+<dd><p>An event handler for toggle events that have nothing to do
+with mouse interaction by the user and therefore the events
+emited by _on_toggled would be inappropriate.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">RadioButton</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="enaml.widgets.push_button.PushButton.html" title="PushButton"
+             >previous</a> |
+          <a href="enaml.widgets.field.Field.html" title="Field"
+             >next</a> |
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../../genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="../../_sources/tech_ref/widgets/enaml.widgets.radio_button.RadioButton.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

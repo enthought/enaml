@@ -1,0 +1,384 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Component Testing &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="up" title="Enaml Testing" href="../enaml.tests.html" />
+    <link rel="next" title="TestCalendar" href="widgets/enaml.tests.widgets.calendar.TestCalendar.html" />
+    <link rel="prev" title="Enaml Testing" href="../enaml.tests.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="widgets/enaml.tests.widgets.calendar.TestCalendar.html" title="TestCalendar"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../enaml.tests.html" title="Enaml Testing"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../enaml.tests.html" accesskey="U">Enaml Testing</a> &raquo;</li>
+  
+    <li><a href="#">Component Testing</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Component Testing</a><ul>
+<li><a class="reference internal" href="#enamltestcase">EnamlTestCase</a></li>
+<li><a class="reference internal" href="#testassistant-classes">TestAssistant classes</a><ul>
+<li><a class="reference internal" href="#wx">WX</a></li>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#widget-testing-classes">Widget testing classes</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/developer_guide/tests/components.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="module-enaml.tests.widgets">
+<span id="component-testing"></span><h1>Component Testing<a class="headerlink" href="#module-enaml.tests.widgets" title="Permalink to this headline">¶</a></h1>
+<p>Toolkit independed abstract testing classes</p>
+<p>The tests.widgets package contains a set of abstract classes that simplify
+the testing of the Enaml object components for the implemented toolkits.</p>
+<p>All Enaml testcases are children of the
+<a class="reference internal" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase" title="enaml.tests.widgets.enaml_test_case.EnamlTestCase"><tt class="xref py py-class docutils literal"><span class="pre">EnamlTestCase</span></tt></a> class. The
+class implements the main functionality to parse and prepare the Enaml
+based View object for testing without initiating the event Loop.</p>
+<p>For each Enaml object in the standard set of graphical widgets there exist
+a corresponding abstract test class that tests the specific Enaml object
+for conformance against the expected interface and behaviour. Each of them
+require a set of methods (as described in the class docstring) to be
+defined before the class can be created.</p>
+<div class="section" id="enamltestcase">
+<h2>EnamlTestCase<a class="headerlink" href="#enamltestcase" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase">
+<em class="property">class </em><tt class="descclassname">enaml.tests.widgets.enaml_test_case.</tt><tt class="descname">EnamlTestCase</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#EnamlTestCase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></tt></p>
+<p>Base class for testing Enaml object widgets.</p>
+<p>This class provide utility methods and assertion functions to help
+the testing of enaml components</p>
+<dl class="attribute">
+<dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.toolkit">
+<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x1fd86f0&gt;, '__invoke_later__': &lt;function invoke_later at 0x47a4530&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x5f80270&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x5f80300&gt;, 'align_v_center': &lt;function align_v_center at 0x5f7acb0&gt;, 'Include': &lt;enaml.toolkit.Constructor object at 0x5f78c60&gt;, 'align_right': &lt;function align_right at 0x5f7abf0&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x1fd8770&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x5f80540&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x5f804b0&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x5f80390&gt;, '__operator_ColonEqual__': &lt;function operator at 0x1fd8730&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x1fa2c70&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x5f80d20&gt;, 'align': &lt;function align at 0x5f7ad30&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1b9c088&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x5f80b70&gt;, 'align_top': &lt;function align_top at 0x5f7ac30&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x5f78db0&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x5f78e40&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x5f78ed0&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x5f78f60&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x5f800c0&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x5f80150&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x5f801e0&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x5f80420&gt;, 'hbox': &lt;function hbox at 0x5f7ab30&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x5f80660&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x5f806f0&gt;, 'align_h_center': &lt;function align_h_center at 0x5f7acf0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x5f80780&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x5f808a0&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x47edf00&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x5f80a50&gt;, '__create_app__': &lt;function get_app_qt4 at 0x1fa2bf0&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x5f78c90&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x5f78d20&gt;, 'vertical': &lt;function vertical at 0x5f7aaf0&gt;, 'align_left': &lt;function align_left at 0x5f7abb0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x5f80030&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x5f80930&gt;, 'horizontal': &lt;function horizontal at 0x5f7aab0&gt;, 'align_bottom': &lt;function align_bottom at 0x5f7ac70&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x5f805d0&gt;, '__operator_Equal__': &lt;function operator at 0x1fd86b0&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x5f80810&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x5f809c0&gt;, 'vbox': &lt;function vbox at 0x5f7ab70&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x47a4630&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x5f80ae0&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x5f80c00&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x5f80c90&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.toolkit" title="Permalink to this definition">¶</a></dt>
+<dd><p>default toolkit to use for the enaml source parsing</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.component_by_name">
+<tt class="descname">component_by_name</tt><big>(</big><em>component</em>, <em>name</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#EnamlTestCase.component_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.component_by_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find an item in the view with a given name. The component
+should have the name set its &#8216;name&#8217; attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>component</strong> &#8211; The enaml based BaseComponent object</li>
+<li><strong>name</strong> &#8211; <p>The name of the enaml component to find in the tree.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+<p>The corresponding component or None.</p>
+</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.parse_and_create">
+<tt class="descname">parse_and_create</tt><big>(</big><em>source</em>, <em>*args</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#EnamlTestCase.parse_and_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.parse_and_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses and compiles the source. The source should have defn 
+defined with the name &#8216;MainView&#8217; that returns a single component.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>enaml_source</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The enaml source file</li>
+<li><strong>*args</strong> &#8211; The arguments to pass to the defn.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.assertEnamlInSync">
+<tt class="descname">assertEnamlInSync</tt><big>(</big><em>component</em>, <em>attribute_name</em>, <em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#EnamlTestCase.assertEnamlInSync"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.assertEnamlInSync" title="Permalink to this definition">¶</a></dt>
+<dd><p>Verify that the requested attribute is properly set</p>
+<p>The method compares the attribute value in the Enaml object and
+check if it is synchronized with the toolkit widget. The component
+attribute is retrieved directly while the widget value is retrieved
+through a call to a method function in the test case.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>component</strong> (<a class="reference internal" href="../api_ref/widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="enaml.widgets.component.Component"><em>enaml.widgets.component.Component</em></a>) &#8211; The Enaml component to check.</li>
+<li><strong>attribute_name</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The string name of the Enaml attribute to check.</li>
+<li><strong>value</strong> &#8211; The expected value.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">It is expected that the user has defined an appropriate
+method get_&lt;attribute_name&gt;(widget) or the extentded version
+get_&lt;attribute_name&gt;(component, widget) in the current test
+case. The extended signature is commonly used because additional
+information on the component&#8217;s attributes is required to return
+a sensible result (e.g. the component uses Converters to set
+and retrieve the value of the attribute). The assert method
+The get methods can raise assertion errors when it is not
+possible to retrieve a sensible value for the attribute.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<p>The enaml_test_case module provides also two decorators to assist in the
+creation of Enaml compoenent test suites</p>
+<dl class="function">
+<dt id="enaml.tests.widgets.enaml_test_case.required_method">
+<tt class="descclassname">enaml.tests.widgets.enaml_test_case.</tt><tt class="descname">required_method</tt><big>(</big><em>function_object</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#required_method"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.required_method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator for required methods.</p>
+<p>The decorator wraps an <em>empty</em> method to raise an NotImplementedError
+with an appropriate error message.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="testassistant-classes">
+<h2>TestAssistant classes<a class="headerlink" href="#testassistant-classes" title="Permalink to this headline">¶</a></h2>
+<p>For each toolkit backend there exist a TestAssistant class which is
+responisble for setting the attrributes to the correct toolkit. In some
+cases these classes contain utility methods that are specific to the current
+toolkit. The toolkit specific tests for each component have to inherit first
+from the toolikit test assistant class and then the generic widget component
+test suite.</p>
+<div class="section" id="wx">
+<h3>WX<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant">
+<em class="property">class </em><tt class="descclassname">enaml.tests.widgets.wx.wx_test_assistant.</tt><tt class="descname">WXTestAssistant</tt><a class="reference internal" href="../../_modules/enaml/tests/widgets/wx/wx_test_assistant.html#WXTestAssistant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Assistant class for testing wx based components.</p>
+<p>This class is to be used as a mixing aling with the base enaml test case
+class for the components tests of the wx backend. It sets the correct
+toolkit attribute and provides some useful methods to mock events in
+wx.</p>
+<dl class="attribute">
+<dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.toolkit">
+<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x1fd86f0&gt;, '__invoke_later__': &lt;function invoke_later at 0x140391b0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x147b67e0&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x147b6870&gt;, 'align_v_center': &lt;function align_v_center at 0x5f7acb0&gt;, 'Include': &lt;enaml.toolkit.Constructor object at 0x147b6210&gt;, 'align_right': &lt;function align_right at 0x5f7abf0&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x1fd8770&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x147b6a20&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x147b6900&gt;, '__operator_ColonEqual__': &lt;function operator at 0x1fd8730&gt;, '__start_app__': &lt;function start_event_loop_wx at 0x1fa2bb0&gt;, 'align': &lt;function align at 0x5f7ad30&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1b9c088&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x147a0090&gt;, 'align_top': &lt;function align_top at 0x5f7ac30&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x147b6360&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x147b63f0&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x147b6480&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x147b6510&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x147b6630&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x147b66c0&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x147b6750&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x147b6990&gt;, 'hbox': &lt;function hbox at 0x5f7ab30&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x147b6b40&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x147b6bd0&gt;, 'align_h_center': &lt;function align_h_center at 0x5f7acf0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x147b6c60&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x147b6d80&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x14a943f0&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x147b6f30&gt;, '__create_app__': &lt;function get_app_wx at 0x1fa2b30&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x147b6240&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x147b62d0&gt;, 'vertical': &lt;function vertical at 0x5f7aaf0&gt;, 'align_left': &lt;function align_left at 0x5f7abb0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x147b65a0&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x147b6e10&gt;, 'horizontal': &lt;function horizontal at 0x5f7aab0&gt;, 'align_bottom': &lt;function align_bottom at 0x5f7ac70&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x147b6ab0&gt;, '__operator_Equal__': &lt;function operator at 0x1fd86b0&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x147b6cf0&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x147b6ea0&gt;, 'vbox': &lt;function vbox at 0x5f7ab70&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x142200b0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x147b6fc0&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x147a0120&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x147a01b0&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.process_wx_events">
+<tt class="descname">process_wx_events</tt><big>(</big><em>app</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/wx/wx_test_assistant.html#WXTestAssistant.process_wx_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.process_wx_events" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process posted wxPython events.</p>
+<p>Tests that require resize, move and show/hide or generic event
+response take place need to call this method.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.send_wx_event">
+<tt class="descname">send_wx_event</tt><big>(</big><em>widget</em>, <em>event_type</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/wx/wx_test_assistant.html#WXTestAssistant.send_wx_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.send_wx_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a wxPython widget an event (e.g., EVT_BUTTON).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.send_wx_mouse_event">
+<tt class="descname">send_wx_mouse_event</tt><big>(</big><em>widget</em>, <em>event_type</em>, <em>position=None</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/wx/wx_test_assistant.html#WXTestAssistant.send_wx_mouse_event"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.send_wx_mouse_event" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send a wxPython widget an mouse event (e.g., EVT_BUTTON).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant">
+<em class="property">class </em><tt class="descclassname">enaml.tests.widgets.qt.qt_test_assistant.</tt><tt class="descname">QtTestAssistant</tt><a class="reference internal" href="../../_modules/enaml/tests/widgets/qt/qt_test_assistant.html#QtTestAssistant"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Assistant class for testing wx based components.</p>
+<p>This class is to be used as a mixing with the base enaml test case
+class for the components tests of the qt backend. It sets the correct
+toolkit attribute and (in the future) provide some useful methods for
+testin Qt based components.</p>
+<dl class="attribute">
+<dt id="enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.toolkit">
+<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function operator at 0x1fd86f0&gt;, '__invoke_later__': &lt;function invoke_later at 0x47a4530&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x147b9d80&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x147b9e10&gt;, 'align_v_center': &lt;function align_v_center at 0x5f7acb0&gt;, 'Include': &lt;enaml.toolkit.Constructor object at 0x147b97b0&gt;, 'align_right': &lt;function align_right at 0x5f7abf0&gt;, '__operator_GreaterGreater__': &lt;function operator at 0x1fd8770&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x147c4090&gt;, 'Stacked': &lt;enaml.toolkit.Constructor object at 0x147b9fc0&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x147b9ea0&gt;, '__operator_ColonEqual__': &lt;function operator at 0x1fd8730&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x1fa2c70&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x147c4870&gt;, 'align': &lt;function align at 0x5f7ad30&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1b9c088&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x147c46c0&gt;, 'align_top': &lt;function align_top at 0x5f7ac30&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x147b9900&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x147b9990&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x147b9a20&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x147b9ab0&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x147b9bd0&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x147b9c60&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x147b9cf0&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x147b9f30&gt;, 'hbox': &lt;function hbox at 0x5f7ab30&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x147c41b0&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x147c4240&gt;, 'align_h_center': &lt;function align_h_center at 0x5f7acf0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x147c42d0&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x147c43f0&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x47edf00&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x147c45a0&gt;, '__create_app__': &lt;function get_app_qt4 at 0x1fa2bf0&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x147b97e0&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x147b9870&gt;, 'vertical': &lt;function vertical at 0x5f7aaf0&gt;, 'align_left': &lt;function align_left at 0x5f7abb0&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x147b9b40&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x147c4480&gt;, 'horizontal': &lt;function horizontal at 0x5f7aab0&gt;, 'align_bottom': &lt;function align_bottom at 0x5f7ac70&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x147c4120&gt;, '__operator_Equal__': &lt;function operator at 0x1fd86b0&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x147c4360&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x147c4510&gt;, 'vbox': &lt;function vbox at 0x5f7ab70&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x47a4630&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x147c4630&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x147c4750&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x147c47e0&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="widget-testing-classes">
+<h2>Widget testing classes<a class="headerlink" href="#widget-testing-classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar" title="enaml.tests.widgets.calendar.TestCalendar"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.calendar.TestCalendar</span></tt></a>([...])</td>
+<td>Logic for testing calendars.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="widgets/enaml.tests.widgets.check_box.TestCheckBox.html#enaml.tests.widgets.check_box.TestCheckBox" title="enaml.tests.widgets.check_box.TestCheckBox"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.check_box.TestCheckBox</span></tt></a>([...])</td>
+<td>Logic for testing push buttons.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.tests.widgets.combo_box.TestComboBox.html#enaml.tests.widgets.combo_box.TestComboBox" title="enaml.tests.widgets.combo_box.TestComboBox"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.combo_box.TestComboBox</span></tt></a>([...])</td>
+<td>Logic for testing combo boxes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="widgets/enaml.tests.widgets.push_button.TestPushButton.html#enaml.tests.widgets.push_button.TestPushButton" title="enaml.tests.widgets.push_button.TestPushButton"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.push_button.TestPushButton</span></tt></a>([...])</td>
+<td>Logic for testing push buttons.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.tests.widgets.radio_button.TestRadioButton.html#enaml.tests.widgets.radio_button.TestRadioButton" title="enaml.tests.widgets.radio_button.TestRadioButton"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.radio_button.TestRadioButton</span></tt></a>([...])</td>
+<td>Logic for testing radio buttons.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="widgets/enaml.tests.widgets.field.TestField.html#enaml.tests.widgets.field.TestField" title="enaml.tests.widgets.field.TestField"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.field.TestField</span></tt></a>([methodName])</td>
+<td>Logic for testing fields.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.tests.widgets.label.TestLabel.html#enaml.tests.widgets.label.TestLabel" title="enaml.tests.widgets.label.TestLabel"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.label.TestLabel</span></tt></a>([methodName])</td>
+<td>Logic for testing labels.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider" title="enaml.tests.widgets.slider.TestSlider"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.slider.TestSlider</span></tt></a>([...])</td>
+<td>Logic for testing sliders.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.tests.widgets.spin_box.TestSpinBox.html#enaml.tests.widgets.spin_box.TestSpinBox" title="enaml.tests.widgets.spin_box.TestSpinBox"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.spin_box.TestSpinBox</span></tt></a>([...])</td>
+<td>Logic for testing spin boxes.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="widgets/enaml.tests.widgets.html.TestHtml.html#enaml.tests.widgets.html.TestHtml" title="enaml.tests.widgets.html.TestHtml"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.html.TestHtml</span></tt></a>([methodName])</td>
+<td>Logic for testing Html widgets.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.tests.widgets.datetime_edit.TestDatetimeEdit.html#enaml.tests.widgets.datetime_edit.TestDatetimeEdit" title="enaml.tests.widgets.datetime_edit.TestDatetimeEdit"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.datetime_edit.TestDatetimeEdit</span></tt></a>([...])</td>
+<td>Logic for testing the date time edit components.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="widgets/enaml.tests.widgets.date_edit.TestDateEdit.html#enaml.tests.widgets.date_edit.TestDateEdit" title="enaml.tests.widgets.date_edit.TestDateEdit"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.tests.widgets.date_edit.TestDateEdit</span></tt></a>([...])</td>
+<td>Logic for testing the date edit components.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="widgets/enaml.tests.widgets.calendar.TestCalendar.html" title="TestCalendar"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../enaml.tests.html" title="Enaml Testing"
+             >previous</a> |</li>
+        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Developer&#8217;s Guide</a> &raquo;</li>
+          <li><a href="../enaml.tests.html" >Enaml Testing</a> &raquo;</li>
+  
+    <li><a href="#">Component Testing</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

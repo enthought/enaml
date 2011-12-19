@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.wx.wx_container &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -66,7 +86,7 @@
 <span class="kn">from</span> <span class="nn">..container</span> <span class="kn">import</span> <span class="n">AbstractTkContainer</span>
 
 
-<div class="viewcode-block" id="WXContainer"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer">[docs]</a><span class="k">class</span> <span class="nc">WXContainer</span><span class="p">(</span><span class="n">WXComponent</span><span class="p">,</span> <span class="n">AbstractTkContainer</span><span class="p">):</span>
+<div class="viewcode-block" id="WXContainer"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer">[docs]</a><span class="k">class</span> <span class="nc">WXContainer</span><span class="p">(</span><span class="n">WXComponent</span><span class="p">,</span> <span class="n">AbstractTkContainer</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of Container.</span>
 
 <span class="sd">    WXContainer is usually to be used as a base class for other container</span>
@@ -80,14 +100,14 @@
 <span class="sd">      determine a hint size.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="WXContainer.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXContainer.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Bind the widget to the wx.EVT_SIZE.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">WXContainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_SIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_resize</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXContainer.size_hint"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXContainer.size_hint"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return default value (-1, -1) as a size hint for the generic</span>
 <span class="sd">        containers in wx backend.</span>
 
@@ -95,7 +115,7 @@
         <span class="c"># XXX is this what we really want?</span>
         <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="WXContainer.on_resize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer.on_resize">[docs]</a>    <span class="k">def</span> <span class="nf">on_resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="WXContainer.on_resize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer.on_resize">[docs]</a>    <span class="k">def</span> <span class="nf">on_resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Triggers a relayout of the shell object since the component</span>
 <span class="sd">        has been resized.</span>
 
@@ -119,26 +139,6 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -160,6 +160,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

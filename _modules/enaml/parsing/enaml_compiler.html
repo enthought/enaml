@@ -11,7 +11,7 @@
     
     <title>enaml.parsing.enaml_compiler &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -139,7 +159,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Declaration Compiler</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="DeclarationCompiler"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler">[docs]</a><span class="k">class</span> <span class="nc">DeclarationCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
+<div class="viewcode-block" id="DeclarationCompiler"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler">[docs]</a><span class="k">class</span> <span class="nc">DeclarationCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A visitor which compiles a Declaration node into a code object.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -149,7 +169,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name_stack</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DeclarationCompiler.compile"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DeclarationCompiler.compile"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="c">#----------------------------------------------------------------------</span>
         <span class="c"># Given this sample declaration:</span>
         <span class="c">#   </span>
@@ -185,7 +205,7 @@
                              <span class="bp">True</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">code</span><span class="o">.</span><span class="n">to_code</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="DeclarationCompiler.visit_Declaration"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_Declaration">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DeclarationCompiler.visit_Declaration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_Declaration">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the bytecode ops for a declaration node. This visitor</span>
 <span class="sd">        handles creating the component instance and storing it&#39;s identifer</span>
 <span class="sd">        if one is given.</span>
@@ -235,7 +255,7 @@
 
         <span class="n">name_stack</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="DeclarationCompiler.visit_AttributeBinding"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_AttributeBinding">[docs]</a>    <span class="k">def</span> <span class="nf">visit_AttributeBinding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DeclarationCompiler.visit_AttributeBinding"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_AttributeBinding">[docs]</a>    <span class="k">def</span> <span class="nf">visit_AttributeBinding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the bytecode ops for an attribute binding. This</span>
 <span class="sd">        visitor handles loading and calling the appropriate operator.</span>
 
@@ -273,7 +293,7 @@
             <span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
         <span class="p">])</span>
 </div>
-<div class="viewcode-block" id="DeclarationCompiler.visit_Instantiation"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_Instantiation">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Instantiation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DeclarationCompiler.visit_Instantiation"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_Instantiation">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Instantiation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create the bytecode ops for a component instantiation. This </span>
 <span class="sd">        visitor handles calling another derived component and storing</span>
 <span class="sd">        its identifier, if given.</span>
@@ -325,7 +345,7 @@
             <span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
         <span class="p">])</span>
 </div>
-<div class="viewcode-block" id="DeclarationCompiler.visit_Call"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_Call">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DeclarationCompiler.visit_Call"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DeclarationCompiler.visit_Call">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create the bytecode ops for performing a call in the body</span>
 <span class="sd">        of a declaration or defn. The calls are expected to return </span>
 <span class="sd">        iterables of children.</span>
@@ -399,7 +419,7 @@
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="DefnCompiler"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler">[docs]</a><span class="k">class</span> <span class="nc">DefnCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
+<div class="viewcode-block" id="DefnCompiler"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler">[docs]</a><span class="k">class</span> <span class="nc">DefnCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">ops</span> <span class="o">=</span> <span class="p">[]</span>
@@ -407,7 +427,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">name_stack</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="DefnCompiler.compile"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DefnCompiler.compile"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="n">compiler</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
         <span class="n">compiler</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
         <span class="n">ops</span> <span class="o">=</span> <span class="n">compiler</span><span class="o">.</span><span class="n">ops</span>
@@ -415,7 +435,7 @@
                              <span class="bp">True</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">doc</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">code</span><span class="o">.</span><span class="n">to_code</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="DefnCompiler.visit_Defn"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_Defn">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Defn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DefnCompiler.visit_Defn"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_Defn">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Defn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="n">bp</span> <span class="o">=</span> <span class="n">byteplay</span>
         <span class="n">ops</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ops</span>
         <span class="n">name_stack</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name_stack</span>
@@ -493,7 +513,7 @@
             <span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">RETURN_VALUE</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="p">])</span>
 </div>
-<div class="viewcode-block" id="DefnCompiler.visit_AttributeBinding"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_AttributeBinding">[docs]</a>    <span class="k">def</span> <span class="nf">visit_AttributeBinding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DefnCompiler.visit_AttributeBinding"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_AttributeBinding">[docs]</a>    <span class="k">def</span> <span class="nf">visit_AttributeBinding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the bytecode ops for an attribute binding. This</span>
 <span class="sd">        visitor handles loading and calling the appropriate operator.</span>
 
@@ -531,7 +551,7 @@
             <span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
         <span class="p">])</span>
 </div>
-<div class="viewcode-block" id="DefnCompiler.visit_Instantiation"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_Instantiation">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Instantiation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DefnCompiler.visit_Instantiation"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_Instantiation">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Instantiation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create the bytecode ops for a component instantiation. This </span>
 <span class="sd">        visitor handles calling another derived component and storing</span>
 <span class="sd">        its identifier, if given.</span>
@@ -580,7 +600,7 @@
             <span class="p">(</span><span class="n">bp</span><span class="o">.</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
         <span class="p">])</span>
 </div>
-<div class="viewcode-block" id="DefnCompiler.visit_Call"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_Call">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="DefnCompiler.visit_Call"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.DefnCompiler.visit_Call">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create the bytecode ops for performing a call in the body</span>
 <span class="sd">        of a declaration or defn. The calls are expected to return </span>
 <span class="sd">        iterables of children.</span>
@@ -642,7 +662,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Enaml Compiler</span>
 <span class="c">#------------------------------------------------------------------------------</span></div></div>
-<div class="viewcode-block" id="EnamlCompiler"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler">[docs]</a><span class="k">class</span> <span class="nc">EnamlCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlCompiler"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler">[docs]</a><span class="k">class</span> <span class="nc">EnamlCompiler</span><span class="p">(</span><span class="n">_NodeVisitor</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A compiler that will compile an enaml module ast node.</span>
 <span class="sd">    </span>
 <span class="sd">    The entry point is the `compile` classmethod which will compile</span>
@@ -651,7 +671,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="EnamlCompiler.compile"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_ast</span><span class="p">,</span> <span class="n">module_dict</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlCompiler.compile"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.compile">[docs]</a>    <span class="k">def</span> <span class="nf">compile</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">module_ast</span><span class="p">,</span> <span class="n">module_dict</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The main entry point of the compiler.</span>
 
 <span class="sd">        Parameters</span>
@@ -681,7 +701,7 @@
         <span class="k">exec</span> <span class="s">&#39;&#39;</span> <span class="ow">in</span> <span class="n">module_dict</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_ns</span> <span class="o">=</span> <span class="n">module_dict</span>
 
-<div class="viewcode-block" id="EnamlCompiler.visit_Module"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Module">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlCompiler.visit_Module"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Module">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The module node visitory method. Used internally by the</span>
 <span class="sd">        compiler.</span>
 
@@ -691,7 +711,7 @@
         <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">node</span><span class="o">.</span><span class="n">body</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="EnamlCompiler.visit_Python"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Python">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlCompiler.visit_Python"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Python">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Python</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A visitor which adds a chunk of raw Python into the module.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -703,7 +723,7 @@
             <span class="n">exc_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">exc_type</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
         </div>
-<div class="viewcode-block" id="EnamlCompiler.visit_Import"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Import">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Import</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlCompiler.visit_Import"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Import">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Import</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The import statement visitor method. This ensures that imports</span>
 <span class="sd">        are performed with the enaml import hook in-place.</span>
 
@@ -717,7 +737,7 @@
                 <span class="n">exc_type</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="n">exc_type</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">lineno</span><span class="p">,</span> <span class="n">e</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="EnamlCompiler.visit_Declaration"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Declaration">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlCompiler.visit_Declaration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Declaration">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Declaration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The declaration node visitor. This will add an instance</span>
 <span class="sd">        of EnamlDeclaration to the module.</span>
 
@@ -727,7 +747,7 @@
         <span class="n">wrapper</span> <span class="o">=</span> <span class="n">_decl_wrapper_gen</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_ns</span><span class="p">[</span><span class="n">node</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">wrapper</span>
     </div>
-<div class="viewcode-block" id="EnamlCompiler.visit_Defn"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Defn">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Defn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlCompiler.visit_Defn"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler.visit_Defn">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Defn</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The defn node visitor. This will add an instance of EnamlDefn</span>
 <span class="sd">        to the module.</span>
 
@@ -739,26 +759,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -782,6 +782,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

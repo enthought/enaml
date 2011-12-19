@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.window &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -79,7 +99,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
-<div class="viewcode-block" id="Window"><a class="viewcode-back" href="../../../widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window">[docs]</a><span class="k">class</span> <span class="nc">Window</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
+<div class="viewcode-block" id="Window"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window">[docs]</a><span class="k">class</span> <span class="nc">Window</span><span class="p">(</span><span class="n">Container</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The base top-level Window widget.</span>
 
 <span class="sd">    Window widgets are top-level components which provide window frame</span>
@@ -98,7 +118,7 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkWindow</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Window.show"><a class="viewcode-back" href="../../../widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.show"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Make the window visible on the screen.</span>
 
 <span class="sd">        If the &#39;setup&#39; method is not explicity called prior to calling</span>
@@ -117,7 +137,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="bp">True</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="o">.</span><span class="n">start_app</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
         </div>
-<div class="viewcode-block" id="Window.hide"><a class="viewcode-back" href="../../../widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.hide"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Hide the window, but do not destroy the underlying widgets.</span>
 
 <span class="sd">        Call this method to hide the window on the screen. This call</span>
@@ -126,7 +146,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">visible</span> <span class="o">=</span> <span class="bp">False</span>
 </div>
-<div class="viewcode-block" id="Window.update_constraints"><a class="viewcode-back" href="../../../widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window.update_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">update_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Window.update_constraints"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window.update_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">update_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the constraints for this component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -136,26 +156,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -179,6 +179,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.wx.wx_radio_button &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -149,7 +169,7 @@
             <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetParent</span><span class="p">(),</span> <span class="n">group_evt</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="WXRadioButton"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton">[docs]</a><span class="k">class</span> <span class="nc">WXRadioButton</span><span class="p">(</span><span class="n">WXToggleControl</span><span class="p">,</span> <span class="n">AbstractTkRadioButton</span><span class="p">):</span>
+<div class="viewcode-block" id="WXRadioButton"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton">[docs]</a><span class="k">class</span> <span class="nc">WXRadioButton</span><span class="p">(</span><span class="n">WXToggleControl</span><span class="p">,</span> <span class="n">AbstractTkRadioButton</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A wxPython implementation of RadioButton.</span>
 
 <span class="sd">    WXRadioButton uses a custom wx.RadioButton control. Radio buttons</span>
@@ -160,13 +180,13 @@
     <span class="c">#---------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#---------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="WXRadioButton.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="WXRadioButton.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying custom wx.RadioButton control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">CustomRadioButton</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXRadioButton.bind"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="WXRadioButton.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the event handlers of the control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -178,7 +198,7 @@
         <span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEFT_DOWN</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_pressed</span><span class="p">)</span>
         <span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEAVE_WINDOW</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_released</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="WXRadioButton.on_simple_toggle"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton.on_simple_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">on_simple_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<div class="viewcode-block" id="WXRadioButton.on_simple_toggle"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.wx.wx_radio_button.WXRadioButton.on_simple_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">on_simple_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; An event handler for toggle events that have nothing to do</span>
 <span class="sd">        with mouse interaction by the user and therefore the events</span>
 <span class="sd">        emited by _on_toggled would be inappropriate.</span>
@@ -191,26 +211,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -234,6 +234,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

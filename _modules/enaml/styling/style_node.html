@@ -11,7 +11,7 @@
     
     <title>enaml.styling.style_node &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -66,9 +86,9 @@
 <span class="kn">from</span> <span class="nn">.layout</span> <span class="kn">import</span> <span class="n">AlignmentTrait</span><span class="p">,</span> <span class="n">MarginsTrait</span><span class="p">,</span> <span class="n">SizeTrait</span><span class="p">,</span> <span class="n">SizePolicyTrait</span><span class="p">,</span> <span class="n">SpacingTrait</span><span class="p">,</span> <span class="n">StretchTrait</span>
 
 
-<div class="viewcode-block" id="StyleClassTrait"><a class="viewcode-back" href="../../../enaml.styling.html#enaml.styling.style_node.StyleClassTrait">[docs]</a><span class="k">class</span> <span class="nc">StyleClassTrait</span><span class="p">(</span><span class="n">BaseTuple</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleClassTrait"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_node.StyleClassTrait">[docs]</a><span class="k">class</span> <span class="nc">StyleClassTrait</span><span class="p">(</span><span class="n">BaseTuple</span><span class="p">):</span>
 
-<div class="viewcode-block" id="StyleClassTrait.validate"><a class="viewcode-back" href="../../../enaml.styling.html#enaml.styling.style_node.StyleClassTrait.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleClassTrait.validate"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_node.StyleClassTrait.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
             <span class="n">res</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">value</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)):</span>
@@ -81,7 +101,7 @@
         <span class="k">return</span> <span class="n">res</span>
 
 </div></div>
-<div class="viewcode-block" id="StyleNode"><a class="viewcode-back" href="../../../enaml.styling.html#enaml.styling.style_node.StyleNode">[docs]</a><span class="k">class</span> <span class="nc">StyleNode</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleNode"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_node.StyleNode">[docs]</a><span class="k">class</span> <span class="nc">StyleNode</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
 
     <span class="c">#: The alignment of a widget in its parent layout</span>
     <span class="n">alignment</span> <span class="o">=</span> <span class="n">AlignmentTrait</span>
@@ -117,26 +137,6 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -158,6 +158,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

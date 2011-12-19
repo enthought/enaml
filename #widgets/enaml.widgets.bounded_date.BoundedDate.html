@@ -1,0 +1,257 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>BoundedDate &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="boundeddate">
+<h1>BoundedDate<a class="headerlink" href="#boundeddate" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="enaml.widgets.bounded_date.BoundedDate">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.bounded_date.</tt><tt class="descname">BoundedDate</tt><a class="reference internal" href="../_modules/enaml/widgets/bounded_date.html#BoundedDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.bounded_date.BoundedDate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
+<p>A base class for use with widgets that edit a Python 
+datetime.date object bounded between minimum and maximum 
+values. This class is not meant to be used directly.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.bounded_date.BoundedDate.min_date">
+<tt class="descname">min_date</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.bounded_date.BoundedDate.min_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>The minimum date available in the date edit. If not defined then
+the default value is September 14, 1752. Extra checks take place
+to make sure that the user does not programmatically set
+<a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.min_date" title="enaml.widgets.bounded_date.BoundedDate.min_date"><tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt></a> &gt; <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.max_date" title="enaml.widgets.bounded_date.BoundedDate.max_date"><tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.bounded_date.BoundedDate.max_date">
+<tt class="descname">max_date</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.bounded_date.BoundedDate.max_date" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum date available in the date edit. If not defined then
+the default value is December 31, 7999. Extra checks take place
+to make sure that the user does not programmatically set
+<a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.min_date" title="enaml.widgets.bounded_date.BoundedDate.min_date"><tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt></a> &gt; <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.max_date" title="enaml.widgets.bounded_date.BoundedDate.max_date"><tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt></a>.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.bounded_date.BoundedDate.date">
+<tt class="descname">date</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.bounded_date.BoundedDate.date" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently selected date. Default is the current date. The
+value is bounded between <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.min_date" title="enaml.widgets.bounded_date.BoundedDate.min_date"><tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt></a> and <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.max_date" title="enaml.widgets.bounded_date.BoundedDate.max_date"><tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt></a>.
+Changing the boundary attributes might result in an update of
+<a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.date" title="enaml.widgets.bounded_date.BoundedDate.date"><tt class="xref py py-attr docutils literal"><span class="pre">date</span></tt></a> to fit in the new range. Attempts to assign a value
+outside of these bounds will result in a TraitError.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.bounded_date.BoundedDate.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.bounded_date.BoundedDate.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="backends">
+<h2>Backends<a class="headerlink" href="#backends" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="qt">
+<h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../_images/inheritance-28c7819227b679b30356b9e50f337c1b132125ca.png" alt="Inheritance diagram of enaml.widgets.qt.qt_bounded_date.QtBoundedDate" usemap="#inheritanced3c6cf43d4" class="inheritance"/>
+<map id="inheritanced3c6cf43d4" name="inheritanced3c6cf43d4">
+<area shape="rect" id="node9" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="703,59,788,88"/>
+<area shape="rect" id="node13" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,59,593,88"/>
+<area shape="rect" id="node8" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="882,32,1006,61"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_bounded_date.</tt><tt class="descname">QtBoundedDate</tt><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="enaml.widgets.qt.qt_control.QtControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_control.QtControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.bounded_date.AbstractTkBoundedDate</span></tt></p>
+<p>A base class for use with widgets implementing behavior
+for subclasses of BoundedDate.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate.shell_date_changed">
+<tt class="descname">shell_date_changed</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate.shell_date_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate.shell_date_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate.shell_min_date_changed">
+<tt class="descname">shell_min_date_changed</tt><big>(</big><em>min_date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate.shell_min_date_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate.shell_min_date_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate.shell_max_date_changed">
+<tt class="descname">shell_max_date_changed</tt><big>(</big><em>max_date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate.shell_max_date_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate.shell_max_date_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate.set_date">
+<tt class="descname">set_date</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate.set_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate.set_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate.set_min_date">
+<tt class="descname">set_min_date</tt><big>(</big><em>min_date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate.set_min_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate.set_min_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_bounded_date.QtBoundedDate.set_max_date">
+<tt class="descname">set_max_date</tt><big>(</big><em>max_date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/qt/qt_bounded_date.html#QtBoundedDate.set_max_date"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate.set_max_date" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="wx">
+<h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
+<p class="graphviz">
+<img src="../_images/inheritance-d31a11f53a574d26b6ab02f9a68df417cf56faac.png" alt="Inheritance diagram of enaml.widgets.wx.wx_bounded_date.WXBoundedDate" usemap="#inheritanceeda64851e2" class="inheritance"/>
+<map id="inheritanceeda64851e2" name="inheritanceeda64851e2">
+<area shape="rect" id="node5" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+<area shape="rect" id="node4" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="701,5,790,35"/>
+<area shape="rect" id="node14" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate" title="WXBoundedDate" alt="" coords="883,32,1010,61"/>
+</map>
+</p>
+<dl class="class">
+<dt id="enaml.widgets.wx.wx_bounded_date.WXBoundedDate">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_bounded_date.</tt><tt class="descname">WXBoundedDate</tt><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_bounded_date.html#WXBoundedDate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="enaml.widgets.wx.wx_control.WXControl"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_control.WXControl</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.bounded_date.AbstractTkBoundedDate</span></tt></p>
+<p>A base class for use with widgets implementing behavior
+for subclasses of BoundedDate.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_bounded_date.WXBoundedDate.initialize">
+<tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_bounded_date.html#WXBoundedDate.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate.initialize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_bounded_date.WXBoundedDate.shell_date_changed">
+<tt class="descname">shell_date_changed</tt><big>(</big><em>date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_bounded_date.html#WXBoundedDate.shell_date_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate.shell_date_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_bounded_date.WXBoundedDate.shell_min_date_changed">
+<tt class="descname">shell_min_date_changed</tt><big>(</big><em>min_date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_bounded_date.html#WXBoundedDate.shell_min_date_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate.shell_min_date_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_bounded_date.WXBoundedDate.shell_max_date_changed">
+<tt class="descname">shell_max_date_changed</tt><big>(</big><em>max_date</em><big>)</big><a class="reference internal" href="../_modules/enaml/widgets/wx/wx_bounded_date.html#WXBoundedDate.shell_max_date_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate.shell_max_date_changed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">BoundedDate</a><ul>
+<li><a class="reference internal" href="#backends">Backends</a><ul>
+<li><a class="reference internal" href="#qt">Qt</a></li>
+<li><a class="reference internal" href="#wx">Wx</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="../_sources/#widgets/enaml.widgets.bounded_date.BoundedDate.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

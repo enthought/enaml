@@ -11,7 +11,7 @@
     
     <title>enaml.util.trait_types &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -63,7 +83,7 @@
 <span class="kn">from</span> <span class="nn">traits.traits</span> <span class="kn">import</span> <span class="n">CTrait</span>
 
 
-<div class="viewcode-block" id="SubClass"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.SubClass">[docs]</a><span class="k">class</span> <span class="nc">SubClass</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
+<div class="viewcode-block" id="SubClass"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.SubClass">[docs]</a><span class="k">class</span> <span class="nc">SubClass</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">SubClass</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
@@ -72,7 +92,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">info</span> <span class="o">=</span> <span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SubClass.validate"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.SubClass.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="SubClass.validate"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.SubClass.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="n">cls</span><span class="p">,</span> <span class="n">interface</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">info</span>
         <span class="k">if</span> <span class="n">interface</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">__implements__</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
@@ -88,13 +108,13 @@
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="ReadOnlyConstruct"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.ReadOnlyConstruct">[docs]</a><span class="k">class</span> <span class="nc">ReadOnlyConstruct</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
+<div class="viewcode-block" id="ReadOnlyConstruct"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.ReadOnlyConstruct">[docs]</a><span class="k">class</span> <span class="nc">ReadOnlyConstruct</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factory</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">ReadOnlyConstruct</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_factory</span> <span class="o">=</span> <span class="n">factory</span>
 
-<div class="viewcode-block" id="ReadOnlyConstruct.get"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.ReadOnlyConstruct.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="ReadOnlyConstruct.get"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.ReadOnlyConstruct.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="n">dct</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">__dict__</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dct</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">dct</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
@@ -103,17 +123,17 @@
         <span class="k">return</span> <span class="n">res</span>
 
 </div></div>
-<div class="viewcode-block" id="NamedLookup"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.NamedLookup">[docs]</a><span class="k">class</span> <span class="nc">NamedLookup</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
+<div class="viewcode-block" id="NamedLookup"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.NamedLookup">[docs]</a><span class="k">class</span> <span class="nc">NamedLookup</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lookup_func_name</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">NamedLookup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_func_name</span> <span class="o">=</span> <span class="n">lookup_func_name</span>
 
-<div class="viewcode-block" id="NamedLookup.get"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.NamedLookup.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="NamedLookup.get"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.NamedLookup.get">[docs]</a>    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_lookup_func_name</span><span class="p">)(</span><span class="n">name</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="ORStr"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.ORStr">[docs]</a><span class="k">class</span> <span class="nc">ORStr</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
+<div class="viewcode-block" id="ORStr"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.ORStr">[docs]</a><span class="k">class</span> <span class="nc">ORStr</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Allows a space-separated string of any combination of the</span>
 <span class="sd">    constituents of the string passed to the constructor.</span>
 
@@ -127,7 +147,7 @@
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allowed</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">allowed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">allowed</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
 
-<div class="viewcode-block" id="ORStr.is_valid"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.ORStr.is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+<div class="viewcode-block" id="ORStr.is_valid"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.ORStr.is_valid">[docs]</a>    <span class="k">def</span> <span class="nf">is_valid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="n">components</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">strip</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
@@ -135,7 +155,7 @@
         <span class="k">return</span> <span class="nb">all</span><span class="p">(</span><span class="n">component</span> <span class="ow">in</span> <span class="n">allowed</span> <span class="k">for</span> <span class="n">component</span> <span class="ow">in</span> <span class="n">components</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="Bounded"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.Bounded">[docs]</a><span class="k">class</span> <span class="nc">Bounded</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
+<div class="viewcode-block" id="Bounded"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.Bounded">[docs]</a><span class="k">class</span> <span class="nc">Bounded</span><span class="p">(</span><span class="n">TraitType</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Generic Bounded Trait class.</span>
 
 <span class="sd">    The class defines a generic Trait where the value is validated</span>
@@ -174,7 +194,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">validate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_bounds</span>
 
-<div class="viewcode-block" id="Bounded.validate_with_trait"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.Bounded.validate_with_trait">[docs]</a>    <span class="k">def</span> <span class="nf">validate_with_trait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="Bounded.validate_with_trait"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.Bounded.validate_with_trait">[docs]</a>    <span class="k">def</span> <span class="nf">validate_with_trait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Validate the trait value.</span>
 
 <span class="sd">        Validation takes place in two steps:</span>
@@ -186,7 +206,7 @@
         <span class="n">value</span> <span class="o">=</span> <span class="n">value_type</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_bounds</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Bounded.validate_bounds"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.Bounded.validate_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">validate_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="Bounded.validate_bounds"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.Bounded.validate_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">validate_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Validate that the value is in range.</span>
 
 <span class="sd">        .. note:: Any exceptions that may take place are converted to</span>
@@ -216,7 +236,7 @@
 
         <span class="k">return</span> <span class="n">value</span>
 </div>
-<div class="viewcode-block" id="Bounded.get_bounds"><a class="viewcode-back" href="../../../enaml.util.html#enaml.util.trait_types.Bounded.get_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<div class="viewcode-block" id="Bounded.get_bounds"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.util.html#enaml.util.trait_types.Bounded.get_bounds">[docs]</a>    <span class="k">def</span> <span class="nf">get_bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the lower and upper bounds of the Trait.</span>
 
 <span class="sd">        .. note:: The method supports dynamic values (class traits).</span>
@@ -233,26 +253,6 @@
 </pre></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -276,6 +276,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

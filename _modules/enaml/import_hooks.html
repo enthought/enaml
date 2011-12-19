@@ -11,7 +11,7 @@
     
     <title>enaml.import_hooks &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -64,7 +84,7 @@
 <span class="kn">import</span> <span class="nn">types</span>
 
 
-<div class="viewcode-block" id="EnamlImporter"><a class="viewcode-back" href="../../enaml.html#enaml.import_hooks.EnamlImporter">[docs]</a><span class="k">class</span> <span class="nc">EnamlImporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlImporter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter">[docs]</a><span class="k">class</span> <span class="nc">EnamlImporter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A sys.meta_path finder object for enaml modules.</span>
 
 <span class="sd">    An instance of this class can be added to sys.meta_path to enable</span>
@@ -77,7 +97,7 @@
     <span class="n">install_count</span> <span class="o">=</span> <span class="mi">0</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="EnamlImporter.install"><a class="viewcode-back" href="../../enaml.html#enaml.import_hooks.EnamlImporter.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlImporter.install"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter.install">[docs]</a>    <span class="k">def</span> <span class="nf">install</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Appends this importer into sys.meta_path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -86,7 +106,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">meta_path</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
     </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="EnamlImporter.uninstall"><a class="viewcode-back" href="../../enaml.html#enaml.import_hooks.EnamlImporter.uninstall">[docs]</a>    <span class="k">def</span> <span class="nf">uninstall</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlImporter.uninstall"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter.uninstall">[docs]</a>    <span class="k">def</span> <span class="nf">uninstall</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Removes this importer from sys.meta_path.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -95,7 +115,7 @@
             <span class="n">sys</span><span class="o">.</span><span class="n">meta_path</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">cls</span><span class="p">)</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="EnamlImporter.parse_enaml"><a class="viewcode-back" href="../../enaml.html#enaml.import_hooks.EnamlImporter.parse_enaml">[docs]</a>    <span class="k">def</span> <span class="nf">parse_enaml</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">enaml_path</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlImporter.parse_enaml"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter.parse_enaml">[docs]</a>    <span class="k">def</span> <span class="nf">parse_enaml</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">enaml_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the ast generated by the enaml parser.</span>
 
 <span class="sd">        Arguments</span>
@@ -110,7 +130,7 @@
         <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">enaml_source</span><span class="p">)</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="EnamlImporter.find_module"><a class="viewcode-back" href="../../enaml.html#enaml.import_hooks.EnamlImporter.find_module">[docs]</a>    <span class="k">def</span> <span class="nf">find_module</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">fullname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlImporter.find_module"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter.find_module">[docs]</a>    <span class="k">def</span> <span class="nf">find_module</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">fullname</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Searches the package path or sys.path for a .enaml module</span>
 <span class="sd">        with the given full name. If found, returns a loader object.</span>
 
@@ -146,7 +166,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enaml_module_path</span> <span class="o">=</span> <span class="n">enaml_module_path</span>
 
-<div class="viewcode-block" id="EnamlImporter.load_module"><a class="viewcode-back" href="../../enaml.html#enaml.import_hooks.EnamlImporter.load_module">[docs]</a>    <span class="k">def</span> <span class="nf">load_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fullname</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlImporter.load_module"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter.load_module">[docs]</a>    <span class="k">def</span> <span class="nf">load_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fullname</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Loads and returns the Python module for the given enaml path.</span>
 <span class="sd">        The created module is added to sys.modules.</span>
 
@@ -163,26 +183,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -206,6 +206,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

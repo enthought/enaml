@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.qt.qt_dialog &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -72,7 +92,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="QtDialog"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog">[docs]</a><span class="k">class</span> <span class="nc">QtDialog</span><span class="p">(</span><span class="n">QtWindow</span><span class="p">,</span> <span class="n">AbstractTkDialog</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDialog"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog">[docs]</a><span class="k">class</span> <span class="nc">QtDialog</span><span class="p">(</span><span class="n">QtWindow</span><span class="p">,</span> <span class="n">AbstractTkDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of a Dialog.</span>
 
 <span class="sd">    This class creates a simple top-level dialog.</span>
@@ -81,13 +101,13 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtDialog.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDialog.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying QDialog control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QResizingDialog</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="QtDialog.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDialog.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the attributes on the QDialog.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -97,13 +117,13 @@
     <span class="c">#---------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#---------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtDialog.accept"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDialog.accept"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Accept and close the dialog, sending the &#39;finished&#39; signal.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="QtDialog.reject"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDialog.reject"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Reject and close the dialog, sending the &#39;finished&#39; signal.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -128,7 +148,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtDialog.set_visible"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+<div class="viewcode-block" id="QtDialog.set_visible"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden from the parent class to properly launch and close </span>
 <span class="sd">        the dialog.</span>
 
@@ -145,26 +165,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -188,6 +188,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

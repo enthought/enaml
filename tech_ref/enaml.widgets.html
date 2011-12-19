@@ -1,0 +1,294 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Widgets &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/agogo.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml Reference" href="modules.html" />
+    <link rel="next" title="Component" href="widgets/enaml.widgets.component.Component.html" />
+    <link rel="prev" title="Styling Package" href="enaml.styling.html" /> 
+  </head>
+  <body>
+    <div class="header-wrapper">
+      <div class="header">
+          <p class="logo"><a href="../index.html">
+            <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+          </a></p>
+        <div class="headertitle"><a
+          href="../index.html">enaml 0.1alpha documentation</a></div>
+        <div class="rel">
+          <a href="enaml.styling.html" title="Styling Package"
+             accesskey="P">previous</a> |
+          <a href="widgets/enaml.widgets.component.Component.html" title="Component"
+             accesskey="N">next</a> |
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a>
+        </div>
+       </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="content">
+        <div class="document">
+            
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="widgets">
+<h1>Widgets<a class="headerlink" href="#widgets" title="Permalink to this headline">¶</a></h1>
+<p>An Enaml widget is a toolkit-independent abstraction.
+Each GUI toolkit that Enaml supports is a set of widgets that
+have been implemented and exist in the <tt class="xref py py-mod docutils literal"><span class="pre">enaml.widgets</span></tt> submodule.
+A widget interface is not tied to any particular implementation.</p>
+<div class="section" id="interface">
+<h2>Interface<a class="headerlink" href="#interface" title="Permalink to this headline">¶</a></h2>
+<p>An Enaml widget&#8217;s interface describes the attributes and events that the
+widget exposes as its API. Enaml orchestrates communication between
+user-facing views and the underlying graphical toolkits.</p>
+<p><em>Standard interfaces</em></p>
+<p class="graphviz">
+<img src="../_images/inheritance-3084395ddaa0df26d5e6909686d25099ca47558c.png" alt="Inheritance diagram of enaml.widgets.base_component.BaseComponent, enaml.widgets.bounded_date.BoundedDate, enaml.widgets.bounded_datetime.BoundedDatetime, enaml.widgets.calendar.Calendar, enaml.widgets.check_box.CheckBox, enaml.widgets.combo_box.ComboBox, enaml.widgets.component.Component, enaml.widgets.container.Container, enaml.widgets.control.Control, enaml.widgets.date_edit.DateEdit, enaml.widgets.datetime_edit.DatetimeEdit, enaml.widgets.enable_canvas.EnableCanvas, enaml.widgets.field.Field, enaml.widgets.html.Html, enaml.widgets.image.Image, enaml.widgets.label.Label, enaml.widgets.push_button.PushButton, enaml.widgets.radio_button.RadioButton, enaml.widgets.slider.Slider, enaml.widgets.spin_box.SpinBox, enaml.widgets.table_view.TableView, enaml.widgets.toggle_control.ToggleControl, enaml.widgets.traitsui_item.TraitsUIItem, enaml.widgets.window.Window, enaml.widgets.form.Form, enaml.widgets.group_box.GroupBox, enaml.widgets.dialog.Dialog, enaml.widgets.progress_bar.ProgressBar" usemap="#inheritance86484ccc86" class="inheritance"/>
+<map id="inheritance86484ccc86" name="inheritance86484ccc86">
+<area shape="rect" id="node35" href="widgets/enaml.widgets.image.Image.html#enaml.widgets.image.Image" title="Image" alt="" coords="931,539,1003,568"/>
+<area shape="rect" id="node37" href="widgets/enaml.widgets.datetime_edit.DatetimeEdit.html#enaml.widgets.datetime_edit.DatetimeEdit" title="DatetimeEdit" alt="" coords="1083,379,1187,408"/>
+</map>
+</p>
+</div>
+<div class="section" id="implementation">
+<h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
+<p>The available backends provide concrete versions of Enaml widget
+interfaces. An interface utilizes an implementation-specific
+class, which wraps an actual toolkit widget.</p>
+<p><em>Standard Implementations</em></p>
+<p class="graphviz">
+<img src="../_images/inheritance-cc0ad6e7a4a37afa5e435acbb69b2a36c1f8979b.png" alt="Inheritance diagram of enaml.widgets.base_component.AbstractTkBaseComponent, enaml.widgets.bounded_date.AbstractTkBoundedDate, enaml.widgets.bounded_datetime.AbstractTkBoundedDatetime, enaml.widgets.calendar.AbstractTkCalendar, enaml.widgets.check_box.AbstractTkCheckBox, enaml.widgets.combo_box.AbstractTkComboBox, enaml.widgets.component.AbstractTkComponent, enaml.widgets.container.AbstractTkContainer, enaml.widgets.control.AbstractTkControl, enaml.widgets.date_edit.AbstractTkDateEdit, enaml.widgets.datetime_edit.AbstractTkDatetimeEdit, enaml.widgets.enable_canvas.AbstractTkEnableCanvas, enaml.widgets.field.AbstractTkField, enaml.widgets.html.AbstractTkHtml, enaml.widgets.image.AbstractTkImage, enaml.widgets.label.AbstractTkLabel, enaml.widgets.push_button.AbstractTkPushButton, enaml.widgets.radio_button.AbstractTkRadioButton, enaml.widgets.slider.AbstractTkSlider, enaml.widgets.spin_box.AbstractTkSpinBox, enaml.widgets.table_view.AbstractTkTableView, enaml.widgets.toggle_control.AbstractTkToggleControl, enaml.widgets.traitsui_item.AbstractTkTraitsUIItem, enaml.widgets.window.AbstractTkWindow, enaml.widgets.form.AbstractTkForm, enaml.widgets.group_box.AbstractTkGroupBox, enaml.widgets.dialog.AbstractTkDialog, enaml.widgets.progress_bar.AbstractTkProgressBar" class="inheritance"/>
+</p>
+</div>
+<div class="section" id="standard-widgets">
+<h2>Standard Widgets<a class="headerlink" href="#standard-widgets" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="abstract-base-widgets">
+<h3>Abstract base widgets<a class="headerlink" href="#abstract-base-widgets" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.component.Component</span></tt></td>
+<td>A BaseComponent subclass that adds a box model and support</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.container.Container</span></tt></td>
+<td>A Component subclass that provides for laying out child</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></td>
+<td>The base class of all leaf widgets in Enaml. Controls cannot</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.toggle_control.ToggleControl</span></tt></td>
+<td>An abstract toggle element.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.bounded_date.BoundedDate</span></tt></td>
+<td>A base class for use with widgets that edit a Python</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="basic-widgets">
+<h3>Basic widgets<a class="headerlink" href="#basic-widgets" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.calendar.Calendar</span></tt></td>
+<td>A calendar widget.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.check_box.CheckBox</span></tt></td>
+<td>A check box widget.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.combo_box.ComboBox</span></tt></td>
+<td>A drop-down list from which one item can be selected at a time.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.push_button.PushButton</span></tt></td>
+<td>A push button widget.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.radio_button.RadioButton</span></tt></td>
+<td>A radio button widget derived from IToggleElement</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.field.Field</span></tt></td>
+<td>A single-line editable text widget.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.image.Image.html#enaml.widgets.image.Image" title="enaml.widgets.image.Image"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.image.Image</span></tt></a></td>
+<td>A widget for displaying images.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.label.Label</span></tt></td>
+<td>A simple read-only text display.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.slider.Slider</span></tt></td>
+<td>A simple slider widget that can be used to select from a</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.spin_box.SpinBox</span></tt></td>
+<td>A spin box widget.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.datetime_edit.DatetimeEdit.html#enaml.widgets.datetime_edit.DatetimeEdit" title="enaml.widgets.datetime_edit.DatetimeEdit"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.datetime_edit.DatetimeEdit</span></tt></a></td>
+<td>A datetime widget that displays a Python datetime.datetime object</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.date_edit.DateEdit</span></tt></td>
+<td>A widget to edit a Python datetime.date object.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.progress_bar.ProgressBar</span></tt></td>
+<td>A progress bar.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="container-widgets">
+<h3>Container widgets<a class="headerlink" href="#container-widgets" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.window.Window</span></tt></td>
+<td>The base top-level Window widget.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.dialog.Dialog</span></tt></td>
+<td>A basic dialog widget whose contents are user defined.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.form.Form</span></tt></td>
+<td>A Container subclass that arranges child Components as a two</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.group_box.GroupBox</span></tt></td>
+<td>The GroupBox container, which introduces a group of widgets with</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="special-widgets">
+<h3>Special widgets<a class="headerlink" href="#special-widgets" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.html.Html</span></tt></td>
+<td>An extremely simple widget for displaying HTML.</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.traitsui_item.TraitsUIItem</span></tt></td>
+<td>A control which embeds a traits ui view.</td>
+</tr>
+<tr class="row-odd"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.enable_canvas.EnableCanvas</span></tt></td>
+<td>An Enable canvas widget that will draw any Enable Component</td>
+</tr>
+<tr class="row-even"><td><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.table_view.TableView</span></tt></td>
+<td>A view for tabular data.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+        </div>
+        <div class="sidebar">
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Widgets</a><ul>
+<li><a class="reference internal" href="#interface">Interface</a></li>
+<li><a class="reference internal" href="#implementation">Implementation</a></li>
+<li><a class="reference internal" href="#standard-widgets">Standard Widgets</a><ul>
+<li><a class="reference internal" href="#abstract-base-widgets">Abstract base widgets</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#basic-widgets">Basic widgets</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#container-widgets">Container widgets</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#special-widgets">Special widgets</a><ul>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          <h3 style="margin-top: 1.5em;">Search</h3>
+          <form class="search" action="../search.html" method="get">
+            <input type="text" name="q" />
+            <input type="submit" value="Go" />
+            <input type="hidden" name="check_keywords" value="yes" />
+            <input type="hidden" name="area" value="default" />
+          </form>
+          <p class="searchtip" style="font-size: 90%">
+            Enter search terms or a module, class or function name.
+          </p>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+    <div class="footer-wrapper">
+      <div class="footer">
+        <div class="left">
+          <a href="enaml.styling.html" title="Styling Package"
+             >previous</a> |
+          <a href="widgets/enaml.widgets.component.Component.html" title="Component"
+             >next</a> |
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |
+          <a href="../genindex.html" title="General Index"
+             >index</a>
+            <br/>
+            <a href="../_sources/tech_ref/enaml.widgets.txt"
+               rel="nofollow">Show Source</a>
+        </div>
+
+        <div class="right">
+          
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+        </div>
+        <div class="clearer"></div>
+      </div>
+    </div>
+
+  </body>
+</html>

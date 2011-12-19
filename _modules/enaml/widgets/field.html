@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.field &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -151,7 +171,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 
-<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A single-line editable text widget.</span>
 
 <span class="sd">    Among many other attributes, a Field accepts a converter object</span>
@@ -221,7 +241,7 @@
     <span class="c">#: Overridden parent class trait</span>
     <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkField</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Field.set_selection"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.set_selection"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the selection to the bounds of start and end.</span>
 
 <span class="sd">        If the indices are invalid, no selection will be made,</span>
@@ -238,7 +258,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.select_all"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.select_all"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Select all the text in the line edit.</span>
 
 <span class="sd">        If there is no text in the line edit, the selection will be</span>
@@ -247,19 +267,19 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">select_all</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.deselect"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.deselect"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Deselect any selected text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">deselect</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.clear"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.clear"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Clear the line edit of all text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.backspace"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.backspace"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple backspace functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the left</span>
@@ -268,7 +288,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">backspace</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.delete"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.delete"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simple delete functionality.</span>
 
 <span class="sd">        If no text is selected, deletes the character to the right</span>
@@ -277,7 +297,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.end"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.end"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the end of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -289,7 +309,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">mark</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.home"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.home"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Moves the cursor to the beginning of the line.</span>
 
 <span class="sd">        Arguments</span>
@@ -301,7 +321,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">home</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">mark</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.cut"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.cut"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Cuts the selected text from the line edit.</span>
 
 <span class="sd">        Copies the selected text to the clipthen deletes the selected</span>
@@ -310,13 +330,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">cut</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.copy"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.copy"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Copies the selected text to the clipboard.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.paste"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.paste"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Paste the contents of the clipboard into the line edit.</span>
 
 <span class="sd">        Inserts the contents of the clipboard into the line edit at</span>
@@ -325,7 +345,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">paste</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.insert"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.insert"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Insert the text into the line edit.</span>
 
 <span class="sd">        Inserts the given text at the current cursor position,</span>
@@ -339,13 +359,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Field.undo"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.undo"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Undoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Field.redo"><a class="viewcode-back" href="../../../widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Field.redo"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Redoes the last operation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -390,26 +410,6 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../index.html">
-              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -431,6 +431,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

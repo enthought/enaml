@@ -11,7 +11,7 @@
     
     <title>enaml.parsing.analyzer &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,46 +47,7 @@
   
 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <h1>Source code for enaml.parsing.analyzer</h1><div class="highlight"><pre>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">import</span> <span class="nn">ast</span>
-
-
-<div class="viewcode-block" id="AttributeVisitor"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor">[docs]</a><span class="k">class</span> <span class="nc">AttributeVisitor</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeVisitor</span><span class="p">):</span>
-    <span class="c"># XXX this visitor needs to be far more intelligent</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">deps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="bp">None</span>
-
-<div class="viewcode-block" id="AttributeVisitor.visit_Attribute"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor.visit_Attribute">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">attr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="AttributeVisitor.visit_Name"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor.visit_Name">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
-        <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span>
-        <span class="k">if</span> <span class="n">attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">deps</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="bp">None</span>
-        </div>
-<div class="viewcode-block" id="AttributeVisitor.results"><a class="viewcode-back" href="../../../enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor.results">[docs]</a>    <span class="k">def</span> <span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deps</span><span class="p">)</span>
-</pre></div></div></div>
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../../index.html">
@@ -105,6 +66,45 @@
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.parsing.analyzer</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">ast</span>
+
+
+<div class="viewcode-block" id="AttributeVisitor"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor">[docs]</a><span class="k">class</span> <span class="nc">AttributeVisitor</span><span class="p">(</span><span class="n">ast</span><span class="o">.</span><span class="n">NodeVisitor</span><span class="p">):</span>
+    <span class="c"># XXX this visitor needs to be far more intelligent</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">deps</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="bp">None</span>
+
+<div class="viewcode-block" id="AttributeVisitor.visit_Attribute"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor.visit_Attribute">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="n">node</span><span class="o">.</span><span class="n">attr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">visit</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AttributeVisitor.visit_Name"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor.visit_Name">[docs]</a>    <span class="k">def</span> <span class="nf">visit_Name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span>
+        <span class="k">if</span> <span class="n">attr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">deps</span><span class="o">.</span><span class="n">add</span><span class="p">((</span><span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">attr</span> <span class="o">=</span> <span class="bp">None</span>
+        </div>
+<div class="viewcode-block" id="AttributeVisitor.results"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.analyzer.AttributeVisitor.results">[docs]</a>    <span class="k">def</span> <span class="nf">results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">deps</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -128,6 +128,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

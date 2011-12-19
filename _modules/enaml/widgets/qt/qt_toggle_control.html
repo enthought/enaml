@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.qt.qt_toggle_control &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,111 +47,7 @@
   
 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <h1>Source code for enaml.widgets.qt.qt_toggle_control</h1><div class="highlight"><pre>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">.qt_control</span> <span class="kn">import</span> <span class="n">QtControl</span>
-
-<span class="kn">from</span> <span class="nn">..toggle_control</span> <span class="kn">import</span> <span class="n">AbstractTkToggleControl</span>
-
-
-<div class="viewcode-block" id="QtToggleControl"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl">[docs]</a><span class="k">class</span> <span class="nc">QtToggleControl</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkToggleControl</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A base class for Qt toggle widgets.</span>
-
-<span class="sd">    This class can serve as a base class for widgets that implement</span>
-<span class="sd">    toggle behavior such as CheckBox and RadioButton. It is not meant</span>
-<span class="sd">    to be used directly. Subclasses should implement the &#39;create&#39;</span>
-<span class="sd">    and bind methods.</span>
-
-<span class="sd">    Furthermore, the toggled, pressed and released event that is generated</span>
-<span class="sd">    by the toolkit widget needs to be bound to the on_toggled(),</span>
-<span class="sd">    on_pressed() and on_released() methods.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Setup methods</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtToggleControl.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initializes the attributes of the underlying control.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">QtToggleControl</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">checked</span><span class="p">)</span>
-
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Implementation</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtToggleControl.shell_checked_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.shell_checked_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_checked_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;checked&#39; attribute.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="QtToggleControl.shell_text_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="c"># If the label of the control changes, its size hint has likely</span>
-        <span class="c"># updated and the layout system needs to be informed</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span> <span class="o">=</span> <span class="bp">True</span>
-        </div>
-<div class="viewcode-block" id="QtToggleControl.on_toggled"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.on_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The event handler for the toggled event.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
-        <span class="n">shell</span><span class="o">.</span><span class="n">checked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
-        <span class="n">shell</span><span class="o">.</span><span class="n">toggled</span> <span class="o">=</span> <span class="bp">True</span>
-</div>
-<div class="viewcode-block" id="QtToggleControl.on_pressed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.on_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">on_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The event handler for the pressed event. Not meant for</span>
-<span class="sd">        public consumption.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
-        <span class="n">shell</span><span class="o">.</span><span class="n">_down</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="n">shell</span><span class="o">.</span><span class="n">pressed</span> <span class="o">=</span> <span class="bp">True</span>
-</div>
-<div class="viewcode-block" id="QtToggleControl.on_released"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.on_released">[docs]</a>    <span class="k">def</span> <span class="nf">on_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The event handler for the released event. Not meant for</span>
-<span class="sd">        public consumption.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
-        <span class="k">if</span> <span class="n">shell</span><span class="o">.</span><span class="n">_down</span><span class="p">:</span>
-            <span class="n">shell</span><span class="o">.</span><span class="n">_down</span> <span class="o">=</span> <span class="bp">False</span>
-            <span class="n">shell</span><span class="o">.</span><span class="n">released</span> <span class="o">=</span> <span class="bp">True</span>
-</div>
-<div class="viewcode-block" id="QtToggleControl.set_label"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.set_label">[docs]</a>    <span class="k">def</span> <span class="nf">set_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s label with the provided value. Not</span>
-<span class="sd">        meant for public consumption.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="QtToggleControl.set_checked"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.set_checked">[docs]</a>    <span class="k">def</span> <span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s checked state with the provided value.</span>
-<span class="sd">        Not meant for public consumption.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
-</pre></div></div></div>
-
-          </div>
-        </div>
-      </div>
+    </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../../../index.html">
@@ -170,6 +66,110 @@
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.qt.qt_toggle_control</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt_control</span> <span class="kn">import</span> <span class="n">QtControl</span>
+
+<span class="kn">from</span> <span class="nn">..toggle_control</span> <span class="kn">import</span> <span class="n">AbstractTkToggleControl</span>
+
+
+<div class="viewcode-block" id="QtToggleControl"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl">[docs]</a><span class="k">class</span> <span class="nc">QtToggleControl</span><span class="p">(</span><span class="n">QtControl</span><span class="p">,</span> <span class="n">AbstractTkToggleControl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A base class for Qt toggle widgets.</span>
+
+<span class="sd">    This class can serve as a base class for widgets that implement</span>
+<span class="sd">    toggle behavior such as CheckBox and RadioButton. It is not meant</span>
+<span class="sd">    to be used directly. Subclasses should implement the &#39;create&#39;</span>
+<span class="sd">    and bind methods.</span>
+
+<span class="sd">    Furthermore, the toggled, pressed and released event that is generated</span>
+<span class="sd">    by the toolkit widget needs to be bound to the on_toggled(),</span>
+<span class="sd">    on_pressed() and on_released() methods.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtToggleControl.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the attributes of the underlying control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtToggleControl</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">checked</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtToggleControl.shell_checked_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.shell_checked_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_checked_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;checked&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtToggleControl.shell_text_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="c"># If the label of the control changes, its size hint has likely</span>
+        <span class="c"># updated and the layout system needs to be informed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span> <span class="o">=</span> <span class="bp">True</span>
+        </div>
+<div class="viewcode-block" id="QtToggleControl.on_toggled"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.on_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the toggled event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">checked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">isChecked</span><span class="p">()</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">toggled</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="QtToggleControl.on_pressed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.on_pressed">[docs]</a>    <span class="k">def</span> <span class="nf">on_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the pressed event. Not meant for</span>
+<span class="sd">        public consumption.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">_down</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">pressed</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="QtToggleControl.on_released"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.on_released">[docs]</a>    <span class="k">def</span> <span class="nf">on_released</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the released event. Not meant for</span>
+<span class="sd">        public consumption.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="k">if</span> <span class="n">shell</span><span class="o">.</span><span class="n">_down</span><span class="p">:</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">_down</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">released</span> <span class="o">=</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="QtToggleControl.set_label"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.set_label">[docs]</a>    <span class="k">def</span> <span class="nf">set_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s label with the provided value. Not</span>
+<span class="sd">        meant for public consumption.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtToggleControl.set_checked"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl.set_checked">[docs]</a>    <span class="k">def</span> <span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the widget&#39;s checked state with the provided value.</span>
+<span class="sd">        Not meant for public consumption.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -193,6 +193,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

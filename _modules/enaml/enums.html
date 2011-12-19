@@ -11,7 +11,7 @@
     
     <title>enaml.enums &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -185,7 +205,7 @@
 <span class="n">PolicyEnum</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">((</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="s">&#39;weak&#39;</span><span class="p">,</span> <span class="s">&#39;strong&#39;</span><span class="p">,</span> <span class="s">&#39;required&#39;</span><span class="p">))</span>
 
 
-<div class="viewcode-block" id="Buttons"><a class="viewcode-back" href="../../enaml.html#enaml.enums.Buttons">[docs]</a><span class="k">class</span> <span class="nc">Buttons</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Buttons"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.Buttons">[docs]</a><span class="k">class</span> <span class="nc">Buttons</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Predefined text labels for buttons.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -253,7 +273,7 @@
     <span class="n">YES_NO</span> <span class="o">=</span> <span class="n">YES</span> <span class="o">|</span> <span class="n">NO</span>
 
 </div>
-<div class="viewcode-block" id="DataRole"><a class="viewcode-back" href="../../enaml.html#enaml.enums.DataRole">[docs]</a><span class="k">class</span> <span class="nc">DataRole</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="DataRole"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.DataRole">[docs]</a><span class="k">class</span> <span class="nc">DataRole</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The type or purpose of data in a model.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -301,7 +321,7 @@
     <span class="n">ALL</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
 
 </div>
-<div class="viewcode-block" id="ItemFlags"><a class="viewcode-back" href="../../enaml.html#enaml.enums.ItemFlags">[docs]</a><span class="k">class</span> <span class="nc">ItemFlags</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="ItemFlags"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.ItemFlags">[docs]</a><span class="k">class</span> <span class="nc">ItemFlags</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Specify the actions that can be performed on model items.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -330,7 +350,7 @@
     <span class="n">IS_TRISTATE</span> <span class="o">=</span> <span class="mh">0x40</span>
 
 </div>
-<div class="viewcode-block" id="Match"><a class="viewcode-back" href="../../enaml.html#enaml.enums.Match">[docs]</a><span class="k">class</span> <span class="nc">Match</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+<div class="viewcode-block" id="Match"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.Match">[docs]</a><span class="k">class</span> <span class="nc">Match</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; The type of a text search.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -368,26 +388,6 @@
           </div>
         </div>
       </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
-        </div>
-      </div>
       <div class="clearer"></div>
     </div>
     <div class="related">
@@ -409,6 +409,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

@@ -11,7 +11,7 @@
     
     <title>enaml.tests.widgets.calendar &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -66,7 +86,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestCalendar"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar">[docs]</a><span class="k">class</span> <span class="nc">TestCalendar</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar">[docs]</a><span class="k">class</span> <span class="nc">TestCalendar</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing calendars.</span>
 
 <span class="sd">    Toolkit testcases need to provide the following functions</span>
@@ -90,7 +110,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TestCalendar.setUp"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up before the calendar tests</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -109,7 +129,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;cal&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_initial_value"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_initial_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_initial_value"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_initial_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial attributes of the calendar.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -120,7 +140,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;max_date&#39;</span><span class="p">,</span> <span class="n">date</span><span class="p">(</span><span class="mi">7999</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_change_min_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_min_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_min_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_change_min_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_min_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_min_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test changing the minimum date.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -129,7 +149,7 @@
         <span class="n">component</span><span class="o">.</span><span class="n">min_date</span> <span class="o">=</span> <span class="n">new_minimum</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;min_date&#39;</span><span class="p">,</span> <span class="n">new_minimum</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_change_max_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_max_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_max_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_change_max_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_max_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_max_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test changing the maximum date.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -138,7 +158,7 @@
         <span class="n">component</span><span class="o">.</span><span class="n">max_date</span> <span class="o">=</span> <span class="n">new_maximum</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;max_date&#39;</span><span class="p">,</span> <span class="n">new_maximum</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_change_date_in_enaml"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_date_in_enaml">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_date_in_enaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_change_date_in_enaml"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_date_in_enaml">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_date_in_enaml</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test changing the current date through the component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -148,7 +168,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="n">new_date</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_invalid_min_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_invalid_min_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_invalid_min_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_invalid_min_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_invalid_min_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_invalid_min_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test changing to an invalid date below the min range.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -160,7 +180,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_invalid_max_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_invalid_max_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_invalid_max_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_invalid_max_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_invalid_max_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_invalid_max_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test changing to an invalid date above the max range.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -174,7 +194,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="n">date</span><span class="p">(</span><span class="mi">2011</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_select_date_in_ui"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_select_date_in_ui">[docs]</a>    <span class="k">def</span> <span class="nf">test_select_date_in_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_select_date_in_ui"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_select_date_in_ui">[docs]</a>    <span class="k">def</span> <span class="nf">test_select_date_in_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test changing the current date thought the ui</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -187,7 +207,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">date</span><span class="p">,</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;selected&#39;</span><span class="p">,</span> <span class="n">new_date</span><span class="p">)])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_activate_date_in_ui"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_activate_date_in_ui">[docs]</a>    <span class="k">def</span> <span class="nf">test_activate_date_in_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_activate_date_in_ui"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_activate_date_in_ui">[docs]</a>    <span class="k">def</span> <span class="nf">test_activate_date_in_ui</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test activating the current date thought the ui</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -200,7 +220,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[(</span><span class="s">&#39;selected&#39;</span><span class="p">,</span> <span class="n">new_date</span><span class="p">),</span>
                                        <span class="p">(</span><span class="s">&#39;activated&#39;</span><span class="p">,</span> <span class="n">new_date</span><span class="p">)])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_change_maximum_and_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_maximum_and_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_maximum_and_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_change_maximum_and_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_maximum_and_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_maximum_and_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test setting maximum while the date is out of range.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -210,7 +230,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="n">date</span><span class="p">(</span><span class="mi">2006</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_change_minimum_and_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_minimum_and_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_minimum_and_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_change_minimum_and_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_minimum_and_date">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_minimum_and_date</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test setting minimum while the date is out of range.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -220,7 +240,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;date&#39;</span><span class="p">,</span> <span class="n">date</span><span class="p">(</span><span class="mi">2010</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">9</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_change_range_invalid"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_range_invalid">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_range_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_change_range_invalid"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_change_range_invalid">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_range_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test setting minimum &gt; maximum.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -236,7 +256,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Special initialization tests</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="TestCalendar.test_initial_too_early"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_initial_too_early">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_too_early</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_initial_too_early"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_initial_too_early">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_too_early</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check initialization with an invalid early date is corrected.</span>
 
 <span class="sd">        .. todo:: avoid using the enaml source</span>
@@ -259,7 +279,7 @@
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">assertRaises</span><span class="p">(</span><span class="n">TraitError</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parse_and_create</span><span class="p">(</span><span class="n">enaml_source</span><span class="p">,</span> <span class="n">events</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestCalendar.test_initial_too_late"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_initial_too_late">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_too_late</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.test_initial_too_late"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.test_initial_too_late">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_too_late</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check initialization with an invalid late date is corrected.</span>
 
 <span class="sd">        .. todo:: avoid using the enaml source</span>
@@ -285,35 +305,35 @@
     <span class="c"># Abstract methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestCalendar.get_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.get_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.get_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.get_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get a calendar&#39;s active date.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestCalendar.get_min_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.get_min_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_min_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.get_min_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.get_min_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_min_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get a calendar&#39;s minimum date attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestCalendar.get_max_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.get_max_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_max_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.get_max_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.get_max_date">[docs]</a>    <span class="k">def</span> <span class="nf">get_max_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get a calendar&#39;s maximum date attribute.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestCalendar.activate_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.activate_date">[docs]</a>    <span class="k">def</span> <span class="nf">activate_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.activate_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.activate_date">[docs]</a>    <span class="k">def</span> <span class="nf">activate_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fire an event to indicate that a date was activated.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestCalendar.select_date"><a class="viewcode-back" href="../../../../tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.select_date">[docs]</a>    <span class="k">def</span> <span class="nf">select_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+<div class="viewcode-block" id="TestCalendar.select_date"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.calendar.TestCalendar.html#enaml.tests.widgets.calendar.TestCalendar.select_date">[docs]</a>    <span class="k">def</span> <span class="nf">select_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Fire an event to indicate that a date was selected.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -321,26 +341,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../../../index.html">
-              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -364,6 +364,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

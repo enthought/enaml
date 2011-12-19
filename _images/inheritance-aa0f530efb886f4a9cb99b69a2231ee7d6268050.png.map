@@ -1,6 +1,0 @@
-<map id="inheritance7efb261168" name="inheritance7efb261168">
-<area shape="rect" id="node15" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
-<area shape="rect" id="node14" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="701,5,790,35"/>
-<area shape="rect" id="node7" href="#enaml.widgets.wx.wx_date_edit.WXDateEdit" title="WXDateEdit" alt="" coords="1078,32,1173,61"/>
-<area shape="rect" id="node8" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.wx.wx_bounded_date.WXBoundedDate" title="WXBoundedDate" alt="" coords="892,5,1020,35"/>
-</map>

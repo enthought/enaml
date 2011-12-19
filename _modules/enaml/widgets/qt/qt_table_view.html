@@ -11,7 +11,7 @@
     
     <title>enaml.widgets.qt.qt_table_view &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,88 +47,7 @@
   
 
       </ul>
-    </div>  
-
-    <div class="document">
-      <div class="documentwrapper">
-        <div class="bodywrapper">
-          <div class="body">
-            
-  <h1>Source code for enaml.widgets.qt.qt_table_view</h1><div class="highlight"><pre>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
-<span class="kn">from</span> <span class="nn">.qt_abstract_item_view</span> <span class="kn">import</span> <span class="n">QtAbstractItemView</span>
-
-<span class="kn">from</span> <span class="nn">..table_view</span> <span class="kn">import</span> <span class="n">AbstractTkTableView</span>
-
-
-<div class="viewcode-block" id="QtTableView"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView">[docs]</a><span class="k">class</span> <span class="nc">QtTableView</span><span class="p">(</span><span class="n">QtAbstractItemView</span><span class="p">,</span> <span class="n">AbstractTkTableView</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A Qt implementation of TableView.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Setup methods</span>
-    <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="QtTableView.create"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Create the underlying QTableView control.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTableView</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="QtTableView.initialize"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initialize the widget with the attributes of this instance.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">QtTableView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_vertical_header_visible</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">vertical_header_visible</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_horizontal_header_visible</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">horizontal_header_visible</span><span class="p">)</span>
-
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Implementation</span>
-    <span class="c">#-------------------------------------------------------------------------- </span></div>
-<div class="viewcode-block" id="QtTableView.shell_vertical_header_visible_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.shell_vertical_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_vertical_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;vertical_header_visible&#39; </span>
-<span class="sd">        attribute of the shell object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_vertical_header_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="QtTableView.shell_horizontal_header_visible_changed"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.shell_horizontal_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_horizontal_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;horizontal_header_visible&#39;</span>
-<span class="sd">        attribute of the shell object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_horizontal_header_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
-
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Widget Update Methods</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="QtTableView.set_vertical_header_visible"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.set_vertical_header_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_vertical_header_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the vertical header visibility of the widget.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
-    </div>
-<div class="viewcode-block" id="QtTableView.set_horizontal_header_visible"><a class="viewcode-back" href="../../../../widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.set_horizontal_header_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_horizontal_header_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the horizontal header visibility of the widget.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
-</pre></div></div></div>
-
-          </div>
-        </div>
-      </div>
       <div class="sphinxsidebar">
         <div class="sphinxsidebarwrapper">
             <p class="logo"><a href="../../../../index.html">
@@ -147,6 +66,87 @@
     </p>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.widgets.qt.qt_table_view</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">.qt_abstract_item_view</span> <span class="kn">import</span> <span class="n">QtAbstractItemView</span>
+
+<span class="kn">from</span> <span class="nn">..table_view</span> <span class="kn">import</span> <span class="n">AbstractTkTableView</span>
+
+
+<div class="viewcode-block" id="QtTableView"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView">[docs]</a><span class="k">class</span> <span class="nc">QtTableView</span><span class="p">(</span><span class="n">QtAbstractItemView</span><span class="p">,</span> <span class="n">AbstractTkTableView</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of TableView.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtTableView.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying QTableView control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTableView</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTableView.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the widget with the attributes of this instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtTableView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_vertical_header_visible</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">vertical_header_visible</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_horizontal_header_visible</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">horizontal_header_visible</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation</span>
+    <span class="c">#-------------------------------------------------------------------------- </span></div>
+<div class="viewcode-block" id="QtTableView.shell_vertical_header_visible_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.shell_vertical_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_vertical_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;vertical_header_visible&#39; </span>
+<span class="sd">        attribute of the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_vertical_header_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="QtTableView.shell_horizontal_header_visible_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.shell_horizontal_header_visible_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_horizontal_header_visible_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;horizontal_header_visible&#39;</span>
+<span class="sd">        attribute of the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_horizontal_header_visible</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtTableView.set_vertical_header_visible"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.set_vertical_header_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_vertical_header_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the vertical header visibility of the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">verticalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="QtTableView.set_horizontal_header_visible"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.qt.qt_table_view.QtTableView.set_horizontal_header_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_horizontal_header_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the horizontal header visibility of the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">horizontalHeader</span><span class="p">()</span><span class="o">.</span><span class="n">hide</span><span class="p">()</span>
+</pre></div></div></div>
+
+          </div>
         </div>
       </div>
       <div class="clearer"></div>
@@ -170,6 +170,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

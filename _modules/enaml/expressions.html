@@ -11,7 +11,7 @@
     
     <title>enaml.expressions &mdash; enaml 0.1alpha documentation</title>
     
-    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     
     <script type="text/javascript">
@@ -47,7 +47,27 @@
   
 
       </ul>
-    </div>  
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
 
     <div class="document">
       <div class="documentwrapper">
@@ -76,7 +96,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Express Locals</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="ExpressionLocals"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.ExpressionLocals">[docs]</a><span class="k">class</span> <span class="nc">ExpressionLocals</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="ExpressionLocals"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.ExpressionLocals">[docs]</a><span class="k">class</span> <span class="nc">ExpressionLocals</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A mapping object that will first look in the provided locals</span>
 <span class="sd">    dictionary and finally by walking up the tree of components looking</span>
 <span class="sd">    for attributes.</span>
@@ -178,7 +198,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Ast walking helpers</span>
 <span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="parse_attr_names"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.parse_attr_names">[docs]</a><span class="k">def</span> <span class="nf">parse_attr_names</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">):</span>
+<div class="viewcode-block" id="parse_attr_names"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.parse_attr_names">[docs]</a><span class="k">def</span> <span class="nf">parse_attr_names</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Parses an expression ast, looking for attributes references in</span>
 <span class="sd">    the objects attribute space.</span>
 
@@ -230,7 +250,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Abstract Expression</span>
 <span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression">[docs]</a><span class="k">class</span> <span class="nc">AbstractExpression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractExpression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.AbstractExpression">[docs]</a><span class="k">class</span> <span class="nc">AbstractExpression</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
 
@@ -276,11 +296,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span> <span class="o">=</span> <span class="n">f_locals</span>
 
     <span class="nd">@property</span>
-<div class="viewcode-block" id="AbstractExpression.obj"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression.obj">[docs]</a>    <span class="k">def</span> <span class="nf">obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractExpression.obj"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.AbstractExpression.obj">[docs]</a>    <span class="k">def</span> <span class="nf">obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_ref</span><span class="p">()</span>
 </div>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractExpression.bind"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.AbstractExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Bind the expression to the `name` attribute on `object`.</span>
 
 <span class="sd">        This method will be called after the appropriate items in the</span>
@@ -291,7 +311,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
     <span class="nd">@abstractmethod</span>
-<div class="viewcode-block" id="AbstractExpression.eval_expression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.AbstractExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractExpression.eval_expression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.AbstractExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluate the expression and return the result. This will be</span>
 <span class="sd">        called only after `bind` has been called.</span>
 
@@ -302,7 +322,7 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Standard Expression Classes</span>
 <span class="c">#------------------------------------------------------------------------------</span></div></div>
-<div class="viewcode-block" id="SimpleExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression">[docs]</a><span class="k">class</span> <span class="nc">SimpleExpression</span><span class="p">(</span><span class="n">AbstractExpression</span><span class="p">):</span>
+<div class="viewcode-block" id="SimpleExpression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression">[docs]</a><span class="k">class</span> <span class="nc">SimpleExpression</span><span class="p">(</span><span class="n">AbstractExpression</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractExpression that provides</span>
 <span class="sd">    a default attribute value by evaluating the expression.</span>
 
@@ -313,14 +333,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-<div class="viewcode-block" id="SimpleExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SimpleExpression.bind"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Bind the expression to the `name` attribute on `object`.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c"># Nothing to do for simple expression</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="SimpleExpression.eval_expression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SimpleExpression.eval_expression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Evaluates and returns the results of the expression.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -329,7 +349,7 @@
         <span class="n">val</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">code</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">val</span>
 </div>
-<div class="viewcode-block" id="SimpleExpression.get_globals"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.get_globals">[docs]</a>    <span class="k">def</span> <span class="nf">get_globals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SimpleExpression.get_globals"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression.get_globals">[docs]</a>    <span class="k">def</span> <span class="nf">get_globals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the global namespace dictionary which is the union</span>
 <span class="sd">        of f_globals and the toolkit, f_globals taking precedence.</span>
 
@@ -339,7 +359,7 @@
         <span class="n">d</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">f_globals</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">d</span>
 </div>
-<div class="viewcode-block" id="SimpleExpression.get_locals"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.SimpleExpression.get_locals">[docs]</a>    <span class="k">def</span> <span class="nf">get_locals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="SimpleExpression.get_locals"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression.get_locals">[docs]</a>    <span class="k">def</span> <span class="nf">get_locals</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the local namespace mapping object. The mapping</span>
 <span class="sd">        object first attempts to lookup the value in f_locals, then</span>
 <span class="sd">        continues by walking up the tree checking the attributes of</span>
@@ -349,7 +369,7 @@
         <span class="k">return</span> <span class="n">ExpressionLocals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="UpdatingExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.UpdatingExpression">[docs]</a><span class="k">class</span> <span class="nc">UpdatingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
+<div class="viewcode-block" id="UpdatingExpression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.UpdatingExpression">[docs]</a><span class="k">class</span> <span class="nc">UpdatingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A dynamically updating concrete expression object.</span>
 
 <span class="sd">    The expression is parsed for trait attribute references and when any</span>
@@ -359,7 +379,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
 
-<div class="viewcode-block" id="UpdatingExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.UpdatingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UpdatingExpression.bind"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.UpdatingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Parse the expression for any trait attribute references. A</span>
 <span class="sd">        notifier is attached to each trait reference that will update</span>
 <span class="sd">        the expression value upon change.</span>
@@ -395,7 +415,7 @@
         <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">owner</span> <span class="ow">in</span> <span class="n">parse_attr_names</span><span class="p">(</span><span class="n">expr_ast</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span><span class="p">):</span>
             <span class="n">owner</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="n">update_method</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="UpdatingExpression.update_object"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.UpdatingExpression.update_object">[docs]</a>    <span class="k">def</span> <span class="nf">update_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="UpdatingExpression.update_object"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.UpdatingExpression.update_object">[docs]</a>    <span class="k">def</span> <span class="nf">update_object</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The notification handler to update the component object.</span>
 
 <span class="sd">        When this method is called, the expression is re-evaluated, and</span>
@@ -406,14 +426,14 @@
         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">eval_expression</span><span class="p">())</span>
 
 </div></div>
-<div class="viewcode-block" id="DelegatingExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression">[docs]</a><span class="k">class</span> <span class="nc">DelegatingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
+<div class="viewcode-block" id="DelegatingExpression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression">[docs]</a><span class="k">class</span> <span class="nc">DelegatingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A concrete expression object that performs two-way binding on</span>
 <span class="sd">    constructs of the from &#39;foo.bar&#39;</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;lookup_info&#39;</span><span class="p">,)</span>
 
-<div class="viewcode-block" id="DelegatingExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="DelegatingExpression.bind"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Parses the expression object for the appropriate</span>
 <span class="sd">        lookup names.</span>
 
@@ -457,7 +477,7 @@
 
         <span class="n">obj</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_delegate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="DelegatingExpression.update_object"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression.update_object">[docs]</a>    <span class="k">def</span> <span class="nf">update_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+<div class="viewcode-block" id="DelegatingExpression.update_object"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression.update_object">[docs]</a>    <span class="k">def</span> <span class="nf">update_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The notification handler to update the component object.</span>
 
 <span class="sd">        When this method is called, the delegate expression is evaluated</span>
@@ -487,7 +507,7 @@
                     <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">):</span>
                         <span class="nb">setattr</span><span class="p">(</span><span class="n">dlgt_obj</span><span class="p">,</span> <span class="n">dlgt_attr_name</span><span class="p">,</span> <span class="n">new_val</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="DelegatingExpression.update_delegate"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.DelegatingExpression.update_delegate">[docs]</a>    <span class="k">def</span> <span class="nf">update_delegate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+<div class="viewcode-block" id="DelegatingExpression.update_delegate"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression.update_delegate">[docs]</a>    <span class="k">def</span> <span class="nf">update_delegate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The notification handler to update the delegate object.</span>
 
 <span class="sd">        When this method is called, the delegate expression is updated</span>
@@ -517,7 +537,7 @@
                         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">,</span> <span class="n">new_val</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="NotifyingExpression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.NotifyingExpression">[docs]</a><span class="k">class</span> <span class="nc">NotifyingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
+<div class="viewcode-block" id="NotifyingExpression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.NotifyingExpression">[docs]</a><span class="k">class</span> <span class="nc">NotifyingExpression</span><span class="p">(</span><span class="n">SimpleExpression</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A concrete expression object that will eval an expression when</span>
 <span class="sd">    the attribute on the object changes.</span>
 
@@ -526,7 +546,7 @@
 
     <span class="n">arguments</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s">&#39;arguments&#39;</span><span class="p">,</span> <span class="s">&#39;obj name old new&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="NotifyingExpression.bind"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.NotifyingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="NotifyingExpression.bind"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.NotifyingExpression.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden from the parent class to hookup a notifier on</span>
 <span class="sd">        the component attribute.</span>
 
@@ -534,7 +554,7 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">NotifyingExpression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">eval_expression</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">attr</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="NotifyingExpression.eval_expression"><a class="viewcode-back" href="../../enaml.html#enaml.expressions.NotifyingExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+<div class="viewcode-block" id="NotifyingExpression.eval_expression"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.NotifyingExpression.eval_expression">[docs]</a>    <span class="k">def</span> <span class="nf">eval_expression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">old</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden from the parent class to add the arguments object</span>
 <span class="sd">        to the expression locals.</span>
 
@@ -548,26 +568,6 @@
 </pre></div></div></div>
 
           </div>
-        </div>
-      </div>
-      <div class="sphinxsidebar">
-        <div class="sphinxsidebarwrapper">
-            <p class="logo"><a href="../../index.html">
-              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
-            </a></p>
-<div id="searchbox" style="display: none">
-  <h3>Quick search</h3>
-    <form class="search" action="../../search.html" method="get">
-      <input type="text" name="q" />
-      <input type="submit" value="Go" />
-      <input type="hidden" name="check_keywords" value="yes" />
-      <input type="hidden" name="area" value="default" />
-    </form>
-    <p class="searchtip" style="font-size: 90%">
-    Enter search terms or a module, class or function name.
-    </p>
-</div>
-<script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
       </div>
       <div class="clearer"></div>
@@ -591,6 +591,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>
