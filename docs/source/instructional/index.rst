@@ -1,4 +1,4 @@
-.. instructional
+.. _instructional
 
 |Enaml| Getting Started Guide and Tutorials
 ===============================================================================
@@ -7,4 +7,5 @@
     :maxdepth: 2
 
     overview
+    Tutorials <tutorials_home>
     Examples <example>
