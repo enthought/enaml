@@ -1,0 +1,7 @@
+<map id="inheritancec8455e7019" name="inheritancec8455e7019">
+<area shape="rect" id="node1" href="#enaml.exceptions.EnamlError" title="EnamlError" alt="" coords="43,539,135,568"/>
+<area shape="rect" id="node2" href="#enaml.exceptions.EnamlSyntaxError" title="EnamlSyntaxError" alt="" coords="243,512,378,541"/>
+<area shape="rect" id="node4" href="#enaml.exceptions.EnamlRuntimeError" title="EnamlRuntimeError" alt="" coords="238,565,384,595"/>
+<area shape="rect" id="node6" href="#enaml.exceptions.ShellNotificationContext" title="ShellNotificationContext" alt="" coords="222,5,400,35"/>
+<area shape="rect" id="node7" href="#enaml.exceptions.ShellExceptionContext" title="ShellExceptionContext" alt="" coords="6,5,173,35"/>
+</map>

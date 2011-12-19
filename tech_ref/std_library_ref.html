@@ -1,0 +1,265 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Enaml Standard library components &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml Technical Reference" href="index.html" />
+    <link rel="next" title="Enaml Architecture Reference" href="../architecture/index.html" />
+    <link rel="prev" title="Enaml Built-in Components" href="built_ins_ref.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../architecture/index.html" title="Enaml Architecture Reference"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="built_ins_ref.html" title="Enaml Built-in Components"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Enaml Technical Reference</a> &raquo;</li>
+  
+    <li><a href="#">Enaml Standard library components</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Enaml Standard library components</a><ul>
+<li><a class="reference internal" href="#fields">Fields</a></li>
+<li><a class="reference internal" href="#radio-group">Radio Group</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/tech_ref/std_library_ref.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="enaml-standard-library-components">
+<span id="std-library-ref"></span><h1>Enaml Standard library components<a class="headerlink" href="#enaml-standard-library-components" title="Permalink to this headline">¶</a></h1>
+<p>The following components are available from the standard library:</p>
+<div class="section" id="fields">
+<h2>Fields<a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h2>
+<div class="admonition-todo admonition " id="index-0">
+<p class="first admonition-title">Todo</p>
+<p class="last">Write abstract representation of standard library components</p>
+</div>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from enaml.converters import IntConverter, FloatConverter, LongConverter, ComplexConverter
+
+
+ErrorField(Field):
+    bg_color &lt;&lt; 'error' if error else 'none'
+
+
+IntField(ErrorField):
+    converter = IntConverter()
+
+
+LongField(ErrorField):
+    converter = LongConverter()
+
+
+FloatField(ErrorField):
+    converter = FloatConverter()
+
+
+ComplexField(ErrorField):
+    converter = ComplexConverter()
+
+
+PasswordField(Field):
+    password_mode = 'password'
+
+</pre>
+</div>
+</div>
+<div class="section" id="radio-group">
+<h2>Radio Group<a class="headerlink" href="#radio-group" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" A custom RadioGroup component.
+
+A RadioGroup makes it easier to work with a group of radio buttons
+since it manages the various toggle behavior internally and yields
+output in the form of selected item, index, and label.
+
+"""
+:: python ::
+
+def _toggle_helper(rgroup, idx, label, checked):
+    """ A helper function to handle the radio button toggle events
+    until we have statement support in notification expressions.
+
+    """
+    if checked:
+        rgroup.selected_label = label
+        rgroup.selected_index = idx
+        rgroup.selected = rgroup.items[idx]
+
+:: end ::
+
+
+defn _MakeButton(rgroup, idx, label):
+    """ A private defn which creates a properly bound RadioButton.
+
+    """
+    RadioButton:
+        text = label
+        toggled &gt;&gt; _toggle_helper(rgroup, idx, label, checked)
+
+
+RadioGroup(Container):
+    """ A Container that automatically generates a group of RadioButtons.
+
+    Input Attributes
+    ----------------
+    orientation : string
+        The orientation of the group of radio buttons, either
+        'horizontal' or 'vertical'. Defaults to 'horizontal'.
+    
+    items : list
+        The list of items which represent the underlying radio 
+        buttons.
+    
+    to_string : callable
+        A callable which get mapped across the list of items to 
+        generate the list of labels for the buttons.
+    
+    Output Attributes
+    -----------------
+    selected : object
+        An attribute which is updated with the item associated
+        with the currently selected radio button.
+    
+    selected_index : integer
+        An attribute which is updated with the index of the 
+        currently selected radio button.
+
+    selected_label : string
+        An attribute which is updated with the label of the 
+        currently selected radio button.
+
+    """
+    id: rgroup
+    orientation = 'horizontal'
+    items = []
+    to_string = str
+    selected = None
+    selected_index = None
+    selected_label = None
+    constraints &lt;&lt; [
+        hbox(*children) if orientation == 'horizontal' else vbox(*children)
+    ]
+    _labels &lt;&lt; map(to_string, items)
+    Include:
+        components &lt;&lt; [_MakeButton(rgroup, idx, label) 
+                       for idx, label in enumerate(_labels)]
+
+</pre>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../architecture/index.html" title="Enaml Architecture Reference"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="built_ins_ref.html" title="Enaml Built-in Components"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Technical Reference</a> &raquo;</li>
+  
+    <li><a href="#">Enaml Standard library components</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 19, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

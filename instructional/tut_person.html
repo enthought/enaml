@@ -66,7 +66,12 @@
 <ul>
 <li><a class="reference internal" href="#">Hello John Doe tutorial</a><ul>
 <li><a class="reference internal" href="#source">Source</a></li>
-<li><a class="reference internal" href="#walk-through">Walk-through</a></li>
+<li><a class="reference internal" href="#walk-through">Walk-through</a><ul>
+<li><a class="reference internal" href="#comments">Comments</a></li>
+<li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#component-declaration">Component Declaration</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -98,9 +103,9 @@
           <div class="body">
             
   <div class="section" id="hello-john-doe-tutorial">
-<h1>Hello John Doe tutorial<a class="headerlink" href="#hello-john-doe-tutorial" title="Permalink to this headline">¶</a></h1>
-<p>This is a basic tutorial to explain the basic features on an Enaml user
-interface.</p>
+<span id="hello-john-doe"></span><h1>Hello John Doe tutorial<a class="headerlink" href="#hello-john-doe-tutorial" title="Permalink to this headline">¶</a></h1>
+<p>This is a basic tutorial to explain the basic features of an Enaml user
+interface. It uses sets up a GUI with the name and age of a person.</p>
 <div class="section" id="source">
 <h2>Source<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
 <p><a class="reference download internal" href="../_downloads/person_view.enaml"><tt class="xref download docutils literal"><span class="pre">.enaml</span> <span class="pre">file</span></tt></a></p>
@@ -142,14 +147,77 @@ defn PersonView(person):
 </div>
 <p>The Python code to use the GUI is shown here (and can be downloaded from the
 other link above):</p>
-<div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
-#  All rights reserved.
-#------------------------------------------------------------------------------
-from enaml.stdlib.fields import IntField
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Range</span><span class="p">,</span> <span class="n">on_trait_change</span>
 
 
-PersonForm(Form):
+<span class="k">class</span> <span class="nc">Person</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A simple class representing a person object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">Str</span>
+
+    <span class="n">age</span> <span class="o">=</span> <span class="n">Range</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;age&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">debug_print</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Prints out a debug message whenever the person&#39;s age changes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">templ</span> <span class="o">=</span> <span class="s">&quot;{first} {last} is {age} years old.&quot;</span>
+        <span class="k">print</span> <span class="n">templ</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span> 
+                           <span class="n">last</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">last_name</span><span class="p">,</span> 
+                           <span class="n">age</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">age</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">enaml</span>
+    <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">person_view</span> <span class="kn">import</span> <span class="n">PersonView</span>
+    
+    <span class="n">john</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">first_name</span><span class="o">=</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s">&#39;Doe&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+    
+    <span class="n">view</span> <span class="o">=</span> <span class="n">PersonView</span><span class="p">(</span><span class="n">john</span><span class="p">)</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The resulting GUI looks like this (in Mac OS):</p>
+<img alt="../_images/john_doe.png" src="../_images/john_doe.png" />
+</div>
+<div class="section" id="walk-through">
+<h2>Walk-through<a class="headerlink" href="#walk-through" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s take a closer look at the files.</p>
+<div class="section" id="comments">
+<h3>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h3>
+<p>The file begins with some comment lines. As in Python code, <cite>#</cite> begins a
+comment line and is ignored during lexing and parsing.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#-----------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#-----------------------------------------------------------------------------</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="imports">
+<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
+<p>Imports also work as they do in Python.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">enaml.stdlib.fields</span> <span class="kn">import</span> <span class="n">IntField</span>
+</pre></div>
+</div>
+<p>In this case, we are importing the integer field widget IntField from the
+<a class="reference internal" href="../tech_ref/std_library_ref.html#std-library-ref"><em>standard component library.</em></a> This is the component that
+lets us assign an integer value in a text field, with validation and error
+checking.</p>
+</div>
+<div class="section" id="component-declaration">
+<h3>Component Declaration<a class="headerlink" href="#component-declaration" title="Permalink to this headline">¶</a></h3>
+<p>Next, we define an entry form using a <em>class-like</em> declaration:</p>
+<div class="highlight-python"><pre>PersonForm(Form):
     person = None
     Label:
         text = 'First Name'
@@ -162,34 +230,18 @@ PersonForm(Form):
     Label:
         text = 'Age'
     IntField:
-        value := person.age 
-
-
-defn PersonView(person):
-    Window:
-        PersonForm:
-            person = person
-            
-</pre>
+        value := person.age</pre>
 </div>
-<p>The resulting GUI looks like this (in Mac OS):</p>
-<img alt="../_images/john_doe.png" src="../_images/john_doe.png" />
-</div>
-<div class="section" id="walk-through">
-<h2>Walk-through<a class="headerlink" href="#walk-through" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s take a closer look at the files.</p>
-<p>The file begins with some comment lines. As in Python code, <cite>#</cite> begins a
-comment line and is ignored during lexing and parsing.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#-----------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#-----------------------------------------------------------------------------</span>
-</pre></div>
-</div>
-<p>Imports also work as they do in Python. In this case, we are importing the
-integer field widget.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">enaml.stdlib.fields</span> <span class="kn">import</span> <span class="n">IntField</span>
-</pre></div>
+<dl class="docutils">
+<dt>The syntax of Python is copied in several aspects of the declaration.</dt>
+<dd><ul class="first last simple">
+<li><cite>PersonForm(Form)</cite> indicates that the new component <cite>PersonForm</cite> inherits from
+the Enaml <a class="reference internal" href="../tech_ref/built_ins_ref.html#built-ins-ref"><em>built-in component</em></a> <cite>Form</cite>.</li>
+<li>A colon (:) marks the end of a declaration header.</li>
+<li>Indentation is used to specify code block structure.</li>
+</ul>
+</dd>
+</dl>
 </div>
 </div>
 </div>
