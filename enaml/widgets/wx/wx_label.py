@@ -33,16 +33,18 @@ class WXLabel(WXControl, AbstractTkLabel):
     # Implementation
     #--------------------------------------------------------------------------
     def shell_text_changed(self, text):
-        """ The change handler for the 'text' attribute.
+        """ The change handler for the 'text' attribute on the shell 
+        component.
 
         """
         self.set_label(text)
-        # If the text in the label changes, then the size hint of
-        # label will have changed, and the layout system needs to
-        # be informed.
-        self.shell_obj.size_hint_updated = True
-        
+
     def shell_word_wrap_changed(self, wrap):
+        """ The change handler for the 'word_wrap' attribute on the 
+        shell component. Wx does not support word wrap, so this is 
+        a no-op.
+
+        """
         pass
 
     def set_label(self, label):

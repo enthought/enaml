@@ -15,7 +15,6 @@ class AbstractTkLabel(AbstractTkControl):
     def shell_text_changed(self, text):
         raise NotImplementedError
         
-    
     @abstractmethod
     def shell_word_wrap_changed(self, word_wrap):
         raise NotImplementedError
@@ -29,6 +28,9 @@ class Label(Control):
     text = Str
     
     #: Whether or not the label should wrap around on long lines.
+    #: This may not be supported by all toolkit backends (like Wx)
+    #: and it may be necessary with those toolkits to insert newline 
+    #: characters where necessary.
     word_wrap = Bool(False)
 
     #: How strongly a component hugs it's content. Labels hug their
@@ -38,8 +40,10 @@ class Label(Control):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkLabel)
 
-    # Note: Do not attempt to create a _text_changed handler here
-    # to fire off size hint updated events. This is because such
-    # a handler might get fired *before* the label is actually
-    # updated and so the computed size hint will be incorrect.
+    def _text_changed(self):
+        """ A change handler for the 'text' attribute which fires off 
+        a size hint updated event.
+
+        """
+        self.size_hint_updated = True
 

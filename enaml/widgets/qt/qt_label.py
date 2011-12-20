@@ -38,10 +38,6 @@ class QtLabel(QtControl, AbstractTkLabel):
 
         """
         self.set_label(text)
-        # If the text in the label changes, then the size hint of
-        # label will have changed, and the layout system needs to
-        # be informed.
-        self.shell_obj.size_hint_updated = True
 
     def shell_word_wrap_changed(self, word_wrap):
         """ The change handler for the 'word_wrap' attribute.
