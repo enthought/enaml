@@ -389,7 +389,7 @@ class BaseComponent(HasStrictTraits):
         self._setup_init_visibility()
         self._setup_init_layout()
         self._setup_set_initialized()
-
+        
     def _setup_parent_refs(self):
         """ A setup method which assigns the parent reference to the
         static children.

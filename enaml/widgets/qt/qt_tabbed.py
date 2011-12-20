@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui
 
-from .qt_stacked import QtStacked
+from .qt_container import QtContainer
 from .qt_resizing_widgets import QResizingTabWidget
 
 from ..tabbed import AbstractTkTabbed
@@ -19,7 +19,7 @@ _TAB_POSITION_MAP = {
 }
 
 
-class QtTabbed(QtStacked, AbstractTkTabbed):
+class QtTabbed(QtContainer, AbstractTkTabbed):
     """ A Qt implementation of the Tabbed container.
 
     """
@@ -37,7 +37,10 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
 
         """
         super(QtTabbed, self).initialize()
-        self._set_tab_position(self.shell_obj.tab_position)
+        self.update_children()
+        shell = self.shell_obj
+        self.set_index(shell.index)
+        self.set_tab_position(shell.tab_position)
 
     def bind(self):
         """ Bind to the events emitted by the underlying control.
@@ -49,12 +52,26 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
     #--------------------------------------------------------------------------
     # Implementation 
     #--------------------------------------------------------------------------
+    def shell_index_changed(self, index):
+        """ Update the widget index with the new value from the shell 
+        object.
+
+        """
+        self.set_index(index)
+        self.shell_obj.size_hint_updated = True
+    
+    def shell_children_changed(self, index):
+        """ Update the widget with new children.
+
+        """
+        self.update_children()
+
     def shell_tab_position_changed(self, tab_position):
         """ The change handler for the 'tab_position' attribute of the
         shell object.
 
         """
-        self._set_tab_position(tab_position)
+        self.set_tab_position(tab_position)
         self.shell_obj.size_hint_updated = True
 
     def size_hint(self):
@@ -63,16 +80,22 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
         value is used by the layout manager to determine how much
         space to allocate the widget.
 
-        Override to add the content margins to the size hint.
-
         """
-        width_hint, height_hint = super(QtTabbed, self).size_hint()
         widget = self.widget
         shell = self.shell_obj
+        curr_shell = shell.children[shell.index]
+        size_hint = curr_shell.size_hint()
+        
+        if size_hint == (-1, -1):
+            q_size = curr_shell.toolkit_widget.minimumSize()
+            size_hint = (q_size.width(), q_size.height())
+
+        width_hint, height_hint = size_hint
+
         # FIXME: This can get called before the tab_position has been
-        # synchronized with the widget. Ensure that it is synchronized. It would
-        # be better if the shell_*changed() methods could be given priority over
-        # other Trait change handlers.
+        # synchronized with the widget. Ensure that it is synchronized. 
+        # It would be better if the shell_*changed() methods could be 
+        # given priority over other Trait change handlers.
         tab_position = shell.tab_position
         q_tab_position = _TAB_POSITION_MAP[tab_position]
         if q_tab_position != widget.tabPosition():
@@ -81,12 +104,14 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
         opt = QtGui.QStyleOptionTabWidgetFrame()
         widget.initStyleOption(opt)
         tab_bar_size = opt.tabBarSize
+        
         if shell.tab_position in ('top', 'bottom'):
             height_hint += tab_bar_size.height()
             width_hint = max(width_hint, tab_bar_size.width())
         else:
             width_hint += opt.tabBarSize.width()
             height_hint = max(height_hint, tab_bar_size.height())
+
         return (width_hint, height_hint)
 
     #--------------------------------------------------------------------------
@@ -102,7 +127,7 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
-    def _set_tab_position(self, tab_position):
+    def set_tab_position(self, tab_position):
         """ Sets the position of the tabs on the underlying tab widget.
 
         """
@@ -123,9 +148,14 @@ class QtTabbed(QtStacked, AbstractTkTabbed):
         """
         shell = self.shell_obj
         widget = self.widget
+        selected_index = shell.index
         widget.clear()
-        for child in shell.children:
+        for idx, child in enumerate(shell.children):
+            if idx == selected_index:
+                child.visible = True
+            else:
+                child.visible = False
             widget.addTab(child.toolkit_widget, child.title)
-        self.set_index(shell.index)
+        self.set_index(selected_index)
         shell.size_hint_updated = True
 
