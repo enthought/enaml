@@ -66,6 +66,9 @@ class BaseItemSelectionModel(BaseComponent):
     #: rectangular ranges of selected cells.
     selection_event = Event()
 
+    #: BaseItemSelectionModels are not visible.
+    visible = False
+
     #: BaseItemSelectionModel has no children.
     _subcomponents = List(maxlen=0)
 
