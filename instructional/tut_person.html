@@ -30,7 +30,7 @@
     <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="next" title="Examples" href="example.html" />
-    <link rel="prev" title="Enaml Tutorials" href="tutorials_home.html" /> 
+    <link rel="prev" title="Hello World! tutorial" href="tut_hello_world.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,7 +46,7 @@
           <a href="example.html" title="Examples"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tutorials_home.html" title="Enaml Tutorials"
+          <a href="tut_hello_world.html" title="Hello World! tutorial"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
@@ -67,11 +67,19 @@
 <li><a class="reference internal" href="#">Hello John Doe tutorial</a><ul>
 <li><a class="reference internal" href="#source">Source</a></li>
 <li><a class="reference internal" href="#walk-through">Walk-through</a><ul>
-<li><a class="reference internal" href="#comments">Comments</a></li>
+<li><a class="reference internal" href="#enaml-file">Enaml file</a><ul>
 <li><a class="reference internal" href="#imports">Imports</a></li>
-<li><a class="reference internal" href="#component-declaration">Component Declaration</a></li>
+<li><a class="reference internal" href="#component-declaration-block">Component Declaration Block</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a class="reference internal" href="#defn-block"><tt class="docutils literal"><span class="pre">defn</span></tt> Block</a><ul>
+<li><a class="reference internal" href="#python-code">Python code</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#traits-object">Traits Object</a></li>
+<li><a class="reference internal" href="#hooking-up-the-enaml-view">Hooking up the Enaml view</a></li>
 </ul>
 </li>
 </ul>
@@ -125,7 +133,7 @@ from enaml.stdlib.fields import IntField
 PersonForm(Form):
     person = None
     Label:
-        text = 'First Name'
+        Label.text = 'First Name'
     Field:
         value := person.first_name
     Label:
@@ -192,31 +200,26 @@ other link above):</p>
 <div class="section" id="walk-through">
 <h2>Walk-through<a class="headerlink" href="#walk-through" title="Permalink to this headline">¶</a></h2>
 <p>Let&#8217;s take a closer look at the files.</p>
-<div class="section" id="comments">
-<h3>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h3>
-<p>The file begins with some comment lines. As in Python code, <cite>#</cite> begins a
-comment line and is ignored during lexing and parsing.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="c">#-----------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
-<span class="c">#-----------------------------------------------------------------------------</span>
-</pre></div>
-</div>
-</div>
+<div class="section" id="enaml-file">
+<h3>Enaml file<a class="headerlink" href="#enaml-file" title="Permalink to this headline">¶</a></h3>
 <div class="section" id="imports">
-<h3>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h3>
-<p>Imports also work as they do in Python.</p>
+<h4>Imports<a class="headerlink" href="#imports" title="Permalink to this headline">¶</a></h4>
+<p>Imports similar to Python.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">enaml.stdlib.fields</span> <span class="kn">import</span> <span class="n">IntField</span>
 </pre></div>
 </div>
 <p>In this case, we are importing the integer field widget IntField from the
 <a class="reference internal" href="../tech_ref/std_library_ref.html#std-library-ref"><em>standard component library.</em></a> This is the component that
 lets us assign an integer value in a text field, with validation and error
-checking.</p>
+checking. Note that this import points to a component declaration in a
+<tt class="docutils literal"><span class="pre">.enaml</span></tt> file. <em>The import statement looks like Python but imports from an
+.enaml file.</em></p>
 </div>
-<div class="section" id="component-declaration">
-<h3>Component Declaration<a class="headerlink" href="#component-declaration" title="Permalink to this headline">¶</a></h3>
-<p>Next, we define an entry form using a <em>class-like</em> declaration:</p>
+<div class="section" id="component-declaration-block">
+<h4>Component Declaration Block<a class="headerlink" href="#component-declaration-block" title="Permalink to this headline">¶</a></h4>
+<p>Next, we define an entry form using a <em>class-like</em> component hierarchy
+declaration. With this block of code, we define a reusable component derived
+from other components.</p>
 <div class="highlight-python"><pre>PersonForm(Form):
     person = None
     Label:
@@ -235,13 +238,93 @@ checking.</p>
 <dl class="docutils">
 <dt>The syntax of Python is copied in several aspects of the declaration.</dt>
 <dd><ul class="first last simple">
-<li><cite>PersonForm(Form)</cite> indicates that the new component <cite>PersonForm</cite> inherits from
+<li><tt class="docutils literal"><span class="pre">PersonForm(Form)</span></tt> indicates that the new component <tt class="docutils literal"><span class="pre">PersonForm</span></tt> inherits from
 the Enaml <a class="reference internal" href="../tech_ref/built_ins_ref.html#built-ins-ref"><em>built-in component</em></a> <cite>Form</cite>.</li>
-<li>A colon (:) marks the end of a declaration header.</li>
+<li>A colon <tt class="docutils literal"><span class="pre">:</span></tt> marks the end of a declaration header.</li>
 <li>Indentation is used to specify code block structure.</li>
 </ul>
 </dd>
 </dl>
+<p>With <tt class="docutils literal"><span class="pre">person</span> <span class="pre">=</span> <span class="pre">None</span></tt> we are initializing the <tt class="docutils literal"><span class="pre">person</span></tt> attribute of
+<tt class="docutils literal"><span class="pre">PersonForm</span></tt>.</p>
+<p>Next, we add a series of labels and fields. <tt class="docutils literal"><span class="pre">Label</span></tt> and <tt class="docutils literal"><span class="pre">Field</span></tt> are both from
+the library of Enaml <a class="reference internal" href="../tech_ref/built_ins_ref.html#built-ins-ref"><em>built-in components.</em></a> Assignments
+are made to a component in an indented block. The assignments are made as if
+they were within an implicit <tt class="docutils literal"><span class="pre">with(Label):</span></tt> block.</p>
+<p>In the <tt class="docutils literal"><span class="pre">Field</span></tt> code block, we notice a new operator <tt class="docutils literal"><span class="pre">:=</span></tt>. This is the
+<a class="reference internal" href="../tech_ref/grammar_ref.html#delegation-opr"><em>delegation operator</em></a>, one of the four special operators in
+the Enaml <a class="reference internal" href="../tech_ref/grammar_ref.html#grammar-ref"><em>grammar</em></a>. It sets up a two-way synchronization
+between the objects on the left-hand and right-hand sides. That is, changes to
+the value of the text field in the GUI widget are applied to the value of
+person.first_name, and changes to the value of person.first_name are displayed
+in the GUI component.</p>
+<p>The <tt class="docutils literal"><span class="pre">IntField</span></tt> component provides a string-to-integer conversion, validation,
+and error reporting function. It is derived from the <tt class="docutils literal"><span class="pre">Field</span></tt> component used
+elsewhere in the widget. By using the <tt class="docutils literal"><span class="pre">IntField</span></tt> component, we add validation
+to the GUI, as shown in the example below, where a non-integer value was
+entered in the age field:</p>
+<img alt="../_images/john_doe_error.png" src="../_images/john_doe_error.png" />
+</div>
+</div>
+</div>
+<div class="section" id="defn-block">
+<h2><tt class="docutils literal"><span class="pre">defn</span></tt> Block<a class="headerlink" href="#defn-block" title="Permalink to this headline">¶</a></h2>
+<p>With a <tt class="docutils literal"><span class="pre">defn</span></tt> block, we create a particular instance of the reusable
+component declared in the previous code block. This then becomes availble for
+external Python functions to import. With a <tt class="docutils literal"><span class="pre">defn</span></tt> block header, we specify
+the <em>arguments</em> that will be passed in by the calling Python function.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The header line of a <em>component declaration block</em> specifies
+<strong>inheritance</strong>, while the header line of a <em>defn block</em> specifies the
+<strong>signature</strong> for the calling function.</p>
+</div>
+<div class="highlight-python"><pre>defn PersonView(person):
+    Window:
+        PersonForm:
+            person = person</pre>
+</div>
+<p>As with the component declaration block, the <tt class="docutils literal"><span class="pre">defn</span></tt> block specifies a
+hierarchy tree of components. Here, the <tt class="docutils literal"><span class="pre">PersonView</span></tt> is made up of a
+<tt class="docutils literal"><span class="pre">Window</span></tt> (a <em class="xref std std-ref">built-in component &lt;built-ins-ref&gt;) containing a
+``PersonForm`</em> (defined above). <tt class="docutils literal"><span class="pre">The</span> <span class="pre">PersonForm</span></tt> &#8216;s <tt class="docutils literal"><span class="pre">person</span></tt> attribute (on
+the left-hand side) is set equal to the <tt class="docutils literal"><span class="pre">person</span></tt> argument passed in by the
+calling Python function.</p>
+<div class="section" id="python-code">
+<h3>Python code<a class="headerlink" href="#python-code" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="traits-object">
+<h2>Traits Object<a class="headerlink" href="#traits-object" title="Permalink to this headline">¶</a></h2>
+<p>Enaml is designed to work with <a class="reference external" href="http://code.enthought.com/projects/traits/">Traits</a>. The important thing to note is
+that the <tt class="docutils literal"><span class="pre">Person</span></tt> attribute names exactly match the names of the
+<tt class="docutils literal"><span class="pre">PersonForm</span></tt> attributes from the .enaml file. Our <tt class="docutils literal"><span class="pre">Person</span></tt> class is
+designed to print out a debug statement when the <tt class="docutils literal"><span class="pre">age</span></tt> attribute changes.
+<em>(Run the example to confirm this.)</em> So far the Person class is just like any
+other Traits class. <a class="reference external" href="http://github.enthought.com/traits/traits_user_manual/index.html">See the Traits user guide for
+help.</a></p>
+</div>
+<div class="section" id="hooking-up-the-enaml-view">
+<h2>Hooking up the Enaml view<a class="headerlink" href="#hooking-up-the-enaml-view" title="Permalink to this headline">¶</a></h2>
+<p>The Enaml particulars show up in the code block for launching the script from
+the command line:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">enaml</span>
+    <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">person_view</span> <span class="kn">import</span> <span class="n">PersonView</span>
+
+    <span class="n">john</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">first_name</span><span class="o">=</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s">&#39;Doe&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+    <span class="n">view</span> <span class="o">=</span> <span class="n">PersonView</span><span class="p">(</span><span class="n">john</span><span class="p">)</span>
+    <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>First, we <tt class="docutils literal"><span class="pre">import</span> <span class="pre">enaml</span></tt>.</p>
+<p>Then we use <tt class="docutils literal"><span class="pre">enaml.imports()</span></tt> as a <a class="reference external" href="http://docs.python.org/release/2.5.2/ref/context-managers.html">context manager</a> for importing
+the Enaml view.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">person_view</span> <span class="kn">import</span> <span class="n">PersonView</span>
+</pre></div>
 </div>
 </div>
 </div>
@@ -265,7 +348,7 @@ the Enaml <a class="reference internal" href="../tech_ref/built_ins_ref.html#bui
           <a href="example.html" title="Examples"
              >next</a> |</li>
         <li class="right" >
-          <a href="tutorials_home.html" title="Enaml Tutorials"
+          <a href="tut_hello_world.html" title="Hello World! tutorial"
              >previous</a> |</li>
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
@@ -278,7 +361,7 @@ the Enaml <a class="reference internal" href="../tech_ref/built_ins_ref.html#bui
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 19, 2011.
+      Last updated on Dec 20, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

@@ -1,0 +1,14 @@
+.. _tutorials-home:
+
+|Enaml| Tutorials
+===============================================================================
+
+.. toctree::
+    :maxdepth: 2
+
+<<<<<<< HEAD
+    Hello World! <tut_hello_world>
+    John Doe <tut_person>
+=======
+    Hello John Doe! <tut_person>
+>>>>>>> 847f7ea94619444762b55fd76d94195eddb5505d

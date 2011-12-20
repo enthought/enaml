@@ -8,7 +8,7 @@ from enaml.stdlib.fields import IntField
 PersonForm(Form):
     person = None
     Label:
-        text = 'First Name'
+        Label.text = 'First Name'
     Field:
         value := person.first_name
     Label:
