@@ -4,8 +4,9 @@
 #------------------------------------------------------------------------------
 import weakref
 
-from traits.api import (List, Instance, Bool, on_trait_change, Property, 
-                        cached_property, Any)
+from traits.api import (
+    List, Instance, Bool, on_trait_change, Property, cached_property, Any,
+)
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 
@@ -169,6 +170,12 @@ class Include(BaseComponent):
             child._setup_listeners()
 
         for child in cmpnts:
+            child._setup_init_visibility()
+
+        for child in cmpnts:
+            child._setup_init_layout()
+
+        for child in cmpnts:
             child._setup_set_initialized()
 
         self._components_initialized = True
@@ -222,7 +229,7 @@ class Include(BaseComponent):
             # items listeners don't get hooked up if we use the trait
             # change method decorator. Instead, we manually bind the 
             # notifier the first time this component is initialized.
-            self.on_trait_change(self._handle_subcomponents_updated, 
+            self.on_trait_change(self._on_subcomponents_updated, 
                                  '_components:_components_updated')
             self._components_updated = True
     
@@ -241,7 +248,7 @@ class Include(BaseComponent):
                 self._components_updated = True
             self.relayout_enqueue(closure)
             
-    def _handle_subcomponents_updated(self):
+    def _on_subcomponents_updated(self):
         """ Handles a '_components_updated' event being fired by one 
         the dynamic components. The event is proxied up the tree by
         firing the same event on this instance. This allows a nested

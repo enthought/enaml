@@ -26,13 +26,29 @@ class FreezeContext(object):
     _counts = {}
 
     @classmethod
-    def is_frozen(cls, obj):
-         return obj in cls._counts
+    def is_frozen(cls, component):
+        """ Returns a boolean indicating whether or not the given 
+        component is currently the subject of a freeze context.
+
+        """
+        return component in cls._counts
 
     def __init__(self, component):
+        """ Initialize a freeze context.
+
+        Parameters
+        ----------
+        component : BaseComponent
+            The component that should be frozen.
+        
+        """
         self.component = component
     
     def __enter__(self):
+        """ Disables updates on the component the first time that any
+        freeze context on that component is entered.
+
+        """
         counts = self._counts
         cmpnt = self.component
         if cmpnt not in counts:
@@ -42,6 +58,10 @@ class FreezeContext(object):
             counts[cmpnt] += 1
     
     def __exit__(self, exc_type, exc_value, traceback):
+        """ Enables updates on the component when the last freeze
+        context on that component is exited.
+
+        """
         counts = self._counts
         cmpnt = self.component
         counts[cmpnt] -= 1
@@ -238,9 +258,9 @@ class BaseComponent(HasStrictTraits):
 
     #: Whether the component has been initialized or not. This will be 
     #: set to True after all of the setup() steps defined here are 
-    #: completed, but before the layout is initialized. It should not be
-    #: changed afterwards. This can be used to trigger certain actions 
-    # that need to occur after the component has been set up.
+    #: completed. It should not be changed afterwards. This can be used 
+    #: to trigger certain actions that need to occur after the component 
+    #: has been set up.
     initialized = Bool(False)
 
     #: An optional name to give to this component to assist in finding
@@ -278,21 +298,21 @@ class BaseComponent(HasStrictTraits):
     _subcomponents = List(Instance('BaseComponent'))
 
     #: A private event that should be emitted by a component when the 
-    #: results of calling _get_compenents() has changed. This event is 
-    #: listened to by the parent of subcomponents in order to know when 
-    #: to rebuild its list of children. User code will not typically
-    #: interact with this event.
+    #: results of calling _get_compenents() will result in new values. 
+    #: This event is listened to by the parent of subcomponents in order 
+    #: to know when to rebuild its list of children. User code will not 
+    #: typically interact with this event.
     _components_updated = Event
 
     #--------------------------------------------------------------------------
-    # Property and Component Getters
+    # Property Getters
     #--------------------------------------------------------------------------
     @cached_property
     def _get_children(self):
         """ The cached property getter for the 'children' attribute.
 
-        This property getter returns the list of components in
-        '_subcomponents' which are not instances of Include.
+        This property getter returns the flattened list of components
+        returned by calling 'get_components()' on each subcomponent.
 
         """
         return sum([c.get_components() for c in self._subcomponents], [])
@@ -309,10 +329,13 @@ class BaseComponent(HasStrictTraits):
         """
         return FreezeContext.is_frozen(self)
 
+    #--------------------------------------------------------------------------
+    # Component Getters 
+    #--------------------------------------------------------------------------
     def get_components(self):
         """ Returns the list of BaseComponent instance which should be
         included as proper children of our parent. By default this 
-        simply returns [self]. This method should be overridden by 
+        simply returns [self]. This method should be reimplemented by 
         subclasses which need to contribute different components to their
         parent's children.
 
@@ -320,7 +343,7 @@ class BaseComponent(HasStrictTraits):
         return [self]
     
     #--------------------------------------------------------------------------
-    # Setup and Teardown Methods 
+    # Setup Methods 
     #--------------------------------------------------------------------------
     def setup(self, parent=None):
         """ Run the setup process for the ui tree.
@@ -352,7 +375,7 @@ class BaseComponent(HasStrictTraits):
         parent : native toolkit widget, optional
             If embedding this BaseComponent into a non-Enaml GUI, use 
             this to pass the appropriate toolkit widget that should be 
-            the parent for this component.
+            the parent toolkit widget for this component.
 
         """
         self._setup_parent_refs()
@@ -364,7 +387,7 @@ class BaseComponent(HasStrictTraits):
         self._setup_bind_hooks()
         self._setup_listeners()
         self._setup_init_visibility()
-        self._setup_initialize_layout()
+        self._setup_init_layout()
         self._setup_set_initialized()
 
     def _setup_parent_refs(self):
@@ -440,14 +463,6 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child._setup_listeners()
 
-    def _setup_set_initialized(self):
-        """ A setup method whic ets the initialized attribute to True.
-
-        """
-        self.initialized = True
-        for child in self._subcomponents:
-            child._setup_set_initialized()
-    
     def _setup_init_visibility(self):
         """ A setup method called to initialize the visibility. This
         is called before the components are marked as initialized, so
@@ -456,10 +471,10 @@ class BaseComponent(HasStrictTraits):
 
         """
         self.set_visible(self.visible)
-        for child in self.children:
+        for child in self._subcomponents:
             child._setup_init_visibility()
 
-    def _setup_initialize_layout(self):
+    def _setup_init_layout(self):
         """ A setup method called at the end of the setup process, but 
         before the 'initialized' attribute it set to True. By default, 
         this method is a no-op and should be reimplemented by subclasses 
@@ -467,9 +482,21 @@ class BaseComponent(HasStrictTraits):
         of themselves or their children.
 
         """
-        for child in self.children:
-            child._setup_initialize_layout()
+        self.initialize_layout()
+        for child in self._subcomponents:
+            child._setup_init_layout()
 
+    def _setup_set_initialized(self):
+        """ A setup method whic ets the initialized attribute to True.
+
+        """
+        self.initialized = True
+        for child in self._subcomponents:
+            child._setup_set_initialized()
+
+    #--------------------------------------------------------------------------
+    # Teardown Methods
+    #--------------------------------------------------------------------------
     def destroy(self):
         """ Destroys the underlying toolkit widget as well as all of
         the children of this component. After calling this method, the
@@ -481,12 +508,22 @@ class BaseComponent(HasStrictTraits):
         # does not try to update after destroying its internal widget.
         self.remove_trait_listener(self.abstract_obj, 'shell')
         self.abstract_obj.destroy()
-        for child in self.children:
+        for child in self._subcomponents:
             child.destroy()
+        self.abstract_obj = None
+        self._subcomponents = []
 
     #--------------------------------------------------------------------------
     # Layout Stubs 
     #--------------------------------------------------------------------------
+    def initialize_layout(self):
+        """ A method called during the setup process to initialize layout. 
+        By default, it does nothing. Subclasses should reimplement this
+        method as required.
+
+        """
+        pass
+
     def relayout(self):
         """ A method called when the layout of the component's children
         should be refreshed. By default, this method proxies the call up
@@ -519,8 +556,8 @@ class BaseComponent(HasStrictTraits):
         the refresh is complete before the method returns. 
 
         Note: This method performs less work than 'relayout' and should 
-            typically only need to be called when the children need to be 
-            repositioned, rather than have all of their layout 
+            typically only need to be called when the children need to 
+            be repositioned, rather than have all of their layout 
             relationships recomputed.
 
         """
@@ -537,8 +574,8 @@ class BaseComponent(HasStrictTraits):
         time in the future.
         
         Note: This method performs less work than 'relayout' and should 
-            typically only need to be called when the children need to be 
-            repositioned, rather than have all of their layout 
+            typically only need to be called when the children need to 
+            be repositioned, rather than have all of their layout 
             relationships recomputed.
 
         """
@@ -551,7 +588,7 @@ class BaseComponent(HasStrictTraits):
         next relayout pass. By default, this method proxies the call up
         the hierarchy until an implementor is found. Implementors should
         ensure that enqueuing the callable results in a relayout later
-        that empties the queue from within a freeze context.
+        which empties the queue from within a freeze context.
 
         """
         parent = self.parent
@@ -563,7 +600,7 @@ class BaseComponent(HasStrictTraits):
         next rearrange pass. By default, this method proxies the call up
         the hierarchy until an implementor is found. Implementors should
         ensure that enqueuing the callable results in a rearrange later
-        that empties the queue from within a freeze context.
+        which empties the queue from within a freeze context.
 
         """
         parent = self.parent
@@ -575,7 +612,7 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     def _children_changed(self):
         """ Handles the children being changed on this component by 
-        calling 'relayout()' if this component is already initialized.
+        enqueing a relayout provided that the component is initialized.
 
         """
         if self.initialized:
@@ -586,10 +623,13 @@ class BaseComponent(HasStrictTraits):
             self.relayout_enqueue(lambda: None)
 
     def _visible_changed(self, visible):
-        """ Handles the 'visible' attribute being changed on this component 
-        by calling the 'set_visible' method.
+        """ Handles the 'visible' attribute being changed by calling the
+        'set_visible' method.
 
         """
+        # The method call allows the visibility to be set by other parts 
+        # of the framework which are not dependent on change notification.
+        # By using the method here, we help to ensure a consistent state.
         self.set_visible(visible)
 
     #--------------------------------------------------------------------------
@@ -597,9 +637,9 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     def set_visible(self, visible):
         """ Set the visibility of the component according to the given
-        boolean. There is protection logic in place to ensure that the
-        component is properly set up before allowing a visibility change
-        to proceed.
+        boolean. There is protection logic in place to ensure a that 
+        the visibility state remains consistent throughout the lifetime 
+        of the component.
 
         """
         # Make sure the 'visible' attribute is synced up as a result
@@ -628,13 +668,7 @@ class BaseComponent(HasStrictTraits):
                 # If the component is initialized but it is not toplevel,
                 # then the visibility change must occur in a deferred
                 # context, since changing the visibility of a nested
-                # component requires a layout update.
-                #
-                # XXX We are assuming that we know that a Container's 
-                # layout is dependent on the visibility of its widgets, 
-                # hence the need for the relayout_enqueue. It would be
-                # nice to not have to know anything about how layout
-                # is implemented.
+                # component will require a layout update.
                 def visibility_closure():
                     print 'setting vis', self
                     self.abstract_obj.set_visible(visible)
@@ -649,7 +683,7 @@ class BaseComponent(HasStrictTraits):
             if self.parent is not None:
                 self.abstract_obj.set_visible(visible)
 
-    def traverse(self, depth_first=False, node_attr='children'):
+    def traverse(self, depth_first=False):
         """ Yields all of the nodes in the tree, from this node downward.
 
         Parameters
@@ -657,10 +691,6 @@ class BaseComponent(HasStrictTraits):
         depth_first : bool, optional
             If True, yield the nodes in depth first order. If False,
             yield the nodes in breadth first order. Defaults to False.
-
-        node_attr : string, optional
-            The attribute on the nodes which will yield the child 
-            nodes. Defaults to 'children'
 
         """
         if depth_first:
@@ -675,7 +705,23 @@ class BaseComponent(HasStrictTraits):
         while stack:
             item = stack_pop()
             yield item
-            stack_extend(getattr(item, node_attr))
+            stack_extend(item.children)
+    
+    def traverse_ancestors(self, root=None):
+        """ Yields all of the nodes in the tree, from the parent of this 
+        node updward, stopping at the given root.
+
+        Parameters
+        ----------
+        root : BaseComponent, optional
+            The component at which to stop the traversal. Defaults
+            to None
+
+        """
+        parent = self.parent
+        while parent is not root and parent is not None:
+            yield parent
+            parent = parent.parent
 
     def find_by_name(self, name):
         """ Locate and return a named item that exists in the subtree

@@ -67,7 +67,7 @@ class Dialog(Window):
     #: Overridden parent class trait.
     abstract_obj = Instance(AbstractTkDialog)
 
-    def show(self):
+    def show(self, parent=None):
         """ Make the dialog visible on the screen.
 
         This is overridden from Window.show(). Since dialogs are shown
@@ -79,13 +79,13 @@ class Dialog(Window):
         # more exposure to dialogs.
         app = self.toolkit.create_app()
         if not self.initialized:
-            self.setup()
+            self.setup(parent)
             # For now, compute the initial size based using the minimum
             # size routine from the layout. We'll probably want to have
             # an initial_size optional attribute or something at some point.
             size = self.layout_manager.calc_min_size()
             self.resize(*size)
-        self.visible = True
+        self.set_visible(True)
 
     def accept(self):
         """ Close the dialog and set the result to `accepted`.

@@ -145,11 +145,11 @@ class AbstractTkComponent(AbstractTkBaseComponent):
         # up the tree and subtract out the parent's offset.
         dx = 0
         dy = 0
-        for ancestor in shell.walk_up_containers(root):
+        for ancestor in shell.traverse_ancestors(root):
             adx, ady, _, _ = ancestor.geometry()
             dx += adx
             dy += ady
-        self.set_geometry(x-dx, y-dy, width, height)
+        self.set_geometry(x - dx, y - dy, width, height)
         return (dx, dy)
 
 
@@ -384,14 +384,4 @@ class Component(BaseComponent):
 
         """
         return self.abstract_obj.set_solved_geometry(root)
-
-    def walk_up_containers(self, root):
-        """ Walk up the component hierarchy from this component and yield
-        the parent Containers, excepting the given root Container.
-
-        """
-        parent = self.parent
-        while parent is not root and parent is not None:
-            yield parent
-            parent = parent.parent
 
