@@ -68,5 +68,6 @@ QT_CONSTRUCTORS = dict((
     constructor('tab'),
     constructor('splitter'),
     constructor('float_slider'),
+    constructor('base_item_selection_model'),
 ))
 
