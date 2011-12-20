@@ -60,6 +60,11 @@ class ColoredTable(TableModel):
 
 table_model = ColoredTable(table, data_setter=table_setter)
 
+def printer(value):
+    old, new = value
+    print 'Old:', old
+    print 'New:', new
+
 :: end ::
 
 
@@ -76,7 +81,10 @@ MainWindow(Window):
         id: tv1
         hug_width = 'strong'
         item_model = list_model
+        selection_mode = 'multi'
     TableView:
         id: tv2
         item_model = table_model
-
+        selection_mode = 'extended'
+        BaseItemSelectionModel:
+            selected_event >> printer(value)
