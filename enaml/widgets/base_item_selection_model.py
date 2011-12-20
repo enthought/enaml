@@ -126,5 +126,3 @@ class BaseItemSelectionModel(BaseComponent):
         """
         return self.abstract_obj.get_selection()
 
-    def _selection_event_changed(self, new):
-        print new
