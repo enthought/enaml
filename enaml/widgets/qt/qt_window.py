@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
 from .qt_container import QtContainer
 
 from ..window import AbstractTkWindow
@@ -56,9 +55,11 @@ class QtWindow(QtContainer, AbstractTkWindow):
         """
         # Don't show the window if we're not initializing.
         if not self._initializing:
+            widget = self.widget
             if visible:
-                self.widget.setVisible(True)
-                self.widget.raise_()
+                widget.setVisible(True)
+                widget.raise_()
+                widget.activateWindow()
             else:
-                self.widget.setVisible(False)
+                widget.setVisible(False)
 

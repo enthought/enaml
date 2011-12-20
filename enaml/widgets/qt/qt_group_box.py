@@ -48,22 +48,24 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         shell object.
 
         """
-        self._set_title(title)
-        self._reset_layout_margins()
-        # We need to call relayout since the margins may have changed. 
-        # Using the size_hint_updated event here is not sufficient.
-        self.shell_obj.relayout_later()
+        # We perform the title update in a relayout context to 
+        # prevent flicker and multiple calls to relayout.
+        def title_update_closure():
+            self._set_title(title)
+            self._reset_layout_margins()
+        self.shell_obj.relayout_enqueue(title_update_closure)
 
     def shell_flat_changed(self, flat):
         """ Update the flat flag of the group box with the new value from
         the shell object.
 
         """
-        self._set_flat(flat)
-        self._reset_layout_margins()
-        # We need to call relayout since the margins may have changed. 
-        # Using the size_hint_updated event here is not sufficient.
-        self.shell_obj.relayout_later()
+        # We perform the flat update in a relayout context to 
+        # prevent flicker and multiple calls to relayout.
+        def flat_update_closure():
+            self._set_flat(flat)
+            self._reset_layout_margins()
+        self.shell_obj.relayout_enqueue(flat_update_closure)
 
     def shell_title_align_changed(self, align):
         """ Update the title alignment to the new value from the shell 
@@ -79,8 +81,9 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         """
         dx, dy, dr, db = self._layout_margins
         m = self.widget.contentsMargins()
-        contents_margins = (m.top()-dy, m.left()-dx, m.right()-dr, m.bottom()-db)
-        #contents_margins = (m.top(), m.left(), m.right(), m.bottom())
+        contents_margins = (
+            m.top() - dy, m.left() - dx, m.right() - dr, m.bottom() - db,
+        )
         return contents_margins
 
     #--------------------------------------------------------------------------

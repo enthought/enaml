@@ -62,7 +62,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         dx, dy, dr, db = self._layout_margins
-        self.widget.resize(width+dx+dr, height+dy+db)
+        self.widget.resize(width + dx + dr, height + dy + db)
     
     def min_size(self):
         """ Returns the hard minimum (width, height) of the widget, 
@@ -80,7 +80,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
 
         """
         dx, dy, dr, db = self._layout_margins
-        self.widget.setMinimumSize(min_width+dx+dr, min_height+dy+db)
+        self.widget.setMinimumSize(min_width + dx + dr, min_height + dy + db)
 
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
@@ -117,7 +117,7 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         pdx, pdy, pdr, pdb = self._parent_margins
         geom = self._layout_item.geometry()
-        return (geom.x()-pdx, geom.y()-pdy, geom.width(), geom.height())
+        return (geom.x() - pdx, geom.y() - pdy, geom.width(), geom.height())
 
     def set_geometry(self, x, y, width, height):
         """ Sets the geometry of the internal widget to the given
@@ -127,7 +127,9 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         dx, dy, dr, db = self._layout_margins
         pdx, pdy, pdr, pdb = self._parent_margins
-        self.widget.setGeometry(x-dx+pdx, y-dy+pdy, width+dr+dx, height+db+dy)
+        self.widget.setGeometry(
+            x - dx + pdx, y - dy + pdy, width + dr + dx, height + db + dy,
+        )
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods
