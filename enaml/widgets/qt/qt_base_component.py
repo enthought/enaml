@@ -144,57 +144,65 @@ class QtBaseComponent(AbstractTkBaseComponent):
         """ Enable or disable the widget.
 
         """
-        self.widget.setEnabled(enabled)
+        widget = self.widget
+        if widget:
+            widget.setEnabled(enabled)
 
     def set_visible(self, visible):
         """ Show or hide the widget.
 
         """
-        self.widget.setVisible(visible)
+        widget = self.widget
+        if widget:
+            widget.setVisible(visible)
 
     def set_bg_color(self, color):
         """ Set the background color of the widget.
 
         """
         widget = self.widget
-        role = widget.backgroundRole()
-        if not color:
-            palette = QtGui.QApplication.instance().palette(widget)
-            qcolor = palette.color(role)
-            # On OSX, the default color is rendered *slightly* off
-            # so a simple workaround is to tell the widget not to
-            # auto fill the background.
-            widget.setAutoFillBackground(False)
-        else:
-            qcolor = q_color_from_color(color)
-            # When not using qt style sheets to set the background
-            # color, we need to tell the widget to auto fill the 
-            # background or the bgcolor won't render at all.
-            widget.setAutoFillBackground(True)
-        palette = widget.palette()
-        palette.setColor(role, qcolor)
-        widget.setPalette(palette)
+        if widget:
+            role = widget.backgroundRole()
+            if not color:
+                palette = QtGui.QApplication.instance().palette(widget)
+                qcolor = palette.color(role)
+                # On OSX, the default color is rendered *slightly* off
+                # so a simple workaround is to tell the widget not to
+                # auto fill the background.
+                widget.setAutoFillBackground(False)
+            else:
+                qcolor = q_color_from_color(color)
+                # When not using qt style sheets to set the background
+                # color, we need to tell the widget to auto fill the 
+                # background or the bgcolor won't render at all.
+                widget.setAutoFillBackground(True)
+            palette = widget.palette()
+            palette.setColor(role, qcolor)
+            widget.setPalette(palette)
     
     def set_fg_color(self, color):
         """ Set the foreground color of the widget.
 
         """
         widget = self.widget
-        role = widget.foregroundRole()
-        if not color:
-            palette = QtGui.QApplication.instance().palette(widget)
-            qcolor = palette.color(role)
-        else:
-            qcolor = q_color_from_color(color)
-        palette = widget.palette()
-        palette.setColor(role, qcolor)
-        widget.setPalette(palette)
+        if widget:
+            role = widget.foregroundRole()
+            if not color:
+                palette = QtGui.QApplication.instance().palette(widget)
+                qcolor = palette.color(role)
+            else:
+                qcolor = q_color_from_color(color)
+            palette = widget.palette()
+            palette.setColor(role, qcolor)
+            widget.setPalette(palette)
 
     def set_font(self, font):
         """ Set the font of the underlying toolkit widget to an 
         appropriate QFont.
 
         """
-        q_font = q_font_from_font(font)
-        self.widget.setFont(q_font)
+        widget = self.widget
+        if widget:
+            q_font = q_font_from_font(font)
+            widget.setFont(q_font)
 
