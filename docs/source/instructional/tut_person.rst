@@ -38,8 +38,18 @@ Walk-through
 
 Let's take a closer look at the files.
 
-|Enaml| file
-_______________________________________________________________________________
+Comments
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The file begins with some comment lines. As in Python code, `#` begins a
+comment line and is ignored during lexing and parsing.
+
+::
+
+ #-----------------------------------------------------------------------------
+ #  Copyright (c) 2011, Enthought, Inc.
+ #  All rights reserved.
+ #-----------------------------------------------------------------------------
 
 Imports
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -53,12 +63,11 @@ Imports similar to Python.
 In this case, we are importing the integer field widget IntField from the
 :ref:`standard component library.<std-library-ref>` This is the component that
 lets us assign an integer value in a text field, with validation and error
-checking. Note that this import points to a component declaration in a
-``.enaml`` file. *The import statement looks like Python but imports from an
-.enaml file.*
+checking. Note that this import points to a component declaration in a `.enaml`
+file. *The import statement looks like Python but imports from an .enaml file.*
 
 
-Component Declaration Block
+Component Declaration
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Next, we define an entry form using a *class-like* component hierarchy
