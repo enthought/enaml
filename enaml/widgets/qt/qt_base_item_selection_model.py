@@ -43,7 +43,6 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
 
         """
         super(QtBaseItemSelectionModel, self).initialize()
-        self.widget = self.get_qitem_selection_model()
 
     def bind(self):
         """ Bind to events.
@@ -52,8 +51,8 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
         super(QtBaseItemSelectionModel, self).bind()
         #parent = self.shell_obj.parent
         #parent.on_trait_change(self.reset_for_new_model, 'item_model')
-        self.widget.currentChanged.connect(self._update_current)
-        self.widget.selectionChanged.connect(self._update_selection)
+        self.selection_model.currentChanged.connect(self._update_current)
+        self.selection_model.selectionChanged.connect(self._update_selection)
 
     def reset_for_new_model(self):
         """ Reset the state for a new AbstractItemModel.
@@ -64,7 +63,8 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
         #parent.on_trait_change(self.reset_for_new_model, 'item_model', remove=True)
         self.bind()
 
-    def get_qitem_selection_model(self):
+    @property
+    def selection_model(self):
         """ Get the QItemSelectionModel for the parent widget.
 
         """
@@ -72,12 +72,22 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
         qitem_selection_model = shell.parent.toolkit_widget.selectionModel()
         return qitem_selection_model
 
+    @property
+    def item_model(self):
+        """ Get the AbstractItemModelWrapper for the corresponding item model.
+
+        """
+        # FIXME: We must get it from the widget itself instead of the
+        # QItemSelectionModel.model() member. There seems to be a bug in PySide
+        # causing segfaults on finalization if we do it that way.
+        return self.shell_obj.parent.toolkit_widget.model()
+
     def py_selection_to_qt(self, selection):
         """ Convert the Python list of ModelIndex ranges to a QItemSelection.
 
         """
         qsel = QtGui.QItemSelection()
-        qitem_model = self.widget.model()
+        qitem_model = self.item_model
         for topleft, botright in selection:
             qtopleft = qitem_model.to_q_index(topleft)
             qbotright = qitem_model.to_q_index(botright)
@@ -89,7 +99,7 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
 
         """
         pysel = []
-        qitem_model = self.widget.model()
+        qitem_model = self.item_model
         for qrange in qselection:
             topleft = qitem_model.from_q_index(qrange.topLeft())
             botright = qitem_model.from_q_index(qrange.bottomRight())
@@ -97,7 +107,7 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
         return pysel
 
     def _update_current(self, current, previous):
-        qitem_model = self.widget.model()
+        qitem_model = self.item_model
         old = qitem_model.from_q_index(previous)
         new = qitem_model.from_q_index(current)
         self.shell_obj.current_event = (old, new)
@@ -111,24 +121,22 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
         """ Clear the selection and the current index.
 
         """
-        self.widget.clear()
+        self.selection_model.clear()
 
     def get_current_index(self):
         """ Return the current ModelIndex or None if there is not one.
 
         """
-        qindex = self.widget.currentIndex()
-        qitem_model = self.widget.model()
-        index = qitem_model.from_q_index(qindex)
+        qindex = self.selection_model.currentIndex()
+        index = self.item_model.from_q_index(qindex)
         return index
 
     def set_current_index(self, index):
         """ Set the current ModelIndex.
 
         """
-        item_model = self.widget.model()
-        qindex = item_model.to_q_index(index)
-        self.widget.setCurrentIndex(qindex)
+        qindex = self.item_model.to_q_index(index)
+        self.selection_model.setCurrentIndex(qindex)
 
     def set_selection(self, selection, command='clear_select'):
         """ Set the current selection.
@@ -140,13 +148,13 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
         for cmd in command:
             qflag |= _COMMAND_MAP[cmd]
         qsel = self.py_selection_to_qt(selection)
-        self.widget.select(qsel, qflag)
+        self.selection_model.select(qsel, qflag)
 
     def get_selection(self):
         """ Get the current selection.
 
         """
-        qsel = self.widget.selection()
+        qsel = self.selection_model.selection()
         pysel = self.qt_selection_to_py(qsel)
         return pysel
 
