@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .qt import QtGui
 from .qt_container import QtContainer
 
 from ..window import AbstractTkWindow

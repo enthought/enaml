@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Str, Instance
+from traits.api import Str, Instance, Bool
 
 from .control import Control, AbstractTkControl
 
@@ -16,6 +16,11 @@ class AbstractTkLabel(AbstractTkControl):
         raise NotImplementedError
         
     
+    @abstractmethod
+    def shell_word_wrap_changed(self, word_wrap):
+        raise NotImplementedError
+
+
 class Label(Control):
     """ A simple read-only text display.
 
@@ -23,6 +28,9 @@ class Label(Control):
     #: The text in the label.
     text = Str
     
+    #: Whether or not the label should wrap around on long lines.
+    word_wrap = Bool(False)
+
     #: How strongly a component hugs it's content. Labels hug their
     #: contents' width weakly by default.
     hug_width = 'weak'

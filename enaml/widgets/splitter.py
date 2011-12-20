@@ -94,16 +94,14 @@ class Splitter(Container):
     #: in height.
     hug_height = 'ignore'
 
-    def initialize_layout(self):
+    def _setup_initialize_layout(self):
         """ Initialize the layout of the children. This is overridden
         from the parent class since the Splitter container does not use
         a constraints layout manager. That is, a Splitter container is
         a boundary which constraints may not cross.
 
         """
-        for child in self.children:
-            if hasattr(child, 'initialize_layout'):
-                child.initialize_layout()
+        super(Splitter, self)._setup_initialize_layout()
         self.abstract_obj.set_initial_sizes()
 
     @on_trait_change(_SIZE_HINT_DEPS)

@@ -34,7 +34,6 @@ class WXBaseComponent(AbstractTkBaseComponent):
         """
         shell = self.shell_obj
         self.set_enabled(shell.enabled)
-        self.set_visible(shell.visible)
 
     def bind(self):
         """ Bind any event handlers for the Wx Widget.
@@ -104,13 +103,6 @@ class WXBaseComponent(AbstractTkBaseComponent):
 
         """
         self.set_enabled(enabled)
-
-    def shell_visible_changed(self, visible):
-        """ The change handler for the 'visible' attribute on the shell
-        object.
-
-        """
-        self.set_visible(visible)
 
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the shell

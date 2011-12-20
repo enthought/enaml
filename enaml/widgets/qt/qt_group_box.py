@@ -50,10 +50,9 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         """
         self._set_title(title)
         self._reset_layout_margins()
-        # We need to call update constraints since the margins may 
-        # have changed. Using the size_hint_updated event here is
-        # not sufficient.
-        self.shell_obj.set_needs_update_constraints()
+        # We need to call relayout since the margins may have changed. 
+        # Using the size_hint_updated event here is not sufficient.
+        self.shell_obj.relayout_later()
 
     def shell_flat_changed(self, flat):
         """ Update the flat flag of the group box with the new value from
@@ -62,10 +61,9 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         """
         self._set_flat(flat)
         self._reset_layout_margins()
-        # We need to call update constraints since the margins may 
-        # have changed. Using the size_hint_updated event here is
-        # not sufficient.
-        self.shell_obj.set_needs_update_constraints()
+        # We need to call relayout since the margins may have changed. 
+        # Using the size_hint_updated event here is not sufficient.
+        self.shell_obj.relayout_later()
 
     def shell_title_align_changed(self, align):
         """ Update the title alignment to the new value from the shell 

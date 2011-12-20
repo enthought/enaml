@@ -17,20 +17,32 @@ def _toggle_helper(rgroup, idx, label, checked):
 
     """
     if checked:
-        rgroup.selected_label = label
-        rgroup.selected_index = idx
-        rgroup.selected = rgroup.items[idx]
+        rgroup.trait_set(
+        selected_label = label,
+        selected = rgroup.items[idx],
+        selected_index = idx)
 
 :: end ::
 
 
-defn _MakeButton(rgroup, idx, label):
+defn _MakeButton(rgroup, label, idx):
     """ A private defn which creates a properly bound RadioButton.
 
     """
     RadioButton:
         text = label
         toggled >> _toggle_helper(rgroup, idx, label, checked)
+        # This is using Enaml's dynamic scoping feature to determine
+        # whether this button should be checked initially. We allow
+        # the attribute access to dynamically scope up to the parent
+        # in which this button will be place. This allows us to compute
+        # default without building a dynamic dependency on those value
+        # which would cause a rebuild of the entire list of buttons.
+        checked = (
+            (idx == selected_index) or
+            (label == selected_label) or
+            (items[idx] == selected)
+        )
 
 
 RadioGroup(Container):
@@ -77,6 +89,6 @@ RadioGroup(Container):
     ]
     _labels << map(to_string, items)
     Include:
-        components << [_MakeButton(rgroup, idx, label) 
+        components << [_MakeButton(rgroup, label, idx) 
                        for idx, label in enumerate(_labels)]
 

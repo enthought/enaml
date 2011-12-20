@@ -132,6 +132,12 @@ class Field(Control):
     #: is an empty string.
     value = Any('')
 
+    #: A read-only property that returns the internal text of the field.
+    text = Property(depends_on='_text')
+
+    #: Private internal storage for the 'text' attribute.
+    _text = Str
+
     #: A property which manages the conversion to and from :attr:`value`
     #: and the string for display and editing. Toolkit implementations
     #: should use this attribute for getting/setting the value.
@@ -309,6 +315,12 @@ class Field(Control):
         """
         return self._selected_text
 
+    def _get_text(self):
+        """ The property getter for the 'text' attribute.
+
+        """
+        return self._text
+
     def _get_field_text(self):
         """ The property getter for :attr:`field_text`. It uses an 
         appropriate exception guard to manage the error state if
@@ -326,6 +338,7 @@ class Field(Control):
         the conversion from string to value fails.
 
         """
+        self._text = text
         with self.capture_notification_exceptions():
             self.value = self.converter.from_component(text)
 

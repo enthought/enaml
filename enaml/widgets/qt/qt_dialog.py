@@ -37,9 +37,9 @@ class QtDialog(QtWindow, AbstractTkDialog):
         super(QtDialog, self).initialize()
         self.widget.finished.connect(self._on_close)
 
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     # Implementation
-    #---------------------------------------------------------------------------
+    #--------------------------------------------------------------------------
     def accept(self):
         """ Accept and close the dialog, sending the 'finished' signal.
 

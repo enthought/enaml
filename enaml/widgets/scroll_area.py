@@ -73,17 +73,6 @@ class ScrollArea(Container):
     #: Overridden parent class trait. Only one child is allowed.
     _subcomponents = List(Instance(BaseComponent), maxlen=1)
 
-    def initialize_layout(self):
-        """ Initialize the layout of the children. A scroll area does
-        not provide or maintain a layout manager, but its children may.
-        So, this call is just forwarded on to the children of the scroll
-        area.
-
-        """
-        for child in self.children:
-            if hasattr(child, 'initialize_layout'):
-                child.initialize_layout()
-
     def size_hint(self):
         """ Use the given preferred size when specified and the widget's 
         size hint when not.

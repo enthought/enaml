@@ -55,7 +55,7 @@ class Window(Container):
             # For now, compute the initial size based using the minimum
             # size routine from the layout. We'll probably want to have
             # an initial_size optional attribute or something at some point.
-            size = self.layout.calc_min_size()
+            size = self.layout_manager.calc_min_size()
             self.resize(*size)
         self.visible = True
         self.toolkit.start_app(app)
@@ -69,11 +69,13 @@ class Window(Container):
         """
         self.visible = False
 
-    def update_constraints(self):
-        """ Update the constraints for this component.
+    def relayout(self):
+        """ Overridden parent class method which sets the minimum size
+        of the window whenever constraints are recomputed.
 
         """
-        super(Window, self).update_constraints()
-        size = self.layout.calc_min_size()
-        self.set_min_size(*size)
+        super(Window, self).relayout()
+        if self.layout_manager is not None:
+            size = self.layout_manager.calc_min_size()
+            self.set_min_size(*size)
 

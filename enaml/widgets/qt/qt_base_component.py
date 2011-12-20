@@ -41,7 +41,6 @@ class QtBaseComponent(AbstractTkBaseComponent):
         if shell.font:
             self.set_font(shell.font)
         self.set_enabled(shell.enabled)
-        self.set_visible(shell.visible)
     
     def bind(self):
         """ Bind any event/signal handlers for the Qt Widget.
@@ -114,13 +113,6 @@ class QtBaseComponent(AbstractTkBaseComponent):
 
         """
         self.set_enabled(enabled)
-
-    def shell_visible_changed(self, visible):
-        """ The change handler for the 'visible' attribute on the shell
-        object.
-
-        """
-        self.set_visible(visible)
 
     def shell_bg_color_changed(self, color):
         """ The change handler for the 'bg_color' attribute on the shell

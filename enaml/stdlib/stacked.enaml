@@ -1,0 +1,49 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" A Stacked widget implementation in pure Enaml.
+
+A Stacked widget provides a virtual 'stack' of children, of which only
+one may be visible at a time. The visible child is determined by an
+integer 'index' attribute of the Stacked widget. Changing this index
+changes which children are visible.
+
+"""
+:: python ::
+
+def _update_stacked_vis(stacked):
+    """ A Stacked widget helper function which toggles the visibility
+    of the appropriate children.
+
+    """
+    stack_idx = stacked.index
+    print 'update stacked vis', stacked.initialized
+    for idx, child in enumerate(stacked.children):
+        if idx == stack_idx:
+            child.set_visible(True)
+        else:
+            child.set_visible(False)
+
+:: end ::
+
+
+Stacked(Container):
+    """ A Container derivative which holds a stack of children.
+
+    A Stacked widget provides a virtual 'stack' of children, only one
+    of which may be visible at a time. The visible child is selected
+    via an integer 'index'.
+
+    Public Attributes
+    -----------------
+    index : integer
+        The index of the visible child. Changing this index will change
+        which child of the stack is visible.
+    
+    """
+    id: stckd
+    index = 0
+    initialized >> _update_stacked_vis(stckd )
+    index >> _update_stacked_vis(stckd)
+

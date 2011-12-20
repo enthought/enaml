@@ -73,15 +73,12 @@ class ConstraintsLayout(AbstractLayoutManager):
         descendants = list(self.traverse_descendants(component))
 
         # Disable the layout engines on all Containers descending from this one.
-        # FIXME: This destructively sets the .layout attribute to None. It
+        # FIXME: This destructively sets the .layout_manager attribute to None. It
         # works, but we might be able to do it more cleanly.
         for desc in descendants:
-            if hasattr(desc, 'layout'):
-                if type(desc.layout) is type(self):
-                    desc.layout = None
-                else:
-                    # Initialize their layout.
-                    desc.initialize_layout()
+            if hasattr(desc, 'layout_manager'):
+                if type(desc.layout_manager) is type(self):
+                    desc.layout_manager = None
 
         # Component default constraints
         cns = self.compute_component_cns(component)
