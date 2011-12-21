@@ -1,0 +1,80 @@
+:: python ::
+def pop_bounds(data_low, data_high, margin, tight_bounds):
+    """ Return "nice" boundaries for the given population data range.
+
+    In this case, our lower bound is always 0. We round the high boundary up to
+    a nice multiple of 20.
+    """
+    q, r = divmod(data_high, 20.0)
+    if r:
+        q += 1
+    high = q * 20.0
+    return (0.0, high)
+
+:: end ::
+
+
+defn Range(minimum, maximum):
+    Container:
+        constraints = [
+            horizontal(left, 0, min_label, slider, max_label, 0, right),
+            vertical(top, 0, slider, 0, bottom),
+            align('v_center', min_label, slider, max_label),
+            slider.width == 100,
+        ]
+        Label -> min_label:
+            text = '{:.2f}'.format(minimum)
+        FloatSlider -> slider:
+            minimum = minimum
+            maximum = maximum
+        Label -> max_label:
+            text = '{:.2f}'.format(maximum)
+
+
+defn MainWindow(model):
+    Window:
+        title = "Lotka-Volterra Model"
+        constraints = [
+            hbox(plot, vbox(form, _space_)),
+            align('left', prey0_slider, pred0_slider, prey_growth_slider, pred_rate_slider, pred_death_slider, pred_growth_slider),
+            align('right', prey0_slider, pred0_slider, prey_growth_slider, pred_rate_slider, pred_death_slider, pred_growth_slider),
+            plot.width >= 500,
+            plot.height >= 500,
+        ]
+        SimplePlot -> plot:
+            data << dict(t=model.t, prey=model.prey, predator=model.predator)
+            commands = [
+                self.plot(('t', 'prey'), type='line', name='Prey', color='black'),
+                self.plot(('t', 'predator'), type='line', name='Predator', color='red'),
+                self.yrange(bounds_func=pop_bounds),
+            ]
+            legend = True
+            xtitle = 'Time'
+            ytitle = 'Population'
+            padding_right = 10
+            padding_top = 10
+        Form -> form:
+            Label:
+                text = "Initial Prey:"
+            Range(0.0, 10.0) -> slider as prey0_slider:
+                prey0_slider.value := model.prey0
+            Label:
+                text = "Initial Predators:"
+            Range(0.0, 10.0) -> slider as pred0_slider:
+                pred0_slider.value := model.predator0
+            Label:
+                text = "Prey Growth:"
+            Range(0.0, 2.0) -> slider as prey_growth_slider:
+                prey_growth_slider.value := model.prey_growth
+            Label:
+                text = "Predation Rate:"
+            Range(0.0, 2.0) -> slider as pred_rate_slider:
+                pred_rate_slider.value := model.predation_rate
+            Label:
+                text = "Predator Death:"
+            Range(0.0, 2.0) -> slider as pred_death_slider:
+                pred_death_slider.value := model.predator_death
+            Label:
+                text = "Predator Growth:"
+            Range(0.0, 2.0) -> slider as pred_growth_slider:
+                pred_growth_slider.value := model.predator_growth
