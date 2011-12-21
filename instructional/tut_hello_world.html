@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hello World! tutorial &mdash; enaml 0.1alpha documentation</title>
+    <title>“Hello World” tutorial &mdash; enaml 0.1alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -29,7 +29,7 @@
     <link rel="shortcut icon" href="../_static/et.ico"/>
     <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
-    <link rel="next" title="Hello John Doe tutorial" href="tut_person.html" />
+    <link rel="next" title="John Doe tutorial" href="tut_person.html" />
     <link rel="prev" title="Enaml Tutorials" href="tutorials_home.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tut_person.html" title="Hello John Doe tutorial"
+          <a href="tut_person.html" title="John Doe tutorial"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="tutorials_home.html" title="Enaml Tutorials"
@@ -52,7 +52,7 @@
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
   
-    <li><a href="#">Hello World! tutorial</a></li>
+    <li><a href="#">&#8220;Hello World&#8221; tutorial</a></li>
   
 
       </ul>
@@ -64,19 +64,11 @@
             </a></p>
 <h3>Page Contents</h3>
 <ul>
-<li><a class="reference internal" href="#">Hello World! tutorial</a><ul>
-<li><a class="reference internal" href="#source">Source</a></li>
-<li><a class="reference internal" href="#walk-through">Walk-through</a><ul>
-<li><a class="reference internal" href="#enaml-file">Enaml file</a><ul>
-<li><a class="reference internal" href="#comments">Comments</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li><a class="reference internal" href="#defn-block"><tt class="docutils literal"><span class="pre">defn</span></tt> Block</a><ul>
-<li><a class="reference internal" href="#python-code">Python code</a></li>
-</ul>
-</li>
+<li><a class="reference internal" href="#">&#8220;Hello World&#8221; tutorial</a><ul>
+<li><a class="reference internal" href="#hello-world-source">&#8220;Hello World&#8221; Source</a></li>
+<li><a class="reference internal" href="#comment-block">Comment Block</a></li>
+<li><a class="reference internal" href="#defn-block"><tt class="docutils literal"><span class="pre">defn</span></tt> Block</a></li>
+<li><a class="reference internal" href="#using-the-enaml-view-in-python">Using the Enaml view in Python</a></li>
 </ul>
 </li>
 </ul>
@@ -108,15 +100,18 @@
           <div class="body">
             
   <div class="section" id="hello-world-tutorial">
-<span id="hello-world"></span><h1>Hello World! tutorial<a class="headerlink" href="#hello-world-tutorial" title="Permalink to this headline">¶</a></h1>
+<span id="hello-world"></span><h1>&#8220;Hello World&#8221; tutorial<a class="headerlink" href="#hello-world-tutorial" title="Permalink to this headline">¶</a></h1>
 <p>This is a basic tutorial to explain the basic features of an Enaml user
-interface. It uses sets up a minimal GUI to display a simple message.</p>
-<div class="section" id="source">
-<h2>Source<a class="headerlink" href="#source" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s get started with a basic &#8220;hello world!&#8221; example:</p>
-<p>An Enaml GUI comprises two components: the .enaml file (describing the view)
-and the Python code to execute it. Our minimalist .enaml file describing a
-message-displaying GUI is shown here (and can be downloaded <a class="reference download internal" href="../_downloads/hello_world.enaml"><tt class="xref download docutils literal"><span class="pre">here</span></tt></a>):</p>
+interface. It sets up a minimal GUI to display a simple message.</p>
+<div class="section" id="hello-world-source">
+<h2>&#8220;Hello World&#8221; Source<a class="headerlink" href="#hello-world-source" title="Permalink to this headline">¶</a></h2>
+<p>Let&#8217;s get started with a basic &#8220;hello world&#8221; example:</p>
+<p>Enaml supports implementing a <a class="reference external" href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">model-view-controller architecture</a> . An
+&#8216;.enaml&#8217; file describes the <em>view</em>, and the <em>model</em> is treated by Python code,
+usually in the form of <a class="reference external" href="http://code.enthought.com/projects/traits/">Traits objects</a> . The Enaml module handles
+most/all of the <em>controller</em> aspects of the GUI.</p>
+<p>Here is our minimalist .enaml file describing a message-displaying GUI
+(<a class="reference download internal" href="../_downloads/hello_world.enaml"><tt class="xref download docutils literal"><span class="pre">download</span> <span class="pre">here</span></tt></a>):</p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
@@ -129,8 +124,7 @@ defn MyMessageToTheWorld(message):
             
 </pre>
 </div>
-<p>The Python code to use the GUI is shown here (and can be downloaded
-<a class="reference download internal" href="../_downloads/hello_world.py"><tt class="xref download docutils literal"><span class="pre">here</span></tt></a>):</p>
+<p>Here is the Python code to use the GUI (<a class="reference download internal" href="../_downloads/hello_world.py"><tt class="xref download docutils literal"><span class="pre">download</span> <span class="pre">here</span></tt></a>):</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#------------------------------------------------------------------------------</span>
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
@@ -145,16 +139,12 @@ defn MyMessageToTheWorld(message):
 </div>
 <p>The resulting GUI looks like this (in Mac OS):</p>
 <img alt="../_images/hello_world.png" src="../_images/hello_world.png" />
+<p>Let&#8217;s take a closer look at the Enaml file.</p>
 </div>
-<div class="section" id="walk-through">
-<h2>Walk-through<a class="headerlink" href="#walk-through" title="Permalink to this headline">¶</a></h2>
-<p>Let&#8217;s take a closer look at the files.</p>
-<div class="section" id="enaml-file">
-<h3>Enaml file<a class="headerlink" href="#enaml-file" title="Permalink to this headline">¶</a></h3>
-<div class="section" id="comments">
-<h4>Comments<a class="headerlink" href="#comments" title="Permalink to this headline">¶</a></h4>
-<p>The file begins with some comment lines. As in Python code, <tt class="docutils literal"><span class="pre">#</span></tt> begins a
-comment line and is ignored during lexing and parsing.</p>
+<div class="section" id="comment-block">
+<h2>Comment Block<a class="headerlink" href="#comment-block" title="Permalink to this headline">¶</a></h2>
+<p>The .enaml file begins with some comment lines. As in Python code, <tt class="docutils literal"><span class="pre">#</span></tt> begins
+a comment line and is ignored during lexing and parsing.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#-----------------------------------------------------------------------------</span>
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
@@ -162,27 +152,32 @@ comment line and is ignored during lexing and parsing.</p>
 </pre></div>
 </div>
 </div>
-</div>
-</div>
 <div class="section" id="defn-block">
-<h2><tt class="docutils literal"><span class="pre">defn</span></tt> Block<a class="headerlink" href="#defn-block" title="Permalink to this headline">¶</a></h2>
-<p>We use a <tt class="docutils literal"><span class="pre">defn</span></tt> block to construct a view that is available for external
-Python functions to import.  The header line starts with the Enaml keyword
-<tt class="docutils literal"><span class="pre">defn</span></tt> and ends with a colon. With the header line, we specify any
-<em>arguments</em> that will be passed in by the calling Python function.</p>
+<span id="defn-block-tut"></span><h2><tt class="docutils literal"><span class="pre">defn</span></tt> Block<a class="headerlink" href="#defn-block" title="Permalink to this headline">¶</a></h2>
+<p>Next, we use a <tt class="docutils literal"><span class="pre">defn</span></tt> block to construct a view that is available for
+external Python functions to import. The syntax is similar to that of <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html">Python
+compound statements</a>
+. The header line starts with the Enaml keyword <strong>defn</strong> and ends with a
+colon. With the header line, we specify any <em>arguments</em> that will be passed in
+by the calling Python function. In this case, <tt class="docutils literal"><span class="pre">message</span></tt> is passed in as a
+parameter.</p>
 <div class="highlight-python"><pre>defn MyMessageToTheWorld(message):
     Window:
         Label:
             text = message</pre>
 </div>
-<p>In this case, <tt class="docutils literal"><span class="pre">message</span></tt> is passed in as a parameter.  Next, we specify a
-hierarchy tree of view components. As in Python, indentation is used to specify
-code block structure.</p>
-<p>Our view is made up of a <tt class="docutils literal"><span class="pre">Window</span></tt> (a <a class="reference internal" href="../tech_ref/built_ins_ref.html#built-ins-ref"><em>built-in component</em></a>) containing a <tt class="docutils literal"><span class="pre">Label</span></tt>, whose <tt class="docutils literal"><span class="pre">text</span></tt> attribute we set
-equal to <tt class="docutils literal"><span class="pre">message</span></tt>, the parameter passed in by the calling function.</p>
-<div class="section" id="python-code">
-<h3>Python code<a class="headerlink" href="#python-code" title="Permalink to this headline">¶</a></h3>
-<p>To use the view in Python code, first, we import Enaml:</p>
+<p>Next, we specify a hierarchy tree of view components. <a class="reference external" href="http://docs.python.org/reference/lexical_analysis.html#indentation">As in Python</a> ,
+indentation is used to specify code block structure. That is, statements
+beginning at a certain indentation level refer to the header line at the next
+lower indentation level.</p>
+<p>Our view is made up of a <tt class="docutils literal"><span class="pre">Window</span></tt> containing a <tt class="docutils literal"><span class="pre">Label</span></tt>, whose <tt class="docutils literal"><span class="pre">text</span></tt>
+attribute we set equal to <tt class="docutils literal"><span class="pre">message</span></tt>, which is passed in by the calling
+function.  (We&#8217;ll discuss this in more detail in the <a class="reference internal" href="tut_person.html#john-doe"><em>next tutorial</em></a> .)</p>
+</div>
+<div class="section" id="using-the-enaml-view-in-python">
+<h2>Using the Enaml view in Python<a class="headerlink" href="#using-the-enaml-view-in-python" title="Permalink to this headline">¶</a></h2>
+<p>Now we&#8217;ll take a look at how to use the view in Python code. First, we import
+Enaml:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">import</span> <span class="nn">enaml</span>
 </pre></div>
 </div>
@@ -192,7 +187,7 @@ the Enaml view.</p>
     <span class="kn">from</span> <span class="nn">hello_world</span> <span class="kn">import</span> <span class="n">MyMessageToTheWorld</span>
 </pre></div>
 </div>
-<p>Then, we instantiate the view:</p>
+<p>Then, we instantiate the view, passing the message to be displayed:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">view</span> <span class="o">=</span> <span class="n">MyMessageToTheWorld</span><span class="p">(</span><span class="s">&quot;Hello, world!&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -200,7 +195,7 @@ the Enaml view.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-</div>
+<img alt="../_images/hello_world.png" src="../_images/hello_world.png" />
 </div>
 </div>
 
@@ -220,7 +215,7 @@ the Enaml view.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="tut_person.html" title="Hello John Doe tutorial"
+          <a href="tut_person.html" title="John Doe tutorial"
              >next</a> |</li>
         <li class="right" >
           <a href="tutorials_home.html" title="Enaml Tutorials"
@@ -229,14 +224,14 @@ the Enaml view.</p>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
   
-    <li><a href="#">Hello World! tutorial</a></li>
+    <li><a href="#">&#8220;Hello World&#8221; tutorial</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 20, 2011.
+      Last updated on Dec 21, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>
