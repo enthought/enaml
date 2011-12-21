@@ -1390,44 +1390,43 @@ def p_subscript14(p):
 # scope. By default, we assign Name a Load() context since we aren't 
 # in the business of assigning to variables with this expression
 # parser.
+def _store_exprs_context(exprs):
+    for expr in exprs:
+        if isinstance(expr, ast.Name):
+            expr.ctx = ast.Store()
+        elif isinstance(expr, ast.Tuple):
+            expr.ctx = ast.Store()
+            for name in expr.elts:
+                name.ctx = ast.Store()
+
+
 def p_exprlist1(p):
     ''' exprlist : expr '''
     # expr will match a tuple or a name, so we need to handle 
     # the store context for both.
     expr = p[1]
-    if isinstance(expr, ast.Name):
-        expr.ctx = ast.Store()
-    elif isinstance(expr, ast.Tuple):
-        expr.ctx = ast.Store()
-        for name in expr.elts:
-            name.ctx = ast.Store()
+    _store_exprs_context([expr])
     p[0] = expr
 
 
 def p_exprlist2(p):
     ''' exprlist : expr COMMA '''
     exprs = [p[1]]
-    for expr in exprs:
-        if isinstance(expr, ast.Name):
-            expr.ctx = ast.Store()
+    _store_exprs_context(exprs)
     p[0] = ast.Tuple(elts=exprs, ctx=ast.Store())
 
 
 def p_exprlist3(p):
     ''' exprlist : expr exprlist_list '''
     exprs = [p[1]] + p[2]
-    for expr in exprs:
-        if isinstance(expr, ast.Name):
-            expr.ctx = ast.Store()
+    _store_exprs_context(exprs)
     p[0] = ast.Tuple(elts=exprs, ctx=ast.Store())
 
 
 def p_exprlist4(p):
     ''' exprlist : expr exprlist_list COMMA '''
     exprs = [p[1]] + p[2]
-    for expr in exprs:
-        if isinstance(expr, ast.Name):
-            expr.ctx = ast.Store()
+    _store_exprs_context(exprs)
     p[0] = ast.Tuple(elts=exprs, ctx=ast.Store())
 
 

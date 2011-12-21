@@ -29,6 +29,6 @@ MainWindow(Window):
         value = items[0]
     RadioGroup:
         orientation << switch.value
-        selected >> print(selected)
+        selected >> print('selected:', selected)
         items << range(how_many)
 

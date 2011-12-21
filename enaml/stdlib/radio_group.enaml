@@ -11,38 +11,45 @@ output in the form of selected item, index, and label.
 """
 :: python ::
 
-def _toggle_helper(rgroup, idx, label, checked):
+def _toggle_helper(rgroup, idx, item, label, checked):
     """ A helper function to handle the radio button toggle events
     until we have statement support in notification expressions.
 
     """
     if checked:
-        rgroup.trait_set(
-        selected_label = label,
-        selected = rgroup.items[idx],
-        selected_index = idx)
+        rgroup.selected = item
+        rgroup.selected_index = idx
+        rgroup.selected_label = label
+
+
+def _make_buttons(radio_group, item_info):
+    """ A helper function to handle created the list of buttons 
+    for the radio group and ensuring the initial selection are
+    managed appropriately.
+
+    """
+    buttons = []
+    for idx, (item, label) in item_info:
+        if radio_group.selected == item:
+            radio_group.selected_index = idx
+            radio_group.selected_label = label
+            is_checked = True
+        else:
+            is_checked = False
+        buttons.append(_MakeButton(radio_group, idx, item, label, is_checked))
+    return buttons
 
 :: end ::
 
 
-defn _MakeButton(rgroup, label, idx):
+defn _MakeButton(rgroup, idx, item, label, is_checked):
     """ A private defn which creates a properly bound RadioButton.
 
     """
     RadioButton:
         text = label
-        toggled >> _toggle_helper(rgroup, idx, label, checked)
-        # This is using Enaml's dynamic scoping feature to determine
-        # whether this button should be checked initially. We allow
-        # the attribute access to dynamically scope up to the parent
-        # in which this button will be place. This allows us to compute
-        # default without building a dynamic dependency on those value
-        # which would cause a rebuild of the entire list of buttons.
-        checked = (
-            (idx == selected_index) or
-            (label == selected_label) or
-            (items[idx] == selected)
-        )
+        toggled >> _toggle_helper(rgroup, idx, item, label, checked)
+        checked = is_checked
 
 
 RadioGroup(Container):
@@ -62,33 +69,47 @@ RadioGroup(Container):
         A callable which get mapped across the list of items to 
         generate the list of labels for the buttons.
     
-    Output Attributes
-    -----------------
+    Input/Output Attributes
+    -----------------------
     selected : object
         An attribute which is updated with the item associated
-        with the currently selected radio button.
-    
-    selected_index : integer
-        An attribute which is updated with the index of the 
-        currently selected radio button.
+        with the currently selected radio button. Changing this
+        value will cause a corresponding change the appropriate
+        button.
 
+    Output Attributes
+    -----------------
+    selected_index : integer
+        The integer index of the currently selected radio button. This
+        attribute is updated after the 'selected' attribute is updated.
+    
     selected_label : string
-        An attribute which is updated with the label of the 
-        currently selected radio button.
+        The label of the currently selected radio button. This attribute
+        is updated after the 'selected_index' attribute is updated.
 
     """
     id: rgroup
+
+    # Input Attributes
     orientation = 'horizontal'
     items = []
     to_string = str
+
+    # Input/Output Attributes
     selected = None
-    selected_index = None
-    selected_label = None
+
+    # Output Attributes (need to be intialized based on selected)
+    selected_index = items.index(selected) if selected in items else -1
+    selected_label = to_string(selected) if selected is not None else ''
+
+    # Private Attributes
+    _item_info << list(enumerate(zip(items, map(to_string, items))))
+
+    # Internal Logic
     constraints << [
         hbox(*children) if orientation == 'horizontal' else vbox(*children)
     ]
-    _labels << map(to_string, items)
+
     Include:
-        components << [_MakeButton(rgroup, label, idx) 
-                       for idx, label in enumerate(_labels)]
+        components << _make_buttons(rgroup, _item_info)
 
