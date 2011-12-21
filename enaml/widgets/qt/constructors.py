@@ -15,6 +15,50 @@ def importer(module_path, name):
         return res
     return _importer
 
+def get_shell_loader(base_path):
+    """ Get the shell class loader for the given name.
+
+    Parameters
+    ----------
+    base_path : str
+        The lowercase-with-underscores name of the module containing the shell
+        class.
+
+    Returns
+    -------
+    c_name : str
+        The name of the shell class.
+    shell_loader : callable
+        The loader function for the shell class.
+
+    """
+    c_module_path = 'enaml.widgets.' + base_path
+    c_name = ''.join(part.capitalize() for part in base_path.split('_'))
+    shell_loader = importer(c_module_path, c_name)
+    return c_name, shell_loader
+
+def get_abstract_loader(c_name, base_path):
+    """ Get the abstract class loader for the given name.
+
+    Parameters
+    ----------
+    c_name : str
+        The TitleCase class name of the shell class.
+    base_path : str
+        The lowercase-with-underscores name of the module containing the shell
+        class.
+
+    Returns
+    -------
+    abstract_loader : callable
+        The loader function for the abstract class.
+
+    """
+    t_module_path = 'enaml.widgets.qt.' + 'qt_' + base_path
+    t_name = 'Qt' + c_name
+    abstract_loader = importer(t_module_path, t_name)
+    return abstract_loader
+
 
 def constructor(base_path):
     """ A factory function which understands our name mangling and will
@@ -23,19 +67,15 @@ def constructor(base_path):
     in the enaml source code.
 
     """
-    c_module_path = 'enaml.widgets.' + base_path
-    c_name = ''.join(part.capitalize() for part in base_path.split('_'))
-
-    t_module_path = 'enaml.widgets.qt.' + 'qt_' + base_path
-    t_name = 'Qt' + c_name
-
-    shell_loader = importer(c_module_path, c_name)
-    abstract_loader = importer(t_module_path, t_name)
+    c_name, shell_loader = get_shell_loader(base_path)
+    abstract_loader = get_abstract_loader(c_name, base_path)
 
     ctor = Constructor(shell_loader, abstract_loader)
 
     return c_name, ctor
 
+base_item_selection_model = constructor('base_item_selection_model')[1]
+row_selection_model = base_item_selection_model.clone(get_shell_loader('row_selection_model')[1])
 
 QT_CONSTRUCTORS = dict((
     constructor('window'),
@@ -67,6 +107,7 @@ QT_CONSTRUCTORS = dict((
     constructor('tabbed'),
     constructor('tab'),
     constructor('splitter'),
-    constructor('base_item_selection_model'),
+    ('BaseItemSelectionModel', base_item_selection_model),
+    ('RowSelectionModel', row_selection_model),
 ))
 
