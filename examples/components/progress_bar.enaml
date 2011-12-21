@@ -74,7 +74,7 @@ defn ModelView(model):
 # A 'main' function is special cased as an entry point by the enaml-run script
 def main():
     model = Model()
-    window, = ModelView(model)
+    window = ModelView(model)
     window.show()
 
 :: end ::
