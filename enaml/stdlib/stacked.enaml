@@ -18,7 +18,6 @@ def _update_stacked_vis(stacked):
 
     """
     stack_idx = stacked.index
-    print 'update stacked vis', stacked.initialized
     for idx, child in enumerate(stacked.children):
         if idx == stack_idx:
             child.set_visible(True)
@@ -44,6 +43,6 @@ Stacked(Container):
     """
     id: stckd
     index = 0
-    initialized >> _update_stacked_vis(stckd )
+    initialized >> _update_stacked_vis(stckd) 
     index >> _update_stacked_vis(stckd)
 

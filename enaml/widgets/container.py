@@ -24,13 +24,6 @@ class AbstractTkContainer(AbstractTkComponent):
     pass
 
 
-c = 1
-def print_relayout(obj):
-    global c
-    print 'relayout', c, obj
-    c += 1
-
-
 class Container(Component):
     """ A Component subclass that provides for laying out its child 
     Components.
@@ -107,7 +100,6 @@ class Container(Component):
             # Protect against relayout recursion.
             if not guard.guarded(self, 'relayout'):
                 with guard(self, 'relayout'):
-                    print_relayout(self)
                     layout_mgr.update_constraints()
                     layout_mgr.layout()
                     self._relayout_pending = False
@@ -126,7 +118,6 @@ class Container(Component):
             # already a relayout pending.
             if not self._relayout_pending:
                 self._relayout_pending = True
-                print 'relayout later'
                 self.toolkit.invoke_later(self.relayout)
     
     def rearrange(self):
@@ -156,7 +147,6 @@ class Container(Component):
             # Squash multiple calls to rearrange_later if there is
             # already a rearrange pending.
             if not self._rearrange_pending:
-                print 'rearrange later'
                 self._rearrange_pending = True
                 self.toolkit.invoke_later(self.rearrange)
 
@@ -168,14 +158,12 @@ class Container(Component):
         if self.layout_manager is None:
             super(Container, self).relayout_enqueue(callable)
         else:
-            print 'enque', self
             self._relayout_queue.append(callable)
             # Measuring the size of the queue is not a reliable indicator
             # of when we need to invoke the method to purge the queue.
             # So, we use a flag instead.
             if not self._relayout_queue_processing:
                 self._relayout_queue_processing = True
-                print 'empty layoutq later', self
                 self.toolkit.invoke_later(self._empty_relayout_queue)
 
     def rearrange_enqueue(self, callable):

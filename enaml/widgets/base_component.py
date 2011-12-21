@@ -670,7 +670,6 @@ class BaseComponent(HasStrictTraits):
                 # context, since changing the visibility of a nested
                 # component will require a layout update.
                 def visibility_closure():
-                    print 'setting vis', self
                     self.abstract_obj.set_visible(visible)
                 self.relayout_enqueue(visibility_closure)
         else:
