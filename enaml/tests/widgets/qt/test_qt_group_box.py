@@ -19,12 +19,22 @@ class TestGroupBox(QtTestAssistant, group_box.TestGroupBox):
         """ Returns the title text from the tookit widget
 
         """
+        # The title is set on a deferred call, so we need to pump
+        # the event loop a bit to get the title to change. Yes,
+        # we need to do it twice.
+        self.toolkit.process_events()
+        self.toolkit.process_events()
         return widget.title()
 
     def get_flat(self, component, widget):
         """ Returns the flat style status from the tookit widget
 
         """
+        # The flat is set on a deferred call, so we need to pump
+        # the event loop a bit to get the title to change. Yes,
+        # we need to do it twice.
+        self.toolkit.process_events()
+        self.toolkit.process_events()
         return widget.isFlat()
 
     def get_title_align(self, component, widget):
