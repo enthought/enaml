@@ -1,30 +1,25 @@
-.. _hello-john-doe:
+.. _john-doe:
 
-Hello John Doe tutorial
+John Doe tutorial
 ===============================================================================
 
-This is a basic tutorial to explain the basic features of an |Enaml| user
-interface. It uses sets up a GUI with the name and age of a person.
+This tutorial expands on the :ref:`"Hello World" Tutorial <hello-world>` to
+introduce the concepts of reusable component declarations and components from
+the standard library in |Enaml|. It sets up a GUI with the name and age of a
+person.
 
-Source
--------------------------------------------------------------------------------
 
-:download:`.enaml file <../../../examples/person/person_view.enaml>`
+John Doe Source
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-:download:`Python file <../../../examples/person/person.py>`
-
-Let's get started with a basic hello-world type example. We will create a GUI
-to view or change the information about a person.
-
-An |Enaml| GUI comprises two components: the .enaml file (describing the view)
-and the Python code to execute it. The .enaml file describing a person for our
-example is shown here (and can be downloaded from the link above):
+Here is the |Enaml| file (:download:`download here
+<../../../examples/person/person_view.enaml>`):
 
 .. literalinclude:: ../../../examples/person/person_view.enaml
     :language: python
 
-The Python code to use the GUI is shown here (and can be downloaded from the
-other link above):
+Here is the Python code (:download:`download here
+<../../../examples/person/person.py>`):
 
 .. literalinclude:: ../../../examples/person/person.py
     :language: python
@@ -33,44 +28,28 @@ The resulting GUI looks like this (in Mac OS):
 
 .. image:: images/john_doe.png
 
-Walk-through
--------------------------------------------------------------------------------
-
-Let's take a closer look at the files.
-
-Comments
+|Enaml| Imports
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The file begins with some comment lines. As in Python code, `#` begins a
-comment line and is ignored during lexing and parsing.
-
-::
-
- #-----------------------------------------------------------------------------
- #  Copyright (c) 2011, Enthought, Inc.
- #  All rights reserved.
- #-----------------------------------------------------------------------------
-
-Imports
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-Imports similar to Python.
-
+This .enaml file begins like the :ref:`"Hello World" <hello-world>` example
+with comments, but next we see that we can do imports in Enaml, like in Python.
 ::
 
  from enaml.stdlib.fields import IntField
 
-In this case, we are importing the integer field widget IntField from the
-:ref:`standard component library.<std-library-ref>` This is the component that
+In this case, we are importing the integer field widget ``IntField`` from
+|Enaml|'s :ref:`standard component library.<std-library-ref>` This component
 lets us assign an integer value in a text field, with validation and error
-checking. Note that this import points to a component declaration in a `.enaml`
-file. *The import statement looks like Python but imports from an .enaml file.*
+checking. Note that this import points to a component declaration in a
+``.enaml`` file. *The import statement looks like Python but imports from an
+.enaml file.*
 
 
 Component Declaration
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Next, we define an entry form using a *class-like* component hierarchy
+Next, there is a new kind of code block, a **component declaration**. We define
+a component, in this case an entry form, using a component hierarchy
 declaration. With this block of code, we define a reusable component derived
 from other components.
 
@@ -91,19 +70,37 @@ from other components.
      IntField:
          value := person.age 
 
-The syntax of Python is copied in several aspects of the declaration.
- - ``PersonForm(Form)`` indicates that the new component ``PersonForm`` inherits from
-   the |Enaml| :ref:`built-in component <built-ins-ref>` `Form`.
- - A colon ``:`` marks the end of a declaration header.
- - Indentation is used to specify code block structure.
+A component declaration block header line begins with the name of the component
+followed by the base component or widget it inherits from, if any. The header
+line ends with a colon.
+::
 
-With ``person = None`` we are initializing the ``person`` attribute of
-``PersonForm``.
+ PersonForm(Form):
 
-Next, we add a series of labels and fields. ``Label`` and ``Field`` are both from
-the library of |Enaml| :ref:`built-in components. <built-ins-ref>` Assignments
-are made to a component in an indented block. The assignments are made as if
-they were within an implicit ``with(Label):`` block.
+Indented under the header line are statements declaring either attributes or
+children. ``person = None`` initializes a ``person`` attribute of
+``PersonForm``. 
+
+Built-in Components
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Next, we add a series of labels and fields. ``Form``, ``Label`` and ``Field``
+are all from the library of |Enaml| :ref:`built-in components. <built-ins-ref>`
+
+:py:class:`~enaml.widgets.form.Form` is a built-in container that arranges
+alternating child components into two columns. This is typically done in the
+way seen here with alternating ``Label:`` and widget children. In a form with
+an odd number of components, the last component spans both columns.
+
+:py:class:`~enaml.widgets.label.Label` is a built-in component for displaying
+read-only text.
+
+:py:class:`~enaml.widgets.field.Field` is a built-in widget for entering a text
+value. Field is used as the base component for many other components that do
+type conversions.
+
+Delegation Operator
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In the ``Field`` code block, we notice a new operator ``:=``. This is the
 :ref:`delegation operator<delegation-opr>`, one of the four special operators in
@@ -113,25 +110,23 @@ the value of the text field in the GUI widget are applied to the value of
 person.first_name, and changes to the value of person.first_name are displayed
 in the GUI component.
 
-The ``IntField`` component provides a string-to-integer conversion, validation,
-and error reporting function. It is derived from the ``Field`` component used
-elsewhere in the widget. By using the ``IntField`` component, we add validation
-to the GUI, as shown in the example below, where a non-integer value was
-entered in the age field:
+Standard Library of Derived Components
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+The ``IntField`` component is derived from ``Field`` and provides a
+string-to-integer conversion, validation, and error reporting functions.By
+using the ``IntField`` component, we add validation to the GUI, as shown in the
+example below, where a non-integer value was entered in the age field:
 
 .. image:: images/john_doe_error.png
 
 ``defn`` Block
--------------------------------------------------------------------------------
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-With a ``defn`` block, we create a particular instance of the reusable
-component declared in the previous code block. This then becomes availble for
-external Python functions to import. With a ``defn`` block header, we specify
-the *arguments* that will be passed in by the calling Python function.
-
-.. note:: The header line of a *component declaration block* specifies
-   **inheritance**, while the header line of a *defn block* specifies the
-   **signature** for the calling function.
+Now, with a ``defn`` block, we can make a view available using our previously
+declared ``PersonForm``. If we wanted to, we could add ``PersonForm`` many
+times over in this view, but for now we'll keep it simple. Note that we will
+pass a ``person`` object to the view.
 
 ::
 
@@ -140,31 +135,47 @@ the *arguments* that will be passed in by the calling Python function.
          PersonForm:
              person = person
 
-As with the component declaration block, the ``defn`` block specifies a
-hierarchy tree of components. Here, the ``PersonView`` is made up of a
-``Window`` (a :ref:`built-in component <built-ins-ref>) containing a
-``PersonForm`` (defined above). ``The PersonForm`` 's ``person`` attribute (on
-the left-hand side) is set equal to the ``person`` argument passed in by the
-calling Python function.
-
-Python code
-_______________________________________________________________________________
+Now, on to the Python code.
 
 Traits Object
 -------------------------------------------------------------------------------
-|Enaml| is designed to work with `Traits
-<http://code.enthought.com/projects/traits/>`_. The important thing to note is
-that the ``Person`` attribute names exactly match the names of the
-``PersonForm`` attributes from the .enaml file. Our ``Person`` class is
-designed to print out a debug statement when the ``age`` attribute changes.
-*(Run the example to confirm this.)* So far the Person class is just like any
-other Traits class. `See the Traits user guide for
-help. <http://github.enthought.com/traits/traits_user_manual/index.html>`_
 
-Hooking up the |Enaml| view
--------------------------------------------------------------------------------
-The |Enaml| particulars show up in the code block for launching the script from
-the command line:
+|Enaml| is designed to work with `Traits objects
+<http://code.enthought.com/projects/traits/>`_. The important thing to note is
+that the ``Person`` attribute names match the names of the ``PersonForm``
+attributes from the .enaml file. 
+::
+
+ class Person(HasTraits):
+    """ A simple class representing a person object.
+
+    """
+    last_name = Str
+
+    first_name = Str
+
+    age = Range(low=0)
+
+    @on_trait_change('age')
+    def debug_print(self):
+        """ Prints out a debug message whenever the person's age changes.
+
+        """
+        templ = "{first} {last} is {age} years old."
+        print templ.format(first=self.first_name, 
+                           last=self.last_name, 
+                           age=self.age)
+
+Note that our ``Person`` class is designed to print out the name and age of the
+person when the ``age`` attribute changes. See the `Traits user guide
+<http://github.enthought.com/traits/traits_user_manual/index.html>`_ for help
+on Traits.
+
+Hooking up an |Enaml| View to a Traits Object
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+In the code block for launching the script from the command line, we create a
+Person object and pass it to ``PersonView``.
 
 ::
 
@@ -178,13 +189,19 @@ the command line:
      view = PersonView(john)
      view.show()
 
-First, we ``import enaml``.
-
-Then we use ``enaml.imports()`` as a `context manager
-<http://docs.python.org/release/2.5.2/ref/context-managers.html>`_ for importing
-the |Enaml| view.
+Running it from the command line, we see
 ::
 
- with enaml.imports():
-     from person_view import PersonView
+ $ python person.py
+  is 42 years old.
 
+.. image:: images/john_doe.png
+
+Note that the age was assigned before the first and last names, so that those
+fields are empty when Person() prints to the command line. That's not the case
+when we make a change in the GUI and see
+::
+
+ John Doe Jr. is 22 years old.
+
+.. image:: images/john_doe_jr.png
