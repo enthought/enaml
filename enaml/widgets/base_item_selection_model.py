@@ -60,7 +60,7 @@ class BaseItemSelectionModel(BaseComponent):
     current_event = Event()
 
     #: Updated when the current selection changes.
-    #: Gets a 2-tuple: (old selection, new selection)
+    #: Gets a 2-tuple: (deleted items, added items)
     #: Each selection is a list of
     #: (top_left ModelIndex, bottom_right ModelIndex) tuples specifying
     #: rectangular ranges of selected cells.
