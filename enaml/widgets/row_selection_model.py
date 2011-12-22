@@ -7,7 +7,7 @@ from contextlib import contextmanager
 
 from traits.api import Bool, List, Int, on_trait_change
 
-from .base_item_selection_model import BaseItemSelectionModel
+from .base_selection_model import BaseSelectionModel
 
 
 @contextmanager
@@ -24,7 +24,7 @@ def updating_trait(obj, trait, new=True):
         setattr(obj, trait, old)
 
 
-class RowSelectionModel(BaseItemSelectionModel):
+class RowSelectionModel(BaseSelectionModel):
     """ A selection model that maps to a list of row indices.
 
     Generally, this should be used with `selection_behavior='rows'`.

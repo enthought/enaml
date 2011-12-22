@@ -5,7 +5,7 @@
 
 from .qt import QtGui
 from .qt_base_component import QtBaseComponent
-from ..base_item_selection_model import AbstractTkBaseItemSelectionModel
+from ..base_selection_model import AbstractTkBaseSelectionModel
 
 _COMMAND_MAP = {
     'clear_select': QtGui.QItemSelectionModel.ClearAndSelect,
@@ -23,8 +23,8 @@ _COMMAND_MAP = {
 
 
 
-class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel):
-    """ Qt implementation of the BaseItemSelectionModel.
+class QtBaseSelectionModel(QtBaseComponent, AbstractTkBaseSelectionModel):
+    """ Qt implementation of the BaseSelectionModel.
 
     """
 
@@ -42,13 +42,13 @@ class QtBaseItemSelectionModel(QtBaseComponent, AbstractTkBaseItemSelectionModel
         """ Get the QItemSelectionModel.
 
         """
-        super(QtBaseItemSelectionModel, self).initialize()
+        super(QtBaseSelectionModel, self).initialize()
 
     def bind(self):
         """ Bind to events.
 
         """
-        super(QtBaseItemSelectionModel, self).bind()
+        super(QtBaseSelectionModel, self).bind()
         #parent = self.shell_obj.parent
         #parent.on_trait_change(self.reset_for_new_model, 'item_model')
         self.selection_model.currentChanged.connect(self._update_current)

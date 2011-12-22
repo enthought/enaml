@@ -9,7 +9,7 @@ from traits.api import Event, List
 from .base_component import BaseComponent, AbstractTkBaseComponent
 
 
-class AbstractTkBaseItemSelectionModel(AbstractTkBaseComponent):
+class AbstractTkBaseSelectionModel(AbstractTkBaseComponent):
     """ The toolkit interface for the selection model.
 
     """
@@ -50,7 +50,7 @@ class AbstractTkBaseItemSelectionModel(AbstractTkBaseComponent):
         raise NotImplementedError
 
 
-class BaseItemSelectionModel(BaseComponent):
+class BaseSelectionModel(BaseComponent):
     """ The base class for item selection models.
 
     """
@@ -66,10 +66,10 @@ class BaseItemSelectionModel(BaseComponent):
     #: rectangular ranges of selected cells.
     selection_event = Event()
 
-    #: BaseItemSelectionModels are not visible.
+    #: BaseSelectionModels are not visible.
     visible = False
 
-    #: BaseItemSelectionModel has no children.
+    #: BaseSelectionModel has no children.
     _subcomponents = List(maxlen=0)
 
 

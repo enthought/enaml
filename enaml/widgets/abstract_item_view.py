@@ -10,7 +10,7 @@ from .control import Control, AbstractTkControl
 
 from ..item_models.abstract_item_model import AbstractItemModel
 from ..enums import SelectionMode, SelectionBehavior
-from .base_item_selection_model import BaseItemSelectionModel
+from .base_selection_model import BaseSelectionModel
 
 
 class AbstractTkItemView(AbstractTkControl):
@@ -46,10 +46,10 @@ class AbstractItemView(Control):
     selection_behavior = SelectionBehavior()
 
     #: The selection model for this view.
-    selection_model = Property(Instance(BaseItemSelectionModel),
+    selection_model = Property(Instance(BaseSelectionModel),
         depends_on=['_subcomponents', '_subcomponents_items'])
 
-    _subcomponents = List(Instance(BaseItemSelectionModel), maxlen=1)
+    _subcomponents = List(Instance(BaseSelectionModel), maxlen=1)
 
     def _selection_mode_changed(self, new):
         if self.abstract_obj is not None:
@@ -60,7 +60,7 @@ class AbstractItemView(Control):
             self.abstract_obj.set_selection_behavior(new)
 
     def _subcomponents_default(self):
-        return [BaseItemSelectionModel()]
+        return [BaseSelectionModel()]
 
     def _get_selection_model(self):
         return self._subcomponents[0]
