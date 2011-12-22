@@ -74,8 +74,8 @@ def constructor(base_path):
 
     return c_name, ctor
 
-base_item_selection_model = constructor('base_item_selection_model')[1]
-row_selection_model = base_item_selection_model.clone(get_shell_loader('row_selection_model')[1])
+base_selection_model = constructor('base_selection_model')[1]
+row_selection_model = base_selection_model.clone(get_shell_loader('row_selection_model')[1])
 
 QT_CONSTRUCTORS = dict((
     constructor('window'),
@@ -107,7 +107,7 @@ QT_CONSTRUCTORS = dict((
     constructor('tabbed'),
     constructor('tab'),
     constructor('splitter'),
-    ('BaseItemSelectionModel', base_item_selection_model),
+    ('BaseSelectionModel', base_selection_model),
     ('RowSelectionModel', row_selection_model),
 ))
 

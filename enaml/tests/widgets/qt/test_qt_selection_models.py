@@ -22,8 +22,8 @@ class QtSelectionTestHelper(object):
         return pysel
 
 
-class TestQtBaseItemSelectionModel(QtTestAssistant, QtSelectionTestHelper, selection_models.TestBaseItemSelectionModel):
-    """ QtBaseItemSelectionModel tests. 
+class TestQtBaseSelectionModel(QtTestAssistant, QtSelectionTestHelper, selection_models.TestBaseSelectionModel):
+    """ QtBaseSelectionModel tests. 
 
     """
 

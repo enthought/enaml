@@ -69,13 +69,13 @@ class SelectionTestHelper(object):
         """
 
 
-class TestBaseItemSelectionModel(EnamlTestCase, SelectionTestHelper):
+class TestBaseSelectionModel(EnamlTestCase, SelectionTestHelper):
     """ Logic for testing selection models.
 
     """
 
     def setUp(self):
-        """ Set up tests for Enaml's BaseItemSelectionModel.
+        """ Set up tests for Enaml's BaseSelectionModel.
 
         """
 
@@ -99,7 +99,7 @@ defn MainView(events):
         TableView:
             name = 'table_view'
             item_model = the_item_model
-            BaseItemSelectionModel:
+            BaseSelectionModel:
                 name = 'selection_model'
 """
 
