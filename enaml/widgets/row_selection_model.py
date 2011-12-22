@@ -52,14 +52,13 @@ class RowSelectionModel(BaseItemSelectionModel):
         if self._updating_selected_rows:
             return
         item_model = self.parent.item_model
-        last_column = item_model.column_count() - 1
         selection = []
         # FIXME: try to merge contiguous rows into ranges.
         for i in self.selected_rows:
             topleft = item_model.create_index(i, 0, item_model)
-            botright = item_model.create_index(i, last_column, item_model)
+            botright = item_model.create_index(i, 0, item_model)
             selection.append((topleft, botright))
-        self.set_selection(selection)
+        self.set_selection(selection, ('clear_select', 'rows'))
 
 
 
