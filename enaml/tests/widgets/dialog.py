@@ -58,7 +58,7 @@ defn MainView():
         """ Test the behavior when showing and closing the dialog.
 
         """
-        self.component.abstract_obj.shell_visible_changed(True)
+        self.component.abstract_obj.set_visible(True)
         # Compare sets because the order is unimportant.
         self.assertEquals(set(self.event_log), set([
             ('active', True),
@@ -75,7 +75,7 @@ defn MainView():
             ('closed', 'accepted'),
         ]))
         self.event_log = []
-        self.component.abstract_obj.shell_visible_changed(True)
+        self.component.abstract_obj.set_visible(True)
         self.assertEquals(set(self.event_log), set([
             ('active', True),
             ('_active', True),
@@ -102,5 +102,10 @@ defn MainView():
         """ Append the trait change notification to the event log.
 
         """
+        # XXX this test is fragile since it's collected all trait 
+        # change events. Hence we need to filter out certain things
+        # we don't care about. FIX THIS TEST!!!!!
+        if name == '_relayout_pending':
+            return
         self.event_log.append((name, new))
 

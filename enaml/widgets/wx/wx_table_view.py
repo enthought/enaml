@@ -135,6 +135,20 @@ class WXTableView(WXControl, AbstractTkTableView):
         """
         self.set_table_model(item_model)
 
+    def shell_vertical_header_visible_changed(self, visible):
+        """ The change handler for the 'vertical_header_visible' 
+        attribute of the shell object.
+
+        """
+        pass
+
+    def shell_horizontal_header_visible_changed(self, visible):
+        """ The change handler for the 'horizontal_header_visible'
+        attribute of the shell object.
+
+        """
+        pass
+        
     def on_select_cell(self, event):
         """ The event handler for the cell selection event.  Not meant
         for public consumption.

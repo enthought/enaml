@@ -12,7 +12,7 @@ from .layout.layout_manager import NullLayoutManager
 
 _SIZE_HINT_DEPS = ('children:size_hint_updated, children:hug_width, '
                    'children:hug_height, children:resist_clip_width, '
-                   'children:resist_clip_height')
+                   'children:resist_clip_height, index')
 
 
 class AbstractTkStacked(AbstractTkContainer):
@@ -63,10 +63,6 @@ class Stacked(Container):
     #: container ignores its height hug by default, so it expands freely
     #: in height.
     hug_height = 'ignore'
-
-    #: Overridden parent class trait. Children of a Stacked container
-    #: must themselves be containers.
-    children = List(Instance(Container))
 
     def initialize_layout(self):
         """ Initialize the layout of the children. This is overridden

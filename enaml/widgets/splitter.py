@@ -4,17 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, on_trait_change, Bool
+from traits.api import Instance, Bool
 
 from .container import Container, AbstractTkContainer
 from .layout.layout_manager import NullLayoutManager
 
 from ..enums import Orientation
-
-
-_SIZE_HINT_DEPS = ('children:size_hint_updated, children:hug_width, '
-                   'children:hug_height, children:resist_clip_width, '
-                   'children:resist_clip_height')
 
 
 class AbstractTkSplitter(AbstractTkContainer):
@@ -101,15 +96,13 @@ class Splitter(Container):
         a boundary which constraints may not cross.
 
         """
-        for child in self.children:
-            if hasattr(child, 'initialize_layout'):
-                child.initialize_layout()
+        super(Splitter, self).initialize_layout()
         self.abstract_obj.set_initial_sizes()
 
-    @on_trait_change(_SIZE_HINT_DEPS)
-    def handle_size_hint_changed(self, child, name, old, new):
-        """ Pass up the size hint changed notification to the parent
-        so that a window resize can take place if necessary.
+    def _on_size_hint_changed(self, child, name, old, new):
+        """ Overridden parent class method to pass up the size hint 
+        changed notification to the parent so that a window resize 
+        can take place if necessary.
 
         """
         self.size_hint_updated = True

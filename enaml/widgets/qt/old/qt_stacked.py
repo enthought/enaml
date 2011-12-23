@@ -29,6 +29,13 @@ class QtStacked(QtContainer, AbstractTkStacked):
         self.update_children()
         self.set_index(self.shell_obj.index)
 
+        # XXX Temporary hack to overcome some visibility issues
+        # during initialization.
+        idx = self.shell_obj.index
+        for i, child in enumerate(self.shell_obj.children):
+            if idx != i:
+                child.visible = False
+    
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -79,6 +86,7 @@ class QtStacked(QtContainer, AbstractTkStacked):
         if size_hint == (-1, -1):
             q_size = curr_shell.toolkit_widget.minimumSize()
             size_hint = (q_size.width(), q_size.height())
+        print 'size hint', size_hint
         return size_hint
 
     def update_children(self):
@@ -100,5 +108,4 @@ class QtStacked(QtContainer, AbstractTkStacked):
         # Finally, update the selected index of the of the widget 
         # and notify the layout of the size hint update
         self.set_index(shell.index)
-        shell.size_hint_updated = True
 

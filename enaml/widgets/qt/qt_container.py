@@ -36,8 +36,8 @@ class QtContainer(QtComponent, AbstractTkContainer):
         has been resized.
 
         """
-        # Notice that we are calling do_layout() here instead of 
-        # set_needs_layout() since we want the layout to happen
+        # Notice that we are calling rearrange() here instead of 
+        # rearrange_later() since we want the layout to happen
         # immediately. Otherwise the resize layouts will appear 
         # to lag in the ui. This is a safe operation since by the
         # time we get this resize event, the widget has already 
@@ -45,7 +45,7 @@ class QtContainer(QtComponent, AbstractTkContainer):
         # by the layout manager is that of our children. And should
         # it be required to resize this widget from within the layout
         # call, then the layout manager will do that via invoke_later.
-        self.shell_obj.do_layout()
+        self.shell_obj.rearrange()
 
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
@@ -66,3 +66,4 @@ class QtContainer(QtComponent, AbstractTkContainer):
         # they have recorded our own margins.
         for child in self.shell_obj.children:
             child.abstract_obj._reset_layout_margins()
+

@@ -87,7 +87,7 @@ defn ModelView(model):
 # The main function is special cased as the entry point by the enaml-run script
 def main():
     model = Model()
-    window, = ModelView(model)
+    window = ModelView(model)
     model.timer_func = window.toolkit.invoke_timer
     window.show()
 

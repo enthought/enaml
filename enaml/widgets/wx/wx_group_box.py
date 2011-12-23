@@ -226,22 +226,22 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
         shell object.
 
         """
-        self._set_title(title)
-        # We need to call update constraints since the margins may 
-        # have changed. Using the size_hint_updated event here is
-        # not sufficient.
-        self.shell_obj.set_needs_update_constraints()
+        # We perform the title update in a relayout context to 
+        # prevent flicker and multiple calls to relayout.
+        def title_update_closure():
+            self._set_title(title)
+        self.shell_obj.relayout_enqueue(title_update_closure)
 
     def shell_flat_changed(self, flat):
         """ Update the flat flag of the group box with the new value from
         the shell object.
 
         """
-        self._set_flat(flat)
-        # We need to call update constraints since the margins may 
-        # have changed. Using the size_hint_updated event here is
-        # not sufficient.
-        self.shell_obj.set_needs_update_constraints()
+        # We perform the title update in a relayout context to 
+        # prevent flicker and multiple calls to relayout.
+        def flat_update_closure():
+            self._set_flat(flat)
+        self.shell_obj.relayout_enqueue(flat_update_closure)
 
     def shell_title_align_changed(self, align):
         """ Update the title alignment to the new value from the shell

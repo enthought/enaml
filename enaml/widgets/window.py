@@ -41,23 +41,31 @@ class Window(Container):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkWindow)
 
-    def show(self):
+    def show(self, parent=None):
         """ Make the window visible on the screen.
 
         If the 'setup' method is not explicity called prior to calling
         this method, then the window will lay itself out prior to
         displaying itself to the screen.
 
+        Parameters
+        ----------
+        parent : native toolkit widget, optional
+            Provide this argument if the window should have another
+            widget as its logical parent. This may help with stacking
+            order and/or visibility hierarchy depending on the toolkit
+            backend.
+
         """
         app = self.toolkit.create_app()
         if not self.initialized:
-            self.setup()
+            self.setup(parent)
             # For now, compute the initial size based using the minimum
             # size routine from the layout. We'll probably want to have
             # an initial_size optional attribute or something at some point.
-            size = self.layout.calc_min_size()
+            size = self.layout_manager.calc_min_size()
             self.resize(*size)
-        self.visible = True
+        self.set_visible(True)
         self.toolkit.start_app(app)
         
     def hide(self):
@@ -67,13 +75,15 @@ class Window(Container):
         will always succeed.
 
         """
-        self.visible = False
+        self.set_visible(False)
 
-    def update_constraints(self):
-        """ Update the constraints for this component.
+    def relayout(self):
+        """ Overridden parent class method which sets the minimum size
+        of the window whenever constraints are recomputed.
 
         """
-        super(Window, self).update_constraints()
-        size = self.layout.calc_min_size()
-        self.set_min_size(*size)
+        super(Window, self).relayout()
+        if self.layout_manager is not None:
+            size = self.layout_manager.calc_min_size()
+            self.set_min_size(*size)
 

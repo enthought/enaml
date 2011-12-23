@@ -26,8 +26,10 @@ class QtLabel(QtControl, AbstractTkLabel):
 
         """
         super(QtLabel, self).initialize()
-        self.set_label(self.shell_obj.text)
-
+        shell = self.shell_obj
+        self.set_label(shell.text)
+        self.set_word_wrap(shell.word_wrap)
+        
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -36,14 +38,22 @@ class QtLabel(QtControl, AbstractTkLabel):
 
         """
         self.set_label(text)
-        # If the text in the label changes, then the size hint of
-        # label will have changed, and the layout system needs to
-        # be informed.
-        self.shell_obj.size_hint_updated = True
+
+    def shell_word_wrap_changed(self, word_wrap):
+        """ The change handler for the 'word_wrap' attribute.
+
+        """
+        self.set_word_wrap(word_wrap)
 
     def set_label(self, label):
         """ Sets the label on the underlying control.
 
         """
         self.widget.setText(label)
+
+    def set_word_wrap(self, wrap):
+        """ Sets the word wrapping on the underlying widget.
+
+        """
+        self.widget.setWordWrap(wrap)
 

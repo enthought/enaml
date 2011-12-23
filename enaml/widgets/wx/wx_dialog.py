@@ -75,9 +75,9 @@ class WXDialog(WXWindow, AbstractTkDialog):
             if visible:
                 shell.trait_set(_active=True, opened=True)
                 # Wx doesn't reliably emit resize events when making a 
-                # ui visible. So this extra call to update cns helps make 
+                # ui visible. So this extra call to relayout helps make
                 # sure things are arranged nicely.
-                self.shell_obj.set_needs_update_constraints()
+                self.shell_obj.relayout_later()
                 # wx cannot distinguish between app modal and 
                 # window modal, so we only get one kind.
                 widget.ShowModal()

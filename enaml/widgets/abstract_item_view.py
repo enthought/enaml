@@ -17,10 +17,6 @@ class AbstractTkItemView(AbstractTkControl):
     def shell_item_model_changed(self, model):
         raise NotImplementedError
 
-    @abstractmethod
-    def shell_selection_model_changed(self, model):
-        raise NotImplementedError
-
 
 class AbstractItemView(Control):
     """ An abstract base class view that contains common logic for the

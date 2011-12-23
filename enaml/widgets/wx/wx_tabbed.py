@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_stacked import WXStacked
+from .wx_container import WXContainer
 
 from ..tabbed import AbstractTkTabbed
 
@@ -18,7 +18,7 @@ _TAB_POSITION_MAP = {
 }
 
 
-class WXTabbed(WXStacked, AbstractTkTabbed):
+class WXTabbed(WXContainer, AbstractTkTabbed):
     """ A wx implementation of the Tabbed container.
 
     """
@@ -40,11 +40,27 @@ class WXTabbed(WXStacked, AbstractTkTabbed):
 
         """
         super(WXTabbed, self).bind()
+        self.update_children()
+        self.set_index(self.shell_obj.index)
         self.widget.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self._on_page_changed)
 
     #--------------------------------------------------------------------------
     # Implementation 
     #--------------------------------------------------------------------------
+    def shell_index_changed(self, index):
+        """ Update the widget index with the new value from the shell 
+        object.
+
+        """
+        self.set_index(index)
+        self.shell_obj.size_hint_updated = True
+            
+    def shell_children_changed(self, children):
+        """ Update the widget with new children.
+
+        """
+        self.update_children()
+
     def shell_tab_position_changed(self, tab_position):
         """ The change handler for the 'tab_position' attribute of the
         shell object.
@@ -60,18 +76,26 @@ class WXTabbed(WXStacked, AbstractTkTabbed):
         space to allocate the widget.
 
         """
-        width_hint, height_hint = super(WXTabbed, self).size_hint()
-                
+        widget = self.widget
+        shell = self.shell_obj
+        curr_shell = shell.children[shell.index]
+        size_hint = curr_shell.size_hint()
+
+        if size_hint == (-1, -1):
+            size_hint = tuple(curr_shell.toolkit_widget.GetMinSize())
+        
+        width_hint, height_hint = size_hint
+
         # Compute the size of the tab so we can offset the size hint.
         # On Windows, the return value of the height function is a hard
         # coded default of 20. This is close for the standard font but
         # will probably break down with different fonts or icons. I've
         # found no other way to measure the height of the tab bar.
-        tab_size = wx.RendererNative.Get().GetHeaderButtonHeight(self.widget)
+        tab_size = wx.RendererNative.Get().GetHeaderButtonHeight(widget)
         tab_length = self._estimate_tab_bar_length()
 
         # Offset the size hint by the tab bar size
-        style = self.widget.GetWindowStyle()
+        style = widget.GetWindowStyle()
         if (style & wx.NB_TOP) or (style & wx.NB_BOTTOM):
             height_hint += tab_size
             width_hint = max(width_hint, tab_length)
@@ -129,8 +153,30 @@ class WXTabbed(WXStacked, AbstractTkTabbed):
         of notebook pages properly.
 
         """
-        super(WXTabbed, self).update_children()
+        # FIXME: there should be a more efficient way to do this, but 
+        # for now just remove all present widgets and add the current 
+        # ones. If we use DeleteAllPages(), then the child widgets would
+        # be destroyed, which is not the behavior we want.
+        shell = self.shell_obj
         widget = self.widget
-        for idx, child in enumerate(self.shell_obj.children):
-            widget.SetPageText(idx, child.title)
+        selected_index = shell.index
+        while widget.GetPageCount():
+            widget.RemovePage(0)
+        
+        # Reparent all of the child widgets to the new parent. This
+        # ensures that any new children are properly parented.
+        for idx, child in enumerate(shell.children):
+            child_widget = child.toolkit_widget
+            child_widget.Reparent(widget)
+            widget.AddPage(child_widget, child.title)
+            if idx == selected_index:
+                child.visible = True
+            else:
+                child.visible = False
 
+        # Finally, update the selected index of the of the widget 
+        # and notify the layout of the size hint update
+        self.set_index(selected_index)
+        shell.size_hint_updated = True
+
+        

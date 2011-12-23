@@ -4,8 +4,9 @@
 #------------------------------------------------------------------------------
 import weakref
 
-from traits.api import (List, Instance, Bool, on_trait_change, Property, 
-                        cached_property, Any)
+from traits.api import (
+    List, Instance, Bool, on_trait_change, Property, cached_property, Any,
+)
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
 
@@ -51,9 +52,6 @@ class NullTkInclude(AbstractTkBaseComponent):
     def shell_enabled_changed(self, enabled):
         pass
 
-    def shell_visible_changed(self, visible):
-        pass
-
     def shell_bg_color_changed(self, color):
         pass
     
@@ -61,6 +59,9 @@ class NullTkInclude(AbstractTkBaseComponent):
         pass
     
     def shell_font_changed(self, font):
+        pass
+
+    def set_visible(self, visible):
         pass
 
 
@@ -169,6 +170,12 @@ class Include(BaseComponent):
             child._setup_listeners()
 
         for child in cmpnts:
+            child._setup_init_visibility()
+
+        for child in cmpnts:
+            child._setup_init_layout()
+
+        for child in cmpnts:
             child._setup_set_initialized()
 
         self._components_initialized = True
@@ -195,6 +202,14 @@ class Include(BaseComponent):
         for item in self.components:
             item.destroy()
 
+    def freeze(self):
+        """ A re-implemented parent class method which returns the 
+        freeze context of the parent of the include, since an Include
+        has no toolkit widget on which to disable updates.
+
+        """
+        return self.parent.freeze()
+
     #--------------------------------------------------------------------------
     # Change Handlers 
     #--------------------------------------------------------------------------
@@ -214,7 +229,7 @@ class Include(BaseComponent):
             # items listeners don't get hooked up if we use the trait
             # change method decorator. Instead, we manually bind the 
             # notifier the first time this component is initialized.
-            self.on_trait_change(self._handle_subcomponents_updated, 
+            self.on_trait_change(self._on_subcomponents_updated, 
                                  '_components:_components_updated')
             self._components_updated = True
     
@@ -226,22 +241,14 @@ class Include(BaseComponent):
 
         """
         if self.initialized:
-            # Before we destroy and rebuild the children, we want to
-            # freeze the toplevel component from drawing any updates
-            # until we have fully completed the update. This helps
-            # to significantly reduce flicker during the update. We
-            # disable updates all the way at the root component since
-            # it seems to be a bit more reliable that just disabling
-            # it on our parent, likely because if the update causes
-            # the parent (non-root) to resize, that causes some flicker.
-            root = self.toplevel_component()
-            with root.freeze():
+            def closure():
                 for item in old:
                     item.destroy()
                 self._setup_components()
                 self._components_updated = True
-
-    def _handle_subcomponents_updated(self):
+            self.relayout_enqueue(closure)
+            
+    def _on_subcomponents_updated(self):
         """ Handles a '_components_updated' event being fired by one 
         the dynamic components. The event is proxied up the tree by
         firing the same event on this instance. This allows a nested
