@@ -81,10 +81,11 @@ MainWindow(Window):
         id: tv1
         hug_width = 'strong'
         item_model = list_model
-        selection_mode = 'multi'
+        BaseSelectionModel:
+            selection_mode = 'multi'
     TableView:
         id: tv2
         item_model = table_model
-        selection_mode = 'extended'
         BaseSelectionModel:
-            selected_event >> printer(value)
+            selection_mode = 'extended'
+            selection_event >> printer(selection_event)
