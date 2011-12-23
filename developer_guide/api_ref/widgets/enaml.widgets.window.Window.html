@@ -134,11 +134,22 @@ default).</p>
 
 <dl class="method">
 <dt id="enaml.widgets.window.Window.show">
-<tt class="descname">show</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/window.html#Window.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.show" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">show</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/window.html#Window.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make the window visible on the screen.</p>
 <p>If the &#8216;setup&#8217; method is not explicity called prior to calling
 this method, then the window will lay itself out prior to
 displaying itself to the screen.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>parent</strong> (<em>native toolkit widget, optional</em>) &#8211; Provide this argument if the window should have another
+widget as its logical parent. This may help with stacking
+order and/or visibility hierarchy depending on the toolkit
+backend.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
@@ -150,9 +161,10 @@ will always succeed.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.widgets.window.Window.update_constraints">
-<tt class="descname">update_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/window.html#Window.update_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.update_constraints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the constraints for this component.</p>
+<dt id="enaml.widgets.window.Window.relayout">
+<tt class="descname">relayout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method which sets the minimum size
+of the window whenever constraints are recomputed.</p>
 </dd></dl>
 
 </dd></dl>
@@ -162,10 +174,10 @@ will always succeed.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-dc8dd86c168d0334ffbf6218bae831b89fcfe5bb.png" alt="Inheritance diagram of enaml.widgets.qt.qt_window.QtWindow" usemap="#inheritancebc2967eea7" class="inheritance"/>
+<img src="../../../_images/inheritance-4762977bf6f7dc2201d9015e6d26c0f548336978.png" alt="Inheritance diagram of enaml.widgets.qt.qt_window.QtWindow" usemap="#inheritancebc2967eea7" class="inheritance"/>
 <map id="inheritancebc2967eea7" name="inheritancebc2967eea7">
 <area shape="rect" id="node1" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="690,5,790,35"/>
-<area shape="rect" id="node6" href="#enaml.widgets.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="859,32,946,61"/>
+<area shape="rect" id="node10" href="#enaml.widgets.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="859,32,946,61"/>
 <area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="488,5,600,35"/>
 </map>
 </p>
@@ -207,11 +219,11 @@ the front if it should be shown.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-e2735144e876cd9c458f1cd9c7298824ad6975d3.png" alt="Inheritance diagram of enaml.widgets.wx.wx_window.WXWindow" usemap="#inheritance199fc6d954" class="inheritance"/>
+<img src="../../../_images/inheritance-d4319384a8f40aeff0a80533c9091c9bc2c33908.png" alt="Inheritance diagram of enaml.widgets.wx.wx_window.WXWindow" usemap="#inheritance199fc6d954" class="inheritance"/>
 <map id="inheritance199fc6d954" name="inheritance199fc6d954">
-<area shape="rect" id="node10" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,5,602,35"/>
+<area shape="rect" id="node11" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="688,59,792,88"/>
+<area shape="rect" id="node8" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,59,602,88"/>
 <area shape="rect" id="node14" href="#enaml.widgets.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="860,32,951,61"/>
-<area shape="rect" id="node9" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="688,5,792,35"/>
 </map>
 </p>
 <dl class="class">
@@ -350,7 +362,7 @@ of the internal wx.Frame object.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 21, 2011.
+      Last updated on Dec 23, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

@@ -116,6 +116,15 @@
 </dd></dl>
 
 <dl class="attribute">
+<dt id="enaml.widgets.label.Label.word_wrap">
+<tt class="descname">word_wrap</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.label.Label.word_wrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Whether or not the label should wrap around on long lines.
+This may not be supported by all toolkit backends (like Wx)
+and it may be necessary with those toolkits to insert newline
+characters where necessary.</p>
+</dd></dl>
+
+<dl class="attribute">
 <dt id="enaml.widgets.label.Label.hug_width">
 <tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.label.Label.hug_width" title="Permalink to this definition">¶</a></dt>
 <dd><p>How strongly a component hugs it&#8217;s content. Labels hug their
@@ -135,10 +144,10 @@ contents&#8217; width weakly by default.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-5e1e44d1c9bd181d8d2ea74b694ea54ee6887864.png" alt="Inheritance diagram of enaml.widgets.qt.qt_label.QtLabel" usemap="#inheritanceba39089ca7" class="inheritance"/>
+<img src="../../../_images/inheritance-39e26a821596c798f6c5fab0e45ca4602e28913b.png" alt="Inheritance diagram of enaml.widgets.qt.qt_label.QtLabel" usemap="#inheritanceba39089ca7" class="inheritance"/>
 <map id="inheritanceba39089ca7" name="inheritanceba39089ca7">
-<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_label.QtLabel" title="QtLabel" alt="" coords="829,32,901,61"/>
-<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="676,59,761,88"/>
+<area shape="rect" id="node16" href="#enaml.widgets.qt.qt_label.QtLabel" title="QtLabel" alt="" coords="829,32,901,61"/>
+<area shape="rect" id="node8" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="676,59,761,88"/>
 <area shape="rect" id="node9" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="481,59,593,88"/>
 </map>
 </p>
@@ -166,9 +175,21 @@ contents&#8217; width weakly by default.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="enaml.widgets.qt.qt_label.QtLabel.shell_word_wrap_changed">
+<tt class="descname">shell_word_wrap_changed</tt><big>(</big><em>word_wrap</em><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_label.QtLabel.shell_word_wrap_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;word_wrap&#8217; attribute.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="enaml.widgets.qt.qt_label.QtLabel.set_label">
 <tt class="descname">set_label</tt><big>(</big><em>label</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_label.html#QtLabel.set_label"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_label.QtLabel.set_label" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the label on the underlying control.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_label.QtLabel.set_word_wrap">
+<tt class="descname">set_word_wrap</tt><big>(</big><em>wrap</em><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_label.QtLabel.set_word_wrap" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the word wrapping on the underlying widget.</p>
 </dd></dl>
 
 </dd></dl>
@@ -177,10 +198,10 @@ contents&#8217; width weakly by default.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-ae2ae362d5e7ec3b6355229071be97a97a569fbf.png" alt="Inheritance diagram of enaml.widgets.wx.wx_label.WXLabel" usemap="#inheritance7933e2ac0c" class="inheritance"/>
+<img src="../../../_images/inheritance-f8fd72bb32d758e6ed6d22d388c14de527c413e3.png" alt="Inheritance diagram of enaml.widgets.wx.wx_label.WXLabel" usemap="#inheritance7933e2ac0c" class="inheritance"/>
 <map id="inheritance7933e2ac0c" name="inheritance7933e2ac0c">
 <area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="674,5,763,35"/>
-<area shape="rect" id="node12" href="#enaml.widgets.wx.wx_label.WXLabel" title="WXLabel" alt="" coords="829,32,904,61"/>
+<area shape="rect" id="node16" href="#enaml.widgets.wx.wx_label.WXLabel" title="WXLabel" alt="" coords="829,32,904,61"/>
 <area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
 </map>
 </p>
@@ -204,7 +225,16 @@ contents&#8217; width weakly by default.</p>
 <dl class="method">
 <dt id="enaml.widgets.wx.wx_label.WXLabel.shell_text_changed">
 <tt class="descname">shell_text_changed</tt><big>(</big><em>text</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_label.html#WXLabel.shell_text_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_label.WXLabel.shell_text_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>The change handler for the &#8216;text&#8217; attribute.</p>
+<dd><p>The change handler for the &#8216;text&#8217; attribute on the shell 
+component.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_label.WXLabel.shell_word_wrap_changed">
+<tt class="descname">shell_word_wrap_changed</tt><big>(</big><em>wrap</em><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_label.WXLabel.shell_word_wrap_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;word_wrap&#8217; attribute on the 
+shell component. Wx does not support word wrap, so this is 
+a no-op.</p>
 </dd></dl>
 
 <dl class="method">
@@ -253,7 +283,7 @@ contents&#8217; width weakly by default.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 21, 2011.
+      Last updated on Dec 23, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

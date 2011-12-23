@@ -1,0 +1,28 @@
+<map id="inheritance86484ccc86" name="inheritance86484ccc86">
+<area shape="rect" id="node1" href="widgets/enaml.widgets.check_box.CheckBox.html#enaml.widgets.check_box.CheckBox" title="CheckBox" alt="" coords="1092,139,1177,168"/>
+<area shape="rect" id="node2" href="widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.toggle_control.ToggleControl" title="ToggleControl" alt="" coords="910,165,1024,195"/>
+<area shape="rect" id="node18" href="widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.radio_button.RadioButton" title="RadioButton" alt="" coords="1085,192,1185,221"/>
+<area shape="rect" id="node4" href="widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="Container" alt="" coords="766,85,850,115"/>
+<area shape="rect" id="node44" href="widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window" title="Window" alt="" coords="931,5,1003,35"/>
+<area shape="rect" id="node54" href="widgets/enaml.widgets.form.Form.html#enaml.widgets.form.Form" title="Form" alt="" coords="931,59,1003,88"/>
+<area shape="rect" id="node60" href="widgets/enaml.widgets.group_box.GroupBox.html#enaml.widgets.group_box.GroupBox" title="GroupBox" alt="" coords="924,112,1009,141"/>
+<area shape="rect" id="node5" href="widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="Component" alt="" coords="620,299,716,328"/>
+<area shape="rect" id="node8" href="widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="Control" alt="" coords="772,512,844,541"/>
+<area shape="rect" id="node7" href="widgets/enaml.widgets.image.Image.html#enaml.widgets.image.Image" title="Image" alt="" coords="931,219,1003,248"/>
+<area shape="rect" id="node14" href="widgets/enaml.widgets.enable_canvas.EnableCanvas.html#enaml.widgets.enable_canvas.EnableCanvas" title="EnableCanvas" alt="" coords="912,325,1022,355"/>
+<area shape="rect" id="node16" href="widgets/enaml.widgets.html.Html.html#enaml.widgets.html.Html" title="Html" alt="" coords="931,379,1003,408"/>
+<area shape="rect" id="node20" href="widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.combo_box.ComboBox" title="ComboBox" alt="" coords="921,432,1013,461"/>
+<area shape="rect" id="node25" href="widgets/enaml.widgets.progress_bar.ProgressBar.html#enaml.widgets.progress_bar.ProgressBar" title="ProgressBar" alt="" coords="918,485,1015,515"/>
+<area shape="rect" id="node30" href="widgets/enaml.widgets.label.Label.html#enaml.widgets.label.Label" title="Label" alt="" coords="931,592,1003,621"/>
+<area shape="rect" id="node35" href="widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate" title="BoundedDate" alt="" coords="913,645,1021,675"/>
+<area shape="rect" id="node38" href="widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field" title="Field" alt="" coords="931,699,1003,728"/>
+<area shape="rect" id="node40" href="widgets/enaml.widgets.traitsui_item.TraitsUIItem.html#enaml.widgets.traitsui_item.TraitsUIItem" title="TraitsUIItem" alt="" coords="917,752,1017,781"/>
+<area shape="rect" id="node49" href="widgets/enaml.widgets.push_button.PushButton.html#enaml.widgets.push_button.PushButton" title="PushButton" alt="" coords="919,805,1014,835"/>
+<area shape="rect" id="node56" href="widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.spin_box.SpinBox" title="SpinBox" alt="" coords="930,859,1003,888"/>
+<area shape="rect" id="node58" href="widgets/enaml.widgets.slider.Slider.html#enaml.widgets.slider.Slider" title="Slider" alt="" coords="931,912,1003,941"/>
+<area shape="rect" id="node10" href="widgets/enaml.widgets.datetime_edit.DatetimeEdit.html#enaml.widgets.datetime_edit.DatetimeEdit" title="DatetimeEdit" alt="" coords="1083,272,1187,301"/>
+<area shape="rect" id="node27" href="widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.table_view.TableView" title="TableView" alt="" coords="1091,539,1178,568"/>
+<area shape="rect" id="node46" href="widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.calendar.Calendar" title="Calendar" alt="" coords="1095,619,1174,648"/>
+<area shape="rect" id="node51" href="widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.date_edit.DateEdit" title="DateEdit" alt="" coords="1097,672,1172,701"/>
+<area shape="rect" id="node43" href="widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog" title="Dialog" alt="" coords="1099,5,1171,35"/>
+</map>

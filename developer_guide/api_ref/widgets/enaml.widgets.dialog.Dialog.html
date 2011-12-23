@@ -156,6 +156,15 @@ dialog is shown will have no effect.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="enaml.widgets.dialog.Dialog.show">
+<tt class="descname">show</tt><big>(</big><em>parent=None</em><big>)</big><a class="headerlink" href="#enaml.widgets.dialog.Dialog.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make the dialog visible on the screen.</p>
+<p>This is overridden from Window.show(). Since dialogs are shown
+modally by creating their own event loop, there is no need to
+start the event loop at the end of this method as in Window.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="enaml.widgets.dialog.Dialog.accept">
 <tt class="descname">accept</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/dialog.html#Dialog.accept"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.dialog.Dialog.accept" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close the dialog and set the result to <cite>accepted</cite>.</p>
@@ -178,12 +187,12 @@ on the Cancel button.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-b514402bee03c31936a977d38d48d8f6ac5fa3fb.png" alt="Inheritance diagram of enaml.widgets.qt.qt_dialog.QtDialog" usemap="#inheritanceb8e29c7c26" class="inheritance"/>
+<img src="../../../_images/inheritance-a8736e19027993a127b408d5212ccf004fd690f2.png" alt="Inheritance diagram of enaml.widgets.qt.qt_dialog.QtDialog" usemap="#inheritanceb8e29c7c26" class="inheritance"/>
 <map id="inheritanceb8e29c7c26" name="inheritanceb8e29c7c26">
 <area shape="rect" id="node1" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="690,5,790,35"/>
-<area shape="rect" id="node6" href="enaml.widgets.window.Window.html#enaml.widgets.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="882,5,969,35"/>
+<area shape="rect" id="node7" href="enaml.widgets.window.Window.html#enaml.widgets.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="882,5,969,35"/>
 <area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="488,5,600,35"/>
-<area shape="rect" id="node19" href="#enaml.widgets.qt.qt_dialog.QtDialog" title="QtDialog" alt="" coords="1041,32,1119,61"/>
+<area shape="rect" id="node6" href="#enaml.widgets.qt.qt_dialog.QtDialog" title="QtDialog" alt="" coords="1041,32,1119,61"/>
 </map>
 </p>
 <dl class="class">
@@ -229,12 +238,12 @@ the dialog.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-2f068df8a7ab1b8a07b605febab30fb42dfd6513.png" alt="Inheritance diagram of enaml.widgets.wx.wx_dialog.WXDialog" usemap="#inheritance83f8ef61aa" class="inheritance"/>
+<img src="../../../_images/inheritance-60aa3124e22bb026eb72432aae5e8d2dd2c087c1.png" alt="Inheritance diagram of enaml.widgets.wx.wx_dialog.WXDialog" usemap="#inheritance83f8ef61aa" class="inheritance"/>
 <map id="inheritance83f8ef61aa" name="inheritance83f8ef61aa">
-<area shape="rect" id="node16" href="#enaml.widgets.wx.wx_dialog.WXDialog" title="WXDialog" alt="" coords="1040,32,1123,61"/>
-<area shape="rect" id="node17" href="enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="880,5,971,35"/>
-<area shape="rect" id="node12" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,5,602,35"/>
-<area shape="rect" id="node11" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="688,5,792,35"/>
+<area shape="rect" id="node1" href="#enaml.widgets.wx.wx_dialog.WXDialog" title="WXDialog" alt="" coords="1040,32,1123,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="880,59,971,88"/>
+<area shape="rect" id="node16" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="688,59,792,88"/>
+<area shape="rect" id="node13" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,59,602,88"/>
 </map>
 </p>
 <dl class="class">
@@ -314,7 +323,7 @@ the dialog.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 21, 2011.
+      Last updated on Dec 23, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>

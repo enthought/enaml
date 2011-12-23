@@ -1,0 +1,214 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Nested Containers Example &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Examples Gallery" href="example.html" />
+    <link rel="next" title="Multiple Scrolling Areas Example" href="ex_multi_scroll_area.html" />
+    <link rel="prev" title="Find Replace Example (Variable-width Buttons Aligned)" href="ex_find_replace.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ex_multi_scroll_area.html" title="Multiple Scrolling Areas Example"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_find_replace.html" title="Find Replace Example (Variable-width Buttons Aligned)"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+          <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
+  
+    <li><a href="#">Nested Containers Example</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/instructional/ex_nested.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="nested-containers-example">
+<h1>Nested Containers Example<a class="headerlink" href="#nested-containers-example" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference download internal" href="../_downloads/nested.enaml"><tt class="xref download docutils literal"><span class="pre">nested.enaml</span></tt></a></p>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example showing the unified layout across nested Containers.
+
+We have three Containers under the window, two sharing space on top and one
+taking up the entire horizontal space on the bottom. The two on top simply
+consist of a Label and a Field. The Container on the left is constrained to be
+slightly larger than the other by a constant multiplier.
+
+The Container on the bottom contains the more complicated example from
+constrained.enaml to demonstrate that a complicated layout works inside
+a nested Container, too.
+
+FIXME: Occasionally, this example fails with a solver error stating that the
+objective function is unbounded.
+
+"""
+LabeledField(Container):
+    label_text = 'Label'
+    constraints = [
+        hbox(label, field),
+        align('v_center', label, field)
+    ]
+    Label:
+        id: label
+        text = label_text
+    Field:
+        id: field
+        resist_clip_width = 'weak'
+
+
+MainWindow(Window):
+    title = "Nested Containers"
+    constraints = [
+        vbox(
+            hbox(top_left_cntr, top_right_cntr),
+            bottom_cntr,
+        ),
+        top_left_cntr.width == 1.2 * top_right_cntr.width,
+    ]
+    LabeledField:
+        id: top_left_cntr
+        label_text = "Left:"
+    LabeledField:
+        id: top_right_cntr 
+        label_text = "Right:"
+    Container:
+        id: bottom_cntr
+        constraints = [
+            vbox(
+                html_frame, 
+                hbox(
+                    add_button, remove_button, _space_, 
+                    change_mode_button, _space_, share_button,
+                ),
+            ),
+            align('h_center', html_frame, change_mode_button) | 'weak',
+            html_frame.height &gt;= 150,
+        ]
+        Html:
+            id: html_frame
+            source = '&lt;center&gt;&lt;h1&gt;Hello Enaml!&lt;/h1&gt;&lt;/center&gt;'
+        PushButton:
+            id: add_button
+            text = 'Add'
+        PushButton:
+            id: remove_button
+            text = 'Remove'
+        PushButton:
+            id: change_mode_button
+            text = 'Change Mode'
+        PushButton:
+            id: share_button
+            text = 'Share...'
+
+</pre>
+</div>
+<div class="highlight-python"><pre>$ enaml-run nested.enaml</pre>
+</div>
+<img alt="../_images/nested.png" src="../_images/nested.png" />
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="ex_multi_scroll_area.html" title="Multiple Scrolling Areas Example"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_find_replace.html" title="Find Replace Example (Variable-width Buttons Aligned)"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+          <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
+  
+    <li><a href="#">Nested Containers Example</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 23, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+    </div>
+  </body>
+</html>

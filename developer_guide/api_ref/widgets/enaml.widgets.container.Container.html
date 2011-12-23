@@ -108,13 +108,13 @@
 <dt id="enaml.widgets.container.Container">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.container.</tt><tt class="descname">Container</tt><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="enaml.widgets.component.Component"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.component.Component</span></tt></a></p>
-<p>A Component subclass that provides for laying out child 
+<p>A Component subclass that provides for laying out its child 
 Components.</p>
 <dl class="attribute">
-<dt id="enaml.widgets.container.Container.layout">
-<tt class="descname">layout</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.layout" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.widgets.container.Container.layout_manager">
+<tt class="descname">layout_manager</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.layout_manager" title="Permalink to this definition">¶</a></dt>
 <dd><p>An object that manages the layout of this component and its
-direct children. The default is simple constraints based</p>
+direct children. The default is constraints based layout.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -133,7 +133,8 @@ container.</p>
 <dl class="method">
 <dt id="enaml.widgets.container.Container.initialize_layout">
 <tt class="descname">initialize_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.initialize_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.initialize_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize the layout for the first time.</p>
+<dd><p>Initialize the layout for the first time. Called at the end
+of the setup process.</p>
 </dd></dl>
 
 <dl class="method">
@@ -141,9 +142,45 @@ container.</p>
 <tt class="descname">relayout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.relayout" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reimplemented parent class method which triggers an update
 of the constraints and a layout refresh. This is called whenever
-the children of the component change. The constraints update and
-relayout occur immediately and are completed before the method
-returns.</p>
+the children of the component should have their layout refreshed. 
+The constraints update and relayout occur immediately and are 
+completed before the method returns.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.relayout_later">
+<tt class="descname">relayout_later</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.relayout_later" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which triggers an update
+of the constraints and a layout refresh at some point in the 
+future.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.rearrange">
+<tt class="descname">rearrange</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.rearrange" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which triggers a rearrange
+of the children.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.rearrange_later">
+<tt class="descname">rearrange_later</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.rearrange_later" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which triggers a rearrange
+of the children at some point in the future.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.relayout_enqueue">
+<tt class="descname">relayout_enqueue</tt><big>(</big><em>callable</em><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.relayout_enqueue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which triggers a rearrange
+after adding the callable to the queue.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.rearrange_enqueue">
+<tt class="descname">rearrange_enqueue</tt><big>(</big><em>callable</em><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.rearrange_enqueue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reimplemented parent class method which trigger a rearrange
+after after adding the callable to the queue.</p>
 </dd></dl>
 
 <dl class="method">
@@ -162,65 +199,6 @@ probably want to override this (possibly to return an empty list).</p>
 type of container. This should be implemented by subclasses
 such as Form to set up their standard constraints.</p>
 </dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.update_constraints_if_needed">
-<tt class="descname">update_constraints_if_needed</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.update_constraints_if_needed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.update_constraints_if_needed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the constraints of this component if necessary. This
-is typically the case when a constraint has been changed.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.set_needs_update_constraints">
-<tt class="descname">set_needs_update_constraints</tt><big>(</big><em>needs=True</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.set_needs_update_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.set_needs_update_constraints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Indicate that the constraints for this component should be
-updated some time later.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.update_constraints">
-<tt class="descname">update_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.update_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.update_constraints" title="Permalink to this definition">¶</a></dt>
-<dd><p>Update the constraints for this component.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.layout_if_needed">
-<tt class="descname">layout_if_needed</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.layout_if_needed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.layout_if_needed" title="Permalink to this definition">¶</a></dt>
-<dd><p>Refreshes the layout of this component if necessary. This
-will typically be needed if this component has been resized or
-the sizes of any of its children have been changed.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.set_needs_layout">
-<tt class="descname">set_needs_layout</tt><big>(</big><em>needs=True</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.set_needs_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.set_needs_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Indicate that the layout should be refreshed some time later.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.do_layout">
-<tt class="descname">do_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.do_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.do_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Updates the layout of this component.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.handle_size_hint_changed">
-<tt class="descname">handle_size_hint_changed</tt><big>(</big><em>child</em>, <em>name</em>, <em>old</em>, <em>new</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.handle_size_hint_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.handle_size_hint_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>A change handler for updaing the layout when the size hint
-of any of the container&#8217;s children have changed.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.handle_constraints_changed">
-<tt class="descname">handle_constraints_changed</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.handle_constraints_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.handle_constraints_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>A handler for updating the layout when the constraints of the
-container change.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.container.Container.handle_visible_changed">
-<tt class="descname">handle_visible_changed</tt><big>(</big><em>child</em>, <em>name</em>, <em>old</em>, <em>new</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.handle_visible_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.handle_visible_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 </dd></dl>
 
@@ -277,10 +255,10 @@ manager to determine how much space to allocate the widget.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-51793ecb34b2726fe28077dc1ff65ac8bea66e2c.png" alt="Inheritance diagram of enaml.widgets.wx.wx_container.WXContainer" usemap="#inheritance11982c541a" class="inheritance"/>
+<img src="../../../_images/inheritance-dd050b5e55d04417f18e025256535cc0c90907f3.png" alt="Inheritance diagram of enaml.widgets.wx.wx_container.WXContainer" usemap="#inheritance11982c541a" class="inheritance"/>
 <map id="inheritance11982c541a" name="inheritance11982c541a">
-<area shape="rect" id="node7" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,5,602,35"/>
-<area shape="rect" id="node6" href="#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="669,32,773,61"/>
+<area shape="rect" id="node11" href="#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="669,32,773,61"/>
+<area shape="rect" id="node8" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="486,59,602,88"/>
 </map>
 </p>
 <dl class="class">
@@ -359,7 +337,7 @@ has been resized.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 21, 2011.
+      Last updated on Dec 23, 2011.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
     </div>
   </body>
