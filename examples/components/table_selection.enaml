@@ -94,15 +94,13 @@ defn MainView(model):
             id: tv1
             hug_width = 'strong'
             item_model = list_model
-            selection_mode = 'extended'
-            selection_behavior = 'rows'
             RowSelectionModel:
+                selection_mode = 'extended'
                 selected_rows := model.selected_rows
         TableView:
             id: tv2
             item_model = table_model
-            selection_mode = 'extended'
-            selection_behavior = 'rows'
             RowSelectionModel:
+                selection_mode = 'extended'
                 selected_rows := model.selected_rows
 

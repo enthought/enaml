@@ -4,9 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event, List
+from traits.api import Any, List, NO_COMPARE
 
 from .base_component import BaseComponent, AbstractTkBaseComponent
+from ..enums import SelectionMode, SelectionBehavior
 
 
 class AbstractTkBaseSelectionModel(AbstractTkBaseComponent):
@@ -49,6 +50,15 @@ class AbstractTkBaseSelectionModel(AbstractTkBaseComponent):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def set_selection_mode(self, selection_mode):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_selection_behavior(self, selection_behavior):
+        raise NotImplementedError
+
+
 
 class BaseSelectionModel(BaseComponent):
     """ The base class for item selection models.
@@ -57,14 +67,21 @@ class BaseSelectionModel(BaseComponent):
 
     #: Updated when the current ModelIndex changes.
     #: Gets a 2-tuple: (old ModelIndex, new ModelIndex)
-    current_event = Event()
+    current_event = Any(comparison_mode=NO_COMPARE)
 
     #: Updated when the current selection changes.
     #: Gets a 2-tuple: (deleted items, added items)
     #: Each selection is a list of
     #: (top_left ModelIndex, bottom_right ModelIndex) tuples specifying
     #: rectangular ranges of selected cells.
-    selection_event = Event()
+    selection_event = Any(comparison_mode=NO_COMPARE)
+
+    #: The selection mode.
+    selection_mode = SelectionMode()
+
+    #: What kinds of things can be selected.
+    selection_behavior = SelectionBehavior()
+
 
     #: BaseSelectionModels are not visible.
     visible = False
@@ -98,7 +115,7 @@ class BaseSelectionModel(BaseComponent):
         """ Get the current ModelIndex.
 
         """
-        return self.abstract_obj.get_current_index(index)
+        return self.abstract_obj.get_current_index()
 
     def set_selection(self, selection, command='clear_select'):
         """ Set the current selection.
@@ -125,4 +142,13 @@ class BaseSelectionModel(BaseComponent):
             a given selection range.
         """
         return self.abstract_obj.get_selection()
+
+
+    def _selection_mode_changed(self, new):
+        if self.abstract_obj is not None:
+            self.abstract_obj.set_selection_mode(new)
+
+    def _selection_behavior_changed(self, new):
+        if self.abstract_obj is not None:
+            self.abstract_obj.set_selection_behavior(new)
 

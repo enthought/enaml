@@ -34,6 +34,10 @@ class RowSelectionModel(BaseSelectionModel):
     #: The selected row indices.
     selected_rows = List(Int)
 
+
+    #: Only select rows.
+    selection_behavior = 'rows'
+
     #: Whether we are currently updating the selected_rows trait to avoid cycles.
     _updating_selected_rows = Bool(False)
 

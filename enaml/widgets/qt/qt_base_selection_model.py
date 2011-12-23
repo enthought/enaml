@@ -7,7 +7,21 @@ from .qt import QtGui
 from .qt_base_component import QtBaseComponent
 from ..base_selection_model import AbstractTkBaseSelectionModel
 
-_COMMAND_MAP = {
+_SELECTION_MODE_MAP = {
+    'single': QtGui.QAbstractItemView.SingleSelection,
+    'contiguous': QtGui.QAbstractItemView.ContiguousSelection,
+    'extended': QtGui.QAbstractItemView.ExtendedSelection,
+    'multi': QtGui.QAbstractItemView.MultiSelection,
+    'none': QtGui.QAbstractItemView.NoSelection,
+}
+
+_SELECTION_BEHAVIOR_MAP = {
+    'items' : QtGui.QAbstractItemView.SelectItems,
+    'rows' : QtGui.QAbstractItemView.SelectRows,
+    'columns' : QtGui.QAbstractItemView.SelectColumns,
+}
+
+_SELECTION_COMMAND_MAP = {
     'clear_select': QtGui.QItemSelectionModel.ClearAndSelect,
     'no_update': QtGui.QItemSelectionModel.NoUpdate,
     'clear': QtGui.QItemSelectionModel.Clear,
@@ -43,6 +57,9 @@ class QtBaseSelectionModel(QtBaseComponent, AbstractTkBaseSelectionModel):
 
         """
         super(QtBaseSelectionModel, self).initialize()
+        shell = self.shell_obj
+        self.set_selection_mode(shell.selection_mode)
+        self.set_selection_behavior(shell.selection_behavior)
 
     def bind(self):
         """ Bind to events.
@@ -146,7 +163,7 @@ class QtBaseSelectionModel(QtBaseComponent, AbstractTkBaseSelectionModel):
             command = (command,)
         qflag = 0
         for cmd in command:
-            qflag |= _COMMAND_MAP[cmd]
+            qflag |= _SELECTION_COMMAND_MAP[cmd]
         qsel = self.py_selection_to_qt(selection)
         self.selection_model.select(qsel, qflag)
 
@@ -157,4 +174,21 @@ class QtBaseSelectionModel(QtBaseComponent, AbstractTkBaseSelectionModel):
         qsel = self.selection_model.selection()
         pysel = self.qt_selection_to_py(qsel)
         return pysel
+
+    def set_selection_mode(self, selection_mode):
+        """ Sets the selection mode.
+
+        """
+        shell = self.shell_obj
+        item_widget = shell.parent.toolkit_widget
+        item_widget.setSelectionMode(_SELECTION_MODE_MAP[selection_mode])
+
+    def set_selection_behavior(self, selection_behavior):
+        """ Sets the selection behavior.
+
+        """
+        shell = self.shell_obj
+        item_widget = shell.parent.toolkit_widget
+        item_widget.setSelectionBehavior(_SELECTION_BEHAVIOR_MAP[selection_behavior])
+
 
