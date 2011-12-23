@@ -47,7 +47,7 @@ class AbstractItemView(Control):
 
     #: The selection model for this view.
     selection_model = Property(Instance(BaseSelectionModel),
-        depends_on=['_subcomponents', '_subcomponents_items'])
+        depends_on=['children'])
 
     _subcomponents = List(Instance(BaseSelectionModel), maxlen=1)
 
