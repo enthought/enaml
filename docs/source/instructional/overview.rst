@@ -24,11 +24,13 @@ The goals of the |Enaml| project are to:
 - Be **extensible** and allow adaptation and addition of the base widgets
   with little effort.
 
+.. _dependencies:
+
 Prerequisites
 ^^^^^^^^^^^^^
 
 Enaml is developed using `Python <http://python.org/>`_ 2.7 and requires
-recent versions of the following libraries:
+recent (2012-current) versions of the following libraries:
 
 *Required*:
 
@@ -42,8 +44,8 @@ recent versions of the following libraries:
     library
 - `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
   for parsing *.enaml* files
-- `cassowarypy <http://pypi.python.org/pypi/cassowarypy>`_ Cassowary 
-  linear constraint solver.
+- `casuarius <https://github.enthought.com/casuarius>`_ linear constraint
+  solver.
 - `distribute <http://pypi.python.org/pypi/distribute>`_ (package
   installation)
 
@@ -55,13 +57,15 @@ recent versions of the following libraries:
 Installation
 ^^^^^^^^^^^^
 
-To install the package please check out the source from
-`github <https://github.com/enthought/enaml>`_ execute::
+To install the package please check out `the source from github
+<https://github.com/enthought/enaml>`_
+
+Then install with::
 
     python setup.py install
 
-Alternatively you can work in developing mode with::
+Alternatively you can work in developing mode::
 
     python setup.py develop
 
-Next, take a look at the :ref:`Tutorials.<tutorials-home>`
+Next, take a look at the :ref:`tutorials.<tutorials-home>`

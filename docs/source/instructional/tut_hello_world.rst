@@ -6,16 +6,14 @@
 This is a basic tutorial to explain the basic features of an |Enaml| user
 interface. It sets up a minimal GUI to display a simple message.
 
-"Hello World" Source
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Let's get started with a basic "hello world" example:
-
 |Enaml| supports implementing a `model-view-controller architecture
 <http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_ . An
 '.enaml' file describes the *view*, and the *model* is treated by Python code,
 usually in the form of `Traits objects
 <http://code.enthought.com/projects/traits/>`_ . The |Enaml| module handles
 most/all of the *controller* aspects of the GUI.
+
+Let's get started with a basic "hello world" example:
 
 Here is our minimalist .enaml file describing a message-displaying GUI
 (:download:`download here <../../../examples/hello_world/hello_world.enaml>`):
@@ -35,7 +33,7 @@ The resulting GUI looks like this (in Mac OS):
 
 Let's take a closer look at the |Enaml| file.
 
-Comment Block
+Comment Blocks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 The .enaml file begins with some comment lines. As in Python code, ``#`` begins
@@ -50,7 +48,7 @@ a comment line and is ignored during lexing and parsing.
 
 .. _defn-block-tut:
 
-``defn`` Block
+``defn`` Blocks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Next, we use a ``defn`` block to construct a view that is available for
