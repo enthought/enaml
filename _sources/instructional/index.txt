@@ -9,3 +9,4 @@
     overview
     Tutorials <tutorials_home>
     Examples <example>
+    <faq>

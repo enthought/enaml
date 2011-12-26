@@ -8,10 +8,6 @@ introduce the concepts of reusable component declarations and components from
 the standard library in |Enaml|. It sets up a GUI with the name and age of a
 person.
 
-
-John Doe Source
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
 Here is the |Enaml| file (:download:`download here
 <../../../examples/person/person_view.enaml>`):
 
@@ -99,7 +95,7 @@ read-only text.
 value. Field is used as the base component for many other components that do
 type conversions.
 
-Delegation Operator
+Delegation Operator :=
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 In the ``Field`` code block, we notice a new operator ``:=``. This is the

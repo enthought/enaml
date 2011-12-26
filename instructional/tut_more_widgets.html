@@ -1,0 +1,211 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>More on Enaml Widgets &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
+    <link rel="next" title="Examples Gallery" href="example.html" />
+    <link rel="prev" title="enaml-run and Python code tags in Enaml files" href="tut_python_code.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="example.html" title="Examples Gallery"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+          <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
+  
+    <li><a href="#">More on Enaml Widgets</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">More on Enaml Widgets</a><ul>
+<li><a class="reference internal" href="#id-tags"><tt class="docutils literal"><span class="pre">id</span></tt> Tags</a></li>
+<li><a class="reference internal" href="#subscription-operator">Subscription Operator &lt;&lt;</a></li>
+<li><a class="reference internal" href="#notification-operator">Notification Operator &gt;&gt;</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/instructional/tut_more_widgets.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="more-on-enaml-widgets">
+<span id="tutorial-more-widgets"></span><h1>More on Enaml Widgets<a class="headerlink" href="#more-on-enaml-widgets" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we take a closer look at some of the widgets available for
+building GUI&#8217;s in Enaml by building a &#8220;working&#8221; progress bar. We&#8217;ll introduce
+some new attributes including the <tt class="docutils literal"><span class="pre">id</span></tt> tag and two new Enaml operators: the
+subscription operator <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt> and the notification operator <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> along with
+some component-specific attributes.</p>
+<p>Let&#8217;s start with a code snip from <a class="reference download internal" href="../_downloads/progress_bar_simple.enaml"><tt class="xref download docutils literal"><span class="pre">progress_bar_simple.enaml</span></tt></a>:</p>
+<div class="highlight-python"><pre>defn ModelView(model):
+    Window:
+        title = 'Progress Bar'
+        ProgressBar:
+            id: progress
+            value := model.units_done
+            maximum := model.work_units
+        Label:
+            id: label
+            text &lt;&lt; '{0}% ({1}/{2})'.format(progress.percentage, progress.value, progress.maximum)
+        PushButton:
+            id: work_button
+            text &lt;&lt; "Do Some Work" if progress.percentage &lt; 100 else "Reset"
+            clicked &gt;&gt; model.do_work() if progress.percentage &lt; 100 else model.reset()</pre>
+</div>
+<p>We&#8217;re setting up a view, and we will pass it a model. The view consists of a
+window with three widgets: a ProgressBar, a Label, and a PushButton. Starting
+with the ProgressBar we see something new: an <tt class="docutils literal"><span class="pre">id</span></tt> tag.</p>
+<div class="section" id="id-tags">
+<h2><tt class="docutils literal"><span class="pre">id</span></tt> Tags<a class="headerlink" href="#id-tags" title="Permalink to this headline">¶</a></h2>
+<p>Enaml uses a special attribute called an <tt class="docutils literal"><span class="pre">id</span></tt> tag to let you refer to a
+component or widget from elsewhere in the declaration. Note that no quotation
+marks are necessary. Because of the line <tt class="docutils literal"><span class="pre">id:</span> <span class="pre">progress</span></tt> under
+<tt class="docutils literal"><span class="pre">ProgressBar:</span></tt> we can refer to this component as <tt class="docutils literal"><span class="pre">progress</span></tt> in code blocks
+of similar <em>scope</em>. (We will have a more detailed discussion of scope later.)
+<tt class="docutils literal"><span class="pre">progress</span></tt> has two other attributes whose values we delegate with the <tt class="docutils literal"><span class="pre">:=</span></tt>
+operator.</p>
+<p>With the Label widget, we introduce a new operator.</p>
+</div>
+<div class="section" id="subscription-operator">
+<h2>Subscription Operator &lt;&lt;<a class="headerlink" href="#subscription-operator" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>subscription operator</strong> <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt> is an Enaml-specific operator that makes
+the object on the left-hand side depend on the value of the Python-valid
+expression on the right-hand side of the operator. If there are variables in
+the expression on the right-hand side, then Enaml registers dependencies for
+each, and when any of the variable objects in the expression changes, the
+object on the left-hand side will be recomputed.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">text</span> <span class="o">&lt;&lt;</span> <span class="s">&#39;{0}% ({1}/{2})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">progress</span><span class="o">.</span><span class="n">percentage</span><span class="p">,</span> <span class="n">progress</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">progress</span><span class="o">.</span><span class="n">maximum</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">text</span></tt> attribute of the <tt class="docutils literal"><span class="pre">Label</span></tt> object in our example is <em>subscribed</em>
+to a formatted string, with dependencies on <tt class="docutils literal"><span class="pre">progress.percentage</span></tt>,
+<tt class="docutils literal"><span class="pre">progress.value</span></tt>, and <tt class="docutils literal"><span class="pre">progress.maximum</span></tt>.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">text</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Do Some Work&quot;</span> <span class="k">if</span> <span class="n">progress</span><span class="o">.</span><span class="n">percentage</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="s">&quot;Reset&quot;</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">work_button</span></tt> widget also has a subscribed text attribute; in this case it
+is a Python <tt class="docutils literal"><span class="pre">if</span></tt> statement dependent on the value of
+<tt class="docutils literal"><span class="pre">progress.percentage</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">work_button</span></tt> also has another new operator, the last of the four special
+Enaml operators.</p>
+</div>
+<div class="section" id="notification-operator">
+<h2>Notification Operator &gt;&gt;<a class="headerlink" href="#notification-operator" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>notification operator</strong> <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> is the last Enaml-specific operator. It
+causes the expression on the right-hand side to be evaluated whenever the
+object on the left-hand side fires an event.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">clicked</span> <span class="o">&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">do_work</span><span class="p">()</span> <span class="k">if</span> <span class="n">progress</span><span class="o">.</span><span class="n">percentage</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="n">model</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>In our example, the <tt class="docutils literal"><span class="pre">clicked</span></tt> attribute of <tt class="docutils literal"><span class="pre">work_button</span></tt> <em>notifies</em>
+<tt class="docutils literal"><span class="pre">model.do_work()</span></tt> or <tt class="docutils literal"><span class="pre">model_reset()</span></tt> depending on the value of the Python
+<tt class="docutils literal"><span class="pre">if</span></tt> statement on the right-hand side.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="example.html" title="Examples Gallery"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+          <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
+  
+    <li><a href="#">More on Enaml Widgets</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 26, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

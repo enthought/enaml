@@ -1,0 +1,6 @@
+<map id="inheritancec1adb27c6f" name="inheritancec1adb27c6f">
+<area shape="rect" id="node1" href="enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.wx.wx_toggle_control.WXToggleControl" title="WXToggleControl" alt="" coords="906,5,1040,35"/>
+<area shape="rect" id="node12" href="#enaml.widgets.wx.wx_radio_button.WXRadioButton" title="WXRadioButton" alt="" coords="1107,32,1227,61"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="703,5,793,35"/>
+<area shape="rect" id="node6" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="479,5,596,35"/>
+</map>

@@ -125,37 +125,6 @@ A widget interface is not tied to any particular implementation.</p>
 widget exposes as its API. Enaml orchestrates communication between
 user-facing views and the underlying graphical toolkits.</p>
 <p><em>Standard interfaces</em></p>
-<p class="graphviz">
-<img src="../../_images/inheritance-3f22f468d9de540c952a172b172ade7a997966c9.png" alt="Inheritance diagram of enaml.widgets.base_component.BaseComponent, enaml.widgets.bounded_date.BoundedDate, enaml.widgets.bounded_datetime.BoundedDatetime, enaml.widgets.calendar.Calendar, enaml.widgets.check_box.CheckBox, enaml.widgets.combo_box.ComboBox, enaml.widgets.component.Component, enaml.widgets.container.Container, enaml.widgets.control.Control, enaml.widgets.date_edit.DateEdit, enaml.widgets.datetime_edit.DatetimeEdit, enaml.widgets.enable_canvas.EnableCanvas, enaml.widgets.field.Field, enaml.widgets.html.Html, enaml.widgets.image.Image, enaml.widgets.label.Label, enaml.widgets.push_button.PushButton, enaml.widgets.radio_button.RadioButton, enaml.widgets.slider.Slider, enaml.widgets.spin_box.SpinBox, enaml.widgets.table_view.TableView, enaml.widgets.toggle_control.ToggleControl, enaml.widgets.traitsui_item.TraitsUIItem, enaml.widgets.window.Window, enaml.widgets.form.Form, enaml.widgets.group_box.GroupBox, enaml.widgets.dialog.Dialog, enaml.widgets.progress_bar.ProgressBar" usemap="#inheritance86484ccc86" class="inheritance"/>
-<map id="inheritance86484ccc86" name="inheritance86484ccc86">
-<area shape="rect" id="node1" href="widgets/enaml.widgets.check_box.CheckBox.html#enaml.widgets.check_box.CheckBox" title="CheckBox" alt="" coords="1092,139,1177,168"/>
-<area shape="rect" id="node2" href="widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.toggle_control.ToggleControl" title="ToggleControl" alt="" coords="910,165,1024,195"/>
-<area shape="rect" id="node18" href="widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.radio_button.RadioButton" title="RadioButton" alt="" coords="1085,192,1185,221"/>
-<area shape="rect" id="node4" href="widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="Container" alt="" coords="766,85,850,115"/>
-<area shape="rect" id="node44" href="widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window" title="Window" alt="" coords="931,5,1003,35"/>
-<area shape="rect" id="node54" href="widgets/enaml.widgets.form.Form.html#enaml.widgets.form.Form" title="Form" alt="" coords="931,59,1003,88"/>
-<area shape="rect" id="node60" href="widgets/enaml.widgets.group_box.GroupBox.html#enaml.widgets.group_box.GroupBox" title="GroupBox" alt="" coords="924,112,1009,141"/>
-<area shape="rect" id="node5" href="widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="Component" alt="" coords="620,299,716,328"/>
-<area shape="rect" id="node8" href="widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="Control" alt="" coords="772,512,844,541"/>
-<area shape="rect" id="node7" href="widgets/enaml.widgets.image.Image.html#enaml.widgets.image.Image" title="Image" alt="" coords="931,219,1003,248"/>
-<area shape="rect" id="node14" href="widgets/enaml.widgets.enable_canvas.EnableCanvas.html#enaml.widgets.enable_canvas.EnableCanvas" title="EnableCanvas" alt="" coords="912,325,1022,355"/>
-<area shape="rect" id="node16" href="widgets/enaml.widgets.html.Html.html#enaml.widgets.html.Html" title="Html" alt="" coords="931,379,1003,408"/>
-<area shape="rect" id="node20" href="widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.combo_box.ComboBox" title="ComboBox" alt="" coords="921,432,1013,461"/>
-<area shape="rect" id="node25" href="widgets/enaml.widgets.progress_bar.ProgressBar.html#enaml.widgets.progress_bar.ProgressBar" title="ProgressBar" alt="" coords="918,485,1015,515"/>
-<area shape="rect" id="node30" href="widgets/enaml.widgets.label.Label.html#enaml.widgets.label.Label" title="Label" alt="" coords="931,592,1003,621"/>
-<area shape="rect" id="node35" href="widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate" title="BoundedDate" alt="" coords="913,645,1021,675"/>
-<area shape="rect" id="node38" href="widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field" title="Field" alt="" coords="931,699,1003,728"/>
-<area shape="rect" id="node40" href="widgets/enaml.widgets.traitsui_item.TraitsUIItem.html#enaml.widgets.traitsui_item.TraitsUIItem" title="TraitsUIItem" alt="" coords="917,752,1017,781"/>
-<area shape="rect" id="node49" href="widgets/enaml.widgets.push_button.PushButton.html#enaml.widgets.push_button.PushButton" title="PushButton" alt="" coords="919,805,1014,835"/>
-<area shape="rect" id="node56" href="widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.spin_box.SpinBox" title="SpinBox" alt="" coords="930,859,1003,888"/>
-<area shape="rect" id="node58" href="widgets/enaml.widgets.slider.Slider.html#enaml.widgets.slider.Slider" title="Slider" alt="" coords="931,912,1003,941"/>
-<area shape="rect" id="node10" href="widgets/enaml.widgets.datetime_edit.DatetimeEdit.html#enaml.widgets.datetime_edit.DatetimeEdit" title="DatetimeEdit" alt="" coords="1083,272,1187,301"/>
-<area shape="rect" id="node27" href="widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.table_view.TableView" title="TableView" alt="" coords="1091,539,1178,568"/>
-<area shape="rect" id="node46" href="widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.calendar.Calendar" title="Calendar" alt="" coords="1095,619,1174,648"/>
-<area shape="rect" id="node51" href="widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.date_edit.DateEdit" title="DateEdit" alt="" coords="1097,672,1172,701"/>
-<area shape="rect" id="node43" href="widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog" title="Dialog" alt="" coords="1099,5,1171,35"/>
-</map>
-</p>
 </div>
 <div class="section" id="implementation">
 <h2>Implementation<a class="headerlink" href="#implementation" title="Permalink to this headline">¶</a></h2>
@@ -163,9 +132,6 @@ user-facing views and the underlying graphical toolkits.</p>
 interfaces. An interface utilizes an implementation-specific
 class, which wraps an actual toolkit widget.</p>
 <p><em>Standard Implementations</em></p>
-<p class="graphviz">
-<img src="../../_images/inheritance-611ab58137ce91f223df43a603ca787467a326e4.png" alt="Inheritance diagram of enaml.widgets.base_component.AbstractTkBaseComponent, enaml.widgets.bounded_date.AbstractTkBoundedDate, enaml.widgets.bounded_datetime.AbstractTkBoundedDatetime, enaml.widgets.calendar.AbstractTkCalendar, enaml.widgets.check_box.AbstractTkCheckBox, enaml.widgets.combo_box.AbstractTkComboBox, enaml.widgets.component.AbstractTkComponent, enaml.widgets.container.AbstractTkContainer, enaml.widgets.control.AbstractTkControl, enaml.widgets.date_edit.AbstractTkDateEdit, enaml.widgets.datetime_edit.AbstractTkDatetimeEdit, enaml.widgets.enable_canvas.AbstractTkEnableCanvas, enaml.widgets.field.AbstractTkField, enaml.widgets.html.AbstractTkHtml, enaml.widgets.image.AbstractTkImage, enaml.widgets.label.AbstractTkLabel, enaml.widgets.push_button.AbstractTkPushButton, enaml.widgets.radio_button.AbstractTkRadioButton, enaml.widgets.slider.AbstractTkSlider, enaml.widgets.spin_box.AbstractTkSpinBox, enaml.widgets.table_view.AbstractTkTableView, enaml.widgets.toggle_control.AbstractTkToggleControl, enaml.widgets.traitsui_item.AbstractTkTraitsUIItem, enaml.widgets.window.AbstractTkWindow, enaml.widgets.form.AbstractTkForm, enaml.widgets.group_box.AbstractTkGroupBox, enaml.widgets.dialog.AbstractTkDialog, enaml.widgets.progress_bar.AbstractTkProgressBar" class="inheritance"/>
-</p>
 </div>
 <div class="section" id="standard-widgets">
 <h2>Standard Widgets<a class="headerlink" href="#standard-widgets" title="Permalink to this headline">¶</a></h2>
@@ -178,19 +144,19 @@ class, which wraps an actual toolkit widget.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="enaml.widgets.component.Component"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.component.Component</span></tt></a></td>
-<td>A BaseComponent subclass that adds a box model and support</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="enaml.widgets.container.Container"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.container.Container</span></tt></a></td>
-<td>A Component subclass that provides for laying out its child</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></td>
-<td>The base class of all leaf widgets in Enaml. Controls cannot</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.toggle_control.ToggleControl" title="enaml.widgets.toggle_control.ToggleControl"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.toggle_control.ToggleControl</span></tt></a></td>
-<td>An abstract toggle element.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.bounded_date.BoundedDate" title="enaml.widgets.bounded_date.BoundedDate"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.bounded_date.BoundedDate</span></tt></a></td>
-<td>A base class for use with widgets that edit a Python</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -204,43 +170,43 @@ class, which wraps an actual toolkit widget.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.calendar.Calendar" title="enaml.widgets.calendar.Calendar"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.calendar.Calendar</span></tt></a></td>
-<td>A calendar widget.</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.check_box.CheckBox.html#enaml.widgets.check_box.CheckBox" title="enaml.widgets.check_box.CheckBox"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.check_box.CheckBox</span></tt></a></td>
-<td>A check box widget.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.combo_box.ComboBox.html#enaml.widgets.combo_box.ComboBox" title="enaml.widgets.combo_box.ComboBox"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.combo_box.ComboBox</span></tt></a></td>
-<td>A drop-down list from which one item can be selected at a time.</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.push_button.PushButton.html#enaml.widgets.push_button.PushButton" title="enaml.widgets.push_button.PushButton"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.push_button.PushButton</span></tt></a></td>
-<td>A push button widget.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.radio_button.RadioButton.html#enaml.widgets.radio_button.RadioButton" title="enaml.widgets.radio_button.RadioButton"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.radio_button.RadioButton</span></tt></a></td>
-<td>A radio button widget derived from IToggleElement</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.field.Field.html#enaml.widgets.field.Field" title="enaml.widgets.field.Field"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.field.Field</span></tt></a></td>
-<td>A single-line editable text widget.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.image.Image.html#enaml.widgets.image.Image" title="enaml.widgets.image.Image"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.image.Image</span></tt></a></td>
-<td>A widget for displaying images.</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.label.Label.html#enaml.widgets.label.Label" title="enaml.widgets.label.Label"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.label.Label</span></tt></a></td>
-<td>A simple read-only text display.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.slider.Slider.html#enaml.widgets.slider.Slider" title="enaml.widgets.slider.Slider"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.slider.Slider</span></tt></a></td>
-<td>A simple slider widget that can be used to select from a</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.spin_box.SpinBox.html#enaml.widgets.spin_box.SpinBox" title="enaml.widgets.spin_box.SpinBox"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.spin_box.SpinBox</span></tt></a></td>
-<td>A spin box widget.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.datetime_edit.DatetimeEdit.html#enaml.widgets.datetime_edit.DatetimeEdit" title="enaml.widgets.datetime_edit.DatetimeEdit"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.datetime_edit.DatetimeEdit</span></tt></a></td>
-<td>A datetime widget that displays a Python datetime.datetime object</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.date_edit.DateEdit.html#enaml.widgets.date_edit.DateEdit" title="enaml.widgets.date_edit.DateEdit"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.date_edit.DateEdit</span></tt></a></td>
-<td>A widget to edit a Python datetime.date object.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.progress_bar.ProgressBar.html#enaml.widgets.progress_bar.ProgressBar" title="enaml.widgets.progress_bar.ProgressBar"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.progress_bar.ProgressBar</span></tt></a></td>
-<td>A progress bar.</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -254,16 +220,16 @@ class, which wraps an actual toolkit widget.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.window.Window.html#enaml.widgets.window.Window" title="enaml.widgets.window.Window"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.window.Window</span></tt></a></td>
-<td>The base top-level Window widget.</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog" title="enaml.widgets.dialog.Dialog"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.dialog.Dialog</span></tt></a></td>
-<td>A basic dialog widget whose contents are user defined.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.form.Form.html#enaml.widgets.form.Form" title="enaml.widgets.form.Form"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.form.Form</span></tt></a></td>
-<td>A Container subclass that arranges child Components as a two</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.group_box.GroupBox.html#enaml.widgets.group_box.GroupBox" title="enaml.widgets.group_box.GroupBox"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.group_box.GroupBox</span></tt></a></td>
-<td>The GroupBox container, which introduces a group of widgets with</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -277,16 +243,16 @@ class, which wraps an actual toolkit widget.</p>
 </colgroup>
 <tbody valign="top">
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.html.Html.html#enaml.widgets.html.Html" title="enaml.widgets.html.Html"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.html.Html</span></tt></a></td>
-<td>An extremely simple widget for displaying HTML.</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.traitsui_item.TraitsUIItem.html#enaml.widgets.traitsui_item.TraitsUIItem" title="enaml.widgets.traitsui_item.TraitsUIItem"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.traitsui_item.TraitsUIItem</span></tt></a></td>
-<td>A control which embeds a traits ui view.</td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="widgets/enaml.widgets.enable_canvas.EnableCanvas.html#enaml.widgets.enable_canvas.EnableCanvas" title="enaml.widgets.enable_canvas.EnableCanvas"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.enable_canvas.EnableCanvas</span></tt></a></td>
-<td>An Enable canvas widget that will draw any Enable Component</td>
+<td></td>
 </tr>
 <tr class="row-even"><td><a class="reference internal" href="widgets/enaml.widgets.table_view.TableView.html#enaml.widgets.table_view.TableView" title="enaml.widgets.table_view.TableView"><tt class="xref py py-obj docutils literal"><span class="pre">enaml.widgets.table_view.TableView</span></tt></a></td>
-<td>A view for tabular data.</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -327,8 +293,8 @@ class, which wraps an actual toolkit widget.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 23, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+      Last updated on Dec 26, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

@@ -1,0 +1,229 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml-run and Python code tags in Enaml files &mdash; enaml 0.1alpha documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1alpha',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
+    <link rel="next" title="More on Enaml Widgets" href="tut_more_widgets.html" />
+    <link rel="prev" title="John Doe tutorial" href="tut_person.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tut_more_widgets.html" title="More on Enaml Widgets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="tut_person.html" title="John Doe tutorial"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+          <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
+  
+    <li><a href="#">enaml-run and Python code tags in Enaml files</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">enaml-run and Python code tags in Enaml files</a><ul>
+<li><a class="reference internal" href="#enaml-run">enaml-run</a></li>
+<li><a class="reference internal" href="#the-mainwindow-component">The MainWindow component</a></li>
+<li><a class="reference internal" href="#python-code-tags-in-an-enaml-file">Python code tags in an Enaml file</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/instructional/tut_python_code.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="enaml-run-and-python-code-tags-in-enaml-files">
+<span id="tut-python-code"></span><h1>enaml-run and Python code tags in Enaml files<a class="headerlink" href="#enaml-run-and-python-code-tags-in-enaml-files" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we introduce the <tt class="docutils literal"><span class="pre">enaml-run</span></tt> command-line tool for
+quickstart and debugging purposes, and we show how to insert Python code blocks
+into an Enaml file. This is useful for setting up variables and substitutions
+in the GUI definition and as a convenience for self-contained GUI
+applications. (It is in fact a great convenience for tutorials, examples, and
+demonstrations.)</p>
+<div class="section" id="enaml-run">
+<h2>enaml-run<a class="headerlink" href="#enaml-run" title="Permalink to this headline">¶</a></h2>
+<p>Enaml comes with a convenience utility that runs from the command-line:</p>
+<div class="highlight-python"><pre>enaml-run &lt;enaml_filename.enaml&gt;</pre>
+</div>
+<p><tt class="docutils literal"><span class="pre">enaml-run</span></tt> looks for a component called &#8220;MainWindow&#8221; or a Python main()
+function in <em>enaml_filename.enaml</em> and runs it as a stand-alone program.</p>
+</div>
+<div class="section" id="the-mainwindow-component">
+<h2>The MainWindow component<a class="headerlink" href="#the-mainwindow-component" title="Permalink to this headline">¶</a></h2>
+<p>MainWindow is defined in a component declaration block or in a <tt class="docutils literal"><span class="pre">defn</span></tt> block,
+so it can be called and executed from within Python code as usual. This is just
+a convenience that allows you to try out your user interface without running
+all of the other code that may go with it in the end application. (In fact, you
+can pass the name of any component in an enaml file to <tt class="docutils literal"><span class="pre">enaml-run</span></tt>;
+<tt class="docutils literal"><span class="pre">MainWindow</span></tt> is just the default.)</p>
+<p>Let&#8217;s rewrite our &#8220;hello world&#8221; example to take advantage of the convenience
+function:</p>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+defn MainWindow():
+    Window:
+        Label:
+            text = "Bonjour, Monde!"
+            
+</pre>
+</div>
+<p><a class="reference download internal" href="../_downloads/hello_world_main_window.enaml"><tt class="xref download docutils literal"><span class="pre">download</span></tt></a>
+and run it from the command line:</p>
+<div class="highlight-python"><pre>$ enaml-run hello_world_main_window</pre>
+</div>
+<img alt="../_images/bonjour_monde.png" src="../_images/bonjour_monde.png" />
+<p>If your component takes an argument, you can insert your calling Python code
+into the Enaml file.</p>
+</div>
+<div class="section" id="python-code-tags-in-an-enaml-file">
+<h2>Python code tags in an Enaml file<a class="headerlink" href="#python-code-tags-in-an-enaml-file" title="Permalink to this headline">¶</a></h2>
+<p>You can insert Python code to be executed when the component is imported using
+the following tags:</p>
+<div class="highlight-python"><pre>:: python ::
+
+# python code goes here
+
+:: end ::</pre>
+</div>
+<p>This enables more complexity in your test or demo, as in this version of our
+&#8220;hello world&#8221; example. Note that we have effectively rolled all of the calling
+code that used to be in &#8220;hello_world.py&#8221; into the enaml file. Remember that
+<tt class="docutils literal"><span class="pre">enaml-run</span></tt> looks for a Python function called &#8220;main()&#8221;.</p>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+:: python ::
+
+def main():
+    """
+    The main() function is a special case entry point for enaml-run.
+    """
+    import sys
+    view = MyMessageToTheWorld("Hola, Mundo!")
+    view.show()
+
+:: end::
+
+defn MyMessageToTheWorld(message):
+    Window:
+        Label:
+            text = message
+            
+</pre>
+</div>
+<p><a class="reference download internal" href="../_downloads/hello_world_main_window_args.enaml"><tt class="xref download docutils literal"><span class="pre">download</span></tt></a>
+and run it from the command line:</p>
+<div class="highlight-python"><pre>$ enaml-run hello_world_main_window_args</pre>
+</div>
+<img alt="../_images/hola_mundo.png" src="../_images/hola_mundo.png" />
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="tut_more_widgets.html" title="More on Enaml Widgets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="tut_person.html" title="John Doe tutorial"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
+          <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
+  
+    <li><a href="#">enaml-run and Python code tags in Enaml files</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Enthought, Inc..
+      Last updated on Dec 26, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

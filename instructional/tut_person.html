@@ -29,7 +29,7 @@
     <link rel="shortcut icon" href="../_static/et.ico"/>
     <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
-    <link rel="next" title="Examples Gallery" href="example.html" />
+    <link rel="next" title="enaml-run and Python code tags in Enaml files" href="tut_python_code.html" />
     <link rel="prev" title="“Hello World” tutorial" href="tut_hello_world.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="example.html" title="Examples Gallery"
+          <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="tut_hello_world.html" title="“Hello World” tutorial"
@@ -65,11 +65,10 @@
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">John Doe tutorial</a><ul>
-<li><a class="reference internal" href="#john-doe-source">John Doe Source</a></li>
 <li><a class="reference internal" href="#enaml-imports">Enaml Imports</a></li>
 <li><a class="reference internal" href="#component-declaration">Component Declaration</a></li>
 <li><a class="reference internal" href="#built-in-components">Built-in Components</a></li>
-<li><a class="reference internal" href="#delegation-operator">Delegation Operator</a></li>
+<li><a class="reference internal" href="#delegation-operator">Delegation Operator :=</a></li>
 <li><a class="reference internal" href="#standard-library-of-derived-components">Standard Library of Derived Components</a></li>
 <li><a class="reference internal" href="#defn-block"><tt class="docutils literal"><span class="pre">defn</span></tt> Block</a><ul>
 <li><a class="reference internal" href="#traits-object">Traits Object</a></li>
@@ -112,8 +111,6 @@
 introduce the concepts of reusable component declarations and components from
 the standard library in Enaml. It sets up a GUI with the name and age of a
 person.</p>
-<div class="section" id="john-doe-source">
-<h2>John Doe Source<a class="headerlink" href="#john-doe-source" title="Permalink to this headline">¶</a></h2>
 <p>Here is the Enaml file (<a class="reference download internal" href="../_downloads/person_view.enaml"><tt class="xref download docutils literal"><span class="pre">download</span> <span class="pre">here</span></tt></a>):</p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
 #  Copyright (c) 2011, Enthought, Inc.
@@ -187,7 +184,6 @@ defn PersonView(person):
 </div>
 <p>The resulting GUI looks like this (in Mac OS):</p>
 <img alt="../_images/john_doe.png" src="../_images/john_doe.png" />
-</div>
 <div class="section" id="enaml-imports">
 <h2>Enaml Imports<a class="headerlink" href="#enaml-imports" title="Permalink to this headline">¶</a></h2>
 <p>This .enaml file begins like the <a class="reference internal" href="tut_hello_world.html#hello-world"><em>&#8220;Hello World&#8221;</em></a> example
@@ -247,7 +243,7 @@ value. Field is used as the base component for many other components that do
 type conversions.</p>
 </div>
 <div class="section" id="delegation-operator">
-<h2>Delegation Operator<a class="headerlink" href="#delegation-operator" title="Permalink to this headline">¶</a></h2>
+<h2>Delegation Operator :=<a class="headerlink" href="#delegation-operator" title="Permalink to this headline">¶</a></h2>
 <p>In the <tt class="docutils literal"><span class="pre">Field</span></tt> code block, we notice a new operator <tt class="docutils literal"><span class="pre">:=</span></tt>. This is the
 <a class="reference internal" href="../tech_ref/grammar_ref.html#delegation-opr"><em>delegation operator</em></a>, one of the four special operators in
 the Enaml <a class="reference internal" href="../tech_ref/grammar_ref.html#grammar-ref"><em>grammar</em></a>. It sets up a two-way synchronization
@@ -352,7 +348,7 @@ when we make a change in the GUI and see</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="example.html" title="Examples Gallery"
+          <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
              >next</a> |</li>
         <li class="right" >
           <a href="tut_hello_world.html" title="“Hello World” tutorial"
@@ -368,8 +364,8 @@ when we make a change in the GUI and see</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 23, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre.
+      Last updated on Dec 26, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
