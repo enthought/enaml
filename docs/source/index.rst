@@ -24,5 +24,5 @@ and PyQt4. However, it is not tied to a single widget toolkit.
     Developer's Guide <developer_guide/index.rst>
 
 
-.. todolist::
+
 
