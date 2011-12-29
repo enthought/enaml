@@ -95,8 +95,8 @@ class SimplePlot(EnableCanvas):
         cons = tk['EnableCanvas'].clone(shell_loader=lambda:cls)
         tk[cls.__name__] = cons
 
-    def initialize(self):
-        super(SimplePlot, self).initialize()
+    def _setup_init_widgets(self):
+        super(SimplePlot, self)._setup_init_widgets()
         self.set_data()
         self.set_commands()
         self._xtitle_changed(self.xtitle)

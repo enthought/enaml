@@ -1,4 +1,17 @@
 """ A Lotka-Volterra model. 
+
+This example plots a non-trivial system and allows the user to explore the
+parameter space using sliders. The system is a first order Lotka-Volterra model, also known as a predator-prey model::
+
+    http://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equation
+
+As in the sine plot example, the plot is on the left while the parameter sliders
+are on the right. The plot will update as the slider values change.
+
+This is the main driver for the example. The Enaml UI is defined in lotka_volterra_ui.enaml
+
+This demo requires numpy and Chaco.
+
 """
 
 import numpy as np
@@ -9,6 +22,9 @@ import enaml
 
 
 class LotkaVolterra(HasTraits):
+    """ A simple Lotka-Volterra model.
+
+    """
 
     dt = Float(1./128)
     total_time = Float(20.0)
@@ -26,7 +42,7 @@ class LotkaVolterra(HasTraits):
 
     @on_trait_change('dt,total_time,prey0,predator0,prey_growth,predation_rate,predator_growth,predator_death')
     def integrate(self):
-        """ Use a modifed Euler's method to integrate the 
+        """ Use a modifed Euler's method to integrate the ODE.
         """
         nsteps = int(round(self.total_time / self.dt))
         t = self.dt * np.arange(nsteps)

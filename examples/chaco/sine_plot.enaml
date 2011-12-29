@@ -1,53 +1,56 @@
+""" UI for sine_plot_example.py
+
+Run sine_plot_example.py to view this demo.
+
+"""
+
 from numpy import pi
 
-defn Range(minimum, maximum):
-    Container:
-        constraints = [
-            horizontal(left, 0, min_label, slider, max_label, 0, right),
-            vertical(top, 0, slider, 0, bottom),
-            align('v_center', min_label, slider, max_label),
-            slider.width == 100,
-        ]
-        Label -> min_label:
-            text = '{:.2f}'.format(minimum)
-        FloatSlider -> slider:
-            minimum = minimum
-            maximum = maximum
-        Label -> max_label:
-            text = '{:.2f}'.format(maximum)
+from range import Range
 
 
 defn MainWindow(model):
     Window:
         constraints = [
             hbox(plot, vbox(form, _space_)),
-            align('left', phase_slider, amp_slider, w_slider),
-            align('right', phase_slider, amp_slider, w_slider),
+            align('left', phase_range.slider, amp_range.slider, w_range.slider),
+            align('right', phase_range.slider, amp_range.slider, w_range.slider),
             plot.width >= 500,
             plot.height >= 500,
         ]
-        SimplePlot -> plot:
+        SimplePlot:
+            id: plot
             data << dict(x=model.x, y_sin=model.y_sin, y_cos=model.y_cos)
             commands = [
-                self.plot(('x', 'y_sin'), type='line', name='sin', color='black'),
-                self.plot(('x', 'y_cos'), type='line', name='cos', color='red'),
-                self.yrange(low_setting= -4.0, high_setting=4.0),
+                plot.plot(('x', 'y_sin'), type='line', name='sin', color='black'),
+                plot.plot(('x', 'y_cos'), type='line', name='cos', color='red'),
+                plot.yrange(low_setting= -4.0, high_setting=4.0),
             ]
             xtitle = 'X'
             ytitle = 'sin and cos'
             padding_right = 10
             padding_top = 10
-        Form -> form:
+        Form:
+            id: form
             Label:
                 text = "Phase:"
-            Range(0.0, 2*pi) -> slider as phase_slider:
-                phase_slider.value := model.phase
+            Range:
+                id: phase_range
+                minimum = 0.0
+                maximum = 2*pi
+                value := model.phase
             Label:
                 text = "Amplitude:"
-            Range(0.0, 3.0) -> slider as amp_slider:
-                amp_slider.value := model.amplitude
+            Range:
+                id: amp_range
+                minimum = 0.0
+                maximum = 3.0
+                value := model.amplitude
             Label:
                 text = "Frequency:"
-            Range(0.0, 2*pi) -> slider as w_slider:
-                w_slider.value := model.w
+            Range:
+                id: w_range
+                minimum = 0.0
+                maximum = 2*pi
+                value := model.w
 

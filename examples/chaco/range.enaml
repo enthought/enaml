@@ -1,0 +1,31 @@
+""" A reusable float slider component with text labels for the minimum and maximum.
+
+The Range component is used by the other examples in this directory.
+
+"""
+
+Range(Container):
+    id: range
+    minimum = 0.0
+    maximum = 1.0
+    value = 0.5
+    text_format = '{:.2f}'
+    slider = slider_
+    constraints = [
+        horizontal(left, 0, min_label, slider, max_label, 0, right),
+        vertical(top, 0, slider, 0, bottom),
+        align('v_center', min_label, slider, max_label),
+        slider.width == 100,
+    ]
+    Label:
+        id: min_label
+        text << text_format.format(minimum)
+    FloatSlider:
+        id: slider_
+        minimum << range.minimum
+        maximum << range.maximum
+        value := range.value
+    Label:
+        id: max_label
+        text << text_format.format(maximum)
+
