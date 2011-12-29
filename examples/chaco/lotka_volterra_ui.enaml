@@ -1,0 +1,95 @@
+""" UI for lotka_volterra.py
+
+Run lotka_volterra.py to view this demo.
+
+"""
+
+:: python ::
+def pop_bounds(data_low, data_high, margin, tight_bounds):
+    """ Return "nice" boundaries for the given population data range.
+
+    In this case, our lower bound is always 0. We round the high boundary up to
+    a nice multiple of 20.
+    """
+    q, r = divmod(data_high, 20.0)
+    if r:
+        q += 1
+    high = q * 20.0
+    return (0.0, high)
+
+:: end ::
+
+from range import Range
+
+
+defn MainWindow(model):
+    Window:
+        title = "Lotka-Volterra Model"
+        constraints = [
+            hbox(plot, vbox(form, _space_)),
+            align('left', prey0_range.slider, predator0_range.slider,
+                prey_growth_range.slider, predation_rate_range.slider,
+                predator_death_range.slider, predator_growth_range.slider),
+            align('right', prey0_range.slider, predator0_range.slider,
+                prey_growth_range.slider, predation_rate_range.slider,
+                predator_death_range.slider, predator_growth_range.slider),
+            plot.width >= 500,
+            plot.height >= 500,
+        ]
+        SimplePlot:
+            id: plot
+            data << dict(t=model.t, prey=model.prey, predator=model.predator)
+            commands = [
+                plot.plot(('t', 'prey'), type='line', name='Prey', color='black'),
+                plot.plot(('t', 'predator'), type='line', name='Predator', color='red'),
+                plot.yrange(bounds_func=pop_bounds),
+            ]
+            legend = True
+            xtitle = 'Time'
+            ytitle = 'Population'
+            padding_right = 10
+            padding_top = 10
+        Form:
+            id: form
+            Label:
+                text = "Initial Prey:"
+            Range:
+                id: prey0_range
+                minimum = 0.0
+                maximum = 10.0
+                value := model.prey0
+            Label:
+                text = "Initial Predators:"
+            Range:
+                id: predator0_range
+                minimum = 0.0
+                maximum = 10.0
+                value := model.predator0
+            Label:
+                text = "Prey Growth:"
+            Range:
+                id: prey_growth_range
+                minimum = 0.0
+                maximum = 2.0
+                value := model.prey_growth
+            Label:
+                text = "Predation Rate:"
+            Range:
+                id: predation_rate_range
+                minimum = 0.0
+                maximum = 2.0
+                value := model.predation_rate
+            Label:
+                text = "Predator Death:"
+            Range:
+                id: predator_death_range
+                minimum = 0.0
+                maximum = 2.0
+                value := model.predator_death
+            Label:
+                text = "Predator Growth:"
+            Range:
+                id: predator_growth_range
+                minimum = 0.0
+                maximum = 2.0
+                value := model.predator_growth

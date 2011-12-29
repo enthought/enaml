@@ -1,0 +1,56 @@
+""" UI for sine_plot_example.py
+
+Run sine_plot_example.py to view this demo.
+
+"""
+
+from numpy import pi
+
+from range import Range
+
+
+defn MainWindow(model):
+    Window:
+        constraints = [
+            hbox(plot, vbox(form, _space_)),
+            align('left', phase_range.slider, amp_range.slider, w_range.slider),
+            align('right', phase_range.slider, amp_range.slider, w_range.slider),
+            plot.width >= 500,
+            plot.height >= 500,
+        ]
+        SimplePlot:
+            id: plot
+            data << dict(x=model.x, y_sin=model.y_sin, y_cos=model.y_cos)
+            commands = [
+                plot.plot(('x', 'y_sin'), type='line', name='sin', color='black'),
+                plot.plot(('x', 'y_cos'), type='line', name='cos', color='red'),
+                plot.yrange(low_setting= -4.0, high_setting=4.0),
+            ]
+            xtitle = 'X'
+            ytitle = 'sin and cos'
+            padding_right = 10
+            padding_top = 10
+        Form:
+            id: form
+            Label:
+                text = "Phase:"
+            Range:
+                id: phase_range
+                minimum = 0.0
+                maximum = 2*pi
+                value := model.phase
+            Label:
+                text = "Amplitude:"
+            Range:
+                id: amp_range
+                minimum = 0.0
+                maximum = 3.0
+                value := model.amplitude
+            Label:
+                text = "Frequency:"
+            Range:
+                id: w_range
+                minimum = 0.0
+                maximum = 2*pi
+                value := model.w
+
