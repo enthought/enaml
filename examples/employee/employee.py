@@ -28,8 +28,10 @@ class Person(HasTraits):
     def _get_age(self):
         today = datetime.date.today()
         dob = self.dob
-        delta = today - dob
-        age = delta.days / 365
+        age = today.year - dob.year
+        birthday_this_year = dob.replace(year=today.year)
+        if today < birthday_this_year:
+            age -= 1
         return age
 
 
