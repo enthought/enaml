@@ -31,7 +31,7 @@ class DatetimeEdit(BoundedDatetime):
     #: the datetime on the control.
     datetime_changed = Event
     
-    #: How strongly a component hugs it's contents' width. DatetimeEdits 
+    #: How strongly a component hugs its contents' width. DatetimeEdits 
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
 

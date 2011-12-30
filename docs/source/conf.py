@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.abspath('./sphinxext'))
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.0'
+needs_sphinx = '1.0.7'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
@@ -112,8 +112,12 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 ##inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
 ##                              color='dodgerblue1', style='filled')
 
-inheritance_graph_attrs = dict(rankdir="LR", size='"20.0, 20.0"',
-                               fontsize=14, ratio='compress')
+inheritance_graph_attrs = dict(
+    #rankdir="LR",
+    size='"8.0, 20.0"',
+    fontsize=14,
+    ratio='compress'
+    )
 
 autosummary_generate = True
 
@@ -121,15 +125,21 @@ autosummary_generate = True
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'default'
+html_theme = 'enthought_doc'
+#'default'
+#'agogo'
+#
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
-#html_theme_options = {}
+## html_theme_options = {
+##     'pagewidth' : '70em',
+##     'sidebarwidth' : '20em'
+##     }
 
 # Add any paths that contain custom themes here, relative to this directory.
-#html_theme_path = []
+html_theme_path = ['./']
 
 # The name for this set of Sphinx documents.  If None, it defaults to
 # "<project> v<release> documentation".
@@ -154,7 +164,7 @@ html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
-#html_last_updated_fmt = '%b %d, %Y'
+html_last_updated_fmt = '%b %d, %Y'
 
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
@@ -218,7 +228,7 @@ latex_documents = [
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.
-#latex_use_parts = False
+latex_use_parts = True
 
 # If true, show page references after internal links.
 #latex_show_pagerefs = False
@@ -233,7 +243,7 @@ latex_documents = [
 #latex_appendices = []
 
 # If false, no module index is generated.
-#latex_domain_indices = True
+latex_domain_indices = True
 
 
 # -- Options for manual page output --------------------------------------------
@@ -287,7 +297,11 @@ epub_copyright = u'2011, Enthought, Inc.'
 
 
 # Example configuration for intersphinx: refer to the Python standard library.
-intersphinx_mapping = {'python' : ('http://docs.python.org/', None),
-                       'traits' : ('http://github.enthought.com/traits/'
-                                   'traits_user_manual/', None)}
+intersphinx_mapping = {
+    'python' : ('http://docs.python.org/', None),
+    'traits' : ('http://github.enthought.com/traits/', None)
+    }
 
+rst_epilog = """
+.. |Enaml| replace:: Enaml
+"""
