@@ -122,8 +122,10 @@ some component-specific attributes.</p>
             clicked &gt;&gt; model.do_work() if progress.percentage &lt; 100 else model.reset()</pre>
 </div>
 <p>We&#8217;re setting up a view, and we will pass it a model. The view consists of a
-window with three widgets: a ProgressBar, a Label, and a PushButton. Starting
-with the ProgressBar we see something new: an <tt class="docutils literal"><span class="pre">id</span></tt> tag.</p>
+window with three widgets: a ProgressBar, a Label, and a PushButton. (In the
+<a class="reference internal" href="../tech_ref/index.html#tech-ref"><em>Enaml Technical Reference</em></a> you can find a list and descriptions of widgets and components
+from the <a class="reference internal" href="../tech_ref/built_ins_ref.html#built-ins-ref"><em>built-ins</em></a> and <a class="reference internal" href="../tech_ref/std_library_ref.html#std-library-ref"><em>standard library</em></a>.) Starting with the ProgressBar we see something new: an
+<tt class="docutils literal"><span class="pre">id</span></tt> tag.</p>
 <div class="section" id="id-tags">
 <h2><tt class="docutils literal"><span class="pre">id</span></tt> Tags<a class="headerlink" href="#id-tags" title="Permalink to this headline">¶</a></h2>
 <p>Enaml uses a special attribute called an <tt class="docutils literal"><span class="pre">id</span></tt> tag to let you refer to a
@@ -169,6 +171,61 @@ object on the left-hand side fires an event.</p>
 <p>In our example, the <tt class="docutils literal"><span class="pre">clicked</span></tt> attribute of <tt class="docutils literal"><span class="pre">work_button</span></tt> <em>notifies</em>
 <tt class="docutils literal"><span class="pre">model.do_work()</span></tt> or <tt class="docutils literal"><span class="pre">model_reset()</span></tt> depending on the value of the Python
 <tt class="docutils literal"><span class="pre">if</span></tt> statement on the right-hand side.</p>
+<p>Now let&#8217;s set up the model using Python code inside Python code tags.</p>
+<div class="highlight-python"><pre>:: python ::
+
+import random
+from traits.api import HasTraits, Int
+
+class Model(HasTraits):
+    """ Model a process that does some work on command.
+    """
+    # The total units of work to do.
+    work_units = Int(1000)
+
+    # The number of units done.
+    units_done = Int(0)
+
+    def do_work(self):
+        """ Do a random amount of work.
+        """
+        nunits = random.randint(10, 100)
+        nunits = min(nunits, self.work_units - self.units_done)
+        self.units_done += nunits
+
+    def reset(self):
+        """ Reset the work done back to 0.
+        """
+        self.units_done = 0
+:: end ::</pre>
+</div>
+<p>Note that logically, this section of Python code should go <em>before</em> the veiw
+declaration, but Enaml files are executed &#8220;all at once&#8221;, and the order of
+declaration does not matter <a class="footnote-reference" href="#id2" id="id1">[1]</a>. Within the Python code tags, of course, the normal
+rules of Python parsing and execution apply.</p>
+<p>With a separate piece of Python code, we set up the main() function for
+running from the command line:</p>
+<div class="highlight-python"><pre>:: python ::
+
+# A 'main' function is special cased as an entry point by the enaml-run script
+def main():
+    model = Model()
+    window = ModelView(model)
+    window.show()
+
+:: end ::</pre>
+</div>
+<p>Execute from the command line with</p>
+<div class="highlight-python"><pre>$ enaml-run progress_bar_simple.enaml</pre>
+</div>
+<img alt="../_images/progress_bar_simple.png" src="../_images/progress_bar_simple.png" />
+<table class="docutils footnote" frame="void" id="id2" rules="none">
+<colgroup><col class="label" /><col /></colgroup>
+<tbody valign="top">
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Technically, the right-hand side of an Enaml operator acts as a
+closure which has access to all of the identifiers declared in the block.</td></tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -204,8 +261,8 @@ object on the left-hand side fires an event.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 26, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Dec 30, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>
 </html>

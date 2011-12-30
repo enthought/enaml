@@ -31,8 +31,11 @@ Let's start with a code snip from :download:`progress_bar_simple.enaml
 
 
 We're setting up a view, and we will pass it a model. The view consists of a
-window with three widgets: a ProgressBar, a Label, and a PushButton. Starting
-with the ProgressBar we see something new: an ``id`` tag.
+window with three widgets: a ProgressBar, a Label, and a PushButton. (In the
+:ref:`tech-ref` you can find a list and descriptions of widgets and components
+from the :ref:`built-ins <built-ins-ref>` and :ref:`standard library
+<std-library-ref>`.) Starting with the ProgressBar we see something new: an
+``id`` tag.
 
 ``id`` Tags
 -------------------------------------------------------------------------------
@@ -90,3 +93,66 @@ object on the left-hand side fires an event.
 In our example, the ``clicked`` attribute of ``work_button`` *notifies*
 ``model.do_work()`` or ``model_reset()`` depending on the value of the Python
 ``if`` statement on the right-hand side.
+
+
+Now let's set up the model using Python code inside Python code tags.
+
+::
+
+ :: python ::
+
+ import random
+ from traits.api import HasTraits, Int
+
+ class Model(HasTraits):
+     """ Model a process that does some work on command.
+     """
+     # The total units of work to do.
+     work_units = Int(1000)
+
+     # The number of units done.
+     units_done = Int(0)
+
+     def do_work(self):
+         """ Do a random amount of work.
+         """
+         nunits = random.randint(10, 100)
+         nunits = min(nunits, self.work_units - self.units_done)
+         self.units_done += nunits
+
+     def reset(self):
+         """ Reset the work done back to 0.
+         """
+         self.units_done = 0
+ :: end ::
+
+Note that logically, this section of Python code should go *before* the veiw
+declaration, but |Enaml| files are executed "all at once", and the order of
+declaration does not matter [#]_. Within the Python code tags, of course, the normal
+rules of Python parsing and execution apply.
+
+With a separate piece of Python code, we set up the main() function for
+running from the command line:
+
+::
+
+    :: python ::
+
+    # A 'main' function is special cased as an entry point by the enaml-run script
+    def main():
+        model = Model()
+        window = ModelView(model)
+        window.show()
+
+    :: end ::
+
+Execute from the command line with
+
+::
+
+ $ enaml-run progress_bar_simple.enaml 
+
+.. image:: images/progress_bar_simple.png
+
+.. [#] Technically, the right-hand side of an |Enaml| operator acts as a
+   closure which has access to all of the identifiers declared in the block.

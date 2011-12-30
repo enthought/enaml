@@ -213,8 +213,10 @@ defn EmployeeView(employee):
     <span class="k">def</span> <span class="nf">_get_age</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">today</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
         <span class="n">dob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dob</span>
-        <span class="n">delta</span> <span class="o">=</span> <span class="n">today</span> <span class="o">-</span> <span class="n">dob</span>
-        <span class="n">age</span> <span class="o">=</span> <span class="n">delta</span><span class="o">.</span><span class="n">days</span> <span class="o">/</span> <span class="mi">365</span>
+        <span class="n">age</span> <span class="o">=</span> <span class="n">today</span><span class="o">.</span><span class="n">year</span> <span class="o">-</span> <span class="n">dob</span><span class="o">.</span><span class="n">year</span>
+        <span class="n">birthday_this_year</span> <span class="o">=</span> <span class="n">dob</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="n">today</span><span class="o">.</span><span class="n">year</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">today</span> <span class="o">&lt;</span> <span class="n">birthday_this_year</span><span class="p">:</span>
+            <span class="n">age</span> <span class="o">-=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">age</span>
 
 
@@ -343,8 +345,8 @@ defn EmployeeView(employee):
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 26, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Dec 30, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>
 </html>

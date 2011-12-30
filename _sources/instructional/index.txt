@@ -1,4 +1,4 @@
-.. _instructional
+.. _instructional:
 
 |Enaml| Getting Started Guide and Tutorials
 ===============================================================================
@@ -9,4 +9,4 @@
     overview
     Tutorials <tutorials_home>
     Examples <example>
-    <faq>
+    faq

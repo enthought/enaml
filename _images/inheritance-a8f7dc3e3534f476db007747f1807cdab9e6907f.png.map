@@ -1,0 +1,12 @@
+<map id="inheritancec23f0d1252" name="inheritancec23f0d1252">
+<area shape="rect" id="node1" href="#enaml.styling.style_sheet.IDSelector" title="IDSelector" alt="" coords="631,1340,718,1369"/>
+<area shape="rect" id="node2" href="#enaml.styling.style_sheet.Selector" title="Selector" alt="" coords="477,1420,550,1449"/>
+<area shape="rect" id="node4" href="#enaml.styling.style_sheet.QualSelector" title="QualSelector" alt="" coords="623,1393,726,1423"/>
+<area shape="rect" id="node7" href="#enaml.styling.style_sheet.ClassSelector" title="ClassSelector" alt="" coords="621,1447,728,1476"/>
+<area shape="rect" id="node16" href="#enaml.styling.style_sheet.TypeSelector" title="TypeSelector" alt="" coords="623,1500,727,1529"/>
+<area shape="rect" id="node6" href="#enaml.styling.style_sheet.BoxedValue" title="BoxedValue" alt="" coords="6,913,103,943"/>
+<area shape="rect" id="node14" href="#enaml.styling.style_sheet.StyleValue" title="StyleValue" alt="" coords="152,913,240,943"/>
+<area shape="rect" id="node9" href="#enaml.styling.style_sheet.style" title="style" alt="" coords="19,5,91,35"/>
+<area shape="rect" id="node20" href="#enaml.styling.style_sheet.IStyleNodeData" title="IStyleNodeData" alt="" coords="454,1367,573,1396"/>
+<area shape="rect" id="node24" href="#enaml.styling.style_sheet.StyleSheet" title="StyleSheet" alt="" coords="470,1473,557,1503"/>
+</map>

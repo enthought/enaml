@@ -41,7 +41,7 @@ checking. Note that this import points to a component declaration in a
 .enaml file.*
 
 
-Component Declaration
+Component Declaration Block
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Next, there is a new kind of code block, a **component declaration**. We define

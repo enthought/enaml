@@ -1,0 +1,16 @@
+*.pyc
+*.un~
+*.swp
+*.egg-info
+*.so
+/build
+/dist
+/docs/build
+docs/source/.DS_Store
+docs/source/instructional/.DS_Store
+<<<<<<< HEAD
+docs/source/instructional/images/.DS_Store
+docs/source/developer_guide/.DS_Store
+=======
+docs/source/instructional/images/.DS_Store
+>>>>>>> 604818f9ec9cd532ae9b5b4574fa140aa9c3fa0e

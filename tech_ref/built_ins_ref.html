@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Enaml Built-in Components &mdash; enaml 0.1alpha documentation</title>
+    <title>Enaml Built-in Widgets &mdash; enaml 0.1alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -29,7 +29,7 @@
     <link rel="shortcut icon" href="../_static/et.ico"/>
     <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Technical Reference" href="index.html" />
-    <link rel="next" title="Enaml Standard library components" href="std_library_ref.html" />
+    <link rel="next" title="Enaml Standard Widget Library (derived)" href="std_library_ref.html" />
     <link rel="prev" title="Enaml Grammar Reference" href="grammar_ref.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="std_library_ref.html" title="Enaml Standard library components"
+          <a href="std_library_ref.html" title="Enaml Standard Widget Library (derived)"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="grammar_ref.html" title="Enaml Grammar Reference"
@@ -51,7 +51,7 @@
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Technical Reference</a> &raquo;</li>
   
-    <li><a href="#">Enaml Built-in Components</a></li>
+    <li><a href="#">Enaml Built-in Widgets</a></li>
   
 
       </ul>
@@ -87,9 +87,100 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="enaml-built-in-components">
-<span id="built-ins-ref"></span><h1>Enaml Built-in Components<a class="headerlink" href="#enaml-built-in-components" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="enaml-built-in-widgets">
+<span id="built-ins-ref"></span><h1>Enaml Built-in Widgets<a class="headerlink" href="#enaml-built-in-widgets" title="Permalink to this headline">¶</a></h1>
 <p>The following components are built into Enaml and available without import.</p>
+<dl class="class">
+<dt id="enaml.widgets.combo_box.ComboBox">
+<em class="property">class </em><tt class="descclassname">enaml.widgets.combo_box.</tt><tt class="descname">ComboBox</tt><a class="reference internal" href="../_modules/enaml/widgets/combo_box.html#ComboBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
+<p>A drop-down list from which one item can be selected at a time.</p>
+<p>Use a combo box to select a single item from a collection of items.
+To select multiple items from a collection of items use a ListBox.</p>
+<p>The combo box works by first using the to_string callable to convert
+the value and the list of items into strings for display and then 
+using the index of the combo box to make appropriate selections.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<ul class="last simple">
+<li>If a value is specified that does not exist in the list of
+items then the box is deselected and the index attribute will
+be set to -1. However, the value attribute will still be 
+assigned the invalid value.</li>
+<li>If list of items is changed then component will try to find
+the current value in the list and select it. If the value is
+not found then the index will be updated to -1.</li>
+<li>The selected event is only emitted when the user selects
+a valid value through the ui control, not when the value
+is changed programmatically.</li>
+</ul>
+</div>
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.items">
+<tt class="descname">items</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>The objects that compose the collection.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.value">
+<tt class="descname">value</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.value" title="Permalink to this definition">¶</a></dt>
+<dd><p>The currently selected item from the collection. If this value
+is set to a value that is not in <tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt> then the computed
+<tt class="xref py py-attr docutils literal"><span class="pre">index</span></tt> will be -1.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.index">
+<tt class="descname">index</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.index" title="Permalink to this definition">¶</a></dt>
+<dd><p>The integer index of the current selection in items. If the index
+is out of range of <tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt> then the index it is set to -1,
+and the current <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt> is left unchanged.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.to_string">
+<tt class="descname">to_string</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.to_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>A callable which will convert the objects in the items list to
+strings for display. Defaults to str.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.labels">
+<tt class="descname">labels</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.labels" title="Permalink to this definition">¶</a></dt>
+<dd><p>A readonly property that holds the component items as a list of
+strings that are produced by the <tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt> attribute.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.selected_text">
+<tt class="descname">selected_text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.selected_text" title="Permalink to this definition">¶</a></dt>
+<dd><p>A readonly property that will return the result of calling
+<tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt> on <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.selected">
+<tt class="descname">selected</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.selected" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fired when a new selection is made by the user through the ui,
+but not when changed programatically. The args object will contain
+the selected value.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.hug_width">
+<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.hug_width" title="Permalink to this definition">¶</a></dt>
+<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. ComboBoxes hug
+width weakly, by default.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.combo_box.ComboBox.abstract_obj">
+<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.abstract_obj" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class trait</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -108,7 +199,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="std_library_ref.html" title="Enaml Standard library components"
+          <a href="std_library_ref.html" title="Enaml Standard Widget Library (derived)"
              >next</a> |</li>
         <li class="right" >
           <a href="grammar_ref.html" title="Enaml Grammar Reference"
@@ -116,15 +207,15 @@
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Technical Reference</a> &raquo;</li>
   
-    <li><a href="#">Enaml Built-in Components</a></li>
+    <li><a href="#">Enaml Built-in Widgets</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 26, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Last updated on Dec 30, 2011.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
     </div>
   </body>
 </html>
