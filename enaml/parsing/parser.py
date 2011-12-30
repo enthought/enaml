@@ -185,20 +185,30 @@ def p_declaration_body1(p):
 
 
 def p_declaration_body2(p):
+    ''' declaration_body : NEWLINE INDENT identifier DEDENT '''
+    p[0] = ('', p[3], [])
+
+
+def p_declaration_body3(p):
     ''' declaration_body : NEWLINE INDENT identifier declaration_body_items DEDENT '''
     # Filter out any pass statements
     items = filter(None, p[4])
     p[0] = ('', p[3], items)
 
 
-def p_declaration_body3(p):
+def p_declaration_body4(p):
     ''' declaration_body : NEWLINE INDENT STRING NEWLINE declaration_body_items DEDENT '''
     # Filter out any pass statements
     items = filter(None, p[5])
     p[0] = (p[3], None, items)
 
 
-def p_declaration_body4(p):
+def p_declaration_body5(p):
+    ''' declaration_body : NEWLINE INDENT STRING NEWLINE identifier DEDENT '''
+    p[0] = (p[3], p[5], [])
+
+
+def p_declaration_body6(p):
     ''' declaration_body : NEWLINE INDENT STRING NEWLINE identifier declaration_body_items DEDENT '''
     # Filter out any pass statements
     items = filter(None, p[6])
@@ -259,6 +269,11 @@ def p_instantiation_body1(p):
 
 
 def p_instantiation_body2(p):
+    ''' instantiation_body : NEWLINE INDENT identifier DEDENT '''
+    p[0] = (p[3], [])
+
+
+def p_instantiation_body3(p):
     ''' instantiation_body : NEWLINE INDENT identifier instantiation_body_items DEDENT '''
     # Filter out any pass statements
     items = filter(None, p[4])
