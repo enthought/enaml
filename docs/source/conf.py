@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.abspath('./sphinxext'))
 # -- General configuration -----------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-needs_sphinx = '1.0'
+needs_sphinx = '1.0.7'
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
@@ -112,8 +112,12 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 ##inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
 ##                              color='dodgerblue1', style='filled')
 
-inheritance_graph_attrs = dict(rankdir="LR", size='"20.0, 20.0"',
-                               fontsize=14, ratio='compress')
+inheritance_graph_attrs = dict(
+    #rankdir="LR",
+    size='"8.0, 20.0"',
+    fontsize=14,
+    ratio='compress'
+    )
 
 autosummary_generate = True
 
