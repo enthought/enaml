@@ -1,0 +1,10 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+defn MyMessageToTheWorld(message):
+    Window:
+        Label:
+            text = message
+            
