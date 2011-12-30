@@ -58,3 +58,11 @@ Standard Library Examples
 
     ex_radio_group
     ex_stacked
+
+Chaco Plot Examples
+-------------------------------------------------------------------------------
+
+.. toctree::
+
+    ex_sine_plot
+    ex_lotka_volterra
