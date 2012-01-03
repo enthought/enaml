@@ -149,22 +149,13 @@ class Include(BaseComponent):
             child._setup_parent_refs()
         
         for child in cmpnts:
-            child._setup_init_hooks()
-        
-        for child in cmpnts:
             child._setup_create_widgets(toolkit_parent)
-        
-        for child in cmpnts:
-            child._setup_final_hooks()
             
         for child in cmpnts:
             child._setup_init_widgets()
 
         for child in cmpnts:
             child._setup_bind_widgets()
-
-        for child in cmpnts:
-            child._setup_bind_hooks()
                 
         for child in cmpnts:
             child._setup_listeners()

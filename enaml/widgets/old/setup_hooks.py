@@ -48,7 +48,7 @@ class ExpressionDefaultTrait(TraitType):
         if name in dct:
             res = dct[name]
         else:
-            res = dct[name] = self.expression.eval_expression()
+            res = dct[name] = self.expression.eval()
         return res
 
 
@@ -73,10 +73,6 @@ class AbstractSetupHook(object):
     def finalize(self, component):
         raise NotImplementedError
 
-    @abstractmethod
-    def bind(self, component):
-        raise NotImplementedError
-
 
 class ExpressionSetupHook(AbstractSetupHook):
     """ A SetupHook for binding expressions to attributes on an instance
@@ -91,44 +87,9 @@ class ExpressionSetupHook(AbstractSetupHook):
         self.eval_default = eval_default
 
     def initialize(self, component):
-        """ A setup hook method which sets up the expression before the
-        'create' method on a component is called. This initialization
-        allows the expression to be used during the call to 'create'.
-
-        """
-        # We want to setup the expressions before we create and
-        # initialize the widgets so that values computed from the
-        # expression can be used to select an appropriate widget
-        # if necessary.
-        self.setup_expression(component)
-
-    def finalize(self, component):
-        """ A setup hook method which finalizes the expression by
-        evaluating it and assigning the value as the default value
-        of the component attribute if necessary.
-
-        """
-        # Now that all of the widgets have been created, we are done
-        # with the process of creating objects in the tree. So, we
-        # can safetly evaluate our expression and assign its value
-        # to the attribute on the component, removing any instance
-        # traits we needed to add for initialization to work properly.
-        self.finalize_expression(component)
-
-    def bind(self, component):
-        """ A setup hook method which binds the expression listeners
-        after all of the widget event handlers have been set up.
-
-        """
-        # The last thing we need to do in the setup process is parse the
-        # expression and bind the updated listeners. We do this after 
-        # the ui toolkit has finished binding its own event handlers.
-        self.expression.bind()
-        
-    def setup_expression(self, component):
         """ Sets up the expression for use on a component. This involves
-        adding special temporary instance traits to the component so 
-        that the default value is properly retrieved from the expression.
+        adding special temporary instance traits to the component so that
+        the default value is properly retrieved from the expression.
 
         """
         name = self.name
@@ -141,18 +102,14 @@ class ExpressionSetupHook(AbstractSetupHook):
         # where we are creating a new trait, there is notifier management
         # that needs to take place here since the trait may already have
         # notifiers associated with it. Also, for things like property
-        # traits and delegates, simple setting the default value method
-        # won't work. So, we add an Any and later on do setattr with the
-        # computed value after we remove the Any trait. The eval default
-        # flag indictates we have an expression that is right associative
-        # and so we don't care about the value of the expression.
-        if name in component.class_traits():
-            if eval_default:
-                component.add_trait(name, ExpressionDefaultTrait(expression))
-            else:
-                # we don't need to do anything special
-                pass
-
+        # traits and delegates, simply setting the default value method
+        # won't work. So, we add an Any trait, and later on perform a 
+        # setattr with the computed value after we remove the Any trait. 
+        # If the eval default flag is False, this indictates we have an 
+        # expression that is right associative and so we don't care about 
+        # the value of the expression.
+        if name in component.class_traits() and eval_default:
+            component.add_trait(name, ExpressionDefaultTrait(expression))
         # Otherwise, the user is defining their own attributes and we 
         # need to create an instance trait (if necessary, since it may have
         # been done once already) and then bind the default value (also if 
@@ -167,14 +124,14 @@ class ExpressionSetupHook(AbstractSetupHook):
             if trait is None:
                 trait = Any().as_ctrait()
             if eval_default:
-                dvf = lambda obj: expression.eval_expression()
+                dvf = lambda obj: expression.eval()
                 trait.default_value(8, dvf)
             component.add_trait(name, trait)
 
-    def finalize_expression(self, component):
+    def finalize(self, component):
         """ Finalizes the expression object by computing its value if 
         required, removing any appropriate instance traits, and setting
-        the value on component.
+        the value on the component.
 
         """
         # This method is called after all the widgets in the tree have
@@ -213,7 +170,7 @@ class ExpressionSetupHook(AbstractSetupHook):
         # like any other default value assignment.
         if eval_default:
             component.trait_setq(**{name: val})
-
+        
     def rebind(self, obj, name, notifier):
         """ Rebinds a HasTraits object's TraitChangeNotifyWrapper for 
         the trait of the given name.
