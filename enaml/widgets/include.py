@@ -239,6 +239,8 @@ class Include(BaseComponent):
                 self._components_updated = True
             self.relayout_enqueue(closure)
             
+    # This notifier is hooked up in the '_handle_initialized' method 
+    # due to issues surrounding trait_setq contexts.
     def _on_subcomponents_updated(self):
         """ Handles a '_components_updated' event being fired by one 
         the dynamic components. The event is proxied up the tree by
@@ -246,8 +248,6 @@ class Include(BaseComponent):
         Include to update its contents independent of the Include in
         which it is nested.
 
-        """
-        # This notifier is hooked up in the '_handle_initialized' method 
-        # due to issues surrounding trait_setq contexts.
+        """        
         self._components_updated = True
 
