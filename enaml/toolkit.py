@@ -46,7 +46,14 @@ class Constructor(HasStrictTraits):
         self.abstract_loader = abstract_loader
 
     def __call__(self, *args, **kwargs):
-        """ Calls the loaders and assembles the component.
+        """ Exposes the __enaml_call__ routine convienently to Python
+        code.
+
+        """
+        return self.__enaml_call__(*args, **kwargs)
+
+    def __enaml_call__(self, *args, **kwargs):
+        """ Calls the loaders and assembles and returns the component.
 
         """
         shell_cls = self.shell_loader()

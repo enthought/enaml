@@ -6,10 +6,102 @@ import itertools
 from functools import wraps
 import types
 
+from traits.api import HasStrictTraits, Any
+
 from . import byteplay
 
 from .. import imports
 from ..toolkit import Toolkit
+
+
+#------------------------------------------------------------------------------
+# Expression Locals
+#------------------------------------------------------------------------------
+class ExpressionLocals(HasStrictTraits):
+    """ A HasStrictTraits class which acts as a locals mapping object.
+    Each item in the locals is added as an Any trait on the object
+    so that notifiers can be attached to the locals. It provides the
+    special methods __getitem__, __setitem__, __contains__ and __len__
+    so that the object can be used like a dictionary.
+
+    """
+    def __init__(self, **values):
+        """ Initialize an ExpressionLocals instance.
+
+        Paramters
+        ---------
+        **values
+            The default key/value pairs to add to the locals object.
+        
+        """
+        super(ExpressionLocals, self).__init__()
+        for key, value in values.iteritems():
+            self.add_trait(key, Any)
+            setattr(self, key, value)
+
+    def __getitem__(self, name):
+        """ Returns the value for the name or raises a KeyError.
+
+        """
+        try:
+            return getattr(self, name)
+        except AttributeError:
+            raise KeyError(name)
+    
+    def __setitem__(self, name, value):
+        """ Sets the value for the name, creating the entry if required.
+
+        """
+        if name in self.__dict__:
+            setattr(self, name, value)
+        else:
+            self.add_trait(name, Any)
+            setattr(self, name, value)
+    
+    def __contains__(self, name):
+        """ Returns True if there is a value for the given name, False
+        otherwise.
+
+        """
+        return name in self.__dict__
+
+
+#------------------------------------------------------------------------------
+# Compiler Helpers
+#------------------------------------------------------------------------------
+def _var_name_generator():
+    """ Returns a generator that generates sequential variable names for
+    use in a code block.
+
+    """
+    count = itertools.count()
+    while True:
+        yield '_var_' + str(count.next())
+
+
+def _decl_wrapper_gen(func):
+    """ Wraps a generated function in a wrapper function which calls
+    into the enaml code path for creating the component. It also,
+    applies any given kwargs to the object before returning.
+
+    """
+    @wraps(func)
+    def wrapper(**kwargs):
+        obj = wrapper.__enaml_call__(None, None)
+        obj.trait_set(**kwargs)
+        return obj
+
+    @wraps(func)
+    def enaml_call(f_locals, toolkit):
+        if f_locals is None:
+            f_locals = ExpressionLocals()
+        if toolkit is None:
+            toolkit = Toolkit.active_toolkit()
+        return func(f_locals, toolkit)
+
+    wrapper.__enaml_call__ = enaml_call
+
+    return wrapper
 
 
 #------------------------------------------------------------------------------
@@ -40,35 +132,6 @@ class _NodeVisitor(object):
 
 
 #------------------------------------------------------------------------------
-# Compiler Helpers
-#------------------------------------------------------------------------------
-def _var_name_generator():
-    """ Returns a generator that generates sequential variable names for
-    use in a code block.
-
-    """
-    count = itertools.count()
-    while True:
-        yield '_var_' + str(count.next())
-
-
-def _decl_wrapper_gen(func):
-    """ Wraps a generated declaration function in a wrapper which creates
-    the identifier scope if necessary, and loads the active toolkit if
-    necessary.
-
-    """
-    @wraps(func)
-    def wrapper(identifiers=None, toolkit=None):
-        if identifiers is None:
-            identifiers = {}
-        if toolkit is None:
-            toolkit = Toolkit.active_toolkit()
-        return func(identifiers, toolkit)
-    return wrapper
-
-
-#------------------------------------------------------------------------------
 # Declaration Compiler
 #------------------------------------------------------------------------------
 class DeclarationCompiler(_NodeVisitor):
@@ -86,28 +149,28 @@ class DeclarationCompiler(_NodeVisitor):
 
         Given this sample declaration:
           
-            FooWindow(Window) foo:
+            FooWindow(Window) 
+                id: foo
                 a = '12'
-                PushButton button:
+                PushButton:
+                    id: btn
                     text = 'clickme'
         
         We generate bytecode that would correspond to a function that 
         looks similar to this:
         
-            def FooWindow(identifiers, toolkit):
+            def FooWindow(f_locals, toolkit):
                 f_globals = globals()
-                foo = eval('Window', toolkit, f_globals)(identifiers, 
-                                                         toolkit)
-                identifiers['foo'] = foo
+                foo_cls = eval('Window', toolkit, f_globals)
+                foo = foo_cls.__enaml_call__(f_locals, toolkit)
+                f_locals['foo'] = foo
                 op = eval('__operator_Equal__', toolkit, f_globals)
-                op(foo, 'a', <ast for '12'>, <code for '12'>, 
-                   f_globals, identifiers)
-                button = eval('PushButton', toolkit, f_globals)(identifiers, 
-                                                                toolkit)
-                identifiers['button'] = button
+                op(foo, 'a', <ast>, <code>, f_locals, f_globals, toolkit)
+                btn_cls = eval('PushButton', toolkit, f_globals)
+                btn = btn_cls.__enaml_call__(None, toolkit)
+                f_locals['btn'] = button
                 op = eval('__operator_Equal__', toolkit, f_globals)
-                op(item, 'text', <ast for 'clickme'>, <code for 'clickme'>, 
-                   f_globals, identifiers)
+                op(item, 'text', <ast>, <code>, f_locals, f_globals, toolkit)
                 foo._subcomponents.append(button)
                 return foo
         
@@ -115,7 +178,7 @@ class DeclarationCompiler(_NodeVisitor):
         compiler = cls()
         compiler.visit(node)
         ops = compiler.ops
-        code = byteplay.Code(ops, [], ['identifiers', 'toolkit'], False, False,
+        code = byteplay.Code(ops, [], ['f_locals', 'toolkit'], False, False,
                              True, node.name, 'Enaml', node.lineno, node.doc)
         return code.to_code()
 
@@ -137,13 +200,15 @@ class DeclarationCompiler(_NodeVisitor):
             (bp.CALL_FUNCTION, 0x0000),
             (bp.STORE_FAST, 'f_globals'),
 
-            # foo = eval('Window', toolkit, f_globals)(identifiers, toolkit)
+            # foo_cls = eval('Window', toolkit, f_globals)
+            # foo = foo_cls.__enaml_call__(f_locals, toolkit)
             (bp.LOAD_CONST, eval),
             (bp.LOAD_CONST, node.base.code),
             (bp.LOAD_FAST, 'toolkit'),
             (bp.LOAD_FAST, 'f_globals'),
             (bp.CALL_FUNCTION, 0x0003),
-            (bp.LOAD_FAST, 'identifiers'),
+            (bp.LOAD_ATTR, '__enaml_call__'),
+            (bp.LOAD_FAST, 'f_locals'),
             (bp.LOAD_FAST, 'toolkit'),
             (bp.CALL_FUNCTION, 0x0002),
             (bp.STORE_FAST, name),
@@ -151,9 +216,9 @@ class DeclarationCompiler(_NodeVisitor):
 
         if node.identifier:
             ops.extend([
-                # identifiers['foo'] = foo
+                # f_locals['foo'] = foo
                 (bp.LOAD_FAST, name),
-                (bp.LOAD_FAST, 'identifiers'),
+                (bp.LOAD_FAST, 'f_locals'),
                 (bp.LOAD_CONST, node.identifier),
                 (bp.STORE_SUBSCR, None),
             ])
@@ -189,7 +254,7 @@ class DeclarationCompiler(_NodeVisitor):
         # operator function and passing it the a number of arguments:
         #
         # op = eval('__operator_Equal__', toolkit, f_globals)
-        # op(item, 'a', <ast>, <code>, f_globals, toolkit, identifiers)
+        # op(item, 'a', <ast>, <code>, f_locals, f_globals, toolkit)
         ops.extend([
             (bp.LOAD_CONST, eval),
             (bp.LOAD_CONST, op_code),
@@ -200,9 +265,9 @@ class DeclarationCompiler(_NodeVisitor):
             (bp.LOAD_CONST, node.name),
             (bp.LOAD_CONST, expr_ast),
             (bp.LOAD_CONST, expr_code),
+            (bp.LOAD_FAST, 'f_locals'),
             (bp.LOAD_FAST, 'f_globals'),
             (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'identifiers'),
             (bp.CALL_FUNCTION, 0x0007),
             (bp.POP_TOP, None),
         ])
@@ -223,15 +288,18 @@ class DeclarationCompiler(_NodeVisitor):
 
         op_code = compile(node.name, 'Enaml', mode='eval')
         ops.extend([
+            # btn_cls = eval('PushButton', toolkit, f_globals)
+            # btn = btn_cls.__enaml_call__(None, toolkit)
+            # When instantiating a Declaration, it is called without
+            # f_locals, so that it creates it's own new expr locals
+            # scope. This means that derived declarations share ids,
+            # but the composed children have an isolated id space.
             (bp.LOAD_CONST, eval),
             (bp.LOAD_CONST, op_code),
             (bp.LOAD_FAST, 'toolkit'),
             (bp.LOAD_FAST, 'f_globals'),
             (bp.CALL_FUNCTION, 0x0003),
-            # When instantiating a Declaration, it is called without
-            # identifiers, so that it creates it's own new identifier
-            # scope. This means that derived declarations share ids,
-            # but the composed children have an isolated id space.
+            (bp.LOAD_ATTR, '__enaml_call__'),
             (bp.LOAD_CONST, None),
             (bp.LOAD_FAST, 'toolkit'),
             (bp.CALL_FUNCTION, 0x0002),
@@ -241,7 +309,7 @@ class DeclarationCompiler(_NodeVisitor):
         if node.identifier:
             ops.extend([
                 (bp.LOAD_FAST, name),
-                (bp.LOAD_FAST, 'identifiers'),
+                (bp.LOAD_FAST, 'f_locals'),
                 (bp.LOAD_CONST, node.identifier),
                 (bp.STORE_SUBSCR, None),
             ])
@@ -330,31 +398,18 @@ class DefnCompiler(_NodeVisitor):
         name = self.name_gen.next()
         name_stack.append(name)
 
-        # defn FooBar(a, b, c):
-        #     f_locals = locals()
-        #     identifiers = {}
-        #     identifiers.update(f_locals)
+        # def FooBar(a, b, c):
+        #     f_locals = ExpressionLocals(**locals())
         #     f_globals = globals()
         #     toolkit = Toolkit.active_toolkit()
-        #     merged_globals = {}
-        #     merged_globals.update(toolkit)
-        #     merged_globals.update(f_globals)
         #     root = _DefnCollector()
         ops.extend([
-            # f_locals = locals()
+            # f_locals = ExpressionLocals(**locals())
+            (bp.LOAD_CONST, ExpressionLocals),
             (bp.LOAD_GLOBAL, 'locals'),
             (bp.CALL_FUNCTION, 0x0000),
+            (bp.CALL_FUNCTION_KW, 0x0000),
             (bp.STORE_FAST, 'f_locals'),
-
-            # identifiers = {}
-            # identifiers.update(f_locals)
-            (bp.BUILD_MAP, 0),
-            (bp.DUP_TOP, 0),
-            (bp.LOAD_ATTR, 'update'),
-            (bp.LOAD_FAST, 'f_locals'),
-            (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
-            (bp.STORE_FAST, 'identifiers'),
 
             # f_globals = globals()
             (bp.LOAD_GLOBAL, 'globals'),
@@ -366,21 +421,6 @@ class DefnCompiler(_NodeVisitor):
             (bp.LOAD_ATTR, 'active_toolkit'),
             (bp.CALL_FUNCTION, 0x0000),
             (bp.STORE_FAST, 'toolkit'),
-
-            # eval_globals = {}
-            # eval_globals.update(toolkit)
-            # eval_globals.update(f_globals)
-            (bp.BUILD_MAP, 0),
-            (bp.DUP_TOP, None),
-            (bp.LOAD_ATTR, 'update'),
-            (bp.DUP_TOP, None),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
-            (bp.STORE_FAST, 'merged_globals'),
 
             # root = _DefnCollector()
             (bp.LOAD_CONST, _DefnCollector),
@@ -420,21 +460,21 @@ class DefnCompiler(_NodeVisitor):
         # A binding is accomplished by loading the appropriate binding
         # operator function and passing it the a number of arguments:
         #
-        # op = eval('__operator_Equal__', merged_globals, f_locals)
-        # op(item, 'a', <ast>, <code>, f_globals, toolkit, identifiers)
+        # op = eval('__operator_Equal__', toolkit, f_globals)
+        # op(item, 'a', <ast>, <code>, f_locals, f_globals, toolkit)
         ops.extend([
             (bp.LOAD_CONST, eval),
             (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'merged_globals'),
-            (bp.LOAD_FAST, 'f_locals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
             (bp.CALL_FUNCTION, 0x0003),
             (bp.LOAD_FAST, name_stack[-1]),
             (bp.LOAD_CONST, node.name),
             (bp.LOAD_CONST, expr_ast),
             (bp.LOAD_CONST, expr_code),
+            (bp.LOAD_FAST, 'f_locals'),
             (bp.LOAD_FAST, 'f_globals'),
             (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'identifiers'),
             (bp.CALL_FUNCTION, 0x0007),
             (bp.POP_TOP, None),
         ])
@@ -455,12 +495,14 @@ class DefnCompiler(_NodeVisitor):
 
         op_code = compile(node.name, 'Enaml', mode='eval')
         ops.extend([
-            # item = eval('Foo', merged_globals, f_locals)(None, toolkit)
+            # item_cls = eval('Foo', toolkit, f_globals)
+            # item = item_cls.__enaml_call__(None, toolkit)
             (bp.LOAD_CONST, eval),
             (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'merged_globals'),
-            (bp.LOAD_FAST, 'f_locals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
             (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_ATTR, '__enaml_call__'),
             (bp.LOAD_CONST, None),
             (bp.LOAD_FAST, 'toolkit'),
             (bp.CALL_FUNCTION, 0x0002),
@@ -470,7 +512,7 @@ class DefnCompiler(_NodeVisitor):
         if node.identifier:
             ops.extend([
                 (bp.LOAD_FAST, name),
-                (bp.LOAD_FAST, 'identifiers'),
+                (bp.LOAD_FAST, 'f_locals'),
                 (bp.LOAD_CONST, node.identifier),
                 (bp.STORE_SUBSCR, None),
             ])
