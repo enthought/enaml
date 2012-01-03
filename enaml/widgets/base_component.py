@@ -23,7 +23,7 @@ class ExpressionTrait(TraitType):
     binding.
 
     """
-    def __init__(self, proxy_name, init_quietly):
+    def __init__(self, proxy_name):
         """ Initialize an expression trait.
 
         Parameters
@@ -38,7 +38,6 @@ class ExpressionTrait(TraitType):
         """
         super(ExpressionTrait, self).__init__()
         self.proxy_name = proxy_name
-        self.init_quietly = init_quietly
         self.inited = False
 
     def init_expr(self, obj, name):
@@ -48,26 +47,17 @@ class ExpressionTrait(TraitType):
         as changes to this expression trait.
 
         """
-        # We have to set .inited to True immediately, since the various
-        # calls made in this method (like .eval()) may trigger recursion. 
-        # If we don't set it immediately, the recursion may be infinite 
-        # and everything will break.
-        # 
-        # XXX - any negative side effects for setting immediately?
-        self.inited = True
-
         # First, hook up a notifier on the proxy trait that will 
         # forward the notifications as if they were made from this
-        # trait.
-        wr_self = weakref.ref(self)
+        # trait as given by the argument 'name'.
         def notify(target_obj, target_name, old, new):
-            this = wr_self()
-            if this is not None:
-                if target_name.endswith('_items'):
-                    changed_name = name + '_items'
-                else:
-                    changed_name = name
-                target_obj.trait_property_changed(changed_name, old, new)
+            # If the change event was an items event on a List, Dict, 
+            # or Set, the proxied event needs to be an items event.
+            if target_name.endswith('_items'):
+                changed_name = name + '_items'
+            else:
+                changed_name = name
+            target_obj.trait_property_changed(changed_name, old, new)
         
         # Traits magic numbers 5, 6, 9 correspond to List, Dict,
         # and Set, respectively. If we are proxying to one of those 
@@ -77,12 +67,18 @@ class ExpressionTrait(TraitType):
             bind_name = self.proxy_name + '_items'
         else:
             bind_name = self.proxy_name
+        
+        # Set the target of the notifier to self so that the notifier
+        # gets destroyed when the object which contains this trait is
+        # destroyed.
         obj.on_trait_change(notify, bind_name, target=self)
 
         # Next, eval the expression and set the value of the proxy,
-        # silencing notifiers if necessary.
+        # silencing notifiers if the object is not initialized since
+        # attribute assigment before initialization should appear as
+        # a default value assignment which does not fire notifiers.
         val = obj._expressions[name].eval()
-        if self.init_quietly:
+        if not obj.initialized:
             obj.trait_setq(**{self.proxy_name: val})
         else:
             setattr(obj, self.proxy_name, val)
@@ -93,6 +89,11 @@ class ExpressionTrait(TraitType):
 
         """
         if not self.inited:
+            # We need to flip the flag to True before initing the
+            # expression since the act of evaluating the expression
+            # may cause recursion into this get method which would
+            # then infinitely recurse.
+            self.inited = True
             self.init_expr(obj, name)
         return getattr(obj, self.proxy_name)
 
@@ -102,6 +103,11 @@ class ExpressionTrait(TraitType):
 
         """
         if not self.inited:
+            # We need to flip the flag to True before initing the
+            # expression since the act of evaluating the expression
+            # may cause recursion into this get method which would
+            # then infinitely recurse.
+            self.inited = True
             self.init_expr(obj, name)
         setattr(obj, self.proxy_name, val)
 
@@ -433,7 +439,7 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Attribute Binding 
     #--------------------------------------------------------------------------
-    def bind_expression(self, name, expression, init_quietly=True):
+    def bind_expression(self, name, expression):
         """ Binds the given expression to the attribute 'name'. If
         the attribute does not exist, one is created.
 
@@ -458,7 +464,7 @@ class BaseComponent(HasStrictTraits):
         # and notification.  
         self._expressions[name] = expression
         current_trait = self.trait(name)
-        proxy_name = '_enaml_expression_trait_' + name
+        proxy_name = '_enaml_expr_trait_' + name
 
         # If this is the first time binding the expression, move the
         # current trait to its new proxy location.
@@ -472,7 +478,7 @@ class BaseComponent(HasStrictTraits):
         
         # Once the proxy is setup properly, we can add a new expression
         # trait at the given attribute location.
-        expr_trait = ExpressionTrait(proxy_name, init_quietly)
+        expr_trait = ExpressionTrait(proxy_name)
         self.add_trait(name, expr_trait)
 
     #--------------------------------------------------------------------------
