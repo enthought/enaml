@@ -5,7 +5,9 @@
 from abc import abstractmethod
 from datetime import datetime as py_datetime
 
-from traits.api import Property, BaseInstance, Instance, TraitError
+from traits.api import (
+    Property, BaseInstance, Instance, TraitError, on_trait_change,
+)
 
 from .control import Control, AbstractTkControl
 
@@ -85,7 +87,6 @@ class BoundedDatetime(Control):
             msg = msg.format(self.max_datetime, datetime)
             raise TraitError(msg)
         self._min_datetime = datetime
-        self._adapt_datetime()
 
     def _set_max_datetime(self, datetime):
         """ Set the max_datetime.
@@ -101,7 +102,6 @@ class BoundedDatetime(Control):
             msg = msg.format(self.min_datetime, datetime)
             raise TraitError(msg)
         self._max_datetime = datetime
-        self._adapt_datetime()
 
     def _get_max_datetime(self):
         """ The property getter for the max datetime.
@@ -115,13 +115,12 @@ class BoundedDatetime(Control):
         """
         return self._min_datetime
 
-    # FIXME: I would like to have this method use the on_change decorator, but
-    # it should not be run while the component is initialized so that an
-    # exception is raised when the enaml source contains invalid values.
+    @on_trait_change('min_datetime, max_datetime')
     def _adapt_datetime(self):
         """ Adapt the date to the bounderies
 
         """
-        min_dt, max_dt = self.min_datetime, self.max_datetime
-        self.datetime = min(max(self.datetime, min_dt), max_dt)
+        if self.initialized:
+            min_dt, max_dt = self.min_datetime, self.max_datetime
+            self.datetime = min(max(self.datetime, min_dt), max_dt)
 
