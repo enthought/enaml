@@ -148,13 +148,12 @@ class Bounded(TraitType):
             if isinstance(raised_exception, TraitError):
                 raise raised_exception
             else:
-                msg = ("Bound checking of {0} caused a the following Python "
-                       "Exception: {1}").format(value, raised_exception)
+                msg = ('Bound checking of {0} caused a the following Python '
+                       'Exception: {1}'.format(value, raised_exception))
                 raise TraitError(msg)
         if not is_inside_bounds:
-            msg = ('The assigned date value of must be bounded between {0} '
-                   ' and {1}, the input value was {2}'.\
-                   format(low, high, value))
+            msg = ('The assigned date value must be bounded between {0} '
+                   ' and {1}. Got {2} instead.'.format(low, high, value))
             raise TraitError(msg)
 
         return value
