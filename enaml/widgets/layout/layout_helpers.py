@@ -51,7 +51,7 @@ def clear_invisible(items):
     """
     visible = []
     for item in items:
-        if isinstance(item, (Component, LinearBoxHelper)) and not item.visible:
+        if isinstance(item, Constrainable) and not item.visible:
             if len(visible) > 0 and is_spacer(visible[-1]):
                 visible.pop()
         else:
@@ -236,6 +236,8 @@ class LinearBoxHelper(DeferredConstraints, Constrainable):
     @property
     def visible(self):
         """ True if there is a visible item in the list.
+
+        This helps satisfy the `Constrainable` interface.
 
         """
         visible = clear_invisible(self.items) != []
