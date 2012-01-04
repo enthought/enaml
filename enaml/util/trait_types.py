@@ -102,20 +102,33 @@ class Bounded(TraitType):
 
         """
         if isinstance(value, CTrait):
+            self.validate = self.validate_with_trait
             default_value = value.default
         else:
-            default_value = value
+            self.validate = self.validate_bounds
+            if value is None:
+                if low is not None:
+                    value = default_value = low
+                else:
+                    value = default_value = high
+            else:
+                default_value = value
 
         super(Bounded, self).__init__(default_value, **metadata)
 
         self._high = high
         self._low = low
+        self._value = value
 
-        if (isinstance(value, CTrait)) and (value is not Any):
-            self._value_type = value
-            self.validate = self.validate_with_trait
-        else:
-            self.validate = self.validate_bounds
+        if isinstance(value, basestring):
+            self.default_value_type = 8
+            self.default_value = self._get_default_value
+    
+    def _get_default_value(self, obj):
+        """ Handles computing the default value for the Bounded trait.
+
+        """
+        return reduce(getattr, self._value.split('.'), obj)
 
     def validate_with_trait(self, obj, name, value):
         """ Validate the trait value.
@@ -125,8 +138,8 @@ class Bounded(TraitType):
         #. The value it is between the static (or dynamic) bounds.
 
         """
-        value_type = self._value_type
-        value = value_type.validate(obj, name, value)
+        value_trait = self._value
+        value = value_trait.validate(obj, name, value)
         return self.validate_bounds(obj, name, value)
 
     def validate_bounds(self, obj, name, value):
@@ -141,6 +154,7 @@ class Bounded(TraitType):
             low = value
         if high is None:
             high = value
+        
         is_inside_bounds = False
         try:
             is_inside_bounds = (low <= value <= high)
@@ -151,6 +165,7 @@ class Bounded(TraitType):
                 msg = ('Bound checking of {0} caused a the following Python '
                        'Exception: {1}'.format(value, raised_exception))
                 raise TraitError(msg)
+        
         if not is_inside_bounds:
             msg = ('The assigned date value must be bounded between {0} '
                    ' and {1}. Got {2} instead.'.format(low, high, value))
@@ -161,14 +176,14 @@ class Bounded(TraitType):
     def get_bounds(self, obj):
         """ Get the lower and upper bounds of the Trait.
 
-        .. note:: The method supports dynamic values (class traits).
-
         """
-        low, high = self._low, self._high
+        low = self._low
         if isinstance(low, basestring):
             low = reduce(getattr, low.split('.'), obj)
-
+        
+        high = self._high
         if isinstance(high, basestring):
             high = reduce(getattr, high.split('.'), obj)
 
-        return low, high
+        return (low, high)
+
