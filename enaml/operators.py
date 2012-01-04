@@ -2,29 +2,27 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .expressions import (SimpleExpression, UpdatingExpression, 
+from .expressions import (SimpleExpression, SubscriptionExpression, 
                           DelegatingExpression, NotifyingExpression)
-from .widgets.setup_hooks import ExpressionSetupHook
 
 
-def operator_factory(expression_class, eval_default=True):
-    """ A factory function which creates an Enaml operator function 
-    for an implementor of enaml.expresssions.AbstractExpression. The
-    created operator will setup an appropriate SetupHook for the 
-    component so that the expression is properly bound at run time.
+def op_simple(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
+    expr = SimpleExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
+    cmpnt.bind_expression(attr, expr)
 
-    """
-    def operator(component, attr, ast, code, f_globals, toolkit, f_locals):
-        """ The default Enaml expression operator. It uses an implementor
-        of AbstractExpression to bind a python expression to a component
-        at run time.
 
-        """
-        expression = expression_class(component, attr, ast, code,
-                                      f_globals, toolkit, f_locals)
-        hook = ExpressionSetupHook(attr, expression, eval_default)
-        component.setup_hooks.append(hook)
-    return operator
+def op_subscribe(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
+    expr = SubscriptionExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
+    cmpnt.bind_expression(attr, expr)
+
+
+def op_delegate(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
+    expr = DelegatingExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
+    cmpnt.bind_expression(attr, expr)
+
+
+def op_notify(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
+    NotifyingExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
 
 
 #: The builtin Enaml expression operators
@@ -35,9 +33,9 @@ def operator_factory(expression_class, eval_default=True):
 #:    '>>' : A dynamically notifying expression
 #:
 OPERATORS = {
-    '__operator_Equal__': operator_factory(SimpleExpression),
-    '__operator_LessLess__': operator_factory(UpdatingExpression),
-    '__operator_ColonEqual__': operator_factory(DelegatingExpression),
-    '__operator_GreaterGreater__': operator_factory(NotifyingExpression, False),
+    '__operator_Equal__': op_simple,
+    '__operator_LessLess__': op_subscribe,
+    '__operator_ColonEqual__': op_delegate,
+    '__operator_GreaterGreater__': op_notify,
 }
 

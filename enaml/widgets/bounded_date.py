@@ -5,7 +5,7 @@
 from abc import abstractmethod
 from datetime import date
 
-from traits.api import Date, Instance, Property, TraitError
+from traits.api import Date, Instance, Property, TraitError, on_trait_change
 
 from .control import Control, AbstractTkControl
 
@@ -75,7 +75,6 @@ class BoundedDate(Control):
             msg = msg.format(self.max_date, date)
             raise TraitError(msg)
         self._min_date = date
-        self._adapt_date()
 
     def _set_max_date(self, date):
         """ Set the max_date. Addtional checks are applied to make sure
@@ -88,7 +87,6 @@ class BoundedDate(Control):
             msg = msg.format(self.min_date, date)
             raise TraitError(msg)
         self._max_date = date
-        self._adapt_date()
 
     def _get_max_date(self):
         """ The property getter for the maximum date.
@@ -101,10 +99,12 @@ class BoundedDate(Control):
 
         """
         return self._min_date
-
+    
+    @on_trait_change('min_date, max_date')
     def _adapt_date(self):
         """ Adapt the date to the bounderies
 
         """
-        self.date = min(max(self.date, self.min_date), self.max_date)
+        if self.initialized:
+            self.date = min(max(self.date, self.min_date), self.max_date)
 

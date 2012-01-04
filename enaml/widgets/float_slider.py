@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
 from traits.api import Constant, Float, Property, Range, TraitError
 
 from .slider import Slider, AbstractTkSlider, MAX_SLIDER_VALUE
@@ -10,7 +9,6 @@ from .slider import Slider, AbstractTkSlider, MAX_SLIDER_VALUE
 
 class AbstractTkFloatSlider(AbstractTkSlider):
     pass
-
 
 
 class FloatSlider(Slider):
@@ -40,10 +38,6 @@ class FloatSlider(Slider):
     #: The number of integer steps allowed by the slider. Default value is 100.
     precision = Range(value=100, low=1, high=MAX_SLIDER_VALUE)
 
-    #: The position value of the Slider. The bounds are defined by
-    #: :attr:minimum: and :attr:maximum:.
-    value = Range(low='minimum', high='maximum')
-
     #: The interval to put between tick marks in integer units step units.
     #: Default value is `10`.
     tick_interval = Range(low='_one', high='precision', value=10, exclude_high=True)
@@ -53,14 +47,13 @@ class FloatSlider(Slider):
     #: user presses the page_up/page_down keys. Default is 10.
     page_step = Range(low='_one', high='precision', value=10)
 
-
     #--------------------------------------------------------------------------
     # Property methods
     #--------------------------------------------------------------------------
-
     def _set_minimum(self, value):
         """ The property setter for the 'minimum' attribute. This
         validates that the value is always smaller than :attr:`maximum`.
+        This is an overridden parent class method.
 
         """
         if (value > self.maximum):
@@ -69,19 +62,13 @@ class FloatSlider(Slider):
                    'but a value of {1} was given')
             msg = msg.format(self.maximum, value)
             raise TraitError(msg)
-
-        # The Range Trait will not fire a change notification when the 
-        # dynamic bounds cause a value change. So, we perform the check
-        # and make sure the value is properly updated, which will fire
-        # a change event on its own.
-        position = self.value
-        if position < value:
-            self.value = value
-        self._minimum = value
+        else:
+            self._minimum = value
 
     def _set_maximum(self, value):
         """ The property setter for the 'maximum' attribute. This
         validates that the value is always larger than :attr:`minimum`.
+        This is an overridden parent class method.
 
         """
         if (value < self.minimum):
@@ -90,26 +77,22 @@ class FloatSlider(Slider):
                    "but a value of {1} was given")
             msg = msg.format(self.minimum, value)
             raise TraitError(msg)
-
-        # The Range Trait will not fire a change notification when the 
-        # dynamic bounds cause a value change. So, we perform the check
-        # and make sure the value is properly updated, which will fire
-        # a change event on its own.
-        position = self.value
-        if position > value:
-            self.value = value
-        self._maximum = value
+        else:
+            self._maximum = value
 
     def _get_maximum(self):
-        """ The property getter for the slider maximum.
+        """ The property getter for the slider maximum. Even though this
+        is identical to the parent class method, it is required since we
+        redefine the property on this class.
 
         """
         return self._maximum
 
     def _get_minimum(self):
-        """ The property getter for the slider minimum.
+        """ The property getter for the slider minimum. Even though this
+        is identical to the parent class method, it is required since we
+        redefine the property on this class.
 
         """
         return self._minimum
-
-
+        

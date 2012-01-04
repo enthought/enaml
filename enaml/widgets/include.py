@@ -108,7 +108,7 @@ class Include(BaseComponent):
         return self._components
     
     def _set_components(self, val):
-        """ The property setter for the 'components' attribut. It 
+        """ The property setter for the 'components' attribute. It 
         converts a variety of acceptable values into a list that is 
         stored in the '_components' attribute.
 
@@ -149,22 +149,13 @@ class Include(BaseComponent):
             child._setup_parent_refs()
         
         for child in cmpnts:
-            child._setup_init_hooks()
-        
-        for child in cmpnts:
             child._setup_create_widgets(toolkit_parent)
-        
-        for child in cmpnts:
-            child._setup_final_hooks()
             
         for child in cmpnts:
             child._setup_init_widgets()
 
         for child in cmpnts:
             child._setup_bind_widgets()
-
-        for child in cmpnts:
-            child._setup_bind_hooks()
                 
         for child in cmpnts:
             child._setup_listeners()
@@ -240,7 +231,13 @@ class Include(BaseComponent):
         '_components_updated' event gets fired.
 
         """
-        if self.initialized:
+        # The first time a cached property is set, the notification
+        # handler will be sent None as the old value even if the 
+        # property getter points to something that has a value. In 
+        # all other cases, it works as expected. We guard against
+        # that condition as well a making sure the object is fully
+        # initialized before destroying any of the old children.
+        if self.initialized and old is not None:
             def closure():
                 for item in old:
                     item.destroy()
@@ -248,6 +245,8 @@ class Include(BaseComponent):
                 self._components_updated = True
             self.relayout_enqueue(closure)
             
+    # This notifier is hooked up in the '_handle_initialized' method 
+    # due to issues surrounding trait_setq contexts.
     def _on_subcomponents_updated(self):
         """ Handles a '_components_updated' event being fired by one 
         the dynamic components. The event is proxied up the tree by
@@ -255,8 +254,6 @@ class Include(BaseComponent):
         Include to update its contents independent of the Include in
         which it is nested.
 
-        """
-        # This notifier is hooked up in the '_handle_initialized' method 
-        # due to issues surrounding trait_setq contexts.
+        """        
         self._components_updated = True
 
