@@ -1,3 +1,7 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ UI for lotka_volterra.py
 
 Run lotka_volterra.py to view this demo.
@@ -5,11 +9,13 @@ Run lotka_volterra.py to view this demo.
 """
 
 :: python ::
+
 def pop_bounds(data_low, data_high, margin, tight_bounds):
     """ Return "nice" boundaries for the given population data range.
 
-    In this case, our lower bound is always 0. We round the high boundary up to
-    a nice multiple of 20.
+    In this case, our lower bound is always 0. We round the high boundary 
+    up to a nice multiple of 20.
+
     """
     q, r = divmod(data_high, 20.0)
     if r:
@@ -49,8 +55,15 @@ defn MainWindow(model):
             ytitle = 'Population'
             padding_right = 10
             padding_top = 10
+            bgcolor << color_selector.value
         Form:
             id: form
+            Label:
+                text = "Background Color:"
+            ComboBox:
+                id: color_selector
+                items = ['white', 'coral', 'lightblue', 'wheat']
+                value = items[0]
             Label:
                 text = "Initial Prey:"
             Range:
@@ -93,3 +106,4 @@ defn MainWindow(model):
                 minimum = 0.0
                 maximum = 2.0
                 value := model.predator_growth
+
