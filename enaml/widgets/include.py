@@ -155,6 +155,9 @@ class Include(BaseComponent):
             child._setup_init_widgets()
 
         for child in cmpnts:
+            child._setup_eval_expressions()
+
+        for child in cmpnts:
             child._setup_bind_widgets()
                 
         for child in cmpnts:
