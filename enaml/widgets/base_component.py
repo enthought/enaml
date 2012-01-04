@@ -577,15 +577,14 @@ class BaseComponent(HasStrictTraits):
 
     def _setup_init_layout(self):
         """ A setup method called at the end of the setup process, but 
-        before the 'initialized' attribute it set to True. By default, 
-        this method is a no-op and should be reimplemented by subclasses 
-        that need to perform some action for initializing the layout
-        of themselves or their children.
+        before the 'initialized' attribute it set to True. This setup
+        method is performed bottom-up so that children have a chance
+        to compute their sizes before reporting them to their parent.
 
         """
-        self.initialize_layout()
         for child in self._subcomponents:
             child._setup_init_layout()
+        self.initialize_layout()
 
     def _setup_set_initialized(self):
         """ A setup method whic ets the initialized attribute to True.
