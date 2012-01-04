@@ -22,99 +22,71 @@ class ExpressionTrait(TraitType):
     binding.
 
     """
-    def __init__(self, proxy_name):
+    def __init__(self, old_trait):
         """ Initialize an expression trait.
 
         Parameters
         ----------
-        proxy_name : string
-            The attribute name to which this trait is proxying.
-        
-        init_quietly : bool
-            Whether or not to silence trait listeners when initializing
-            the trait attribute from the value of the expression.
+        old_trait : ctrait
+            The trait object that the expression trait is temporarily
+            replacing. When a 'get' or 'set' is triggered on this 
+            trait, the old trait will be restored and then the default
+            value of the expression will be applied.
         
         """
         super(ExpressionTrait, self).__init__()
-        self.proxy_name = proxy_name
-        self.inited = False
-
-    def init_expr(self, obj, name):
-        """ Initializes the value of the proxy trait using the value
-        from the bound expression. Also hooks up the appropriate 
-        notifiers so that changes to the proxy trait get forwarded
-        as changes to this expression trait.
+        self.old_trait = old_trait
+    
+    def swapout(self, obj, name):
+        """ Restore the old trait onto the object. This method takes
+        care to make sure that listeners are copied over properly.
 
         """
-        def notify(target_obj, target_name, old, new):
-            """ Proxies an change event from the shadow trait to the
-            target trait.
-
-            """
-            target_obj.trait_property_changed(name, old, new)
-        
-        def notify_items(target_obj, target_name, old, new):
-            """ Proxies an items event from the shadow trait to the 
-            target trait.
-
-            """
-            target_obj.trait_property_changed(name + '_items', old, new)
-
-        # Traits magic numbers 5, 6, 9 correspond to List, Dict,
-        # and Set, respectively. If we are proxying to one of those 
-        # trait types, then we also need to listen to that items event.
-        # Set the target of the notifier to self so that the notifier
-        # gets destroyed when the object which contains this trait is
-        # destroyed.
-        proxy_name = self.proxy_name
-        trait = obj.trait(proxy_name)
-        obj.on_trait_change(notify, proxy_name, target=self)
-        if trait.handler.default_value_type in (5, 6, 9):
-            # For items events we need to bind two handlers. Traits gets
-            # a bit weird when using the 'trait_name[]' style syntax to
-            # bind a single handler to both the object and items events
-            # and then trying to proxy that notification to another 
-            # trait. However, using two separate handlers seems to be ok.
-            items_name = proxy_name + '_items'
-            obj.on_trait_change(notify_items, items_name, target=self)
-        
-        # Next, eval the expression and set the value of the proxy,
-        # silencing notifiers if the object is not initialized since
-        # attribute assigment before initialization should appear as
-        # a default value assignment which does not fire notifiers.
-        val = obj._expressions[name].eval()
-        if not obj.initialized:
-            obj.trait_setq(**{proxy_name: val})
-        else:
-            setattr(obj, proxy_name, val)
+        # The default behavior of add_trait does *almost* the right
+        # thing when it copies over notifiers when replacing the
+        # existing trait. What it fails to do is update the owner
+        # attribute of TraitChangeNotifyWrappers which are managing
+        # a bound method notifier. This means that if said notifier
+        # ever dies, it removes itself from the incorrect owner list
+        # and it will be (erroneously) called on the next dispatch
+        # cycle. The logic here makes sure that the owner attribute
+        # of such a notifier is properly updated with its new owner.
+        obj.add_trait(name, self.old_trait)
+        notifiers = obj.trait(name)._notifiers(0)
+        if notifiers is not None:
+            for notifier in notifiers:
+                if hasattr(notifier, 'owner'):
+                    notifier.owner = notifiers
 
     def get(self, obj, name):
-        """ Returns the value of the expression trait, initializing
-        the attribute from the expression if necessary.
+        """ Handle the computing the initial value for the expression
+        trait. This method first restores the old trait, then evaluates
+        the expression and sets the value on the trait. It then performs
+        a getattr to return the new value of the trait. If the object
+        is not yet fully initialized, the value is set quietly.
 
         """
-        if not self.inited:
-            # We need to flip the flag to True before initing the
-            # expression since the act of evaluating the expression
-            # may cause recursion into this get method which would
-            # then infinitely recurse.
-            self.inited = True
-            self.init_expr(obj, name)
-        return getattr(obj, self.proxy_name)
-
+        self.swapout(obj, name)
+        val = obj.expressions[name][-1].eval()
+        if not obj.initialized:
+            obj.trait_setq(**{name: val})
+        else:    
+            setattr(obj, name, val)
+        return getattr(obj, name, val)
+    
     def set(self, obj, name, val):
-        """ Sets the value of the expression trait, initializing
-        the attribute from the expression if necessary.
+        """ Handle the setting of an initial value for the expression
+        trait. This method first restores the old trait, then sets
+        the value on that trait. In this case, the expression object
+        is not needed. If the object is not yet fully initialized, the 
+        value is set quietly.
 
         """
-        if not self.inited:
-            # We need to flip the flag to True before initing the
-            # expression since the act of evaluating the expression
-            # may cause recursion into this get method which would
-            # then infinitely recurse.
-            self.inited = True
-            self.init_expr(obj, name)
-        setattr(obj, self.proxy_name, val)
+        self.swapout(obj, name)
+        if not obj.initialized:
+            obj.trait_setq(**{name: val})
+        else:
+            setattr(obj, name, val)
 
 
 class FreezeContext(object):
@@ -339,6 +311,12 @@ class BaseComponent(HasStrictTraits):
     #: should not be directly manipulated
     children = Property(List, depends_on='_subcomponents:_components_updated')
 
+    #: The dictionary of expression objects that are bound to attributes
+    #: on this component. This should not normally be manipulated directly
+    #: by the user. The bind_attribute method should be used instead if 
+    #: proper default value initialization is desired.
+    expressions = Dict(Str, List(Instance(AbstractExpression)))
+
     #: The list of include nodes for this component.
     #: The toolkit specific object that implements the behavior of
     #: this component and manages the gui toolkit object. Subclasses
@@ -390,11 +368,6 @@ class BaseComponent(HasStrictTraits):
     #: be changed after initialization. It can, however, be redefined
     #: by subclasses to limit the type or number of subcomponents.
     _subcomponents = List(Instance('BaseComponent'))
-
-    #: The private dictionary of expressions that are bound to attributes
-    #: on this component. This should not normally be manipulated directly
-    #: by the user. The bind_attribute method should be used instead.
-    _expressions = Dict(Str, Instance(AbstractExpression))
 
     #: A private event that should be emitted by a component when the 
     #: results of calling _get_compenents() will result in new values. 
@@ -448,6 +421,15 @@ class BaseComponent(HasStrictTraits):
         """ Binds the given expression to the attribute 'name'. If
         the attribute does not exist, one is created.
 
+        If the object is not yet initialized, the expression will be 
+        evaulated as the default value of the attribute on-demand.
+        If the object is already initialized, then the expression
+        is evaluated and the attribute set with the value. A strong
+        reference to the expression object is kept internally. Mutliple
+        expressions may be bound to the same attribute, but only the
+        most recently bound expression will be used to compute the
+        default value.
+        
         Parameters
         ----------
         name : string
@@ -456,35 +438,27 @@ class BaseComponent(HasStrictTraits):
         expression : AbstractExpression
             An implementation of enaml.expressions.AbstractExpression.
         
-        init_quietly : bool, optional
-            Whether or not to silence listeners when initializing the 
-            value of the attribute from the expression. Defaults to True.
-        
         """
-        # The first time an expression is bound, we need to move the 
-        # existing trait into its new shadow position. After that is
-        # done, we create a new ExpressionTrait which points at the
-        # shadow trait. A new ExpressionTrait is created each time
-        # such that we support the desired behavior for initialization 
-        # and notification.  
-        self._expressions[name] = expression
-        current_trait = self.trait(name)
-        proxy_name = '_enaml_expr_trait_' + name
-
-        # If this is the first time binding the expression, move the
-        # current trait to its new proxy location.
-        if current_trait is not None:
-            if not isinstance(current_trait.trait_type, ExpressionTrait):
-                self.add_trait(proxy_name, current_trait)
-        # Otherwise, the user is requesting that we add a new attribute
-        # on which we want to bind the expression.
-        else:
-            self.add_trait(proxy_name, Any())
+        expressions = self.expressions
+        if name not in expressions:
+            expressions[name] = []
+        expressions[name].append(expression)
         
-        # Once the proxy is setup properly, we can add a new expression
-        # trait at the given attribute location.
-        expr_trait = ExpressionTrait(proxy_name)
-        self.add_trait(name, expr_trait)
+        if not self.initialized:
+            current_trait = self.trait(name)
+            if current_trait is None:
+                # If no trait exists, then the user is requesting to add 
+                # an attribute to the object. 
+                self.add_trait(name, Any())
+                current_trait = self.trait(name)
+
+            # We only need to add an ExpressionTrait once since it 
+            # will reach back into the _expressions dict when needed
+            # and retrieve the most current expression.
+            if not isinstance(current_trait.trait_type, ExpressionTrait):
+                self.add_trait(name, ExpressionTrait(current_trait))
+        else:
+            setattr(self, name, expression.eval())
 
     #--------------------------------------------------------------------------
     # Setup Methods 
@@ -502,11 +476,12 @@ class BaseComponent(HasStrictTraits):
         1) Child shell objects are given a reference to their parent
         2) Abstract objects create their internal toolkit object
         3) Abstract objects initialize their internal toolkit object
-        4) Abstract objects bind their event handlers
-        5) Abstract objects are added as a listeners to the shell object
-        6) Visibility is initialized (toplevel nodes are skipped)
-        7) Layout is initialized
-        8) Nodes are marked as initialized
+        4) Bount expression values are explicitly applied.
+        5) Abstract objects bind their event handlers
+        6) Abstract objects are added as a listeners to the shell object
+        7) Visibility is initialized (toplevel nodes are skipped)
+        8) Layout is initialized
+        9) Nodes are marked as initialized
 
         Each of the setup steps is performed in depth-first order. This 
         method should only be called on the root node of the tree.
@@ -522,12 +497,13 @@ class BaseComponent(HasStrictTraits):
         self._setup_parent_refs()
         self._setup_create_widgets(parent)
         self._setup_init_widgets()
+        self._setup_eval_expressions()
         self._setup_bind_widgets()
         self._setup_listeners()
         self._setup_init_visibility()
         self._setup_init_layout()
         self._setup_set_initialized()
-        
+
     def _setup_parent_refs(self):
         """ A setup method which assigns the parent reference to the
         static children.
@@ -555,6 +531,19 @@ class BaseComponent(HasStrictTraits):
         self.abstract_obj.initialize()
         for child in self._subcomponents:
             child._setup_init_widgets()
+
+    def _setup_eval_expressions(self):
+        """ A setup method that loops over all of bound expressions and
+        performs a getattr for those attributes. This ensures that all
+        bound attributes are initialized, since it won't alway be the
+        case that the previous initialization step will pull all of the
+        values, but they nevertheless need to be applied.
+
+        """
+        for name in self.expressions:
+            getattr(self, name)
+        for child in self._subcomponents:
+            child._setup_eval_expressions()
 
     def _setup_bind_widgets(self):
         """ A setup method that tells the abstract object to bind its
