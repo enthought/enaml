@@ -4,12 +4,15 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import (Bool, Event, Instance, Property, Int, TraitError,
-                        Either, Range)
+from traits.api import (
+    Bool, Event, Instance, Property, Int, TraitError, Either, Range, 
+    on_trait_change,
+)
 
 from .control import Control, AbstractTkControl
 
 from ..enums import Orientation, TickPosition, PolicyEnum
+from ..util.trait_types import Bounded
 
 
 class AbstractTkSlider(AbstractTkControl):
@@ -87,7 +90,7 @@ class Slider(Control):
 
     #: The position value of the Slider. The bounds are defined by
     #: :attr:minimum: and :attr:maximum:.
-    value = Range(low='minimum', high='maximum')
+    value = Bounded(low='minimum', high='maximum')
 
     #: The interval to put between tick marks in slider range units.
     #: Default value is `10`.
@@ -222,15 +225,8 @@ class Slider(Control):
                    'but a value of {1} was given')
             msg = msg.format(self.maximum, value)
             raise TraitError(msg)
-
-        # The Range Trait will not fire a change notification when the 
-        # dynamic bounds cause a value change. So, we perform the check
-        # and make sure the value is properly updated, which will fire
-        # a change event on its own.
-        position = self.value
-        if position < value:
-            self.value = value
-        self._minimum = value
+        else:
+            self._minimum = value
 
     def _set_maximum(self, value):
         """ The property setter for the 'maximum' attribute. This
@@ -243,15 +239,8 @@ class Slider(Control):
                    "but a value of {1} was given")
             msg = msg.format(self.minimum, value)
             raise TraitError(msg)
-
-        # The Range Trait will not fire a change notification when the 
-        # dynamic bounds cause a value change. So, we perform the check
-        # and make sure the value is properly updated, which will fire
-        # a change event on its own.
-        position = self.value
-        if position > value:
-            self.value = value
-        self._maximum = value
+        else:
+            self._maximum = value
 
     def _get_maximum(self):
         """ The property getter for the slider maximum.
@@ -264,4 +253,12 @@ class Slider(Control):
 
         """
         return self._minimum
+
+    @on_trait_change('minimum, maximum')
+    def _adapt_value(self):
+        """ Adapt the value to the boundaries
+
+        """
+        if self.initialized:
+            self.value = min(max(self.value, self.minimum), self.maximum)
 
