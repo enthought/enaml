@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod, abstractproperty
 from collections import deque
-import weakref
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
@@ -47,41 +46,47 @@ class ExpressionTrait(TraitType):
         as changes to this expression trait.
 
         """
-        # First, hook up a notifier on the proxy trait that will 
-        # forward the notifications as if they were made from this
-        # trait as given by the argument 'name'.
         def notify(target_obj, target_name, old, new):
-            # If the change event was an items event on a List, Dict, 
-            # or Set, the proxied event needs to be an items event.
-            if target_name.endswith('_items'):
-                changed_name = name + '_items'
-            else:
-                changed_name = name
-            target_obj.trait_property_changed(changed_name, old, new)
+            """ Proxies an change event from the shadow trait to the
+            target trait.
+
+            """
+            target_obj.trait_property_changed(name, old, new)
         
+        def notify_items(target_obj, target_name, old, new):
+            """ Proxies an items event from the shadow trait to the 
+            target trait.
+
+            """
+            target_obj.trait_property_changed(name + '_items', old, new)
+
         # Traits magic numbers 5, 6, 9 correspond to List, Dict,
         # and Set, respectively. If we are proxying to one of those 
         # trait types, then we also need to listen to that items event.
-        trait = obj.trait(self.proxy_name)
-        if trait.handler.default_value_type in (5, 6, 9):
-            bind_name = self.proxy_name + '_items'
-        else:
-            bind_name = self.proxy_name
-        
         # Set the target of the notifier to self so that the notifier
         # gets destroyed when the object which contains this trait is
         # destroyed.
-        obj.on_trait_change(notify, bind_name, target=self)
-
+        proxy_name = self.proxy_name
+        trait = obj.trait(proxy_name)
+        obj.on_trait_change(notify, proxy_name, target=self)
+        if trait.handler.default_value_type in (5, 6, 9):
+            # For items events we need to bind two handlers. Traits gets
+            # a bit weird when using the 'trait_name[]' style syntax to
+            # bind a single handler to both the object and items events
+            # and then trying to proxy that notification to another 
+            # trait. However, using two separate handlers seems to be ok.
+            items_name = proxy_name + '_items'
+            obj.on_trait_change(notify_items, items_name, target=self)
+        
         # Next, eval the expression and set the value of the proxy,
         # silencing notifiers if the object is not initialized since
         # attribute assigment before initialization should appear as
         # a default value assignment which does not fire notifiers.
         val = obj._expressions[name].eval()
         if not obj.initialized:
-            obj.trait_setq(**{self.proxy_name: val})
+            obj.trait_setq(**{proxy_name: val})
         else:
-            setattr(obj, self.proxy_name, val)
+            setattr(obj, proxy_name, val)
 
     def get(self, obj, name):
         """ Returns the value of the expression trait, initializing
