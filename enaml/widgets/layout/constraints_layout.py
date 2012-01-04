@@ -192,11 +192,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         for child in component.children:
             if child.visible:
                 yield child
-                child_layout = getattr(child, 'layout', None)
+                child_layout = getattr(child, 'layout_manager', None)
                 if child_layout is None or type(child_layout) is type(self):
                     for desc in self.traverse_descendants(child):
                         yield desc
-
 
     #--------------------------------------------------------------------------
     # Constraint computation

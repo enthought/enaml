@@ -77,7 +77,7 @@ class Splitter(Container):
     #: An object that manages the layout of this component and its 
     #: direct children. In this case, it does nothing, since constraints
     #: may not cross the boundaries of a splitter.
-    layout = Instance(NullLayoutManager, ())
+    layout_manager = Instance(NullLayoutManager, ())
 
     #: How strongly a component hugs it's contents' width. A Splitter
     #: container ignores its width hug by default, so it expands freely
@@ -91,9 +91,7 @@ class Splitter(Container):
 
     def initialize_layout(self):
         """ Initialize the layout of the children. This is overridden
-        from the parent class since the Splitter container does not use
-        a constraints layout manager. That is, a Splitter container is
-        a boundary which constraints may not cross.
+        from the parent class to initialize the sizes of the splitter.
 
         """
         super(Splitter, self).initialize_layout()
