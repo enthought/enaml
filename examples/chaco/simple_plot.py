@@ -1,14 +1,19 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ A simple Chaco Plot Component.
 
 """
-
 import functools
 
 from chaco.api import ArrayPlotData
 from chaco.tools.api import PanTool, ZoomTool
 from chaco.shell.scaly_plot import ScalyPlot
 from chaco.scales.api import CalendarScaleSystem
-from traits.api import Array, Bool, DelegatesTo, Dict, Enum, Instance, List, Str, on_trait_change
+from traits.api import (
+    Array, Bool, DelegatesTo, Dict, Enum, Instance, List, Str, on_trait_change,
+)
 
 from enaml.toolkit import Toolkit
 from enaml.widgets.enable_canvas import EnableCanvas
@@ -26,7 +31,8 @@ class DeferredCall(object):
 
 
 def plot_command(func):
-    """ Create an object that represents a call to a method on a Plot object.
+    """ Create an object that represents a call to a method on a Plot 
+    object.
 
     """
     @functools.wraps(func)
@@ -210,3 +216,7 @@ class SimplePlot(EnableCanvas):
     def _legend_changed(self, new):
         self.component.legend = new
         self.component.request_redraw()
+
+    def _bgcolor_changed(self, new):
+        self.component.request_redraw()
+
