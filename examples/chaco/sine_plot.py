@@ -1,16 +1,17 @@
-#!/usr/bin/env python
-# -*- coding: UTF-8 -*-
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ Driver for the sine plot example.
 
-The window will show a Chaco plot on the left with sin(x) and cos(x) functions.
-The right side of the window will be a Form showing sliders that control the
-phase, amplitude, and angular frequency of the sinusoidal functions. The plot
-will update whenever the slider values change.
+The window will show a Chaco plot on the left with sin(x) and cos(x) 
+functions. The right side of the window will be a Form showing sliders 
+that control the phase, amplitude, and angular frequency of the sinusoidal 
+functions. The plot will update whenever the slider values change.
 
 This demo requires numpy and Chaco.
 
 """
-
 import numpy as np
 
 from traits.api import HasTraits, Array, Float, Property
@@ -53,5 +54,7 @@ def main():
     window = MainWindow(model=model)
     window.show()
 
+
 if __name__ == '__main__':
     main()
+

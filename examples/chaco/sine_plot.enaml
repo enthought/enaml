@@ -1,9 +1,12 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ UI for sine_plot_example.py
 
 Run sine_plot_example.py to view this demo.
 
 """
-
 from numpy import pi
 
 from range import Range
