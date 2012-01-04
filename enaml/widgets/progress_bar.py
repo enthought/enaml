@@ -128,7 +128,7 @@ class ProgressBar(Control):
 
     @on_trait_change('minimum, maximum')
     def _adapt_value(self):
-        """ Adapt the value to the bounderies
+        """ Adapt the value to the boundaries
 
         """
         if self.initialized:
