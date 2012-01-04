@@ -64,6 +64,8 @@ class Window(Container):
             # size routine from the layout. We'll probably want to have
             # an initial_size optional attribute or something at some point.
             size = self.layout_manager.calc_min_size()
+            if size == (0, 0):
+               size = (200, 100)
             self.resize(*size)
         self.set_visible(True)
         self.toolkit.start_app(app)
