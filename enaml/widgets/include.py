@@ -108,7 +108,7 @@ class Include(BaseComponent):
         return self._components
     
     def _set_components(self, val):
-        """ The property setter for the 'components' attribut. It 
+        """ The property setter for the 'components' attribute. It 
         converts a variety of acceptable values into a list that is 
         stored in the '_components' attribute.
 
@@ -231,7 +231,13 @@ class Include(BaseComponent):
         '_components_updated' event gets fired.
 
         """
-        if self.initialized:
+        # The first time a cached property is set, the notification
+        # handler will be sent None as the old value even if the 
+        # property getter points to something that has a value. In 
+        # all other cases, it works as expected. We guard against
+        # that condition as well a making sure the object is fully
+        # initialized before destroying any of the old children.
+        if self.initialized and old is not None:
             def closure():
                 for item in old:
                     item.destroy()
