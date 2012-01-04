@@ -7,7 +7,7 @@ from collections import deque
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
-    cached_property, Event, Dict, TraitType, Any
+    cached_property, Event, Dict, TraitType, Any, Disallow,
 )
 
 from ..expressions import AbstractExpression
@@ -445,18 +445,19 @@ class BaseComponent(HasStrictTraits):
         expressions[name].append(expression)
         
         if not self.initialized:
-            current_trait = self.trait(name)
-            if current_trait is None:
+            curr = self.trait(name)
+            if curr is None or curr is Disallow:
                 # If no trait exists, then the user is requesting to add 
-                # an attribute to the object. 
+                # an attribute to the object. The HasStrictTraits may 
+                # give a Disallow trait for attributes that don't exist.
                 self.add_trait(name, Any())
-                current_trait = self.trait(name)
+                curr = self.trait(name)
 
             # We only need to add an ExpressionTrait once since it 
             # will reach back into the _expressions dict when needed
             # and retrieve the most current expression.
-            if not isinstance(current_trait.trait_type, ExpressionTrait):
-                self.add_trait(name, ExpressionTrait(current_trait))
+            if not isinstance(curr.trait_type, ExpressionTrait):
+                self.add_trait(name, ExpressionTrait(curr))
         else:
             setattr(self, name, expression.eval())
 
