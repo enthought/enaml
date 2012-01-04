@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import TraitType, Interface, TraitError, Any
+from traits.api import TraitType, Interface, TraitError
 from traits.traits import CTrait
 
 
