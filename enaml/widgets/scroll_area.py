@@ -60,7 +60,7 @@ class ScrollArea(Container):
 
     #: An object that manages the layout of this component and its 
     #: direct children. In this case, it does nothing.
-    layout = Instance(NullLayoutManager, ())
+    layout_manager = Instance(NullLayoutManager, ())
 
     #: How strongly a component hugs it's contents' width. Scroll
     #: areas do not hug their width and are free to expand.

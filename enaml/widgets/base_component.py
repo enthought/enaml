@@ -7,15 +7,86 @@ from collections import deque
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
-    cached_property, Event
+    cached_property, Event, Dict, TraitType, Any, Disallow,
 )
 
-from .setup_hooks import AbstractSetupHook
-
+from ..expressions import AbstractExpression
 from ..guard import guard
 from ..styling.color import ColorTrait
 from ..styling.font import FontTrait
 from ..toolkit import Toolkit
+
+
+class ExpressionTrait(TraitType):
+    """ A custom trait type which is used to help implement expression 
+    binding.
+
+    """
+    def __init__(self, old_trait):
+        """ Initialize an expression trait.
+
+        Parameters
+        ----------
+        old_trait : ctrait
+            The trait object that the expression trait is temporarily
+            replacing. When a 'get' or 'set' is triggered on this 
+            trait, the old trait will be restored and then the default
+            value of the expression will be applied.
+        
+        """
+        super(ExpressionTrait, self).__init__()
+        self.old_trait = old_trait
+    
+    def swapout(self, obj, name):
+        """ Restore the old trait onto the object. This method takes
+        care to make sure that listeners are copied over properly.
+
+        """
+        # The default behavior of add_trait does *almost* the right
+        # thing when it copies over notifiers when replacing the
+        # existing trait. What it fails to do is update the owner
+        # attribute of TraitChangeNotifyWrappers which are managing
+        # a bound method notifier. This means that if said notifier
+        # ever dies, it removes itself from the incorrect owner list
+        # and it will be (erroneously) called on the next dispatch
+        # cycle. The logic here makes sure that the owner attribute
+        # of such a notifier is properly updated with its new owner.
+        obj.add_trait(name, self.old_trait)
+        notifiers = obj.trait(name)._notifiers(0)
+        if notifiers is not None:
+            for notifier in notifiers:
+                if hasattr(notifier, 'owner'):
+                    notifier.owner = notifiers
+
+    def get(self, obj, name):
+        """ Handle the computing the initial value for the expression
+        trait. This method first restores the old trait, then evaluates
+        the expression and sets the value on the trait. It then performs
+        a getattr to return the new value of the trait. If the object
+        is not yet fully initialized, the value is set quietly.
+
+        """
+        self.swapout(obj, name)
+        val = obj.expressions[name][-1].eval()
+        if not obj.initialized:
+            obj.trait_setq(**{name: val})
+        else:    
+            setattr(obj, name, val)
+        return getattr(obj, name, val)
+    
+    def set(self, obj, name, val):
+        """ Handle the setting of an initial value for the expression
+        trait. This method first restores the old trait, then sets
+        the value on that trait. In this case, the expression object
+        is not needed. If the object is not yet fully initialized, the 
+        value is set quietly.
+
+        """
+        self.swapout(obj, name)
+        if not obj.initialized:
+            obj.trait_setq(**{name: val})
+        else:
+            setattr(obj, name, val)
 
 
 class FreezeContext(object):
@@ -240,17 +311,18 @@ class BaseComponent(HasStrictTraits):
     #: should not be directly manipulated
     children = Property(List, depends_on='_subcomponents:_components_updated')
 
+    #: The dictionary of expression objects that are bound to attributes
+    #: on this component. This should not normally be manipulated directly
+    #: by the user. The bind_attribute method should be used instead if 
+    #: proper default value initialization is desired.
+    expressions = Dict(Str, List(Instance(AbstractExpression)))
+
     #: The list of include nodes for this component.
     #: The toolkit specific object that implements the behavior of
     #: this component and manages the gui toolkit object. Subclasses
     #: should redefine this trait to specify the specialized type of
     #: abstract_obj that is accepted.
     abstract_obj = Instance(AbstractTkBaseComponent) 
-    
-    #: A list of hooks that are called during the setup process
-    #: that can modify the behavior of the component such as installing
-    #: listeners at the appropriate times.
-    setup_hooks = List(Instance(AbstractSetupHook))
 
     #: A read-only property that returns the toolkit specific widget
     #: being managed by the abstract widget.
@@ -343,6 +415,53 @@ class BaseComponent(HasStrictTraits):
         return [self]
     
     #--------------------------------------------------------------------------
+    # Attribute Binding 
+    #--------------------------------------------------------------------------
+    def bind_expression(self, name, expression):
+        """ Binds the given expression to the attribute 'name'. If
+        the attribute does not exist, one is created.
+
+        If the object is not yet initialized, the expression will be 
+        evaulated as the default value of the attribute on-demand.
+        If the object is already initialized, then the expression
+        is evaluated and the attribute set with the value. A strong
+        reference to the expression object is kept internally. Mutliple
+        expressions may be bound to the same attribute, but only the
+        most recently bound expression will be used to compute the
+        default value.
+        
+        Parameters
+        ----------
+        name : string
+            The name of the attribute on which to bind the expression.
+        
+        expression : AbstractExpression
+            An implementation of enaml.expressions.AbstractExpression.
+        
+        """
+        expressions = self.expressions
+        if name not in expressions:
+            expressions[name] = []
+        expressions[name].append(expression)
+        
+        if not self.initialized:
+            curr = self.trait(name)
+            if curr is None or curr is Disallow:
+                # If no trait exists, then the user is requesting to add 
+                # an attribute to the object. The HasStrictTraits may 
+                # give a Disallow trait for attributes that don't exist.
+                self.add_trait(name, Any())
+                curr = self.trait(name)
+
+            # We only need to add an ExpressionTrait once since it 
+            # will reach back into the _expressions dict when needed
+            # and retrieve the most current expression.
+            if not isinstance(curr.trait_type, ExpressionTrait):
+                self.add_trait(name, ExpressionTrait(curr))
+        else:
+            setattr(self, name, expression.eval())
+
+    #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
     def setup(self, parent=None):
@@ -355,17 +474,15 @@ class BaseComponent(HasStrictTraits):
 
         The setup process is comprised of the following steps:
         
-        1)  Child shell objects are given a reference to their parent
-        2)  Setup hooks are initialized
-        3)  Abstract objects create their internal toolkit object
-        4)  Setup hooks are finalized
-        5)  Abstract objects initialize their internal toolkit object
-        6)  Abstract objects bind their event handlers
-        7)  Setup hooks are bound
-        8)  Abstract objects are added as a listeners to the shell object
-        9)  Visibility is initialized (toplevel nodes are skipped)
-        10) Layout is initialized
-        11) Nodes are marked as initialized
+        1) Child shell objects are given a reference to their parent
+        2) Abstract objects create their internal toolkit object
+        3) Abstract objects initialize their internal toolkit object
+        4) Bount expression values are explicitly applied.
+        5) Abstract objects bind their event handlers
+        6) Abstract objects are added as a listeners to the shell object
+        7) Visibility is initialized (toplevel nodes are skipped)
+        8) Layout is initialized
+        9) Nodes are marked as initialized
 
         Each of the setup steps is performed in depth-first order. This 
         method should only be called on the root node of the tree.
@@ -379,17 +496,15 @@ class BaseComponent(HasStrictTraits):
 
         """
         self._setup_parent_refs()
-        self._setup_init_hooks()
         self._setup_create_widgets(parent)
-        self._setup_final_hooks()
         self._setup_init_widgets()
+        self._setup_eval_expressions()
         self._setup_bind_widgets()
-        self._setup_bind_hooks()
         self._setup_listeners()
         self._setup_init_visibility()
         self._setup_init_layout()
         self._setup_set_initialized()
-        
+
     def _setup_parent_refs(self):
         """ A setup method which assigns the parent reference to the
         static children.
@@ -398,15 +513,6 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child.parent = self
             child._setup_parent_refs()
-
-    def _setup_init_hooks(self):
-        """ A setup method which initializes the setup hooks.
-
-        """
-        for hook in self.setup_hooks:
-            hook.initialize(self)
-        for child in self._subcomponents:
-            child._setup_init_hooks()
 
     def _setup_create_widgets(self, parent):
         """ A setup method that tells the abstract object to create its
@@ -418,15 +524,6 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child._setup_create_widgets(self_widget)
 
-    def _setup_final_hooks(self):
-        """ A setup method which finalizes the setup hooks.
-
-        """
-        for hook in self.setup_hooks:
-            hook.finalize(self)
-        for child in self._subcomponents:
-            child._setup_final_hooks()
-
     def _setup_init_widgets(self):
         """ A setup method that tells the abstract object to initialize
         its internal toolkit object.
@@ -436,6 +533,19 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child._setup_init_widgets()
 
+    def _setup_eval_expressions(self):
+        """ A setup method that loops over all of bound expressions and
+        performs a getattr for those attributes. This ensures that all
+        bound attributes are initialized, since it won't alway be the
+        case that the previous initialization step will pull all of the
+        values, but they nevertheless need to be applied.
+
+        """
+        for name in self.expressions:
+            getattr(self, name)
+        for child in self._subcomponents:
+            child._setup_eval_expressions()
+
     def _setup_bind_widgets(self):
         """ A setup method that tells the abstract object to bind its
         event handlers to its internal toolkit object.
@@ -444,15 +554,6 @@ class BaseComponent(HasStrictTraits):
         self.abstract_obj.bind()
         for child in self._subcomponents:
             child._setup_bind_widgets()
-
-    def _setup_bind_hooks(self):
-        """ A setup method which binds the setup hooks.
-
-        """
-        for hook in self.setup_hooks:
-            hook.bind(self)
-        for child in self._subcomponents:
-            child._setup_bind_hooks()
 
     def _setup_listeners(self):
         """ A setup method which sets the abstract object as a traits 
@@ -476,15 +577,14 @@ class BaseComponent(HasStrictTraits):
 
     def _setup_init_layout(self):
         """ A setup method called at the end of the setup process, but 
-        before the 'initialized' attribute it set to True. By default, 
-        this method is a no-op and should be reimplemented by subclasses 
-        that need to perform some action for initializing the layout
-        of themselves or their children.
+        before the 'initialized' attribute it set to True. This setup
+        method is performed bottom-up so that children have a chance
+        to compute their sizes before reporting them to their parent.
 
         """
-        self.initialize_layout()
         for child in self._subcomponents:
             child._setup_init_layout()
+        self.initialize_layout()
 
     def _setup_set_initialized(self):
         """ A setup method whic ets the initialized attribute to True.

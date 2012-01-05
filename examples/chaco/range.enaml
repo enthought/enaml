@@ -1,9 +1,13 @@
-""" A reusable float slider component with text labels for the minimum and maximum.
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" A reusable float slider component with text labels for the minimum 
+and maximum.
 
 The Range component is used by the other examples in this directory.
 
 """
-
 Range(Container):
     id: range
     minimum = 0.0

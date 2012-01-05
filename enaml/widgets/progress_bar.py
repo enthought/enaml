@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Int, Instance, Property, TraitError
+from traits.api import Int, Instance, Property, TraitError, on_trait_change
 
 from .control import Control, AbstractTkControl
 
@@ -79,7 +79,6 @@ class ProgressBar(Control):
             msg = msg.format(self.maximum, value)
             raise TraitError(msg)
         self._minimum = value
-        self._adapt_value()
 
     def _set_maximum(self, value):
         """ The property setter for :attr:`maximum`. Addtional checks are 
@@ -93,7 +92,6 @@ class ProgressBar(Control):
             msg = msg.format(self.minimum, value)
             raise TraitError(msg)
         self._maximum = value
-        self._adapt_value()
 
     def _get_maximum(self):
         """ The property getter for the ProgressBar maximum.
@@ -128,12 +126,11 @@ class ProgressBar(Control):
             res = min(res, 99)
         return res
 
-    # FIXME: I would like to have this method use the on_change decorator, 
-    # but it should not be run while the component is initialized so that 
-    # an exception is raised when the enaml source contains invalid values.
+    @on_trait_change('minimum, maximum')
     def _adapt_value(self):
-        """ Adapt the value to the bounderies
+        """ Adapt the value to the boundaries
 
         """
-        self.value = min(max(self.value, self.minimum), self.maximum)
+        if self.initialized:
+            self.value = min(max(self.value, self.minimum), self.maximum)
 

@@ -12,11 +12,6 @@ from .layout.layout_manager import NullLayoutManager
 from ..enums import TabPosition
 
 
-_SIZE_HINT_DEPS = ('children:size_hint_updated, children:hug_width, '
-                   'children:hug_height, children:resist_clip_width, '
-                   'children:resist_clip_height')
-
-
 class AbstractTkTabbed(AbstractTkContainer):
     """ The abstract toolkit Tabbed interface.
 
@@ -59,7 +54,7 @@ class Tabbed(Container):
 
     #: An object that manages the layout of this component and its 
     #: direct children. In this case, it does nothing.
-    layout = Instance(NullLayoutManager, ())
+    layout_manager = Instance(NullLayoutManager, ())
 
     #: A TabPosition enum value that indicate where the tabs should
     #: be drawn on the control. One of 'top', 'bottom', 'left', 'right'.
