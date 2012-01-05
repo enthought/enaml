@@ -17,6 +17,9 @@
 
 import sys, os
 
+from enaml.import_hooks import EnamlImporter
+EnamlImporter.install()
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -112,8 +115,9 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 ##inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
 ##                              color='dodgerblue1', style='filled')
 
+#: rankdir ['LR', 'TB', 'BT', 'RL']
 inheritance_graph_attrs = dict(
-    #rankdir="LR",
+    rankdir="TB",
     size='"8.0, 20.0"',
     fontsize=14,
     ratio='compress'
