@@ -55,10 +55,11 @@ class Python(ASTNode):
         The compiled Python code object for the py_ast.
     
     """
-    __slots__ = ('py_ast', 'code')
+    __slots__ = ('py_txt', 'py_ast', 'code')
 
-    def __init__(self, py_ast, code, lineno):
+    def __init__(self, py_txt, py_ast, code, lineno):
         super(Python, self).__init__(lineno)
+        self.py_txt = py_txt
         self.py_ast = py_ast
         self.code = code
 

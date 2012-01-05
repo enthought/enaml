@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import itertools
-from functools import wraps
 import types
 
 from traits.api import HasStrictTraits, Any
@@ -84,7 +83,8 @@ class EnamlDeclaration(object):
     function with an interface that is easy to use from Python.
 
     """
-    def __init__(self, func):
+    def __init__(self, base, func):
+        self.__base__ = base
         self.__doc__ = func.__doc__
         self.__name__ = func.__name__
         self.__func__ = func
@@ -643,7 +643,7 @@ class EnamlCompiler(_NodeVisitor):
         """
         func_code = DeclarationCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
-        wrapper = EnamlDeclaration(func)
+        wrapper = EnamlDeclaration(node.base.py_txt, func)
         self.global_ns[node.name] = wrapper
     
     def visit_Defn(self, node):

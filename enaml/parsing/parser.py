@@ -145,11 +145,11 @@ def p_enaml_module_item4(p):
 #------------------------------------------------------------------------------
 def p_enaml_raw_python(p):
     ''' raw_python : PY_BLOCK_START NEWLINE PY_BLOCK PY_BLOCK_END NEWLINE '''
-    # XXX update me to handle Python code without the tags
-    py_txt = p[3]
+    # XXX update me to handle Python code without the start/end tags
+    py_txt = p[3].strip()
     py_ast = ast.parse(py_txt, mode='exec')
     py_code = compile(py_ast, 'Enaml', mode='exec')
-    p[0] = enaml_ast.Python(py_ast, py_code, p.lineno(1))
+    p[0] = enaml_ast.Python(py_txt, py_ast, py_code, p.lineno(1))
 
 
 #------------------------------------------------------------------------------
@@ -160,7 +160,7 @@ def p_enaml_import(p):
     imprt = p[1]
     mod = ast.Module(body=[imprt])
     mod_code = compile(mod, 'Enaml', mode='exec')
-    p[0] = enaml_ast.Import(mod, mod_code, imprt.lineno)
+    p[0] = enaml_ast.Import('<untracked>', mod, mod_code, imprt.lineno)
 
 
 #------------------------------------------------------------------------------
@@ -168,12 +168,15 @@ def p_enaml_import(p):
 #------------------------------------------------------------------------------
 def p_declaration(p):
     ''' declaration : NAME LPAR test RPAR COLON declaration_body '''
+    start_pos = p.lexpos(2) + 1
+    end_pos = p.lexpos(4)
     lineno = p.lineno(1)
+    py_txt = p.lexer.lexer.lexdata[start_pos:end_pos].strip()
     doc, idn, items = p[6]
     base = ast.Expression(body=p[3])
     set_locations(base, lineno, 1)
     code = compile(base, 'Enaml', mode='eval')
-    base_node = enaml_ast.Python(base, code, lineno)
+    base_node = enaml_ast.Python(py_txt, base, code, lineno)
     p[0] = enaml_ast.Declaration(p[1], base_node, idn, doc, items, lineno)
 
 
@@ -392,7 +395,7 @@ def p_defn_keyword_parameter(p):
     expr = ast.Expression(body=p[3])
     set_locations(expr, lineno, 1)
     code = compile(expr, 'Enaml', mode='eval')
-    expr_node = enaml_ast.Python(expr, code, lineno)
+    expr_node = enaml_ast.Python('<untracked>', expr, code, lineno)
     p[0] = (p[1], expr_node)
 
 
@@ -444,12 +447,14 @@ def p_attribute_binding(p):
 def p_binding(p):
     ''' binding : enaml_operator test NEWLINE '''
     # XXX extend me to support code blocks
-    lineno, op = p[1]
+    start_pos, lineno, op = p[1]
+    end_pos = p.lexpos(3)
+    py_text = p.lexer.lexer.lexdata[start_pos:end_pos].strip()
     operator = translate_operator(op)
     expr = ast.Expression(body=p[2])
     set_locations(expr, lineno, 1)
     code = compile(expr, 'Enaml', mode='eval')
-    expr_node = enaml_ast.Python(expr, code, lineno)
+    expr_node = enaml_ast.Python(py_text, expr, code, lineno)
     p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
 
 
@@ -466,8 +471,9 @@ def p_enaml_operator(p):
                        | MINUSGREATER
                        | VBARGREATER
                        | LESSVBAR '''
+    start_pos = p.lexpos(1) + 1
     lineno = p.lineno(1)
-    p[0] = (lineno, p[1])
+    p[0] = (start_pos, lineno, p[1])
 
 
 #==============================================================================
