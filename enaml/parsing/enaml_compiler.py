@@ -79,29 +79,55 @@ def _var_name_generator():
         yield '_var_' + str(count.next())
 
 
-def _decl_wrapper_gen(func):
-    """ Wraps a generated function in a wrapper function which calls
-    into the enaml code path for creating the component. It also,
-    applies any given kwargs to the object before returning.
+class EnamlDeclaration(object):
+    """ A helper class which exposes a compiled Enaml declaration
+    function with an interface that is easy to use from Python.
 
     """
-    @wraps(func)
-    def wrapper(**kwargs):
-        obj = wrapper.__enaml_call__(None, None)
+    def __init__(self, func):
+        self.__doc__ = func.__doc__
+        self.__name__ = func.__name__
+        self.__func__ = func
+    
+    def __call__(self, **kwargs):
+        """ Invokes the underlying Enaml function and applies the
+        given keyword arguments as attributes to the result.
+
+        """
+        obj = self.__enaml_call__(None, None)
         obj.trait_set(**kwargs)
         return obj
+    
+    def __enaml_call__(self, f_locals, toolkit):
+        """ Invokes the underlying Enaml function, creating the locals
+        and toolkit if necessary.
 
-    @wraps(func)
-    def enaml_call(f_locals, toolkit):
+        """
         if f_locals is None:
             f_locals = ExpressionLocals()
         if toolkit is None:
             toolkit = Toolkit.active_toolkit()
-        return func(f_locals, toolkit)
+        return self.__func__(f_locals, toolkit)
 
-    wrapper.__enaml_call__ = enaml_call
 
-    return wrapper
+class EnamlDefn(object):
+    """ A helper class which exposes a compiled Enaml defn function
+    with an interface that is easy to use from Python. It serves 
+    mainly to distinguish an Enaml defn function from a normal
+    function for the purposes of documentation generation.
+
+    """
+    def __init__(self, func):
+        self.__doc__ = func.__doc__
+        self.__name__ = func.__name__
+        self.__func__ = func
+    
+    def __call__(self, *args, **kwargs):
+        """ Invokes the underlying Enaml function and applies the
+        given keyword arguments as attributes to the result.
+
+        """
+        return self.__func__(*args, **kwargs)
 
 
 #------------------------------------------------------------------------------
@@ -617,7 +643,7 @@ class EnamlCompiler(_NodeVisitor):
         """
         func_code = DeclarationCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
-        wrapper = _decl_wrapper_gen(func)
+        wrapper = EnamlDeclaration(func)
         self.global_ns[node.name] = wrapper
     
     def visit_Defn(self, node):
@@ -628,5 +654,6 @@ class EnamlCompiler(_NodeVisitor):
         # XXX Handle arg defaults
         func_code = DefnCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
-        self.global_ns[node.name] = func
+        wrapper = EnamlDefn(func)
+        self.global_ns[node.name] = wrapper
 
