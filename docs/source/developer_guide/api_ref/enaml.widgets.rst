@@ -1,5 +1,5 @@
 Widgets
-=======
+===============================================================================
 
 An Enaml widget is a toolkit-independent abstraction.
 Each GUI toolkit that Enaml supports is a set of widgets that

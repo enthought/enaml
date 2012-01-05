@@ -69,7 +69,7 @@ RadioGroup(Container):
         A callable which get mapped across the list of items to 
         generate the list of labels for the buttons.
     
-    Input/Output Attributes
+    Input Output Attributes
     -----------------------
     selected : object
         An attribute which is updated with the item associated
