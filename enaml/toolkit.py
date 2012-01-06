@@ -59,10 +59,11 @@ class Constructor(HasStrictTraits):
         shell_cls = self.shell_loader()
         abstract_cls = self.abstract_loader()
         shell_obj = shell_cls()
-        abstract_obj = abstract_cls()
-        shell_obj.abstract_obj = abstract_obj
+        if abstract_cls is not None:
+            abstract_obj = abstract_cls()
+            shell_obj.abstract_obj = abstract_obj
+            abstract_obj.shell_obj = shell_obj
         shell_obj.toolkit = self.toolkit
-        abstract_obj.shell_obj = shell_obj
         return shell_obj
 
     def clone(self, shell_loader=None, abstract_loader=None):
@@ -184,20 +185,6 @@ class Toolkit(dict):
         """
         self.__stack__.pop()
 
-    def _get_style_sheet(self):
-        """ Returns the default style sheet instance for this toolkit.
-
-        """
-        return self['__style_sheet__']
-
-    def _set_style_sheet(self, val):
-        """ Sets the default style sheet instance for this toolkit.
-
-        """
-        self['__style_sheet__'] = val
-
-    style_sheet = property(_get_style_sheet, _set_style_sheet)
-
     def _get_create_app(self):
         """ Returns the app creation function for this toolkit.
 
@@ -312,7 +299,6 @@ def qt_toolkit():
     from .operators import OPERATORS
     from .widgets.qt.constructors import QT_CONSTRUCTORS
     from .util.guisupport import get_app_qt4, start_event_loop_qt4, process_events_qt4
-    from .widgets.qt.styling import QT_STYLE_SHEET
     from .widgets.qt.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
     from .widgets.constructors import CONSTRUCTORS
@@ -325,7 +311,6 @@ def qt_toolkit():
     toolkit.create_app = get_app_qt4
     toolkit.start_app = start_event_loop_qt4
     toolkit.process_events = process_events_qt4
-    toolkit.style_sheet = QT_STYLE_SHEET
     toolkit.invoke_later = invoke_later
     toolkit.invoke_timer = invoke_timer
     toolkit.control_exception_handler = None
@@ -343,7 +328,6 @@ def wx_toolkit():
     from .operators import OPERATORS
     from .widgets.wx.constructors import WX_CONSTRUCTORS
     from .util.guisupport import get_app_wx, start_event_loop_wx, process_events_wx
-    from .widgets.wx.styling import WX_STYLE_SHEET
     from .widgets.wx.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
     from .widgets.constructors import CONSTRUCTORS
@@ -356,7 +340,6 @@ def wx_toolkit():
     toolkit.create_app = get_app_wx
     toolkit.start_app = start_event_loop_wx
     toolkit.process_events = process_events_wx
-    toolkit.style_sheet = WX_STYLE_SHEET
     toolkit.invoke_later = invoke_later
     toolkit.invoke_timer = invoke_timer
     toolkit.control_exception_handler = None

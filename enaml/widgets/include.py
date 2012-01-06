@@ -2,67 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import weakref
-
 from traits.api import (
     List, Instance, Bool, on_trait_change, Property, cached_property, Any,
 )
 
-from .base_component import BaseComponent, AbstractTkBaseComponent
-
-
-class NullTkInclude(AbstractTkBaseComponent):
-    """ A null toolkit Include implementation. An Include object does
-    not need an abstract object implementation, so this class is just
-    a null implementation of the required interface.
-
-    """
-    @property
-    def toolkit_widget(self):
-        return None
-
-    _shell_obj = lambda self: None
-
-    def _get_shell_obj(self):
-        return self._shell_obj()
-    
-    def _set_shell_obj(self, val):
-        self._shell_obj = weakref.ref(val)
-    
-    shell_obj = property(_get_shell_obj, _set_shell_obj)
-
-    def create(self, parent):
-        pass
-    
-    def initialize(self):
-        pass
-
-    def bind(self):
-        pass
-
-    def destroy(self):
-        pass
-    
-    def disable_updates(self):
-        pass
-    
-    def enable_updates(self):
-        pass
-    
-    def shell_enabled_changed(self, enabled):
-        pass
-
-    def shell_bg_color_changed(self, color):
-        pass
-    
-    def shell_fg_color_changed(self, color):
-        pass
-    
-    def shell_font_changed(self, font):
-        pass
-
-    def set_visible(self, visible):
-        pass
+from .base_component import BaseComponent
 
 
 class Include(BaseComponent):
@@ -76,7 +20,7 @@ class Include(BaseComponent):
     #: values are as follows:
     #:     None -> []
     #:     component -> [component]
-    #:     [components] -> [components]
+    #:     [components, ...] -> [component, ...]
     components = Property(Any, depends_on='_components')
         
     #: A private attribute which stores the underlying list of created
@@ -90,11 +34,7 @@ class Include(BaseComponent):
 
     #: An Overridden parent class trait which restricts this Include 
     #: component to not have any static subcomponents.
-    _subcomponents = List(Instance('BaseComponent'), maxlen=0)
-
-    #: An Overridden parent class trait which restrict the type of the
-    #: abstract object to be a NullTkInclude type.
-    abstract_obj = Instance(NullTkInclude)
+    _subcomponents = List(maxlen=0)
 
     #--------------------------------------------------------------------------
     # Property Getters and Setters
@@ -135,17 +75,22 @@ class Include(BaseComponent):
         # are siblings of the Include. To do this, we pass the reference
         # to the parent of the Include and the corresponding toolkit
         # widget where appropriate.
-        parent_shell = self.parent
-        toolkit_parent = parent_shell.toolkit_widget
-        
+        parent = self.parent
+        try:
+            # If our parent is a BaseComponent, it won't have a 
+            # toolkit_widget attribute.
+            toolkit_parent = parent.toolkit_widget
+        except AttributeError:
+            toolkit_parent = None
+
         # The following blocks perform roughly the same setup process
         # as BaseComponent.setup(), except that we don't need to perform
-        # the setup for this Include instance (since it's already) setup.
+        # the setup for this Include instance (since it's already setup).
         # Also, since we don't need to recurse into any children (an
         # Include can't have children), there is no need to break these
         # blocks out into separate methods.
         for child in cmpnts:
-            child.parent = parent_shell
+            child.parent = parent
             child._setup_parent_refs()
         
         for child in cmpnts:
@@ -177,6 +122,15 @@ class Include(BaseComponent):
     #--------------------------------------------------------------------------
     # Parent Class Overrides 
     #--------------------------------------------------------------------------
+    def add_subcomponent(self, component):
+        """ An overriden parent class method which prevents subcomponents
+        from being declared for an Include instance.
+
+        """
+        msg = ("Cannot add subcomponents to an Include. Assign a list to the "
+               "'components' attribute instead.")
+        raise ValueError(msg)
+
     def get_components(self):
         """ A reimplemented parent class method to include the dynamic
         children of this Include in our parent's list of children.
@@ -195,14 +149,6 @@ class Include(BaseComponent):
         """
         for item in self.components:
             item.destroy()
-
-    def freeze(self):
-        """ A re-implemented parent class method which returns the 
-        freeze context of the parent of the include, since an Include
-        has no toolkit widget on which to disable updates.
-
-        """
-        return self.parent.freeze()
 
     #--------------------------------------------------------------------------
     # Change Handlers 

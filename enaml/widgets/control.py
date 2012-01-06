@@ -4,16 +4,15 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Instance, List
 
-from .base_component import BaseComponent
-from .component import Component, AbstractTkComponent
+from .layout_component import LayoutComponent, AbstractTkLayoutComponent
 from ..exceptions import ShellExceptionContext, ShellNotificationContext
 
 
-class AbstractTkControl(AbstractTkComponent):
+class AbstractTkControl(AbstractTkLayoutComponent):
     pass
 
 
-class Control(Component):
+class Control(LayoutComponent):
     """ The base class of all leaf widgets in Enaml. Controls cannot
     have children and attempts to add children to a control will
     raise an exception.
@@ -29,21 +28,25 @@ class Control(Component):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkControl)
 
-    #: Overridden parent class trait
-    _subcomponents = List(Instance(BaseComponent), maxlen=0)
+    #: Overridden parent class trait. A standard Control is not allowed 
+    #: to have children.
+    _subcomponents = List(maxlen=0)
 
     def capture_exceptions(self):
-        """ Return a ShellExceptionContext that will capture error state automatically.
+        """ Return a ShellExceptionContext that will capture error state 
+        automatically.
         
         """
         return ShellExceptionContext(self)
     
-    def capture_notification_exceptions(self, handler=None, reraise_exceptions=True,
-            main=False, locked=False):
-        """ Return a ShellNotificationContext that will set error state automatically,
-        including TraitErrors in listeners.
+    def capture_notification_exceptions(
+        self, handler=None, reraise_exceptions=True, main=False, locked=False):
+        """ Return a ShellNotificationContext that will set error state 
+        automatically, including TraitErrors in listeners.
         
         """
-        return ShellNotificationContext(self, handler, reraise_exceptions, main,
-            locked)
+        res = ShellNotificationContext(
+            self, handler, reraise_exceptions, main, locked,
+        )
+        return res
 

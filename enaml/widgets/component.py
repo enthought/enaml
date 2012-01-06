@@ -2,386 +2,391 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import abstractmethod
+from abc import ABCMeta, abstractmethod, abstractproperty
 
-from traits.api import Instance, Property, Tuple, Event, Enum
+from traits.api import Instance, Property, Bool
 
-from .base_component import BaseComponent, AbstractTkBaseComponent
-from .layout.box_model import BoxModel
+from .base_component import BaseComponent
+
+from ..guard import guard
+from ..styling.color import ColorTrait
+from ..styling.font import FontTrait
 
 
-PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
-
-
-class AbstractTkComponent(AbstractTkBaseComponent):
-    """ The abstract toolkit Component interface.
-
-    A toolkit component is responsible for handling changes on a shell 
-    Component and proxying those changes to and from its internal toolkit
-    widget.
+#------------------------------------------------------------------------------
+# Freeze Context
+#------------------------------------------------------------------------------
+class FreezeContext(object):
+    """ A context manager which disables rendering updates of a component
+    on enter, and re-enables them on exit. It may safely nested.
 
     """
-    @abstractmethod
-    def size(self):
-        """ Returns the size of the internal toolkit widget, ignoring any
-        windowing decorations, as a (width, height) tuple of integers.
+    _counts = {}
+
+    @classmethod
+    def is_frozen(cls, component):
+        """ Returns a boolean indicating whether or not the given 
+        component is currently the subject of a freeze context.
 
         """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def size_hint(self):
-        """ Returns a (width, height) tuple of integers which represent
-        the suggested size of the widget for its current state, ignoring
-        any windowing decorations. This value is used by the layout 
-        manager to determine how much space to allocate the widget.
+        return component in cls._counts
 
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def resize(self, width, height):
-        """ Resizes the internal toolkit widget according the given
-        width and height integers, ignoring any windowing decorations.
-
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def min_size(self):
-        """ Returns the hard minimum (width, height) of the widget, 
-        ignoring any windowing decorations. A widget will not be able
-        to be resized smaller than this value
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def set_min_size(self, min_width, min_height):
-        """ Set the hard minimum width and height of the widget, ignoring
-        any windowing decorations. A widget will not be able to be resized 
-        smaller than this value.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def pos(self):
-        """ Returns the position of the internal toolkit widget as an
-        (x, y) tuple of integers, including any windowing decorations. 
-        The coordinates should be relative to the origin of the widget's 
-        parent, or to the screen if the widget is toplevel.
-
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def move(self, x, y):
-        """ Moves the internal toolkit widget according to the given
-        x and y integers which are relative to the origin of the
-        widget's parent and includes any windowing decorations.
-
-        """
-        raise NotImplementedError
-        
-    @abstractmethod
-    def frame_geometry(self):
-        """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget, including any windowing
-        decorations.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def geometry(self):
-        """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget, ignoring any windowing
-        decorations.
-
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def set_geometry(self, x, y, width, height):
-        """ Sets the geometry of the internal widget to the given
-        x, y, width, and height values, ignoring any windowing 
-        decorations.
-
-        """
-        raise NotImplementedError
-
-    def set_solved_geometry(self, root):
-        """ Makes the component take the solved geometry and other 
-        constrained variables and set its internal values.
-
-        This method can assume that all of its parents have had their 
-        geometry set correctly.
+    def __init__(self, component):
+        """ Initialize a freeze context.
 
         Parameters
         ----------
-        root : Container
-            The root container that actually performed the layout for 
-            this component. Implementations will need this to know how 
-            to transform the global solved (x,y) values to local values 
-            relative to their immediate parent.
-
-        Returns
-        -------
-        dx, dy : int
-            The offsets needed to convert (x, y) variable values into 
-            local positions. These are mostly used in overrides of this 
-            method that handle additional variables.
+        component : BaseComponent
+            The component that should be frozen.
+        
+        """
+        self.component = component
+    
+    def __enter__(self):
+        """ Disables updates on the component the first time that any
+        freeze context on that component is entered.
 
         """
-        shell = self.shell_obj
-        x = shell.left.value
-        y = shell.top.value
-        width = shell.width.value
-        height = shell.height.value
-        x, y, width, height = (int(round(z)) for z in (x, y, width, height))
-        # This is offset against the root Container. Each Component's 
-        # geometry actually needs to be offset against its parent. Walk 
-        # up the tree and subtract out the parent's offset.
-        dx = 0
-        dy = 0
-        for ancestor in shell.traverse_ancestors(root):
-            adx, ady, _, _ = ancestor.geometry()
-            dx += adx
-            dy += ady
-        self.set_geometry(x - dx, y - dy, width, height)
-        return (dx, dy)
+        counts = self._counts
+        cmpnt = self.component
+        if cmpnt not in counts:
+            counts[cmpnt] = 1
+            cmpnt.disable_updates()
+        else:
+            counts[cmpnt] += 1
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        """ Enables updates on the component when the last freeze
+        context on that component is exited.
+
+        """
+        counts = self._counts
+        cmpnt = self.component
+        counts[cmpnt] -= 1
+        if counts[cmpnt] == 0:
+            del counts[cmpnt]
+            cmpnt.enable_updates()
 
 
-class Component(BaseComponent):
-    """ A BaseComponent subclass that adds a box model and support
-    for constraints specification. This class represents the most
-    basic visible widget in Enaml.
+#------------------------------------------------------------------------------
+# Abstract Toolkit Component Interface
+#------------------------------------------------------------------------------
+class AbstractTkComponent(object):
+    """ The abstract toolkit Component interface.
+
+    A toolkit component is responsible for handling changes on a shell 
+    Component and proxying those changes to and from its internal guit
+    toolkit widget.
 
     """
-    #: A private attribute that holds the box model instance
-    #: for this component. 
-    _box_model = Instance(BoxModel)
-    def __box_model_default(self):
-        return BoxModel(self)
-
-    #: How strongly a component hugs it's contents' width. Valid strengths
-    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default is 
-    #: 'strong'. This trait should be overridden on a per-control basis to
-    #: specify  a logical default for the given control.
-    hug_width = PolicyEnum('strong')
-
-    #: How strongly a component hugs it's contents' height. Valid strengths
-    #: are 'weak', 'medium', 'strong', 'required' and 'ignore'. Default is
-    #: 'strong'. This trait should be overridden on a per-control basis to 
-    #: specify  a logical default for the given control.
-    hug_height = PolicyEnum('strong')
-
-    #: The combination of (hug_width, hug_height).
-    hug = Property(Tuple(PolicyEnum, PolicyEnum), depends_on=['hug_width', 
-                                                              'hug_height'])
-
-    #: How strongly a component resists clipping its contents. Valid 
-    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
-    #: The default is 'strong' for width.
-    resist_clip_width = PolicyEnum('strong')
-
-    #: How strongly a component resists clipping its contents. Valid 
-    #: strengths are 'weak', 'medium', 'strong', 'required' and 'ignore'. 
-    #: The default is 'strong' for height.
-    resist_clip_height = PolicyEnum('strong')
-
-    #: The combination of (resist_clip_width, resist_clip_height).
-    resist_clip = Property(Tuple(PolicyEnum, PolicyEnum), 
-                           depends_on=['resist_clip_width', 
-                                       'resist_clip_height'])
-
-    #: An event that should be emitted by the abstract obj when its size 
-    #: hint has updated do to some change.
-    size_hint_updated = Event
-
-    #: A read-only symbolic object that represents the left boundary of 
-    #: the component
-    left = Property
-
-    #: A read-only symbolic object that represents the top boundary of 
-    #: the component
-    top = Property
-
-    #: A read-only symbolic object that represents the width of the 
-    #: component
-    width = Property
-
-    #: A read-only symbolic object that represents the height of the 
-    #: component
-    height = Property
-
-    #: A read-only symbolic object that represents the right boundary 
-    #: of the component
-    right = Property
-
-    #: A read-only symbolic object that represents the bottom boundary 
-    #: of the component
-    bottom = Property
-
-    #: A read-only symbolic object that represents the vertical center 
-    #: of the component
-    v_center = Property
-
-    #: A read-only symbolic object that represents the horizontal 
-    #: center of the component
-    h_center = Property
-
-    #: Overridden parent class trait
-    abstract_obj = Instance(AbstractTkComponent)
-
-    def _get_left(self):
-        """ Property getter for the 'left' property.
-
-        """
-        return self._box_model.left
+    __metaclass__ = ABCMeta
     
-    def _get_top(self):
-        """ Property getter for the 'top' property.
+    @abstractproperty
+    def toolkit_widget(self):
+        """ An abstract property that should return the gui toolkit 
+        widget being managed by the object.
 
         """
-        return self._box_model.top
+        raise NotImplementedError
+
+    @abstractproperty
+    def shell_obj(self):
+        """ An abstract property that should *get* and *set* a reference
+        to the shell object (an instance of Component). 
+
+        It is suggested that the implementation maintain only a weakref
+        to the shell object in order to avoid reference cycles.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def create(self, parent):
+        """ Create the underlying implementation object. 
+
+        This method is called after the reference to the shell object
+        has been set and is called in depth-first order. This means
+        that by the time this method is called, the logical parent
+        of this instance has already been created.
+
+        Parameters
+        ----------
+        parent : toolkit widget or None
+            The toolkit widget that will be the parent for the internal
+            widget.
+
+        """
+        raise NotImplementedError
     
-    def _get_width(self):
-        """ Property getter for the 'width' property.
+    @abstractmethod
+    def initialize(self):
+        """ Initialize the implementation object.
+
+        This method is called after 'create' in depth-first order. This
+        means that all other implementations in the tree will have been
+        created so that intialization can depend on the existence of 
+        other implementation objects.
 
         """
-        return self._box_model.width
+        raise NotImplementedError
+
+    @abstractmethod
+    def bind(self):
+        """ Called after 'initialize' in order to bind event handlers.
+
+        At the time this method is called, the entire tree of ui
+        objects will have been initialized. The intention of this 
+        method is delay the binding of event handlers until after
+        everything has been intialized in order to mitigate extraneous
+        event firing.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def destroy(self):
+        """ Called when the underlying widget should be destroyed.
+
+        This method is called before the child shell object is removed
+        from its parent. This enables a toolkit backend to ensure that
+        the underlying toolkit widget objects are properly removed 
+        from the widget tree before the abstract wrapper is discarded.
+                
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def disable_updates(self):
+        """ Called when the widget should disable its rendering updates.
+
+        This is used before a large change occurs to a live ui so that
+        the widget can optimize/delay redrawing until all the updates
+        have been completed and 'enable_updates' is called.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def enable_updates(self):
+        """ Called when the widget should enable rendering updates.
+
+        This is used in conjunction with 'disable_updates' to allow
+        a widget to optimize/delay redrawing until all the updates
+        have been completed and this function is called.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_visible(self, visible):
+        """ Set the visibility of the of the widget according to the
+        given boolean.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell
+        object. Sets the enabled/disabled state of the widget.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
+        """
+        raise NotImplementedError
     
-    def _get_height(self):
-        """ Property getter for the 'height' property.
+    @abstractmethod
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the shell
+        object. Sets the foreground color of the internal widget to the 
+        given color. For some widgets this may do nothing.
 
         """
-        return self._box_model.height
+        raise NotImplementedError
     
-    def _get_right(self):
-        """ Property getter for the 'right' property.
+    @abstractmethod
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell
+        object. Sets the font of the internal widget to the given font.
+        For some widgets this may do nothing.
 
         """
-        return self._box_model.right
+        raise NotImplementedError
+
+
+#------------------------------------------------------------------------------
+# Enaml Component
+#------------------------------------------------------------------------------
+class Component(BaseComponent):
+    """ A BaseComponent subclass that adds support for a toolkit specific
+    abstract object. This class represents the most basic widget in Enaml
+    that drives a gui toolkit widget.
+
+    """ 
+    #: The background color of the widget.
+    bg_color = ColorTrait
     
-    def _get_bottom(self):
-        """ Property getter for the 'bottom' property.
-
-        """
-        return self._box_model.bottom
+    #: The foreground color of the widget.
+    fg_color = ColorTrait
     
-    def _get_v_center(self):
-        """ Property getter for the 'v_center' property.
+    #: The font used for the widget.
+    font = FontTrait
+
+    #: Whether or not the widget is enabled.
+    enabled = Bool(True)
+
+    #: Whether or not the widget is visible.
+    visible = Bool(True)
+
+    #: A property which returns whether or not this component is 
+    #: currently frozen.
+    frozen = Property
+
+    #: A read-only property that returns the toolkit specific widget
+    #: being managed by the abstract widget.
+    toolkit_widget = Property
+
+    #: The toolkit specific object that implements the behavior of
+    #: this component and manages the gui toolkit object. Subclasses
+    #: should redefine this trait to specify the specialized type of
+    #: abstract_obj that is accepted.
+    abstract_obj = Instance(AbstractTkComponent) 
+
+    #--------------------------------------------------------------------------
+    # Property Getters
+    #--------------------------------------------------------------------------
+    def _get_toolkit_widget(self):
+        """ The property getter for the 'toolkit_widget' attribute.
 
         """
-        return self._box_model.v_center
+        return self.abstract_obj.toolkit_widget
+
+    def _get_frozen(self):
+        """ The property getter for the 'frozen' attribute.
+
+        """
+        return FreezeContext.is_frozen(self)
+
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def _setup_create_widgets(self, parent):
+        """ A reimplemented parent class setup method which creates the
+        underlying toolkit widgets.
+
+        """
+        self.abstract_obj.create(parent)
+        self_widget = self.toolkit_widget
+        super(Component, self)._setup_create_widgets(self_widget)
+
+    def _setup_init_widgets(self):
+        """ A reimplemented parent class setup method which initializes
+        the underyling toolkit widgets.
+
+        """
+        self.abstract_obj.initialize()
+        super(Component, self)._setup_init_widgets()
     
-    def _get_h_center(self):
-        """ Property getter for the 'h_center' property.
+    def _setup_bind_widgets(self):
+        """ A reimplemented parent class setup method which binds the
+        event handlers for the internal toolkit widgets.
 
         """
-        return self._box_model.h_center
-
-    def _get_hug(self):
-        """ Property getter for the 'hug' property.
-
-        """
-        return (self.hug_width, self.hug_height)
-
-    def _set_hug(self, value):
-        """ Property setter for the 'hug' property.
-
-        """
-        self.trait_set(
-            hug_width=value[0],
-            hug_height=value[1],
-        )
-
-    def _get_resist_clip(self):
-        """ Property getter for the 'resist_clip' property.
-
-        """
-        return (self.resist_clip_width, self.resist_clip_height)
-
-    def _set_resist_clip(self, value):
-        """ Property setter for the 'resist_clip' property.
-
-        """
-        self.trait_set(
-            resist_clip_width=value[0],
-            resist_clip_height=value[1],
-        )
-
-    def size(self):
-        """ Returns the size tuple as given by the abstract widget.
-
-        """
-        return self.abstract_obj.size()
+        self.abstract_obj.bind()
+        super(Component, self)._setup_bind_widgets()
     
-    def size_hint(self):
-        """ Returns the size hint tuple as given by the abstract widget
-        for its current state.
+    def _setup_listeners(self):
+        """ A reimplemented parent class setup method which sets up
+        the trait listeners for the abstract object.
 
         """
-        return self.abstract_obj.size_hint()
-
-    def resize(self, width, height):
-        """ Resize the abstract widget as specified by the given
-        width and height integers.
-
-        """
-        self.abstract_obj.resize(width, height)
+        self.add_trait_listener(self.abstract_obj, 'shell')
+        super(Component, self)._setup_listeners()
     
-    def min_size(self):
-        """ Returns the hard minimum (width, height) of the widget, 
-        ignoring any windowing decorations. A widget will not be able
-        to be resized smaller than this value
+    def _setup_init_visibility(self):
+        """ A reimplemented parent class setup method which initializes
+        the visibility of the component.
 
         """
-        return self.abstract_obj.min_size()
-
-    def set_min_size(self, min_width, min_height):
-        """ Set the hard minimum width and height of the widget. A widget
-        should not be able to be resized smaller than this value.
+        self.set_visible(self.visible)
+        super(Component, self)._setup_init_visibility()
+        
+    #--------------------------------------------------------------------------
+    # Teardown Methods
+    #--------------------------------------------------------------------------
+    def destroy(self):
+        """ Destroys the underlying toolkit widget as well as all of
+        the children of this component. After calling this method, the
+        component and all of its children should be considered invalid
+        and no longer used. This is a reimplemented parent class method
+        that adds additional destruction logic to destroy the underlying
+        toolkit widgets.
 
         """
-        self.abstract_obj.set_min_size(min_width, min_height)
-
-    def pos(self):
-        """ Returns the position tuple as given by the abstract widget.
-
-        """
-        return self.abstract_obj.pos()
+        # Remove the abstract object as a trait listener so that it
+        # does not try to update after destroying its internal widget.
+        self.remove_trait_listener(self.abstract_obj, 'shell')
+        self.abstract_obj.destroy()
+        self.abstract_obj = None
+        super(Component, self).destroy()
     
-    def move(self, x, y):
-        """ Moves the abstract widget to the given x and y integer
-        coordinates which are given relative to the parent origin.
+    #--------------------------------------------------------------------------
+    # Change Handlers
+    #--------------------------------------------------------------------------
+    def _visible_changed(self, visible):
+        """ Handles the 'visible' attribute being changed by calling the
+        'set_visible' method.
 
         """
-        self.abstract_obj.move(x, y)
-    
-    def geometry(self):
-        """ Returns the (x, y, width, height) geometry tuple as given
-        by the abstract widget.
+        # The method call allows the visibility to be set by other parts 
+        # of the framework which are not dependent on change notification.
+        # By using the method here, we help to ensure a consistent state.
+        self.set_visible(visible)
+
+    #--------------------------------------------------------------------------
+    # Auxiliary Methods 
+    #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ Set the visibility of the component according to the given
+        boolean. Subclasses that need more control over visibility
+        changes should reimplement this method.
 
         """
-        return self.abstract_obj.geometry()
-    
-    def set_geometry(self, x, y, width, height):
-        """ Sets the geometry of the abstract widget with the given
-        integer values.
+        # Make sure the 'visible' attribute is synced up as a result
+        # of the method call. This may fire a notification, in which
+        # case the change handler will call this method again. This
+        # guard prevents that unneeded recursion.
+        if guard.guarded(self, 'set_visible'):
+            return
+        else:
+            with guard(self, 'set_visible'):
+                self.visible = visible
+        self.abstract_obj.set_visible(visible)
+
+    def disable_updates(self):
+        """ Disables rendering updates for the underlying widget.
 
         """
-        self.abstract_obj.set_geometry(x, y, width, height)
+        self.abstract_obj.disable_updates()
 
-    def set_solved_geometry(self, root):
-        """ Makes the component take the solved geometry and other 
-        constrained variables and set its internal values.
-
-        This method can assume that all of its parents have had their 
-        geometry set correctly.
+    def enable_updates(self):
+        """ Enables rendering updates for the underlying widget.
 
         """
-        return self.abstract_obj.set_solved_geometry(root)
+        self.abstract_obj.enable_updates()
+
+    def freeze(self):
+        """ A context manager which disables rendering updates on 
+        enter and restores them on exit. The context can be safetly
+        nested.
+
+        """
+        return FreezeContext(self)
 
