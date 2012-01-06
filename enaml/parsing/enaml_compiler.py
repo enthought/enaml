@@ -643,7 +643,7 @@ class EnamlCompiler(_NodeVisitor):
         """
         func_code = DeclarationCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
-        wrapper = EnamlDeclaration(node.base.py_txt, func)
+        wrapper = EnamlDeclaration(node.base.py_txt.strip(), func)
         self.global_ns[node.name] = wrapper
     
     def visit_Defn(self, node):
