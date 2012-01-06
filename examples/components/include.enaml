@@ -37,7 +37,7 @@ defn PersonField(person):
 
 MainWindow(Window):
     Field:
-        value << 'People: ' + ', '.join([person.name for person in people])
+        value << ', '.join([person.name for person in people])
         bg_color = 'lightblue'
         read_only = True
     Include:
