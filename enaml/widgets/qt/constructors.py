@@ -39,7 +39,6 @@ def constructor(base_path):
 
 QT_CONSTRUCTORS = dict((
     constructor('window'),
-    constructor('component'),
     constructor('container'),
     constructor('dialog'),
     constructor('calendar'),
