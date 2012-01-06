@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import tokenize
+import weakref
 
 import ply.lex as lex
 
@@ -420,6 +421,10 @@ class EnamlLexer(object):
         self.lexer = lex.lex(module=self)
         self.token_stream = None
         self.filename = filename
+
+        # Add a weakref to this instance so the parser can 
+        # reference back to this instance when needed.
+        self.lexer._py_lexer = weakref.ref(self)
 
     def input(self, txt):
         self.lexer.input(txt)

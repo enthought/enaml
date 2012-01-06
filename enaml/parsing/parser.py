@@ -2050,7 +2050,8 @@ def p_fplist_list2(p):
 
  
 def p_error(t):
-    raise_syntax_error('invalid syntax.', t.lexer.filename, t.lineno)
+    fn = t.lexer._py_lexer().filename
+    raise_syntax_error('invalid syntax.', fn, t.lineno)
 
 
 _parser = yacc.yacc(debug=False, tabmodule='enaml_parsetab', 
