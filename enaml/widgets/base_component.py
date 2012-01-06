@@ -402,7 +402,7 @@ class BaseComponent(HasStrictTraits):
         return FreezeContext.is_frozen(self)
 
     #--------------------------------------------------------------------------
-    # Component Getters 
+    # Component Manipulation
     #--------------------------------------------------------------------------
     def get_components(self):
         """ Returns the list of BaseComponent instance which should be
@@ -413,7 +413,16 @@ class BaseComponent(HasStrictTraits):
 
         """
         return [self]
-    
+        
+    def add_subcomponent(self, component):
+        """ Adds the given component as a subcomponent of this object.
+        By default, the subcomponent is added to an internal list of 
+        subcomponents. This method may be overridden by subclasses to 
+        filter or otherwise handle certain subcomponents differently.
+
+        """
+        self._subcomponents.append(component)
+        
     #--------------------------------------------------------------------------
     # Attribute Binding 
     #--------------------------------------------------------------------------

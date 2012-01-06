@@ -197,7 +197,7 @@ class DeclarationCompiler(_NodeVisitor):
                 f_locals['btn'] = button
                 op = eval('__operator_Equal__', toolkit, f_globals)
                 op(item, 'text', <ast>, <code>, f_locals, f_globals, toolkit)
-                foo._subcomponents.append(button)
+                foo.add_subcomponent(button)
                 return foo
         
         """
@@ -345,10 +345,9 @@ class DeclarationCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo._subcomponents.append(button)
+            # foo.add_subcomponent(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, '_subcomponents'),
-            (bp.LOAD_ATTR, 'append'),
+            (bp.LOAD_ATTR, 'add_subcomponent'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
             (bp.POP_TOP, None),
@@ -368,6 +367,12 @@ class _DefnCollector(object):
 
     def __init__(self):
         self._subcomponents = []
+    
+    def add_subcomponent(self, component):
+        """ Adds the subcomponent to the internal list.
+
+        """
+        self._subcomponents.append(component)
 
     def results(self):
         """ Computes the proper return results for a defn depending on
@@ -548,10 +553,9 @@ class DefnCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo._subcomponents.append(button)
+            # foo.add_subcomponent(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, '_subcomponents'),
-            (bp.LOAD_ATTR, 'append'),
+            (bp.LOAD_ATTR, 'add_subcomponent'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
             (bp.POP_TOP, None),
