@@ -2,195 +2,173 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .wx_base_component import WXBaseComponent
+import weakref
+
+import wx
+
+from .styling import wx_color_from_color
 
 from ..component import AbstractTkComponent
 
 
-class WXComponent(WXBaseComponent, AbstractTkComponent):
-    """ A wxPython implementation of Component.
+class WXComponent(AbstractTkComponent):
+    """ Base component object for the Wx based backend.
 
     """
-    #--------------------------------------------------------------------------
-    # Abstract Implementation
-    #--------------------------------------------------------------------------
-    def size(self):
-        """ Returns the size of the internal toolkit widget, ignoring any
-        windowing decorations, as a (width, height) tuple of integers.
+    #: The a reference to the shell object. Will be stored as a weakref.
+    _shell_obj = lambda self: None
 
-        """
-        return self._size(self.widget)
-
-    def size_hint(self):
-        """ Returns a (width, height) tuple of integers which represent
-        the suggested size of the widget for its current state, ignoring
-        any windowing decorations. This value is used by the layout 
-        manager to determine how much space to allocate the widget.
-
-        """
-        return self._size_hint(self.widget)
-
-    def resize(self, width, height):
-        """ Resizes the internal toolkit widget according the given
-        width and height integers, ignoring any windowing decorations.
-
-        """
-        self._resize(self.widget, width, height)
-
-    def min_size(self):
-        """ Returns the hard minimum (width, height) of the widget, 
-        ignoring any windowing decorations. A widget will not be able
-        to be resized smaller than this value
-
-        """
-        return self._min_size(self.widget)
-
-    def set_min_size(self, min_width, min_height):
-        """ Set the hard minimum width and height of the widget, ignoring
-        any windowing decorations. A widget will not be able to be resized 
-        smaller than this value.
-
-        """
-        self._set_min_size(self.widget, min_width, min_height)
-
-    def pos(self):
-        """ Returns the position of the internal toolkit widget as an
-        (x, y) tuple of integers, including any windowing decorations. 
-        The coordinates should be relative to the origin of the widget's 
-        parent, or to the screen if the widget is toplevel.
-
-        """
-        return self._pos(self.widget)
-
-    def move(self, x, y):
-        """ Moves the internal toolkit widget according to the given
-        x and y integers which are relative to the origin of the
-        widget's parent and includes any windowing decorations.
-
-        """
-        self._move(self.widget, x, y)
-
-    def frame_geometry(self):
-        """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget, including any windowing
-        decorations.
-
-        """
-        return self._frame_geometry(self.widget)
-
-    def geometry(self):
-        """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget, ignoring any windowing
-        decorations.
-
-        """
-        return self._geometry(self.widget)
-
-    def set_geometry(self, x, y, width, height):
-        """ Sets the geometry of the internal widget to the given
-        x, y, width, and height values, ignoring any windowing 
-        decorations.
-
-        """
-        self._set_geometry(self.widget, x, y, width, height)
+    #: The Wx widget created by the component
+    widget = None
 
     #--------------------------------------------------------------------------
-    # Indirection getters and setters 
+    # Abstract Implementation 
     #--------------------------------------------------------------------------
+    @property
+    def toolkit_widget(self):
+        """ A property that returns the toolkit specific widget for this
+        component.
+
+        """
+        return self.widget
     
-    # These indirection methods allow subclasses to not need to repeat
-    # code when they need to maintain two separate internal widgets
-    # (See WXWindow for an example). Instead they can just call these
-    # methods.
-
-    def _size(self, widget):
-        """ Returns the size of the given widget. See also 'size()'.
+    def _get_shell_obj(self):
+        """ Returns a strong reference to the shell object.
 
         """
-        return widget.GetClientSizeTuple()
+        return self._shell_obj()
 
-    def _size_hint(self, widget):
-        """ Returns the size hint of the given widget. See also 
-        'size_hint()'.
-
-        """
-        return widget.GetBestSizeTuple()
-
-    def _resize(self, widget, width, height):
-        """ Resizes the given widget. See also 'resize(width, height)'
+    def _set_shell_obj(self, obj):
+        """ Stores a weak reference to the shell object.
 
         """
-        # SetClientSize completely breaks down on Windows, so it seems 
-        # there is no way to reliably set the client size. Instead we
-        # just set the frame size and hope for the best.
-        widget.SetSize((width, height))
+        self._shell_obj = weakref.ref(obj)
 
-    def _min_size(self, widget):
-        """ Returns the minimum size of the widget. See also
-        'min_size()'.
+    #: A property which gets a sets a reference (stored weakly)
+    #: to the shell object
+    shell_obj = property(_get_shell_obj, _set_shell_obj)
 
-        """
-        # Wx really needs a GetMinClientSize function...
-        return tuple(widget.GetMinSize())
-
-    def _set_min_size(self, widget, min_width, min_height):
-        """ Sets the minimum size of the given widget. See also
-        'set_min_size(min_width, min_height)'.
+    def create(self, parent):
+        """ Create the underlying Wx widget.
 
         """
-        # Wx really needs a SetMinClientSize function...
-        widget_width, widget_height = widget.GetSizeTuple()
-        client_width, client_height = widget.GetClientSizeTuple() 
-        min_width = min_width + (widget_width - client_width)
-        min_height = min_height + (widget_height - client_height)
-        widget.SetMinSize((min_width, min_height))
-        new_size = (max(widget_width, min_width), max(widget_height, min_height))
-        if new_size != (widget_width, widget_height):
-            widget.SetSize(new_size)
+        self.widget = wx.Panel(parent)
 
-    def _pos(self, widget):
-        """ Returns the position of the given widget. See also 'pos()'.
+    def initialize(self):
+        """ Initialize the attributes of the Wx widget.
 
         """
-        return widget.GetPositionTuple()
+        shell = self.shell_obj
+        if shell.bg_color:
+            self.set_bg_color(shell.bg_color)
+        if shell.fg_color:
+            self.set_fg_color(shell.fg_color)
+        if shell.font:
+            self.set_font(shell.font)
+        self.set_enabled(shell.enabled)
 
-    def _move(self, widget, x, y):
-        """ Moves the widget to the given position. See also 'move(x, y)'.
-
-        """
-        widget.Move((x, y))
-
-    def _frame_geometry(self, widget):
-        """ Returns the frame geometry of the given widget. See also
-        'frame_geometry()'.
-
-        """
-        return widget.GetRect().asTuple()
-
-    def _geometry(self, widget):
-        """ Returns the geometry of the given widget. See also
-        'geometry()'.
+    def bind(self):
+        """ Bind any event handlers for the Wx Widget. By default,
+        this is a no-op. Subclasses should reimplement this method as
+        necessary to bind any widget event handlers or signals.
 
         """
-        # wx widget.GetClientRect() doesn't seem to be what we want.
-        # ofter, GetRect() and GetClientRect() are the same, but when
-        # they aren't GetRect() does the right thing. This is probably
-        # because of asymmetry between GetClientRect and SetDimensions. 
-        # Given that, the existing examples have been tested side by 
-        # side with Qt on Windows, and these current geometry handlers 
-        # "do the right thing" in most cases, plus or minus a pixel or
-        # two difference.
-        return widget.GetRect().asTuple()
+        pass
 
-    def _set_geometry(self, widget, x, y, width, height):
-        """ Sets the geometry of the given widget. See also
-        'set_geometry(x, y, width, height)'.
+    def destroy(self):
+        """ Destroy the underlying Wx widget.
 
         """
-        # wx doesn't seem to have a SetClientDimensions function
-        # or anything similar. SetClientRect *does not* do the right
-        # thing. This SetDimensions *seems* to do the correct thing
-        # but I'm skeptical that it won't break down in certain 
-        # cirumstances and do the wrong thing wrt to window decorations.
-        widget.SetDimensions(x, y, width, height)
+        widget = self.widget
+        if widget:
+            widget.Destroy()
+
+    def disable_updates(self):
+        """ Disable rendering updates for the underlying Wx widget.
+
+        """
+        widget = self.widget
+        if widget:
+            if not widget.IsFrozen():
+                widget.Freeze()
+    
+    def enable_updates(self):
+        """ Enable rendering updates for the underlying Wx widget.
+
+        """
+        widget = self.widget
+        if widget:
+            if widget.IsFrozen():
+                widget.Thaw()
+
+    #--------------------------------------------------------------------------
+    # Shell Object Change Handlers 
+    #--------------------------------------------------------------------------
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell 
+        object.
+
+        """
+        self.set_enabled(enabled)
+
+    def shell_bg_color_changed(self, color):
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
+        """
+        self.set_bg_color(color)
+
+    def shell_fg_color_changed(self, color):
+        """ The change handler for the 'fg_color' attribute on the parent.
+        Sets the foreground color of the internal widget to the given color.
+        For some widgets this may do nothing.
+        """
+        self.set_fg_color(color)
+
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell 
+        object. Sets the font of the internal widget to the given font.
+
+        """
+        self.set_font(font)
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods 
+    #--------------------------------------------------------------------------
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+
+        """
+        self.widget.Enable(enabled)
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+
+        """
+        self.widget.Show(visible)
+
+    def set_bg_color(self, color):
+        """ Sets the background color of the widget to an appropriate
+        wxColour given the provided Enaml Color object.
+
+        """
+        wx_color = wx_color_from_color(color)
+        self.widget.SetBackgroundColour(wx_color)
+
+    def set_fg_color(self, color):
+        """ Sets the foreground color of the widget to an appropriate
+        wxColour given the provided Enaml Color object.
+
+        """
+        wx_color = wx_color_from_color(color)
+        self.widget.SetForegroundColour(wx_color)
+
+    def set_font(self, font):
+        """ Sets the font of the widget to an appropriate wxFont given 
+        the provided Enaml Font object.
+
+        """
+        # XXX implement me!
+        pass
 
