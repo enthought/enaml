@@ -66,8 +66,8 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
 
         """
         super(QtBaseSelectionModel, self).bind()
-        #parent = self.shell_obj.parent
-        #parent.on_trait_change(self.reset_for_new_model, 'item_model')
+        parent = self.shell_obj.parent
+        parent.on_trait_change(self.reset_for_new_model, 'item_model')
         self.selection_model.currentChanged.connect(self._update_current)
         self.selection_model.selectionChanged.connect(self._update_selection)
 
@@ -76,8 +76,8 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
 
         """
         self.initialize()
-        #parent = self.shell_obj.parent
-        #parent.on_trait_change(self.reset_for_new_model, 'item_model', remove=True)
+        parent = self.shell_obj.parent
+        parent.on_trait_change(self.reset_for_new_model, 'item_model', remove=True)
         self.bind()
 
     @property
