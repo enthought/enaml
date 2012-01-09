@@ -29,6 +29,16 @@ class QtAbstractItemView(QtControl, AbstractTkItemView):
         shell = self.shell_obj
         self.set_item_model(shell.item_model)
 
+    def bind(self):
+        """ Bind any event/signal handlers for the Qt Widget.
+
+        """
+        super(QtAbstractItemView, self).bind()
+        widget = self.toolkit_widget
+        widget.activated.connect(lambda idx: self._send_event(idx, 'activated'))
+        widget.clicked.connect(lambda idx: self._send_event(idx, 'clicked'))
+        widget.doubleClicked.connect(lambda idx: self._send_event(idx, 'double_clicked'))
+
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -46,6 +56,18 @@ class QtAbstractItemView(QtControl, AbstractTkItemView):
         """ Sets the model to use for the view.
 
         """
-        model_wrapper = AbstractItemModelWrapper(item_model)
-        self.widget.setModel(model_wrapper)
+        # Save the model wrapper. PySide's object cache is sometimes unreliable
+        # in various versions.
+        self.model_wrapper = AbstractItemModelWrapper(item_model)
+        self.widget.setModel(self.model_wrapper)
 
+    #--------------------------------------------------------------------------
+    # Event notification methods
+    #--------------------------------------------------------------------------
+    def _send_event(self, qindex, trait):
+        """ Send a ModelIndex to the given shell trait.
+
+        """
+        model = self.model_wrapper
+        index = model.from_q_index(qindex)
+        setattr(self.shell_obj, trait, index)

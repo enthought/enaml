@@ -190,7 +190,7 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         """
         for child in component.children:
-            if child.visible:
+            if getattr(child, 'visible', False):
                 yield child
                 child_layout = getattr(child, 'layout_manager', None)
                 if child_layout is None or type(child_layout) is type(self):
