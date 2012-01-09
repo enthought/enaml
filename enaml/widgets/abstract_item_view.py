@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Instance, List, Property
+from traits.api import Bool, Event, Instance
 
 from .control import Control, AbstractTkControl
 
 from ..item_models.abstract_item_model import AbstractItemModel
+from ..item_models.model_index import ModelIndex
 from .base_selection_model import BaseSelectionModel
 
 
@@ -27,11 +28,21 @@ class AbstractItemView(Control):
     #: The AbstractItemModel instance being displayed by the view.
     item_model = Instance(AbstractItemModel)
 
-    #: Overridden parent class trait
-    abstract_obj = Instance(AbstractTkItemView)
-
     #: The selection model for this view.
     selection_model = Instance(BaseSelectionModel, args=())
+
+    #: The ModelIndex that has just been activated by a user interaction,
+    #: usually a double-click or an Enter keypress.
+    activated = Event(Instance(ModelIndex))
+
+    #: The ModelIndex that has just been clicked.
+    clicked = Event(Instance(ModelIndex))
+
+    #: The ModelIndex that has just been double-clicked.
+    double_clicked = Event(Instance(ModelIndex))
+
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkItemView)
 
     # Whether the selection model has been provided by the Enaml syntax or not.
     # Keeping track of this let's us prevent two or more selection models being

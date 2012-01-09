@@ -11,6 +11,9 @@ the same external model class. As you make selections in one table, they should
 be reflected in the other. The row indices should be printed out to the terminal
 as you do so.
 
+The 'clicked', 'double_clicked', and 'activated' events for the right-hand table
+will also be printed as they happen.
+
 """
 from enaml.item_models.standard_models import ListModel, TableModel
 from enaml.styling.brush import Brush
@@ -24,23 +27,6 @@ from traits.api import HasTraits, List, Int
 # A (1000, 100) table of data
 row_indices = range(1000)
 table = [[i + (100 * j) for i in xrange(100)] for j in xrange(1000)]
-
-# A setter function to update a cell in the list of indices.
-def list_setter(src, idx, val):
-    try:
-        src[idx] = int(val)
-    except ValueError:
-        return False
-    return True
-
-# A setter function to update a cell in the table of data
-def table_setter(src, row, col, val):
-    try:
-        src[row][col] = int(val)
-    except ValueError:
-        return False
-    return True
-
 
 
 # A simple TableModel subclass that alternates the row colors of
@@ -60,8 +46,15 @@ class ColoredTable(TableModel):
         return brush
 
 # A simple list model to display a single row of data
-list_model = ListModel(row_indices, data_setter=list_setter)
-table_model = ColoredTable(table, data_setter=table_setter)
+list_model = ListModel(row_indices)
+table_model = ColoredTable(table)
+
+def printer(event):
+    """ Print a ModelIndex notification event.
+
+    """
+    print '{name}: {index.row!r}, {index.column!r}'.format(name=event.name,
+        index=event.new)
 
 
 class Model(HasTraits):
@@ -100,6 +93,9 @@ defn MainView(model):
         TableView:
             id: tv2
             item_model = table_model
+            activated >> printer(args)
+            clicked >> printer(args)
+            double_clicked >> printer(args)
             RowSelectionModel:
                 selection_mode = 'extended'
                 selected_rows := model.selected_rows
