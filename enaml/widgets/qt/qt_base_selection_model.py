@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 
 from .qt import QtGui
-from .qt_base_component import QtBaseComponent
+from .qt_component import QtComponent
 from ..base_selection_model import AbstractTkBaseSelectionModel
 
 _SELECTION_MODE_MAP = {
@@ -37,7 +37,7 @@ _SELECTION_COMMAND_MAP = {
 
 
 
-class QtBaseSelectionModel(QtBaseComponent, AbstractTkBaseSelectionModel):
+class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
     """ Qt implementation of the BaseSelectionModel.
 
     """
@@ -191,4 +191,26 @@ class QtBaseSelectionModel(QtBaseComponent, AbstractTkBaseSelectionModel):
         item_widget = shell.parent.toolkit_widget
         item_widget.setSelectionBehavior(_SELECTION_BEHAVIOR_MAP[selection_behavior])
 
+    #--------------------------------------------------------------------------
+    # Overrides since this is not an actual QWidget.
+    #--------------------------------------------------------------------------
+    def disable_updates(self):
+        pass
 
+    def enable_updates(self):
+        pass
+
+    def set_enabled(self, enabled):
+        pass
+
+    def set_visible(self, visible):
+        pass
+
+    def set_bg_color(self, color):
+        pass
+
+    def set_fg_color(self, color):
+        pass
+
+    def set_font(self, font):
+        pass

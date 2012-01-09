@@ -6,11 +6,11 @@ from abc import abstractmethod
 
 from traits.api import Any, List, NO_COMPARE
 
-from .base_component import BaseComponent, AbstractTkBaseComponent
+from .component import Component, AbstractTkComponent
 from ..enums import SelectionMode, SelectionBehavior
 
 
-class AbstractTkBaseSelectionModel(AbstractTkBaseComponent):
+class AbstractTkBaseSelectionModel(AbstractTkComponent):
     """ The toolkit interface for the selection model.
 
     """
@@ -60,7 +60,7 @@ class AbstractTkBaseSelectionModel(AbstractTkBaseComponent):
 
 
 
-class BaseSelectionModel(BaseComponent):
+class BaseSelectionModel(Component):
     """ The base class for item selection models.
 
     """
