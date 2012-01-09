@@ -106,7 +106,9 @@ class BaseComponent(HasStrictTraits):
     #: The list of child for this component. This is read-only cached
     #: property that is computed based on the list of static children
     #: and the children contributed from any Include nodes. This list
-    #: should not be directly manipulated.
+    #: should not be directly manipulated. Subclasses may define new
+    #: lists of filtered children based off of this list of children
+    #: for various purposes such as layout.
     children = Property(List, depends_on='_subcomponents:_components_updated')
 
     #: Whether the component has been initialized or not. This will be 
@@ -120,9 +122,7 @@ class BaseComponent(HasStrictTraits):
     #: it in the tree. See the 'find_by_name' method.
     name = Str
 
-    #: A reference to the toolkit that created this object. This does 
-    #: not need to be stored weakly because the toolkit does not maintain
-    #: refs to the compoents that its constructors create.
+    #: A reference to the toolkit that was used to create this object.
     toolkit = Instance(Toolkit)
 
     #: The private dictionary of expression objects that are bound to 
