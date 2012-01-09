@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Any, List, NO_COMPARE
+from traits.api import Event, List
 
 from .component import Component, AbstractTkComponent
 from ..enums import SelectionMode, SelectionBehavior
@@ -67,14 +67,14 @@ class BaseSelectionModel(Component):
 
     #: Updated when the current ModelIndex changes.
     #: Gets a 2-tuple: (old ModelIndex, new ModelIndex)
-    current_event = Any(comparison_mode=NO_COMPARE)
+    current_event = Event()
 
     #: Updated when the current selection changes.
     #: Gets a 2-tuple: (deleted items, added items)
     #: Each selection is a list of
     #: (top_left ModelIndex, bottom_right ModelIndex) tuples specifying
     #: rectangular ranges of selected cells.
-    selection_event = Any(comparison_mode=NO_COMPARE)
+    selection_event = Event()
 
     #: The selection mode.
     selection_mode = SelectionMode()
@@ -82,9 +82,6 @@ class BaseSelectionModel(Component):
     #: What kinds of things can be selected.
     selection_behavior = SelectionBehavior()
 
-
-    #: BaseSelectionModels are not visible.
-    visible = False
 
     #: BaseSelectionModel has no children.
     _subcomponents = List(maxlen=0)

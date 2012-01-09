@@ -60,10 +60,10 @@ class ColoredTable(TableModel):
 
 table_model = ColoredTable(table, data_setter=table_setter)
 
-def printer(value):
-    old, new = value
-    print 'Old:', old
-    print 'New:', new
+def printer(event):
+    print 'Removed:', event.new[0]
+    print 'Added:  ', event.new[1]
+    print
 
 :: end ::
 
@@ -88,4 +88,4 @@ MainWindow(Window):
         item_model = table_model
         BaseSelectionModel:
             selection_mode = 'extended'
-            selection_event >> printer(selection_event)
+            selection_event >> printer(args)
