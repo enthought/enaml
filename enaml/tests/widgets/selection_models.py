@@ -105,8 +105,8 @@ defn MainView(events):
 
         self.events = []
         self.view = self.parse_and_create(enaml_source, self.events)
-        self.component = self.component_by_name(self.view, 'selection_model')
         self.table_view = self.component_by_name(self.view, 'table_view')
+        self.component = self.table_view.selection_model
         self.item_model = self.table_view.item_model
 
     def test_empty_initial_selection(self):
@@ -245,8 +245,8 @@ defn MainView(events):
 
         self.events = []
         self.view = self.parse_and_create(enaml_source, self.events)
-        self.component = self.component_by_name(self.view, 'selection_model')
         self.table_view = self.component_by_name(self.view, 'table_view')
+        self.component = self.table_view.selection_model
         self.item_model = self.table_view.item_model
 
     def test_set_selected_rows(self):
