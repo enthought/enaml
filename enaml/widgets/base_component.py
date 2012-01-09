@@ -109,7 +109,7 @@ class BaseComponent(HasStrictTraits):
     #: should not be directly manipulated. Subclasses may define new
     #: lists of filtered children based off of this list of children
     #: for various purposes such as layout.
-    children = Property(List, depends_on='_subcomponents:_components_updated')
+    children = Property(List, depends_on='_subcomponents:_actual_updated')
 
     #: Whether the component has been initialized or not. This will be 
     #: set to True after all of the setup() steps defined here are 
@@ -138,11 +138,11 @@ class BaseComponent(HasStrictTraits):
     _subcomponents = List(Instance('BaseComponent'))
 
     #: A private event that should be emitted by a component when the 
-    #: results of calling get_components() will result in new values. 
+    #: results of calling get_actual() will result in new values. 
     #: This event is listened to by the parent of subcomponents in order 
     #: to know when to rebuild its list of children. User code will not 
     #: typically interact with this event.
-    _components_updated = Event
+    _actual_updated = Event
 
     #--------------------------------------------------------------------------
     # Children Computation
@@ -152,15 +152,15 @@ class BaseComponent(HasStrictTraits):
         """ The cached property getter for the 'children' attribute.
 
         This property getter returns the flattened list of components
-        returned by calling 'get_components()' on each subcomponent.
+        returned by calling 'get_actual()' on each subcomponent.
 
         """
-        return sum([c.get_components() for c in self._subcomponents], [])
+        return sum([c.get_actual() for c in self._subcomponents], [])
 
     #--------------------------------------------------------------------------
     # Component Manipulation
     #--------------------------------------------------------------------------
-    def get_components(self):
+    def get_actual(self):
         """ Returns the list of BaseComponent instance which should be
         included as proper children of our parent. By default this 
         simply returns [self]. This method should be reimplemented by 

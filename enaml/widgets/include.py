@@ -131,13 +131,13 @@ class Include(BaseComponent):
                "'components' attribute instead.")
         raise ValueError(msg)
 
-    def get_components(self):
+    def get_actual(self):
         """ A reimplemented parent class method to include the dynamic
         children of this Include in our parent's list of children.
 
         """
         if self._components_initialized:
-            res = sum([c.get_components() for c in self.components], [])
+            res = sum([c.get_actual() for c in self.components], [])
         else:
             res = []
         return res
@@ -159,7 +159,7 @@ class Include(BaseComponent):
         normal setup process. Once this Include is fully initialized, 
         it is safe to create and setup the dynamic children. This method
         runs that process when the 'initialized' flag is flipped from 
-        False to True and then fires the '_components_updated' event.
+        False to True and then fires the '_actual_updated' event.
 
         """
         if inited:
@@ -170,14 +170,14 @@ class Include(BaseComponent):
             # change method decorator. Instead, we manually bind the 
             # notifier the first time this component is initialized.
             self.on_trait_change(self._on_subcomponents_updated, 
-                                 '_components:_components_updated')
-            self._components_updated = True
+                                 '_components:_actual_updated')
+            self._actual_updated = True
     
     @on_trait_change('components')
     def _handle_components_changed(self, obj, name, old, new):
         """ Reacts to changes in the dynamic components and sets up the 
-        new children, making sure the old ones are destroyed and that the
-        '_components_updated' event gets fired.
+        new children, making sure the old ones are destroyed and that 
+        the '_actual_updated' event gets fired.
 
         """
         # The first time a cached property is set, the notification
@@ -191,18 +191,18 @@ class Include(BaseComponent):
                 for item in old:
                     item.destroy()
                 self._setup_components()
-                self._components_updated = True
+                self._actual_updated = True
             self.relayout_enqueue(closure)
             
     # This notifier is hooked up in the '_handle_initialized' method 
     # due to issues surrounding trait_setq contexts.
     def _on_subcomponents_updated(self):
-        """ Handles a '_components_updated' event being fired by one 
+        """ Handles a '_actual_updated' event being fired by one 
         the dynamic components. The event is proxied up the tree by
         firing the same event on this instance. This allows a nested
         Include to update its contents independent of the Include in
         which it is nested.
 
         """        
-        self._components_updated = True
+        self._actual_updated = True
 
