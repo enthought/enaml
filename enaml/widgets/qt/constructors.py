@@ -79,7 +79,6 @@ row_selection_model = base_selection_model.clone(get_shell_loader('row_selection
 
 QT_CONSTRUCTORS = dict((
     constructor('window'),
-    constructor('component'),
     constructor('container'),
     constructor('dialog'),
     constructor('calendar'),

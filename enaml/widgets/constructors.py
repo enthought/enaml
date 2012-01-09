@@ -11,8 +11,7 @@ def include_shell():
 
 
 def include_abstract():
-    from .include import NullTkInclude
-    return NullTkInclude
+    return None
 
 
 CONSTRUCTORS = (

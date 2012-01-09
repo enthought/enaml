@@ -2,13 +2,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt_component import QtComponent
+from .qt_layout_component import QtLayoutComponent
 from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 
 from ..container import AbstractTkContainer
 
 
-class QtContainer(QtComponent, AbstractTkContainer):
+class QtContainer(QtLayoutComponent, AbstractTkContainer):
     """ A Qt4 implementation of Container.
 
     QtContainer is usually to be used as a base class for other container

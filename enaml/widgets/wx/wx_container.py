@@ -4,12 +4,12 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_component import WXComponent
+from .wx_layout_component import WXLayoutComponent
 
 from ..container import AbstractTkContainer
 
 
-class WXContainer(WXComponent, AbstractTkContainer):
+class WXContainer(WXLayoutComponent, AbstractTkContainer):
     """ A wxPython implementation of Container.
 
     WXContainer is usually to be used as a base class for other container

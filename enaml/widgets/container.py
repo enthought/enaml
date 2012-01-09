@@ -6,14 +6,14 @@ from collections import deque
 
 from traits.api import List, Instance, Bool
 
-from .component import Component, AbstractTkComponent
+from .layout_component import LayoutComponent, AbstractTkLayoutComponent
 from .layout.constraints_layout import ConstraintsLayout
 from .layout.layout_manager import AbstractLayoutManager
 
 from ..guard import guard
 
 
-class AbstractTkContainer(AbstractTkComponent):
+class AbstractTkContainer(AbstractTkLayoutComponent):
     """ The abstract toolkit Container interface.
 
     A toolkit container is responsible for handling changes on a shell
@@ -24,7 +24,7 @@ class AbstractTkContainer(AbstractTkComponent):
     pass
 
 
-class Container(Component):
+class Container(LayoutComponent):
     """ A Component subclass that provides for laying out its child 
     Components.
 
@@ -39,7 +39,7 @@ class Container(Component):
     #: container.
     constraints = List
 
-    #: Overridden parent class trait
+    #: Overridden parent class trait.
     abstract_obj = Instance(AbstractTkContainer)
 
     #: A private boolean flag indictating whether a relayout is pending.
@@ -66,10 +66,14 @@ class Container(Component):
     # Layout Handling
     #--------------------------------------------------------------------------
     def initialize_layout(self):
-        """ Initialize the layout for the first time. Called at the end
-        of the setup process.
+        """ A reimplemented parent class method that initializes the 
+        layout manager for the first time, and binds the relevant
+        layout change handlers.
 
         """
+        # The layout manager will be destructively set to None by any
+        # parent Containers since they will take over layout management
+        # of their children.
         if self.layout_manager is not None:
             self.layout_manager.initialize()
         # These handlers are bound dynamically here instead of via
@@ -86,7 +90,7 @@ class Container(Component):
         )
 
     def relayout(self):
-        """ Reimplemented parent class method which triggers an update
+        """ A Reimplemented parent class method which triggers an update
         of the constraints and a layout refresh. This is called whenever
         the children of the component should have their layout refreshed. 
         The constraints update and relayout occur immediately and are 
@@ -122,7 +126,8 @@ class Container(Component):
     
     def rearrange(self):
         """ Reimplemented parent class method which triggers a rearrange
-        of the children.
+        of the children. The rearrange occurs immediately and is completed
+        before the method returns.
 
         """
         layout_mgr = self.layout_manager
@@ -152,7 +157,8 @@ class Container(Component):
 
     def relayout_enqueue(self, callable):
         """ Reimplemented parent class method which triggers a rearrange
-        after adding the callable to the queue.
+        after adding the callable to the queue. The queue will be emptied
+        from within a freeze context.
 
         """
         if self.layout_manager is None:
@@ -160,15 +166,16 @@ class Container(Component):
         else:
             self._relayout_queue.append(callable)
             # Measuring the size of the queue is not a reliable indicator
-            # of when we need to invoke the method to purge the queue.
-            # So, we use a flag instead.
+            # of when we need to invoke the method to purge the queue,
+            # so we use a flag instead.
             if not self._relayout_queue_processing:
                 self._relayout_queue_processing = True
                 self.toolkit.invoke_later(self._empty_relayout_queue)
 
     def rearrange_enqueue(self, callable):
         """ Reimplemented parent class method which trigger a rearrange
-        after after adding the callable to the queue.
+        after after adding the callable to the queue. The queue will
+        be emptied from within a freeze context.
 
         """
         if self.layout_manager is None:
@@ -176,8 +183,8 @@ class Container(Component):
         else:
             self._rearrange_queue.append(callable)
             # Measuring the size of the queue is not a reliable indicator
-            # of when we need to invoke the method to purge the queue.
-            # So, we use a flag instead.
+            # of when we need to invoke the method to purge the queue,
+            # so we use a flag instead.
             if not self._rearrange_queue_processing:
                 self._rearrange_queue_processing = True
                 self.toolkit.invoke_later(self._empty_rearrange_queue)

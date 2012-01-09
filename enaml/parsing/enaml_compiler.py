@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import itertools
-from functools import wraps
 import types
 
 from traits.api import HasStrictTraits, Any
@@ -79,29 +78,56 @@ def _var_name_generator():
         yield '_var_' + str(count.next())
 
 
-def _decl_wrapper_gen(func):
-    """ Wraps a generated function in a wrapper function which calls
-    into the enaml code path for creating the component. It also,
-    applies any given kwargs to the object before returning.
+class EnamlDeclaration(object):
+    """ A helper class which exposes a compiled Enaml declaration
+    function with an interface that is easy to use from Python.
 
     """
-    @wraps(func)
-    def wrapper(**kwargs):
-        obj = wrapper.__enaml_call__(None, None)
+    def __init__(self, base, func):
+        self.__base__ = base
+        self.__doc__ = func.__doc__
+        self.__name__ = func.__name__
+        self.__func__ = func
+    
+    def __call__(self, **kwargs):
+        """ Invokes the underlying Enaml function and applies the
+        given keyword arguments as attributes to the result.
+
+        """
+        obj = self.__enaml_call__(None, None)
         obj.trait_set(**kwargs)
         return obj
+    
+    def __enaml_call__(self, f_locals, toolkit):
+        """ Invokes the underlying Enaml function, creating the locals
+        and toolkit if necessary.
 
-    @wraps(func)
-    def enaml_call(f_locals, toolkit):
+        """
         if f_locals is None:
             f_locals = ExpressionLocals()
         if toolkit is None:
             toolkit = Toolkit.active_toolkit()
-        return func(f_locals, toolkit)
+        return self.__func__(f_locals, toolkit)
 
-    wrapper.__enaml_call__ = enaml_call
 
-    return wrapper
+class EnamlDefn(object):
+    """ A helper class which exposes a compiled Enaml defn function
+    with an interface that is easy to use from Python. It serves 
+    mainly to distinguish an Enaml defn function from a normal
+    function for the purposes of documentation generation.
+
+    """
+    def __init__(self, func):
+        self.__doc__ = func.__doc__
+        self.__name__ = func.__name__
+        self.__func__ = func
+    
+    def __call__(self, *args, **kwargs):
+        """ Invokes the underlying Enaml function and applies the
+        given keyword arguments as attributes to the result.
+
+        """
+        return self.__func__(*args, **kwargs)
 
 
 #------------------------------------------------------------------------------
@@ -171,7 +197,7 @@ class DeclarationCompiler(_NodeVisitor):
                 f_locals['btn'] = button
                 op = eval('__operator_Equal__', toolkit, f_globals)
                 op(item, 'text', <ast>, <code>, f_locals, f_globals, toolkit)
-                foo._subcomponents.append(button)
+                foo.add_subcomponent(button)
                 return foo
         
         """
@@ -319,10 +345,9 @@ class DeclarationCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo._subcomponents.append(button)
+            # foo.add_subcomponent(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, '_subcomponents'),
-            (bp.LOAD_ATTR, 'append'),
+            (bp.LOAD_ATTR, 'add_subcomponent'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
             (bp.POP_TOP, None),
@@ -342,6 +367,12 @@ class _DefnCollector(object):
 
     def __init__(self):
         self._subcomponents = []
+    
+    def add_subcomponent(self, component):
+        """ Adds the subcomponent to the internal list.
+
+        """
+        self._subcomponents.append(component)
 
     def results(self):
         """ Computes the proper return results for a defn depending on
@@ -522,10 +553,9 @@ class DefnCompiler(_NodeVisitor):
         
         name_stack.pop()
         ops.extend([
-            # foo._subcomponents.append(button)
+            # foo.add_subcomponent(button)
             (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, '_subcomponents'),
-            (bp.LOAD_ATTR, 'append'),
+            (bp.LOAD_ATTR, 'add_subcomponent'),
             (bp.LOAD_FAST, name),
             (bp.CALL_FUNCTION, 0x0001),
             (bp.POP_TOP, None),
@@ -617,7 +647,7 @@ class EnamlCompiler(_NodeVisitor):
         """
         func_code = DeclarationCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
-        wrapper = _decl_wrapper_gen(func)
+        wrapper = EnamlDeclaration(node.base.py_txt.strip(), func)
         self.global_ns[node.name] = wrapper
     
     def visit_Defn(self, node):
@@ -628,5 +658,6 @@ class EnamlCompiler(_NodeVisitor):
         # XXX Handle arg defaults
         func_code = DefnCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
-        self.global_ns[node.name] = func
+        wrapper = EnamlDefn(func)
+        self.global_ns[node.name] = wrapper
 

@@ -86,8 +86,17 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
 
     def set_checked(self, checked):
         """ Sets the widget's checked state with the provided value.
-        Not meant for public consumption.
 
         """
-        self.widget.setChecked(checked)
+        widget = self.widget
+        # This handles the case where, by default, Qt will not allow
+        # all of the radio buttons in a group to be disabled. By 
+        # temporarily turning off auto-exclusivity, we are able to
+        # handle that case.
+        if not checked and widget.isChecked() and widget.autoExclusive():
+            widget.setAutoExclusive(False)
+            widget.setChecked(checked)
+            widget.setAutoExclusive(True)
+        else:
+            widget.setChecked(checked)
 
