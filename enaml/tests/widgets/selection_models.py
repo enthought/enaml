@@ -279,38 +279,3 @@ defn MainView(events):
         self.set_py_selection(pysel, ('clear_select', 'rows'))
         self.assertEqual(self.component.selected_rows, [2, 3, 5, 6])
 
-
-class TestBadSelectionModels(EnamlTestCase):
-    """ Test that we reject bad uses of selection models.
-
-    """
-
-    def test_reject_two(self):
-        """ Test that we reject two selection models being provided.
-
-        """
-        enaml = """
-defn MainView():
-    Window:
-        TableView:
-            BaseSelectionModel:
-                pass
-            BaseSelectionModel:
-                pass
-"""
-        self.assertRaises(TraitError, self.parse_and_create, enaml)
-
-    def test_reject_not_selection_model(self):
-        """ Test that we reject a child that is not a selection model.
-
-        """
-        enaml = """
-defn MainView():
-    Window:
-        TableView:
-            Container:
-                pass
-"""
-        self.assertRaises(TraitError, self.parse_and_create, enaml)
-
-

@@ -32,8 +32,3 @@ class TestQtRowSelectionModel(QtTestAssistant, QtSelectionTestHelper, selection_
 
     """
 
-class TestQtBadSelectionModels(QtTestAssistant, QtSelectionTestHelper, selection_models.TestBadSelectionModels):
-    """ Bad selection model tests. 
-
-    """
-
