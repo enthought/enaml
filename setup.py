@@ -16,6 +16,9 @@ setup(name='enaml',
     long_description=open('README.rst').read(),
     requires=['traits', 'PySide', 'ply', 'wx', 'argparse'],
     install_requires=['distribute'],
+    package_data = {
+        'enaml.stdlib': ['*.enaml']
+    },
     packages=find_packages(),
     entry_points = dict(
         console_scripts = [
