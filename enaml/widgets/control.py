@@ -14,8 +14,8 @@ class AbstractTkControl(AbstractTkLayoutComponent):
 
 class Control(LayoutComponent):
     """ The base class of all leaf widgets in Enaml. Controls cannot
-    have children and attempts to add children to a control will
-    raise an exception.
+    have subcomponents and attempt to add a subcomponent to a control 
+    will raise an exception.
 
     """
     #: A boolean which indicates whether an exception was raised through 
@@ -29,7 +29,7 @@ class Control(LayoutComponent):
     abstract_obj = Instance(AbstractTkControl)
 
     #: Overridden parent class trait. A standard Control is not allowed 
-    #: to have children.
+    #: to have subcomponents.
     _subcomponents = List(maxlen=0)
 
     def capture_exceptions(self):

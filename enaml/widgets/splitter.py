@@ -44,17 +44,9 @@ class AbstractTkSplitter(AbstractTkContainer):
         raise NotImplementedError
         
     @abstractmethod
-    def shell_children_changed(self, children):
-        """ The change handler for the 'children' attribute of the 
-        shell object.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_children_items_changed(self, event):
-        """ The change handler for the items event of the 'children'
-        attribute of the shell object.
+    def shell_layout_children_changed(self, children):
+        """ The change handler for the 'layout_children' attribute of 
+        the shell object.
 
         """
         raise NotImplementedError

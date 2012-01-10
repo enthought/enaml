@@ -4,7 +4,9 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Property, Tuple, Event, Enum
+from traits.api import (
+    List, Instance, Property, Tuple, Event, Enum, cached_property,
+)
 
 from .component import Component, AbstractTkComponent
 from .layout.box_model import BoxModel
@@ -167,6 +169,11 @@ class LayoutComponent(Component):
     widget in Enaml that can partake in constraints-base layout.
 
     """
+    #: The list of children that can participate in constraints based
+    #: layout. This list is composed of components in the list of 
+    #: children that are instances of LayoutComponent.
+    layout_children = Property(List, depends_on='children')
+
     #: A private attribute that holds the box model instance
     #: for this component. 
     _box_model = Instance(BoxModel)
@@ -248,6 +255,16 @@ class LayoutComponent(Component):
     #--------------------------------------------------------------------------
     # Property Getters and Setters
     #--------------------------------------------------------------------------
+    @cached_property
+    def _get_layout_children(self):
+        """ Cached property getter for the 'layout_children' property. 
+        This getter returns the sublist of children that are instances 
+        of LayoutComponent.
+
+        """
+        flt = lambda child: isinstance(child, LayoutComponent)
+        return filter(flt, self.children)
+
     def _get_left(self):
         """ Property getter for the 'left' property.
 
@@ -331,16 +348,16 @@ class LayoutComponent(Component):
         is initialized from the bottom up.
 
         """
-        for child in self._subcomponents:
-            child._setup_init_layout()
+        super(LayoutComponent, self)._setup_init_layout()
         self.initialize_layout()
 
     #--------------------------------------------------------------------------
     # Change Handlers
     #--------------------------------------------------------------------------
-    def _children_changed(self):
-        """ Handles the children being changed on this component by 
-        enqueing a relayout provided that the component is initialized.
+    def _layout_children_changed(self):
+        """ Handles the layout children being changed on this component 
+        by enqueing a request for relayout so long as this component has
+        been fully initialized.
 
         """
         if self.initialized:
@@ -351,7 +368,7 @@ class LayoutComponent(Component):
             self.relayout_enqueue(lambda: None)
     
     #--------------------------------------------------------------------------
-    # Auxiliary Method
+    # Auxiliary Methods
     #--------------------------------------------------------------------------
     def initialize_layout(self):
         """ A method that is called when the layout of this component

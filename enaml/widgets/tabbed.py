@@ -21,7 +21,7 @@ class AbstractTkTabbed(AbstractTkContainer):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_children_changed(self, children):
+    def shell_layout_children_changed(self, children):
         raise NotImplementedError
 
     @abstractmethod
@@ -50,7 +50,7 @@ class Tabbed(Container):
 
     """
     #: The index of the currently displayed child.
-    index = Range(low='_zero', high='_nchildren', value=0)
+    index = Range(low='_zero', high='_nlayoutchildren', value=0)
 
     #: An object that manages the layout of this component and its 
     #: direct children. In this case, it does nothing.
@@ -80,8 +80,8 @@ class Tabbed(Container):
     _zero = Constant(0)
 
     #: A private upper bound for the index Range trait which computes the 
-    #: length of the `children` list.
-    _nchildren = Property(Int, depends_on='children')
+    #: length of the `layout_children` list.
+    _nlayoutchildren = Property(Int, depends_on='layout_children')
 
     #--------------------------------------------------------------------------
     # Property Handlers 
@@ -91,7 +91,7 @@ class Tabbed(Container):
         the selected child or None if there are no children.
 
         """
-        children = self.children
+        children = self.layout_children
         if len(children) == 0:
             res = None
         else:
@@ -105,17 +105,17 @@ class Tabbed(Container):
 
         """
         try:
-            idx = self.children.index(selected)
+            idx = self.layout_children.index(selected)
         except ValueError:
             msg = '%s is not a child of the Tabbed container' % selected
             raise ValueError(msg)
         self.index = idx
 
-    def _get__nchildren(self):
-        """ Property getter for `_nchildren`.
+    def _get__nlayoutchildren(self):
+        """ Property getter for `_nlayoutchildren`.
 
         """
-        return len(self.children)
+        return len(self.layout_children)
 
     #--------------------------------------------------------------------------
     # Change Handlers
