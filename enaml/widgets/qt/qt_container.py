@@ -62,8 +62,8 @@ class QtContainer(QtLayoutComponent, AbstractTkContainer):
 
         """
         super(QtContainer, self)._reset_layout_margins()
-        # Now reset our children's layout margins to account for the fact that
-        # they have recorded our own margins.
-        for child in self.shell_obj.children:
+        # Now reset our children's layout margins to account for the fact
+        # that they have recorded our own margins.
+        for child in self.shell_obj.layout_children:
             child.abstract_obj._reset_layout_margins()
 

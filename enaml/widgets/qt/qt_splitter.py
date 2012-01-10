@@ -54,14 +54,9 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
         """
         self.set_live_drag(live_drag)
 
-    def shell_children_changed(self, children):
-        """ Update the widget with new children.
-
-        """
-        self.update_children()
-
-    def shell_children_items_changed(self, event):
-        """ Update the widget with new children.
+    def shell_layout_children_changed(self, children):
+        """ The change handler for the 'layout_children' attribute of 
+        the shell object.
 
         """
         self.update_children()
@@ -97,7 +92,7 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
             child = widget.widget(i)
             child.setParent(None)
         shell = self.shell_obj
-        for child in shell.children:
+        for child in shell.layout_children:
             widget.addWidget(child.toolkit_widget)
 
     def size_hint(self):
@@ -109,7 +104,7 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
         shell = self.shell_obj
         i = ['horizontal', 'vertical'].index(shell.orientation)
         j = 1 - i
-        for child in shell.children:
+        for child in shell.layout_children:
             if child.visible:
                 size_hint = child.size_hint()
                 if size_hint == (-1, -1):
@@ -130,7 +125,7 @@ class QtSplitter(QtContainer, AbstractTkSplitter):
         shell = self.shell_obj
         i = ['horizontal', 'vertical'].index(shell.orientation)
         sizes = []
-        for child in shell.children:
+        for child in shell.layout_children:
             hint = child.size_hint()[i]
             if hint <= 0:
                 min_size = child.toolkit_widget.minimumSize()

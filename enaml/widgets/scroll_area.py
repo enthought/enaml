@@ -31,11 +31,7 @@ class AbstractTkScrollArea(AbstractTkContainer):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_children_changed(self, children):
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_children_items_changed(self, event):
+    def shell_layout_children_changed(self, children):
         raise NotImplementedError
 
 
