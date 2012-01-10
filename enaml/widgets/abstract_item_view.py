@@ -6,7 +6,6 @@ from abc import abstractmethod
 
 from traits.api import Event, Instance, List, Property, cached_property
 
-from .base_component import BaseComponent
 from .control import Control, AbstractTkControl
 
 from ..item_models.abstract_item_model import AbstractItemModel
@@ -48,10 +47,6 @@ class AbstractItemView(Control):
     #: A filtered list of children containing the selection models
     selection_children = Property(List, depends_on='children')
 
-    #: Overridden parent class trait to allow the item view to have
-    #: at least one child.
-    _subcomponents = List(Instance(BaseComponent), maxlen=1)
-
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
@@ -74,7 +69,6 @@ class AbstractItemView(Control):
         if len(children) == 0:
             res = BaseSelectionModel()
         else:
-            res = children[0]
+            res = children[-1]
         return res
-        
 
