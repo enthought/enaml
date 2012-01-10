@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Bool, Instance, List
+from traits.api import Bool, Instance
 
 from .layout_component import LayoutComponent, AbstractTkLayoutComponent
 from ..exceptions import ShellExceptionContext, ShellNotificationContext
@@ -27,10 +27,6 @@ class Control(LayoutComponent):
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkControl)
-
-    #: Overridden parent class trait. A standard Control is not allowed 
-    #: to have subcomponents.
-    _subcomponents = List(maxlen=0)
 
     def capture_exceptions(self):
         """ Return a ShellExceptionContext that will capture error state 

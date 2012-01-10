@@ -29,10 +29,6 @@ class Include(BaseComponent):
     #: not be manipulated directly by the user.
     _components_initialized = Bool(False)
 
-    #: An Overridden parent class trait which restricts this Include 
-    #: component to not have any static subcomponents.
-    _subcomponents = List(maxlen=0)
-
     #--------------------------------------------------------------------------
     # Property Getters and Setters
     #--------------------------------------------------------------------------
@@ -163,7 +159,7 @@ class Include(BaseComponent):
             # items listeners don't get hooked up if we use the trait
             # change method decorator. Instead, we manually bind the 
             # notifier the first time this component is initialized.
-            self.on_trait_change(self._on_subcomponents_updated, 
+            self.on_trait_change(self._on_components_actual_updated, 
                                  '_components:_actual_updated')
             self._actual_updated = True
     
@@ -190,7 +186,7 @@ class Include(BaseComponent):
             
     # This notifier is hooked up in the '_handle_initialized' method 
     # due to issues surrounding trait_setq contexts.
-    def _on_subcomponents_updated(self):
+    def _on_components_actual_updated(self):
         """ Handles a '_actual_updated' event being fired by one 
         the dynamic components. The event is proxied up the tree by
         firing the same event on this instance. This allows a nested
