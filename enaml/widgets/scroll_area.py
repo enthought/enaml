@@ -4,10 +4,9 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Either, Enum, List, Tuple, Int
+from traits.api import Instance, Either, Enum, Tuple, Int
 
 from .container import Container, AbstractTkContainer
-from .base_component import BaseComponent
 from .layout.layout_manager import NullLayoutManager
 
 
@@ -65,9 +64,6 @@ class ScrollArea(Container):
     #: How strongly a component hugs it's contents' height. Scroll
     #: areas do not hug their height and are free to expand.
     hug_height = 'ignore'
-
-    #: Overridden parent class trait. Only one child is allowed.
-    _subcomponents = List(Instance(BaseComponent), maxlen=1)
 
     def size_hint(self):
         """ Use the given preferred size when specified and the widget's 
