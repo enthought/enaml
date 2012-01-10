@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from traits.api import TraitError
 
 from .enaml_test_case import EnamlTestCase, required_method
 
@@ -297,7 +298,7 @@ defn MainView():
             BaseSelectionModel:
                 pass
 """
-        self.assertRaises(ValueError, self.parse_and_create, enaml)
+        self.assertRaises(TraitError, self.parse_and_create, enaml)
 
     def test_reject_not_selection_model(self):
         """ Test that we reject a child that is not a selection model.
@@ -310,6 +311,6 @@ defn MainView():
             Container:
                 pass
 """
-        self.assertRaises(TypeError, self.parse_and_create, enaml)
+        self.assertRaises(TraitError, self.parse_and_create, enaml)
 
 

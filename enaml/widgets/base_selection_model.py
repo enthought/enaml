@@ -14,7 +14,6 @@ class AbstractTkBaseSelectionModel(AbstractTkComponent):
     """ The toolkit interface for the selection model.
 
     """
-
     @abstractmethod
     def clear(self):
         """ Clear the selection and the current index.
@@ -64,28 +63,24 @@ class BaseSelectionModel(Component):
     """ The base class for item selection models.
 
     """
+    #: Updated when the current ModelIndex changes. Gets a 2-tuple of
+    #: (old ModelIndex, new ModelIndex)
+    current_event = Event
 
-    #: Updated when the current ModelIndex changes.
-    #: Gets a 2-tuple: (old ModelIndex, new ModelIndex)
-    current_event = Event()
-
-    #: Updated when the current selection changes.
-    #: Gets a 2-tuple: (deleted items, added items)
-    #: Each selection is a list of
+    #: Updated when the current selection changes. Gets a 2-tuple of
+    #: (deleted items, added items). Each selection is a list of
     #: (top_left ModelIndex, bottom_right ModelIndex) tuples specifying
     #: rectangular ranges of selected cells.
-    selection_event = Event()
+    selection_event = Event
 
     #: The selection mode.
-    selection_mode = SelectionMode()
+    selection_mode = SelectionMode
 
     #: What kinds of things can be selected.
-    selection_behavior = SelectionBehavior()
+    selection_behavior = SelectionBehavior
 
-
-    #: BaseSelectionModel has no children.
+    #: BaseSelectionModel has no subcomponents.
     _subcomponents = List(maxlen=0)
-
 
     def clear(self):
         """ Clear the selection and the current index.
@@ -96,9 +91,9 @@ class BaseSelectionModel(Component):
     def set_current_index(self, index):
         """ Set the current ModelIndex.
 
-        This is the cell used for keyboard focus and is usually set when the
-        user clicks on a cell. This may be independent of the selection. It is
-        frequently rendered with a dashed border.
+        This is the cell used for keyboard focus and is usually set when
+        the user clicks a cell. This may be independent of the selection. 
+        It is frequently rendered with a dashed border.
 
         Parameters
         ----------
@@ -120,12 +115,14 @@ class BaseSelectionModel(Component):
         Parameters
         ----------
         selection : list of (ModelIndex, ModelIndex) tuples
-            Each tuple is an inclusive range specifying a bounding box for
-            a given selection range.
-        command : SelectionCommand or sequence of SelectionCommands, optional
-            Exactly what action to perform given these selection ranges. See the
-            `SelectionCommand` documentation for the complete set. Sequences of
-            SelectionCommands will be treated as binary-ORing the flags.
+            Each tuple is an inclusive range specifying a bounding box
+            for a given selection range.
+        command : single or sequence of SelectionCommand, optional
+            Exactly what action to perform given these selection ranges. 
+            See the `SelectionCommand` documentation for the complete 
+            set. Sequences of SelectionCommands will be treated as 
+            binary-ORing the flags.
+        
         """
         self.abstract_obj.set_selection(selection, command)
 
@@ -135,11 +132,11 @@ class BaseSelectionModel(Component):
         Returns
         -------
         selection : list of (ModelIndex, ModelIndex) tuples
-            Each tuple is an inclusive range specifying a bounding box for
-            a given selection range.
+            Each tuple is an inclusive range specifying a bounding box 
+            for a given selection range.
+
         """
         return self.abstract_obj.get_selection()
-
 
     def _selection_mode_changed(self, new):
         if self.abstract_obj is not None:

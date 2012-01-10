@@ -2,10 +2,11 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-
 from .qt import QtGui
 from .qt_component import QtComponent
+
 from ..base_selection_model import AbstractTkBaseSelectionModel
+
 
 _SELECTION_MODE_MAP = {
     'single': QtGui.QAbstractItemView.SingleSelection,
@@ -15,11 +16,13 @@ _SELECTION_MODE_MAP = {
     'none': QtGui.QAbstractItemView.NoSelection,
 }
 
+
 _SELECTION_BEHAVIOR_MAP = {
     'items' : QtGui.QAbstractItemView.SelectItems,
     'rows' : QtGui.QAbstractItemView.SelectRows,
     'columns' : QtGui.QAbstractItemView.SelectColumns,
 }
+
 
 _SELECTION_COMMAND_MAP = {
     'clear_select': QtGui.QItemSelectionModel.ClearAndSelect,
@@ -36,18 +39,16 @@ _SELECTION_COMMAND_MAP = {
 }
 
 
-
 class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
     """ Qt implementation of the BaseSelectionModel.
 
     """
-
     def create(self, parent):
         """ Create a space for the underlying QItemSelectionModel.
 
         We don't want to actually get it yet, since it depends on the
-        AbstractItemModel being set on the parent, which won't happen until the
-        initialize() step.
+        AbstractItemModel being set on the parent, which won't happen 
+        until the initialize() step.
 
         """
         self.widget = None
@@ -68,8 +69,9 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
         super(QtBaseSelectionModel, self).bind()
         parent = self.shell_obj.parent
         parent.on_trait_change(self.reset_for_new_model, 'item_model')
-        self.selection_model.currentChanged.connect(self._update_current)
-        self.selection_model.selectionChanged.connect(self._update_selection)
+        selection_model = self.selection_model
+        selection_model.currentChanged.connect(self._update_current)
+        selection_model.selectionChanged.connect(self._update_selection)
 
     def reset_for_new_model(self):
         """ Reset the state for a new AbstractItemModel.
@@ -77,7 +79,8 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
         """
         self.initialize()
         parent = self.shell_obj.parent
-        parent.on_trait_change(self.reset_for_new_model, 'item_model', remove=True)
+        handler = self.reset_for_new_model
+        parent.on_trait_change(handler, 'item_model', remove=True)
         self.bind()
 
     @property
@@ -91,16 +94,18 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
 
     @property
     def item_model(self):
-        """ Get the AbstractItemModelWrapper for the corresponding item model.
+        """ Get the AbstractItemModelWrapper for the corresponding item 
+        model.
 
         """
         # FIXME: We must get it from the widget itself instead of the
-        # QItemSelectionModel.model() member. There seems to be a bug in PySide
-        # causing segfaults on finalization if we do it that way.
+        # QItemSelectionModel.model() member. There seems to be a bug 
+        # in PySide causing segfaults on finalization otherwise.
         return self.shell_obj.parent.toolkit_widget.model()
 
     def py_selection_to_qt(self, selection):
-        """ Convert the Python list of ModelIndex ranges to a QItemSelection.
+        """ Converts a list of tuples of Enaml ModelIndex ranges into
+        a QItemSelection.
 
         """
         qsel = QtGui.QItemSelection()
@@ -112,7 +117,8 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
         return qsel
 
     def qt_selection_to_py(self, qselection):
-        """ Convert a QItemSelection to a list of ModelIndex ranges.
+        """ Converts a QItemSelection into a list of tuples of Enaml
+        ModelIndex ranges.
 
         """
         pysel = []
@@ -180,16 +186,18 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
 
         """
         shell = self.shell_obj
+        behavior = _SELECTION_MODE_MAP[selection_mode]
         item_widget = shell.parent.toolkit_widget
-        item_widget.setSelectionMode(_SELECTION_MODE_MAP[selection_mode])
+        item_widget.setSelectionMode(behavior)
 
     def set_selection_behavior(self, selection_behavior):
         """ Sets the selection behavior.
 
         """
         shell = self.shell_obj
+        behavior = _SELECTION_BEHAVIOR_MAP[selection_behavior]
         item_widget = shell.parent.toolkit_widget
-        item_widget.setSelectionBehavior(_SELECTION_BEHAVIOR_MAP[selection_behavior])
+        item_widget.setSelectionBehavior(behavior)
 
     #--------------------------------------------------------------------------
     # Overrides since this is not an actual QWidget.
@@ -214,3 +222,4 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
 
     def set_font(self, font):
         pass
+

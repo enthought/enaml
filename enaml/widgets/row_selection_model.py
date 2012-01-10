@@ -2,10 +2,10 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-
 from traits.api import List, Int, on_trait_change
 
 from .base_selection_model import BaseSelectionModel
+
 from ..guard import guard
 
 
@@ -15,14 +15,11 @@ class RowSelectionModel(BaseSelectionModel):
     Generally, this should be used with `selection_behavior='rows'`.
 
     """
-
     #: The selected row indices.
     selected_rows = List(Int)
 
-
     #: Only select rows.
     selection_behavior = 'rows'
-
 
     @on_trait_change('selection_event')
     def _update_rows(self, event):
