@@ -125,11 +125,11 @@ RadioGroup(Container):
     items = []
     to_string = str
     disabled_buttons = []
-    disabled_buttons >> _disable_buttons(children, args.new)
+    disabled_buttons >> _disable_buttons(layout_children, args.new)
 
     # Synchronized Attributes
     selected_index = -1
-    selected_index >> _sync_button(children, args.new)
+    selected_index >> _sync_button(layout_children, args.new)
 
     # Output Attributes
     selected_item << items[selected_index] if (0 <= selected_index < len(items)) else None
@@ -137,7 +137,7 @@ RadioGroup(Container):
 
     # Internal Logic
     constraints << [
-        hbox(*children) if orientation == 'horizontal' else vbox(*children)
+        hbox(*layout_children) if orientation == 'horizontal' else vbox(*layout_children)
     ]
 
     Include:
