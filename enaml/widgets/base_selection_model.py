@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event, List
+from traits.api import Event
 
 from .component import Component, AbstractTkComponent
 from ..enums import SelectionMode, SelectionBehavior
@@ -58,7 +58,6 @@ class AbstractTkBaseSelectionModel(AbstractTkComponent):
         raise NotImplementedError
 
 
-
 class BaseSelectionModel(Component):
     """ The base class for item selection models.
 
@@ -78,9 +77,6 @@ class BaseSelectionModel(Component):
 
     #: What kinds of things can be selected.
     selection_behavior = SelectionBehavior
-
-    #: BaseSelectionModel has no subcomponents.
-    _subcomponents = List(maxlen=0)
 
     def clear(self):
         """ Clear the selection and the current index.
