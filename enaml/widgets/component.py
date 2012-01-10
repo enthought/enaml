@@ -322,12 +322,8 @@ class Component(BaseComponent):
     # Teardown Methods
     #--------------------------------------------------------------------------
     def destroy(self):
-        """ Destroys the underlying toolkit widget as well as all of
-        the children of this component. After calling this method, the
-        component and all of its children should be considered invalid
-        and no longer used. This is a reimplemented parent class method
-        that adds additional destruction logic to destroy the underlying
-        toolkit widgets.
+        """ Overridden parent class destruction method method that adds 
+        additional logic to destroy the underlying toolkit widget.
 
         """
         # Remove the abstract object as a trait listener so that it

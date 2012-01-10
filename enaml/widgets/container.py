@@ -25,12 +25,12 @@ class AbstractTkContainer(AbstractTkLayoutComponent):
 
 
 class Container(LayoutComponent):
-    """ A Component subclass that provides for laying out its child 
-    Components.
+    """ A Component subclass that provides for laying out its layout
+    child Components.
 
     """
     #: An object that manages the layout of this component and its
-    #: direct children. The default is constraints based layout.
+    #: layout children. The default is constraints based layout.
     layout_manager = Instance(AbstractLayoutManager)
     def _layout_manager_default(self):
         return ConstraintsLayout(self)
@@ -73,28 +73,28 @@ class Container(LayoutComponent):
         """
         # The layout manager will be destructively set to None by any
         # parent Containers since they will take over layout management
-        # of their children.
+        # of their layout children.
         if self.layout_manager is not None:
             self.layout_manager.initialize()
         # These handlers are bound dynamically here instead of via
-        # decorators since the children are initially computed quietly.
-        # Binding the handlers here ensures the listeners are properly
-        # initialized with their dependencies.
-        self.on_trait_change(self._on_child_visibility, 'children:visible')
+        # decorators since the layout children are initially computed 
+        # quietly. Binding the handlers here ensures the listeners are 
+        # properly initialized with their dependencies.
+        self.on_trait_change(self._on_child_visibility, 'layout_children:visible')
         self.on_trait_change(self._on_constraints_changed, 'constraints[]')
         self.on_trait_change(
             self._on_size_hint_changed, 
-            'children:size_hint_updated, children:hug_width, '
-            'children:hug_height, children:resist_clip_width, '
-            'children:resist_clip_height'
+            'layout_children:size_hint_updated, layout_children:hug_width, '
+            'layout_children:hug_height, layout_children:resist_clip_width, '
+            'layout_children:resist_clip_height'
         )
 
     def relayout(self):
-        """ A Reimplemented parent class method which triggers an update
+        """ A reimplemented parent class method which triggers an update
         of the constraints and a layout refresh. This is called whenever
-        the children of the component should have their layout refreshed. 
-        The constraints update and relayout occur immediately and are 
-        completed before the method returns.
+        the layout children of the component should have their layout 
+        refreshed. The constraints update and relayout occur immediately 
+        and are completed before the method returns.
 
         """
         layout_mgr = self.layout_manager
@@ -126,8 +126,8 @@ class Container(LayoutComponent):
     
     def rearrange(self):
         """ Reimplemented parent class method which triggers a rearrange
-        of the children. The rearrange occurs immediately and is completed
-        before the method returns.
+        of the layout children. The rearrange occurs immediately and is 
+        completed before the method returns.
 
         """
         layout_mgr = self.layout_manager
@@ -142,7 +142,7 @@ class Container(LayoutComponent):
 
     def rearrange_later(self):
         """ Reimplemented parent class method which triggers a rearrange
-        of the children at some point in the future.
+        of the layout children at some point in the future.
 
         """
         layout_mgr = self.layout_manager
@@ -219,13 +219,13 @@ class Container(LayoutComponent):
     def default_user_constraints(self):
         """ Constraints to use if the constraints trait is an empty list.
         
-        Default behaviour is to put the children into a vertical layout.
-        Subclasses of Container which implement container_constraints will
+        Default behaviour is to put the layout children into a vertical 
+        layout. Subclasses which implement container_constraints will
         probably want to override this (possibly to return an empty list).
 
         """
         from .layout.layout_helpers import vbox
-        return [vbox(*self.children)]
+        return [vbox(*self.layout_children)]
 
     def container_constraints(self):
         """ A set of constraints that should always be applied to this
@@ -239,8 +239,8 @@ class Container(LayoutComponent):
     # Change Handlers 
     #--------------------------------------------------------------------------
     def _on_child_visibility(self):
-        """ A change handler for triggering a relayout when a child of
-        the container toggles its visibility.
+        """ A change handler for triggering a relayout when a layout 
+        child of the container toggles its visibility.
 
         """
         # When visibility changes, we need to ensure a relayout takes
@@ -251,7 +251,7 @@ class Container(LayoutComponent):
 
     def _on_size_hint_changed(self, child, name, old, new):
         """ A change handler for updaing the layout when the size hint
-        of any of the container's children have changed.
+        of any of the container's layout children have changed.
 
         """
         if self.layout_manager is None:

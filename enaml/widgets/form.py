@@ -18,7 +18,7 @@ class AbstractTkForm(AbstractTkContainer):
 
 
 class Form(Container):
-    """ A Container subclass that arranges child Components as a two
+    """ A Container subclass that arranges its layout children as a two 
     column form.
 
     The left column is typically Labels (but this is not a requirement).
@@ -51,7 +51,7 @@ class Form(Container):
 
         """
         # FIXME: do something sensible when children are not visible.
-        children = self.children
+        children = self.layout_children
         labels = children[::2]
         widgets = children[1::2]
 

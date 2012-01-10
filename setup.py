@@ -7,6 +7,7 @@
 
 from setuptools import setup, find_packages
 
+
 setup(name='enaml',
     version='0.1a',
     author='Enthought, Inc',
@@ -17,6 +18,7 @@ setup(name='enaml',
     requires=['traits', 'PySide', 'ply', 'wx', 'argparse'],
     install_requires=['distribute'],
     packages=find_packages(),
+    package_data={'enaml.stdlib': ['*.enaml']},
     entry_points = dict(
         console_scripts = [
             "enaml-run = enaml.runner:main",
