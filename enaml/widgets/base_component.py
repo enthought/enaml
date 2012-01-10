@@ -103,12 +103,11 @@ class BaseComponent(HasStrictTraits):
     #: parent is None.
     parent = WeakRef('BaseComponent')
 
-    #: The list of child for this component. This is read-only cached
-    #: property that is computed based on the list of static children
-    #: and the children contributed from any Include nodes. This list
-    #: should not be directly manipulated. Subclasses may define new
-    #: lists of filtered children based off of this list of children
-    #: for various purposes such as layout.
+    #: The list of children for this component. This is a read-only
+    #: cached property that is computed based on the static list of
+    #: _subcomponents and the items they return by calling their
+    #: 'get_actual' method. This list should not be manipulated by
+    #: user code.
     children = Property(List, depends_on='_subcomponents:_actual_updated')
 
     #: Whether the component has been initialized or not. This will be 
