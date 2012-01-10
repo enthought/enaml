@@ -55,8 +55,9 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         self.set_index(index)
         self.shell_obj.size_hint_updated = True
             
-    def shell_children_changed(self, children):
-        """ Update the widget with new children.
+    def shell_layout_children_changed(self, children):
+        """ The change handler for the 'layout_children' attribute of 
+        the shell object.
 
         """
         self.update_children()
@@ -78,7 +79,7 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         """
         widget = self.widget
         shell = self.shell_obj
-        curr_shell = shell.children[shell.index]
+        curr_shell = shell.layout_children[shell.index]
         size_hint = curr_shell.size_hint()
 
         if size_hint == (-1, -1):
@@ -118,7 +119,7 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         dc.SetFont(f)
         length = 0
         padding = 10
-        for child in self.shell_obj.children:
+        for child in self.shell_obj.layout_children:
             w, h = dc.GetTextExtent(child.title)
             w = max(w, 35)
             length += w + padding
@@ -165,7 +166,7 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         
         # Reparent all of the child widgets to the new parent. This
         # ensures that any new children are properly parented.
-        for idx, child in enumerate(shell.children):
+        for idx, child in enumerate(shell.layout_children):
             child_widget = child.toolkit_widget
             child_widget.Reparent(widget)
             widget.AddPage(child_widget, child.title)
