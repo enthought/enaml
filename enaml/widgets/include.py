@@ -15,12 +15,9 @@ class Include(BaseComponent):
 
     """
     #: The dynamic components of the Include. This is a cached property
-    #: which will convert a variety of inputs into an appropriate list
-    #: that is stored internally. Allowable values and their converted
-    #: values are as follows:
-    #:     None -> []
-    #:     component -> [component]
-    #:     [components, ...] -> [component, ...]
+    #: which will accept a single component, or a list of components as
+    #: input. If the input is a single component, it will be converted
+    #: into a single element list.
     components = Property(Any, depends_on='_components')
         
     #: A private attribute which stores the underlying list of created
@@ -41,22 +38,19 @@ class Include(BaseComponent):
     #--------------------------------------------------------------------------
     @cached_property
     def _get_components(self):
-        """ The cached property getter for the 'components' attribute. It
-        simply returns the private '_components' list.
+        """ The cached property getter for the 'components' attribute. 
+        It simply returns the private '_components' list.
 
         """
         return self._components
     
     def _set_components(self, val):
-        """ The property setter for the 'components' attribute. It 
-        converts a variety of acceptable values into a list that is 
-        stored in the '_components' attribute.
+        """ The property setter for the 'components' attribute. It will
+        convert a single component into a single element list.
 
         """
-        if val is None:
-            val = []
-        elif isinstance(val, BaseComponent):
-            val= [val]
+        if isinstance(val, BaseComponent):
+            val = [val]
         self._components = val
 
     #--------------------------------------------------------------------------
