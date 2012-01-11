@@ -109,5 +109,9 @@ QT_CONSTRUCTORS = dict((
     constructor('float_slider'),
     ('BaseSelectionModel', base_selection_model),
     ('RowSelectionModel', row_selection_model),
+    constructor('menu_bar'),
+    constructor('menu'),
+    constructor('main_window'),
+    constructor('action'),
 ))
 

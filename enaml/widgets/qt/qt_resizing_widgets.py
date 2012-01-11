@@ -80,8 +80,16 @@ class QResizingFrame(ResizingMixin, QtGui.QFrame):
 
     """
 
+
 class QResizingDialog(ResizingMixin, QtGui.QDialog):
     """ A QDialog subclass that passes its resize events back to Enaml through
+    a Qt signal.
+
+    """
+
+
+class QResizingMainWindow(ResizingMixin, QtGui.QMainWindow):
+    """ A QMainWindow subclass that passes its resize events back to Enaml through
     a Qt signal.
 
     """
