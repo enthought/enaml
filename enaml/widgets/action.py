@@ -61,6 +61,14 @@ class AbstractTkAction(AbstractTkComponent):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def shell_separator_changed(self, separator):
+        """ The change handler for the 'separator' attribute on the
+        shell object.
+
+        """
+        raise NotImplementedError
+
 
 class Action(Component):
     """ A declarative Enaml component which represents an action 
@@ -99,5 +107,15 @@ class Action(Component):
     #: if 'checkable' is set to True.
     checked = Bool(False)
 
+    #: Whether or not the action should be considered a separator.
+    separator = Bool(False)
+
     # XXX need to handle icons and keyboard shortcuts
+
+
+class Separator(Action):
+    """ A convenience subclass for defining a menu separator.
+
+    """
+    separator = True
 

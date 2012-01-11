@@ -77,6 +77,17 @@ def constructor(base_path):
 base_selection_model = constructor('base_selection_model')[1]
 row_selection_model = base_selection_model.clone(get_shell_loader('row_selection_model')[1])
 
+
+def separator_shell():
+    from ..action import Separator
+    return Separator
+
+
+def separator_abstract():
+    from .qt_action import QtAction
+    return QtAction
+
+
 QT_CONSTRUCTORS = dict((
     constructor('window'),
     constructor('container'),
@@ -113,5 +124,6 @@ QT_CONSTRUCTORS = dict((
     constructor('menu'),
     constructor('main_window'),
     constructor('action'),
+    ('Separator', Constructor(separator_shell, separator_abstract))
 ))
 

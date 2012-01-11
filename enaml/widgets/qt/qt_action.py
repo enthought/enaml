@@ -33,6 +33,7 @@ class QtAction(QtComponent, AbstractTkAction):
         self.set_status_tip(shell.status_tip)
         self.set_tool_tip(shell.tool_tip)
         self.set_description(shell.description)
+        self.set_separator(shell.separator)
 
         # It's not enough to simply create the action with the proper
         # parent, we need to explicitly add the action or else it won't
@@ -113,6 +114,13 @@ class QtAction(QtComponent, AbstractTkAction):
         """
         self.set_description(description)
 
+    def shell_separator_changed(self, separator):
+        """ The change handler for the 'separator' attribute on the
+        shell object.
+
+        """
+        self.set_separator(separator)
+
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
@@ -174,6 +182,12 @@ class QtAction(QtComponent, AbstractTkAction):
 
         """
         self.widget.setWhatsThis(description)
+
+    def set_separator(self, separator):
+        """ Sets whether or not the QAction is a separator.
+
+        """
+        self.widget.setSeparator(separator)
 
     def set_bg_color(self, color):
         """ Overridden parent class method. This is a no-op since the 
