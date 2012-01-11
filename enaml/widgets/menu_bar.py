@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import abstractmethod
+
 from traits.api import Property, List, Instance, cached_property
 
 from .component import Component, AbstractTkComponent
@@ -13,7 +15,13 @@ class AbstractTkMenuBar(AbstractTkComponent):
     """ The abstract toolkit interface for a MenuBar
 
     """
-    pass
+    @abstractmethod
+    def shell_menus_changed(self):
+        """ The change handler for the 'menus' attribute on the shell
+        object.
+
+        """
+        raise NotImplementedError
 
 
 class MenuBar(Component):

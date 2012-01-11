@@ -24,6 +24,14 @@ class AbstractTkMenu(AbstractTkComponent):
         raise NotImplementedError
 
     @abstractmethod
+    def shell_contents_changed(self, contents):
+        """ The change handler for the list of contents on the
+        shell object.
+
+        """
+        raise NotImplementedError
+        
+    @abstractmethod
     def popup(self, pos=None, blocking=True):
         """ Create and show the menu as context or popup menu.
 
