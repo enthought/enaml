@@ -25,15 +25,19 @@ class AbstractTkTextEditor(AbstractTkControl):
         raise NotImplementedError
     
     @abstractmethod
-    def shell_text_changed(self, value):
-        raise NotImplementedError
-    
-    @abstractmethod
     def shell_wrap_lines_changed(self, value):
         raise NotImplementedError
     
     @abstractmethod
     def shell_overwrite_changed(self, overwrite):
+        raise NotImplementedError
+
+    @abstractmethod
+    def get_text(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_text(self, text):
         raise NotImplementedError
 
     @abstractmethod
@@ -136,22 +140,21 @@ class TextEditor(Control):
     #: False if the text is programmatically changed.
     modified = Property(Bool, depends_on='_modified')
 
-    #: The Python value to display in the editor.
-    text = Str
-
     #: A read only property that is updated with the text selected
     #: in the editor.
     selected_text = Property(Str, depends_on='_selected_text')
 
-    #: Fired when the text is changed programmatically, or by the
-    #: user via the ui. The args object will contain the text.
+    #: Fired when the text is changed programmatically, or by the user
+    #: via the ui. The event object is just True, not the text. Use the
+    #: `get_text()` method if you need the current text.
     text_changed = Event
 
     #: Fired when the text is changed by the user explicitly through
-    #: the ui and not programmatically. The args object will contain
-    #: the text.
+    #: the ui and not programmatically. The event object is just True,
+    #: not the text. Use the `get_text()` method if you need the current
+    #: text.
     text_edited = Event
-    
+
     #: How strongly a component hugs it's contents' width.
     #: TextEditors ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
@@ -179,6 +182,18 @@ class TextEditor(Control):
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkTextEditor)
+
+    def get_text(self):
+        """ Get the current text as a string.
+
+        """
+        return self.abstract_obj.get_text()
+
+    def set_text(self, text):
+        """ Set the current text without an event notification.
+
+        """
+        return self.abstract_obj.set_text(text)
 
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.

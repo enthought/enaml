@@ -36,9 +36,6 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         shell = self.shell_obj
         self.set_read_only(shell.read_only)
         
-        if shell.text:
-            self.update_text()
-        
         shell._modified = False
         self.set_cursor_position(shell.cursor_position)
         self.set_anchor_position(shell.anchor_position)
@@ -82,14 +79,6 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         if not self.setting_text:
             self.set_anchor_position(anchor_position)
-    
-    def shell_text_changed(self, value):
-        """ The change handler for the 'text' attribute on the parent.
-
-        """
-        if not self.setting_text:
-            self.update_text()
-            self.shell_obj._modified = False
     
     def shell_overwrite_changed(self, overwrite):
         """ The change handler for the 'overwrite' attribute on the parent.
@@ -275,14 +264,10 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         widget = self.widget
         shell = self.shell_obj
-        text = widget.toPlainText()
-        self.setting_text = True
-        shell.text = text
-        self.setting_text = False
         self.update_shell_selection()
-        shell.text_edited = text
+        shell.text_edited = True
         shell._modified = True
-        shell.text_changed = text
+        shell.text_changed = True
 
     def on_selection(self):
         """ The event handler for a selection (really a left up) event.
@@ -313,13 +298,14 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         shell._cursor_line = cursor.blockNumber()
         self.setting_text = False
 
-    def update_text(self):
-        """ Updates the text control.
+    def get_text(self):
+        """ Get the text currently in the widget.
 
         """
-        self.change_text(self.shell_obj.text)
+        text = self.widget.toPlainText()
+        return text
 
-    def change_text(self, text):
+    def set_text(self, text):
         """ Changes the text in the widget without emitted a text 
         updated event. This should be called when the text is changed
         programmatically.

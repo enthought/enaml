@@ -71,7 +71,7 @@ defn MainWindow():
         ]
         CodeEditor:
             id: code_editor
-            text = 'Test'
+            initialized >> set_text('Test')
             font = 'Courier 12'
             language = 'python'
         Label:

@@ -52,8 +52,8 @@ defn MainWindow():
         ]
         TextEditor:
             id: text_editor
-            text = 'Test'
-            text >> print(text)
+            initialized >> set_text('Test')
+            text_changed >> print(get_text())
             cursor_position >> print(cursor_position)
             font = 'Arial 12'
         Label:
