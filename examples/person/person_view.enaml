@@ -18,7 +18,8 @@ PersonForm(Form):
     Label:
         text = 'Age'
     IntField:
-        value := person.age 
+        low = 0
+        value := person.age
 
 
 defn PersonView(person):

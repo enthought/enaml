@@ -1,0 +1,92 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+#
+# Defines a UI view for the RangeDemo class in range_demo.py
+#
+
+from enaml.stdlib.fields import IntField, LongField, FloatField, HexField
+
+
+DemoForm(Form):
+
+    demo = None
+
+    Label:
+        text = 'i (int, i >= 0)'
+    IntField:
+        low = 0
+        value := demo.i
+
+    Label:
+        text = 'digit (int, 0 <= digit <= 9)'
+    IntField:
+        low = 0
+        high = 9
+        value := demo.digit
+
+    Label:
+        text = 'bigint (long, bigint >= 1)'
+    IntField:
+        low = 1
+        value := demo.bigint
+
+    Label:
+        text = 'x (float, x >= 0)'
+    IntField:
+        low = 0
+        value := demo.x
+
+    Label:
+        text = 'y (float, 0 <= y <= 10)'
+    FloatField:
+        low = 0.0
+        high = 10
+        value := demo.y
+
+    Label:
+        text = 'z (float, 0 < z <= 10)'
+    FloatField:
+        low = 0.0
+        high = 10.0
+        allow_low = False
+        value := demo.z
+
+    Label:
+        text = 'beta_min (float, beta_min < 0)'
+    FloatField:
+        id: beta_min
+        high = 0.0
+        allow_high = False
+        value := demo.beta_min
+
+    Label:
+        text = 'beta_max (float, beta_max >= 0)'
+    FloatField:
+        id: beta_max
+        low = 0.0
+        value := demo.beta_max
+
+    Label:
+        text = 'beta (float, beta_min <= beta <= beta_max)'
+    FloatField:
+        id: beta
+        low << beta_min.value
+        high << beta_max.value
+        value := demo.beta
+
+    Label:
+        text = 'h (int, 0 <= h <= 255, hex input)'
+    HexField:
+        low = 0
+        high = 255
+        value := demo.h
+
+
+defn RangeDemoView(demo):
+    Window:
+        title = "Range Demo"
+        DemoForm:
+            demo = demo

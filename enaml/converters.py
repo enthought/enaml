@@ -84,27 +84,92 @@ class StringConverter(BaseStringConverter):
         return str(value)
 
 
-class IntConverter(BaseStringConverter):
+class RangeConverter(BaseStringConverter):
+    """Base class for numeric fields with a data type that has a natural ordering.
+    
+    This class can not be instantiated.  Subclasses must implmented the
+    type_convert method.
+    """
+
+    def __init__(self, low=None, high=None, allow_low=True, allow_high=True, **kwargs):
+        self.low = low
+        self.high = high
+        self.allow_low = allow_low
+        self.allow_high = allow_high
+        super(RangeConverter, self).__init__(**kwargs)
+
+    @abstractmethod
+    def type_convert(self, value):
+        """Convert from the string `value` to the desired data type.
+        
+        This is the basic type conversion, without bounds checking.
+
+        Subclasses must define this method.
+        """
+        pass
+
+    def _range_str(self):
+        """Create a string the gives the range of this converter.
+        
+        Only call this function when at least one of self.low or self.high
+        is not None.
+        """
+        s = []
+        if self.low is not None:
+            s.append(str(self.low))
+            low_ineq_str = '<=' if self.allow_low else '<'
+            s.append(low_ineq_str)
+        s.append('value')
+        if self.high is not None:
+            high_ineq_str = '<=' if self.allow_high else '<'
+            s.append(high_ineq_str)
+            s.append(str(self.high))
+        return ' '.join(s)
+
+    def _out_of_range(self, value):
+        """Return True if `value` does not satisy the bounds."""
+        if (self.low is not None and
+            (value < self.low or (value == self.low and not self.allow_low))):
+            return True
+        if (self.high is not None and
+            (value > self.high or (value == self.high and not self.allow_high))):
+            return True
+        return False
+
+    def from_component(self, value):
+        val = self.type_convert(value)
+
+        if self._out_of_range(val):
+            raise ValueError(("value {} is outside the valid range for this "
+                              "field: {}").format(val, self._range_str()))
+
+        return val
+
+
+class IntConverter(RangeConverter):
     """ Convert an integer value to a string and back.
 
     """
-    def from_component(self, value):
+    def type_convert(self, value):
+        """Convert the string `value` to an int."""
         return int(value)
 
 
-class LongConverter(BaseStringConverter):
-    """ Convert an long integer value to a string and back.
+class LongConverter(RangeConverter):
+    """ Convert a long integer value to a string and back.
 
     """
-    def from_component(self, value):
+    def type_convert(self, value):
+        """Convert the string `value` to a long integer."""
         return long(value)
 
 
-class FloatConverter(BaseStringConverter):
+class FloatConverter(RangeConverter):
     """ Convert a float value to a string and back.
 
     """
-    def from_component(self, value):
+    def type_convert(self, value):
+        """Convert the string `value` to a float."""
         return float(value)
 
 
@@ -116,25 +181,27 @@ class ComplexConverter(BaseStringConverter):
         return float(value)
 
 
-class HexConverter(BaseStringConverter):
+class HexConverter(RangeConverter):
     """ Convert between a string and a base-16 integer.
 
     """
+
     def to_component(self, value):
         return hex(value)
 
-    def from_component(self, value):
+    def type_convert(self, value):
         return int(value, 16)
 
 
-class OctalConverter(BaseStringConverter):
+class OctalConverter(RangeConverter):
     """ Convert from a widget to a base-8 integer.
 
     """
+
     def to_component(self, value):
         return oct(value)
 
-    def from_component(self, value):
+    def type_convert(self, value):
         return int(value, 8)
 
 
@@ -188,4 +255,3 @@ class DateTimeConverter(Converter):
 
         """
         return datetime.datetime.strptime(value, self.format_string)
-
