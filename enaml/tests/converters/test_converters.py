@@ -124,6 +124,58 @@ class TestIntConverter(ConverterTestCase):
         """
         self.assertRaises(ValueError, self.converter.from_component, '')
 
+    def test_ranges(self):
+        self.converter.low = 0
+        self.converter.high = 9
+        self.assertEqual(self.converter.from_component('0'), 0)
+        self.assertEqual(self.converter.from_component('9'), 9)
+        self.assertRaises(ValueError, self.converter.from_component, '10') 
+        self.assertRaises(ValueError, self.converter.from_component, '-1') 
+        self.converter.allow_high = False
+        self.assertRaises(ValueError, self.converter.from_component, '9')
+        self.converter.allow_low = False
+        self.assertRaises(ValueError, self.converter.from_component, '0')
+
+        self.reset_converter()
+
+
+class TestLongConverter(ConverterTestCase):
+    """ Test the long integer converter.
+
+    """
+    def setUp(self):
+        """ Create an IntConverter.
+
+        """
+        self.converter = converters.LongConverter()
+
+    def test_symmetry(self):
+        """ Test that the 'to_component' and 'from_component' methods are
+        symmetric.
+
+        """
+        self.assertConverterSymmetric(self.converter, '42', 42)
+
+    def test_empty_string_conversion_failure(self):
+        """ Test that the empty string cannot be converted.
+
+        """
+        self.assertRaises(ValueError, self.converter.from_component, '')
+
+    def test_ranges(self):
+        self.converter.low = 0L
+        self.converter.high = 4294967296L
+        self.assertEqual(self.converter.from_component('0'), 0L)
+        self.assertEqual(self.converter.from_component('4294967296'), 4294967296L)
+        self.assertRaises(ValueError, self.converter.from_component, 4294967296L+1) 
+        self.assertRaises(ValueError, self.converter.from_component, '-1')
+        self.converter.allow_high = False
+        self.assertRaises(ValueError, self.converter.from_component, '4294967296')
+        self.converter.allow_low = False
+        self.assertRaises(ValueError, self.converter.from_component, '0')
+
+        self.reset_converter()
+
 
 class TestHexConverter(ConverterTestCase):
     """ Test the hexadecimal converter.
@@ -148,6 +200,19 @@ class TestHexConverter(ConverterTestCase):
         """
         self.assertRaises(ValueError, self.converter.from_component, '')
 
+    def test_ranges(self):
+        self.converter.low = 0
+        self.converter.high = 255
+        self.assertEqual(self.converter.from_component('0'), 0)
+        self.assertEqual(self.converter.from_component('FF'), 255)
+        self.assertRaises(ValueError, self.converter.from_component, '100') 
+        self.converter.allow_high = False
+        self.assertRaises(ValueError, self.converter.from_component, 'FF')
+        self.converter.allow_low = False
+        self.assertRaises(ValueError, self.converter.from_component, '0')
+
+        self.reset_converter()
+
 
 class TestOctalConverter(ConverterTestCase):
     """ Test the octal converter.
@@ -171,6 +236,19 @@ class TestOctalConverter(ConverterTestCase):
 
         """
         self.assertRaises(ValueError, self.converter.from_component, '')
+
+    def test_ranges(self):
+        self.converter.low = 0
+        self.converter.high = 63
+        self.assertEqual(self.converter.from_component('0'), 0)
+        self.assertEqual(self.converter.from_component('77'), 63)
+        self.assertRaises(ValueError, self.converter.from_component, '100') 
+        self.converter.allow_high = False
+        self.assertRaises(ValueError, self.converter.from_component, '77')
+        self.converter.allow_low = False
+        self.assertRaises(ValueError, self.converter.from_component, '0')
+
+        self.reset_converter()
 
 
 class TestFloatConverter(ConverterTestCase):
@@ -201,6 +279,19 @@ class TestFloatConverter(ConverterTestCase):
 
         """
         self.assertRaises(ValueError, self.converter.from_component, '')
+
+    def test_ranges(self):
+        self.converter.low = -10.0
+        self.converter.high = 10.0
+        self.assertEqual(self.converter.from_component('0'), 0.0)
+        self.assertEqual(self.converter.from_component('-1.5'), -1.5)
+        self.assertRaises(ValueError, self.converter.from_component, '100') 
+        self.converter.allow_high = False
+        self.assertRaises(ValueError, self.converter.from_component, '10')
+        self.converter.allow_low = False
+        self.assertRaises(ValueError, self.converter.from_component, '-10')
+
+        self.reset_converter()
 
 
 class TestDateConverter(ConverterTestCase):
