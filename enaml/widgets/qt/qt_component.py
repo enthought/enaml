@@ -88,7 +88,8 @@ class QtComponent(AbstractTkComponent):
             # unparent the widget as well.
             widget.setParent(None)
             widget.destroy()
-
+        self.widget = None
+        
     def disable_updates(self):
         """ Disable rendering updates for the underlying Qt widget.
 
