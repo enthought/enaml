@@ -22,11 +22,11 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
     #--------------------------------------------------------------------------
     # SetupMethods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QTextEditor.
 
         """
-        self.widget = QtGui.QPlainTextEdit(parent=self.parent_widget())
+        self.widget = QtGui.QPlainTextEdit(parent=parent)
 
     def initialize(self):
         """ Initializes the attributes of the Qt widget.

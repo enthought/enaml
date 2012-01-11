@@ -22,11 +22,11 @@ class QtCodeEditor(QtTextEditor, AbstractTkCodeEditor):
     #--------------------------------------------------------------------------
     # SetupMethods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying CodeWidget.
 
         """
-        self.widget = CodeWidget(parent=self.parent_widget())
+        self.widget = CodeWidget(parent=parent)
     
     def initialize(self):
         """ Initializes the attributes of the Qt widget.
