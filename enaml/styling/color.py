@@ -112,7 +112,7 @@ class Color(tuple):
         return self[3]
 
 
-# All 147 CSS colors plus 'error'.
+#: All 147 CSS colors plus some of our own.
 Color.color_map = {
     'aliceblue': Color(240, 248, 255),
     'antiquewhite': Color(250, 235, 215),
@@ -261,12 +261,13 @@ Color.color_map = {
     'white': Color(255, 255, 255),
     'whitesmoke': Color(245, 245, 245),
     'yellow': Color(255, 255, 0),
-    'yellowgreen': Color(154, 205, 50),
+    'yellowgreen': Color(154, 205, 50), 
+
+    # Custom Enaml colors
+    'error': Color(249, 167, 167),
+    'none': Color(-1, -1, -1, -1),
+
 }
-
-
-# A predefined error color
-error_color = Color(255, 192, 192)
 
 
 class ColorTrait(StyleTrait):

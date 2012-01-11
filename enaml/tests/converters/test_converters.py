@@ -24,7 +24,6 @@ class TestCustomConverter(ConverterTestCase):
     """ Check that the abstract methods on Converter must be implemented.
 
     """
-
     def test_converter_without_from_component(self):
         """ The abstract method 'from_component' must be implemented.
 
@@ -65,26 +64,27 @@ class TestCustomConverter(ConverterTestCase):
         CustomConverter()
 
 
-class TestPassThroughConverter(ConverterTestCase):
-    """ Test the identity converter.
+class TestNullConverter(ConverterTestCase):
+    """ Test the null converter.
 
     """
     def setUp(self):
-        """ Create a PassThroughConverter
+        """ Create a NullConverter
 
         """
-        self.converter = converters.PassThroughConverter()
+        self.converter = converters.NullConverter()
 
     def test_symmetry(self):
-        """ Test that the 'to_component' and 'from_component' methods are
-        symmetric.
+        """ Test that the 'to_component' and 'from_component' methods 
+        are symmetric.
 
         """
         self.assertConverterSymmetric(self.converter, [1, '2'], [1, '2'])
 
 
 class TestStringConverter(ConverterTestCase):
-    """ Test the string converter, which converts inputs and outputs to strings.
+    """ Test the string converter, which converts inputs and outputs to
+    strings.
 
     """
     def setUp(self):
@@ -203,73 +203,6 @@ class TestFloatConverter(ConverterTestCase):
         self.assertRaises(ValueError, self.converter.from_component, '')
 
 
-class TestSliderRangeConverter(ConverterTestCase):
-    """ Test the slider range converter: map (0.0, 1.0) to another interval.
-
-    """
-    def setUp(self):
-        """ Create an instance of SliderRangeConverter.
-
-        """
-        self.low = -10
-        self.high = 10
-        self.converter = converters.SliderRangeConverter(self.low, self.high)
-
-    def test_lower_bound(self):
-        """ Test that the 'to_component' and 'from_component' methods are
-        symmetric at the lower bound.
-
-        """
-        self.assertConverterSymmetric(self.converter, 0, -10)
-
-    def test_upper_bound(self):
-        """ Test that the 'to_component' and 'from_component' methods are
-        symmetric at the upper bound.
-
-        """
-        self.assertConverterSymmetric(self.converter, 1, 10)
-
-    def test_in_range(self):
-        """ Test that an in-bounds value is converted properly.
-
-        """
-        self.assertConverterSymmetric(self.converter, .7, 4.0)
-
-    def test_out_of_bounds_from_component(self):
-        """ Test that a component value outside of (0.0, 1.0) is converted
-        to a value outside the interval (self.low, self.high).
-
-        """
-        component_value = self.converter.from_component(1.2)
-        self.assertFalse(self.low <= component_value <= self.high)
-
-    def test_out_of_bounds_to_component(self):
-        """ Test that an external value outside of (self.low, self.high)
-        is converted to a value outside the interval (0.0, 1.0).
-
-        """
-        component_value = self.converter.to_component(250)
-        self.assertFalse(0 <= component_value <= 1)
-
-
-class TestSliderLogConverter(ConverterTestCase):
-    """ Test the slider logarithm converter.
-
-    """
-    def setUp(self):
-        """ Create an instance of SliderLogConverter.
-
-        """
-        self.converter = converters.SliderLogConverter()
-
-    def test_symmetry(self):
-        """ Test that the 'to_component' and 'from_component' methods are
-        symmetric.
-
-        """
-        self.assertConverterSymmetric(self.converter, 3, 1000)
-
-
 class TestDateConverter(ConverterTestCase):
     """ Test the date converter.
 
@@ -279,8 +212,8 @@ class TestDateConverter(ConverterTestCase):
 
         """
         converter = converters.DateConverter()
-        self.assertConverterSymmetric(converter, '2002-02-22',
-                                      datetime.date(2002, 2, 22))
+        date = datetime.date(2002, 2, 22)
+        self.assertConverterSymmetric(converter, '2002-02-22', date)
 
     def test_custom_format(self):
         """ Test DateConverter with a custom format string.
@@ -301,13 +234,14 @@ class TestDateTimeConverter(ConverterTestCase):
 
         """
         converter = converters.DateTimeConverter()
-        self.assertConverterSymmetric(converter, '1991-08-19T20:02:00',
-                                      datetime.datetime(1991, 8, 19, 20, 2))
+        dt =  datetime.datetime(1991, 8, 19, 20, 2)
+        self.assertConverterSymmetric(converter, '1991-08-19T20:02:00', dt)
 
     def test_custom_format(self):
         """ Test DateTimeConverter with a custom format string.
 
         """
         converter = converters.DateTimeConverter('%I:%M on %m/%d/%Y')
-        self.assertConverterSymmetric(converter, '12:01 on 04/20/1979',
-                                      datetime.datetime(1979, 4, 20, 0, 1))
+        dt = datetime.datetime(1979, 4, 20, 0, 1)
+        self.assertConverterSymmetric(converter, '12:01 on 04/20/1979', dt)
+

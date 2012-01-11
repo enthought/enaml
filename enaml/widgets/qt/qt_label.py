@@ -11,25 +11,25 @@ from ..label import AbstractTkLabel
 class QtLabel(QtControl, AbstractTkLabel):
     """ A Qt implementation of Label.
 
-    A QtLabel displays static text using a QLabel control.
-
     """
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
-        """ Creates the underlying text control.
+    def create(self, parent):
+        """ Creates the underlying QLabel control.
 
         """
-        self.widget = QtGui.QLabel(self.parent_widget())
+        self.widget = QtGui.QLabel(parent)
 
     def initialize(self):
         """ Initializes the attributes on the underlying control.
 
         """
         super(QtLabel, self).initialize()
-        self.set_label(self.shell_obj.text)
-
+        shell = self.shell_obj
+        self.set_label(shell.text)
+        self.set_word_wrap(shell.word_wrap)
+        
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -38,14 +38,22 @@ class QtLabel(QtControl, AbstractTkLabel):
 
         """
         self.set_label(text)
-        # XXX we might need a relayout call here when the text changes
-        # since it's width may have changed and the size hint may
-        # now be different. We probably want to make it configurable
-        # though since fixed width labels don't need a relayout
+
+    def shell_word_wrap_changed(self, word_wrap):
+        """ The change handler for the 'word_wrap' attribute.
+
+        """
+        self.set_word_wrap(word_wrap)
 
     def set_label(self, label):
         """ Sets the label on the underlying control.
 
         """
         self.widget.setText(label)
+
+    def set_word_wrap(self, wrap):
+        """ Sets the word wrapping on the underlying widget.
+
+        """
+        self.widget.setWordWrap(wrap)
 

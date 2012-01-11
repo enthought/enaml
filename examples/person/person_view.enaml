@@ -1,0 +1,28 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from enaml.stdlib.fields import IntField
+
+
+PersonForm(Form):
+    person = None
+    Label:
+        text = 'First Name'
+    Field:
+        value := person.first_name
+    Label:
+        text = 'Last Name'
+    Field:
+        value := person.last_name
+    Label:
+        text = 'Age'
+    IntField:
+        value := person.age 
+
+
+defn PersonView(person):
+    Window:
+        PersonForm:
+            person = person
+            

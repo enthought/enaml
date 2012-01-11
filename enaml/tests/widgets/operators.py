@@ -28,11 +28,14 @@ class TestLessLess(EnamlTestCase):
     """
     def setUp(self):
         enaml_source = """
-defn MainWindow:
+defn MainView():
     Window:
-        Label -> lb:
+        Label:
+            name = 'lb'
             text << 'CheckBox is {0}'.format(cb.checked)
-        CheckBox -> cb:
+        CheckBox:
+            id: cb
+            name = 'cb'
             text = 'Should be checked'
             checked = True
 """
@@ -51,7 +54,6 @@ defn MainWindow:
         self.assertEnamlInSync(check_box, 'checked', True)
         self.assertEnamlInSync(label, 'text', 'CheckBox is True')
 
-
     def test_lessless_update(self):
         """ Test the value after initialization
 
@@ -63,7 +65,7 @@ defn MainWindow:
         self.assertEnamlInSync(check_box, 'checked', False)
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
     @required_method
     def get_text(self, widget):
@@ -78,3 +80,4 @@ defn MainWindow:
 
         """
         pass
+

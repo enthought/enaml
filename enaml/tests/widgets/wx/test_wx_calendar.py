@@ -4,14 +4,15 @@
 #------------------------------------------------------------------------------
 import wx.calendar
 
-from .wx_test_assistant import WXTestAssistant, skip_nonwindows
-from .. import calendar
+from enaml.tests.widgets.wx.wx_test_assistant import WXTestAssistant, skip_nonwindows
+from enaml.tests.widgets import calendar
 
 
 @skip_nonwindows
-class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
-    """ WXCalendar tests. """
+class TestWXCalendar(WXTestAssistant, calendar.TestCalendar):
+    """ WXCalendar tests. 
 
+    """
     def get_date(self, widget):
         """ Get a calendar's active date.
 
@@ -38,6 +39,7 @@ class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
         event = wx.calendar.CalendarEvent(widget, cal_event.typeId)
         event.PySetDate(date)
         widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)
 
     def select_date(self, widget, date):
         """ Fire an event to indicate that a date was selected.
@@ -48,3 +50,5 @@ class TestWxCalendar(WXTestAssistant, calendar.TestCalendar):
         widget.PySetDate(date)
         event.PySetDate(date)
         widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)
+

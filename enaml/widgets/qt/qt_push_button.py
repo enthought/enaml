@@ -5,6 +5,7 @@
 from .qt import QtGui
 
 from .qt_control import QtControl
+
 from ..push_button import AbstractTkPushButton
 
 
@@ -15,11 +16,11 @@ class QtPushButton(QtControl, AbstractTkPushButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QPushButton control.
 
         """
-        self.widget = QtGui.QPushButton(self.parent_widget())
+        self.widget = QtGui.QPushButton(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
@@ -46,6 +47,8 @@ class QtPushButton(QtControl, AbstractTkPushButton):
 
         """
         self.set_label(text)
+        # If the text of the button changes, the size hint has likely
+        # change and the layout system needs to be informed.
         self.shell_obj.size_hint_updated = True
 
     def on_clicked(self):

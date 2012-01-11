@@ -11,10 +11,10 @@ from .util import enum
 #: ============ ===============================================
 #: value        description
 #: ============ ===============================================
-#: ``accepted`` (default) The user accepted the dialog.
-#: ``rejected`` The user declined the default result.
+#: ``accepted`` The user accepted the dialog.
+#: ``rejected`` (default) The user declined the default result.
 #: ============ ===============================================
-DialogResult = Enum(('accepted', 'rejected'))
+DialogResult = Enum(('rejected', 'accepted'))
 
 #: Generic orientation values.
 #:
@@ -26,17 +26,30 @@ DialogResult = Enum(('accepted', 'rejected'))
 #: ============== ======================
 Orientation = Enum(('horizontal', 'vertical'))
 
-#: The position of the tabs in a notebook.
+#: The position of the tabs in a Tabbed container.
 #:
 #: ========== =====================================================
 #: value      description
 #: ========== =====================================================
-#: ``left``   (default) Place tabs to the left of the main content.
-#: ``right``  Place tabs to the right of the main content.
-#: ``top``    Place tabs above the main content.
+#: ``top``    (default) Place tabs above the main content.
 #: ``bottom`` Place tabs below the main content.
+#: ``left``   Place tabs to the left of the main content.
+#: ``right``  Place tabs to the right of the main content.
 #: ========== =====================================================
-TabPosition = Enum(('left', 'right', 'top', 'bottom'))
+TabPosition = Enum(('top', 'bottom', 'left', 'right'))
+
+
+#: Horizontal alingment.
+#:
+#: ========== =====================================================
+#: value      description
+#: ========== =====================================================
+#: ``left``   (default) Align left
+#: ``right``  Align right
+#: ``center`` Align center
+#: ========== =====================================================
+HorizontalAlign = Enum(('left', 'right', 'center'))
+
 
 #: A container's layout style, based on the order of insertion.
 #:
@@ -48,8 +61,8 @@ TabPosition = Enum(('left', 'right', 'top', 'bottom'))
 #: ``top_to_bottom`` Position children from top to bottom.
 #: ``bottom_to_top`` Position children from bottom to top.
 #: ================= ===============================================
-Direction = Enum(('left_to_right', 'right_to_left',
-                    'top_to_bottom', 'bottom_to_top'))
+Direction = Enum(('left_to_right', 'right_to_left', 
+                  'top_to_bottom', 'bottom_to_top'))
 
 #: A window's modality specifies whether it captures focus.
 #:
@@ -62,7 +75,7 @@ Direction = Enum(('left_to_right', 'right_to_left',
 #: ``application_modal`` The window blocks input to all other windows in
 #:                       the application.
 #: ===================== =================================================
-Modality = Enum(('non_modal', 'window_modal', 'application_modal'))
+Modality = Enum(('application_modal', 'window_modal'))
 
 #: The position of ticks for a control.
 #:
@@ -78,8 +91,7 @@ Modality = Enum(('non_modal', 'window_modal', 'application_modal'))
 #:               both the left and the right. This might vary with
 #:               :attr:`Orientation`.
 #: ============= =========================================================
-TickPosition = Enum(('no_ticks', 'left', 'right',
-                     'top', 'bottom', 'both'))
+TickPosition = Enum(('no_ticks', 'left', 'right', 'top', 'bottom', 'both'))
 
 #: The ordering of a sort.
 #:
@@ -113,7 +125,60 @@ Validity = Enum(('invalid', 'indermediate', 'acceptable'))
 #: ``strong``       The constraint should be created, but is strong.
 #: ``required``     The constraint should be created, and is required.
 #: ================ ======================================================
-PolicyEnum = Enum('ignore', 'weak', 'strong', 'required')
+PolicyEnum = Enum(('ignore', 'weak', 'strong', 'required'))
+
+#: The selection mode for item views.
+#:
+#: ================ ======================================================
+#: value            description
+#: ================ ======================================================
+#: ``extended``     Same as contiguous except that the Cmd key can be
+#:                  used to start multiple non-contiguous selection
+#:                  regions.
+#: ``single``       A single item may be selection.
+#: ``contiguous``   A contiguous range of items may be selected using the
+#:                  Shift key.
+#: ``multi``        Clicking on an item toggles its selection.
+#: ``none``         No selection allowed.
+#: ================ ======================================================
+SelectionMode = Enum(('extended', 'contiguous', 'single', 'multi', 'none'))
+
+#: What kind of items may be selected in item views.
+#:
+#: ================ ======================================================
+#: value            description
+#: ================ ======================================================
+#: ``items``        Individual items, like table cells.
+#: ``rows``         Only whole rows, not individual table cells.
+#: ``columns``      Only whole columns, not individual table cells.
+#: ================ ======================================================
+SelectionBehavior = Enum(('items', 'rows', 'columns'))
+
+
+#: Exactly what actions to do when programmatically setting the selection in
+#: item views.
+#:
+#: ==================== ======================================================
+#: value                description
+#: ==================== ======================================================
+#: ``no_update``        Make no selection.
+#: ``clear``            Clear the complete selection.
+#: ``select``           Select the specified indices.
+#: ``deselect``         Deselect the specified indices.
+#: ``toggle``           Toggle the selection of the specified indices.
+#: ``current``          Update the "current" index.
+#: ``rows``             Expand the selection to span rows.
+#: ``columns``          Expand the selection to span columns.
+#: ``select_current``   Select the given selection and update the "current"
+#:                      index.
+#: ``toggle_current``   Toggle the given selection and update the "current"
+#:                      index.
+#: ``clear_select``     Clear the whole selection and select the given
+#:                      indices.
+#: ==================== ======================================================
+SelectionCommand = Enum(('clear_select', 'no_update', 'clear', 'select',
+    'deselect', 'toggle', 'current', 'rows', 'columns', 'select_current',
+    'toggle_current'))
 
 
 class Buttons(enum.Enum):

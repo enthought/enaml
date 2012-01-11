@@ -4,9 +4,12 @@
 #------------------------------------------------------------------------------
 import os
 
-from traits.api import HasStrictTraits, Callable, Str, WeakRef
+from traits.api import HasStrictTraits, Callable, WeakRef
 
 
+#------------------------------------------------------------------------------
+# Constructor
+#------------------------------------------------------------------------------
 class Constructor(HasStrictTraits):
     """ The constructor class to use to populate the toolkit.
 
@@ -18,11 +21,6 @@ class Constructor(HasStrictTraits):
     #: A callable object which returns the abstract implementation class
     #: to use for the widget.
     abstract_loader = Callable
-
-    #: The key with which this constructor was added to the toolkit.
-    #: It is set by the toolkit and used as the type name of the
-    #: instantiated component.
-    style_type = Str
 
     #: A reference (stored weakly) to the toolkit in which this
     #: constructor is contained. It is used to set the toolkit
@@ -47,37 +45,26 @@ class Constructor(HasStrictTraits):
         self.shell_loader = shell_loader
         self.abstract_loader = abstract_loader
 
-    def __enaml_call__(self, *args, **kwargs):
-        """ Called by the vm to create the component(s) for this widget.
-        This should not typically be overridden by sublasses. To perform
-        specialized building behavior, override the `build` method.
+    def __call__(self, *args, **kwargs):
+        """ Exposes the __enaml_call__ routine convienently to Python
+        code.
 
         """
-        component = self.build(*args, **kwargs)
-        return ((component,), {})
+        return self.__enaml_call__(*args, **kwargs)
 
-    def build(self, *args, **kwargs):
-        """ Calls the loaders and assembles the component.
-
-        Subclasses should override this method to implement custom
-        construction behavior if the default is not sufficient.
-
-        Parameters
-        ----------
-        *args :
-            Positional arguments with which this constructor was called
-            from the enaml source code.
-        **kwargs :
-            Keyword arguments with which this constructor was called
-            from the enaml source code.
+    def __enaml_call__(self, *args, **kwargs):
+        """ Calls the loaders and assembles and returns the component.
 
         """
         shell_cls = self.shell_loader()
         abstract_cls = self.abstract_loader()
-        component = shell_cls(style_type=self.style_type,
-                              toolkit=self.toolkit,
-                              abstract_obj=abstract_cls())
-        return component
+        shell_obj = shell_cls()
+        if abstract_cls is not None:
+            abstract_obj = abstract_cls()
+            shell_obj.abstract_obj = abstract_obj
+            abstract_obj.shell_obj = shell_obj
+        shell_obj.toolkit = self.toolkit
+        return shell_obj
 
     def clone(self, shell_loader=None, abstract_loader=None):
         """ Creates a clone of this constructor, optionally changing
@@ -91,6 +78,9 @@ class Constructor(HasStrictTraits):
         return Constructor(shell_loader, abstract_loader)
 
 
+#------------------------------------------------------------------------------
+# Toolkit
+#------------------------------------------------------------------------------
 class Toolkit(dict):
     """ The Enaml toolkit object class which facilitates easy gui
     toolkit independent backend development and use. The Toolkit
@@ -139,8 +129,8 @@ class Toolkit(dict):
             self[key] = value
 
     def __setitem__(self, key, value):
-        """ Overridden dict.__setitem__ to apply style types to the
-        constructors.
+        """ Overridden dict.__setitem__ to apply the toolkit reference
+        to the item.
 
         """
         if isinstance(value, Constructor):
@@ -148,7 +138,6 @@ class Toolkit(dict):
             # being used by more than one toolkit and then having the
             # toolkit refs become out of sync.
             value = value.clone()
-            value.style_type = key
             value.toolkit = self
         super(Toolkit, self).__setitem__(key, value)
 
@@ -196,20 +185,6 @@ class Toolkit(dict):
         """
         self.__stack__.pop()
 
-    def _get_style_sheet(self):
-        """ Returns the default style sheet instance for this toolkit.
-
-        """
-        return self['__style_sheet__']
-
-    def _set_style_sheet(self, val):
-        """ Sets the default style sheet instance for this toolkit.
-
-        """
-        self['__style_sheet__'] = val
-
-    style_sheet = property(_get_style_sheet, _set_style_sheet)
-
     def _get_create_app(self):
         """ Returns the app creation function for this toolkit.
 
@@ -252,6 +227,14 @@ class Toolkit(dict):
 
     app = property(_get_app, _set_app)
 
+    def _get_process_events(self):
+        return self['__process_events__']
+    
+    def _set_process_events(self, val):
+        self['__process_events__'] = val
+
+    process_events = property(_get_process_events, _set_process_events)
+
     def _get_invoke_later(self):
         """ Returns the function for invoking a function later in the event
         loop.
@@ -264,7 +247,35 @@ class Toolkit(dict):
 
     invoke_later = property(_get_invoke_later, _set_invoke_later)
 
+    def _get_invoke_timer(self):
+        """ Returns the function for invoking a function some ms later in
+        the event loop.
 
+        """
+        return self.get('__invoke_timer__')
+
+    def _set_invoke_timer(self, val):
+        self['__invoke_timer__'] = val
+
+    invoke_timer = property(_get_invoke_timer, _set_invoke_timer)
+
+    def _get_control_exception_handler(self):
+        """ Returns the function for handling exceptions on a control object
+        that would otherwise be swallowed.
+        
+        """
+        return self['__control_exception_handler__']
+    
+    def _set_control_exception_handler(self, val):
+        self['__control_exception_handler__'] = val
+        
+    control_exception_handler = property(_get_control_exception_handler, 
+                                         _set_control_exception_handler)
+
+
+#------------------------------------------------------------------------------
+# Toolkit Factory Functions
+#------------------------------------------------------------------------------
 def default_toolkit():
     """ Creates an returns the default toolkit object based on
     the user's current ETS_TOOLKIT environment variables.
@@ -287,19 +298,22 @@ def qt_toolkit():
     """
     from .operators import OPERATORS
     from .widgets.qt.constructors import QT_CONSTRUCTORS
-    from .util.guisupport import get_app_qt4, start_event_loop_qt4
-    from .widgets.qt.styling import QT_STYLE_SHEET
-    from .widgets.qt.utils import invoke_later
+    from .util.guisupport import get_app_qt4, start_event_loop_qt4, process_events_qt4
+    from .widgets.qt.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    
+    from .widgets.constructors import CONSTRUCTORS
+
     utils = {}
 
     toolkit = Toolkit(QT_CONSTRUCTORS)
+    toolkit.update(CONSTRUCTORS)
 
     toolkit.create_app = get_app_qt4
     toolkit.start_app = start_event_loop_qt4
-    toolkit.style_sheet = QT_STYLE_SHEET
+    toolkit.process_events = process_events_qt4
     toolkit.invoke_later = invoke_later
+    toolkit.invoke_timer = invoke_timer
+    toolkit.control_exception_handler = None
     toolkit.update(utils)
     toolkit.update(OPERATORS)
     toolkit.update(LAYOUT_HELPERS)
@@ -313,20 +327,25 @@ def wx_toolkit():
     """
     from .operators import OPERATORS
     from .widgets.wx.constructors import WX_CONSTRUCTORS
-    from .util.guisupport import get_app_wx, start_event_loop_wx
-    from .widgets.wx.styling import WX_STYLE_SHEET
-    from .widgets.wx.utils import invoke_later
+    from .util.guisupport import get_app_wx, start_event_loop_wx, process_events_wx
+    from .widgets.wx.utils import invoke_later, invoke_timer
+    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
+    from .widgets.constructors import CONSTRUCTORS
 
     utils = {}
 
     toolkit = Toolkit(WX_CONSTRUCTORS)
-
+    toolkit.update(CONSTRUCTORS)
+    
     toolkit.create_app = get_app_wx
     toolkit.start_app = start_event_loop_wx
-    toolkit.style_sheet = WX_STYLE_SHEET
+    toolkit.process_events = process_events_wx
     toolkit.invoke_later = invoke_later
+    toolkit.invoke_timer = invoke_timer
+    toolkit.control_exception_handler = None
     toolkit.update(utils)
     toolkit.update(OPERATORS)
+    toolkit.update(LAYOUT_HELPERS)
 
     return toolkit
 

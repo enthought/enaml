@@ -3,12 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .wx_control import WXControl
+
 from ..toggle_control import AbstractTkToggleControl
 
-# FIXME: I do not like that there are methods in this class that assume
-# a specific behaviour for the widget. And that we ask the developer to
-# bind to such functions. Are we pushing the remove dublication` rule
-# too much?
+
 class WXToggleControl(WXControl, AbstractTkToggleControl):
     """ A base class for wxPython toggle widgets.
 
@@ -37,7 +35,6 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-
     def shell_checked_changed(self, checked):
         """ The change handler for the 'checked' attribute.
 
@@ -49,6 +46,9 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
 
         """
         self.set_label(text)
+        # If the label of the control changes, its size hint has likely
+        # updated and the layout system needs to be informed
+        self.shell_obj.size_hint_updated = True
 
     def on_toggled(self, event):
         """ The event handler for the toggled event.

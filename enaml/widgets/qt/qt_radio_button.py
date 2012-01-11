@@ -15,11 +15,11 @@ class QtRadioButton(QtToggleControl, AbstractTkRadioButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying Qt widget.
 
         """
-        self.widget = QtGui.QRadioButton(self.parent_widget())
+        self.widget = QtGui.QRadioButton(parent)
 
     def bind(self):
         """ Binds the event handlers for the radio button.

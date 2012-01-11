@@ -23,14 +23,15 @@ class TestHtml(EnamlTestCase):
         """ Set up before the Html tests.
 
         """
-        enaml = """
-defn MainWindow():
+        enaml_source = """
+defn MainView():
     Window:
-        Html -> html:
+        Html:
+            name = 'html'
             source = '<b>{0}</b>'
 """.format(self.text)
 
-        self.view = self.parse_and_create(enaml)
+        self.view = self.parse_and_create(enaml_source)
         self.component = self.component_by_name(self.view, 'html')
         self.widget = self.component.toolkit_widget
 
@@ -52,12 +53,12 @@ defn MainWindow():
         self.assertEqual(widget_source, new_text)
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_source(self, widget):
         """ Get the source of an Html widget.
 
         """
         pass
+

@@ -2,27 +2,26 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from weakref import WeakKeyDictionary
+
 import wx
 import wx.lib.newevent
 
 from .wx_toggle_control import WXToggleControl
+
 from ..radio_button import AbstractTkRadioButton
 
 
-# A new radio button event for the custom radio button this is emitted on
-# the parent whenever any CustomRadioButton is toggled.
-wxGroupRadio, EVT_GROUP_RADIO = wx.lib.newevent.NewEvent()
-
-# A radio button event emitted when the value is interactively turned on.
+#: A radio button event emitted when the value is interactively turned on.
 wxRadioToggleOn, EVT_RADIO_TOGGLE_ON = wx.lib.newevent.NewEvent()
 
-# A radio button event that is emited when the button is auto unchecked
+#: A radio button event that is emited when the button is auto unchecked.
 wxRadioToggleOff, EVT_RADIO_TOGGLE_OFF = wx.lib.newevent.NewEvent()
 
-# A radio button event emitted when the value is programatically turned on.
+#: A radio button event emitted when the value is programatically turned on.
 wxRadioSetChecked, EVT_RADIO_SET_CHECKED = wx.lib.newevent.NewEvent()
 
-# A radio button event emitted when the value is programatically turned off.
+#: A radio button event emitted when the value is programatically turned off.
 wxRadioSetUnchecked, EVT_RADIO_SET_UNCHECKED = wx.lib.newevent.NewEvent()
 
 
@@ -37,22 +36,28 @@ class CustomRadioButton(wx.RadioButton):
     from on to off.
 
     """
+    _parents = WeakKeyDictionary()
+
     def __init__(self, *args, **kwargs):
         super(CustomRadioButton, self).__init__(*args, **kwargs)
-
-        # This class works by binding every instance to an event that
-        # is emitted on the parent. When an instance is toggled, it
-        # emits the group event on the parent, which allows every other
-        # instance with the same parent to check to see if it has been
-        # unchecked. If it has, then it emits the unchecked event.
+        # This class works by maintaining a WeakKeyDictionary where
+        # the keys are the parent widgets of the radio buttons and 
+        # the values are a list of the radio button children of a 
+        # given parent. When any radio button is toggled, it iterates
+        # over its list of siblings and gives them a chance to see
+        # it they've been toggled off. If they have, then they emit an
+        # unchecked event.
         self.Bind(wx.EVT_RADIOBUTTON, self.OnToggled)
-        self.GetParent().Bind(EVT_GROUP_RADIO, self.OnGroupToggled)
+        parent = self.GetParent()
+        if parent:
+            children = self._parents.setdefault(parent, [])
+            children.append(self)
         self._last = self.GetValue()
 
-    def OnGroupToggled(self, event):
-        """ Handles the event emmitted when one of the radio buttons from
-        our group is toggled. Determines whether the button should emit
-        a toggle off event.
+    def CheckToggledOff(self):
+        """ Checks the state of the radio button to see if it has been
+        toggled from on to off. If it has, it will emit a toggle off
+        event.
 
         """
         last = self._last
@@ -61,18 +66,30 @@ class CustomRadioButton(wx.RadioButton):
             self._last = curr
             off_evt = wxRadioToggleOff()
             wx.PostEvent(self, off_evt)
-        event.Skip()
+
+    def CheckSiblings(self):
+        """ Iterates over the siblings of this radio button, giving 
+        each a chance to respond to a possible toggle off.
+
+        """
+        parent = self.GetParent()
+        if parent:
+            parents = self._parents
+            if parent in parents:
+                for child in parents[parent]:
+                    child.CheckToggledOff()
 
     def OnToggled(self, event):
         """ Handles the standard toggle event and emits a toggle on
-        event.
+        event. After emitting that event, it will cycle through the 
+        list of its siblings and give them a change to emit a toggle
+        off event.
 
         """
         self._last = self.GetValue()
         on_evt = wxRadioToggleOn()
         wx.PostEvent(self, on_evt)
-        group_evt = wxGroupRadio()
-        wx.PostEvent(self.GetParent(), group_evt)
+        self.CheckSiblings()
 
     def SetValue(self, val):
         """ Overrides the default SetValue method to emit proper events.
@@ -88,8 +105,23 @@ class CustomRadioButton(wx.RadioButton):
             else:
                 on_evt = wxRadioSetChecked()
                 wx.PostEvent(self, on_evt)
-            group_evt = wxGroupRadio()
-            wx.PostEvent(self.GetParent(), group_evt)
+            self.CheckSiblings()
+        
+    def Destroy(self):
+        """ Overridden destroy method to remove the radio button from
+        the list of siblings before it's destroyed.
+
+        """
+        parent = self.GetParent()
+        if parent:
+            parents = self._parents
+            if parent in parents:
+                children = parents[parent]
+                try:
+                    children.remove(self)
+                except ValueError:
+                    pass
+        super(CustomRadioButton, self).Destroy()
 
 
 class WXRadioButton(WXToggleControl, AbstractTkRadioButton):
@@ -103,11 +135,11 @@ class WXRadioButton(WXToggleControl, AbstractTkRadioButton):
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying custom wx.RadioButton control.
 
         """
-        self.widget = CustomRadioButton(self.parent_widget())
+        self.widget = CustomRadioButton(parent)
 
     def bind(self):
         """ Binds the event handlers of the control.

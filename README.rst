@@ -21,6 +21,7 @@ Prerequisites
 -------------
 * Python >= 2.6 (not Python 3)
 * Traits
+* Casuarius (https://github.com/enthought/casuarius)
 * PySide (only if using the Qt backend)
 * wxPython (only if using the wx backend)
 * PLY (Python Lex-Yacc), for parsing *.enaml* files

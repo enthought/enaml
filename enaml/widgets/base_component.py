@@ -2,227 +2,100 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from abc import ABCMeta, abstractmethod, abstractproperty
-from functools import wraps
+from collections import deque
 
-from traits.api import HasStrictTraits, WeakRef, Instance, List, Str, Tuple, Property
+from traits.api import (
+    Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
+    cached_property, Event, Dict, TraitType, Any, Disallow,
+)
 
-from .setup_hooks import AbstractSetupHook
-from ..styling.color import ColorTrait
-from ..styling.font import FontTrait
-
+from ..expressions import AbstractExpression
 from ..toolkit import Toolkit
 
 
-class AbstractTkBaseComponent(object):
-    """ The abstract toolkit BaseComponent interface.
-
-    A toolkit BaseComponent is responsible for creating and initializing
-    the state of its implementation and binding event handlers.
-
-    """
-    __metaclass__ = ABCMeta
-
-    @abstractproperty
-    def shell_obj(self):
-        """ An abstract property that should *get* and *set* a reference
-        to the shell object (an instance of BaseComponent). 
-
-        It is suggested that the implementation maintain only a weakref
-        to the shell object in order to avoid reference cycles. This 
-        value will be set by the framework before any other creation or 
-        initialization methods are called. It is performed in depth
-        first order.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def create(self):
-        """ Create the underlying implementation object. 
-
-        This method is called after the reference to the shell object
-        has been set and is called in depth-first order. This means
-        that by the time this method is called, the logical parent
-        of this instance has already been created.
-
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def initialize(self):
-        """ Initialize the implementation object.
-
-        This method is called after 'create' in depth-first order. This
-        means that all other implementations in the tree will have been
-        created so that intialization can depend on the existence of 
-        other implementation objects.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def bind(self):
-        """ Called after 'initialize' in order to bind event handlers.
-
-        At the time this method is called, the entire tree of ui
-        objects will have been initialized. The intention of this 
-        method is delay the binding of event handlers until after
-        everything has been intialized in order to mitigate extraneous
-        event firing.
-
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_bg_color_changed(self, color):
-        """ The change handler for the 'bg_color' attribute on the parent.
-        Sets the background color of the internal widget to the given color.
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_fg_color_changed(self, color):
-        """ The change handler for the 'fg_color' attribute on the parent.
-        Sets the foreground color of the internal widget to the given color.
-        For some widgets this may do nothing.
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_font_changed(self, font):
-        """ The change handler for the 'font' attribute on the parent.
-        Sets the font of the internal widget to the given font.
-        For some widgets this may do nothing.
-        """
-        raise NotImplementedError
-
-
-class NullContext(object):
-    """ A do-nothing context object that is created by the __call__
-    method of SetupContext when that context is being used by a 
-    non-toplevel call.
+#------------------------------------------------------------------------------
+# Expression Trait
+#------------------------------------------------------------------------------
+class ExpressionTrait(TraitType):
+    """ A custom trait type which is used to help implement expression 
+    binding.
 
     """
-    def __enter__(self):
-        pass
-    
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        pass
-
-
-class SetupContext(object):
-    """ A context object that will compute and run a set of generators
-    before and after yield control to user code. An instance of this
-    context manager cannot be entered recursively.
-
-    """
-    def __init__(self, method_name):
-        """ Initialize a SetupContext.
+    def __init__(self, old_trait):
+        """ Initialize an expression trait.
 
         Parameters
         ----------
-        method_name : string
-            The name of the method on the setup hooks to call in order
-            to create the setup generators.
-
-        """
-        self.method_name = method_name
-        self.component = None
-        self.gens = None
-
-    def __call__(self, component):
-        """ Prime the context manager for use.
-
-        Parameters
-        ----------
-        component : Instance(BaseComponent)
-            A component which has SetupHooks installed.
-
-        Returns
-        -------
-        result : NullContext or self.
-            If this manager is not in use, it will be primed and 
-            returned, otherwise a NullContext instance will be returned.
-
-        """
-        if self.component is not None:
-            return NullContext()
-        self.component = component
-        return self
-
-    def __enter__(self):
-        """ Collects the setuphook generators for the tree starting at
-        the current node and iterates the generators as a pre-processing
-        step.
-
-        """
-        # Walk the tree of components from this point down and collect
-        # a flat list of all of the setup hook generators.
-        gens = []
-        gens_extend = gens.extend
-        stack = [self.component]
-        stack_extend = stack.extend
-        stack_pop = stack.pop
-        while stack:
-            cmpnt = stack_pop()
-            gens_extend((getattr(hook, self.method_name)(cmpnt) 
-                         for hook in cmpnt.setup_hooks))
-            stack_extend(cmpnt.children)
+        old_trait : ctrait
+            The trait object that the expression trait is temporarily
+            replacing. When a 'get' or 'set' is triggered on this 
+            trait, the old trait will be restored and then the default
+            value of the expression will be applied.
         
-        # Iterate the generators as a pre-processing step
-        for gen in gens:
-            gen.next()
-        
-        # Store the generators until the exit method, 
-        # so they can be iterated a second time.
-        self.gens = gens
+        """
+        super(ExpressionTrait, self).__init__()
+        self.old_trait = old_trait
     
-    def __exit__(self, exc_type, exc_value, exc_tb):
-        """ Iterates the collected generates a second time as a post
-        processing step, provided that the user code did not raise 
-        any exceptions.
+    def swapout(self, obj, name):
+        """ Restore the old trait onto the object. This method takes
+        care to make sure that listeners are copied over properly.
 
         """
-        # The user functions have now already run, and possibly
-        # raised an exception. In any case, we need to reset the
-        # internal state of this context manager and then iterate
-        # the generators a second time if no exception was raise
-        # by the user code.
-        self.component = None
-        gens = self.gens
-        self.gens = None
-        if exc_type is None:
-            for gen in gens:
-                try:
-                    gen.next()
-                except StopIteration:
-                    pass
+        # The default behavior of add_trait does *almost* the right
+        # thing when it copies over notifiers when replacing the
+        # existing trait. What it fails to do is update the owner
+        # attribute of TraitChangeNotifyWrappers which are managing
+        # a bound method notifier. This means that if said notifier
+        # ever dies, it removes itself from the incorrect owner list
+        # and it will be (erroneously) called on the next dispatch
+        # cycle. The logic here makes sure that the owner attribute
+        # of such a notifier is properly updated with its new owner.
+        obj.add_trait(name, self.old_trait)
+        notifiers = obj.trait(name)._notifiers(0)
+        if notifiers is not None:
+            for notifier in notifiers:
+                if hasattr(notifier, 'owner'):
+                    notifier.owner = notifiers
+
+    def get(self, obj, name):
+        """ Handle the computing the initial value for the expression
+        trait. This method first restores the old trait, then evaluates
+        the expression and sets the value on the trait. It then performs
+        a getattr to return the new value of the trait. If the object
+        is not yet fully initialized, the value is set quietly.
+
+        """
+        self.swapout(obj, name)
+        val = obj._expressions[name][-1].eval()
+        if not obj.initialized:
+            obj.trait_setq(**{name: val})
+        else:    
+            setattr(obj, name, val)
+        return getattr(obj, name, val)
+    
+    def set(self, obj, name, val):
+        """ Handle the setting of an initial value for the expression
+        trait. This method first restores the old trait, then sets
+        the value on that trait. In this case, the expression object
+        is not needed. If the object is not yet fully initialized, the 
+        value is set quietly.
+
+        """
+        self.swapout(obj, name)
+        if not obj.initialized:
+            obj.trait_setq(**{name: val})
+        else:
+            setattr(obj, name, val)
 
 
-def setup_hook(func):
-    """ A decorator for methods involved in the setup process of a 
-    BaseComponent tree. It handles the calling of the setup hooks at 
-    the right places. The methods of a setup hook are generators that 
-    can yield back to this decorator so that a single method can be 
-    used to do pre- and post- processing of a setup method.
-
-    """
-    setup_context = SetupContext(func.__name__)
-
-    @wraps(func)
-    def closure(self, *args, **kwargs):
-        with setup_context(self):
-            func(self, *args, **kwargs)
-
-    return closure
-
-
+#------------------------------------------------------------------------------
+# Enaml Base Component
+#------------------------------------------------------------------------------
 class BaseComponent(HasStrictTraits):
     """ The most base class of the Enaml component heierarchy.
 
-    All Enaml classes should inherit from this class. This class is not 
-    meant to be used directly.
+    All declarative Enaml classes should inherit from this class. This 
+    class is not meant to be instantiated directly.
 
     """
     #: The parent component of this component. It is stored as a weakref
@@ -230,271 +103,436 @@ class BaseComponent(HasStrictTraits):
     #: parent is None.
     parent = WeakRef('BaseComponent')
 
-    #: The list of children components for this component. Subclasses
-    #: should redefine this trait to restrict which types of children
-    #: they allow if necessary. This list should not be manipulated 
-    #: outside of the ``*_child(...)`` methods so that the ui may be 
-    #: properly updated when the children change.
-    children = List(Instance('BaseComponent'))
+    #: The list of children for this component. This is a read-only
+    #: cached property that is computed based on the static list of
+    #: _subcomponents and the items they return by calling their
+    #: 'get_actual' method. This list should not be manipulated by
+    #: user code.
+    children = Property(List, depends_on='_subcomponents:_actual_updated')
 
-    #: The toolkit specific object that implements the behavior of
-    #: this component and manages the gui toolkit object. Subclasses
-    #: should redefine this trait to specify the specialized type of
-    #: abstract_obj that is accepted.
-    abstract_obj = Instance(AbstractTkBaseComponent) 
-    
-    #: A list of hooks that are called during the setup process
-    #: that can modify the behavior of the component such as installing
-    #: listeners at the appropriate times. Hooks should normally be
-    #: appended to this list instead of a list being assigned atomically.
-    setup_hooks = List(Instance(AbstractSetupHook))
+    #: Whether the component has been initialized or not. This will be 
+    #: set to True after all of the setup() steps defined here are 
+    #: completed. It should not be changed afterwards. This can be used 
+    #: to trigger certain actions that need to occur after the component 
+    #: has been set up.
+    initialized = Bool(False)
 
-    #: The toolkit that created this object. This does not need to 
-    #: be stored weakly because the toolkit does not maintain refs
-    #: to the compoents that its constructors create.
+    #: An optional name to give to this component to assist in finding
+    #: it in the tree. See the 'find_by_name' method.
+    name = Str
+
+    #: A reference to the toolkit that was used to create this object.
     toolkit = Instance(Toolkit)
-    
-    #: The background color of the widget
-    bg_color = Property(ColorTrait, depends_on=['_user_bg_color', '_style_bg_color'])
-    
-    #: Private trait holding the user-set background color value
-    _user_bg_color = ColorTrait
-    
-    #: Private trait holding the background color value from the style
-    _style_bg_color = ColorTrait
 
-    #: The foreground color of the widget
-    fg_color = Property(ColorTrait, depends_on=['_user_fg_color', '_style_fg_color'])
-    
-    #: Private trait holding the user-set foreground color value
-    _user_fg_color = ColorTrait
-    
-    #: Private trait holding the foreground color value from the style
-    _style_fg_color = ColorTrait
+    #: The private dictionary of expression objects that are bound to 
+    #: attributes on this component. It should not be manipulated by
+    #: user. Rather, expressions should be added by calling the 
+    #: 'bind_expression' method.
+    _expressions = Dict(Str, List(Instance(AbstractExpression)))
 
-    #: The foreground color of the widget
-    font = Property(FontTrait, depends_on=['_user_font', '_style_font'])
-    
-    #: Private trait holding the user-set foreground color value
-    _user_font = FontTrait
-    
-    #: Private trait holding the foreground color value from the style
-    _style_font = FontTrait
+    #: The private internal list of subcomponents for this component. 
+    #: This list should not be manipulated by the user, and should not
+    #: be changed after initialization. It can, however, be redefined
+    #: by subclasses to limit the type or number of subcomponents.
+    _subcomponents = List(Instance('BaseComponent'))
 
-    #: The attributes on this class that can be set by the styling mechanism
-    _style_tags = Tuple(Str, ('bg_color', 'fg_color', 'font'))
- 
-    #: The optional style identifier for the StyleSheet system.
-    style_id = Str
+    #: A private event that should be emitted by a component when the 
+    #: results of calling get_actual() will result in new values. 
+    #: This event is listened to by the parent of subcomponents in order 
+    #: to know when to rebuild its list of children. User code will not 
+    #: typically interact with this event.
+    _actual_updated = Event
 
-    #: The optional style type for the StyleSheet system. This
-    #: is set by default by the constructor object.
-    style_type = Str
+    #--------------------------------------------------------------------------
+    # Children Computation
+    #--------------------------------------------------------------------------
+    @cached_property
+    def _get_children(self):
+        """ The cached property getter for the 'children' attribute.
 
-    #: The optional style class for the StyleSheet system.
-    style_class = Str
-
-    def add_child(self, child):
-        """ Add the child to this component.
-
-        Arguments
-        ---------
-        child : Instance(BaseComponent)
-            The child to add to the component.
+        This property getter returns the flattened list of components
+        returned by calling 'get_actual()' on each subcomponent.
 
         """
-        self.children.append(child)
+        return sum([c.get_actual() for c in self._subcomponents], [])
 
-    def remove_child(self, child):
-        """ Remove the child from this component.
-
-        Arguments
-        ---------
-        child : Instance(BaseComponent)
-            The child to remove from the container.
-
-        """
-        try:
-            self.children.remove(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-
-    def replace_child(self, child, other_child):
-        """ Replace a child with another child.
-
-        Arguments
-        ---------
-        child : Instance(BaseComponent)
-            The child being replaced.
-
-        other_child : Instance(BaseComponent)
-            The child taking the place of the removed child.
+    #--------------------------------------------------------------------------
+    # Component Manipulation
+    #--------------------------------------------------------------------------
+    def get_actual(self):
+        """ Returns the list of BaseComponent instance which should be
+        included as proper children of our parent. By default this 
+        simply returns [self]. This method should be reimplemented by 
+        subclasses which need to contribute different components to their
+        parent's children.
 
         """
-        try:
-            idx = self.children.index(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-        self.children[idx] = other_child
-
-    def swap_children(self, child, other_child):
-        """ Swap the position of the two children.
-
-        Arguments
-        ---------
-        child : Instance(BaseComponent)
-            The first child in the swap.
-
-        other_child : Instance(BaseComponent)
-            The second child in the swap.
+        return [self]
+        
+    def add_subcomponent(self, component):
+        """ Adds the given component as a subcomponent of this object.
+        By default, the subcomponent is added to an internal list of 
+        subcomponents. This method may be overridden by subclasses to 
+        filter or otherwise handle certain subcomponents differently.
 
         """
-        try:
-            idx = self.children.index(child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % child)
-        try:
-            other_idx = self.children.index(other_child)
-        except ValueError:
-            raise ValueError('Child %s not in children.' % other_child)
-        self.children[idx] = other_child
-        self.children[other_idx] = child
+        self._subcomponents.append(component)
 
-    def set_style_sheet(self, style_sheet):
-        """ Sets the style sheet for this component.
+    #--------------------------------------------------------------------------
+    # Attribute Binding 
+    #--------------------------------------------------------------------------
+    def bind_expression(self, name, expression):
+        """ Binds the given expression to the attribute 'name'. If
+        the attribute does not exist, one is created.
 
-        Arguments
-        ---------
-        style_sheet : StyleSheet
-            The style sheet instance for this component.
-
+        If the object is not yet initialized, the expression will be 
+        evaulated as the default value of the attribute on-demand.
+        If the object is already initialized, then the expression
+        is evaluated and the attribute set with the value. A strong
+        reference to the expression object is kept internally. Mutliple
+        expressions may be bound to the same attribute, but only the
+        most recently bound expression will be used to compute the
+        default value.
+        
+        Parameters
+        ----------
+        name : string
+            The name of the attribute on which to bind the expression.
+        
+        expression : AbstractExpression
+            An implementation of enaml.expressions.AbstractExpression.
+        
         """
-        raise NotImplementedError('Implement me!')
+        expressions = self._expressions
+        if name not in expressions:
+            expressions[name] = []
+        expressions[name].append(expression)
+        
+        if not self.initialized:
+            curr = self.trait(name)
+            if curr is None or curr is Disallow:
+                # If no trait exists, then the user is requesting to add 
+                # an attribute to the object. The HasStrictTraits may 
+                # give a Disallow trait for attributes that don't exist.
+                self.add_trait(name, Any())
+                curr = self.trait(name)
 
-    def setup(self):
+            # We only need to add an ExpressionTrait once since it 
+            # will reach back into the _expressions dict when needed
+            # and retrieve the most current expression.
+            if not isinstance(curr.trait_type, ExpressionTrait):
+                self.add_trait(name, ExpressionTrait(curr))
+        else:
+            setattr(self, name, expression.eval())
+
+    #--------------------------------------------------------------------------
+    # Setup Methods 
+    #--------------------------------------------------------------------------
+    def setup(self, parent=None):
         """ Run the setup process for the ui tree.
 
-        This method splits up the setup process into several passes:
+        The setup process is fairly complex and involves multiple steps.
+        The complexity is required in order to ensure a consistent state
+        of the component tree so that default values that are computed 
+        from expressions have the necessary information available.
+
+        The setup process is comprised of the following steps:
         
-        1) The child shell objects are given a reference to their parent
-        2) The abstract objects are given a reference to the shell object
-        3) The abstract objects create their internal toolkit object
-        4) The abstract objects initialize their internal toolkit object
-        5) The abstract objects bind their event handlers
-        6) The abstract object is added as a listener to the shell object
+        1) Child components are given a reference to their parent
+        2) Abstract objects create their internal toolkit object
+        3) Abstract objects initialize their internal toolkit object
+        4) Bound expression values are explicitly applied
+        5) Abstract objects bind their event handlers
+        6) Abstract objects are added as a listeners to the shell object
+        7) Visibility is initialized (toplevel nodes are skipped)
+        8) Layout is initialized
+        9) Nodes are marked as initialized
 
-        Each of these methods are performed top down. Setup hooks are 
-        called for items 3, 4, and 5.
+        Many of these setup methods are no-ops, but are defined on this
+        BaseComponent for simplicity and continuity. Subclasses that
+        need to partake in certain portions of the layout process 
+        should re-implement the appropriate setup methods.
+
+        Parameters
+        ----------
+        parent : native toolkit widget, optional
+            If embedding this BaseComponent into a non-Enaml GUI, use 
+            this to pass the appropriate toolkit widget that should be 
+            the parent toolkit widget for this component.
 
         """
-        self.set_parent_refs()
-        self.set_shell_refs()
-        self.create()
-        self.initialize()
-        self.bind()
-        self.set_listeners()
+        self._setup_parent_refs()
+        self._setup_create_widgets(parent)
+        self._setup_init_widgets()
+        self._setup_eval_expressions()
+        self._setup_bind_widgets()
+        self._setup_listeners()
+        self._setup_init_visibility()
+        self._setup_init_layout()
+        self._setup_set_initialized()
 
-    def set_parent_refs(self):
-        """ Assigns a reference to self for every child in children and 
-        dispatches the tree top down. This should not normally be called 
-        by user code.
+    def _setup_parent_refs(self):
+        """ A setup method which assigns the parent reference to the
+        child subcomponents.
 
         """
-        for child in self.children:
+        for child in self._subcomponents:
             child.parent = self
-            child.set_parent_refs()
+            child._setup_parent_refs()
 
-    def set_shell_refs(self):
-        """ Assigns a reference to self to the abstract obj and 
-        dispatches the tree top down. This should not normally be 
-        called by user code.
+    def _setup_create_widgets(self, parent):
+        """ A setup method that, by default, is a no-op. Subclasses 
+        that drive gui toolkit widgets should reimplement this method
+        to create the underlying toolkit widget(s).
 
         """
-        self.abstract_obj.shell_obj = self
-        for child in self.children:
-            child.set_shell_refs()
+        for child in self._subcomponents:
+            child._setup_create_widgets(parent)
+
+    def _setup_init_widgets(self):
+        """ A setup method that, by default, is a no-op. Subclasses 
+        that drive gui toolkit widgets should reimplement this method
+        to initialize their internal toolkit widget(s).
+
+        """
+        for child in self._subcomponents:
+            child._setup_init_widgets()
+
+    def _setup_eval_expressions(self):
+        """ A setup method that loops over all of bound expressions and
+        performs a getattr for those attributes. This ensures that all
+        bound attributes are initialized, even if they weren't implicitly
+        initialized in any of the previous setup methods.
+
+        """
+        for name in self._expressions:
+            getattr(self, name)
+        for child in self._subcomponents:
+            child._setup_eval_expressions()
+
+    def _setup_bind_widgets(self):
+        """ A setup method that, by default, is a no-op. Subclasses 
+        that drive gui toolkit widgets should reimplement this method
+        to bind any event handlers of their internal toolkit widget(s).
+
+        """
+        for child in self._subcomponents:
+            child._setup_bind_widgets()
+
+    def _setup_listeners(self):
+        """ A setup method that, by default, is a no-op. Subclasses 
+        that drive gui toolkit widgets should reimplement this method
+        to setup an traits listeners necessary to drive their internal
+        toolkit widget(s).
+
+        """
+        for child in self._subcomponents:
+            child._setup_listeners()
+
+    def _setup_init_visibility(self):
+        """ A setup method that, by default, is a no-op. Subclasses 
+        that drive gui toolkit widgets should reimplement this method
+        to initialize the visibility of their widgets.
+
+        """
+        for child in self._subcomponents:
+            child._setup_init_visibility()
+
+    def _setup_init_layout(self):
+        """ A setup method that, by default, is a no-op. Subclasses 
+        that manage layout should reimplement this method to initialize
+        their underlying layout.
+
+        """
+        for child in self._subcomponents:
+            child._setup_init_layout()
+
+    def _setup_set_initialized(self):
+        """ A setup method which updates the initialized attribute of 
+        the component to True.
+
+        """
+        self.initialized = True
+        for child in self._subcomponents:
+            child._setup_set_initialized()
+
+    #--------------------------------------------------------------------------
+    # Teardown Methods
+    #--------------------------------------------------------------------------
+    def destroy(self):
+        """ Destroys the component by clearing the list of subcomponents
+        and calling 'destroy' on all of the old subcomponents. Subclasses
+        that need more control over destruction should reimplement this
+        method.
+
+        """
+        for child in self._subcomponents:
+            child.destroy()
+        self._subcomponents = []
+
+    #--------------------------------------------------------------------------
+    # Layout Stubs
+    #--------------------------------------------------------------------------
+    def relayout(self):
+        """ A method called when the layout of the component's children
+        should be refreshed. By default, this method proxies the call up
+        the hierarchy until an implementor is found. Any implementors 
+        should ensure that the necessary operations take place immediately 
+        and are complete before the method returns.
+
+        """
+        parent = self.parent
+        if parent is not None:
+            parent.relayout()
+
+    def relayout_later(self):
+        """ A method called when the layout of the component's children
+        should be refreshed at some point in the future. By default, this 
+        method proxies the call up the hierarchy until an implementor is 
+        found. Any implementors should ensure that this method returns 
+        immediately, and that relayout occurs at some point in the future.
+
+        """
+        parent = self.parent
+        if parent is not None:
+            parent.relayout_later()
+
+    def rearrange(self):
+        """ A method called when the positioning of the component's 
+        children should be refreshed. By default, this method proxies the 
+        call up the hierarchy until an implementor is found. Implementors 
+        should ensure that this method takes place immediately, and that
+        the refresh is complete before the method returns. 
+
+        Note: This method performs less work than 'relayout' and should 
+            typically only need to be called when the children need to 
+            be repositioned, rather than have all of their layout 
+            relationships recomputed.
+
+        """
+        parent = self.parent
+        if parent is not None:
+            parent.rearrange()
         
-    @setup_hook
-    def create(self):
-        """ A setup method that tells the abstract object to create its
-        internal toolkit object. This should not normally be called by 
-        user code.
+    def rearrange_later(self):
+        """ A method called when the positioning of the component's 
+        children should be refreshed at some point in the future. By 
+        default, this method proxies the call up the hierarchy until an 
+        implementor is found. Implementors should ensure that this method 
+        returns immediately, and that the refresh is completed at some 
+        time in the future.
+        
+        Note: This method performs less work than 'relayout' and should 
+            typically only need to be called when the children need to 
+            be repositioned, rather than have all of their layout 
+            relationships recomputed.
 
         """
-        self.abstract_obj.create()
-        for child in self.children:
-            child.create()
-
-    @setup_hook
-    def initialize(self):
-        """ A setup method that tells the abstract object to initialize
-        its internal toolkit object. This should not normally be called 
-        by user code.
-
-        """
-        self.abstract_obj.initialize()
-        for child in self.children:
-            child.initialize()
-
-    @setup_hook
-    def bind(self):
-        """ A setup method that tells the abstract object to bind its
-        event handlers to its internal toolkit object. This should not
-        normally be called by user code.
+        parent = self.parent
+        if parent is not None:
+            parent.rearrange_later()
+        
+    def relayout_enqueue(self, callable):
+        """ Enqueue a callable to be executed in a frozen context on the
+        next relayout pass. By default, this method proxies the call up
+        the hierarchy until an implementor is found. Implementors should
+        ensure that enqueuing the callable results in a relayout later
+        which empties the queue from within a freeze context.
 
         """
-        self.abstract_obj.bind()
-        for child in self.children:
-            child.bind()
-
-    def set_listeners(self):
-        """ Sets the abstract object as a traits listener for this
-        component with a prefix of 'shell'.
+        parent = self.parent
+        if parent is not None:
+            parent.relayout_enqueue(callable)
+        
+    def rearrange_enqueue(self, callable):
+        """ Enqueue a callable to be executed in a frozen context on the
+        next rearrange pass. By default, this method proxies the call up
+        the hierarchy until an implementor is found. Implementors should
+        ensure that enqueuing the callable results in a rearrange later
+        which empties the queue from within a freeze context.
 
         """
-        self.add_trait_listener(self.abstract_obj, 'shell')
-        for child in self.children:
-            child.set_listeners()
+        parent = self.parent
+        if parent is not None:
+            parent.rearrange_enqueue(callable)
 
-    def _set_bg_color(self, new):
-        """ Property setter for the 'bg_color' background color property.
-        Set values are pushed to the '_user_bg_color' trait.
+    #--------------------------------------------------------------------------
+    # Auxiliary Methods 
+    #--------------------------------------------------------------------------
+    def traverse(self, depth_first=False):
+        """ Yields all of the nodes in the tree, from this node downward.
+
+        Parameters
+        ----------
+        depth_first : bool, optional
+            If True, yield the nodes in depth first order. If False,
+            yield the nodes in breadth first order. Defaults to False.
+
         """
-        self._user_bg_color = new
+        if depth_first:
+            stack = [self]
+            stack_pop = stack.pop
+            stack_extend = stack.extend
+        else:
+            stack = deque([self])
+            stack_pop = stack.popleft
+            stack_extend = stack.extend
+
+        while stack:
+            item = stack_pop()
+            yield item
+            stack_extend(item.children)
     
-    def _get_bg_color(self):
-        """ Property sgtter for the 'bg_color' background color property.
-        We use the '_user_bg_color' trait unless it is None.
-        """
-        if self._user_bg_color:
-            return self._user_bg_color
-        return self._style_bg_color
+    def traverse_ancestors(self, root=None):
+        """ Yields all of the nodes in the tree, from the parent of this 
+        node updward, stopping at the given root.
 
-    def _set_fg_color(self, new):
-        """ Property setter for the 'fg_color' foreground color property.
-        Set values are pushed to the '_user_fg_color' trait.
-        """
-        self._user_fg_color = new
-    
-    def _get_fg_color(self):
-        """ Property sgtter for the 'fg_color' foreground color property.
-        We use the '_user_fg_color' trait unless it is None.
-        """
-        if self._user_fg_color:
-            return self._user_fg_color
-        return self._style_fg_color
+        Parameters
+        ----------
+        root : BaseComponent, optional
+            The component at which to stop the traversal. Defaults
+            to None
 
-    def _set_font(self, new):
-        """ Property setter for the 'fg_color' foreground color property.
-        Set values are pushed to the '_user_fg_color' trait.
         """
-        self._user_font = new
-    
-    def _get_font(self):
-        """ Property sgtter for the 'fg_color' foreground color property.
-        We use the '_user_fg_color' trait unless it is None.
+        parent = self.parent
+        while parent is not root and parent is not None:
+            yield parent
+            parent = parent.parent
+
+    def find_by_name(self, name):
+        """ Locate and return a named item that exists in the subtree
+        which starts at this node.
+
+        This method will traverse the tree of components, breadth first,
+        from this point downward, looking for a component with the given
+        name. The first one with the given name is returned, or None if
+        no component is found.
+
+        Parameters
+        ----------
+        name : string
+            The name of the component for which to search.
+        
+        Returns
+        -------
+        result : BaseComponent or None
+            The first component found with the given name, or None if 
+            no component is found.
+        
         """
-        if self._user_font:
-            return self._user_font
-        return self._style_font
+        for cmpnt in self.traverse():
+            if cmpnt.name == name:
+                return cmpnt
+
+    def toplevel_component(self):
+        """ Walks up the tree of components starting at this node and
+        returns the toplevel node, which is the first node encountered
+        without a parent.
+
+        """
+        cmpnt = self
+        while cmpnt is not None:
+            res = cmpnt
+            cmpnt = cmpnt.parent
+        return res
 

@@ -7,6 +7,8 @@ from .qt_bounded_date import QtBoundedDate
 
 from ..calendar import AbstractTkCalendar
 
+from ...guard import guard
+
 
 # Workaround for an incompatibility between PySide and PyQt
 try: # pragma: no cover
@@ -22,11 +24,11 @@ class QtCalendar(QtBoundedDate, AbstractTkCalendar):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying QtCalendarWidget.
 
         """
-        self.widget = QtGui.QCalendarWidget(self.parent_widget())
+        self.widget = QtGui.QCalendarWidget(parent)
 
     def bind(self):
         """ Binds the event handlers for the calendar widget.
@@ -53,24 +55,39 @@ class QtCalendar(QtBoundedDate, AbstractTkCalendar):
         """ The event handler for the calendar's selection event.
 
         """
-        date = qdate_to_python(self.widget.selectedDate())
-        self.shell_obj.selected = date
+        if not guard.guarded(self, 'updating'):
+            date = qdate_to_python(self.widget.selectedDate())
+            self.shell_obj.selected = date
 
     def set_date(self, date):
         """ Sets and validates the component date on the widget.
 
         """
-        self.widget.setSelectedDate(date)
+        # Calling setSelectedDate will trigger the dateChanged signal.
+        # We want to avoid that feeback loop since the value is being 
+        # set programatically.
+        with guard(self, 'updating'):
+            self.widget.setSelectedDate(date)
 
     def set_min_date(self, min_date):
         """ Sets the minimum date on the widget with the provided value.
 
         """
-        self.widget.setMinimumDate(min_date)
+        # Calling setMinimumDate *may* trigger the dateChanged signal,
+        # if the date needs to be clipped. We want to avoid that feeback 
+        # loop since the value is being set programatically and the new
+        # date will already have been updated by the shell object.
+        with guard(self, 'updating'):
+            self.widget.setMinimumDate(min_date)
 
     def set_max_date(self, max_date):
         """ Sets the maximum date on the widget with the provided value.
 
         """
-        self.widget.setMaximumDate(max_date)
+        # Calling setMaximumDate *may* trigger the dateChanged signal,
+        # if the date needs to be clipped. We want to avoid that feeback 
+        # loop since the value is being set programatically and the new
+        # date will already have been updated by the shell object.
+        with guard(self, 'updating'):
+            self.widget.setMaximumDate(max_date)
 

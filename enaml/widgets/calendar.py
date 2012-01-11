@@ -18,13 +18,13 @@ class Calendar(BoundedDate):
     toolkit specific control.
 
     """
-    #: Triggered whenever the user clicks or changes the control. The
-    #: event payload will be the date on the control. This is event is
-    #: also fired when the value of :attr:`date` is set programmatically.
+    #: Triggered whenever the user clicks or changes the control from
+    #: the ui, but not programmatically. The event payload will be the 
+    #: date on the control.
     selected = Event
 
-    #: Triggered whenever the user activates a new date via double
-    #: click or pressing enter. The event payload will be the date
+    #: Triggered whenever the user activates a new date via double click 
+    #: or pressing enter on the ui. The event payload will be the date
     #: on the control.
     activated = Event
 

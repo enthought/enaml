@@ -2,13 +2,20 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import wx
 import wx.grid
 
 from .wx_control import WXControl
 from ..table_view import AbstractTkTableView
 
-from ...item_models.abstract_item_model import AbstractItemModel, ModelIndex
-from ...enums import DataRole
+from ...item_models.abstract_item_model import AbstractItemModel, ITEM_IS_EDITABLE
+
+
+GridCellAttr = wx.grid.GridCellAttr
+
+
+def wx_color_from_color(color):
+    return wx.Color(*color)
 
 
 # XXX we need to add more handler support for the different modes of
@@ -20,6 +27,17 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
         if not isinstance(item_model, AbstractItemModel):
             raise TypeError('Model must be an instance of AbstractItemModel.')
         self._item_model = item_model
+
+        # Cache frequently used bound methods
+        self._row_count = item_model.row_count
+        self._col_count = item_model.column_count
+        self._model_index = item_model.index
+        self._model_data = item_model.data
+        self._model_background = item_model.background
+        self._model_foreground = item_model.foreground
+        self._vert_header_data = item_model.vertical_header_data
+        self._horiz_header_data = item_model.horizontal_header_data
+
         self._item_model.on_trait_change(self._end_model_reset, 'model_reset')
         self._item_model.on_trait_change(self._data_changed, 'data_changed')
 
@@ -36,47 +54,46 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
         grid.Refresh()
 
     def GetNumberRows(self):
-        return self._item_model.row_count()
+        return self._row_count()
 
     def GetNumberCols(self):
-        return self._item_model.column_count()
+        return self._col_count()
 
-    def GetValue(self, row, col, parent_index=ModelIndex()):
-        model = self._item_model
-        index = model.index(row, col, parent_index)
-        return model.data(index, DataRole.DISPLAY)
+    def GetValue(self, row, col):
+        index = self._model_index(row, col, None)
+        return self._model_data(index)
 
-    def GetAttr(self, row, col, ignored, parent_index=ModelIndex()):
-        model = self._item_model
-        index = model.index(row, col, parent_index)
+    def GetAttr(self, row, col, ignored):
+        index = self._model_index(row, col, None)
 
-        attr = wx.grid.GridCellAttr()
+        attr = GridCellAttr()
 
-        bgcolor = model.data(index, DataRole.BACKGROUND)
-        if bgcolor:
-            attr.SetBackgroundColour(wx_color_from_color(bgcolor))
+        brush = self._model_background(index)
+        if brush is not None:
+            attr.SetBackgroundColour(wx_color_from_color(brush.color))
 
-        fgcolor = model.data(index, DataRole.FOREGROUND)
-        if fgcolor:
-            attr.SetTextColour(wx_color_from_color(fgcolor))
-
+        brush = self._model_foreground(index)
+        if brush is not None:
+            attr.SetTextColour(wx_color_from_color(brush.color))
+            
         return attr
 
+    def SetValue(self, row, col, val):
+        item_model = self._item_model
+        index = item_model.index(row, col, None)
+        flags = item_model.flags(index)
+        if flags & ITEM_IS_EDITABLE:
+            item_model.set_data(index, val)
+
     def GetRowLabelValue(self, row):
-        model = self._item_model
-        return model.header_data(row, 'vertical', DataRole.DISPLAY)
+        return self._vert_header_data(row)
 
     def GetColLabelValue(self, col):
-        model = self._item_model
-        return model.header_data(col, 'horizontal', DataRole.DISPLAY)
+        return self._horiz_header_data(col)
 
 
 class WXTableView(WXControl, AbstractTkTableView):
     """ A wxPython implementation of TableView.
-
-    See Also
-    --------
-    TableView
 
     """
     #: The underlying model.
@@ -85,44 +102,20 @@ class WXTableView(WXControl, AbstractTkTableView):
     #---------------------------------------------------------------------------
     # ITableViewImpl interface
     #---------------------------------------------------------------------------
-    def create(self):
+    def create(self, parent):
         """ Create the underlying wx.grid.Grid control.
 
         """
-        self.widget = wx.grid.Grid(self.parent_widget())
+        style = wx.WANTS_CHARS | wx.FULL_REPAINT_ON_RESIZE
+        self.widget = wx.grid.Grid(parent, style=style)
 
-    def initialize_widget(self):
+    def initialize(self):
         """ Intialize the widget with the attributes of this instance.
 
         """
         super(WXTableView, self).initialize()
-        self.set_table_model(self.parent.item_model)
-
-##    def create_style_handler(self):
-##        """ Initialize a style handler.
-##
-##        """
-##        pass
-##
-##    def initialize_style(self):
-##        """ Configure the widget's minimum width and height.
-##
-##        """
-##        style = self.parent.style
-##        min_width = style.get_property("min_width")
-##        min_height = style.get_property("min_height")
-##
-##        if isinstance(min_width, int) and min_width >= 0:
-##            pass
-##        else:
-##            min_width = -1
-##
-##        if isinstance(min_height, int) and min_height >= 0:
-##            pass
-##        else:
-##            min_height = -1
-##
-##        self.widget.SetMinSize((min_width, min_height))
+        self.set_table_model(self.shell_obj.item_model)
+        self.widget.SetDoubleBuffered(True)
 
     def bind(self):
         """ Bind the event handlers for the table view.
@@ -142,19 +135,26 @@ class WXTableView(WXControl, AbstractTkTableView):
         """
         self.set_table_model(item_model)
 
+    def shell_vertical_header_visible_changed(self, visible):
+        """ The change handler for the 'vertical_header_visible' 
+        attribute of the shell object.
+
+        """
+        pass
+
+    def shell_horizontal_header_visible_changed(self, visible):
+        """ The change handler for the 'horizontal_header_visible'
+        attribute of the shell object.
+
+        """
+        pass
+        
     def on_select_cell(self, event):
         """ The event handler for the cell selection event.  Not meant
         for public consumption.
 
         """
         event.Skip()
-        shell = self.shell_obj
-        parent_index = ModelIndex()
-        row = event.GetRow()
-        col = event.GetCol()
-        index = shell.item_model.index(row, col, parent_index)
-        shell.selected = index
-
 
     def on_left_dclick(self, event):
         """ The event handler for the double-click event.  Not meant
@@ -162,8 +162,6 @@ class WXTableView(WXControl, AbstractTkTableView):
 
         """
         event.Skip()
-        shell = self.shell_obj
-        shell.left_dclick = shell.selected
 
     def set_table_model(self, model):
         """ Set the table view's model.  Not meant for public
@@ -175,3 +173,11 @@ class WXTableView(WXControl, AbstractTkTableView):
         self.widget.Refresh()
         self.model_wrapper = model_wrapper
 
+    def size_hint(self):
+        # This size hint is taken from QAbstractScrollArea::sizeHint
+        # which is the size hint implementation for QTableView.
+        # The wx GetBestSize() call returns the size for the entire
+        # table, which may be millions of pixels for large tables.
+        # It also takes forever and a year to compute.
+        return (256, 192)
+        

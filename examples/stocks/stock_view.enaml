@@ -1,0 +1,57 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+# XXX this example is not yet updated to the new grammar!
+
+defn MainView(model, adapter, plot, stock_data_table):
+    Window:
+        title << ("Enaml Stock Viewer - %s - %s - %s" % 
+                  (model.symbol, model.start_date, model.end_date))
+        constraints = [
+            hbox(left_content, right_content)
+        ]
+        Container -> left_content:
+            constraints = [
+                vertical(top, frm, lbl, sldr, bottom),
+                horizontal(left, frm, right),
+                sldr.left == frm.midline,
+                lbl.h_center == sldr.h_center,
+            ]
+            Form -> frm:
+                Label:
+                    text = 'Symbol'
+                ComboBox:
+                    items << model.available_symbols
+                    value := model.symbol
+                    selected >> print('New Quote Selected: %s' % value)
+                Label:
+                    text = 'Days History'
+                ComboBox:
+                    items << model.days_of_history_choices
+                    value := model.days_of_history
+                Label:
+                    text = "End Date"
+                DateEdit -> end_date_control:
+                    minimum_date = model.date_range[0]
+                    maximum_date = model.date_range[1]
+                    date := model.end_date
+            Label -> lbl:
+                text = '# Data Points'
+            Slider -> sldr:
+                orientation = 'vertical'
+                minimum = 10
+                maximum = 1000
+                value := model.num_points
+                tick_interval = 100
+        Tabbed -> right_content:
+            Tab:
+                title = 'Volume'
+                EnableCanvas -> canvas:
+                    component = plot.get_plot_component()
+            Tab:
+                title = 'Data'
+                TableView:
+                    item_model = stock_data_table
+

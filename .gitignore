@@ -2,6 +2,11 @@
 *.un~
 *.swp
 *.egg-info
+*.so
 /build
 /dist
 /docs/build
+docs/source/.DS_Store
+docs/source/instructional/.DS_Store
+docs/source/instructional/images/.DS_Store
+docs/source/developer_guide/.DS_Store

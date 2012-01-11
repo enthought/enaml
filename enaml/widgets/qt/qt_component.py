@@ -2,56 +2,26 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import weakref
+
 from .qt import QtGui
-from .qt_base_component import QtBaseComponent
-from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 from .styling import q_color_from_color, q_font_from_font
 
 from ..component import AbstractTkComponent
 
 
-class QtComponent(QtBaseComponent, AbstractTkComponent):
-    """ A Qt4 implementation of Component.
-
-    A QtComponent is not meant to be used directly. It provides some
-    common functionality that is useful to all widgets and should
-    serve as the base class for all other classes.
-
-    .. note:: This is not a HasTraits class.
+class QtComponent(AbstractTkComponent):
+    """ Base component object for the Qt based backend.
 
     """
+    #: The a reference to the shell object. Will be stored as a weakref.
+    _shell_obj = lambda self: None
+
     #: The Qt widget created by the component
     widget = None
 
     #--------------------------------------------------------------------------
-    # Setup Methods
-    #--------------------------------------------------------------------------
-    def create(self):
-        self.widget = QResizingFrame(self.parent_widget())
-    
-    def initialize(self):
-        """Initialize the attributes of the Qt widget.
-        """
-        super(QtComponent, self).initialize()
-        
-        shell = self.shell_obj
-        if shell.bg_color:
-            role = self.widget.backgroundRole()
-            self.set_role_color(role, shell.bg_color)
-        if shell.fg_color:
-            role = self.widget.foregroundRole()
-            self.set_role_color(role, shell.fg_color)
-        if shell.font:
-            self.set_font(shell.font)
-
-    def bind(self):
-        super(QtComponent, self).bind()
-
-        if isinstance(self.widget, QResizingWidget):
-            self.widget.resized.connect(self.on_resize)
-
-    #--------------------------------------------------------------------------
-    # Implementation
+    # Abstract Implementation
     #--------------------------------------------------------------------------
     @property
     def toolkit_widget(self):
@@ -61,170 +31,173 @@ class QtComponent(QtBaseComponent, AbstractTkComponent):
         """
         return self.widget
 
-    def size(self):
-        """ Return the size of the internal toolkit widget as a
-        (width, height) tuple of integers.
+    def _get_shell_obj(self):
+        """ Returns a strong reference to the shell object.
+
+        """
+        return self._shell_obj()
+    
+    def _set_shell_obj(self, obj):
+        """ Stores a weak reference to the shell object.
+
+        """
+        self._shell_obj = weakref.ref(obj)
+    
+    #: A property which gets a sets a reference (stored weakly)
+    #: to the shell object
+    shell_obj = property(_get_shell_obj, _set_shell_obj)
+
+    def create(self, parent):
+        """ Creates the underlying Qt widget. As necessary, subclasses
+        should reimplement this method to create different types of
+        widgets.
+
+        """
+        self.widget = QtGui.QFrame(parent)
+
+    def initialize(self):
+        """ Initializes the attributes of the the Qt widget.
+
+        """
+        shell = self.shell_obj
+        if shell.bg_color:
+            self.set_bg_color(shell.bg_color)
+        if shell.fg_color:
+            self.set_fg_color(shell.fg_color)
+        if shell.font:
+            self.set_font(shell.font)
+        self.set_enabled(shell.enabled)
+    
+    def bind(self):
+        """ Bind any event/signal handlers for the Qt Widget. By default,
+        this is a no-op. Subclasses should reimplement this method as
+        necessary to bind any widget event handlers or signals.
+
+        """
+        pass
+
+    def destroy(self):
+        """ Destroys the underlying Qt widget.
 
         """
         widget = self.widget
-        return (widget.width(), widget.height())
+        if widget:
+            # On Windows, it's not sufficient to simply destroy the
+            # widget. It appears that this only schedules the widget 
+            # for destruction at a later time. So, we need to explicitly
+            # unparent the widget as well.
+            widget.setParent(None)
+            widget.destroy()
 
-    def size_hint(self):
-        """ Returns a (width, height) tuple of integers which represent
-        the suggested size of the widget for its current state. This
-        value is used by the layout manager to determine how much
-        space to allocate the widget.
-
-        """
-        size_hint = self.widget.sizeHint()
-        return (size_hint.width(), size_hint.height())
-
-    def resize(self, width, height):
-        """ Resizes the internal toolkit widget according the given
-        width and height integers.
-
-        """
-        self.widget.resize(width, height)
-    
-    def set_min_size(self, min_width, min_height):
-        """ Set the hard minimum width and height of the widget. A widget
-        will not be able to be resized smaller than this value.
-
-        """
-        self.widget.setMinimumSize(min_width, min_height)
-
-    def pos(self):
-        """ Returns the position of the internal toolkit widget as an
-        (x, y) tuple of integers. The coordinates should be relative to
-        the origin of the widget's parent.
+    def disable_updates(self):
+        """ Disable rendering updates for the underlying Qt widget.
 
         """
         widget = self.widget
-        return (widget.x(), widget.y())
+        if widget:
+            widget.setUpdatesEnabled(False)
 
-    def move(self, x, y):
-        """ Moves the internal toolkit widget according to the given
-        x and y integers which are relative to the origin of the
-        widget's parent.
-
-        """
-        self.widget.move(x, y)
-
-    def geometry(self):
-        """ Returns an (x, y, width, height) tuple of geometry info
-        for the internal toolkit widget. The semantic meaning of the
-        values are the same as for the 'size' and 'pos' methods.
+    def enable_updates(self):
+        """ Enable rendering updates for the underlying Wx widget.
 
         """
-        x, y = self.pos()
-        width, height = self.size()
-        return (x, y, width, height)
+        widget = self.widget
+        if widget:
+            widget.setUpdatesEnabled(True)
 
-    def set_geometry(self, x, y, width, height):
-        """ Sets the geometry of the internal widget to the given
-        x, y, width, and height values. The semantic meaning of the
-        values is the same as for the 'resize' and 'move' methods.
-
-        """
-        self.widget.setGeometry(x, y, width, height)
-
-    def on_resize(self):
-        """ Triggers a relayout of the shell object since the component
-        has been resized.
+    #--------------------------------------------------------------------------
+    # Shell Object Change Handlers 
+    #--------------------------------------------------------------------------
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell
+        object.
 
         """
-        # Notice that we are calling do_layout() here instead of 
-        # set_needs_layout() since we want the layout to happen
-        # immediately. Otherwise the resize layouts will appear 
-        # to lag in the ui. This is a safe operation since by the
-        # time we get this resize event, the widget has already 
-        # changed size. Further, the only geometry that gets set
-        # by the layout manager is that of our children. And should
-        # it be required to resize this widget from within the layout
-        # call, then the layout manager will do that via invoke_later.
-        self.shell_obj.do_layout()
-    
+        self.set_enabled(enabled)
+
     def shell_bg_color_changed(self, color):
-        """ The change handler for the 'bg_color' attribute on the parent.
-        Sets the background color of the internal widget to the given color.
+        """ The change handler for the 'bg_color' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
         """
-        role = self.widget.backgroundRole()
-        self.set_role_color(role, color)
+        self.set_bg_color(color)
     
     def shell_fg_color_changed(self, color):
-        """ The change handler for the 'fg_color' attribute on the parent.
-        Sets the foreground color of the internal widget to the given color.
-        For some widgets this may do nothing.
+        """ The change handler for the 'fg_color' attribute on the shell
+        object. Sets the foreground color of the internal widget to the 
+        given color.
+
         """
-        role = self.widget.foregroundRole()
-        self.set_role_color(role, color)
+        self.set_fg_color(color)
 
     def shell_font_changed(self, font):
-        """ The change handler for the 'font' attribute on the parent.
-        Sets the font of the internal widget to the given font.
-        For some widgets this may do nothing.
+        """ The change handler for the 'font' attribute on the shell 
+        object. Sets the font of the internal widget to the given font.
+
         """
-        self.set_font(font)    
+        self.set_font(font)
 
     #--------------------------------------------------------------------------
-    # Convienence methods
+    # Widget Update Methods
     #--------------------------------------------------------------------------
-    def parent_widget(self):
-        """ Returns the logical QWidget parent for this component.
-
-        Since some parents may wrap non-Widget objects, this method will
-        walk up the tree of components until a QWidget is found or None
-        if no QWidget is found.
-
-        Returns
-        -------
-        result : QWidget or None
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
 
         """
-        # XXX do we need to do this still? i.e. can we now have a parent
-        # that doesn't create a widget???
-        shell_parent = self.shell_obj.parent
-        while shell_parent:
-            widget = shell_parent.toolkit_widget
-            if isinstance(widget, QtGui.QWidget):
-                return widget
-            shell_parent = shell_parent.parent
+        self.widget.setEnabled(enabled)
 
-    def child_widgets(self):
-        """ Iterates over the shell widget's children and yields the
-        toolkit widgets for those children.
+    def set_visible(self, visible):
+        """ Show or hide the widget.
 
         """
-        for child in self.shell_obj.children:
-            yield child.toolkit_widget
+        self.widget.setVisible(visible)
 
-    def set_role_color(self, role, color):
-        """ Set the color for a role of a QWidget to the color specified by
-        the given enaml color or reset the widgets color to the default value for
-        the role if the enaml color is invalid.
+    def set_bg_color(self, color):
+        """ Sets the background color of the widget to an appropriate
+        QColor given the provided Enaml Color object.
+
         """
+        widget = self.widget
+        role = widget.backgroundRole()
         if not color:
-            palette = QtGui.QApplication.instance().palette(self.widget)
+            palette = QtGui.QApplication.instance().palette(widget)
             qcolor = palette.color(role)
             # On OSX, the default color is rendered *slightly* off
             # so a simple workaround is to tell the widget not to
             # auto fill the background.
-            if role == self.widget.backgroundRole():
-                self.widget.setAutoFillBackground(False)
+            widget.setAutoFillBackground(False)
         else:
             qcolor = q_color_from_color(color)
             # When not using qt style sheets to set the background
             # color, we need to tell the widget to auto fill the 
             # background or the bgcolor won't render at all.
-            if role == self.widget.backgroundRole():
-                self.widget.setAutoFillBackground(True)
-        palette = self.widget.palette()
+            widget.setAutoFillBackground(True)
+        palette = widget.palette()
         palette.setColor(role, qcolor)
-        self.widget.setPalette(palette)
+        widget.setPalette(palette)
+    
+    def set_fg_color(self, color):
+        """ Sets the foreground color of the widget to an appropriate
+        QColor given the provided Enaml Color object.
+
+        """
+        widget = self.widget
+        role = widget.foregroundRole()
+        if not color:
+            palette = QtGui.QApplication.instance().palette(widget)
+            qcolor = palette.color(role)
+        else:
+            qcolor = q_color_from_color(color)
+        palette = widget.palette()
+        palette.setColor(role, qcolor)
+        widget.setPalette(palette)
 
     def set_font(self, font):
-        """ Set the font of the underlying toolkit widget to an appropriate
-        QFont.
+        """ Sets the font of the widget to an appropriate QFont given 
+        the provided Enaml Font object.
+
         """
         q_font = q_font_from_font(font)
         self.widget.setFont(q_font)
+

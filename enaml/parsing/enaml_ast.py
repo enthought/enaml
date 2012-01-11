@@ -2,9 +2,19 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-class EnamlASTNode(object):
+class ASTNode(object):
+    """ The base Enaml AST node.
 
-    __slots__ = ()
+    Attributes
+    ----------
+    lineno : int
+        The line number in the source code that created this node.
+    
+    """
+    __slots__ = ('lineno',)
+
+    def __init__(self, lineno):
+        self.lineno = lineno
 
     def __repr__(self):
         return self.__class__.__name__
@@ -13,129 +23,202 @@ class EnamlASTNode(object):
         return repr(self)
             
 
-class EnamlModule(EnamlASTNode):
+class Module(ASTNode):
+    """ An AST node representing an Enaml module.
+
+    Attributes
+    ----------
+    doc : str
+        The module's documentation string.
     
+    body : list
+        A list of ast nodes comprising the body of the module.
+    
+    """
     __slots__ = ('doc', 'body',)
 
-    def __init__(self, doc, body):
+    def __init__(self, doc, body, lineno):
+        super(Module, self).__init__(lineno)
         self.doc = doc
         self.body = body
 
 
-class EnamlImport(EnamlASTNode):
+class Python(ASTNode):
+    """ An AST node representing a chunk of pure Python code.
 
-    __slots__ = ('py_ast',)
+    Attributes
+    ----------
+    py_ast : ast.AST
+        A Python ast node.
+    
+    code : types.CodeType
+        The compiled Python code object for the py_ast.
+    
+    """
+    __slots__ = ('py_txt', 'py_ast', 'code')
 
-    def __init__(self, py_ast):
-        self.py_ast = py_ast
-
-
-class EnamlRawPython(EnamlASTNode):
-
-    __slots__ = ('py_txt',)
-
-    def __init__(self, py_txt):
+    def __init__(self, py_txt, py_ast, code, lineno):
+        super(Python, self).__init__(lineno)
         self.py_txt = py_txt
+        self.py_ast = py_ast
+        self.code = code
 
 
-class EnamlDefine(EnamlASTNode):
+class Import(Python):
+    """ A _PyNode representing a normal Python import statement.
 
+    """
+    __slots__ = ()
+
+
+class Declaration(ASTNode):
+    """ An AST node representing an Enaml declaration.
+
+    Attributes
+    ----------
+    name : str
+        The name of the declaration.
+    
+    base : Python
+        A Python node which represents the base type of the declaration.
+    
+    identifier : str
+        The local identifier to use for instances of the declaration.
+    
+    doc : str
+        The documentation string for the declaration.
+    
+    body : list
+        A list of AST nodes that comprise the body of the declaration.
+    
+    """
+    __slots__ = ('name', 'base', 'identifier', 'doc', 'body')
+
+    def __init__(self, name, base, identifier, doc, body, lineno):
+        super(Declaration, self).__init__(lineno)
+        self.name = name
+        self.base = base
+        self.identifier = identifier
+        self.doc = doc
+        self.body = body
+
+
+class Instantiation(ASTNode):
+    """ An AST node representing a declaration instantiation.
+
+    Attributes
+    ----------
+    name : str
+        The name of declaration being instantiated.
+    
+    identifier : str
+        The local identifier to use for the new instance.
+    
+    body : list
+        A list of AST nodes which comprise the instantiation body.
+    
+    """
+    __slots__ = ('name', 'identifier', 'body')
+
+    def __init__(self, name, identifier, body, lineno):
+        super(Instantiation, self).__init__(lineno)
+        self.name = name
+        self.identifier = identifier
+        self.body = body
+
+
+class AttributeBinding(ASTNode):
+    """ An AST node which represents an expression attribute binding.
+
+    Attributes
+    ----------
+    name : str
+        The name of the attribute being bound.
+    
+    binding : ast node
+        The ast node which represents the binding.
+    
+    """
+    __slots__ = ('name', 'binding')
+
+    def __init__(self, name, binding, lineno):
+        super(AttributeBinding, self).__init__(lineno)
+        self.name = name
+        self.binding = binding
+
+
+class BoundExpression(ASTNode):
+    """ An ast node which represents a bound expression.
+
+    Attributes
+    ----------
+    op : str
+        The name of the operator that will perform the binding.
+    
+    expr : Python
+        A Python ast node that reprents the bound expression.
+    
+    """
+    __slots__ = ('op', 'expr')
+
+    def __init__(self, op, expr, lineno):
+        super(BoundExpression, self).__init__(lineno)
+        self.op = op
+        self.expr = expr
+
+
+class BoundCodeBlock(Python):
+    """ An ast Node which represents a bound block of Python code.
+
+    """
+    __slots__ = ()
+
+
+class Defn(ASTNode):
+    """ An ast Node which represents a defn block.
+
+    Attributes
+    ----------
+    name : str
+        The name of the defn block.
+    
+    parameters : Parameters
+        A Parameters node for the parameters passed to the defn.
+    
+    doc : str
+        The documentation string of the defn.
+    
+    body : list
+        A list of ast nodes comprising the body of the defn.
+    
+    """
     __slots__ = ('name', 'parameters', 'doc', 'body')
 
-    def __init__(self, name, parameters, doc, body):
+    def __init__(self, name, parameters, doc, body, lineno):
+        super(Defn, self).__init__(lineno)
         self.name = name
         self.parameters = parameters
         self.doc = doc
         self.body = body
 
 
-class EnamlCall(EnamlASTNode):
+class Parameters(ASTNode):
+    """ An ast Node representing the parameters definition of a defn.
 
-    __slots__ = ('name', 'arguments', 'unpack', 'captures', 'body')
-
-    def __init__(self, name, arguments, unpack, captures, body):
-        self.name = name
-        self.arguments = arguments
-        self.unpack = unpack
-        self.captures = captures
-        self.body = body
-
-
-class EnamlParameters(EnamlASTNode):
-
-    __slots__ = ('args', 'defaults')
+    Attributes
+    ----------
+    names : list
+        A list of strings which are the names of the parameters.
     
-    def __init__(self, args, defaults):
-        self.args = args
+    defaults : list
+        A list of Python nodes representing any default parameter
+        values.
+
+    """
+    __slots__ = ('names', 'defaults')
+    
+    def __init__(self, names, defaults, lineno):
+        super(Parameters, self).__init__(lineno)
+        self.names = names
         self.defaults = defaults
-        
-
-class EnamlArgument(EnamlASTNode):    
-
-    __slots__ = ('py_ast',)
-
-    def __init__(self, py_ast):
-        self.py_ast = py_ast
-
-
-class EnamlKeywordArgument(EnamlASTNode):
-
-    __slots__ = ('name', 'py_ast')
-
-    def __init__(self, name, py_ast):
-        self.name = name
-        self.py_ast = py_ast
-    
-
-class EnamlCapture(EnamlASTNode):
-
-    __slots__ = ('ns_name', 'name')
-
-    def __init__(self, ns_name, name):
-        self.ns_name = ns_name
-        self.name = name
-
-
-class EnamlAssignment(EnamlASTNode):
-
-    __slots__ = ('lhs', 'op', 'rhs')
-
-    def __init__(self, lhs, op, rhs):
-        self.lhs = lhs
-        self.op = op
-        self.rhs = rhs
-
-
-class EnamlName(EnamlASTNode):
-
-    __slots__ = ('name',)
-
-    def __init__(self, name):
-        self.name = name
-
-
-class EnamlGetattr(EnamlASTNode):
-
-    __slots__ = ('root', 'attr')
-
-    def __init__(self, root, attr):
-        self.root = root
-        self.attr = attr
-
-
-class EnamlIndex(EnamlASTNode):
-
-    __slots__ = ('name', 'idx')
-
-    def __init__(self, name, idx):
-        self.name = name
-        self.idx = idx
-
-
-class EnamlExpression(EnamlASTNode):
-
-    __slots__ = ('py_ast',)
-
-    def __init__(self, py_ast):
-        self.py_ast = py_ast
 

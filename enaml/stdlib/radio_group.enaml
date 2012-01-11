@@ -1,0 +1,147 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" A custom RadioGroup component.
+
+A RadioGroup makes it easier to work with a group of radio buttons
+since it manages the various toggle behavior internally and yields
+output in the form of selected item, index, and label.
+
+"""
+:: python ::
+
+def _radio_buttons(rgroup, to_string, items):
+    """ A Python helper function to generate the underlying radio
+    buttons.
+
+    """
+    # Reset the selected index if it's out of range.
+    idx = rgroup.selected_index
+    if idx >= len(items):
+        idx = rgroup.selected_index = -1
+    disabled = rgroup.disabled_buttons
+    labels = map(to_string, items)
+    return [_RGroupButton(i, label, i==idx, i in disabled)
+            for i, label in enumerate(labels)]
+
+
+def _button_toggled(rgroup, idx, checked):
+    """ A Python helper function to set the selected index on the
+    radio group if the button is checked.
+
+    """
+    # XXX - this wont be needed when we support RHS code blocks in
+    # notification expressions.
+    if checked:
+        rgroup.selected_index = idx
+
+
+def _sync_button(buttons, idx):
+    """ A Python helper function to set the checked state of the 
+    selected radio button.
+
+    """
+    # XXX - this wont be needed when we support RHS code blocks in
+    # notification expressions.
+    if idx == -1:
+        for button in buttons:
+            button.checked = False
+    elif idx < len(buttons):
+        buttons[idx].checked = True
+    else:
+        raise IndexError('Index %s has no RadioButton' % idx)
+
+
+def _disable_buttons(buttons, indices):
+    """ A Python helper function to disable the given buttons.
+
+    """
+    for idx, button in enumerate(buttons):
+        button.enabled = not (idx in indices)
+
+:: end ::
+
+
+defn _RGroupButton(idx, label, is_checked, is_disabled):
+    """ A private defn which creates a properly bound and initialized
+    RadioButton.
+
+    """
+    RadioButton:
+        text = label
+        checked = is_checked
+        enabled = not is_disabled
+        toggled >> _button_toggled(parent, idx, checked)
+
+
+RadioGroup(Container):
+    """ A Container that automatically generates a group of RadioButtons.
+
+    Input Attributes
+    ----------------
+    orientation : string
+        The orientation of the group of radio buttons, either
+        'horizontal' or 'vertical'. Defaults to 'horizontal'.
+    
+    items : list
+        The list of items which represent the underlying radio 
+        buttons. Defaults to the empty list.
+    
+    to_string : callable
+        A callable which get mapped across the list of items to 
+        generate the list of labels for the buttons. Defaults
+        to str.
+    
+    disabled_buttons : list
+        A list of integers which indicate which radio buttons should 
+        be disabled. Defaults to an empty list.
+
+    Synchronized Attributes
+    -----------------------
+    selected_index : integer
+        An attribute which is updated with the index of the object
+        in the list of items that is associated with the currently 
+        selected radio button. Changing this value will cause a 
+        corresponding change the appropriately toggled button.
+        Setting this value to -1 will result in no radio buttons
+        being selected. Defaults to -1.
+
+    Output Attributes
+    -----------------
+    selected_item : object
+        The currently selected item from the list of items, or None
+        if the list is empty or the selected index is -1.
+    
+    selected_label : string
+        The label of the currently selected radio button, or '' if
+        the list is empty or the selected index is -1.
+
+    """
+    id: rgroup
+
+    # Input Attributes
+    orientation = 'horizontal'
+    items = []
+    to_string = str
+    disabled_buttons = []
+    disabled_buttons >> _disable_buttons(layout_children, args.new)
+
+    # Synchronized Attributes
+    selected_index = -1
+    selected_index >> _sync_button(layout_children, args.new)
+
+    # Output Attributes
+    selected_item << items[selected_index] if (0 <= selected_index < len(items)) else None
+    selected_label << to_string(selected_item) if selected_item is not None else ''
+
+    # Internal Logic
+    constraints << [
+        hbox(*layout_children) if orientation == 'horizontal' else vbox(*layout_children)
+    ]
+
+    Include:
+        # We need to build new radio buttons whenever the 'to_string'
+        # or 'items' attributes change.
+        components << _radio_buttons(rgroup, to_string, items)
+

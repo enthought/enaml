@@ -1,0 +1,88 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Group boxes.
+
+We create two GroupBoxes containing Form layouts. The GroupBoxes have
+informative titles. CheckBoxes on the bottom of the window allow you to 
+toggle the presence of the titles and whether they should be shown in a 
+"flat" style or the default style.
+
+"""
+:: python ::
+
+def toggle_title(top_box, bottom_box):
+    """ Toggle the presence of titles on the two GroupBoxes. 
+
+    """
+    if top_box.title:
+        top_box.title = ""
+    else:
+        top_box.title = "Personal Details"
+    if bottom_box.title:
+        bottom_box.title = ""
+    else:
+        bottom_box.title = "Employment Details"
+
+def toggle_flat(*boxes):
+    """ Toggle the `flat` flag on the two GroupBoxes.
+
+    """
+    for box in boxes:
+        box.flat = not box.flat
+
+:: end ::
+
+
+MainWindow(Window):
+    title = "Group Boxes"
+    constraints = [
+        vbox(
+            top_box,
+            bottom_box,
+            hbox(_space_, title_check, flat_check),
+        ),
+        align('midline', top_form, bottom_form),
+    ]
+    GroupBox:
+        id: top_box
+        title = "Personal Details"
+        Form:
+            id: top_form
+            Label:
+                text = "First name:"
+            Field:
+                pass
+            Label:
+                text = "Last name:"
+            Field:
+                pass
+            Label:
+                text = "Home phone:"
+            Field:
+                pass
+    GroupBox:
+        id: bottom_box
+        title = "Employment Details"
+        Form:
+            id: bottom_form
+            Label:
+                text = "Employer:"
+            Field:
+                pass
+            Label:
+                text = "Office or Desk phone:"
+            Field:
+                pass
+    CheckBox:
+        id: title_check
+        text = "Show titles"
+        checked = True
+        toggled >> toggle_title(top_box, bottom_box)
+    CheckBox:
+        id: flat_check
+        text = "Flat"
+        checked = False
+        toggled >> toggle_flat(top_box, bottom_box)
+

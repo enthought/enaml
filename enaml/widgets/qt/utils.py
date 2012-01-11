@@ -84,3 +84,10 @@ def invoke_later(callable, *args, **kwds):
     """
     _FutureCall(0, callable, *args, **kwds)
     
+
+def invoke_timer(ms, callable, *args, **kwds):
+    """ Invoke a function some milliseconds from now.
+
+    """
+    _FutureCall(ms, callable, *args, **kwds)
+

@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from .enaml_test_case import EnamlTestCase, required_method
 
-class TestCheckBox(EnamlTestCase):
 
+class TestCheckBox(EnamlTestCase):
     """ Logic for testing push buttons.
 
     Tooklit testcases need to provide the following functions
@@ -28,20 +28,18 @@ class TestCheckBox(EnamlTestCase):
         Toggle the button programmatically.
 
     """
-
-
     def setUp(self):
         """ Setup enaml component for testing
 
         """
-
         self.check_box_label = 'checkbox label'
 
-        enaml = """
-defn MainWindow(events):
+        enaml_source = """
+defn MainView(events):
     Window:
-        CheckBox -> checkb1:
-            text = '{0}'
+        CheckBox:
+            name = 'checkb1'
+            text = 'checkbox label'
             checked = True
             toggled >> events.append('toggled')
             pressed >> events.append('pressed')
@@ -49,7 +47,7 @@ defn MainWindow(events):
 """.format(self.check_box_label)
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml_source, self.events)
         self.component = self.component_by_name(self.view, 'checkb1')
         self.widget = self.component.toolkit_widget
 
@@ -57,78 +55,49 @@ defn MainWindow(events):
         """ Test the initialization of the widget
 
         """
-        widget = self.widget
+        component = self.component
         # checked
-        self.assertTrue(self.checked_status(widget),
-            'The checkbox should not be checked')
-        self.assertEqual(self.component.checked, self.checked_status(widget),
-            'The checked attribute does not agree with the widget')
-
-        # text
-        self.assertEqual(self.check_box_label, self.get_text(widget),
-            "The widget's label should be {0}".format(self.check_box_label))
-        self.assertEqual(self.component.text, self.get_text(widget),
-            'The text attribute does not agree with the widget label')
+        self.assertEnamlInSync(component, 'checked', True)
+        self.assertEnamlInSync(component, 'text', self.check_box_label)
 
     def testLabelChange(self):
-        """Test changing the label of a check box
+        """ Test changing the label of a check box
 
         """
-
-        widget = self.widget
+        component = self.component
         new_label = 'new_label'
-        self.component.text = new_label
-
-        self.assertEqual(new_label, self.get_text(widget),
-            "The widget's label should be {0}".format(new_label))
-        self.assertEqual(self.component.text, self.get_text(widget),
-            'The text attribute does not agree with the widget label')
+        component.text = new_label
+        self.assertEnamlInSync(component, 'text', new_label)
 
     def testSettingChecked(self):
-        """Test selecting a WXCheckBox"""
+        """ Test selecting a WXCheckBox
 
-        widget = self.widget
-
+        """
+        component = self.component
         # un-check
         self.component.checked = False
-
-        self.assertFalse(self.checked_status(widget),
-            'The checkbox should be unchecked')
-        self.assertEqual(self.component.checked,
-            self.checked_status(widget),
-            'The checked attribute does not agree with the widget')
-
+        self.assertEnamlInSync(component, 'checked', False)
         # check
         self.component.checked = True
-
-        self.assertTrue(self.checked_status(widget),
-            'The checkbox should be unchecked')
-        self.assertEqual(self.component.checked,
-            self.checked_status(widget),
-            'The checked attribute does not agree with the widget')
+        self.assertEnamlInSync(component, 'checked', True)
 
     def test_checkbox_pressed(self):
         """ React to a checkbox press event.
 
         """
-        self.checkbox_pressed(self.widget)
-
         events = self.events
+        self.checkbox_pressed(self.widget)
         self.assertTrue(self.component.down)
-        self.assertIn('pressed', events)
-        self.assertNotIn('released', events)
-        self.assertNotIn('toggled', events)
+        self.assertEqual(events, ['pressed'])
 
     def test_checkbox_toggled(self):
         """ Test a checkbox toggled event.
 
         """
-        self.checkbox_toggle(self.widget)
-
         events = self.events
-        self.assertIn('toggled', events)
-        self.assertNotIn('pressed', events)
-        self.assertNotIn('released', events)
+        self.checkbox_toggle(self.widget)
+        self.assertFalse(self.component.down)
+        self.assertEqual(events, ['toggled'])
 
     def test_checkbox_released(self):
         """ Test a checkbox release event.
@@ -140,20 +109,18 @@ defn MainWindow(events):
         self.assertEqual(events, [])
 
     def test_press_release_sequence(self):
-        """ Verify the even firing when the press-release (nornal) sequence
-        is applied.
+        """ Verify the even firing when the press-release (nornal) 
+        sequence is applied.
 
         """
+        component = self.component
         widget = self.widget
         events = self.events
-
         self.checkbox_pressed(widget)
-        self.assertTrue(self.component.down)
+        self.assertTrue(component.down)
         self.checkbox_released(widget)
-        self.assertFalse(self.component.down)
-        self.assertEqual(events.count('pressed'), 1)
-        self.assertEqual(events.count('released'), 1)
-        self.assertNotIn('toggled', events)
+        self.assertFalse(component.down)
+        self.assertEqual(events, ['pressed', 'released'])
 
     def test_checkbox_all_events(self):
         """ Test press, release, and click events.
@@ -164,15 +131,11 @@ defn MainWindow(events):
         self.checkbox_toggle(self.widget)
 
         events = self.events
-        self.assertEqual(events.count('toggled'), 1)
-        self.assertEqual(events.count('pressed'), 1)
-        self.assertEqual(events.count('released'), 1)
-
+        self.assertEqual(events, ['pressed', 'released', 'toggled'])
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_text(self, widget):
         """ Returns the text from the tookit widget.
@@ -181,7 +144,7 @@ defn MainWindow(events):
         pass
 
     @required_method
-    def checked_status(self, widget):
+    def get_checked(self, widget):
         """ Returns the checked status of the toolkit widget.
 
         """

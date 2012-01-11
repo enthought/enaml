@@ -2,10 +2,14 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import TraitError
-
 from .enaml_test_case import required_method
 from .window import TestWindow
+
+
+def skip_test(func):
+    def closure(self, *args, **kwargs):
+        self.skipTest('Skipped')
+    return closure
 
 
 class TestDialog(TestWindow):
@@ -19,8 +23,9 @@ class TestDialog(TestWindow):
         """
 
         enaml_source = """
-defn MainWindow():
-    Dialog -> dialog:
+defn MainView():
+    Dialog:
+        name = 'dialog'
         title = 'foo'
 """
 
@@ -28,7 +33,7 @@ defn MainWindow():
         self.component = self.component_by_name(self.view, 'dialog')
         self.widget = self.component.toolkit_widget
         # Don't actually show the dialog.
-        self.widget.show = lambda: None
+        self.disable_showing(self.widget)
         # (trait_name, value) log of all trait change events on the Dialog.
         self.event_log = []
         self.component.on_trait_change(self._append_event_handler, 'anytrait')
@@ -38,7 +43,7 @@ defn MainWindow():
 
         """
         self.assertEquals(self.component.active, False)
-
+    
     def test_result_value(self):
         """ Test the modification of the result value.
 
@@ -53,7 +58,7 @@ defn MainWindow():
         """ Test the behavior when showing and closing the dialog.
 
         """
-        self.component.open()
+        self.component.abstract_obj.set_visible(True)
         # Compare sets because the order is unimportant.
         self.assertEquals(set(self.event_log), set([
             ('active', True),
@@ -70,7 +75,7 @@ defn MainWindow():
             ('closed', 'accepted'),
         ]))
         self.event_log = []
-        self.component.open()
+        self.component.abstract_obj.set_visible(True)
         self.assertEquals(set(self.event_log), set([
             ('active', True),
             ('_active', True),
@@ -87,8 +92,8 @@ defn MainWindow():
         ]))
 
     @required_method
-    def get_result(self, widget):
-        """ Get the result value from the widget.
+    def disable_showing(self, widget):
+        """ Disable the actual display of the dialog window.
 
         """
         pass
@@ -97,4 +102,10 @@ defn MainWindow():
         """ Append the trait change notification to the event log.
 
         """
+        # XXX this test is fragile since it's collected all trait 
+        # change events. Hence we need to filter out certain things
+        # we don't care about. FIX THIS TEST!!!!!
+        if name == '_relayout_pending':
+            return
         self.event_log.append((name, new))
+

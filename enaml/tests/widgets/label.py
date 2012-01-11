@@ -23,9 +23,10 @@ class TestLabel(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainWindow():
+defn MainView():
     Window:
-        Label -> label:
+        Label:
+            name = 'label'
             text = 'foo'
 """
 
@@ -48,13 +49,12 @@ defn MainWindow():
         self.assertEnamlInSync(self.component, 'text', 'bar')
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
-
     @required_method
     def get_text(self, widget):
         """ Returns the label text from the tookit widget
 
         """
         pass
+

@@ -39,24 +39,6 @@ class TestQtSpinBox(QtTestAssistant, spin_box.TestSpinBox):
         """
         return widget.wrapping()
 
-    def get_prefix(self, widget):
-        """ Get a spin box's text prefix.
-
-        """
-        return widget.prefix()
-
-    def get_suffix(self, widget):
-        """ Get a spin box's text suffix.
-
-        """
-        return widget.suffix()
-
-    def get_special_value_text(self, widget):
-        """ Get a spin box's special value text, displayed at the minimum value.
-
-        """
-        return widget.specialValueText()
-
     def get_text(self, widget):
         """ Get the text displayed in a spin box.
 

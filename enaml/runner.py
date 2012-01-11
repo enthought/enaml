@@ -11,7 +11,6 @@ from enaml.toolkit import default_toolkit, wx_toolkit, qt_toolkit
 toolkits = {'default': default_toolkit, 'wx': wx_toolkit,
             'qt': qt_toolkit}
 
-
 def main():
     import argparse
     parser = argparse.ArgumentParser(
@@ -29,20 +28,19 @@ def main():
 
     with open(args.enaml_file) as f:
         enaml_code = f.read()
-    ast = parse(enaml_code)
+    ast = parse(enaml_code, filename=args.enaml_file)
     ns = {}
 
     with enaml.imports():
         EnamlCompiler.compile(ast, ns)
-    
-    if 'main' in ns:
-        ns['main']()
-    else:
-        component = ns[args.component]
 
-        with toolkits[args.toolkit]():
+    with toolkits[args.toolkit]():
+        if 'main' in ns:
+            ns['main']()
+        else:
+            component = ns[args.component]
             window = component()
-        window.show()
+            window.show()
 
 if __name__ == '__main__':
     main()

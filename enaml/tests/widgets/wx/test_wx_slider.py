@@ -5,6 +5,7 @@
 import wx
 
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
+
 from .. import slider
 
 
@@ -135,8 +136,7 @@ class TestWXSlider(WXTestAssistant, slider.TestSlider):
         """ Get the Slider's tracking status.
 
         """
-        self.skipTest('Getting the tracking status from the wxSlider is'
-                      'not implemented yet')
+        return self.component.tracking
 
     def send_event(self, widget, event):
         """ Send an event to the Slider programmatically.
@@ -172,3 +172,4 @@ class TestWXSlider(WXTestAssistant, slider.TestSlider):
             widget.SetValue(value)
             event = wx.ScrollEvent(event_type.typeId, widget.GetId())
             widget.GetEventHandler().ProcessEvent(event)
+        self.process_wx_events(self.app)

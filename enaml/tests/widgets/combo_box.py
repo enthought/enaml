@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Undefined
-
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -31,9 +29,10 @@ class TestComboBox(EnamlTestCase):
         """
 
         enaml = """
-defn MainWindow(events):
+defn MainView(events):
     Window:
-        ComboBox -> cmb:
+        ComboBox:
+            name = 'cmb'
             items = [int, float, oct]
             value = float
             to_string = lambda x: str(x) + '!' if x is not None else ''
@@ -41,7 +40,7 @@ defn MainWindow(events):
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml, events=self.events)
+        self.view = self.parse_and_create(enaml, self.events)
         self.component = self.component_by_name(self.view, 'cmb')
         self.widget = self.component.toolkit_widget
 
@@ -50,7 +49,7 @@ defn MainWindow(events):
 
         """
         component = self.component
-        str_value = component.to_string(component.value)
+        str_value = component.selected_text
         self.assertEqual(self.get_selected_text(self.widget), str_value)
         self.assertEqual(component.value, component.items[1])
         self.assertEqual(self.events, [])
@@ -69,7 +68,7 @@ defn MainWindow(events):
 
         """
         component = self.component
-        component.to_string = lambda x: str(x) + '?' if x is not None else ''
+        component.to_string = lambda x: str(x) + '?'
         self.test_items()
 
     def test_selected_event(self):
@@ -91,7 +90,8 @@ defn MainWindow(events):
         self.assertEqual(self.events, [('selected', oct)])
 
     def test_append_item(self):
-        """ Add an item on the Enaml side; see if the toolkit widget updates.
+        """ Add an item on the Enaml side; see if the toolkit widget 
+        updates.
 
         """
         component = self.component
@@ -99,7 +99,8 @@ defn MainWindow(events):
         self.test_items()
 
     def test_remove_item(self):
-        """ Remove an item on the Enaml side; see if the toolkit widget updates.
+        """ Remove an item on the Enaml side; see if the toolkit widget 
+        updates.
 
         """
         component = self.component
@@ -107,46 +108,41 @@ defn MainWindow(events):
         self.test_items()
 
     def test_deselect(self):
-        """ Assert that an invalid value sets the component to undefined.
+        """ Assert that an invalid value sets the index to -1.
 
         """
         component = self.component
         component.value = hex
-        self.assertTrue(component.value is Undefined)
-        self.assertEqual(self.events, [('selected', Undefined)])
+        self.assertTrue(component.value is hex)
+        self.assertEqual(component.index, -1)
 
     def test_value_when_items_change(self):
-        """ Assert that the selection moves correctly when the items change.
+        """ Assert that the selection moves correctly when the items 
+        change.
 
         """
         component = self.component
         component.value = int
         self.assertEqual(component.value, int)
-        self.assertEqual(component._index, 0)
+        self.assertEqual(component.index, 0)
         component.items.insert(0, hex)
-        selection = self.get_selected_text(self.widget)
-        self.assertEqual(component._index, 1)
-        self.assertEqual(component._selection, selection)
-        self.assertEqual(self.events, [('selected', int)])
+        self.assertEqual(component.index, 1)
+        self.assertEqual(self.events, [])
 
-    def test_undefined_when_items_change(self):
-        """ Assert that the selection is undefined when the value is
-        removed from the items list.
+    def test_index_when_items_change(self):
+        """ Assert that the index is -1 when the value is removed from 
+        the items list.
 
         """
         component = self.component
         component.value = int
         component.items.pop(0)
-        self.assertTrue(component.value is Undefined)
-        selection = self.get_selected_text(self.widget)
-        self.assertEqual(component._selection, selection)
-        self.assertEqual(self.events, [('selected', int),
-                                        ('selected', Undefined)])
+        self.assertEqual(component.index, -1)
+        self.assertEqual(self.events, [])
 
     #--------------------------------------------------------------------------
-    # absrtact methods
+    # Abstract methods
     #--------------------------------------------------------------------------
-
     @required_method
     def get_selected_text(self, widget):
         """ Get the current selected text of a combo box.
@@ -167,3 +163,4 @@ defn MainWindow(events):
 
         """
         pass
+

@@ -5,24 +5,22 @@
 import wx
 
 from .wx_control import WXControl
+
 from ..push_button import AbstractTkPushButton
 
 
 class WXPushButton(WXControl, AbstractTkPushButton):
     """ A wxPython implementation of PushButton.
 
-    WXPushButton uses a wx.Button control.
-
     """
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
-
-    def create(self):
+    def create(self, parent):
         """ Creates the underlying wx.Button control.
 
         """
-        self.widget = wx.Button(self.parent_widget())
+        self.widget = wx.Button(parent)
 
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
@@ -39,11 +37,8 @@ class WXPushButton(WXControl, AbstractTkPushButton):
         widget = self.widget
         widget.Bind(wx.EVT_BUTTON, self.on_clicked)
         widget.Bind(wx.EVT_LEFT_DOWN, self.on_pressed)
-        # The wx buttons don't emit an EVT_LEFT_UP even though they
-        # emits an EVT_LEFT_DOWN (ugh!) So in order to reset the down
-        # flag when the mouse leaves the button and then releases,
-        # we need to hook the EVT_LEAVE_WINDOW
         widget.Bind(wx.EVT_LEAVE_WINDOW, self.on_released)
+
     #---------------------------------------------------------------------------
     # Implementation
     #---------------------------------------------------------------------------
@@ -52,6 +47,9 @@ class WXPushButton(WXControl, AbstractTkPushButton):
 
         """
         self.set_label(text)
+        # If the text of the button changes, the size hint has likely
+        # change and the layout system needs to be informed.
+        self.shell_obj.size_hint_updated = True
 
     def on_clicked(self, event):
         """ The event handler for the button's clicked event.

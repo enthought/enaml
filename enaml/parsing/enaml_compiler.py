@@ -2,581 +2,593 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from . import enaml_ast
+import itertools
+import types
+
+from traits.api import HasStrictTraits, Any
+
+from . import byteplay
+
 from .. import imports
-from .virtual_machine import (LOAD_GLOBAL, LOAD_LOCAL, LOAD_CONST,
-                              LOAD_GLOBALS_CLOSURE, LOAD_LOCALS_CLOSURE, 
-                              GET_ITEM, STORE_LOCAL, EVAL, CALL, DUP_TOP,
-                              POP_TOP, UNPACK_SEQUENCE, ENAML_ADD_CHILDREN, 
-                              GET_ITER, FOR_ITER, JUMP_ABSOLUTE, ROT_TWO,
-                              ENAML_CALL, evalcode)
-
-from ..exceptions import EnamlSyntaxError
-from ..view import View
+from ..toolkit import Toolkit
 
 
 #------------------------------------------------------------------------------
-# Enaml Definition Object
+# Expression Locals
 #------------------------------------------------------------------------------
-class EnamlDefinition(object):  
-    """ The Python class which represents a defn block in Enaml source
-    code. Instances of this class are callable and are added to the
-    module dictionary (1 per defn block). When called, these objects
-    populate an initial local namespace and then hand off to the 
-    Enaml virtual machine for executing the function body.
+class ExpressionLocals(HasStrictTraits):
+    """ A HasStrictTraits class which acts as a locals mapping object.
+    Each item in the locals is added as an Any trait on the object
+    so that notifiers can be attached to the locals. It provides the
+    special methods __getitem__, __setitem__, __contains__ and __len__
+    so that the object can be used like a dictionary.
 
     """
-    def __init__(self, name, doc, code, args, defaults, global_ns):
-        """ Initialize an EnamlDefinition.
-
-        Parameters
-        ----------
-        name : string
-            The name of the defn block.
-        
-        doc : string
-            The docstring for the defn block.
-
-        code : list
-            The list of instruction to execute in the vm when called.
-        
-        args : list of strings
-            The list of all the parameter names in the defn block 
-            declaration, ordered from left to right.
-        
-        defaults : list of objects
-            The list of default keyword values. The values are matched
-            with the argument names from right to left starting at the
-            right side of both lists.
-        
-        global_ns : dict
-            The module dict in which this definition lives.
-        
-        """
-        self.__name__ = name
-        self.__doc__ = doc
-        self.__code__ = code
-        self.__args__ = args
-        self.__defaults__ = defaults
-        self.__globals__ = global_ns
-
-    def __call__(self, *args, **kwargs):
-        """ Returns a view object created by the call to the defn 
-        function.
-
-        """
-        components, ns = self.__enaml_call__(*args, **kwargs)
-        view = View(components=components, ns=ns)
-        return view
-
-    def __enaml_call__(self, *args, **kwargs):
-        """ Execute the instruction code in the Enaml virtual machine.
+    def __init__(self, **values):
+        """ Initialize an ExpressionLocals instance.
 
         Paramters
         ---------
-        *args, **kwargs
-            The arguments and keywords which comprise the initial local
-            scope of the defn call.
-        
-        Returns
-        -------
-        results : (widgets, ns)
-            The sequence of widgets and the local namespace created
-            by the call.
+        **values
+            The default key/value pairs to add to the locals object.
         
         """
-        f_locals = self._build_locals(args, kwargs)
-        f_globals = self.__globals__
-        return evalcode(self.__code__, f_globals, f_locals)
+        super(ExpressionLocals, self).__init__()
+        for key, value in values.iteritems():
+            self.add_trait(key, Any)
+            setattr(self, key, value)
 
-    def _build_locals(self, args, kwargs):
-        """ Creates an initial local scope dictionary given the arg and
-        kwargs with which the definition was called. Performs appropriate
-        argument checking for consistency with Python call semantics.
-        This method is used internally by the definition.
+    def __getitem__(self, name):
+        """ Returns the value for the name or raises a KeyError.
 
         """
-        __name__ = self.__name__
-        __args__ = self.__args__
-        __defaults__ = self.__defaults__
+        try:
+            return getattr(self, name)
+        except AttributeError:
+            raise KeyError(name)
+    
+    def __setitem__(self, name, value):
+        """ Sets the value for the name, creating the entry if required.
 
-        n_params = len(__args__)
-        n_defaults = len(__defaults__)
-        n_required = n_params - n_defaults
-        n_args = len(args)
-        n_kwargs = len(kwargs)
-        n_supplied = n_args + n_kwargs
-
-        if n_params > 0 and n_defaults == 0 and n_supplied != n_params:
-            msg = '%s() takes exactly %s arguments (%s given)'
-            raise TypeError(msg % (__name__, n_params, n_supplied))
-        elif n_supplied < n_required:
-            msg = '%s() requires at least %s arguments (%s given)'
-            raise TypeError(msg % (__name__, n_required, n_supplied))
-        elif n_supplied > n_params:
-            msg = '%s() takes at most %s arguments (%s given)'
-            raise TypeError(msg % (__name__, n_params, n_supplied))
-               
-        scope = {}
-        
-        for name, value in zip(__args__[:n_args], args):
-            scope[name] = value
-        
-        for name, value in kwargs.iteritems():
-            if name not in __args__:
-                msg = '%s() got an unexpected keyword argument `%s`'
-                raise TypeError(msg % (self.name, name)) 
-            if name in scope:
-                msg = '%s() got multiple values for keyword `%s`'
-                raise TypeError(msg % (self.name, name))
-            scope[name] = value
-        
-        for key, value in zip(__args__[-n_defaults:], __defaults__):
-            if key not in scope:
-                scope[key] = value
-
-        return scope
-
-
-#------------------------------------------------------------------------------
-# Compiler
-#------------------------------------------------------------------------------
-class _Mangler(object):
-    """ A name mangler used by the enaml defn body compiler to create
-    mangled names for use in anonymous assigments. For each new instance
-    of this class, once can call the instance with a string and get back
-    a mangled name of the form '_<string>_<n>' where n is the nth time
-    the instance has been called with this string.
-
-    Example
-    -------
-    >>> mangle = _Mangler()
-    >>> mangle('Panel')
-    _Panel_0
-    >>> mangle('Panel')
-    _Panel_1
-    >>> mangle('Foo')
-    _Foo_0
-    >>> mangle = _Mangler()
-    >>> mangle('Panel')
-    _Panel_0
-
-    """
-    @staticmethod
-    def _mangle(name):
-        i = 0
-        while True:
-            yield '_%s_%s' % (name, i)
-            i += 1
-
-    def __init__(self):
-        self._manglers = {}
-
-    def __call__(self, name):
-        manglers = self._manglers
-        if name in manglers:
-            mangler = manglers[name]
+        """
+        if name in self.__dict__:
+            setattr(self, name, value)
         else:
-            mangler = manglers[name] = self._mangle(name)
-        return mangler.next()
+            self.add_trait(name, Any)
+            setattr(self, name, value)
+    
+    def __contains__(self, name):
+        """ Returns True if there is a value for the given name, False
+        otherwise.
+
+        """
+        return name in self.__dict__
 
 
-class DefnBodyCompiler(object):
-    """ A compiler for the body of a defn statement.
-
-    This compiler performs the majority of the compilation work 
-    for enaml. It converts the body of a defn block into a set
-    of virtual machine instructions. Coupled with the appropriate
-    namespaces, these instructions can be executed by the virtual
-    machine to build the ui tree.
-
-    The main entry point is the `compile` classmethod.
+#------------------------------------------------------------------------------
+# Compiler Helpers
+#------------------------------------------------------------------------------
+def _var_name_generator():
+    """ Returns a generator that generates sequential variable names for
+    use in a code block.
 
     """
-    @classmethod
-    def compile(cls, local_names, body):
-        """ The main entry point of the compiler.
+    count = itertools.count()
+    while True:
+        yield '_var_' + str(count.next())
 
-        Parameters
-        ----------
-        local_names : set
-            The initial set of local_names that are available to the 
-            body as the result of the function call (the argument names)
-            This set is updated in-place during compilation with new
-            local variables as they are defined.
-        
-        body : list
-            The list ast nodes that comprise the body of the defn
-            block.
-        
-        Returns
-        -------
-        result : list
-            The list of virtual machine instructions for this defn block.
-        
-        """
-        compiler = cls(local_names)
-        for item in body:
-            compiler.visit(item)
-        return compiler.instructions
 
-    def __init__(self, local_names):
-        """ Initialize a compiler instance.
+class EnamlDeclaration(object):
+    """ A helper class which exposes a compiled Enaml declaration
+    function with an interface that is easy to use from Python.
 
-        Parameters
-        ----------
-        local_names : set
-            The initial set of local names. Will be updated in-place.
+    """
+    def __init__(self, base, func):
+        self.__base__ = base
+        self.__doc__ = func.__doc__
+        self.__name__ = func.__name__
+        self.__func__ = func
+    
+    def __call__(self, **kwargs):
+        """ Invokes the underlying Enaml function and applies the
+        given keyword arguments as attributes to the result.
 
         """
-        self.mangle = _Mangler()
-        self.local_names = local_names
-        self.instructions = []
+        obj = self.__enaml_call__(None, None)
+        obj.trait_set(**kwargs)
+        return obj
+    
+    def __enaml_call__(self, f_locals, toolkit):
+        """ Invokes the underlying Enaml function, creating the locals
+        and toolkit if necessary.
 
+        """
+        if f_locals is None:
+            f_locals = ExpressionLocals()
+        if toolkit is None:
+            toolkit = Toolkit.active_toolkit()
+        return self.__func__(f_locals, toolkit)
+
+
+class EnamlDefn(object):
+    """ A helper class which exposes a compiled Enaml defn function
+    with an interface that is easy to use from Python. It serves 
+    mainly to distinguish an Enaml defn function from a normal
+    function for the purposes of documentation generation.
+
+    """
+    def __init__(self, func):
+        self.__doc__ = func.__doc__
+        self.__name__ = func.__name__
+        self.__func__ = func
+    
+    def __call__(self, *args, **kwargs):
+        """ Invokes the underlying Enaml function and applies the
+        given keyword arguments as attributes to the result.
+
+        """
+        return self.__func__(*args, **kwargs)
+
+
+#------------------------------------------------------------------------------
+# Node Visitor
+#------------------------------------------------------------------------------
+class _NodeVisitor(object):
+    """ A node visitor class that is used as base class for the various
+    Enaml compilers.
+
+    """
     def visit(self, node):
-        """  The main visitor dispatch method. Used internally by the
-        compiler.
+        """  The main visitor dispatch method.
 
         """
         name = 'visit_%s' % node.__class__.__name__
-        method = getattr(self, name, self.default_visit)
+        try:
+            method = getattr(self, name)
+        except AttributeError:
+            method = self.default_visit
         method(node)
 
     def default_visit(self, node):
-        """ The default visitor method. Used internally by the compiler.
+        """ The default visitor method. Raises an error since there 
+        should not be any unhandled nodes.
 
         """
         raise ValueError('Unhandled Node %s.' % node)
 
-    def visit_EnamlCall(self, node):
-        """ The vistor method for the call node. Used internally by the
-        compiler.
+
+#------------------------------------------------------------------------------
+# Declaration Compiler
+#------------------------------------------------------------------------------
+class DeclarationCompiler(_NodeVisitor):
+    """ A visitor which compiles a Declaration node into a code object.
+
+    """
+    def __init__(self):
+        self.ops = []
+        self.name_gen = _var_name_generator()
+        self.name_stack = []
+
+    @classmethod
+    def compile(cls, node):
+        """ Compiles the given Declaration node into a code object.
+
+        Given this sample declaration:
+          
+            FooWindow(Window) 
+                id: foo
+                a = '12'
+                PushButton:
+                    id: btn
+                    text = 'clickme'
+        
+        We generate bytecode that would correspond to a function that 
+        looks similar to this:
+        
+            def FooWindow(f_locals, toolkit):
+                f_globals = globals()
+                foo_cls = eval('Window', toolkit, f_globals)
+                foo = foo_cls.__enaml_call__(f_locals, toolkit)
+                f_locals['foo'] = foo
+                op = eval('__operator_Equal__', toolkit, f_globals)
+                op(foo, 'a', <ast>, <code>, f_locals, f_globals, toolkit)
+                btn_cls = eval('PushButton', toolkit, f_globals)
+                btn = btn_cls.__enaml_call__(None, toolkit)
+                f_locals['btn'] = button
+                op = eval('__operator_Equal__', toolkit, f_globals)
+                op(item, 'text', <ast>, <code>, f_locals, f_globals, toolkit)
+                foo.add_subcomponent(button)
+                return foo
+        
+        """
+        compiler = cls()
+        compiler.visit(node)
+        ops = compiler.ops
+        code = byteplay.Code(ops, [], ['f_locals', 'toolkit'], False, False,
+                             True, node.name, 'Enaml', node.lineno, node.doc)
+        return code.to_code()
+
+    def visit_Declaration(self, node):
+        """ Creates the bytecode ops for a declaration node. This visitor
+        handles creating the component instance and storing it's identifer
+        if one is given.
 
         """
-        local_names = self.local_names
-        instructions = self.instructions
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
 
-        # In enaml, all calls that create widgets return two items: 
-        # a sequence of components (even if only 1), and a namespace dict.
-        # The current top of the stack is the sequence that was returned
-        # by the last call. In order to use it as a parent, and also let
-        # it be returned to its caller, we need to duplicate it.
-        inst = (DUP_TOP, None)
-        instructions.append(inst)
-        
-        # Lookup the symbol which we'll be calling
-        name = node.name
-        if name in local_names:
-            inst = (LOAD_LOCAL, name)
-        else:
-            inst = (LOAD_GLOBAL, name)
-        instructions.append(inst)
+        name = self.name_gen.next()
+        name_stack.append(name)
+        ops.extend([
+            # f_globals = globals()
+            (bp.LOAD_GLOBAL, 'globals'),
+            (bp.CALL_FUNCTION, 0x0000),
+            (bp.STORE_FAST, 'f_globals'),
 
-        # Load the args and kwargs for the call. Note that the args
-        # and kwargs get placed on the stack from left to right. The
-        # virtual machine will reverse them as it pops them off so 
-        # that they get passed in the correct order.
-        n_args = 0
-        n_kwargs = 0
-        for arg in node.arguments:
-            if isinstance(arg, enaml_ast.EnamlArgument):
-                n_args += 1
-            else:
-                n_kwargs += 1
-            self.visit(arg)
-        
-        # Execute the call operation. The sequence and the dict that is 
-        # returned by the call are each pushed onto the stack separately.
-        inst = (ENAML_CALL, (n_args, n_kwargs))
-        instructions.append(inst)
+            # foo_cls = eval('Window', toolkit, f_globals)
+            # foo = foo_cls.__enaml_call__(f_locals, toolkit)
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, node.base.code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_ATTR, '__enaml_call__'),
+            (bp.LOAD_FAST, 'f_locals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.STORE_FAST, name),
+        ])
 
-        # At this point, the top two items in the stack are
-        # | ... | sequence | namespace dict
-        # We need to handle any namespace captures from this namespace.
-        for capture in node.captures:
-            ns_name = capture.ns_name
-            store_name = capture.name
+        if node.identifier:
+            ops.extend([
+                # f_locals['foo'] = foo
+                (bp.LOAD_FAST, name),
+                (bp.LOAD_FAST, 'f_locals'),
+                (bp.LOAD_CONST, node.identifier),
+                (bp.STORE_SUBSCR, None),
+            ])
 
-            # Duplicate the TOS so we can consume a reference to the
-            # namespace object.
-            inst = (DUP_TOP, None)
-            instructions.append(inst)
-
-            # If the name to lookup in the namespace is not '*',
-            # This indicates we should capture that item out of the ns.
-            if ns_name != '*':
-                inst = (GET_ITEM, ns_name)
-                instructions.append(inst)
-                
-            # Finally we store away the item. If the ns_name was '*'
-            # then we are storing away the entire namespace
-            inst = (STORE_LOCAL, store_name)
-            instructions.append(inst)
-
-        # After we're done with the captures, we can discard the namespace.
-        inst = (POP_TOP, None)
-        instructions.append(inst)
-
-        # In order to unpack the return sequence values into local 
-        # variables, and still have values to add as children to the
-        # parent, we need to duplicate the top.
-        inst = (DUP_TOP, None)
-        instructions.append(inst)
-
-        # Unpack the TOS sequence into local variables. If no unpack 
-        # name is provided (an anonymous call) we generate a mangled 
-        # name into which we do the assigment. This provides two things:
-        # 1) consistency of handling return values
-        # 2) the ability to refer to `anonymous` results if one knows
-        #    the mangling semantics.
-        #
-        # The vm special cases unpacking sequences into 1 name. If
-        # the sequence is of length-1, then the single value is 
-        # unpacked. Otherwise, the entire sequence is pushed back
-        # onto the stack. This means that doing Field -> my_field will
-        # cause `my_field` to be bound to the Field object instead of
-        # a length-1 tuple (which is what the Field call actually returns)
-        unpack = node.unpack
-        if not unpack:
-            unpack = [self.mangle(name)]
-        
-        n_unpack = len(unpack)
-        inst = (UNPACK_SEQUENCE, n_unpack)
-        instructions.append(inst)
-        for unpack_name in unpack:
-            inst = (STORE_LOCAL, unpack_name)
-            instructions.append(inst)
-            local_names.add(unpack_name)
-
-        # Visit the body of the call node. This is a list comprised of
-        # (at most) two types of nodes: assignment nodes, call nodes.
         for item in node.body:
             self.visit(item)
         
-        # Finally 'return' from the call by adding the children to their
-        # parent. At this point, the top of the stack is the sequence of 
-        # children we want to add, and the next item is the parent to which
-        # we want to add them. This parent must be a sequence of length-1.
-        # If it's not, the vm will raise a runtime error, since it makes no 
-        # sense to add to multiple things.
-        inst = (ENAML_ADD_CHILDREN, None)
-        instructions.append(inst)
+        ops.extend([
+            # return foo
+            (bp.LOAD_FAST, name),
+            (bp.RETURN_VALUE, None),
+        ])
 
-    def visit_EnamlArgument(self, node):
-        """ The visitor method for handling arguments passed to 
-        callable objects. Used internally by the compiler.
+        name_stack.pop()
 
-        """
-        # Creating an argument follows the process:
-        # 1) Load the code object for the argument expression
-        # 4) Eval the code in the collapsing scope and push the results
-        instructions = self.instructions
-        code = compile(node.py_ast, 'Enaml', mode='eval')
-        inst = (LOAD_CONST, code)
-        instructions.append(inst)
-        inst = (EVAL, None)
-        instructions.append(inst)
-
-    def visit_EnamlKeywordArgument(self, node):
-        """ The visitor method for handling keyword arguments passed
-        to callable objects. Used internally by the compiler.
+    def visit_AttributeBinding(self, node):
+        """ Creates the bytecode ops for an attribute binding. This
+        visitor handles loading and calling the appropriate operator.
 
         """
-        # Creating an argument follows the process:
-        # 1) Load the name for the keyword argument
-        # 2) Load the code object for the keyword expression
-        # 5) Eval the code in the collapsing scope and push the results
-        instructions = self.instructions
-        code = compile(node.py_ast, 'Enaml', mode='eval')
-        inst = (LOAD_CONST, node.name)
-        instructions.append(inst)
-        inst = (LOAD_CONST, code)
-        instructions.append(inst)
-        inst = (EVAL, None)
-        instructions.append(inst)
+        # XXX handle BoundCodeBlock instead of just BoundExpression
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
 
-    def visit_EnamlAssignment(self, node):
-        """ The visitor method for the assignment node. Used internally
-        by the compiler.
+        # Grab the ast and code object for the expression. These will
+        # be passed to the binding operator.
+        expr_ast = node.binding.expr.py_ast
+        expr_code = node.binding.expr.code
+        op_code = compile(node.binding.op, 'Enaml', mode='eval')
+
+        # A binding is accomplished by loading the appropriate binding
+        # operator function and passing it the a number of arguments:
+        #
+        # op = eval('__operator_Equal__', toolkit, f_globals)
+        # op(item, 'a', <ast>, <code>, f_locals, f_globals, toolkit)
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_CONST, node.name),
+            (bp.LOAD_CONST, expr_ast),
+            (bp.LOAD_CONST, expr_code),
+            (bp.LOAD_FAST, 'f_locals'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0007),
+            (bp.POP_TOP, None),
+        ])
+
+    def visit_Instantiation(self, node):
+        """ Create the bytecode ops for a component instantiation. This 
+        visitor handles calling another derived component and storing
+        its identifier, if given.
+        
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # This is similar logic to visit_Declaration
+        name = self.name_gen.next()
+        name_stack.append(name)
+
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            # btn_cls = eval('PushButton', toolkit, f_globals)
+            # btn = btn_cls.__enaml_call__(None, toolkit)
+            # When instantiating a Declaration, it is called without
+            # f_locals, so that it creates it's own new expr locals
+            # scope. This means that derived declarations share ids,
+            # but the composed children have an isolated id space.
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_ATTR, '__enaml_call__'),
+            (bp.LOAD_CONST, None),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.STORE_FAST, name),
+        ])
+        
+        if node.identifier:
+            ops.extend([
+                (bp.LOAD_FAST, name),
+                (bp.LOAD_FAST, 'f_locals'),
+                (bp.LOAD_CONST, node.identifier),
+                (bp.STORE_SUBSCR, None),
+            ])
+
+        for item in node.body:
+            self.visit(item)
+        
+        name_stack.pop()
+        ops.extend([
+            # foo.add_subcomponent(button)
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_ATTR, 'add_subcomponent'),
+            (bp.LOAD_FAST, name),
+            (bp.CALL_FUNCTION, 0x0001),
+            (bp.POP_TOP, None),
+        ])
+
+
+#------------------------------------------------------------------------------
+# Defn Compiler
+#------------------------------------------------------------------------------
+class _DefnCollector(object):
+    """ A private class that is used by the DefnCompiler to collect the
+    components created when calling a defn. It also manages returning 
+    the proper results depending on how many items were created.
+
+    """
+    __slots__ = ('_subcomponents',)
+
+    def __init__(self):
+        self._subcomponents = []
+    
+    def add_subcomponent(self, component):
+        """ Adds the subcomponent to the internal list.
 
         """
-        instructions = self.instructions
+        self._subcomponents.append(component)
 
-        lhs = node.lhs
-        op = node.op
-        py_ast = node.rhs.py_ast
-
-        # There are two cases for an assignment that need to be handled:
-        # 1) The assignment is being done to a name, which implicitly
-        #    means that the assignment should be performed to that attr
-        #    on every element in the sequence on TOS.
-        # 2) The assignment is being done to a getattr-style expression
-        #    which means that the assignment is being explicity performed
-        #    on a single one of the return sequence objects.
-
-        # Case 1) Mapping onto each item in the sequence
-        if isinstance(lhs, enaml_ast.EnamlName):
-            # Create an iterator from the tos over which we will loop
-            # and perform the assignment operations
-            inst = (DUP_TOP, None)
-            instructions.append(inst)
-            inst = (GET_ITER, None)
-            instructions.append(inst)
+    def results(self):
+        """ Computes the proper return results for a defn depending on
+        how many components were created:
             
-            # Create the list of binding instructions that form the inner 
-            # body of the loop.
-            bind_insts = self.create_binding_insts(op, lhs.name, py_ast)
-
-            # The loop_idx is the absolute instruction index to which the
-            # vm will jump at the end of each succesful run of the loop.
-            # 
-            # The jump_target is the absolute instruction index to which
-            # the vm will jump once the iterator is exhausted. The +2 
-            # offset is used to account for the FOR_ITER and JUMP_ABSOLUTE 
-            # instructions that bound the loop body instructions.
-            loop_idx = len(instructions)
-            jump_target = loop_idx + len(bind_insts) + 2
-            inst = (FOR_ITER, jump_target)
-            instructions.append(inst)
-            instructions.extend(bind_insts)
-            inst = (JUMP_ABSOLUTE, loop_idx)
-            instructions.append(inst)
-
-        # Case 2) Assigning to an explicit return item
-        elif isinstance(lhs, enaml_ast.EnamlGetattr):
-            # There are two types of lhs getattr expressions allowed
-            # by the enaml parser:
-            # 1) plain `foo.bar` style getattr
-            # 2) `some_sequence[some_int].some_attr` style getattr
-            #
-            # This covers the practical use cases of assignment in enaml.
-            root = lhs.root
-            attr_name = lhs.attr
-            root_name = root.name
-
-            # Case 1) `foo.bar` style getattr
-            if isinstance(root, enaml_ast.EnamlName):
-                inst = (LOAD_LOCAL, root_name)
-                instructions.append(inst)
-                insts = self.create_binding_insts(op, attr_name, py_ast)
-                instructions.extend(insts)
-                    
-            # Case 2) `some_sequence[some_int].some_attr` style getattr
-            elif isinstance(root, enaml_ast.EnamlIndex):
-                inst = (LOAD_LOCAL, root_name)
-                instructions.append(inst)
-                inst = (GET_ITEM, root.idx)
-                instructions.append(inst)
-                insts = self.create_binding_insts(op, attr_name, py_ast)
-                instructions.extend(insts)
-
-            else:
-                msg = 'The parser should not allow this to happen'
-                raise EnamlSyntaxError(msg)
-
+            n == 0 -> None
+            n == 1 -> components
+            n > 1  -> list of components
+        
+        """
+        cmpnts = self._subcomponents
+        n = len(cmpnts)
+        if n == 0:
+            res = None
+        elif n == 1:
+            res = cmpnts[0]
         else:
-            msg = 'The parser should not allow this to happen'
-            raise EnamlSyntaxError(msg)
+            res = cmpnts
+        return res
 
-    def create_binding_insts(self, op, attr_name, py_ast):
-        """ Creates a new list of vm instructions for binding a python
-        expression to the attribute of an enaml widget. Used internally
-        by the compiler.
+
+class DefnCompiler(_NodeVisitor):
+    """ A visitor which compiles a Defn node into a code object.
+
+    """
+    def __init__(self):
+        self.ops = []
+        self.name_gen = _var_name_generator()
+        self.name_stack = []
+
+    @classmethod
+    def compile(cls, node):
+        """ Compiles the given Defn node into a code object. The bytecode
+        generated is similar to that for the Declaration node, with the
+        exception that a Defn introduces arguments into the scope that
+        need to be taken into account.
 
         """
-        # The top of the stack will be the enaml widget object which 
-        # has the attribute to which we want to bind. It is assumed
-        # the tos is appropriately duplicated and we are free to consume
-        # the top of the stack.
+        compiler = cls()
+        compiler.visit(node)
+        ops = compiler.ops
+        code = byteplay.Code(ops, [], node.parameters.names, False, False,
+                             True, node.name, 'Enaml', node.lineno, node.doc)
+        return code.to_code()
+
+    def visit_Defn(self, node):
+        """ Creates the bytecode ops for a defn node.
+
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        name = self.name_gen.next()
+        name_stack.append(name)
+
+        # def FooBar(a, b, c):
+        #     f_locals = ExpressionLocals(**locals())
+        #     f_globals = globals()
+        #     toolkit = Toolkit.active_toolkit()
+        #     root = _DefnCollector()
+        ops.extend([
+            # f_locals = ExpressionLocals(**locals())
+            (bp.LOAD_CONST, ExpressionLocals),
+            (bp.LOAD_GLOBAL, 'locals'),
+            (bp.CALL_FUNCTION, 0x0000),
+            (bp.CALL_FUNCTION_KW, 0x0000),
+            (bp.STORE_FAST, 'f_locals'),
+
+            # f_globals = globals()
+            (bp.LOAD_GLOBAL, 'globals'),
+            (bp.CALL_FUNCTION, 0x0000),
+            (bp.STORE_FAST, 'f_globals'),
+
+            # toolkit = Toolkit.active_toolkit()
+            (bp.LOAD_CONST, Toolkit),
+            (bp.LOAD_ATTR, 'active_toolkit'),
+            (bp.CALL_FUNCTION, 0x0000),
+            (bp.STORE_FAST, 'toolkit'),
+
+            # root = _DefnCollector()
+            (bp.LOAD_CONST, _DefnCollector),
+            (bp.CALL_FUNCTION, 0x0000),
+            (bp.STORE_FAST, name),
+        ])
+
+        for item in node.body:
+            self.visit(item)
+        
+        name_stack.pop()
+
+        # return root.results()
+        ops.extend([
+            (bp.LOAD_FAST, name),
+            (bp.LOAD_ATTR, 'results'),
+            (bp.CALL_FUNCTION, 0x0000),
+            (bp.RETURN_VALUE, None),
+        ])
+
+    def visit_AttributeBinding(self, node):
+        """ Creates the bytecode ops for an attribute binding. This
+        visitor handles loading and calling the appropriate operator.
+
+        """
+        # XXX handle BoundCodeBlock instead of just BoundExpression
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # Grab the ast and code object for the expression. These will
+        # be passed to the binding operator.
+        expr_ast = node.binding.expr.py_ast
+        expr_code = node.binding.expr.code
+        op_code = compile(node.binding.op, 'Enaml', mode='eval')
+
+        # A binding is accomplished by loading the appropriate binding
+        # operator function and passing it the a number of arguments:
         #
-        # The semantics here are:
-        # 1) Load the operator that will handle the expression binding.
-        # 2) Rotate the top 2 items so that the operator is under the object.
-        # 3) Load the remaining args for the operator call 
-        #    (attribute_name, ast, code_obj, globals, locals)
-        # 4) Call the operator.
-        # 5) Pop the top of the stack since the operator returns None.
-        #
-        # The operators are looked up as specially named objects which 
-        # are provided by the toolkit and can therefore be looked up 
-        # by default in the global namespace. It also means that they
-        # can be overridden through dependency inject via function
-        # arguments or as members of the module's dict.
-        local_names = self.local_names
-        instructions = []
+        # op = eval('__operator_Equal__', toolkit, f_globals)
+        # op(item, 'a', <ast>, <code>, f_locals, f_globals, toolkit)
+        ops.extend([
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_CONST, node.name),
+            (bp.LOAD_CONST, expr_ast),
+            (bp.LOAD_CONST, expr_code),
+            (bp.LOAD_FAST, 'f_locals'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0007),
+            (bp.POP_TOP, None),
+        ])
 
-        # The ast is compiled into a code object now, instead of allowing
-        # the operators to do it because then it would be compiled every
-        # time the defn is called, instead of just once as it needs to be
-        # since an expression code object is reusable across mutliple
-        # independent namespaces.
-        code = compile(py_ast, 'Enaml', mode='eval')
-
-        # Load the operator
-        if op in local_names:
-            inst = (LOAD_LOCAL, op)
-        else:
-            inst = (LOAD_GLOBAL, op)
-        instructions.append(inst)
+    def visit_Instantiation(self, node):
+        """ Create the bytecode ops for a component instantiation. This 
+        visitor handles calling another derived component and storing
+        its identifier, if given.
         
-        # ROT_TWO to put the operator under its first argument.
-        inst = (ROT_TWO, None)
-        instructions.append(inst)
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # This is similar logic to visit_Declaration
+        name = self.name_gen.next()
+        name_stack.append(name)
+
+        op_code = compile(node.name, 'Enaml', mode='eval')
+        ops.extend([
+            # item_cls = eval('Foo', toolkit, f_globals)
+            # item = item_cls.__enaml_call__(None, toolkit)
+            (bp.LOAD_CONST, eval),
+            (bp.LOAD_CONST, op_code),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.LOAD_FAST, 'f_globals'),
+            (bp.CALL_FUNCTION, 0x0003),
+            (bp.LOAD_ATTR, '__enaml_call__'),
+            (bp.LOAD_CONST, None),
+            (bp.LOAD_FAST, 'toolkit'),
+            (bp.CALL_FUNCTION, 0x0002),
+            (bp.STORE_FAST, name),
+        ])
         
-        # Load the rest of the arguments for the operator call
-        inst = (LOAD_CONST, attr_name)
-        instructions.append(inst)
-        inst = (LOAD_CONST, py_ast)
-        instructions.append(inst)
-        inst = (LOAD_CONST, code)
-        instructions.append(inst)
-        inst = (LOAD_GLOBALS_CLOSURE, None)
-        instructions.append(inst)
-        inst = (LOAD_LOCALS_CLOSURE, None)
-        instructions.append(inst)
+        if node.identifier:
+            ops.extend([
+                (bp.LOAD_FAST, name),
+                (bp.LOAD_FAST, 'f_locals'),
+                (bp.LOAD_CONST, node.identifier),
+                (bp.STORE_SUBSCR, None),
+            ])
 
-        # Call the operator with 
-        # (obj, name, py_ast, code, globals_closure, locals_closure)
-        inst = (CALL, (6, 0))
-        instructions.append(inst)
-
-        # Pop and discard the None result from the operator
-        inst = (POP_TOP, None)
-        instructions.append(inst)
-
-        return instructions
+        for item in node.body:
+            self.visit(item)
         
+        name_stack.pop()
+        ops.extend([
+            # foo.add_subcomponent(button)
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_ATTR, 'add_subcomponent'),
+            (bp.LOAD_FAST, name),
+            (bp.CALL_FUNCTION, 0x0001),
+            (bp.POP_TOP, None),
+        ])
 
-class EnamlCompiler(object):
+
+#------------------------------------------------------------------------------
+# Enaml Compiler
+#------------------------------------------------------------------------------
+class EnamlCompiler(_NodeVisitor):
     """ A compiler that will compile an enaml module ast node.
     
     The entry point is the `compile` classmethod which will compile
-    the ast into appropriate python object and place the results 
+    the ast into an appropriate python object and place the results 
     in the provided module dictionary.
 
     """
     @classmethod
-    def compile(cls, enaml_module_ast, module_dict):
+    def compile(cls, module_ast, module_dict):
         """ The main entry point of the compiler.
 
         Parameters
         ----------
-        enaml_module_ast : Instance(enaml_ast.EnamlModule)
+        module_ast : Instance(enaml_ast.Module)
             The enaml module ast node that should be compiled.
         
         module_dict : dict
             The dictionary of the Python module into which we are
             compiling the enaml code.
-
-        Returns
-        -------
-        result : None
-            The compiled results are added to the provided module
-            dictionary.
         
         """
         compiler = cls(module_dict)
-        compiler.visit(enaml_module_ast)
+        compiler.visit(module_ast)
 
     def __init__(self, module_dict):
         """ Initialize a compiler instance.
@@ -584,31 +596,15 @@ class EnamlCompiler(object):
         Parameters
         ----------
         module_dict : dict
-            The module dictionary into which the compiled objects
-            are placed.
+            The module dictionary into which the compiled objects are 
+            placed.
         
         """
-        # This ensures that __builtins__ exists in the module dict.
-        exec('', {}, module_dict)
+        # This ensures that the key '__builtins__' exists in the mod dict.
+        exec '' in module_dict
         self.global_ns = module_dict
 
-    def visit(self, node):
-        """ The main vistor dispatch method. Used internally by the
-        compiler.
-
-        """
-        name = 'visit_%s' % node.__class__.__name__
-        method = getattr(self, name, self.default_visit)
-        method(node)
-
-    def default_visit(self, node):
-        """ The default visitor method. Used internally by the 
-        compiler.
-
-        """
-        raise ValueError('Unhandled Node %s.' % node)
-
-    def visit_EnamlModule(self, node):
+    def visit_Module(self, node):
         """ The module node visitory method. Used internally by the
         compiler.
 
@@ -618,70 +614,50 @@ class EnamlCompiler(object):
         for item in node.body:
             self.visit(item)
     
-    def visit_EnamlRawPython(self, node):
-        py_txt = node.py_txt
-        code = compile(py_txt, '<Enaml>', mode='exec')
-        exec code in self.global_ns
-
-    def visit_EnamlImport(self, node):
-        """ The import statement visitory method. Used internally 
-        by the compiler.
+    def visit_Python(self, node):
+        """ A visitor which adds a chunk of raw Python into the module.
 
         """
-        # The import statements are currently normal python
-        # ast trees. In the future, this will probably be
-        # extended to support an enaml import.
-        # 
-        # The global ns must be passed as the locals since
-        # it's a mapping type and not a real dictionary.
-        # The effect is the same.
-        code = compile(node.py_ast, 'Enaml', mode='exec')
-        # Enable the Enaml import hook to allow inter-enaml imports if they have
-        # not been already.
-        with imports():
-            exec(code, self.global_ns)
-
-    def visit_EnamlDefine(self, node):
-        """ The definition node visitory. Used internally by the 
-        compiler.
-
-        """
-        # The default keyword parameters for a definition are computed
-        # once per compilation (just like in Python) and at the time
-        # the definition appears in the module. The only scope of the
-        # default parameter expressions is the global ns (just like 
-        # Python).
-        #
-        # The global ns must be passed as the locals since
-        # it's a mapping type and not a real dictionary.
-        # The effect is the same.
-        computed_defaults = []
-        for expr in node.parameters.defaults:
-            code = compile(expr, 'Enaml', mode='eval')
-            computed = eval(code, self.global_ns)
-            computed_defaults.append(computed)
+        try:
+            exec node.code in self.global_ns
+        except Exception as e:
+            msg = ('Unable to evaluate raw Python code on lineno %s. '
+                   'Original exception was %s.')
+            exc_type = type(e)
+            raise exc_type(msg % (node.lineno, e))
         
-        # The definition body compiler requires an initial set of 
-        # names that will appear in the local scope. This is an 
-        # optimization so we don't have to lookup locals -> globals
-        # on everything and can go straight to locals or globals
-        # based on what names exist in the local namespace (which
-        # is trackable)
-        args = node.parameters.args 
-        instructions = DefnBodyCompiler.compile(set(args), node.body)
+    def visit_Import(self, node):
+        """ The import statement visitor method. This ensures that imports
+        are performed with the enaml import hook in-place.
 
-        # The definition compiler just gives us an instruction set.
-        # The instructions are executed by a 'function-like' object
-        # which, when called, creates the local namespace and dispatches
-        # to the virtual machine to execute the instruction set.
-        name = node.name
-        doc = node.doc
-        definition = EnamlDefinition(
-            name, doc, instructions, args, computed_defaults, self.global_ns,
-        )
+        """
+        with imports():
+            try:
+                exec node.code in self.global_ns
+            except Exception as e:
+                msg = ('Unable to evaluate import on lineno %s. '
+                       'Original exception was %s.')
+                exc_type = type(e)
+                raise exc_type(msg % (node.lineno, e))
 
-        # The defintion is a normal callable python object that we
-        # add to the global_ns and is thus an importable object
-        self.global_ns[name] = definition
+    def visit_Declaration(self, node):
+        """ The declaration node visitor. This will add an instance
+        of EnamlDeclaration to the module.
 
+        """
+        func_code = DeclarationCompiler.compile(node)
+        func = types.FunctionType(func_code, self.global_ns)
+        wrapper = EnamlDeclaration(node.base.py_txt.strip(), func)
+        self.global_ns[node.name] = wrapper
+    
+    def visit_Defn(self, node):
+        """ The defn node visitor. This will add an instance of EnamlDefn
+        to the module.
+
+        """
+        # XXX Handle arg defaults
+        func_code = DefnCompiler.compile(node)
+        func = types.FunctionType(func_code, self.global_ns)
+        wrapper = EnamlDefn(func)
+        self.global_ns[node.name] = wrapper
 
