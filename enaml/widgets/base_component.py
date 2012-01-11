@@ -130,6 +130,12 @@ class BaseComponent(HasStrictTraits):
     #: 'bind_expression' method.
     _expressions = Dict(Str, Instance(AbstractExpression))
 
+    #: The private list of virtual base classes that were used to 
+    #: instantiate this component from Enaml source code. The 
+    #: EnamlFactory class of the Enaml runtime will directly append
+    #: to this list as necessary.
+    _bases = List
+
     #: The private internal list of subcomponents for this component. 
     #: This list should not be manipulated by the user, and should not
     #: be changed after initialization. It can, however, be redefined

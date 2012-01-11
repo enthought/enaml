@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..toolkit import Constructor
+from ..constructor import Constructor
 
 
 def include_shell():
@@ -10,11 +10,7 @@ def include_shell():
     return Include
 
 
-def include_abstract():
-    return None
-
-
 CONSTRUCTORS = (
-    ('Include', Constructor(include_shell, include_abstract)),
+    ('Include', Constructor(include_shell)),
 )
 
