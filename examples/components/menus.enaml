@@ -1,0 +1,99 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Menu Example
+
+This example shows how to use the MenuBar and popup menu facilities.
+
+"""
+:: python ::
+
+def get_action_label(action):
+    """ A simple function which walks up the tree from the given 
+    action and assembles a string that more-or-less indicates its
+    hierarchy. 
+
+    """
+    parts = [action.text]
+    parent = action.parent
+    # FIXME - this is a bit fragile.
+    while hasattr(parent, 'title'):
+        parts.append(parent.title)
+        parent = parent.parent
+    return ' - '.join(reversed(parts))
+    
+
+def get_recent_file_actions():
+    """ A simple function that returns a list of PrintActions that
+    represent a list of recent files. This would normally be computed
+    based on some model information.
+
+    """
+    files = ['foo.txt', 'bar.rst', 'report.pdf']
+    return [PrintAction(text=f) for f in files]
+
+:: end ::
+
+
+PrintAction(Action):
+    """ A very simple action which prints out its text hierarchy
+    when triggered.
+
+    """
+    id: action
+    triggered >> print(get_action_label(action))
+
+
+Main(MainWindow):
+    MenuBar:
+        Menu:
+            id: file_menu
+            title = 'File'
+            PrintAction:
+                text = 'New File'
+            PrintAction:
+                text = 'Open File...'
+            PrintAction:
+                text = 'Open Folder...'
+            Menu:
+                title = 'Open Recent'
+                Include:
+                    components = get_recent_file_actions()
+                Separator:
+                    pass
+                PrintAction:
+                    text = 'Clear Items'
+            PrintAction:
+                text = 'Close'
+        Menu:
+            title = 'Edit'
+            PrintAction:
+                text = 'Cut'
+            PrintAction:
+                text = 'Copy'
+            PrintAction:
+                text = 'Paste'
+        Menu:
+            title = 'Window'
+            PrintAction:
+                text = 'Minimize'
+            PrintAction:
+                text = 'Zoom'
+    Html:
+        source = '<center><h1>Hello Enaml Menus!</h1></center>'
+    PushButton:
+        text = 'Popup File Menu'
+        clicked >> file_menu.popup()
+
+
+:: python ::
+
+# FIXME - The enaml-run script looks for something name MainWindow
+#   if it can't find a 'main'. Since MainWindow is now the name of
+#   of a widget, we have to use a 'main' in this example. Fix the
+#   enaml-run script.
+def main():
+    Main().show()
+
+:: end ::
