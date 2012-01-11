@@ -85,13 +85,32 @@ class StringConverter(BaseStringConverter):
 
 
 class RangeConverter(BaseStringConverter):
-    """Base class for numeric fields with a data type that has a natural ordering.
-    
+    """ Base class for numeric fields with a type that has a natural ordering.
+
     This class can not be instantiated.  Subclasses must implmented the
     type_convert method.
+
+    Attributes
+    ----------
+    low : converter-specific data type, or None
+        If `low` is not None, it must be the low end of the range that is
+        valid for this converter.  If `low` is None (the default), there is
+        no minimum value.
+    high : converter-specifc data type, or None
+        If `high` is not None, it must be the high end of the range that is
+        valid for this converter.  If `high` is None (the default), there is
+        no maximum value.
+    allow_low : bool
+        If True (the default), the value of `low` is included in the valid
+        range.
+    allow_high : bool
+        If True (the default), the value of `high` is included in the valid
+        range.
+
     """
 
-    def __init__(self, low=None, high=None, allow_low=True, allow_high=True, **kwargs):
+    def __init__(self, low=None, high=None, allow_low=True, allow_high=True,
+                 **kwargs):
         self.low = low
         self.high = high
         self.allow_low = allow_low
@@ -100,19 +119,21 @@ class RangeConverter(BaseStringConverter):
 
     @abstractmethod
     def type_convert(self, value):
-        """Convert from the string `value` to the desired data type.
+        """ Convert from the string `value` to the desired data type.
         
         This is the basic type conversion, without bounds checking.
+        Subclasses must define this method.  It should raise a ValueError
+        if `value` is not valid.
 
-        Subclasses must define this method.
         """
         pass
 
     def _range_str(self):
-        """Create a string the gives the range of this converter.
+        """ Create a string the gives the range of this converter.
         
         Only call this function when at least one of self.low or self.high
         is not None.
+
         """
         s = []
         if self.low is not None:
@@ -127,12 +148,14 @@ class RangeConverter(BaseStringConverter):
         return ' '.join(s)
 
     def _out_of_range(self, value):
-        """Return True if `value` does not satisy the bounds."""
+        """ Return True if `value` does not satisfy the bounds."""
         if (self.low is not None and
-            (value < self.low or (value == self.low and not self.allow_low))):
+            (value < self.low or (value == self.low and
+                                  not self.allow_low))):
             return True
         if (self.high is not None and
-            (value > self.high or (value == self.high and not self.allow_high))):
+            (value > self.high or (value == self.high and
+                                   not self.allow_high))):
             return True
         return False
 
@@ -150,8 +173,9 @@ class IntConverter(RangeConverter):
     """ Convert an integer value to a string and back.
 
     """
+
     def type_convert(self, value):
-        """Convert the string `value` to an int."""
+        """ Convert the string `value` to an int."""
         return int(value)
 
 
@@ -159,8 +183,9 @@ class LongConverter(RangeConverter):
     """ Convert a long integer value to a string and back.
 
     """
+
     def type_convert(self, value):
-        """Convert the string `value` to a long integer."""
+        """ Convert the string `value` to a long integer."""
         return long(value)
 
 
@@ -168,8 +193,9 @@ class FloatConverter(RangeConverter):
     """ Convert a float value to a string and back.
 
     """
+
     def type_convert(self, value):
-        """Convert the string `value` to a float."""
+        """ Convert the string `value` to a float."""
         return float(value)
 
 
@@ -177,7 +203,9 @@ class ComplexConverter(BaseStringConverter):
     """ Convert a complex value to a string and back.
 
     """
+
     def from_component(self, value):
+        """ Convert the string `value` to a complex number."""
         return float(value)
 
 
@@ -187,9 +215,11 @@ class HexConverter(RangeConverter):
     """
 
     def to_component(self, value):
+        """ Convert the integer `value` to a hexadecimal string."""
         return hex(value)
 
     def type_convert(self, value):
+        """ Convert the hexadecimal string `value` to an int."""
         return int(value, 16)
 
 
@@ -199,9 +229,11 @@ class OctalConverter(RangeConverter):
     """
 
     def to_component(self, value):
+        """ Convert the integer `value` to an octal string."""
         return oct(value)
 
     def type_convert(self, value):
+        """ Convert the octal string `value` to an int."""
         return int(value, 8)
 
 
