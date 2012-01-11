@@ -1,0 +1,172 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+#
+# Defines a UI view for the RangeDemo class in range_demo.py
+#
+
+from enaml.stdlib.fields import IntField, LongField, FloatField, HexField
+
+
+BoldLabel(Label):
+    font = 'times 14 bold'
+
+defn RangeDemoView(demo):
+    Window:
+        title = "Range Demo"
+
+        constraints = [
+            vbox(
+                hbox(col1title, col2title, col3title, col4title),
+                hbox(i_name, i_type, i_range, i),
+                hbox(digit_name, digit_type, digit_range, digit),
+                hbox(h_name, h_type, h_range, h),
+                hbox(bigint_name, bigint_type, bigint_range, bigint),
+                hbox(z_name, z_type, z_range, z),
+                hbox(b_min_name, b_min_type, b_min_range, b_min),
+                hbox(b_max_name, b_max_type, b_max_range, b_max),
+                hbox(b_name, b_type, b_range, b),
+            ) | 'strong',
+            align('left', col1title, i_name, digit_name, h_name, bigint_name,
+                            z_name, b_min_name, b_max_name, b_name),
+            align('left', col2title, i_type, digit_type, h_type, bigint_type,
+                            z_type, b_min_type, b_max_type, b_type),
+            align('left', col3title, i_range, digit_range, h_range, bigint_range,
+                            z_range, b_min_range, b_max_range, b_range),
+            align('left', col4title, i, digit, h, bigint, z, b_min, b_max, b),
+        ]
+
+        BoldLabel:
+            id: col1title
+            text = 'Name       '
+        BoldLabel:
+            id: col2title
+            text = 'Type'
+        BoldLabel:
+            id: col3title
+            text = 'Range'
+        BoldLabel:
+            id: col4title
+            text = 'Value'
+
+        Label:
+            id: i_name
+            text = 'i'
+        Label:
+            id: i_type
+            text = 'int'
+        Label:
+            id: i_range
+            text = 'i >= 0'
+        IntField:
+            id: i
+            low = 0
+            value := demo.i
+
+        Label:
+            id: digit_name
+            text = 'digit'
+        Label:
+            id: digit_type
+            text = 'int'
+        Label:
+            id: digit_range
+            text = '0 <= digit <= 9'
+        IntField:
+            id: digit
+            low = 0
+            high = 9
+            value := demo.digit
+
+        Label:
+            id: h_name
+            text = 'h'
+        Label:
+            id: h_type
+            text = 'int, in hex'
+        Label:
+            id: h_range
+            text = '0x0 <= h <= 0xFF'
+        HexField:
+            id: h
+            low = 0
+            high = 255
+            value := demo.h
+
+        Label:
+            id: bigint_name
+            text = 'bigint'
+        Label:
+            id: bigint_type
+            text = 'long'
+        Label:
+            id: bigint_range
+            text = 'bigint >= 1'
+        LongField:
+            id: bigint
+            low = 1
+            value := demo.bigint
+
+        Label:
+            id: z_name
+            text = 'z'
+        Label:
+            id: z_type
+            text = 'float'
+        Label:
+            id: z_range
+            text = '0 < z <= 10'
+        FloatField:
+            id: z
+            low = 0.0
+            high = 10.0
+            allow_low = False
+            value := demo.z
+
+        Label:
+            id: b_min_name
+            text = 'b_min'
+        Label:
+            id: b_min_type
+            text = 'float'
+        Label:
+            id: b_min_range
+            text = 'b_min < 0'
+        FloatField:
+            id: b_min
+            high = 0.0
+            allow_high = False
+            value := demo.b_min
+
+        Label:
+            id: b_max_name
+            text = 'b_max'
+        Label:
+            id: b_max_type
+            text = 'float'
+        Label:
+            id: b_max_range
+            text = 'b_max >= 0'
+        FloatField:
+            id: b_max
+            low = 0.0
+            value := demo.b_max
+
+        Label:
+            id: b_name
+            text = 'b'
+        Label:
+            id: b_type
+            text = 'float'
+        Label:
+            id: b_range
+            text = 'b_min <= b <= b_max'
+        FloatField:
+            id: b
+            low << b_min.value
+            high << b_max.value
+            value := demo.b
+
+

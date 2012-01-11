@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import unittest
-
+from enaml.converters import RangeConverter
 
 class ConverterTestCase(unittest.TestCase):
     """ A base class for testing `enaml.converters.Converter` objects.
@@ -22,3 +22,10 @@ class ConverterTestCase(unittest.TestCase):
         self.assertEqual(widget_converted, widget_value)
 
         # XXX Should we check the types?
+
+    def reset_converter(self):
+        if isinstance(self.converter, RangeConverter):
+            self.converter.low = None
+            self.converter.high = None
+            self.converter.allow_low = True
+            self.converter.allow_high = True

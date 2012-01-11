@@ -64,6 +64,7 @@ from other components.
      Label:
          text = 'Age'
      IntField:
+         low = 0
          value := person.age 
 
 A component declaration block header line begins with the name of the component
