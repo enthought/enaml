@@ -34,16 +34,6 @@ class QtAction(QtComponent, AbstractTkAction):
         self.set_tool_tip(shell.tool_tip)
         self.set_description(shell.description)
         self.set_separator(shell.separator)
-
-        # It's not enough to simply create the action with the proper
-        # parent, we need to explicitly add the action or else it won't
-        # show up in things like menus.
-        parent = self.widget.parent()
-        if parent is not None:
-            # In the conceivable places where actions will be used,
-            # (menus and toolbars), the parent widget will have an 
-            # addAction method, so we can just duck-type here.
-            parent.addAction(self.widget)
         
     def bind(self):
         """ Binds the event handlers for the underlying QAction object.
