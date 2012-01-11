@@ -28,15 +28,7 @@ class QtMenu(QtComponent, AbstractTkMenu):
         super(QtMenu, self).initialize()
         shell = self.shell_obj
         self.set_title(shell.title)
-
-        # It's not enough to simply create the menu with the proper
-        # parent, we need to explicitly add the action or else it 
-        # won't show up in a menu bar.
-        parent = self.widget.parent()
-        if parent is not None:
-            # If the parent is not None, it's conceivable that its
-            # a QMenuBar, so we can just duck-type here.
-            parent.addMenu(self.widget)
+        self.update_contents()
     
     def bind(self):
         """ Binds the event handlers for the underlying QMenu object.
@@ -56,7 +48,14 @@ class QtMenu(QtComponent, AbstractTkMenu):
 
         """
         self.set_title(text)
-    
+        
+    def shell_contents_changed(self, contents):
+        """ The change handler for the 'contents' attribute on the shell
+        object. 
+
+        """
+        self.update_contents()
+
     #--------------------------------------------------------------------------
     # Signal Handlers
     #--------------------------------------------------------------------------
@@ -75,6 +74,23 @@ class QtMenu(QtComponent, AbstractTkMenu):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
+    def update_contents(self):
+        """ Updates the contents of the Menu.
+
+        """
+        # There is no need to clear() the Menu since that destroys the
+        # underlying objects, and any dynamic children will have already
+        # been destroyed. It's sufficient to just make a pass over the 
+        # contents and add them to the menu. Qt is smart enough to do the
+        # right thing here.
+        contents = self.shell_obj.contents
+        for item in contents:
+            child_widget = item.toolkit_widget
+            if isinstance(child_widget, QtGui.QMenu):
+                self.widget.addMenu(child_widget)
+            else:
+                self.widget.addAction(child_widget)
+
     def set_title(self, title):
         """ Sets the title of the QMenu object.
 
