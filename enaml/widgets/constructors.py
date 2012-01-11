@@ -5,16 +5,16 @@
 from ..toolkit import Constructor
 
 
-def include_shell():
+def null_abstract_loader():
+    return None
+
+
+def include_shell_loader():
     from .include import Include
     return Include
 
 
-def include_abstract():
-    return None
-
-
 CONSTRUCTORS = (
-    ('Include', Constructor(include_shell, include_abstract)),
+    ('Include', Constructor(include_shell_loader, null_abstract_loader)),
 )
 
