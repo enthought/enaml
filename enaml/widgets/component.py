@@ -323,15 +323,25 @@ class Component(BaseComponent):
     #--------------------------------------------------------------------------
     def destroy(self):
         """ Overridden parent class destruction method method that adds 
-        additional logic to destroy the underlying toolkit widget.
+        additional logic to destroy the underlying toolkit widget. 
+
+        The destruction happens in dual pass top-down, then bottom-up.
+        On the top-down pass, the traits listeners for the abstract obj
+        are unhooked so that no events get fired during destruction. On
+        the bottom up pass, the abstract obj is destroyed and its ref
+        set to None.
 
         """
         # Remove the abstract object as a trait listener so that it
         # does not try to update after destroying its internal widget.
         self.remove_trait_listener(self.abstract_obj, 'shell')
+
+        # Traverse down the tree and have the children destroy themselves.
+        super(Component, self).destroy()
+        
+        # On pass back up the tree, destroy the abstract_obj.
         self.abstract_obj.destroy()
         self.abstract_obj = None
-        super(Component, self).destroy()
     
     #--------------------------------------------------------------------------
     # Change Handlers
@@ -364,7 +374,14 @@ class Component(BaseComponent):
         else:
             with guard(self, 'set_visible'):
                 self.visible = visible
-        self.abstract_obj.set_visible(visible)
+        
+        # Only set the visibility of the menu only if it is fully 
+        # initialized or being set to False. This prevents situations 
+        # where a widget is shown prematurely in some toolkit backends
+        # which then causes the entire window hierarchy to be shown
+        # prematurely.
+        if self.initialized or not visible:
+            self.abstract_obj.set_visible(visible)
 
     def disable_updates(self):
         """ Disables rendering updates for the underlying widget.
