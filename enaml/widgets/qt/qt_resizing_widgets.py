@@ -2,11 +2,10 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
-""" Subclasses of standard QWidgets that add a `resized` signal that will pass
-on notifications of resize events to Enaml.
+""" Subclasses of standard QWidgets that add a `resized` signal that will 
+pass on notifications of resize events to Enaml.
 
 """
-
 from abc import ABCMeta
 
 from .qt import QtCore, QtGui, qt_api
@@ -25,12 +24,13 @@ class QResizingWidget(object):
 
         """
         if issubclass(C, QtGui.QWidget):
-            if any(isinstance(getattr(B, "resized", None), QtCore.Signal) for B in C.__mro__):
+            if any(isinstance(getattr(B, "resized", None), QtCore.Signal) 
+                   for B in C.__mro__):
                 return True
         return NotImplemented
 
 
-# For the mixins, we will use a different base class for PySide than for PyQt4.
+# PySide requires a difference mixin base that PyQt4
 if qt_api.lower() == 'pyside':
     MixinBaseClass = object
 else:
@@ -38,15 +38,13 @@ else:
 
 
 class ResizingMixin(MixinBaseClass):
-    """ Add a `resized` signal to the widget and a `resizeEvent()` method that
-    emits the signal.
+    """ Add a `resized` signal to the widget and a `resizeEvent()` method 
+    that emits the signal.
 
     Note: Under PySide 1.0.8, the base class of this mixin must be `object`
     while under PyQt4, it must be `QWidget`.
 
     """
-
-
     resized = QtCore.Signal()
 
     def resizeEvent(self, event):
@@ -55,11 +53,10 @@ class ResizingMixin(MixinBaseClass):
 
 
 class LayoutDebugMixin(MixinBaseClass):
-    """ A mixin that can be added to a container widget to draw the positions of
-    its children.
+    """ A mixin that can be added to a container widget to draw the 
+    positions of its children.
 
     """
-
     def paintEvent(self, event):
         super(LayoutDebugMixin, self).paintEvent(event)
         qp = QtGui.QPainter()
@@ -75,45 +72,51 @@ class LayoutDebugMixin(MixinBaseClass):
 
 
 class QResizingFrame(ResizingMixin, QtGui.QFrame):
-    """ A QFrame subclass that passes its resize events back to Enaml through
-    a Qt signal.
+    """ A QFrame subclass that passes its resize events back to Enaml 
+    through a Qt signal.
 
     """
+    pass
 
 
 class QResizingDialog(ResizingMixin, QtGui.QDialog):
-    """ A QDialog subclass that passes its resize events back to Enaml through
-    a Qt signal.
+    """ A QDialog subclass that passes its resize events back to Enaml 
+    through a Qt signal.
 
     """
+    pass
 
 
 class QResizingMainWindow(ResizingMixin, QtGui.QMainWindow):
-    """ A QMainWindow subclass that passes its resize events back to Enaml through
-    a Qt signal.
+    """ A QMainWindow subclass that passes its resize events back to Enaml 
+    through a Qt signal.
 
     """
+    pass
 
 
 class QResizingGroupBox(ResizingMixin, QtGui.QGroupBox):
-    """ A QGroupBox subclass that passes its resize events back to Enaml through
-    a Qt signal.
+    """ A QGroupBox subclass that passes its resize events back to Enaml 
+    through a Qt signal.
 
     """
+    pass
 
 
 class QResizingStackedWidget(ResizingMixin, QtGui.QStackedWidget):
-    """ A QStackedWidget subclass that passes its resize events back to Enaml through
-    a Qt signal.
+    """ A QStackedWidget subclass that passes its resize events back to 
+    Enaml through a Qt signal.
 
     """
+    pass
 
 
 class QResizingScrollArea(ResizingMixin, QtGui.QScrollArea):
-    """ A QScrollArea subclass that passes its resize events back to Enaml through
-    a Qt signal.
+    """ A QScrollArea subclass that passes its resize events back to Enaml 
+    through a Qt signal.
 
     """
+    pass
 
 
 class QResizingTabWidget(ResizingMixin, QtGui.QTabWidget):
@@ -124,8 +127,8 @@ class QResizingTabWidget(ResizingMixin, QtGui.QTabWidget):
 
 
 class QResizingSplitter(ResizingMixin, QtGui.QSplitter):
-    """ A QSplitter subclass that passes its resize events back to Enaml through
-    a Qt signal.
+    """ A QSplitter subclass that passes its resize events back to Enaml 
+    through a Qt signal.
 
     """
 
