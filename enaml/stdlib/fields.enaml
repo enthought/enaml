@@ -2,14 +2,25 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+"""
+Enaml Standard Library - Fields
+
+This is a library of Enaml components deriving from the built-in Field.
+"""
 from enaml.converters import IntConverter, FloatConverter, LongConverter, ComplexConverter
 
 
 ErrorField(Field):
+    """
+    ErrorField changes background color when the error state is True.
+    """
     bg_color << 'error' if error else 'none'
 
 
 IntField(ErrorField):
+    """
+    IntField - an ErrorField with built-in string-to-Int converter.
+    """
     converter = IntConverter()
 
 
