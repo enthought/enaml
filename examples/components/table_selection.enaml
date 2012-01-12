@@ -1,0 +1,102 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Synchronize the selection of two TableViews.
+
+On the left is a single-column table showing. On the right is a multi-column
+table. Both have their selection modes set to be the same: extended selection on
+whole rows. Both use RowSelectionModels and synchronize their selected rows to
+the same external model class. As you make selections in one table, they should
+be reflected in the other. The row indices should be printed out to the terminal
+as you do so.
+
+The 'clicked', 'double_clicked', and 'activated' events for the right-hand table
+will also be printed as they happen.
+
+"""
+from enaml.item_models.standard_models import ListModel, TableModel
+from enaml.styling.brush import Brush
+from enaml.styling.color import Color
+
+
+:: python ::
+
+from traits.api import HasTraits, List, Int
+
+# A (1000, 100) table of data
+row_indices = range(1000)
+table = [[i + (100 * j) for i in xrange(100)] for j in xrange(1000)]
+
+
+# A simple TableModel subclass that alternates the row colors of
+# the table as well as selectively colors certain cells based on 
+# the data value for that cell.
+class ColoredTable(TableModel):
+
+    shade_brush = Brush(Color(237, 237, 237))
+
+    def background(self, index):
+        brush = None
+        row = index.row
+
+        if row % 2 == 0:
+            brush = self.shade_brush
+            
+        return brush
+
+# A simple list model to display a single row of data
+list_model = ListModel(row_indices)
+table_model = ColoredTable(table)
+
+def printer(event):
+    """ Print a ModelIndex notification event.
+
+    """
+    print '{name}: {index.row!r}, {index.column!r}'.format(name=event.name,
+        index=event.new)
+
+
+class Model(HasTraits):
+    selected_rows = List(Int)
+
+    def _selected_rows_changed(self, new):
+        print 'Selected Rows: {!r}'.format(new)
+
+def main():
+    model = Model()
+    view = MainView(model)
+    view.show()
+
+:: end ::
+
+
+# ListModel and TableModel are both subclasses of AbstractItemModel
+# which means they can both be passed to TableView and work just fine.
+# And once ListView and TreeView are implemented, will work just fine
+# there as well.
+
+defn MainView(model):
+    Window:
+        constraints = [
+            hbox(tv1, tv2),
+            width >= 800,
+            height >= 600,
+        ]
+        TableView: 
+            id: tv1
+            hug_width = 'strong'
+            item_model = list_model
+            RowSelectionModel:
+                selection_mode = 'extended'
+                selected_rows := model.selected_rows
+        TableView:
+            id: tv2
+            item_model = table_model
+            activated >> printer(args)
+            clicked >> printer(args)
+            double_clicked >> printer(args)
+            RowSelectionModel:
+                selection_mode = 'extended'
+                selected_rows := model.selected_rows
+

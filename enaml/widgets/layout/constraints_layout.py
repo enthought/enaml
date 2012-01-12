@@ -44,18 +44,18 @@ class ConstraintsLayout(AbstractLayoutManager):
     #--------------------------------------------------------------------------
     def initialize(self):
         """ Initializes the solver by creating all of the necessary 
-        constraints for this components children and adding them to 
-        the solver.
+        constraints for this components layout children and adding them
+        to the solver.
 
         """
         if self._recursion_guard or self._initialized:
             return
         self._recursion_guard = True
 
-        # Rather than do intialization in the __init__ method, which
-        # in Python has the context of only happening once, we use
-        # this method since the manager will be re-initialized whenever
-        # any of the constraints of the components children change.
+        # Rather than intialize in the __init__ method, which in Python 
+        # has the context of only happening once, we use this method 
+        # since the manager will be re-initialized whenever any of the 
+        # constraints of the component's layout children change.
         self.solver = casuarius.Solver(autosolve=False)
         self.component_cns = []
         self.user_cns = []
@@ -130,7 +130,7 @@ class ConstraintsLayout(AbstractLayoutManager):
     def layout(self):
         """ Perform an iteration of the solver for the new width and 
         height of the component. This will resolve the system and update
-        the geometry of all of the component's children.
+        the geometry of all of the component's layout children.
 
         """
         if self._recursion_guard or not self._initialized:
@@ -150,8 +150,8 @@ class ConstraintsLayout(AbstractLayoutManager):
         height_var = component.height
 
         with solver.suggest_values([(width_var, width), (height_var, height)], casuarius.medium):
-            # Update the geometry of the children with their new
-            # solved values.
+            # Update the geometry of the layout children with their 
+            # new solved values.
             for child in self.traverse_descendants(component):
                 child.set_solved_geometry(component)
 
@@ -189,7 +189,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         that participate in the Constraints-base layout.
 
         """
-        for child in component.children:
+        for child in component.layout_children:
             if child.visible:
                 yield child
                 child_layout = getattr(child, 'layout_manager', None)

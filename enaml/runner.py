@@ -28,7 +28,7 @@ def main():
 
     with open(args.enaml_file) as f:
         enaml_code = f.read()
-    ast = parse(enaml_code)
+    ast = parse(enaml_code, filename=args.enaml_file)
     ns = {}
 
     with enaml.imports():

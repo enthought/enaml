@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ...toolkit import Constructor
+from ...constructor import Constructor
 
 
 def importer(module_path, name):
@@ -39,7 +39,6 @@ def constructor(base_path):
 
 WX_CONSTRUCTORS = dict((
     constructor('window'),
-    constructor('component'),
     constructor('container'),
     constructor('dialog'),
     constructor('calendar'),
@@ -67,3 +66,4 @@ WX_CONSTRUCTORS = dict((
     constructor('splitter'),
     constructor('float_slider'),
 ))
+

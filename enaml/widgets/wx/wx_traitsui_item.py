@@ -6,6 +6,7 @@ from .wx_control import WXControl
 
 from ..traitsui_item import AbstractTkTraitsUIItem
 
+
 class WXTraitsUIItem(WXControl, AbstractTkTraitsUIItem):
     """ A wxPython implementation of TraitsUIItem.
 

@@ -2,13 +2,13 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt_component import QtComponent
+from .qt_layout_component import QtLayoutComponent
 from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 
 from ..container import AbstractTkContainer
 
 
-class QtContainer(QtComponent, AbstractTkContainer):
+class QtContainer(QtLayoutComponent, AbstractTkContainer):
     """ A Qt4 implementation of Container.
 
     QtContainer is usually to be used as a base class for other container
@@ -62,8 +62,8 @@ class QtContainer(QtComponent, AbstractTkContainer):
 
         """
         super(QtContainer, self)._reset_layout_margins()
-        # Now reset our children's layout margins to account for the fact that
-        # they have recorded our own margins.
-        for child in self.shell_obj.children:
+        # Now reset our children's layout margins to account for the fact
+        # that they have recorded our own margins.
+        for child in self.shell_obj.layout_children:
             child.abstract_obj._reset_layout_margins()
 

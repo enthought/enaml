@@ -57,20 +57,11 @@ class QtScrollArea(QtContainer, AbstractTkScrollArea):
         """
         self._set_vert_policy(policy)
 
-    def shell_children_changed(self, children):
-        """ The change handler for the children of the shell object.
+    def shell_layout_children_changed(self, children):
+        """ The change handler for the 'layout_children' attribute of 
+        the shell object.
 
         """
-        self._update_children()
-
-    def shell_children_items_changed(self, event):
-        """ The change handler for the children items event of the
-        shell object.
-
-        """
-        # XXX this won't work because traits does not properly hook
-        # up items event listeners via calls to .add_trait_listener
-        # which is how this object has been hooked up.
         self._update_children()
     
     def size_hint(self):
@@ -126,9 +117,9 @@ class QtScrollArea(QtContainer, AbstractTkScrollArea):
         """ Update the QScrollArea's children with the current children.
 
         """
-        shell = self.shell_obj
-        if len(shell.children) == 0:
+        children = self.shell_obj.layout_children
+        if len(children) == 0:
             self.widget.setWidget(None)
         else:
-            self.widget.setWidget(shell.children[0].toolkit_widget)
+            self.widget.setWidget(children[0].toolkit_widget)
 

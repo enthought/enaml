@@ -6,11 +6,11 @@ from unittest import TestCase
 
 from traits.api import TraitError
 
-from ..widgets.component import Component
+from ..widgets.layout_component import LayoutComponent
 
 
-class TestComponent(TestCase):
-    """ Test basic operations on Components.
+class TestLayoutComponent(TestCase):
+    """ Test basic operations on LayoutComponents.
 
     """
     def test_hug_property(self):
@@ -20,7 +20,7 @@ class TestComponent(TestCase):
         good_values = ['ignore', 'weak', 'medium', 'strong', 'required']
         bad_values = ['Ignore', None, 'srong']
 
-        comp = Component()
+        comp = LayoutComponent()
         self.assertEqual(comp.hug_width, 'strong')
         self.assertEqual(comp.hug_height, 'strong')
         self.assertEqual(comp.hug, ('strong', 'strong'))
@@ -51,7 +51,7 @@ class TestComponent(TestCase):
         good_values = ['ignore', 'weak', 'medium', 'strong', 'required']
         bad_values = ['Ignore', None, 'srong']
 
-        comp = Component()
+        comp = LayoutComponent()
         self.assertEqual(comp.resist_clip_width, 'strong')
         self.assertEqual(comp.resist_clip_height, 'strong')
         self.assertEqual(comp.resist_clip, ('strong', 'strong'))
