@@ -21,32 +21,8 @@ class QtComponent(AbstractTkComponent):
     widget = None
 
     #--------------------------------------------------------------------------
-    # Abstract Implementation
+    # Setup Methods
     #--------------------------------------------------------------------------
-    @property
-    def toolkit_widget(self):
-        """ A property that returns the toolkit specific widget for this
-        component.
-
-        """
-        return self.widget
-
-    def _get_shell_obj(self):
-        """ Returns a strong reference to the shell object.
-
-        """
-        return self._shell_obj()
-    
-    def _set_shell_obj(self, obj):
-        """ Stores a weak reference to the shell object.
-
-        """
-        self._shell_obj = weakref.ref(obj)
-    
-    #: A property which gets a sets a reference (stored weakly)
-    #: to the shell object
-    shell_obj = property(_get_shell_obj, _set_shell_obj)
-
     def create(self, parent):
         """ Creates the underlying Qt widget. As necessary, subclasses
         should reimplement this method to create different types of
@@ -76,6 +52,9 @@ class QtComponent(AbstractTkComponent):
         """
         pass
 
+    #--------------------------------------------------------------------------
+    # Teardown Methods
+    #--------------------------------------------------------------------------
     def destroy(self):
         """ Destroys the underlying Qt widget.
 
@@ -89,22 +68,45 @@ class QtComponent(AbstractTkComponent):
             widget.setParent(None)
             widget.destroy()
         self.widget = None
+
+    #--------------------------------------------------------------------------
+    # Abstract Implementation
+    #--------------------------------------------------------------------------
+    @property
+    def toolkit_widget(self):
+        """ A property that returns the toolkit specific widget for this
+        component.
+
+        """
+        return self.widget
+
+    def _get_shell_obj(self):
+        """ Returns a strong reference to the shell object.
+
+        """
+        return self._shell_obj()
+    
+    def _set_shell_obj(self, obj):
+        """ Stores a weak reference to the shell object.
+
+        """
+        self._shell_obj = weakref.ref(obj)
+    
+    #: A property which gets a sets a reference (stored weakly)
+    #: to the shell object
+    shell_obj = property(_get_shell_obj, _set_shell_obj)
         
     def disable_updates(self):
         """ Disable rendering updates for the underlying Qt widget.
 
         """
-        widget = self.widget
-        if widget:
-            widget.setUpdatesEnabled(False)
+        self.widget.setUpdatesEnabled(False)
 
     def enable_updates(self):
         """ Enable rendering updates for the underlying Wx widget.
 
         """
-        widget = self.widget
-        if widget:
-            widget.setUpdatesEnabled(True)
+        self.widget.setUpdatesEnabled(True)
 
     #--------------------------------------------------------------------------
     # Shell Object Change Handlers 
