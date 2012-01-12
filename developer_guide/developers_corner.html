@@ -65,7 +65,11 @@
 <ul>
 <li><a class="reference internal" href="#">Developer&#8217;s corner</a><ul>
 <li><a class="reference internal" href="#github-branches">GitHub Branches</a></li>
+<li><a class="reference internal" href="#documentation">Documentation</a><ul>
+<li><a class="reference internal" href="#sphinx-configuration">Sphinx Configuration</a></li>
 <li><a class="reference internal" href="#sphinx-source">Sphinx Source</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#source-code">Source Code</a><ul>
 <li><a class="reference internal" href="#preamble">Preamble</a></li>
 <li><a class="reference internal" href="#docstrings">Docstrings</a><ul>
@@ -140,8 +144,22 @@ their purpose</p>
 </tbody>
 </table>
 </div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="sphinx-configuration">
+<h3>Sphinx Configuration<a class="headerlink" href="#sphinx-configuration" title="Permalink to this headline">¶</a></h3>
+<p>Include the enaml import hooks in <tt class="docutils literal"><span class="pre">conf.py</span></tt> for any project that will use
+<tt class="docutils literal"><span class="pre">autodoc</span></tt> for Enaml objects:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">enaml.import_hooks</span> <span class="kn">import</span> <span class="n">EnamlImporter</span>
+<span class="n">EnamlImporter</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Enaml objects will import as Python functions.</p>
+<p>Including the Sphinx extension <tt class="docutils literal"><span class="pre">refactor_doc</span></tt> allows use of formatted
+docstrings as described below.</p>
+</div>
 <div class="section" id="sphinx-source">
-<h2>Sphinx Source<a class="headerlink" href="#sphinx-source" title="Permalink to this headline">¶</a></h2>
+<h3>Sphinx Source<a class="headerlink" href="#sphinx-source" title="Permalink to this headline">¶</a></h3>
 <p>For Sphinx source, please use 4 spaces for indention and a UTF-8 encoding.
 The line length is preferred to be between 72-74 characters.</p>
 <p>Due to the magic under the hood of the traits objects, automatically
@@ -158,6 +176,7 @@ instead.</li>
 members are not specified in the <tt class="docutils literal"><span class="pre">:members:</span></tt> context parameter.</li>
 </ul>
 </div></blockquote>
+</div>
 </div>
 <div class="section" id="source-code">
 <h2>Source Code<a class="headerlink" href="#source-code" title="Permalink to this headline">¶</a></h2>
@@ -520,8 +539,8 @@ formats:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 30, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on Jan 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>
 </html>

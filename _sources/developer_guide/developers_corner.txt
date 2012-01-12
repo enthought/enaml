@@ -1,5 +1,5 @@
 Developer's corner
-==================
+===============================================================================
 
 This section describes a set of guidelines for the developers of the Enaml.
 
@@ -20,8 +20,26 @@ Label              Description
 ``develop``        developing branch (unstable)
 ================== ============================================
 
+Documentation
+-------------------------------------------------------------------------------
+
+Sphinx Configuration
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Include the enaml import hooks in ``conf.py`` for any project that will use
+``autodoc`` for |Enaml| objects:
+
+::
+
+ from enaml.import_hooks import EnamlImporter
+ EnamlImporter.install()
+
+|Enaml| objects will import as Python functions.
+
+Including the Sphinx extension ``refactor_doc`` allows use of formatted
+docstrings as described below.
+
 Sphinx Source
--------------
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 For Sphinx source, please use 4 spaces for indention and a UTF-8 encoding.
 The line length is preferred to be between 72-74 characters.

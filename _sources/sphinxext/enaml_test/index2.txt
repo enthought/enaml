@@ -1,0 +1,75 @@
+.. enaml_test documentation master file, created by
+   sphinx-quickstart on Mon Jan  9 13:43:06 2012.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+
+enaml directives
+===============================================================================
+
+``.. enaml:enaml_defn:: EnamlDefnExample()``
+
+.. enaml:enaml_defn:: EnamlDefnExample()
+
+
+``.. enaml:enaml_decl:: EnamlDeclaration(ErrorField)``
+
+.. enaml:enaml_decl:: EnamlDeclaration(ErrorField)
+
+
+in-line cross-reference *roles*
+===============================================================================
+
+.. autofunction:: os.path.abspath
+
+
+test \:py\:func\:\`abspath\` with an in-line reference
+:py:func:`~os.path.abspath`
+
+
+In-line XRef to previously defined ``EnamlDeclaration``
+:enaml:enaml_comp:`EnamlDeclaration`
+
+For one declared in a file and *enamldoc* 'd it looks like this:
+:enaml:enaml_comp:`~ui_defns.DefnTester`.  
+
+
+autoenaml directives
+===============================================================================
+ 
+Use ``autoenaml_decl`` directive to profile ``enaml.stdlib.fields.ErrorField``
+No domain is specified.
+
+.. autoenaml_decl:: enaml.stdlib.fields.ErrorField
+
+
+Use ``autoenaml_defn`` to profile a **defn** with ``.. autoenaml_defn::
+ui_defns.DefnTester``
+
+.. autoenaml_defn:: ui_defns.DefnTester
+
+
+Fields Std Library
+===============================================================================
+
+*Try to document a module with ``.. automodule:: enaml.stdlib.fields`` .*
+
+.. autoenaml_module:: enaml.stdlib.fields 
+    :members:
+    :undoc-members: 
+     
+Radio Group Std Library
+===============================================================================
+
+.. autoenaml_module:: enaml.stdlib.radio_group 
+    :members:
+    :undoc-members: 
+
+  
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+

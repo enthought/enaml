@@ -1,6 +1,0 @@
-<map id="inheritance83f8ef61aa" name="inheritance83f8ef61aa">
-<area shape="rect" id="node11" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="468,40,539,60"/>
-<area shape="rect" id="node12" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="331,40,410,60"/>
-<area shape="rect" id="node6" href="#enaml.widgets.wx.wx_dialog.WXDialog" title="WXDialog" alt="" coords="708,22,764,42"/>
-<area shape="rect" id="node7" href="enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="599,40,661,60"/>
-</map>

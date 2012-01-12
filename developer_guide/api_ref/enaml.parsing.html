@@ -130,19 +130,19 @@
 <div class="section" id="enaml-ast-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">enaml_ast</span></tt> Module<a class="headerlink" href="#enaml-ast-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../../_images/inheritance-1b286c6bf5bcbc7831eda3cc080d28ec37a7c31d.png" alt="Inheritance diagram of enaml.parsing.enaml_ast" usemap="#inheritancee71851c2b6" class="inheritance"/>
+<img src="../../_images/inheritance-b7ca55e4ea298f87b4f9a22edc0402dc82e76f51.png" alt="Inheritance diagram of enaml.parsing.enaml_ast" usemap="#inheritancee71851c2b6" class="inheritance"/>
 <map id="inheritancee71851c2b6" name="inheritancee71851c2b6">
-<area shape="rect" id="node1" href="#enaml.parsing.enaml_ast.Python" title="Python" alt="" coords="164,32,236,61"/>
-<area shape="rect" id="node10" href="#enaml.parsing.enaml_ast.BoundCodeBlock" title="BoundCodeBlock" alt="" coords="315,5,445,35"/>
-<area shape="rect" id="node18" href="#enaml.parsing.enaml_ast.Import" title="Import" alt="" coords="344,59,416,88"/>
-<area shape="rect" id="node2" href="#enaml.parsing.enaml_ast.ASTNode" title="ASTNode" alt="" coords="5,219,85,248"/>
-<area shape="rect" id="node4" href="#enaml.parsing.enaml_ast.Parameters" title="Parameters" alt="" coords="153,85,247,115"/>
-<area shape="rect" id="node6" href="#enaml.parsing.enaml_ast.Module" title="Module" alt="" coords="164,139,236,168"/>
-<area shape="rect" id="node8" href="#enaml.parsing.enaml_ast.BoundExpression" title="BoundExpression" alt="" coords="134,192,266,221"/>
-<area shape="rect" id="node12" href="#enaml.parsing.enaml_ast.AttributeBinding" title="AttributeBinding" alt="" coords="136,245,264,275"/>
-<area shape="rect" id="node14" href="#enaml.parsing.enaml_ast.Declaration" title="Declaration" alt="" coords="153,299,247,328"/>
-<area shape="rect" id="node16" href="#enaml.parsing.enaml_ast.Instantiation" title="Instantiation" alt="" coords="149,352,251,381"/>
-<area shape="rect" id="node20" href="#enaml.parsing.enaml_ast.Defn" title="Defn" alt="" coords="164,405,236,435"/>
+<area shape="rect" id="node1" href="#enaml.parsing.enaml_ast.Python" title="Python" alt="" coords="4,67,63,91"/>
+<area shape="rect" id="node12" href="#enaml.parsing.enaml_ast.BoundCodeBlock" title="BoundCodeBlock" alt="" coords="5,130,109,154"/>
+<area shape="rect" id="node20" href="#enaml.parsing.enaml_ast.Import" title="Import" alt="" coords="130,130,188,154"/>
+<area shape="rect" id="node2" href="#enaml.parsing.enaml_ast.ASTNode" title="ASTNode" alt="" coords="350,4,415,28"/>
+<area shape="rect" id="node4" href="#enaml.parsing.enaml_ast.Instantiation" title="Instantiation" alt="" coords="82,67,165,91"/>
+<area shape="rect" id="node6" href="#enaml.parsing.enaml_ast.Declaration" title="Declaration" alt="" coords="185,67,261,91"/>
+<area shape="rect" id="node8" href="#enaml.parsing.enaml_ast.AttributeBinding" title="AttributeBinding" alt="" coords="281,67,383,91"/>
+<area shape="rect" id="node10" href="#enaml.parsing.enaml_ast.Defn" title="Defn" alt="" coords="404,67,463,91"/>
+<area shape="rect" id="node14" href="#enaml.parsing.enaml_ast.BoundExpression" title="BoundExpression" alt="" coords="482,67,589,91"/>
+<area shape="rect" id="node16" href="#enaml.parsing.enaml_ast.Module" title="Module" alt="" coords="610,67,668,91"/>
+<area shape="rect" id="node18" href="#enaml.parsing.enaml_ast.Parameters" title="Parameters" alt="" coords="688,67,764,91"/>
 </map>
 </p>
 <span class="target" id="module-enaml.parsing.enaml_ast"></span><dl class="class">
@@ -197,7 +197,7 @@ A list of ast nodes comprising the body of the module.</p>
 
 <dl class="class">
 <dt id="enaml.parsing.enaml_ast.Python">
-<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_ast.</tt><tt class="descname">Python</tt><big>(</big><em>py_ast</em>, <em>code</em>, <em>lineno</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/enaml_ast.html#Python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.enaml_ast.Python" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_ast.</tt><tt class="descname">Python</tt><big>(</big><em>py_txt</em>, <em>py_ast</em>, <em>code</em>, <em>lineno</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/enaml_ast.html#Python"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.enaml_ast.Python" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#enaml.parsing.enaml_ast.ASTNode" title="enaml.parsing.enaml_ast.ASTNode"><tt class="xref py py-class docutils literal"><span class="pre">enaml.parsing.enaml_ast.ASTNode</span></tt></a></p>
 <p>An AST node representing a chunk of pure Python code.</p>
 <dl class="attribute">
@@ -215,6 +215,11 @@ The compiled Python code object for the py_ast.</p>
 </dd></dl>
 
 <dl class="attribute">
+<dt id="enaml.parsing.enaml_ast.Python.py_txt">
+<tt class="descname">py_txt</tt><a class="headerlink" href="#enaml.parsing.enaml_ast.Python.py_txt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
 <dt>
 <tt class="descname">py_ast</tt></dt>
 <dd></dd></dl>
@@ -228,7 +233,7 @@ The compiled Python code object for the py_ast.</p>
 
 <dl class="class">
 <dt id="enaml.parsing.enaml_ast.Import">
-<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_ast.</tt><tt class="descname">Import</tt><big>(</big><em>py_ast</em>, <em>code</em>, <em>lineno</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/enaml_ast.html#Import"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.enaml_ast.Import" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_ast.</tt><tt class="descname">Import</tt><big>(</big><em>py_txt</em>, <em>py_ast</em>, <em>code</em>, <em>lineno</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/enaml_ast.html#Import"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.enaml_ast.Import" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#enaml.parsing.enaml_ast.Python" title="enaml.parsing.enaml_ast.Python"><tt class="xref py py-class docutils literal"><span class="pre">enaml.parsing.enaml_ast.Python</span></tt></a></p>
 <p>A _PyNode representing a normal Python import statement.</p>
 </dd></dl>
@@ -407,7 +412,7 @@ A Python ast node that reprents the bound expression.</p>
 
 <dl class="class">
 <dt id="enaml.parsing.enaml_ast.BoundCodeBlock">
-<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_ast.</tt><tt class="descname">BoundCodeBlock</tt><big>(</big><em>py_ast</em>, <em>code</em>, <em>lineno</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/enaml_ast.html#BoundCodeBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.enaml_ast.BoundCodeBlock" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_ast.</tt><tt class="descname">BoundCodeBlock</tt><big>(</big><em>py_txt</em>, <em>py_ast</em>, <em>code</em>, <em>lineno</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/enaml_ast.html#BoundCodeBlock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.enaml_ast.BoundCodeBlock" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#enaml.parsing.enaml_ast.Python" title="enaml.parsing.enaml_ast.Python"><tt class="xref py py-class docutils literal"><span class="pre">enaml.parsing.enaml_ast.Python</span></tt></a></p>
 <p>An ast Node which represents a bound block of Python code.</p>
 </dd></dl>
@@ -687,18 +692,30 @@ descended from node.  Similar to ast.fix_locations, but forces changes.</p>
 <dl class="function">
 <dt id="enaml.parsing.parser.p_declaration_body2">
 <tt class="descclassname">enaml.parsing.parser.</tt><tt class="descname">p_declaration_body2</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/parser.html#p_declaration_body2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.parser.p_declaration_body2" title="Permalink to this definition">¶</a></dt>
-<dd><p>declaration_body : NEWLINE INDENT identifier declaration_body_items DEDENT</p>
+<dd><p>declaration_body : NEWLINE INDENT identifier DEDENT</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="enaml.parsing.parser.p_declaration_body3">
 <tt class="descclassname">enaml.parsing.parser.</tt><tt class="descname">p_declaration_body3</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/parser.html#p_declaration_body3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.parser.p_declaration_body3" title="Permalink to this definition">¶</a></dt>
-<dd><p>declaration_body : NEWLINE INDENT STRING NEWLINE declaration_body_items DEDENT</p>
+<dd><p>declaration_body : NEWLINE INDENT identifier declaration_body_items DEDENT</p>
 </dd></dl>
 
 <dl class="function">
 <dt id="enaml.parsing.parser.p_declaration_body4">
 <tt class="descclassname">enaml.parsing.parser.</tt><tt class="descname">p_declaration_body4</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/parser.html#p_declaration_body4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.parser.p_declaration_body4" title="Permalink to this definition">¶</a></dt>
+<dd><p>declaration_body : NEWLINE INDENT STRING NEWLINE declaration_body_items DEDENT</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.parsing.parser.p_declaration_body5">
+<tt class="descclassname">enaml.parsing.parser.</tt><tt class="descname">p_declaration_body5</tt><big>(</big><em>p</em><big>)</big><a class="headerlink" href="#enaml.parsing.parser.p_declaration_body5" title="Permalink to this definition">¶</a></dt>
+<dd><p>declaration_body : NEWLINE INDENT STRING NEWLINE identifier DEDENT</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.parsing.parser.p_declaration_body6">
+<tt class="descclassname">enaml.parsing.parser.</tt><tt class="descname">p_declaration_body6</tt><big>(</big><em>p</em><big>)</big><a class="headerlink" href="#enaml.parsing.parser.p_declaration_body6" title="Permalink to this definition">¶</a></dt>
 <dd><p>declaration_body : NEWLINE INDENT STRING NEWLINE identifier declaration_body_items DEDENT</p>
 </dd></dl>
 
@@ -753,6 +770,12 @@ descended from node.  Similar to ast.fix_locations, but forces changes.</p>
 <dl class="function">
 <dt id="enaml.parsing.parser.p_instantiation_body2">
 <tt class="descclassname">enaml.parsing.parser.</tt><tt class="descname">p_instantiation_body2</tt><big>(</big><em>p</em><big>)</big><a class="reference internal" href="../../_modules/enaml/parsing/parser.html#p_instantiation_body2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.parser.p_instantiation_body2" title="Permalink to this definition">¶</a></dt>
+<dd><p>instantiation_body : NEWLINE INDENT identifier DEDENT</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="enaml.parsing.parser.p_instantiation_body3">
+<tt class="descclassname">enaml.parsing.parser.</tt><tt class="descname">p_instantiation_body3</tt><big>(</big><em>p</em><big>)</big><a class="headerlink" href="#enaml.parsing.parser.p_instantiation_body3" title="Permalink to this definition">¶</a></dt>
 <dd><p>instantiation_body : NEWLINE INDENT identifier instantiation_body_items DEDENT</p>
 </dd></dl>
 
@@ -2413,6 +2436,35 @@ descended from node.  Similar to ast.fix_locations, but forces changes.</p>
 <div class="section" id="module-enaml.parsing.enaml_compiler">
 <span id="enaml-compiler-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">enaml_compiler</span></tt> Module<a class="headerlink" href="#module-enaml.parsing.enaml_compiler" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
+<dt id="enaml.parsing.enaml_compiler.ExpressionLocals">
+<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_compiler.</tt><tt class="descname">ExpressionLocals</tt><big>(</big><em>**values</em><big>)</big><a class="headerlink" href="#enaml.parsing.enaml_compiler.ExpressionLocals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasStrictTraits</span></tt></p>
+<p>A HasStrictTraits class which acts as a locals mapping object.
+Each item in the locals is added as an Any trait on the object
+so that notifiers can be attached to the locals. It provides the
+special methods __getitem__, __setitem__, __contains__ and __len__
+so that the object can be used like a dictionary.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.parsing.enaml_compiler.EnamlDeclaration">
+<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_compiler.</tt><tt class="descname">EnamlDeclaration</tt><big>(</big><em>base</em>, <em>func</em><big>)</big><a class="headerlink" href="#enaml.parsing.enaml_compiler.EnamlDeclaration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A helper class which exposes a compiled Enaml declaration
+function with an interface that is easy to use from Python.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="enaml.parsing.enaml_compiler.EnamlDefn">
+<em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_compiler.</tt><tt class="descname">EnamlDefn</tt><big>(</big><em>func</em><big>)</big><a class="headerlink" href="#enaml.parsing.enaml_compiler.EnamlDefn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A helper class which exposes a compiled Enaml defn function
+with an interface that is easy to use from Python. It serves 
+mainly to distinguish an Enaml defn function from a normal
+function for the purposes of documentation generation.</p>
+</dd></dl>
+
+<dl class="class">
 <dt id="enaml.parsing.enaml_compiler.DeclarationCompiler">
 <em class="property">class </em><tt class="descclassname">enaml.parsing.enaml_compiler.</tt><tt class="descname">DeclarationCompiler</tt><a class="reference internal" href="../../_modules/enaml/parsing/enaml_compiler.html#DeclarationCompiler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.parsing.enaml_compiler.DeclarationCompiler" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.parsing.enaml_compiler._NodeVisitor</span></tt></p>
@@ -2424,11 +2476,13 @@ descended from node.  Similar to ast.fix_locations, but forces changes.</p>
 <p>Given this sample declaration:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>FooWindow(Window) foo:</dt>
-<dd><p class="first">a = &#8216;12&#8217;
-PushButton button:</p>
+<dt>FooWindow(Window) </dt>
+<dd><p class="first">id: foo
+a = &#8216;12&#8217;
+PushButton:</p>
 <blockquote class="last">
-<div>text = &#8216;clickme&#8217;</div></blockquote>
+<div>id: btn
+text = &#8216;clickme&#8217;</div></blockquote>
 </dd>
 </dl>
 </div></blockquote>
@@ -2436,28 +2490,20 @@ PushButton button:</p>
 looks similar to this:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt>def FooWindow(identifiers, toolkit):</dt>
-<dd><p class="first">f_globals = globals()
-foo = eval(&#8216;Window&#8217;, toolkit, f_globals)(identifiers,</p>
-<blockquote>
-<div>toolkit)</div></blockquote>
-<p>identifiers[&#8216;foo&#8217;] = foo
+<dt>def FooWindow(f_locals, toolkit):</dt>
+<dd>f_globals = globals()
+foo_cls = eval(&#8216;Window&#8217;, toolkit, f_globals)
+foo = foo_cls.__enaml_call__(f_locals, toolkit)
+f_locals[&#8216;foo&#8217;] = foo
 op = eval(&#8216;__operator_Equal__&#8217;, toolkit, f_globals)
-op(foo, &#8216;a&#8217;, &lt;ast for &#8216;12&#8217;&gt;, &lt;code for &#8216;12&#8217;&gt;,</p>
-<blockquote>
-<div>f_globals, identifiers)</div></blockquote>
-<dl class="docutils">
-<dt>button = eval(&#8216;PushButton&#8217;, toolkit, f_globals)(identifiers, </dt>
-<dd>toolkit)</dd>
-</dl>
-<p>identifiers[&#8216;button&#8217;] = button
+op(foo, &#8216;a&#8217;, &lt;ast&gt;, &lt;code&gt;, f_locals, f_globals, toolkit)
+btn_cls = eval(&#8216;PushButton&#8217;, toolkit, f_globals)
+btn = btn_cls.__enaml_call__(None, toolkit)
+f_locals[&#8216;btn&#8217;] = button
 op = eval(&#8216;__operator_Equal__&#8217;, toolkit, f_globals)
-op(item, &#8216;text&#8217;, &lt;ast for &#8216;clickme&#8217;&gt;, &lt;code for &#8216;clickme&#8217;&gt;,</p>
-<blockquote>
-<div>f_globals, identifiers)</div></blockquote>
-<p class="last">foo._subcomponents.append(button)
-return foo</p>
-</dd>
+op(item, &#8216;text&#8217;, &lt;ast&gt;, &lt;code&gt;, f_locals, f_globals, toolkit)
+foo._subcomponents.append(button)
+return foo</dd>
 </dl>
 </div></blockquote>
 </dd></dl>
@@ -2623,8 +2669,8 @@ to the module.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 30, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on Jan 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>
 </html>

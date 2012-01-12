@@ -5,6 +5,8 @@
 
 The following components are built into |Enaml| and available without import.
 
-
-.. autoclass:: enaml.widgets.combo_box.ComboBox
+.. automodule:: enaml.widgets.combo_box
     :members:
+
+.. enaml:class:: enaml.widgets.combo_box.ComboBox
+..    :members:

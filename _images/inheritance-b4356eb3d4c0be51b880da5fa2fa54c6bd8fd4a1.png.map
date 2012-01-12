@@ -1,0 +1,6 @@
+<map id="inheritance613b37b6cb" name="inheritance613b37b6cb">
+<area shape="rect" id="node11" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="182,160,297,189"/>
+<area shape="rect" id="node4" href="#enaml.widgets.wx.wx_combo_box.WXComboBox" title="WXComboBox" alt="" coords="107,315,217,344"/>
+<area shape="rect" id="node5" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="193,237,281,267"/>
+<area shape="rect" id="node7" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.AbstractTkComboBox" title="AbstractTkComboBox" alt="" coords="7,237,168,267"/>
+</map>

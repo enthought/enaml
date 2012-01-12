@@ -1,21 +1,28 @@
 .. _std-library-ref:
 
-|Enaml| Standard Widget Library (derived)
+|Enaml| Standard Widget Library
 ===============================================================================
 
 The following components are available from the standard library:
 
+.. _std-lib-fields:
+
 Fields
 -------------------------------------------------------------------------------
 
-.. todo:: Write abstract representation of standard library components
 
-.. py:class:: IntField(ErrorField)
-    converter = IntConverter()
+.. automodule:: enaml.stdlib.fields
 
-.. literalinclude:: ../../../enaml/stdlib/fields.enaml
+.. _std-lib-radio-group:
 
 Radio Group
 -------------------------------------------------------------------------------
 
-.. literalinclude:: ../../../enaml/stdlib/radio_group.enaml
+.. automodule:: enaml.stdlib.radio_group
+
+
+.. _std-lib-stacked:
+
+Stacked
+-------------------------------------------------------------------------------
+ .. automodule:: enaml.stdlib.stacked

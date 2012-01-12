@@ -1,19 +1,25 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
 """ A Lotka-Volterra model. 
 
 This example plots a non-trivial system and allows the user to explore the
-parameter space using sliders. The system is a first order Lotka-Volterra model, also known as a predator-prey model::
+parameter space using sliders. The system is a first order Lotka-Volterra 
+model, also known as a predator-prey model::
 
     http://en.wikipedia.org/wiki/Lotka%E2%80%93Volterra_equation
 
-As in the sine plot example, the plot is on the left while the parameter sliders
-are on the right. The plot will update as the slider values change.
+As in the sine plot example, the plot is on the left while the parameter 
+sliders and the color controls are on the right. The plot will update as 
+the slider values change.
 
-This is the main driver for the example. The Enaml UI is defined in lotka_volterra_ui.enaml
+This is the main driver for the example. The Enaml UI is defined in 
+lotka_volterra_ui.enaml
 
 This demo requires numpy and Chaco.
 
 """
-
 import numpy as np
 
 from traits.api import Array, HasTraits, Float, on_trait_change
@@ -77,6 +83,7 @@ def main():
     model.integrate()
     window = MainWindow(model=model)
     window.show()
+
 
 if __name__ == '__main__':
     main()

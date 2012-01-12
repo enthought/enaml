@@ -109,18 +109,18 @@ thin layer over backend widgets and produce the traits View objects.</p>
 <div class="section" id="enums-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">enums</span></tt> Module<a class="headerlink" href="#enums-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../../_images/inheritance-ca3224cde3673505490455a776a5ecbf40ca2ea7.png" alt="Inheritance diagram of enaml.enums" usemap="#inheritance8c09fb9196" class="inheritance"/>
+<img src="../../_images/inheritance-fd37e60dca3547f389b5dc4616b93162b8a3436b.png" alt="Inheritance diagram of enaml.enums" usemap="#inheritance8c09fb9196" class="inheritance"/>
 <map id="inheritance8c09fb9196" name="inheritance8c09fb9196">
-<area shape="rect" id="node1" href="enaml.util.html#enaml.util.enum.Enum" title="Enum" alt="" coords="5,85,77,115"/>
-<area shape="rect" id="node2" href="#enaml.enums.Match" title="Match" alt="" coords="132,5,204,35"/>
-<area shape="rect" id="node4" href="#enaml.enums.ItemFlags" title="ItemFlags" alt="" coords="126,59,210,88"/>
-<area shape="rect" id="node6" href="#enaml.enums.DataRole" title="DataRole" alt="" coords="129,112,207,141"/>
-<area shape="rect" id="node8" href="#enaml.enums.Buttons" title="Buttons" alt="" coords="132,165,204,195"/>
+<area shape="rect" id="node1" href="#enaml.enums.Match" title="Match" alt="" coords="5,83,77,112"/>
+<area shape="rect" id="node2" href="enaml.util.html#enaml.util.enum.Enum" title="Enum" alt="" coords="155,5,227,35"/>
+<area shape="rect" id="node4" href="#enaml.enums.DataRole" title="DataRole" alt="" coords="102,83,180,112"/>
+<area shape="rect" id="node6" href="#enaml.enums.Buttons" title="Buttons" alt="" coords="205,83,277,112"/>
+<area shape="rect" id="node8" href="#enaml.enums.ItemFlags" title="ItemFlags" alt="" coords="301,83,384,112"/>
 </map>
 </p>
 <span class="target" id="module-enaml.enums"></span><dl class="data">
 <dt id="enaml.enums.DialogResult">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">DialogResult</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27ab970&gt;</em><a class="headerlink" href="#enaml.enums.DialogResult" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">DialogResult</tt><em class="property"> = Enum(rejected, accepted)</em><a class="headerlink" href="#enaml.enums.DialogResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>A dialog&#8217;s result (depending on how it was closed)</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -145,7 +145,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.Orientation">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Orientation</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abaf0&gt;</em><a class="headerlink" href="#enaml.enums.Orientation" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Orientation</tt><em class="property"> = Enum(horizontal, vertical)</em><a class="headerlink" href="#enaml.enums.Orientation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Generic orientation values.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -170,7 +170,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.TabPosition">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">TabPosition</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abb10&gt;</em><a class="headerlink" href="#enaml.enums.TabPosition" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">TabPosition</tt><em class="property"> = Enum(top, bottom, left, right)</em><a class="headerlink" href="#enaml.enums.TabPosition" title="Permalink to this definition">¶</a></dt>
 <dd><p>The position of the tabs in a Tabbed container.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -201,7 +201,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.HorizontalAlign">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">HorizontalAlign</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abb30&gt;</em><a class="headerlink" href="#enaml.enums.HorizontalAlign" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">HorizontalAlign</tt><em class="property"> = Enum(left, right, center)</em><a class="headerlink" href="#enaml.enums.HorizontalAlign" title="Permalink to this definition">¶</a></dt>
 <dd><p>Horizontal alingment.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -229,7 +229,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.Direction">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Direction</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abb50&gt;</em><a class="headerlink" href="#enaml.enums.Direction" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Direction</tt><em class="property"> = Enum(left_to_right, right_to_left, top_to_bottom, bottom_to_top)</em><a class="headerlink" href="#enaml.enums.Direction" title="Permalink to this definition">¶</a></dt>
 <dd><p>A container&#8217;s layout style, based on the order of insertion.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -260,7 +260,7 @@ thin layer over backend widgets and produce the traits View objects.</p>
 
 <dl class="data">
 <dt id="enaml.enums.Modality">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Modality</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abb70&gt;</em><a class="headerlink" href="#enaml.enums.Modality" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Modality</tt><em class="property"> = Enum(application_modal, window_modal)</em><a class="headerlink" href="#enaml.enums.Modality" title="Permalink to this definition">¶</a></dt>
 <dd><p>A window&#8217;s modality specifies whether it captures focus.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -290,7 +290,7 @@ the application.</td>
 
 <dl class="data">
 <dt id="enaml.enums.TickPosition">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">TickPosition</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abb90&gt;</em><a class="headerlink" href="#enaml.enums.TickPosition" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">TickPosition</tt><em class="property"> = Enum(no_ticks, left, right, top, bottom, both)</em><a class="headerlink" href="#enaml.enums.TickPosition" title="Permalink to this definition">¶</a></dt>
 <dd><p>The position of ticks for a control.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -329,7 +329,7 @@ both the left and the right. This might vary with
 
 <dl class="data">
 <dt id="enaml.enums.Sorted">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Sorted</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abbb0&gt;</em><a class="headerlink" href="#enaml.enums.Sorted" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Sorted</tt><em class="property"> = Enum(ascending, descending)</em><a class="headerlink" href="#enaml.enums.Sorted" title="Permalink to this definition">¶</a></dt>
 <dd><p>The ordering of a sort.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -354,7 +354,7 @@ both the left and the right. This might vary with
 
 <dl class="data">
 <dt id="enaml.enums.Validity">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">Validity</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abbd0&gt;</em><a class="headerlink" href="#enaml.enums.Validity" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">Validity</tt><em class="property"> = Enum(invalid, indermediate, acceptable)</em><a class="headerlink" href="#enaml.enums.Validity" title="Permalink to this definition">¶</a></dt>
 <dd><p>The result of a validation function.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -383,7 +383,7 @@ valid.</td>
 
 <dl class="data">
 <dt id="enaml.enums.PolicyEnum">
-<tt class="descclassname">enaml.enums.</tt><tt class="descname">PolicyEnum</tt><em class="property"> = &lt;traits.trait_types.Enum object at 0x27abbf0&gt;</em><a class="headerlink" href="#enaml.enums.PolicyEnum" title="Permalink to this definition">¶</a></dt>
+<tt class="descclassname">enaml.enums.</tt><tt class="descname">PolicyEnum</tt><em class="property"> = Enum(ignore, weak, strong, required)</em><a class="headerlink" href="#enaml.enums.PolicyEnum" title="Permalink to this definition">¶</a></dt>
 <dd><p>The strength of widget expand and clip preferences for hug and resist_clip.</p>
 <table border="1" class="docutils">
 <colgroup>
@@ -762,20 +762,20 @@ valid.</td>
 <div class="section" id="converters-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">converters</span></tt> Module<a class="headerlink" href="#converters-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../../_images/inheritance-bfc73478702ad54e24c1c76d64cdc764ab0f115e.png" alt="Inheritance diagram of enaml.converters" usemap="#inheritancec016d6e32c" class="inheritance"/>
+<img src="../../_images/inheritance-61e880b82e077105c347ef4d6afc212249b56059.png" alt="Inheritance diagram of enaml.converters" usemap="#inheritancec016d6e32c" class="inheritance"/>
 <map id="inheritancec016d6e32c" name="inheritancec016d6e32c">
-<area shape="rect" id="node1" href="#enaml.converters.Converter" title="Converter" alt="" coords="6,245,90,275"/>
-<area shape="rect" id="node3" href="#enaml.converters.BaseStringConverter" title="BaseStringConverter" alt="" coords="139,165,291,195"/>
-<area shape="rect" id="node14" href="#enaml.converters.NullConverter" title="NullConverter" alt="" coords="159,219,270,248"/>
-<area shape="rect" id="node16" href="#enaml.converters.DateTimeConverter" title="DateTimeConverter" alt="" coords="141,272,288,301"/>
-<area shape="rect" id="node18" href="#enaml.converters.DateConverter" title="DateConverter" alt="" coords="157,325,272,355"/>
-<area shape="rect" id="node2" href="#enaml.converters.ComplexConverter" title="ComplexConverter" alt="" coords="339,5,482,35"/>
-<area shape="rect" id="node5" href="#enaml.converters.FloatConverter" title="FloatConverter" alt="" coords="353,59,469,88"/>
-<area shape="rect" id="node7" href="#enaml.converters.LongConverter" title="LongConverter" alt="" coords="352,112,469,141"/>
-<area shape="rect" id="node9" href="#enaml.converters.IntConverter" title="IntConverter" alt="" coords="360,165,462,195"/>
-<area shape="rect" id="node11" href="#enaml.converters.StringConverter" title="StringConverter" alt="" coords="349,219,472,248"/>
-<area shape="rect" id="node20" href="#enaml.converters.OctalConverter" title="OctalConverter" alt="" coords="352,272,470,301"/>
-<area shape="rect" id="node22" href="#enaml.converters.HexConverter" title="HexConverter" alt="" coords="356,325,466,355"/>
+<area shape="rect" id="node1" href="#enaml.converters.DateConverter" title="DateConverter" alt="" coords="225,65,314,88"/>
+<area shape="rect" id="node2" href="#enaml.converters.Converter" title="Converter" alt="" coords="428,4,493,27"/>
+<area shape="rect" id="node4" href="#enaml.converters.BaseStringConverter" title="BaseStringConverter" alt="" coords="333,65,452,88"/>
+<area shape="rect" id="node10" href="#enaml.converters.DateTimeConverter" title="DateTimeConverter" alt="" coords="471,65,585,88"/>
+<area shape="rect" id="node12" href="#enaml.converters.NullConverter" title="NullConverter" alt="" coords="604,65,690,88"/>
+<area shape="rect" id="node6" href="#enaml.converters.IntConverter" title="IntConverter" alt="" coords="4,125,83,148"/>
+<area shape="rect" id="node8" href="#enaml.converters.ComplexConverter" title="ComplexConverter" alt="" coords="103,125,214,148"/>
+<area shape="rect" id="node14" href="#enaml.converters.StringConverter" title="StringConverter" alt="" coords="232,125,328,148"/>
+<area shape="rect" id="node16" href="#enaml.converters.FloatConverter" title="FloatConverter" alt="" coords="347,125,438,148"/>
+<area shape="rect" id="node18" href="#enaml.converters.OctalConverter" title="OctalConverter" alt="" coords="457,125,549,148"/>
+<area shape="rect" id="node20" href="#enaml.converters.LongConverter" title="LongConverter" alt="" coords="568,125,659,148"/>
+<area shape="rect" id="node22" href="#enaml.converters.HexConverter" title="HexConverter" alt="" coords="678,125,764,148"/>
 </map>
 </p>
 <span class="target" id="module-enaml.converters"></span><dl class="class">
@@ -994,88 +994,90 @@ method is needed.</p>
 <div class="section" id="expressions-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">expressions</span></tt> Module<a class="headerlink" href="#expressions-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../../_images/inheritance-bcf96eb4c2ef4205e580a408d5b6b54ad3821531.png" alt="Inheritance diagram of enaml.expressions" usemap="#inheritanceed4a18a838" class="inheritance"/>
+<img src="../../_images/inheritance-cb459361017059a2d677d6626872367bc294aa6c.png" alt="Inheritance diagram of enaml.expressions" usemap="#inheritanceed4a18a838" class="inheritance"/>
 <map id="inheritanceed4a18a838" name="inheritanceed4a18a838">
-<area shape="rect" id="node1" href="#enaml.expressions.AbstractExpression" title="AbstractExpression" alt="" coords="6,940,152,969"/>
-<area shape="rect" id="node3" href="#enaml.expressions.SimpleExpression" title="SimpleExpression" alt="" coords="200,940,336,969"/>
-<area shape="rect" id="node2" href="#enaml.expressions.NotifyingExpression" title="NotifyingExpression" alt="" coords="390,887,541,916"/>
-<area shape="rect" id="node6" href="#enaml.expressions.DelegatingExpression" title="DelegatingExpression" alt="" coords="384,940,546,969"/>
-<area shape="rect" id="node8" href="#enaml.expressions.UpdatingExpression" title="UpdatingExpression" alt="" coords="390,993,541,1023"/>
-<area shape="rect" id="node5" href="#enaml.expressions.ExpressionLocals" title="ExpressionLocals" alt="" coords="13,5,145,35"/>
+<area shape="rect" id="node1" href="#enaml.expressions.AbstractExpression" title="AbstractExpression" alt="" coords="203,5,348,35"/>
+<area shape="rect" id="node2" href="#enaml.expressions.SubscriptionExpression" title="SubscriptionExpression" alt="" coords="4,83,176,112"/>
+<area shape="rect" id="node7" href="#enaml.expressions.NotifyingExpression" title="NotifyingExpression" alt="" coords="200,83,351,112"/>
+<area shape="rect" id="node10" href="#enaml.expressions.SimpleExpression" title="SimpleExpression" alt="" coords="375,83,509,112"/>
+<area shape="rect" id="node5" href="#enaml.expressions.DelegatingExpression" title="DelegatingExpression" alt="" coords="10,160,171,189"/>
+<area shape="rect" id="node4" href="#enaml.expressions.ExpressionScope" title="ExpressionScope" alt="" coords="406,5,535,35"/>
+<area shape="rect" id="node9" href="#enaml.expressions.TraitAttributeNotifier" title="TraitAttributeNotifier" alt="" coords="576,5,733,35"/>
 </map>
 </p>
 <span class="target" id="module-enaml.expressions"></span><dl class="class">
-<dt id="enaml.expressions.ExpressionLocals">
-<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">ExpressionLocals</tt><big>(</big><em>obj</em>, <em>f_locals</em>, <em>overrides=None</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#ExpressionLocals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.ExpressionLocals" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.expressions.TraitAttributeNotifier">
+<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">TraitAttributeNotifier</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>expr</em><big>)</big><a class="headerlink" href="#enaml.expressions.TraitAttributeNotifier" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
-<p>A mapping object that will first look in the provided locals
-dictionary and finally by walking up the tree of components looking
-for attributes.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">When setting items on this mapping, the values are stored in an 
-internal dictionary. Modifying the f_locals is not desired since
-that would effect all other expressions that operate with those
-locals. However, we must support assignment since that&#8217;s required
-to make list comprehensions work.</p>
-</div>
-<p>Strong references are kept to all objects passed to the constructor,
-so care should be taken in managing the lifetime of these scope
-objects since their use is likely to create reference cycles.
-(It&#8217;s probably best to create these objects on-the-fly when needed)</p>
+<p>A thin object which manages a trait change notification for
+a SubscriptionExpression affording easy subscription lifetime 
+management.</p>
 <dl class="attribute">
-<dt id="enaml.expressions.ExpressionLocals.obj">
-<tt class="descname">obj</tt><a class="headerlink" href="#enaml.expressions.ExpressionLocals.obj" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.expressions.TraitAttributeNotifier.expr_ref">
+<tt class="descname">expr_ref</tt><a class="headerlink" href="#enaml.expressions.TraitAttributeNotifier.expr_ref" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.expressions.ExpressionLocals.f_locals">
-<tt class="descname">f_locals</tt><a class="headerlink" href="#enaml.expressions.ExpressionLocals.f_locals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.expressions.ExpressionLocals.overrides">
-<tt class="descname">overrides</tt><a class="headerlink" href="#enaml.expressions.ExpressionLocals.overrides" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.expressions.ExpressionLocals.temp_locals">
-<tt class="descname">temp_locals</tt><a class="headerlink" href="#enaml.expressions.ExpressionLocals.temp_locals" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="enaml.expressions.TraitAttributeNotifier.notify">
+<tt class="descname">notify</tt><big>(</big><em>obj</em>, <em>name</em>, <em>old</em>, <em>new</em><big>)</big><a class="headerlink" href="#enaml.expressions.TraitAttributeNotifier.notify" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the subscribed trait attribute.</p>
+</dd></dl>
 
 </dd></dl>
 
-<dl class="function">
-<dt id="enaml.expressions.parse_attr_names">
-<tt class="descclassname">enaml.expressions.</tt><tt class="descname">parse_attr_names</tt><big>(</big><em>py_ast</em>, <em>obj</em>, <em>f_locals</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#parse_attr_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.parse_attr_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses an expression ast, looking for attributes references in
-the objects attribute space.</p>
-<p>Given an ast.Expression node and an objet, returns the set of tuples
-which are (name, object) parents. The name is an attribute name an
-the object is the object which contains the trait attribute and is
-either &#8216;obj&#8217; itself or some ancestor of obj.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
-<li><strong>py_ast</strong> (<em>Instance(ast.Expresssion)</em>) &#8211; The ast Expression node to parse.</li>
-<li><strong>obj</strong> (<em>HasTraits object</em>) &#8211; The HasTraits instance object we are querrying for attributes.</li>
-<li><strong>f_locals</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The local dictionary whose names override those of the attribute
-space.</li>
-</ul>
-</td>
-</tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>result</strong> (set) - The set of (name, object) pairs referred to in the expression that are trait attributes on some ancestor of obj.</p>
-</td>
-</tr>
-</tbody>
-</table>
+<dl class="class">
+<dt id="enaml.expressions.ExpressionScope">
+<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">ExpressionScope</tt><big>(</big><em>obj</em>, <em>f_locals</em>, <em>f_globals</em>, <em>toolkit</em>, <em>overrides=None</em>, <em>binder=None</em><big>)</big><a class="headerlink" href="#enaml.expressions.ExpressionScope" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>A mapping object that implements the scope resolution order for
+Enaml expressions.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Strong references are kept to all objects passed to the constructor,
+so care should be taken in managing the lifetime of these scope
+objects since their use is likely to create reference cycles. It is
+probably best to create these scope objects on-the-fly as needed.</p>
+</div>
+<dl class="attribute">
+<dt id="enaml.expressions.ExpressionScope.obj">
+<tt class="descname">obj</tt><a class="headerlink" href="#enaml.expressions.ExpressionScope.obj" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.expressions.ExpressionScope.f_locals">
+<tt class="descname">f_locals</tt><a class="headerlink" href="#enaml.expressions.ExpressionScope.f_locals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.expressions.ExpressionScope.f_globals">
+<tt class="descname">f_globals</tt><a class="headerlink" href="#enaml.expressions.ExpressionScope.f_globals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.expressions.ExpressionScope.toolkit">
+<tt class="descname">toolkit</tt><a class="headerlink" href="#enaml.expressions.ExpressionScope.toolkit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.expressions.ExpressionScope.overrides">
+<tt class="descname">overrides</tt><a class="headerlink" href="#enaml.expressions.ExpressionScope.overrides" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.expressions.ExpressionScope.binder">
+<tt class="descname">binder</tt><a class="headerlink" href="#enaml.expressions.ExpressionScope.binder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.expressions.ExpressionScope.temp_locals">
+<tt class="descname">temp_locals</tt><a class="headerlink" href="#enaml.expressions.ExpressionScope.temp_locals" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 </dd></dl>
 
 <dl class="class">
 <dt id="enaml.expressions.AbstractExpression">
-<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">AbstractExpression</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>expr_ast</em>, <em>code</em>, <em>f_globals</em>, <em>toolkit</em>, <em>f_locals</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#AbstractExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.AbstractExpression" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">AbstractExpression</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>code</em>, <em>f_locals</em>, <em>f_globals</em>, <em>toolkit</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#AbstractExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.AbstractExpression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <dl class="attribute">
 <dt id="enaml.expressions.AbstractExpression.obj_ref">
@@ -1085,11 +1087,6 @@ space.</li>
 <dl class="attribute">
 <dt id="enaml.expressions.AbstractExpression.attr">
 <tt class="descname">attr</tt><a class="headerlink" href="#enaml.expressions.AbstractExpression.attr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.expressions.AbstractExpression.expr_ast">
-<tt class="descname">expr_ast</tt><a class="headerlink" href="#enaml.expressions.AbstractExpression.expr_ast" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="attribute">
@@ -1118,116 +1115,104 @@ space.</li>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="enaml.expressions.AbstractExpression.bind">
-<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#AbstractExpression.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.AbstractExpression.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bind the expression to the <cite>name</cite> attribute on <cite>object</cite>.</p>
-<p>This method will be called after the appropriate items in the
-ui tree have been built such that the namespaces will be
-fully populated.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.expressions.AbstractExpression.eval_expression">
-<tt class="descname">eval_expression</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#AbstractExpression.eval_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.AbstractExpression.eval_expression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate the expression and return the result. This will be
-called only after <cite>bind</cite> has been called.</p>
+<dt id="enaml.expressions.AbstractExpression.eval">
+<tt class="descname">eval</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.AbstractExpression.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the expression and return the result.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="enaml.expressions.SimpleExpression">
-<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">SimpleExpression</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>expr_ast</em>, <em>code</em>, <em>f_globals</em>, <em>toolkit</em>, <em>f_locals</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#SimpleExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.SimpleExpression" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">SimpleExpression</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>code</em>, <em>f_locals</em>, <em>f_globals</em>, <em>toolkit</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#SimpleExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.SimpleExpression" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#enaml.expressions.AbstractExpression" title="enaml.expressions.AbstractExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.AbstractExpression</span></tt></a></p>
 <p>A concrete implementation of AbstractExpression that provides
 a default attribute value by evaluating the expression.</p>
-<p class="rubric">See Also</p>
-<p>AbstractExpression</p>
 <dl class="method">
-<dt id="enaml.expressions.SimpleExpression.bind">
-<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#SimpleExpression.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.SimpleExpression.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bind the expression to the <cite>name</cite> attribute on <cite>object</cite>.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.expressions.SimpleExpression.eval_expression">
-<tt class="descname">eval_expression</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#SimpleExpression.eval_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.SimpleExpression.eval_expression" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.expressions.SimpleExpression.eval">
+<tt class="descname">eval</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.SimpleExpression.eval" title="Permalink to this definition">¶</a></dt>
 <dd><p>Evaluates and returns the results of the expression.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.expressions.SimpleExpression.get_globals">
-<tt class="descname">get_globals</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#SimpleExpression.get_globals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.SimpleExpression.get_globals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the global namespace dictionary which is the union
-of f_globals and the toolkit, f_globals taking precedence.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.expressions.SimpleExpression.get_locals">
-<tt class="descname">get_locals</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#SimpleExpression.get_locals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.SimpleExpression.get_locals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the local namespace mapping object. The mapping
-object first attempts to lookup the value in f_locals, then
-continues by walking up the tree checking the attributes of
-all the parents.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="class">
-<dt id="enaml.expressions.UpdatingExpression">
-<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">UpdatingExpression</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>expr_ast</em>, <em>code</em>, <em>f_globals</em>, <em>toolkit</em>, <em>f_locals</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#UpdatingExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.UpdatingExpression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.expressions.SimpleExpression" title="enaml.expressions.SimpleExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.SimpleExpression</span></tt></a></p>
-<p>A dynamically updating concrete expression object.</p>
-<p>The expression is parsed for trait attribute references and when any
-of those traits in the expression change, the expression is evaluated
-and the value of the component attribute is updated.</p>
+<dt id="enaml.expressions.SubscriptionExpression">
+<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">SubscriptionExpression</tt><big>(</big><em>*args</em><big>)</big><a class="headerlink" href="#enaml.expressions.SubscriptionExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#enaml.expressions.AbstractExpression" title="enaml.expressions.AbstractExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.AbstractExpression</span></tt></a></p>
+<p>A dynamically updating concrete expression object. This 
+expression will hookup the necessary notifiers during execution
+so that the expression can be reevaluation when any of its 
+subcriptions are fired.</p>
+<dl class="attribute">
+<dt id="enaml.expressions.SubscriptionExpression.notifiers">
+<tt class="descname">notifiers</tt><a class="headerlink" href="#enaml.expressions.SubscriptionExpression.notifiers" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <dl class="method">
-<dt id="enaml.expressions.UpdatingExpression.bind">
-<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#UpdatingExpression.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.UpdatingExpression.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parse the expression for any trait attribute references. A
-notifier is attached to each trait reference that will update
-the expression value upon change.</p>
+<dt id="enaml.expressions.SubscriptionExpression.inject_binding_code">
+<tt class="descname">inject_binding_code</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#enaml.expressions.SubscriptionExpression.inject_binding_code" title="Permalink to this definition">¶</a></dt>
+<dd><p>Injects code into the code object which will call a binder 
+callback when attributes are accessed.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.expressions.UpdatingExpression.update_object">
-<tt class="descname">update_object</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#UpdatingExpression.update_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.UpdatingExpression.update_object" title="Permalink to this definition">¶</a></dt>
-<dd><p>The notification handler to update the component object.</p>
-<p>When this method is called, the expression is re-evaluated, and
-the results are assigned to the proper attribute on the component
-object.</p>
+<dt id="enaml.expressions.SubscriptionExpression.notify">
+<tt class="descname">notify</tt><big>(</big><em>obj</em>, <em>name</em>, <em>old</em>, <em>new</em><big>)</big><a class="headerlink" href="#enaml.expressions.SubscriptionExpression.notify" title="Permalink to this definition">¶</a></dt>
+<dd><p>The callback to be use by notifiers when the component should
+be updated with the new value of the expression.</p>
 </dd></dl>
+
+<dl class="method">
+<dt id="enaml.expressions.SubscriptionExpression.update_component">
+<tt class="descname">update_component</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.SubscriptionExpression.update_component" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the value of the component attribute with the new
+value of the expression.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.expressions.SubscriptionExpression.bind_attribute">
+<tt class="descname">bind_attribute</tt><big>(</big><em>obj</em>, <em>attr</em><big>)</big><a class="headerlink" href="#enaml.expressions.SubscriptionExpression.bind_attribute" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hooks up the necessary notifier for the given object and
+attribute which, when fired, will update the value of the 
+attribute on the component.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.expressions.SubscriptionExpression.eval">
+<tt class="descname">eval</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.SubscriptionExpression.eval" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="enaml.expressions.DelegatingExpression">
-<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">DelegatingExpression</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>expr_ast</em>, <em>code</em>, <em>f_globals</em>, <em>toolkit</em>, <em>f_locals</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#DelegatingExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.DelegatingExpression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.expressions.SimpleExpression" title="enaml.expressions.SimpleExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.SimpleExpression</span></tt></a></p>
-<p>A concrete expression object that performs two-way binding on
-constructs of the from &#8216;foo.bar&#8217;</p>
-<dl class="method">
-<dt id="enaml.expressions.DelegatingExpression.bind">
-<tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#DelegatingExpression.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.DelegatingExpression.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses the expression object for the appropriate
-lookup names.</p>
-</dd></dl>
+<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">DelegatingExpression</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#DelegatingExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.DelegatingExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#enaml.expressions.SubscriptionExpression" title="enaml.expressions.SubscriptionExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.SubscriptionExpression</span></tt></a></p>
+<p>A SubscriptionExpression subclass that performs two-way binding
+and restricts the expression to the form &#8220;&lt;expr&gt;.attr&#8221;.</p>
+<dl class="attribute">
+<dt id="enaml.expressions.DelegatingExpression.setter_code">
+<tt class="descname">setter_code</tt><a class="headerlink" href="#enaml.expressions.DelegatingExpression.setter_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="method">
-<dt id="enaml.expressions.DelegatingExpression.update_object">
-<tt class="descname">update_object</tt><big>(</big><em>val</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#DelegatingExpression.update_object"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.DelegatingExpression.update_object" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.expressions.DelegatingExpression.make_setter_code">
+<tt class="descname">make_setter_code</tt><big>(</big><em>code</em><big>)</big><a class="headerlink" href="#enaml.expressions.DelegatingExpression.make_setter_code" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.expressions.DelegatingExpression.update_component">
+<tt class="descname">update_component</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.DelegatingExpression.update_component" title="Permalink to this definition">¶</a></dt>
 <dd><p>The notification handler to update the component object.</p>
 <p>When this method is called, the delegate expression is evaluated
 and the results are assigned to the appropriate attribute on
 the component.</p>
-<p>We guard against circular notifications, but try to ensure that we
-end up in a consistent state, ie. when all is said and done, the
-object and the delegate end up with the same value.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.expressions.DelegatingExpression.update_delegate">
-<tt class="descname">update_delegate</tt><big>(</big><em>val</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#DelegatingExpression.update_delegate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.DelegatingExpression.update_delegate" title="Permalink to this definition">¶</a></dt>
+<dt id="enaml.expressions.DelegatingExpression.update_expression">
+<tt class="descname">update_expression</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.DelegatingExpression.update_expression" title="Permalink to this definition">¶</a></dt>
 <dd><p>The notification handler to update the delegate object.</p>
 <p>When this method is called, the delegate expression is updated
 with the appropriate value from the component.</p>
@@ -1236,24 +1221,24 @@ end up in a consistent state, ie. when all is said and done, the
 object and the delegate end up with the same value.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.expressions.DelegatingExpression.lookup_info">
-<tt class="descname">lookup_info</tt><a class="headerlink" href="#enaml.expressions.DelegatingExpression.lookup_info" title="Permalink to this definition">¶</a></dt>
+<dl class="method">
+<dt id="enaml.expressions.DelegatingExpression.eval_setter">
+<tt class="descname">eval_setter</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.DelegatingExpression.eval_setter" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="class">
 <dt id="enaml.expressions.NotifyingExpression">
-<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">NotifyingExpression</tt><big>(</big><em>obj</em>, <em>attr</em>, <em>expr_ast</em>, <em>code</em>, <em>f_globals</em>, <em>toolkit</em>, <em>f_locals</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#NotifyingExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.NotifyingExpression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#enaml.expressions.SimpleExpression" title="enaml.expressions.SimpleExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.SimpleExpression</span></tt></a></p>
-<p>A concrete expression object that will eval an expression when
-the attribute on the object changes.</p>
+<em class="property">class </em><tt class="descclassname">enaml.expressions.</tt><tt class="descname">NotifyingExpression</tt><big>(</big><em>*args</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#NotifyingExpression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.NotifyingExpression" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#enaml.expressions.AbstractExpression" title="enaml.expressions.AbstractExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.AbstractExpression</span></tt></a></p>
+<p>A concrete expression object that will evaluate an expression 
+when the attribute on the object changes.</p>
 <dl class="class">
 <dt id="enaml.expressions.NotifyingExpression.arguments">
 <em class="property">class </em><tt class="descname">arguments</tt><a class="headerlink" href="#enaml.expressions.NotifyingExpression.arguments" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">tuple</span></tt></p>
-<p>arguments(obj, name, old, new)</p>
+<p>A namedtuple which is used to pass arguments to the expression.</p>
 <dl class="attribute">
 <dt id="enaml.expressions.NotifyingExpression.arguments.name">
 <tt class="descname">name</tt><a class="headerlink" href="#enaml.expressions.NotifyingExpression.arguments.name" title="Permalink to this definition">¶</a></dt>
@@ -1280,18 +1265,30 @@ the attribute on the object changes.</p>
 
 </dd></dl>
 
-<dl class="method">
-<dt id="enaml.expressions.NotifyingExpression.bind">
-<tt class="descclassname">NotifyingExpression.</tt><tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#NotifyingExpression.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.NotifyingExpression.bind" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden from the parent class to hookup a notifier on
-the component attribute.</p>
+<dl class="attribute">
+<dt id="enaml.expressions.NotifyingExpression.instances">
+<tt class="descclassname">NotifyingExpression.</tt><tt class="descname">instances</tt><em class="property"> = &lt;WeakKeyDictionary at 31581968&gt;</em><a class="headerlink" href="#enaml.expressions.NotifyingExpression.instances" title="Permalink to this definition">¶</a></dt>
+<dd><p>A WeakKeyDictionary which is used to hold the instances of the
+NotifyingExpression. The keys of the dict are the components
+to which the expressions are listening and the values are lists
+of instances. Thus, there is no need to store these instances
+on a component. The instances are added as they are created.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.expressions.NotifyingExpression.eval_expression">
-<tt class="descclassname">NotifyingExpression.</tt><tt class="descname">eval_expression</tt><big>(</big><em>obj</em>, <em>name</em>, <em>old</em>, <em>new</em><big>)</big><a class="reference internal" href="../../_modules/enaml/expressions.html#NotifyingExpression.eval_expression"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.expressions.NotifyingExpression.eval_expression" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden from the parent class to add the arguments object
-to the expression locals.</p>
+<dt id="enaml.expressions.NotifyingExpression.eval">
+<tt class="descclassname">NotifyingExpression.</tt><tt class="descname">eval</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.expressions.NotifyingExpression.eval" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the expression and return the results. A notifying
+expression does not return results so this method simply returns
+None. The expression is properly evaluated whenever the object
+attribute changes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.expressions.NotifyingExpression.handle_cmpnt_changed">
+<tt class="descclassname">NotifyingExpression.</tt><tt class="descname">handle_cmpnt_changed</tt><big>(</big><em>obj</em>, <em>name</em>, <em>old</em>, <em>new</em><big>)</big><a class="headerlink" href="#enaml.expressions.NotifyingExpression.handle_cmpnt_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the expression while adding an &#8216;args&#8217; object to the
+expression scope.</p>
 </dd></dl>
 
 </dd></dl>
@@ -1300,13 +1297,13 @@ to the expression locals.</p>
 <div class="section" id="exceptions-module">
 <h2><a class="reference external" href="http://docs.python.org/library/exceptions.html#module-exceptions" title="(in Python v2.7)"><tt class="xref py py-mod docutils literal"><span class="pre">exceptions</span></tt></a> Module<a class="headerlink" href="#exceptions-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../../_images/inheritance-9bc0655d10d02cd2d7a01cd59bcdce23131fc537.png" alt="Inheritance diagram of enaml.exceptions" usemap="#inheritancec8455e7019" class="inheritance"/>
+<img src="../../_images/inheritance-71b6fb11c13f1f5cbb3fca783b24837e57d24edf.png" alt="Inheritance diagram of enaml.exceptions" usemap="#inheritancec8455e7019" class="inheritance"/>
 <map id="inheritancec8455e7019" name="inheritancec8455e7019">
-<area shape="rect" id="node1" href="#enaml.exceptions.EnamlSyntaxError" title="EnamlSyntaxError" alt="" coords="243,512,378,541"/>
-<area shape="rect" id="node2" href="#enaml.exceptions.EnamlError" title="EnamlError" alt="" coords="43,539,135,568"/>
-<area shape="rect" id="node7" href="#enaml.exceptions.EnamlRuntimeError" title="EnamlRuntimeError" alt="" coords="238,565,384,595"/>
-<area shape="rect" id="node4" href="#enaml.exceptions.ShellNotificationContext" title="ShellNotificationContext" alt="" coords="222,5,400,35"/>
-<area shape="rect" id="node5" href="#enaml.exceptions.ShellExceptionContext" title="ShellExceptionContext" alt="" coords="6,5,173,35"/>
+<area shape="rect" id="node1" href="#enaml.exceptions.ShellNotificationContext" title="ShellNotificationContext" alt="" coords="4,83,181,112"/>
+<area shape="rect" id="node2" href="#enaml.exceptions.ShellExceptionContext" title="ShellExceptionContext" alt="" coords="10,5,176,35"/>
+<area shape="rect" id="node4" href="#enaml.exceptions.EnamlRuntimeError" title="EnamlRuntimeError" alt="" coords="267,83,412,112"/>
+<area shape="rect" id="node5" href="#enaml.exceptions.EnamlError" title="EnamlError" alt="" coords="375,5,467,35"/>
+<area shape="rect" id="node7" href="#enaml.exceptions.EnamlSyntaxError" title="EnamlSyntaxError" alt="" coords="436,83,571,112"/>
 </map>
 </p>
 <span class="target" id="module-enaml.exceptions"></span><dl class="exception">
@@ -1362,7 +1359,7 @@ will get swallowed and set into the exception trait of the shell object.</p>
 
 <dl class="class">
 <dt id="enaml.exceptions.ShellNotificationContext">
-<em class="property">class </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">ShellNotificationContext</tt><big>(</big><em>shell_obj</em>, <em>handler=&lt;function null_handler at 0x412c570&gt;</em>, <em>reraise_exceptions=True</em>, <em>main=False</em>, <em>locked=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/exceptions.html#ShellNotificationContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.ShellNotificationContext" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.exceptions.</tt><tt class="descname">ShellNotificationContext</tt><big>(</big><em>shell_obj</em>, <em>handler=&lt;function null_handler at 0x1e040b0&gt;</em>, <em>reraise_exceptions=True</em>, <em>main=False</em>, <em>locked=False</em><big>)</big><a class="reference internal" href="../../_modules/enaml/exceptions.html#ShellNotificationContext"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.exceptions.ShellNotificationContext" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#enaml.exceptions.ShellExceptionContext" title="enaml.exceptions.ShellExceptionContext"><tt class="xref py py-class docutils literal"><span class="pre">enaml.exceptions.ShellExceptionContext</span></tt></a></p>
 <p>Combination of a ShellExceptionContext and a notification_context</p>
 <p>Default behaviour is to use the null_handler with exceptions re-raised,
@@ -1529,7 +1526,7 @@ the user&#8217;s current ETS_TOOLKIT environment variables.</p>
 the import of enaml files using the normal Python import machinery.</p>
 <dl class="attribute">
 <dt id="enaml.import_hooks.EnamlImporter.install_count">
-<tt class="descname">install_count</tt><em class="property"> = 0</em><a class="headerlink" href="#enaml.import_hooks.EnamlImporter.install_count" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">install_count</tt><em class="property"> = 2</em><a class="headerlink" href="#enaml.import_hooks.EnamlImporter.install_count" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="classmethod">
@@ -1610,8 +1607,8 @@ The created module is added to sys.modules.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 30, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on Jan 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>
 </html>

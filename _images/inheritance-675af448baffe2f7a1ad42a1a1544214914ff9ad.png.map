@@ -1,0 +1,5 @@
+<map id="inheritanceab23ab4484" name="inheritanceab23ab4484">
+<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_html.QtHtml" title="QtHtml" alt="" coords="702,27,763,52"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="573,50,645,75"/>
+<area shape="rect" id="node9" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="409,50,504,75"/>
+</map>

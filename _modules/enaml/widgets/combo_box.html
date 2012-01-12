@@ -86,17 +86,17 @@
 <span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">Control</span><span class="p">,</span> <span class="n">AbstractTkControl</span>
 
 
-<span class="k">class</span> <span class="nc">AbstractTkComboBox</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractTkComboBox"><a class="viewcode-back" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.AbstractTkComboBox">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkComboBox</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
 
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractTkComboBox.shell_labels_changed"><a class="viewcode-back" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.AbstractTkComboBox.shell_labels_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
-
+</div>
     <span class="nd">@abstractmethod</span>
-    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractTkComboBox.shell_index_changed"><a class="viewcode-back" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.AbstractTkComboBox.shell_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-
+</div></div>
 <div class="viewcode-block" id="ComboBox"><a class="viewcode-back" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox">[docs]</a><span class="k">class</span> <span class="nc">ComboBox</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A drop-down list from which one item can be selected at a time.</span>
 
@@ -236,8 +236,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 30, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on Jan 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>
 </html>

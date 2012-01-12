@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Enaml Standard Widget Library (derived) &mdash; enaml 0.1alpha documentation</title>
+    <title>Enaml Standard Widget Library &mdash; enaml 0.1alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -51,7 +51,7 @@
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Technical Reference</a> &raquo;</li>
   
-    <li><a href="#">Enaml Standard Widget Library (derived)</a></li>
+    <li><a href="#">Enaml Standard Widget Library</a></li>
   
 
       </ul>
@@ -63,9 +63,10 @@
             </a></p>
 <h3>Page Contents</h3>
 <ul>
-<li><a class="reference internal" href="#">Enaml Standard Widget Library (derived)</a><ul>
-<li><a class="reference internal" href="#fields">Fields</a></li>
-<li><a class="reference internal" href="#radio-group">Radio Group</a></li>
+<li><a class="reference internal" href="#">Enaml Standard Widget Library</a><ul>
+<li><a class="reference internal" href="#module-enaml.stdlib.fields">Fields</a></li>
+<li><a class="reference internal" href="#module-enaml.stdlib.radio_group">Radio Group</a></li>
+<li><a class="reference internal" href="#stacked">Stacked</a></li>
 </ul>
 </li>
 </ul>
@@ -96,174 +97,108 @@
         <div class="bodywrapper">
           <div class="body">
             
-  <div class="section" id="enaml-standard-widget-library-derived">
-<span id="std-library-ref"></span><h1>Enaml Standard Widget Library (derived)<a class="headerlink" href="#enaml-standard-widget-library-derived" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="enaml-standard-widget-library">
+<span id="std-library-ref"></span><h1>Enaml Standard Widget Library<a class="headerlink" href="#enaml-standard-widget-library" title="Permalink to this headline">¶</a></h1>
 <p>The following components are available from the standard library:</p>
-<div class="section" id="fields">
-<h2>Fields<a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h2>
-<div class="admonition-todo admonition" id="index-0">
-<p class="first admonition-title">Todo</p>
-<p class="last">Write abstract representation of standard library components</p>
-</div>
-<dl class="class">
-<dt id="IntField">
-<em class="property">class </em><tt class="descname">IntField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#IntField" title="Permalink to this definition">¶</a></dt>
-<dt>
-<tt class="descname">converter = IntConverter()</tt></dt>
+<div class="section" id="module-enaml.stdlib.fields">
+<span id="fields"></span><span id="std-lib-fields"></span><h2>Fields<a class="headerlink" href="#module-enaml.stdlib.fields" title="Permalink to this headline">¶</a></h2>
+<p>Enaml Standard Library - Fields</p>
+<p>This is a library of Enaml components deriving from the built-in Field.</p>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.ComplexField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ComplexField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.ComplexField" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
-<div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
-#  All rights reserved.
-#------------------------------------------------------------------------------
-from enaml.converters import IntConverter, FloatConverter, LongConverter, ComplexConverter
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.ErrorField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ErrorField</tt><big>(</big><em>Field</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.ErrorField" title="Permalink to this definition">¶</a></dt>
+<dd><p>ErrorField changes background color when the error state is True.</p>
+</dd></dl>
 
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.FloatField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">FloatField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.FloatField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-ErrorField(Field):
-    bg_color &lt;&lt; 'error' if error else 'none'
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.IntField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">IntField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.IntField" title="Permalink to this definition">¶</a></dt>
+<dd><p>IntField - an ErrorField with built-in string-to-Int converter.</p>
+</dd></dl>
 
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.LongField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-IntField(ErrorField):
-    converter = IntConverter()
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.PasswordField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">PasswordField</tt><big>(</big><em>Field</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.PasswordField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
-
-LongField(ErrorField):
-    converter = LongConverter()
-
-
-FloatField(ErrorField):
-    converter = FloatConverter()
-
-
-ComplexField(ErrorField):
-    converter = ComplexConverter()
-
-
-PasswordField(Field):
-    password_mode = 'password'
-
-</pre>
 </div>
-</div>
-<div class="section" id="radio-group">
-<h2>Radio Group<a class="headerlink" href="#radio-group" title="Permalink to this headline">¶</a></h2>
-<div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
-#  All rights reserved.
-#------------------------------------------------------------------------------
-""" A custom RadioGroup component.
-
-A RadioGroup makes it easier to work with a group of radio buttons
+<div class="section" id="module-enaml.stdlib.radio_group">
+<span id="radio-group"></span><span id="std-lib-radio-group"></span><h2>Radio Group<a class="headerlink" href="#module-enaml.stdlib.radio_group" title="Permalink to this headline">¶</a></h2>
+<p>A custom RadioGroup component.</p>
+<p>A RadioGroup makes it easier to work with a group of radio buttons
 since it manages the various toggle behavior internally and yields
-output in the form of selected item, index, and label.
+output in the form of selected item, index, and label.</p>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.radio_group.RadioGroup">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.radio_group.</tt><tt class="descname">RadioGroup</tt><big>(</big><em>Container</em><big>)</big><a class="headerlink" href="#enaml.stdlib.radio_group.RadioGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Container that automatically generates a group of RadioButtons.</p>
+<dl class="docutils">
+<dt>orientation <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>The orientation of the group of radio buttons, either
+&#8216;horizontal&#8217; or &#8216;vertical&#8217;. Defaults to &#8216;horizontal&#8217;.</dd>
+<dt>items <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
+<dd>The list of items which represent the underlying radio 
+buttons.</dd>
+<dt>to_string <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
+<dd>A callable which get mapped across the list of items to 
+generate the list of labels for the buttons.</dd>
+</dl>
+<dl class="docutils">
+<dt>selected <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
+<dd>An attribute which is updated with the item associated
+with the currently selected radio button. Changing this
+value will cause a corresponding change the appropriate
+button.</dd>
+</dl>
+<dl class="docutils">
+<dt>selected_index <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>The integer index of the currently selected radio button. This
+attribute is updated after the &#8216;selected&#8217; attribute is updated.</dd>
+<dt>selected_label <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
+<dd>The label of the currently selected radio button. This attribute
+is updated after the &#8216;selected_index&#8217; attribute is updated.</dd>
+</dl>
+</dd></dl>
 
-"""
-:: python ::
-
-def _toggle_helper(rgroup, idx, item, label, checked):
-    """ A helper function to handle the radio button toggle events
-    until we have statement support in notification expressions.
-
-    """
-    if checked:
-        rgroup.selected = item
-        rgroup.selected_index = idx
-        rgroup.selected_label = label
-
-
-def _make_buttons(radio_group, item_info):
-    """ A helper function to handle created the list of buttons 
-    for the radio group and ensuring the initial selection are
-    managed appropriately.
-
-    """
-    buttons = []
-    for idx, (item, label) in item_info:
-        if radio_group.selected == item:
-            radio_group.selected_index = idx
-            radio_group.selected_label = label
-            is_checked = True
-        else:
-            is_checked = False
-        buttons.append(_MakeButton(radio_group, idx, item, label, is_checked))
-    return buttons
-
-:: end ::
-
-
-defn _MakeButton(rgroup, idx, item, label, is_checked):
-    """ A private defn which creates a properly bound RadioButton.
-
-    """
-    RadioButton:
-        text = label
-        toggled &gt;&gt; _toggle_helper(rgroup, idx, item, label, checked)
-        checked = is_checked
-
-
-RadioGroup(Container):
-    """ A Container that automatically generates a group of RadioButtons.
-
-    Input Attributes
-    ----------------
-    orientation : string
-        The orientation of the group of radio buttons, either
-        'horizontal' or 'vertical'. Defaults to 'horizontal'.
-    
-    items : list
-        The list of items which represent the underlying radio 
-        buttons.
-    
-    to_string : callable
-        A callable which get mapped across the list of items to 
-        generate the list of labels for the buttons.
-    
-    Input/Output Attributes
-    -----------------------
-    selected : object
-        An attribute which is updated with the item associated
-        with the currently selected radio button. Changing this
-        value will cause a corresponding change the appropriate
-        button.
-
-    Output Attributes
-    -----------------
-    selected_index : integer
-        The integer index of the currently selected radio button. This
-        attribute is updated after the 'selected' attribute is updated.
-    
-    selected_label : string
-        The label of the currently selected radio button. This attribute
-        is updated after the 'selected_index' attribute is updated.
-
-    """
-    id: rgroup
-
-    # Input Attributes
-    orientation = 'horizontal'
-    items = []
-    to_string = str
-
-    # Input/Output Attributes
-    selected = None
-
-    # Output Attributes (need to be intialized based on selected)
-    selected_index = items.index(selected) if selected in items else -1
-    selected_label = to_string(selected) if selected is not None else ''
-
-    # Private Attributes
-    _item_info &lt;&lt; list(enumerate(zip(items, map(to_string, items))))
-
-    # Internal Logic
-    constraints &lt;&lt; [
-        hbox(*children) if orientation == 'horizontal' else vbox(*children)
-    ]
-
-    Include:
-        components &lt;&lt; _make_buttons(rgroup, _item_info)
-
-</pre>
 </div>
+<div class="section" id="stacked">
+<span id="std-lib-stacked"></span><h2>Stacked<a class="headerlink" href="#stacked" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><span class="target" id="module-enaml.stdlib.stacked"></span><p>A Stacked widget implementation in pure Enaml.</p>
+<p>A Stacked widget provides a virtual &#8216;stack&#8217; of children, of which only
+one may be visible at a time. The visible child is determined by an
+integer &#8216;index&#8217; attribute of the Stacked widget. Changing this index
+changes which children are visible.</p>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.stacked.Stacked">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.stacked.</tt><tt class="descname">Stacked</tt><big>(</big><em>Container</em><big>)</big><a class="headerlink" href="#enaml.stdlib.stacked.Stacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Container derivative which holds a stack of children.</p>
+<p>A Stacked widget provides a virtual &#8216;stack&#8217; of children, only one
+of which may be visible at a time. The visible child is selected
+via an integer &#8216;index&#8217;.</p>
+<dl class="docutils">
+<dt>index <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
+<dd>The index of the visible child. Changing this index will change
+which child of the stack is visible.</dd>
+</dl>
+</dd></dl>
+
+</div></blockquote>
 </div>
 </div>
 
@@ -291,15 +226,15 @@ RadioGroup(Container):
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Technical Reference</a> &raquo;</li>
   
-    <li><a href="#">Enaml Standard Widget Library (derived)</a></li>
+    <li><a href="#">Enaml Standard Widget Library</a></li>
   
 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 30, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on Jan 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>
 </html>

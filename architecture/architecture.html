@@ -514,7 +514,7 @@ subclasses will need to implement appropriate versions of the <tt class="xref py
 and <tt class="xref py py-meth docutils literal"><span class="pre">eval_expression()</span></tt> methods.</p>
 <p>For the four basic expression bindings, you will most likely need to create
 subclasses of  <a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression" title="enaml.expressions.SimpleExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.SimpleExpression</span></tt></a>,
-<a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.UpdatingExpression" title="enaml.expressions.UpdatingExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.UpdatingExpression</span></tt></a>,
+<tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.UpdatingExpression</span></tt>,
 <a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression" title="enaml.expressions.DelegatingExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.DelegatingExpression</span></tt></a>, and
 <a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.NotifyingExpression" title="enaml.expressions.NotifyingExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.NotifyingExpression</span></tt></a>.
 When implementing overriden methods, all of these subclasses
@@ -532,7 +532,7 @@ or in the Enaml namespace.</p>
 to compute the default value from the model, but ideally you should
 be able to use this class unmodified.</p>
 </dd>
-<dt><a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.UpdatingExpression" title="enaml.expressions.UpdatingExpression"><tt class="xref py py-class docutils literal"><span class="pre">UpdatingExpression</span></tt></a></dt>
+<dt><tt class="xref py py-class docutils literal"><span class="pre">UpdatingExpression</span></tt></dt>
 <dd><p class="first">This class needs to provide a default value for the expression, but
 also needs to analyze the expression for dependencies and react to
 changes in the dependency values on the model objects.</p>
@@ -638,8 +638,8 @@ the rest of the Enaml file.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Dec 30, 2011.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.
+      Last updated on Jan 12, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>
 </html>
