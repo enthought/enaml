@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 from collections import namedtuple
 import weakref
 
-from traits.api import HasTraits, Disallow
+from traits.api import Any, HasTraits, HasStrictTraits, Disallow
 
 from .parsing import byteplay as bp
 
@@ -50,6 +50,58 @@ class TraitAttributeNotifier(object):
         expr = self.expr_ref()
         if expr is not None:
             expr.notify(obj, name, old, new)
+
+
+#------------------------------------------------------------------------------
+# Expression Locals
+#------------------------------------------------------------------------------
+class ExpressionLocals(HasStrictTraits):
+    """ A HasStrictTraits class which acts as a locals mapping object.
+    Each item in the locals is added as an Any trait on the object
+    so that notifiers can be attached to the locals. It provides the
+    special methods __getitem__, __setitem__, __contains__ and __len__
+    so that the object can be used like a dictionary.
+
+    """
+    def __init__(self, **values):
+        """ Initialize an ExpressionLocals instance.
+
+        Paramters
+        ---------
+        **values
+            The default key/value pairs to add to the locals object.
+        
+        """
+        super(ExpressionLocals, self).__init__()
+        for key, value in values.iteritems():
+            self.add_trait(key, Any)
+            setattr(self, key, value)
+
+    def __getitem__(self, name):
+        """ Returns the value for the name or raises a KeyError.
+
+        """
+        try:
+            return getattr(self, name)
+        except AttributeError:
+            raise KeyError(name)
+    
+    def __setitem__(self, name, value):
+        """ Sets the value for the name, creating the entry if required.
+
+        """
+        if name in self.__dict__:
+            setattr(self, name, value)
+        else:
+            self.add_trait(name, Any)
+            setattr(self, name, value)
+    
+    def __contains__(self, name):
+        """ Returns True if there is a value for the given name, False
+        otherwise.
+
+        """
+        return name in self.__dict__
 
 
 #------------------------------------------------------------------------------

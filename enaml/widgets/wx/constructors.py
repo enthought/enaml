@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ...toolkit import Constructor
+from ...constructor import Constructor
 
 
 def importer(module_path, name):

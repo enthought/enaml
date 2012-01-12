@@ -2,19 +2,15 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..toolkit import Constructor
+from ..constructor import Constructor
 
 
-def null_abstract_loader():
-    return None
-
-
-def include_shell_loader():
+def include_shell():
     from .include import Include
     return Include
 
 
 CONSTRUCTORS = (
-    ('Include', Constructor(include_shell_loader, null_abstract_loader)),
+    ('Include', Constructor(include_shell)),
 )
 

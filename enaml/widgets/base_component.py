@@ -66,7 +66,7 @@ class ExpressionTrait(TraitType):
 
         """
         self.swapout(obj, name)
-        val = obj._expressions[name][-1].eval()
+        val = obj._expressions[name].eval()
         if not obj.initialized:
             obj.trait_setq(**{name: val})
         else:    
@@ -128,7 +128,13 @@ class BaseComponent(HasStrictTraits):
     #: attributes on this component. It should not be manipulated by
     #: user. Rather, expressions should be added by calling the 
     #: 'bind_expression' method.
-    _expressions = Dict(Str, List(Instance(AbstractExpression)))
+    _expressions = Dict(Str, Instance(AbstractExpression))
+
+    #: The private list of virtual base classes that were used to 
+    #: instantiate this component from Enaml source code. The 
+    #: EnamlFactory class of the Enaml runtime will directly append
+    #: to this list as necessary.
+    _bases = List
 
     #: The private internal list of subcomponents for this component. 
     #: This list should not be manipulated by the user, and should not
@@ -189,10 +195,7 @@ class BaseComponent(HasStrictTraits):
         evaulated as the default value of the attribute on-demand.
         If the object is already initialized, then the expression
         is evaluated and the attribute set with the value. A strong
-        reference to the expression object is kept internally. Mutliple
-        expressions may be bound to the same attribute, but only the
-        most recently bound expression will be used to compute the
-        default value.
+        reference to the expression object is kept internally.
         
         Parameters
         ----------
@@ -203,14 +206,10 @@ class BaseComponent(HasStrictTraits):
             An implementation of enaml.expressions.AbstractExpression.
         
         """
-        expressions = self._expressions
-        if name not in expressions:
-            expressions[name] = []
-        expressions[name].append(expression)
-        
+        self._expressions[name] = expression
         if not self.initialized:
             curr = self.trait(name)
-            if curr is None or curr is Disallow:
+            if curr is None or curr.trait_type is Disallow:
                 # If no trait exists, then the user is requesting to add 
                 # an attribute to the object. The HasStrictTraits may 
                 # give a Disallow trait for attributes that don't exist.
