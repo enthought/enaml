@@ -43,6 +43,9 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
     """ Qt implementation of the BaseSelectionModel.
 
     """
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
     def create(self, parent):
         """ Create a space for the underlying QItemSelectionModel.
 
@@ -200,26 +203,54 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
         item_widget.setSelectionBehavior(behavior)
 
     #--------------------------------------------------------------------------
-    # Overrides since this is not an actual QWidget.
+    # Parent Class Overrides
     #--------------------------------------------------------------------------
     def disable_updates(self):
+        """ Overridden parent class method. This is a no-op since the 
+        operation does not apply to a QItemSelection.
+
+        """
         pass
 
     def enable_updates(self):
+        """ Overridden parent class method. This is a no-op since the 
+        operation does not apply to a QItemSelection.
+
+        """
         pass
 
     def set_enabled(self, enabled):
+        """ Overridden parent class method. This is a no-op since the 
+        operation does not apply to a QItemSelection.
+
+        """
         pass
 
     def set_visible(self, visible):
+        """ Overridden parent class method. This is a no-op since the 
+        operation does not apply to a QItemSelection.
+
+        """
         pass
 
     def set_bg_color(self, color):
+        """ Overridden parent class method. This is a no-op since the 
+        operation does not apply to a QItemSelection.
+
+        """
         pass
 
     def set_fg_color(self, color):
+        """ Overridden parent class method. This is a no-op since the 
+        operation does not apply to a QItemSelection.
+
+        """
         pass
 
     def set_font(self, font):
+        """ Overridden parent class method. This is a no-op since the 
+        operation does not apply to a QItemSelection.
+
+        """
         pass
 
