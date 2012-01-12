@@ -60,8 +60,8 @@ Main(MainWindow):
                 title = 'Open Recent'
                 Include:
                     components = get_recent_file_actions()
-                Separator:
-                    pass
+                Action:
+                    separator = True
                 PrintAction:
                     text = 'Clear Items'
             PrintAction:
@@ -97,3 +97,4 @@ def main():
     Main().show()
 
 :: end ::
+
