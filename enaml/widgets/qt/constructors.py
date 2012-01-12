@@ -15,19 +15,21 @@ def importer(module_path, name):
         return res
     return _importer
 
-def get_shell_loader(base_path):
+
+def shell_loader(base_path):
     """ Get the shell class loader for the given name.
 
     Parameters
     ----------
     base_path : str
-        The lowercase-with-underscores name of the module containing the shell
-        class.
+        The lowercase-with-underscores name of the module containing the 
+        shell class.
 
     Returns
     -------
     c_name : str
         The name of the shell class.
+
     shell_loader : callable
         The loader function for the shell class.
 
@@ -37,16 +39,18 @@ def get_shell_loader(base_path):
     shell_loader = importer(c_module_path, c_name)
     return c_name, shell_loader
 
-def get_abstract_loader(c_name, base_path):
+
+def abstract_loader(c_name, base_path):
     """ Get the abstract class loader for the given name.
 
     Parameters
     ----------
     c_name : str
         The TitleCase class name of the shell class.
+
     base_path : str
-        The lowercase-with-underscores name of the module containing the shell
-        class.
+        The lowercase-with-underscores name of the module containing the 
+        shell class.
 
     Returns
     -------
@@ -67,25 +71,14 @@ def constructor(base_path):
     in the enaml source code.
 
     """
-    c_name, shell_loader = get_shell_loader(base_path)
-    abstract_loader = get_abstract_loader(c_name, base_path)
-
-    ctor = Constructor(shell_loader, abstract_loader)
-
+    c_name, shell_ldr = shell_loader(base_path)
+    abstract_ldr = abstract_loader(c_name, base_path)
+    ctor = Constructor(shell_ldr, abstract_ldr)
     return c_name, ctor
 
-base_selection_model = constructor('base_selection_model')[1]
-row_selection_model = base_selection_model.clone(get_shell_loader('row_selection_model')[1])
 
-
-def separator_shell():
-    from ..action import Separator
-    return Separator
-
-
-def separator_abstract():
-    from .qt_action import QtAction
-    return QtAction
+base_sel_model = constructor('base_selection_model')[1]
+row_sel_model = base_sel_model.clone(shell_loader('row_selection_model')[1])
 
 
 QT_CONSTRUCTORS = dict((
@@ -118,12 +111,11 @@ QT_CONSTRUCTORS = dict((
     constructor('tab'),
     constructor('splitter'),
     constructor('float_slider'),
-    ('BaseSelectionModel', base_selection_model),
-    ('RowSelectionModel', row_selection_model),
+    ('BaseSelectionModel', base_sel_model),
+    ('RowSelectionModel', row_sel_model),
     constructor('menu_bar'),
     constructor('menu'),
     constructor('main_window'),
     constructor('action'),
-    ('Separator', Constructor(separator_shell, separator_abstract))
 ))
 
