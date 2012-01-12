@@ -375,7 +375,7 @@ class Component(BaseComponent):
             with guard(self, 'set_visible'):
                 self.visible = visible
         
-        # Only set the visibility of the menu only if it is fully 
+        # Only set the visibility of the component if it is fully 
         # initialized or being set to False. This prevents situations 
         # where a widget is shown prematurely in some toolkit backends
         # which then causes the entire window hierarchy to be shown
