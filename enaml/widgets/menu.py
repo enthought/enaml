@@ -52,8 +52,8 @@ class AbstractTkMenu(AbstractTkComponent):
 
 
 class Menu(Component):
-    """ A declarative Enaml Component which represents a menu
-    in a menu bar.
+    """ A declarative Enaml Component which represents a menu in a 
+    menu bar.
 
     """
     #: The title of the menu as displayed by a MenuBar

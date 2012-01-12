@@ -12,7 +12,7 @@ from .menu import Menu
 
 
 class AbstractTkMenuBar(AbstractTkComponent):
-    """ The abstract toolkit interface for a MenuBar
+    """ The abstract toolkit interface for a MenuBar.
 
     """
     @abstractmethod
