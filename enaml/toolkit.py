@@ -4,78 +4,6 @@
 #------------------------------------------------------------------------------
 import os
 
-from traits.api import HasStrictTraits, Callable, WeakRef
-
-
-#------------------------------------------------------------------------------
-# Constructor
-#------------------------------------------------------------------------------
-class Constructor(HasStrictTraits):
-    """ The constructor class to use to populate the toolkit.
-
-    """
-    #: A callable object which returns the shell class to use
-    #: for the widget.
-    shell_loader = Callable
-
-    #: A callable object which returns the abstract implementation class
-    #: to use for the widget.
-    abstract_loader = Callable
-
-    #: A reference (stored weakly) to the toolkit in which this
-    #: constructor is contained. It is used to set the toolkit
-    #: attribute on the components as they are created.
-    toolkit = WeakRef('Toolkit')
-
-    def __init__(self, shell_loader, abstract_loader):
-        """ Initialize a constructor instance.
-
-        Parameters
-        ----------
-        shell_loader : Callable
-            A callable object which returns the shell class to use
-            for the widget.
-
-        abstract_loader : Callable
-            A callable object which returns the abstract implementation
-            class to use for the widget.
-
-        """
-        super(Constructor, self).__init__()
-        self.shell_loader = shell_loader
-        self.abstract_loader = abstract_loader
-
-    def __call__(self, *args, **kwargs):
-        """ Exposes the __enaml_call__ routine convienently to Python
-        code.
-
-        """
-        return self.__enaml_call__(*args, **kwargs)
-
-    def __enaml_call__(self, *args, **kwargs):
-        """ Calls the loaders and assembles and returns the component.
-
-        """
-        shell_cls = self.shell_loader()
-        abstract_cls = self.abstract_loader()
-        shell_obj = shell_cls()
-        abstract_obj = abstract_cls()
-        shell_obj.abstract_obj = abstract_obj
-        shell_obj.toolkit = self.toolkit
-        abstract_obj.shell_obj = shell_obj
-        return shell_obj
-
-    def clone(self, shell_loader=None, abstract_loader=None):
-        """ Creates a clone of this constructor, optionally changing
-        out one or both of the loaders.
-
-        """
-        if shell_loader is None:
-            shell_loader = self.shell_loader
-        if abstract_loader is None:
-            abstract_loader = self.abstract_loader
-        return Constructor(shell_loader, abstract_loader)
-
 
 #------------------------------------------------------------------------------
 # Toolkit
@@ -117,59 +45,6 @@ class Toolkit(dict):
             tk = cls.__default__ = default_toolkit()
         return tk
 
-    def __init__(self, *args, **kwargs):
-        """ Initialize a toolkit object using the same constructor
-        signature as dict(). This overridden constructor ensures that
-        the style types are properly assigned to the constructors.
-
-        """
-        super(Toolkit, self).__init__(*args, **kwargs)
-        for key, value in self.iteritems():
-            self[key] = value
-
-    def __setitem__(self, key, value):
-        """ Overridden dict.__setitem__ to apply the toolkit reference
-        to the item.
-
-        """
-        if isinstance(value, Constructor):
-            # Clone the constructor so we don't risk the same constructor
-            # being used by more than one toolkit and then having the
-            # toolkit refs become out of sync.
-            value = value.clone()
-            value.toolkit = self
-        super(Toolkit, self).__setitem__(key, value)
-
-    def update(self, other=None, **kwargs):
-        """ Overridden from dict.update to apply style types to the
-        constructors.
-
-        """
-        if other is None:
-           pass
-        elif hasattr(other, 'iteritems'):
-            for k, v in other.iteritems():
-                self[k] = v
-        elif hasattr(other, 'keys'):
-            for k in other.keys():
-                self[k] = other[k]
-        else:
-            for k, v in other:
-                self[k] = v
-        if kwargs:
-            self.update(kwargs)
-
-    def setdefault(self, key, default=None):
-        """ Overridden from dict.setdefault to apply style types to the
-        constructors.
-
-        """
-        try:
-            return self[key]
-        except KeyError:
-            self[key] = default
-        return default
-
     def __enter__(self):
         """ A context manager method that pushes this toolkit onto
         the active toolkit stack.
@@ -183,20 +58,6 @@ class Toolkit(dict):
 
         """
         self.__stack__.pop()
-
-    def _get_style_sheet(self):
-        """ Returns the default style sheet instance for this toolkit.
-
-        """
-        return self['__style_sheet__']
-
-    def _set_style_sheet(self, val):
-        """ Sets the default style sheet instance for this toolkit.
-
-        """
-        self['__style_sheet__'] = val
-
-    style_sheet = property(_get_style_sheet, _set_style_sheet)
 
     def _get_create_app(self):
         """ Returns the app creation function for this toolkit.
@@ -312,7 +173,6 @@ def qt_toolkit():
     from .operators import OPERATORS
     from .widgets.qt.constructors import QT_CONSTRUCTORS
     from .util.guisupport import get_app_qt4, start_event_loop_qt4, process_events_qt4
-    from .widgets.qt.styling import QT_STYLE_SHEET
     from .widgets.qt.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
     from .widgets.constructors import CONSTRUCTORS
@@ -325,7 +185,6 @@ def qt_toolkit():
     toolkit.create_app = get_app_qt4
     toolkit.start_app = start_event_loop_qt4
     toolkit.process_events = process_events_qt4
-    toolkit.style_sheet = QT_STYLE_SHEET
     toolkit.invoke_later = invoke_later
     toolkit.invoke_timer = invoke_timer
     toolkit.control_exception_handler = None
@@ -343,7 +202,6 @@ def wx_toolkit():
     from .operators import OPERATORS
     from .widgets.wx.constructors import WX_CONSTRUCTORS
     from .util.guisupport import get_app_wx, start_event_loop_wx, process_events_wx
-    from .widgets.wx.styling import WX_STYLE_SHEET
     from .widgets.wx.utils import invoke_later, invoke_timer
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
     from .widgets.constructors import CONSTRUCTORS
@@ -356,7 +214,6 @@ def wx_toolkit():
     toolkit.create_app = get_app_wx
     toolkit.start_app = start_event_loop_wx
     toolkit.process_events = process_events_wx
-    toolkit.style_sheet = WX_STYLE_SHEET
     toolkit.invoke_later = invoke_later
     toolkit.invoke_timer = invoke_timer
     toolkit.control_exception_handler = None

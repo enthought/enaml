@@ -113,20 +113,11 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         """
         self._set_vert_policy(policy)
 
-    def shell_children_changed(self, children):
-        """ The change handler for the children of the shell object.
+    def shell_layout_children_changed(self, children):
+        """ The change handler for the 'layout_children' attribute of 
+        the shell object.
 
         """
-        self._update_children()
-
-    def shell_children_items_changed(self, event):
-        """ The change handler for the children items event of the
-        shell object.
-
-        """
-        # XXX this won't work because traits does not properly hook
-        # up items event listeners via calls to .add_trait_listener
-        # which is how this object has been hooked up.
         self._update_children()
     
     def size_hint(self):
@@ -174,11 +165,13 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         # when its added or removed from a component dynamically.
         # For now, we just assume that there is one child, and
         # that it never changes.
-        shell = self.shell_obj
-        if len(shell.children) == 0:
+        #
+        # XXX is the above comment still True? Does Include solve this?
+        children = self.shell_obj.layout_children
+        if len(children) == 0:
             pass
         else:
-            sizer = ScrollSizer(shell.children[0])
+            sizer = ScrollSizer(children[0])
             self.widget.SetSizer(sizer)
             self.widget.Refresh()
 

@@ -60,8 +60,9 @@ class QtTabbed(QtContainer, AbstractTkTabbed):
         self.set_index(index)
         self.shell_obj.size_hint_updated = True
     
-    def shell_children_changed(self, index):
-        """ Update the widget with new children.
+    def shell_layout_children_changed(self, children):
+        """ The change handler for the 'layout_children' attribute of 
+        the shell object.
 
         """
         self.update_children()
@@ -83,7 +84,7 @@ class QtTabbed(QtContainer, AbstractTkTabbed):
         """
         widget = self.widget
         shell = self.shell_obj
-        curr_shell = shell.children[shell.index]
+        curr_shell = shell.layout_children[shell.index]
         size_hint = curr_shell.size_hint()
         
         if size_hint == (-1, -1):
@@ -150,7 +151,7 @@ class QtTabbed(QtContainer, AbstractTkTabbed):
         widget = self.widget
         selected_index = shell.index
         widget.clear()
-        for idx, child in enumerate(shell.children):
+        for idx, child in enumerate(shell.layout_children):
             if idx == selected_index:
                 child.visible = True
             else:

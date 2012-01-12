@@ -127,6 +127,59 @@ Validity = Enum(('invalid', 'indermediate', 'acceptable'))
 #: ================ ======================================================
 PolicyEnum = Enum(('ignore', 'weak', 'strong', 'required'))
 
+#: The selection mode for item views.
+#:
+#: ================ ======================================================
+#: value            description
+#: ================ ======================================================
+#: ``extended``     Same as contiguous except that the Cmd key can be
+#:                  used to start multiple non-contiguous selection
+#:                  regions.
+#: ``single``       A single item may be selection.
+#: ``contiguous``   A contiguous range of items may be selected using the
+#:                  Shift key.
+#: ``multi``        Clicking on an item toggles its selection.
+#: ``none``         No selection allowed.
+#: ================ ======================================================
+SelectionMode = Enum(('extended', 'contiguous', 'single', 'multi', 'none'))
+
+#: What kind of items may be selected in item views.
+#:
+#: ================ ======================================================
+#: value            description
+#: ================ ======================================================
+#: ``items``        Individual items, like table cells.
+#: ``rows``         Only whole rows, not individual table cells.
+#: ``columns``      Only whole columns, not individual table cells.
+#: ================ ======================================================
+SelectionBehavior = Enum(('items', 'rows', 'columns'))
+
+
+#: Exactly what actions to do when programmatically setting the selection in
+#: item views.
+#:
+#: ==================== ======================================================
+#: value                description
+#: ==================== ======================================================
+#: ``no_update``        Make no selection.
+#: ``clear``            Clear the complete selection.
+#: ``select``           Select the specified indices.
+#: ``deselect``         Deselect the specified indices.
+#: ``toggle``           Toggle the selection of the specified indices.
+#: ``current``          Update the "current" index.
+#: ``rows``             Expand the selection to span rows.
+#: ``columns``          Expand the selection to span columns.
+#: ``select_current``   Select the given selection and update the "current"
+#:                      index.
+#: ``toggle_current``   Toggle the given selection and update the "current"
+#:                      index.
+#: ``clear_select``     Clear the whole selection and select the given
+#:                      indices.
+#: ==================== ======================================================
+SelectionCommand = Enum(('clear_select', 'no_update', 'clear', 'select',
+    'deselect', 'toggle', 'current', 'rows', 'columns', 'select_current',
+    'toggle_current'))
+
 
 class Buttons(enum.Enum):
     """ Predefined text labels for buttons.

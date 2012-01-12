@@ -50,7 +50,7 @@ class EnamlImporter(object):
         from .parsing import parser
         with open(enaml_path) as f:
             enaml_source = f.read()
-        return parser.parse(enaml_source)
+        return parser.parse(enaml_source, filename=enaml_path)
 
     @classmethod
     def find_module(cls, fullname, path=None):

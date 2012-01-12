@@ -146,9 +146,15 @@ def p_enaml_module_item4(p):
 def p_enaml_raw_python(p):
     ''' raw_python : PY_BLOCK_START NEWLINE PY_BLOCK PY_BLOCK_END NEWLINE '''
     # XXX update me to handle Python code without the start/end tags
-    py_txt = p[3].strip()
-    py_ast = ast.parse(py_txt, mode='exec')
-    py_code = compile(py_ast, 'Enaml', mode='exec')
+    # Adding leading newlines before parsing so that any syntax errors
+    # during compilation are reported with proper line numbers
+    py_txt = p[3]
+    compile_txt = '\n' * p.lineno(1) + py_txt
+    try:
+        py_ast = ast.parse(compile_txt, p.lexer.filename, mode='exec')
+        py_code = compile(py_ast, p.lexer.filename, mode='exec')
+    except SyntaxError as e:
+        raise_syntax_error('invalid syntax', e.filename, e.lineno)
     p[0] = enaml_ast.Python(py_txt, py_ast, py_code, p.lineno(1))
 
 
@@ -159,7 +165,7 @@ def p_enaml_import(p):
     ''' enaml_import : import_stmt '''
     imprt = p[1]
     mod = ast.Module(body=[imprt])
-    mod_code = compile(mod, 'Enaml', mode='exec')
+    mod_code = compile(mod, p.lexer.filename, mode='exec')
     p[0] = enaml_ast.Import('<untracked>', mod, mod_code, imprt.lineno)
 
 
@@ -171,11 +177,11 @@ def p_declaration(p):
     start_pos = p.lexpos(2) + 1
     end_pos = p.lexpos(4)
     lineno = p.lineno(1)
-    py_txt = p.lexer.lexer.lexdata[start_pos:end_pos].strip()
+    py_txt = p.lexer.lexer.lexdata[start_pos:end_pos]
     doc, idn, items = p[6]
     base = ast.Expression(body=p[3])
     set_locations(base, lineno, 1)
-    code = compile(base, 'Enaml', mode='eval')
+    code = compile(base, p.lexer.filename, mode='eval')
     base_node = enaml_ast.Python(py_txt, base, code, lineno)
     p[0] = enaml_ast.Declaration(p[1], base_node, idn, doc, items, lineno)
 
@@ -394,7 +400,7 @@ def p_defn_keyword_parameter(p):
     lineno = p.lineno(1)
     expr = ast.Expression(body=p[3])
     set_locations(expr, lineno, 1)
-    code = compile(expr, 'Enaml', mode='eval')
+    code = compile(expr, p.lexer.filename, mode='eval')
     expr_node = enaml_ast.Python('<untracked>', expr, code, lineno)
     p[0] = (p[1], expr_node)
 
@@ -449,11 +455,11 @@ def p_binding(p):
     # XXX extend me to support code blocks
     start_pos, lineno, op = p[1]
     end_pos = p.lexpos(3)
-    py_text = p.lexer.lexer.lexdata[start_pos:end_pos].strip()
+    py_text = p.lexer.lexer.lexdata[start_pos:end_pos]
     operator = translate_operator(op)
     expr = ast.Expression(body=p[2])
     set_locations(expr, lineno, 1)
-    code = compile(expr, 'Enaml', mode='eval')
+    code = compile(expr, p.lexer.filename, mode='eval')
     expr_node = enaml_ast.Python(py_text, expr, code, lineno)
     p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
 
@@ -2044,15 +2050,15 @@ def p_fplist_list2(p):
 
  
 def p_error(t):
-    raise_syntax_error('invalid syntax.', t)
+    fn = t.lexer._py_lexer().filename
+    raise_syntax_error('invalid syntax.', fn, t.lineno)
 
 
 _parser = yacc.yacc(debug=False, tabmodule='enaml_parsetab', 
                     outputdir=_enaml_dir, errorlog=yacc.NullLogger())
 
 
-def parse(tml):
-    # Need to create a new lexer each time, or line numbers get screwy.
-    _lexer = EnamlLexer()
-    return _parser.parse(tml, lexer=_lexer)
+def parse(enaml_source, filename='Enaml'):
+    _lexer = EnamlLexer(filename)
+    return _parser.parse(enaml_source, lexer=_lexer)
 

@@ -80,14 +80,9 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
         """
         self.set_live_drag(live_drag)
 
-    def shell_children_changed(self, children):
-        """ Update the widget with new children.
-
-        """
-        self.update_children()
-
-    def shell_children_items_changed(self, event):
-        """ Update the widget with new children.
+    def shell_layout_children_changed(self, children):
+        """ The change handler for the 'layout_children' attribute of 
+        the shell object.
 
         """
         self.update_children()
@@ -122,7 +117,7 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
         for widget_child in widget._windows:
             widget.DetachWindow(widget_child)
 
-        for child in shell.children:
+        for child in shell.layout_children:
             child_widget = child.toolkit_widget
             child_widget.Reparent(widget)
             widget.AppendWindow(child_widget)

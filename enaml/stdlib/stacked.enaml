@@ -4,21 +4,21 @@
 #------------------------------------------------------------------------------
 """ A Stacked widget implementation in pure Enaml.
 
-A Stacked widget provides a virtual 'stack' of children, of which only
-one may be visible at a time. The visible child is determined by an
+A Stacked widget provides a virtual 'stack' of layout children, of which 
+only one may be visible at a time. The visible child is determined by an
 integer 'index' attribute of the Stacked widget. Changing this index
-changes which children are visible.
+changes which child is visible.
 
 """
 :: python ::
 
 def _update_stacked_vis(stacked):
     """ A Stacked widget helper function which toggles the visibility
-    of the appropriate children.
+    of the appropriate child.
 
     """
     stack_idx = stacked.index
-    for idx, child in enumerate(stacked.children):
+    for idx, child in enumerate(stacked.layout_children):
         if idx == stack_idx:
             child.set_visible(True)
         else:
