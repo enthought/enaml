@@ -83,13 +83,13 @@ class QtMenu(QtComponent, AbstractTkMenu):
         # been destroyed. It's sufficient to just make a pass over the 
         # contents and add them to the menu. Qt is smart enough to do the
         # right thing here.
-        contents = self.shell_obj.contents
-        for item in contents:
+        widget = self.widget
+        for item in self.shell_obj.contents:
             child_widget = item.toolkit_widget
             if isinstance(child_widget, QtGui.QMenu):
-                self.widget.addMenu(child_widget)
+                widget.addMenu(child_widget)
             else:
-                self.widget.addAction(child_widget)
+                widget.addAction(child_widget)
 
     def set_title(self, title):
         """ Sets the title of the QMenu object.
