@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import TraitError
-
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -11,7 +9,6 @@ class SelectionTestHelper(object):
     """ Helper mixin for selection model test cases.
 
     """
-
     @property
     def widget(self):
         """ Get the current toolkit "widget", as it may change.
@@ -26,8 +23,8 @@ class SelectionTestHelper(object):
         return self.item_model.create_index(row, column, self.item_model)
 
     def to_enaml_selection(self, pysel):
-        """ Convert a selection list given with (row, col) tuples to a selection
-        list with ModexIndexes.
+        """ Convert a selection list given with (row, col) tuples to a 
+        selection list with ModexIndexes.
 
         """
         esel = []
@@ -36,13 +33,14 @@ class SelectionTestHelper(object):
         return esel
 
     def from_enaml_selection(self, esel):
-        """ Convert an Enaml selection list with ModelIndexes to one given with
-        (row, col) tuples for comparison purposes.
+        """ Convert an Enaml selection list with ModelIndexes to one 
+        given with (row, col) tuples for comparison purposes.
 
         """
         pysel = []
         for topleft, botright in esel:
-            pysel.append(((topleft.row, topleft.column), (botright.row, botright.column)))
+            pysel.append(((topleft.row, topleft.column), 
+                          (botright.row, botright.column)))
         return pysel
 
     def set_py_selection(self, pysel, command):
@@ -61,27 +59,24 @@ class SelectionTestHelper(object):
     #--------------------------------------------------------------------------
     # Abstract methods
     #--------------------------------------------------------------------------
-    
     @required_method
     def get_tk_selection(self, widget):
         """ Return the widget's selection as a list of (topleft, botright)
         ranges with (row, col) indexes.
 
         """
+        pass
 
 
 class TestBaseSelectionModel(EnamlTestCase, SelectionTestHelper):
     """ Logic for testing selection models.
 
     """
-
     def setUp(self):
         """ Set up tests for Enaml's BaseSelectionModel.
 
         """
-
         enaml_source = """
-
 :: python ::
 
 from enaml.item_models.standard_models import TableModel
@@ -208,19 +203,15 @@ defn MainView(events):
         self.assertEqual(self.get_py_selection(), remainder)
 
 
-
 class TestRowSelectionModel(EnamlTestCase, SelectionTestHelper):
     """ Logic for testing RowSelectionModel
 
     """
-
     def setUp(self):
         """ Set up tests for Enaml's RowSelectionModel
 
         """
-
         enaml_source = """
-
 :: python ::
 
 from enaml.item_models.standard_models import TableModel
@@ -239,7 +230,6 @@ defn MainView(events):
         TableView:
             name = 'table_view'
             item_model = the_item_model
-            selection_behavior = 'rows'
             RowSelectionModel:
                 name = 'selection_model'
 """

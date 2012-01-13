@@ -195,6 +195,48 @@ class DeclarationCompiler(_NodeVisitor):
 
         name_stack.pop()
 
+    def visit_AttributeDeclaration(self, node):
+        """ Creates the bytecode ops for an attribute declaration. This
+        visitor handles adding a new attribute to a component.
+
+        """
+        bp = byteplay
+        ops = self.ops
+        name_stack = self.name_stack
+
+        # Load the method that's going to be called and the
+        # name of the attribute being declared.
+        ops.extend([
+            (bp.LOAD_FAST, name_stack[-1]),
+            (bp.LOAD_ATTR, 'add_attribute'),
+            (bp.LOAD_CONST, node.name),
+        ])
+
+        # Generate the ops the load the type (if one was given),
+        # and the call the add_attribute method
+        type_name = node.type_name
+        if type_name is not None:
+            op_code = compile(node.type_name, 'Enaml', mode='eval')
+            ops.extend([
+                (bp.LOAD_CONST, eval),
+                (bp.LOAD_CONST, op_code),
+                (bp.LOAD_FAST, 'toolkit'),
+                (bp.LOAD_FAST, 'f_globals'),
+                (bp.CALL_FUNCTION, 0x0003),
+                (bp.CALL_FUNCTION, 0x0002),
+                (bp.POP_TOP, None),
+            ])
+        else:
+            ops.extend([
+                (bp.CALL_FUNCTION, 0x0001),
+                (bp.POP_TOP, None),
+            ])
+
+        # Visit the default attribute binding if one exists.
+        default = node.default
+        if default is not None:
+            self.visit(node.default)
+
     def visit_AttributeBinding(self, node):
         """ Creates the bytecode ops for an attribute binding. This
         visitor handles loading and calling the appropriate operator.

@@ -6,7 +6,7 @@ from enaml.stdlib.fields import IntField
 
 
 PersonForm(Form):
-    person = None
+    attr person
     Label:
         text = 'First Name'
     Field:

@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import TraitError
+
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -28,18 +29,16 @@ class TestGroupBox(EnamlTestCase):
     <method>(component, widget).
 
     """
-
     def setUp(self):
         """ Set up label tests.
 
         """
-
         enaml_source = """
 defn MainView():
     Window:
         name = 'win'
-        contrains = [horizontal(left, gb, right), vertical(top, gb, bottom),
-                    vertical(label1, label2), align_left(label1, label2)]
+        constraints = [horizontal(left, gb, right), vertical(top, gb, bottom),
+                       vertical(label1, label2), align_left(label1, label2)]
         GroupBox:
             id: gb
             name = 'gb'
@@ -130,3 +129,4 @@ defn MainView():
 
         """
         pass
+
