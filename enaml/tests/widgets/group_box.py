@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import TraitError
+
 from .enaml_test_case import EnamlTestCase, required_method
 
 
@@ -28,12 +29,10 @@ class TestGroupBox(EnamlTestCase):
     <method>(component, widget).
 
     """
-
     def setUp(self):
         """ Set up label tests.
 
         """
-
         enaml_source = """
 defn MainView():
     Window:
@@ -130,3 +129,4 @@ defn MainView():
 
         """
         pass
+        
