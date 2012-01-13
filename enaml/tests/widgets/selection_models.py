@@ -230,7 +230,6 @@ defn MainView(events):
         TableView:
             name = 'table_view'
             item_model = the_item_model
-            selection_behavior = 'rows'
             RowSelectionModel:
                 name = 'selection_model'
 """
