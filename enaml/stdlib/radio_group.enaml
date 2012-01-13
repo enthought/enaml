@@ -11,6 +11,9 @@ output in the form of selected item, index, and label.
 """
 :: python ::
 
+from collections import Sequence, Iterable, Callable
+
+
 def _radio_buttons(rgroup, to_string, items):
     """ A Python helper function to generate the underlying radio
     buttons.
@@ -84,18 +87,18 @@ RadioGroup(Container):
         The orientation of the group of radio buttons, either
         'horizontal' or 'vertical'. Defaults to 'horizontal'.
     
-    items : list
-        The list of items which represent the underlying radio 
-        buttons. Defaults to the empty list.
+    items : Sequence
+        The sequence of items which represent the underlying radio 
+        buttons. Defaults to an empty list.
     
-    to_string : callable
+    to_string : Callable
         A callable which get mapped across the list of items to 
         generate the list of labels for the buttons. Defaults
         to str.
     
-    disabled_buttons : list
-        A list of integers which indicate which radio buttons should 
-        be disabled. Defaults to an empty list.
+    disabled_buttons : Iterable
+        An iterable of integers which indicate which radio buttons 
+        should be disabled. Defaults to an empty list.
 
     Synchronized Attributes
     -----------------------
@@ -121,19 +124,19 @@ RadioGroup(Container):
     id: rgroup
 
     # Input Attributes
-    orientation = 'horizontal'
-    items = []
-    to_string = str
-    disabled_buttons = []
+    attr orientation: str = 'horizontal'
+    attr items: Sequence = []
+    attr to_string: Callable = str
+    attr disabled_buttons: Iterable = []
     disabled_buttons >> _disable_buttons(layout_children, args.new)
 
     # Synchronized Attributes
-    selected_index = -1
+    attr selected_index: int = -1
     selected_index >> _sync_button(layout_children, args.new)
 
     # Output Attributes
-    selected_item << items[selected_index] if (0 <= selected_index < len(items)) else None
-    selected_label << to_string(selected_item) if selected_item is not None else ''
+    attr selected_item << items[selected_index] if (0 <= selected_index < len(items)) else None
+    attr selected_label << to_string(selected_item) if selected_item is not None else ''
 
     # Internal Logic
     constraints << [
