@@ -127,6 +127,32 @@ class Instantiation(ASTNode):
         self.body = body
 
 
+class AttributeDeclaration(ASTNode):
+    """ An AST node which represents an attribute declaration.
+
+    Attributes
+    ----------
+    name : str
+        The name of the attribute being declared.
+
+    type_name : str or None
+        The name of the type of the attribute. If None, the attribute
+        can be of any type.
+
+    default : AttributeBinding or None
+        The default binding of the attribute, or None if no default 
+        is provided.
+
+    """
+    __slots__ = ('name', 'type_name', 'default')
+
+    def __init__(self, name, type_name, default, lineno):
+        super(AttributeDeclaration, self).__init__(lineno)
+        self.name = name
+        self.type_name = type_name
+        self.default = default
+
+
 class AttributeBinding(ASTNode):
     """ An AST node which represents an expression attribute binding.
 

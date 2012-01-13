@@ -18,7 +18,7 @@ objective function is unbounded.
 
 """
 LabeledField(Container):
-    label_text = 'Label'
+    attr label_text: str = 'Label'
     constraints = [
         hbox(label, field),
         align('v_center', label, field)

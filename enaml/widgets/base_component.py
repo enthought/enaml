@@ -6,7 +6,7 @@ from collections import deque
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
-    cached_property, Event, Dict, TraitType, Any, Disallow,
+    cached_property, Event, Dict, TraitType, Disallow, Undefined,
 )
 
 from ..expressions import AbstractExpression
@@ -72,7 +72,7 @@ class ExpressionTrait(TraitType):
         else:    
             setattr(obj, name, val)
         return getattr(obj, name, val)
-    
+
     def set(self, obj, name, val):
         """ Handle the setting of an initial value for the expression
         trait. This method first restores the old trait, then sets
@@ -86,6 +86,120 @@ class ExpressionTrait(TraitType):
             obj.trait_setq(**{name: val})
         else:
             setattr(obj, name, val)
+
+
+#------------------------------------------------------------------------------
+# UserAttribute
+#------------------------------------------------------------------------------
+class UninitializedAttributeError(Exception):
+    """ A custom Exception used by UserAttribute to signal the access 
+    of an uninitialized attribute.
+
+    """
+    # XXX - We can't inherit from AttributeError because the local 
+    # scope object used by expressions captures an AttributeError
+    # and converts it into in a KeyError in order to implement
+    # dynamic attribute scoping. 
+    pass
+
+
+class UserAttribute(TraitType):
+    """ A custom trait type that is used to implement optional attribute
+    typing when adding a new user attribute to an Enaml component.
+
+    """
+    @staticmethod
+    def is_valid_attr_type(obj):
+        """ A static method which returns whether or not the given object
+        can be used as the type in an isinstance(..., type) expression.
+
+        Paramters
+        ---------
+        obj : object
+            The object which should behave like a type for the purpose
+            of an isinstance check. This means the object is type
+            or defines an '__instancecheck__' method.
+
+        Returns
+        -------
+        result : bool
+            True if the object is a type or defines a method named
+            '__instancecheck__', False otherwise.
+
+        """
+        return isinstance(obj, type) or hasattr(obj, '__instancecheck__')
+
+    def __init__(self, base_type):
+        """ Initialize a UserAttribute instance.
+
+        Parameters
+        ----------
+        base_type : type-like object
+            An object that behaves like a type for the purposes of a
+            call to isinstance. The staticmethod 'is_valid_attr_type'
+            defined on this class can be used to test a type before
+            creating an instance of this class. It is assumed that the
+            given type passes that test.
+
+        """
+        super(UserAttribute, self).__init__()
+        self.base_type = base_type
+
+    def get(self, obj, name):
+        """ The trait getter method. Returns the value from the object's
+        dict, or raises an unitialized error if the value doesn't exist.
+
+        """
+        dct = obj.__dict__
+        if name not in dct:
+            self.uninitialized_error(obj, name)
+        return dct[name]
+
+    def set(self, obj, name, value):
+        """ The trait setter method. Sets the value in the object's 
+        dict if it is valid, and emits a change notification if the
+        value has changed. The first time the value is set the change
+        notification will carry the traits Undefined object as the old
+        value.
+
+        """
+        value = self.validate(obj, name, value)
+
+        dct = obj.__dict__
+        if name not in dct:
+            old = Undefined
+        else:
+            old = dct[name]
+
+        dct[name] = value
+        
+        if old != value:
+            obj.trait_property_changed(name, old, value)
+
+    def uninitialized_error(self, obj, name):
+        """ A method which raises an UninitializedAttributeError for
+        the given object and attribute name
+
+        """
+        msg = "Cannot access the uninitialized '%s' attribute of the %s object"
+        raise UninitializedAttributeError(msg % (name, obj))
+
+    def full_info(self, obj, name, value):
+        """ Overridden parent class method to compute an appropriate info
+        string for use in error messages.
+
+        """
+        return "an instance of %s" % self.base_type
+
+    def validate(self, obj, name, value):
+        """ The validation handler for a UserAttribute instance. It 
+        performs a simple isinstance(...) check using the attribute
+        type provided to the constructor.
+
+        """
+        if not isinstance(value, self.base_type):
+            self.error(obj, name, value)
+        return value
 
 
 #------------------------------------------------------------------------------
@@ -149,6 +263,14 @@ class BaseComponent(HasStrictTraits):
     #: typically interact with this event.
     _actual_updated = Event
 
+    #: The HasTraits class defines a class attribute 'set' which is
+    #: a deprecated alias for the 'trait_set' method. The problem
+    #: is that having that as an attribute interferes with the 
+    #: ability of Enaml expressions to resolve the builtin 'set',
+    #: since the dynamic attribute scoping takes precedence over
+    #: builtins. This resets those ill-effects.
+    set = Disallow
+
     #--------------------------------------------------------------------------
     # Children Computation
     #--------------------------------------------------------------------------
@@ -185,8 +307,55 @@ class BaseComponent(HasStrictTraits):
         self._subcomponents.append(component)
 
     #--------------------------------------------------------------------------
-    # Attribute Binding 
+    # Attribute Manipulation
     #--------------------------------------------------------------------------
+    def add_attribute(self, name, attr_type=object):
+        """ Adds an attribute to the base component with the given name
+        and ensures that values assigned to this attribute are of a
+        given type.
+
+        If the object already has an attribute with the given name,
+        an exception will be raised.
+
+        Parameters
+        ----------
+        name : string
+            The name of the attribute to add.
+        
+        attr_type : type-like object, optional
+            An object that behaves like a type for the purposes of a
+            call to isinstance. Defaults to object.
+
+        """
+        # Make sure we were given a type that can be used for validation
+        if not UserAttribute.is_valid_attr_type(attr_type):
+           msg = '%s is not a valid type for attribute declaration %s'
+           raise TypeError(msg % (attr_type, name))
+        
+        # Check to see if a trait is already defined. We don't use
+        # hasattr here since that might prematurely trigger a trait
+        # intialization. We allow overriding traits of type Disallow
+        # and UserAttribute. The first is a consequence of using
+        # HasStrictTraits, where non-existing attribute are manifested
+        # as a Disallow trait. The second allows a custom derived
+        # component to specialize the attribute types of the component
+        # from which it is deriving.
+        curr = self.trait(name)
+        if curr is not None:
+            ttype = curr.trait_type
+            if ttype is not Disallow and not isinstance(ttype, UserAttribute):
+                msg = ("Cannot add '%s' attribute. The '%s' attribute on "
+                       "the %s object already exists.")
+                raise TypeError(msg % (name, name, self))
+            
+        # At this point we know there are non-overridable traits defined 
+        # for the object, but it is possible that there are methods or 
+        # other non-trait attributes using the given name. We could 
+        # potentially check for those, but its probably more useful to 
+        # allow for overriding such things from Enaml, so we just go 
+        # ahead and add the user attribute.
+        self.add_trait(name, UserAttribute(attr_type))
+
     def bind_expression(self, name, expression):
         """ Binds the given expression to the attribute 'name'. If
         the attribute does not exist, one is created.
@@ -194,8 +363,8 @@ class BaseComponent(HasStrictTraits):
         If the object is not yet initialized, the expression will be 
         evaulated as the default value of the attribute on-demand.
         If the object is already initialized, then the expression
-        is evaluated and the attribute set with the value. A strong
-        reference to the expression object is kept internally.
+        is evaluated immediately and the attribute set with the value. 
+        A strong reference to the expression object is kept internally.
         
         Parameters
         ----------
@@ -206,22 +375,33 @@ class BaseComponent(HasStrictTraits):
             An implementation of enaml.expressions.AbstractExpression.
         
         """
-        self._expressions[name] = expression
+        # In the below clauses of the if-block, the line of code which
+        # assigns into the _expressions dict is repeated on purpose, 
+        # instead of being pulled out to this level. This is because the
+        # _expressions dict needs to be updated before we add an 
+        # ExpressionTrait or perform a setattr but *not* if the inner 
+        # if-clause of the if-block raises an exception.
         if not self.initialized:
             curr = self.trait(name)
             if curr is None or curr.trait_type is Disallow:
-                # If no trait exists, then the user is requesting to add 
-                # an attribute to the object. The HasStrictTraits may 
-                # give a Disallow trait for attributes that don't exist.
-                self.add_trait(name, Any())
-                curr = self.trait(name)
+                msg = "Cannot bind expression. %s object has no attribute '%s'"
+                raise AttributeError(msg % (self, name))
+        
+            # This explicitly overrides any existing bound expression 
+            # for the given attribute, which means that the most 
+            # recently bound expression takes precedence.
+            self._expressions[name] = expression
 
             # We only need to add an ExpressionTrait once since it 
             # will reach back into the _expressions dict when needed
-            # and retrieve the most current expression.
+            # and retrieve the bound expression.
             if not isinstance(curr.trait_type, ExpressionTrait):
                 self.add_trait(name, ExpressionTrait(curr))
         else:
+            # This explicitly overrides any existing bound expression 
+            # for the given attribute, which means that the most 
+            # recently bound expression takes precedence.
+            self._expressions[name] = expression
             setattr(self, name, expression.eval())
 
     #--------------------------------------------------------------------------

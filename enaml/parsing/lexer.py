@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import tokenize
-import weakref
 
 import ply.lex as lex
 
@@ -118,6 +117,7 @@ class EnamlLexer(object):
 
         # Enaml reserved
         'defn': 'DEFN',
+        'attr': 'ATTR',
     }
 
     tokens = (tokens + 
@@ -422,9 +422,15 @@ class EnamlLexer(object):
         self.token_stream = None
         self.filename = filename
 
-        # Add a weakref to this instance so the parser can 
-        # reference back to this instance when needed.
-        self.lexer._py_lexer = weakref.ref(self)
+        # Ply has a bit of an inconsistency when using a class as a 
+        # lexer instead of a module. The .lexer attribute of tokens 
+        # created by the ply lexer are set to that ply lexer instance, 
+        # but the .lexer attribute of tokens created by the ply parser 
+        # are set to the instance of this class. So, when the p_error 
+        # function is called in the parser, we can't be sure which lexer
+        # will be set on the error token. Since we need the filename in
+        # that function, we add it as an attribute on both lexers.
+        self.lexer.filename = filename
 
     def input(self, txt):
         self.lexer.input(txt)
@@ -452,6 +458,7 @@ class EnamlLexer(object):
         tok.value = None
         tok.lineno = lineno
         tok.lexpos = -1
+        tok.lexer = self.lexer
         return tok
 
     def indent(self, lineno):
@@ -461,6 +468,7 @@ class EnamlLexer(object):
         tok.value = None
         tok.lineno = lineno
         tok.lexpos = -1
+        tok.lexer = self.lexer
         return tok
 
     def newline(self, lineno):
@@ -468,7 +476,8 @@ class EnamlLexer(object):
         tok.type = 'NEWLINE'
         tok.value = '\n'
         tok.lineno = lineno
-        tok.lexpos = lineno
+        tok.lexpos = -1
+        tok.lexer = self.lexer
         return tok
 
     def make_token_stream(self):
@@ -533,6 +542,7 @@ class EnamlLexer(object):
             py_block = lex.LexToken()
             py_block.lineno = start_tok.lineno + 1
             py_block.lexpos = -1
+            py_block.lexer = self.lexer
             py_block.value = py_txt
             py_block.type = 'PY_BLOCK'
 
@@ -765,5 +775,6 @@ class EnamlLexer(object):
         end_marker.value = None
         end_marker.lineno = -1
         end_marker.lexpos = -1
+        end_marker.lexer = self.lexer
         yield end_marker
 

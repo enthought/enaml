@@ -10,11 +10,11 @@ The Range component is used by the other examples in this directory.
 """
 Range(Container):
     id: range
-    minimum = 0.0
-    maximum = 1.0
-    value = 0.5
-    text_format = '{:.2f}'
-    slider = slider_
+    attr minimum: float = 0.0
+    attr maximum: float = 1.0
+    attr value: float = 0.5
+    attr text_format: str = '{:.2f}'
+    attr slider: FloatSlider = slider_
     constraints = [
         horizontal(left, 0, min_label, slider, max_label, 0, right),
         vertical(top, 0, slider, 0, bottom),
