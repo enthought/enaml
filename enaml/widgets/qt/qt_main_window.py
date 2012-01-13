@@ -21,3 +21,7 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         """
         self.widget = QResizingMainWindow(parent)
 
+    # Note: On Qt a MenuBar that is defined as a child of a MainWindow
+    # will be automatically added as the menubar. There is no need
+    # to explicitly call setMenuBar(...).
+
