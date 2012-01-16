@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Property, cached_property
+from traits.api import Instance, Int, Property, cached_property
 
 from .menu_bar import MenuBar
 from .window import Window, AbstractTkWindow
@@ -21,7 +21,16 @@ class AbstractTkMainWindow(AbstractTkWindow):
 
         """
         raise NotImplementedError
- 
+    
+    @abstractmethod
+    def menu_bar_height(self):
+        """ Returns the height of the menu bar in pixels. If the menu
+        bar does not have an effect on the height of the main window,
+        this method returns Zero.
+
+        """
+        raise NotImplementedError
+
 
 class MainWindow(Window):
     """ A top-level main window widget.
@@ -38,6 +47,10 @@ class MainWindow(Window):
     #: is an error.
     menu_bar = Property(Instance(MenuBar), depends_on='children')
         
+    #: A private read-only cached property that returns the height
+    #: of the menu bar.
+    _menu_bar_height = Property(Int, depends_on='menu_bar')
+
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
@@ -57,6 +70,17 @@ class MainWindow(Window):
             msg = ('A MainWindow can have at most 1 MenuBar. '
                    'Got %s instead.')
             raise ValueError(msg % n)
+        return res
+
+    @cached_property
+    def _get__menu_bar_height(self):
+        """ The property getter for the '_menu_bar_height' attribute.
+
+        """
+        if self.menu_bar is not None:
+            res = self.abstract_obj.menu_bar_height()
+        else:
+            res = 0
         return res
 
     #--------------------------------------------------------------------------
@@ -81,9 +105,9 @@ class MainWindow(Window):
         app.initialize()
         if not self.initialized:
             self.setup(parent)
-            # XXX expose initial sizes
-            #size = (200, 100)
-            #self.resize(*size)
+            self.resize_to_initial()
+            self.update_minimum_size()
+            self.update_maximum_size()
         self.set_visible(True)
         app.start_event_loop()
         
@@ -92,4 +116,45 @@ class MainWindow(Window):
 
         """
         self.set_visible(False)
+
+    #--------------------------------------------------------------------------
+    # Change Handlers
+    #--------------------------------------------------------------------------
+    def _menu_bar_changed(self):
+        """ Updates the minimum and maximum sizes of main window if the
+        menu bar changes after the window has been initialized.
+
+        """
+        self.request_relayout_task(self.update_minimum_size)
+        self.request_relayout_task(self.update_maximum_size)
+
+    #--------------------------------------------------------------------------
+    # Parent Class Overrides
+    #--------------------------------------------------------------------------
+    def _compute_initial_size(self):
+        """ Overridden parent class method to add the sizes of any of
+        the non-central-widget children to the computed initial size.
+
+        """
+        width, height = super(MainWindow, self)._compute_initial_size()
+        height += self._menu_bar_height
+        return (width, height)
+
+    def _compute_minimum_size(self):
+        """ Overridden parent class method to add the sizes of any of
+        the non-central-widget children to the computed minimum size.
+
+        """
+        width, height = super(MainWindow, self)._compute_minimum_size()
+        height += self._menu_bar_height
+        return (width, height)
+    
+    def _compute_maximum_size(self):
+        """ Overridden parent class method to add the sizes of any of
+        the non-central-widget children to the computed maximum size.
+
+        """
+        width, height = super(MainWindow, self)._compute_maximum_size()
+        height += self._menu_bar_height
+        return (width, height)
 
