@@ -105,20 +105,16 @@ class Dialog(Window):
         self.toolkit.app.initialize()
         if not self.initialized:
             self.setup(parent)
-            # For now, compute the initial size based using the minimum
-            # size routine from the layout. We'll probably want to have
-            # an initial_size optional attribute or something at some point.
-            #size = self.layout_manager.calc_min_size()
-            #if size == (0, 0):
-            #    size = (200, 100)
-            #self.resize(*size)
-
+            self.resize_to_initial()
+            self.update_minimum_size()
+            self.update_maximum_size()
+            
         # Note that we don't start the event loop after making a Dialog
         # visible. Dialogs are shown modally and typically start their 
         # own event loop. Thus, set_visble(True) will block and starting
         # an event loop after it returns may cause a dead lock
         self.set_visible(True)
-       
+        
     def hide(self):
         """ Close the dialog. Typically, code should call either 'accept'
         or 'reject' to close the dialog instead of 'hide'.
