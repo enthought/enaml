@@ -235,3 +235,48 @@ class Container(LayoutTaskHandler, LayoutComponent):
         """
         self.request_relayout()
 
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def size_hint(self):
+        """ Overridden parent class method to return the size hint of 
+        the container as the computed minimum size.
+
+        """
+        # XXX we can probably do better than this. Maybe have the 
+        # layout manager compute a preferred size, or some such notion
+        return self.get_min_size()
+
+    #--------------------------------------------------------------------------
+    # Auxiliary Methods
+    #--------------------------------------------------------------------------
+    def get_min_size(self):
+        """ Calculates the minimum size of the container which would 
+        allow all constraints to be satisfied. If this container's
+        layout is being managed by a parent, then this method will
+        return (-1, -1).
+
+        """
+        layout_mgr = self.layout_manager
+        if layout_mgr is None:
+            res = (-1, -1)
+        else:
+            w, h = layout_mgr.get_min_size()
+            res = (int(round(w)), int(round(h)))
+        return res
+
+    def get_max_size(self):
+        """ Calculates the maximum size of the container which would 
+        allow all constraints to be satisfied. If this container's
+        layout is being managed by a parent, then this method will
+        return (-1, -1).
+
+        """
+        layout_mgr = self.layout_manager
+        if layout_mgr is None:
+            res = (-1, -1)
+        else:
+            w, h = layout_mgr.get_max_size()
+            res = (int(round(w)), int(round(h)))
+        return res
+
