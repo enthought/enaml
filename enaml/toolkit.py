@@ -24,6 +24,8 @@ class Toolkit(dict):
 
     __default_toolkit__ = None
 
+    __toolkit_app__ = None
+
     @classmethod
     def active_toolkit(cls):
         """ A classmethod that returns the currently active toolkit,
@@ -67,11 +69,7 @@ class Toolkit(dict):
         raises an ValueError if one is not defined.
 
         """
-        try:
-            return self['toolkit_app']
-        except KeyError:
-            msg = 'A toolkit app has not been provided for the active toolkit.'
-            raise ValueError(msg)
+        return self.__toolkit_app__
 
     def _set_toolkit_app(self, val):
         """ Sets the abstract toolkit app for this toolkit and makes
@@ -79,7 +77,7 @@ class Toolkit(dict):
         name.
 
         """
-        self['toolkit_app'] = val
+        self.__toolkit_app__ = val
 
     app = property(_get_toolkit_app, _set_toolkit_app)
 
