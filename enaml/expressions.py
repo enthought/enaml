@@ -3,10 +3,10 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
-from collections import namedtuple
+from collections import namedtuple, MutableMapping
 import weakref
 
-from traits.api import Any, HasTraits, HasStrictTraits, Disallow
+from traits.api import HasTraits, Disallow
 
 from .parsing import byteplay as bp
 
@@ -53,14 +53,50 @@ class TraitAttributeNotifier(object):
 
 
 #------------------------------------------------------------------------------
+# Expression Locals Notifier
+#------------------------------------------------------------------------------
+class ExpressionLocalsNotifier(object):
+    """ A thin object which manages the lifetime of a subscription to
+    an ExpressionLocals mapping.
+
+    """
+    __slots__ = ('expr_ref', '__weakref__')
+
+    def __init__(self, expr_locals, key, expr):
+        """ Initialize an ExpressionLocalsNotifier.
+
+        Parameters
+        ----------
+        expr_locals : Instance(ExpressionLocals)
+            The ExpressionLocals instance to which we are subscribing.
+            No reference is maintained to this object.
+        
+        key : string
+            The key on the locals to subscribe.
+        
+        expr : Instance(AbstractExpression)
+            The expression object which should be notified when the
+            value in the locals changes. Only a weak reference is 
+            maintained to this object.
+        
+        """
+        self.expr_ref = weakref.ref(expr)
+        expr_locals.subscribe(key, self)
+    
+    def __call__(self, expr_locals, key, old, new):
+        expr = self.expr_ref()
+        if expr is not None:
+            expr.notify(expr_locals, key, old, new)
+
+
+#------------------------------------------------------------------------------
 # Expression Locals
 #------------------------------------------------------------------------------
-class ExpressionLocals(HasStrictTraits):
-    """ A HasStrictTraits class which acts as a locals mapping object.
-    Each item in the locals is added as an Any trait on the object
-    so that notifiers can be attached to the locals. It provides the
-    special methods __getitem__, __setitem__, __contains__ and __len__
-    so that the object can be used like a dictionary.
+class ExpressionLocals(MutableMapping):
+    """ A MutableMapping which adds a 'subcribe' method to register
+    callbacks to be called when the value for a particular key as
+    been changed. Unlike a normal mapping, instance of this class
+    are hashable, and hash like a regular Python class instance.
 
     """
     def __init__(self, **values):
@@ -72,37 +108,104 @@ class ExpressionLocals(HasStrictTraits):
             The default key/value pairs to add to the locals object.
         
         """
-        super(ExpressionLocals, self).__init__()
-        for key, value in values.iteritems():
-            self.add_trait(key, Any)
-            setattr(self, key, value)
+        self._data = {}
+        self._subscriptions = {}
+        self.update(**values)
+    
+    def __hash__(self):
+        """ Makes the mapping hashable so that it can be used a key
+        in a dict in order to manage notifiers.
+
+        """
+        return object.__hash__(self)
 
     def __getitem__(self, name):
         """ Returns the value for the name or raises a KeyError.
 
         """
-        try:
-            return getattr(self, name)
-        except AttributeError:
-            raise KeyError(name)
+        return self._data[name]
     
-    def __setitem__(self, name, value):
-        """ Sets the value for the name, creating the entry if required.
+    def __setitem__(self, key, value):
+        """ Sets the value for the name, calling subscribers only if
+        the value previously existed in the mapping and if the current
+        value is different from the old value.
 
         """
-        if name in self.__dict__:
-            setattr(self, name, value)
+        data = self._data
+        if key not in data:
+            data[key] = value
         else:
-            self.add_trait(name, Any)
-            setattr(self, name, value)
+            old = data[key]
+            data[key] = value
+            if value != old:
+                self._call_subscriptions(key, old, value)
     
+    def __delitem__(self, key):
+        """ Deletes the key from the mapping.
+
+        """
+        del self._data[key]
+
+    def __iter__(self):
+        """ Returns an iterator for the mapping.
+
+        """
+        return iter(self._data)
+
     def __contains__(self, name):
         """ Returns True if there is a value for the given name, False
         otherwise.
 
         """
-        return name in self.__dict__
+        return name in self._data
 
+    def __len__(self):
+        """ Returns the length of the mapping.
+
+        """
+        return len(self._data)
+
+    def _call_subscriptions(self, key, old, new):
+        """ A private dispatch method which calls any subscribers when
+        a value in the mapping has changed.
+
+        """
+        subs = self._subscriptions
+        if key in subs:
+            for cb_ref in subs[key]:
+                callback = cb_ref()
+                if callback is not None:
+                    callback(self, key, old, new)
+
+    def subscribe(self, key, callback):
+        """ Subscribe a callback that will be called when the value
+        for the key changes in the mapping.
+
+        Parameters
+        ----------
+        key : string
+            The key to track for value changes in the mapping.
+        
+        callback : callable
+            A callable which accets four arguments: this mapping,
+            the key, the old value, and the new value. Only a weak
+            reference is maintained to this callback.
+        
+        """
+        wr_self = weakref.ref(self)
+        def unsub(wr):
+            this = wr_self()
+            if this is not None:
+                subs = self._subscriptions[key]
+                try:
+                    subs.remove(wr)
+                except ValueError:
+                    pass
+                if not subs:
+                    del self._subscriptions[key]
+        cb_ref = weakref.ref(callback, unsub)
+        self._subscriptions.setdefault(key, []).append(cb_ref)
+    
 
 #------------------------------------------------------------------------------
 # Expression Scope
@@ -412,13 +515,14 @@ class SubscriptionExpression(AbstractExpression):
         attribute on the component.
 
         """
+        # Only hook up a notifier if one does not already exist.
+        notifiers = self.notifiers
+        if obj in notifiers:
+            if attr in notifiers[obj]:
+                return
+
+        notifier = None
         if isinstance(obj, HasTraits):
-            # Only hook up a notifier if one does not already exist.
-            notifiers = self.notifiers
-            if obj in notifiers:
-                if attr in notifiers[obj]:
-                    return
-      
             # Only hook up a notifier if the attribute access refers
             # to a proper trait. We check for Disallow trait types 
             # since those can be returned by instances of HasStrictTraits
@@ -432,10 +536,19 @@ class SubscriptionExpression(AbstractExpression):
                 # any old handlers each time we evaluate the expression.
                 # We simply just delete the old notifiers.
                 notifier = TraitAttributeNotifier(obj, attr, self)
-                if obj in notifiers:
-                    notifiers[obj][attr] = notifier
-                else:
-                    notifiers[obj] = {attr: notifier}
+        elif isinstance(obj, ExpressionLocals):
+            # The ExpressionLocals will keep a weakref to the callback
+            # but a strong ref will be kept to the notifier in the dict
+            # of notifiers on this instance, so we still dont wan't
+            # to just subscribe the method. Instead we use a notifier
+            # object that manages the lifetime.
+            notifier = ExpressionLocalsNotifier(obj, attr, self)
+        
+        if notifier is not None:
+            if obj in notifiers:
+                notifiers[obj][attr] = notifier
+            else:
+                notifiers[obj] = {attr: notifier}
 
     def eval(self):
         # Notifiers are hooked up every time the expression is evaluated

@@ -20,7 +20,7 @@ from enaml.stdlib.radio_group import RadioGroup
 
 
 MainWindow(Window):
-    how_many = 10
+    attr how_many: int = 10
     SpinBox:
         value := how_many
     ComboBox:

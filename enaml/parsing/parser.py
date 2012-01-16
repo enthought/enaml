@@ -235,18 +235,52 @@ def p_declaration_body_items2(p):
 
 
 def p_declaration_body_item1(p):
-    ''' declaration_body_item : attribute_binding '''
+    ''' declaration_body_item : attribute_declaration '''
     p[0] = p[1]
 
 
 def p_declaration_body_item2(p):
-    ''' declaration_body_item : instantiation '''
+    ''' declaration_body_item : attribute_binding '''
     p[0] = p[1]
 
 
 def p_declaration_body_item3(p):
+    ''' declaration_body_item : instantiation '''
+    p[0] = p[1]
+
+
+def p_declaration_body_item4(p):
     ''' declaration_body_item : PASS NEWLINE '''
     p[0] = None
+
+
+#------------------------------------------------------------------------------
+# Attribute Declaration
+#------------------------------------------------------------------------------
+def p_attribute_declaration1(p):
+    ''' attribute_declaration : ATTR NAME NEWLINE '''
+    p[0] = enaml_ast.AttributeDeclaration(p[2], None, None, p.lineno(1))
+
+
+def p_attribute_declaration2(p):
+    ''' attribute_declaration : ATTR NAME COLON NAME NEWLINE '''
+    p[0] = enaml_ast.AttributeDeclaration(p[2], p[4], None, p.lineno(1))
+
+
+def p_attribute_declaration3(p):
+    ''' attribute_declaration : ATTR NAME binding '''
+    lineno = p.lineno(1)
+    name = p[2]
+    binding = enaml_ast.AttributeBinding(name, p[3], lineno)
+    p[0] = enaml_ast.AttributeDeclaration(name, None, binding, lineno)
+
+
+def p_attribute_declaration4(p):
+    ''' attribute_declaration : ATTR NAME COLON NAME binding '''
+    lineno = p.lineno(1)
+    name = p[2]
+    binding = enaml_ast.AttributeBinding(name, p[5], lineno)
+    p[0] = enaml_ast.AttributeDeclaration(name, p[4], binding, lineno)
 
 
 #------------------------------------------------------------------------------
@@ -2050,8 +2084,7 @@ def p_fplist_list2(p):
 
  
 def p_error(t):
-    fn = t.lexer._py_lexer().filename
-    raise_syntax_error('invalid syntax.', fn, t.lineno)
+    raise_syntax_error('invalid syntax.', t.lexer.filename, t.lineno)
 
 
 _parser = yacc.yacc(debug=False, tabmodule='enaml_parsetab', 

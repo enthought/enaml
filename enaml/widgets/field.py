@@ -329,8 +329,20 @@ class Field(Control):
         implementations should not perform an update.
 
         """
-        with self.capture_exceptions():
-            return self.converter.to_component(self.value)
+        # Disable the context temporarily since it captures all
+        # exceptions, including Trait errors that we may want to 
+        # bubble up during initialization.
+        #with self.capture_exceptions():
+        try:
+            res = self.converter.to_component(self.value)
+        except (ValueError, TypeError) as e:
+            self.exception = e
+            self.error = True
+            return
+        else:
+            self.exception = None
+            self.error = False
+        return res
         
     def _set_field_text(self, text):
         """ The property setter for :attr:`field_text`. It uses an
@@ -339,6 +351,17 @@ class Field(Control):
 
         """
         self._text = text
-        with self.capture_notification_exceptions():
+        # Disable the context temporarily since it captures all
+        # exceptions, including Trait errors that we may want to 
+        # bubble up during initialization.
+        #with self.capture_notification_exceptions():
+        try:
             self.value = self.converter.from_component(text)
+        except (ValueError, TypeError) as e:
+            self.exception = e
+            self.error = True
+            return
+        else:
+            self.exception = None
+            self.error = False
 
