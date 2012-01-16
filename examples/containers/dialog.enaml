@@ -30,22 +30,22 @@ defn InformDialog(message):
         id: dialog
         title = "Inform"
         modality = "application_modal"
-        constraints = [
-            vbox(
-                label,
-                hbox(_space_, ok_button),
-            ),
-        ]
-        Label:
-            id: label
-            text = message
-            bg_color = "red"
-            fg_color = 'blue'
-            font = 'times 18 bold'
-        PushButton:
-            id: ok_button
-            text = "OK"
-            clicked >> dialog.accept()
+        Container:
+            constraints = [
+                vbox(
+                    label,
+                    hbox(_space_, ok_button),
+                ),
+            ]
+            Label:
+                id: label
+                text = message
+                fg_color = 'red'
+                font = 'times 18 bold'
+            PushButton:
+                id: ok_button
+                text = "OK"
+                clicked >> dialog.accept()
 
 
 defn ConfirmDialog(message):
@@ -53,28 +53,28 @@ defn ConfirmDialog(message):
         id: dialog
         title = "Confirm"
         modality = "application_modal"
-        constraints = [
-            vbox(
-                label,
-                hbox(_space_, ok_button, cancel_button),
-            ),
-        ]
-        Label:
-            id: label
-            text = message
-        PushButton:
-            id: ok_button
-            text = "OK"
-            clicked >> dialog.accept()
-        PushButton:
-            id: cancel_button
-            text = "Cancel"
-            clicked >> dialog.reject()
+        Container:
+            constraints = [
+                vbox(
+                    label,
+                    hbox(_space_, ok_button, cancel_button),
+                ),
+            ]
+            Label:
+                id: label
+                text = message
+            PushButton:
+                id: ok_button
+                text = "OK"
+                clicked >> dialog.accept()
+            PushButton:
+                id: cancel_button
+                text = "Cancel"
+                clicked >> dialog.reject()
 
 
-MainWindow(Window):
+Main(MainWindow):
     PushButton:
-        id: dlg_button
         text = "Do Something Rash"
         clicked >> raise_dialog()
 
