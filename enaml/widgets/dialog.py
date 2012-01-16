@@ -12,7 +12,9 @@ from ..enums import DialogResult, Modality
 
 
 class AbstractTkDialog(AbstractTkWindow):
+    """ The abstract toolkit interface for a Dialog.
 
+    """
     @abstractmethod
     def accept(self):
         """ Close the dialog and set the result to `accepted`.
@@ -58,55 +60,18 @@ class Dialog(Window):
     #: dialog is shown will have no effect.
     modality = Modality
 
+    #: Overridden parent class trait.
+    abstract_obj = Instance(AbstractTkDialog)
+    
     #: An internal trait used to store the active state of the dialog.
-    _active = Bool
+    _active = Bool(False)
 
     #: An internal trait used to store the result of the dialog.
     _result = DialogResult('rejected')
-
-    #: Overridden parent class trait.
-    abstract_obj = Instance(AbstractTkDialog)
-
-    def show(self, parent=None):
-        """ Make the dialog visible on the screen.
-
-        This is overridden from Window.show(). Since dialogs are shown
-        modally by creating their own event loop, there is no need to
-        start the event loop at the end of this method as in Window.
-
-        """
-        # XXX this may need to be revisited in the future as we get
-        # more exposure to dialogs.
-        app = self.toolkit.create_app()
-        if not self.initialized:
-            self.setup(parent)
-            # For now, compute the initial size based using the minimum
-            # size routine from the layout. We'll probably want to have
-            # an initial_size optional attribute or something at some point.
-            size = self.layout_manager.calc_min_size()
-            if size == (0, 0):
-                size = (200, 100)
-            self.resize(*size)
-        self.set_visible(True)
-
-    def accept(self):
-        """ Close the dialog and set the result to `accepted`.
-
-        Call this method to trigger the same behavior as clicking
-        on the Ok button.
-
-        """
-        self.abstract_obj.accept()
-
-    def reject(self):
-        """ Close the dialog and set the result to `rejected`.
-
-        Call this method to trigger the same behavior as clicking
-        on the Cancel button.
-
-        """
-        self.abstract_obj.reject()
-
+        
+    #--------------------------------------------------------------------------
+    # Property Getters
+    #--------------------------------------------------------------------------
     def _get_active(self):
         """ The property getter for the 'active' attribute.
 
@@ -118,4 +83,67 @@ class Dialog(Window):
 
         """
         return self._result
+
+    #--------------------------------------------------------------------------
+    # Abstract Method Implementations
+    #--------------------------------------------------------------------------
+    def show(self, parent=None):
+        """ Make the dialog visible on the screen.
+
+        If the dialog is not already fully initialized, then the 'setup'
+        method will be called prior to making the dialog visible.
+
+        Parameters
+        ----------
+        parent : native toolkit widget, optional
+            Provide this argument if the dialog should have another
+            widget as its logical parent. This may help with stacking
+            order and/or visibility hierarchy depending on the toolkit
+            backend.
+
+        """
+        self.toolkit.app.initialize()
+        if not self.initialized:
+            self.setup(parent)
+            # For now, compute the initial size based using the minimum
+            # size routine from the layout. We'll probably want to have
+            # an initial_size optional attribute or something at some point.
+            #size = self.layout_manager.calc_min_size()
+            #if size == (0, 0):
+            #    size = (200, 100)
+            #self.resize(*size)
+
+        # Note that we don't start the event loop after making a Dialog
+        # visible. Dialogs are shown modally and typically start their 
+        # own event loop. Thus, set_visble(True) will block and starting
+        # an event loop after it returns may cause a dead lock
+        self.set_visible(True)
+       
+    def hide(self):
+        """ Close the dialog. Typically, code should call either 'accept'
+        or 'reject' to close the dialog instead of 'hide'.
+
+        """
+        self.set_visible(False)
+
+    #--------------------------------------------------------------------------
+    # Auxiliary Methods
+    #--------------------------------------------------------------------------
+    def accept(self):
+        """ Close the dialog and set the result to `accepted`.
+
+        Call this method to trigger the same behavior as clicking on an
+        Ok button.
+
+        """
+        self.abstract_obj.accept()
+
+    def reject(self):
+        """ Close the dialog and set the result to `rejected`.
+
+        Call this method to trigger the same behavior as clicking on a
+        Cancel button.
+
+        """
+        self.abstract_obj.reject()
 
