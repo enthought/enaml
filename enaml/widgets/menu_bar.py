@@ -16,9 +16,8 @@ class AbstractTkMenuBar(AbstractTkComponent):
 
     """
     @abstractmethod
-    def shell_menus_changed(self):
-        """ The change handler for the 'menus' attribute on the shell
-        object.
+    def shell_menus_changed(self, menus):
+        """ Update the menu bar with the new list of menu objects.
 
         """
         raise NotImplementedError
@@ -31,7 +30,7 @@ class MenuBar(Component):
     """
     #: A read-only cached property which holds the list of children
     #: which are instances of Menu.
-    menus = Property(List, depends_on='children')
+    menus = Property(List(Instance(Menu)), depends_on='children')
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkMenuBar)
