@@ -17,8 +17,8 @@
 
 import sys, os
 
-from enaml.import_hooks import EnamlImporter
-EnamlImporter.install()
+## from enaml.import_hooks import EnamlImporter
+## EnamlImporter.install()
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
