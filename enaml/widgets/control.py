@@ -5,6 +5,7 @@
 from traits.api import Bool, Instance
 
 from .layout_component import LayoutComponent, AbstractTkLayoutComponent
+
 from ..exceptions import ShellExceptionContext, ShellNotificationContext
 
 
@@ -20,7 +21,7 @@ class Control(LayoutComponent):
     """
     #: A boolean which indicates whether an exception was raised through 
     #: user interaction or setting a value trait on the Control.
-    error = Bool
+    error = Bool(False)
 
     #: The exception object that was raised to create the error state.
     exception = Instance(Exception)
