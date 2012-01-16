@@ -179,27 +179,6 @@ class QtAction(QtComponent, AbstractTkAction):
         """
         self.widget.setSeparator(separator)
 
-    def set_bg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QAction.
-
-        """
-        pass
-    
-    def set_fg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QAction.
-
-        """
-        pass
-    
-    def set_font(self, font):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QAction.
-
-        """
-        pass
-
     def enable_updates(self):
         """ Overridden parent class method. This is a no-op since the 
         operation does not apply to a QAction.

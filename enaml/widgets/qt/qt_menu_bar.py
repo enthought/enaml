@@ -16,7 +16,10 @@ class QtMenuBar(QtComponent, AbstractTkMenuBar):
         """ Creates the underlying QMenuBar.
 
         """
-        self.widget = QtGui.QMenuBar(parent)
+        # We ignore the parent when creating the menu bar. The parent 
+        # main window is repsonsible for setting the menu bar on itself, 
+        # and using the parent here causes issues on certain platforms.
+        self.widget = QtGui.QMenuBar()
 
     def initialize(self):
         """ Initializes the QMenuBar.
@@ -28,9 +31,8 @@ class QtMenuBar(QtComponent, AbstractTkMenuBar):
     #--------------------------------------------------------------------------
     # Change Handlers 
     #--------------------------------------------------------------------------
-    def shell_menus_changed(self):
-        """ The change handler for the 'menus' attribute on the shell
-        object.
+    def shell_menus_changed(self, menus):
+        """ Update the menu bar with the new list of menu objects.
 
         """
         self.update_menus()
@@ -50,25 +52,4 @@ class QtMenuBar(QtComponent, AbstractTkMenuBar):
         widget = self.widget
         for menu in self.shell_obj.menus:
             widget.addMenu(menu.toolkit_widget)
-              
-    def set_bg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QMenuBar.
-
-        """
-        pass
-    
-    def set_fg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QMenuBar.
-
-        """
-        pass
-    
-    def set_font(self, font):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QMenuBar.
-
-        """
-        pass
 

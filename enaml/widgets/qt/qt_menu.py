@@ -19,7 +19,10 @@ class QtMenu(QtComponent, AbstractTkMenu):
         """ Create the underlying QMenu object.
 
         """
-        self.widget = QtGui.QMenu(parent)
+        # We ignore the parent when creating the menu. The parent menu
+        # is repsonsible for adding menus to itself, and using the parent
+        # here causes issues on certain platforms.
+        self.widget = QtGui.QMenu()
 
     def initialize(self):
         """ Initialize the underlying QMenu object.
@@ -96,27 +99,6 @@ class QtMenu(QtComponent, AbstractTkMenu):
 
         """
         self.widget.setTitle(title)
-
-    def set_bg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QMenu.
-
-        """
-        pass
-    
-    def set_fg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QMenu.
-
-        """
-        pass
-    
-    def set_font(self, font):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QMenu.
-
-        """
-        pass
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
