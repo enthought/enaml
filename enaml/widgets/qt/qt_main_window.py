@@ -39,6 +39,31 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         self.update_menu_bar()
 
     #--------------------------------------------------------------------------
+    # Abstract Implementation
+    #--------------------------------------------------------------------------
+    def menu_bar_height(self):
+        """ Returns the height of the menu bar in pixels. If the menu
+        bar does not have an effect on the height of the main window,
+        this method returns Zero.
+
+        """
+        # XXX The size hint is off by 1 pixel on Windows. What about
+        # other platforms? Calling menuBar.height() here doesn't work
+        # because the value is completely wrong unless the menu bar
+        # is visible on the screen.
+
+        # Get the menu bar from layout since that will not automatically
+        # create one if it doesn't exist, unlike QMainWindow.menuBar()
+        menu_bar = self.widget.layout().menuBar()
+        if menu_bar is None:
+            res = 0
+        else:
+            res = menu_bar.sizeHint().height()
+            if res > 0:
+                res += 1
+        return res
+
+    #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def update_menu_bar(self):
