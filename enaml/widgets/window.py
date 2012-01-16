@@ -4,13 +4,15 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Str, Instance
+from traits.api import Str, Instance, Property, cached_property
 
-from .container import Container, AbstractTkContainer
+from .component import Component, AbstractTkComponent
+from .layout_component import LayoutComponent
+from .layout_task_handler import LayoutTaskHandler
 
 
-class AbstractTkWindow(AbstractTkContainer):
-    """ The abstract Window interface.
+class AbstractTkWindow(AbstractTkComponent):
+    """ The abstract ToplevelWindow interface.
 
     """
     @abstractmethod
@@ -21,32 +23,66 @@ class AbstractTkWindow(AbstractTkContainer):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def shell_central_widget_changed(self, central_widget):
+        """ Update the central widget in the window with the new value
+        from the shell object.
 
-class Window(Container):
-    """ The base top-level Window widget.
+        """
+        raise NotImplementedError
 
-    Window widgets are top-level components which provide window frame
-    decorations and other window  related functionality. Only components
-    which inherit from Window can be shown on the screen. A Window is
-    not expected to have a parent in most cases.
+
+class Window(LayoutTaskHandler, Component):
+    """ A top-level Window component.
+
+    A Window component is represents of a top-level visible component
+    with a frame decoration. It has exactly one central widget which
+    is expanded to fit the size of the window. This class serves as
+    the base class for MainWindow and Dialog. It is and abstract class
+    and not meant to be used directly.
 
     """
     #: The title displayed on the window frame.
     title = Str
 
-    #: Whether the widget is visible or not (windows are not visible by
-    #: default).
-    visible = False
+    #: A read-only property which holds the central widget. Declaring
+    #: more than one central widget is an error.
+    central_widget = Property(
+        Instance(LayoutComponent), depends_on='children',
+    )
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkWindow)
 
+    #--------------------------------------------------------------------------
+    # Property Getters
+    #--------------------------------------------------------------------------
+    @cached_property
+    def _get_central_widget(self):
+        """ The property getter for the 'central_widget' attribute.
+
+        """
+        flt = lambda child: isinstance(child, LayoutComponent)
+        widgets = filter(flt, self.children)
+        n = len(widgets)
+        if n > 1:
+            msg = ('A MainWindow can have at most 1 central widget. '
+                   'Got %s instead.')
+            raise ValueError(msg % n)
+        elif n == 0:
+            res = None
+        else:
+            res = widgets[0]
+        return res
+
+    #--------------------------------------------------------------------------
+    # Abstract Methods
+    #--------------------------------------------------------------------------
     def show(self, parent=None):
         """ Make the window visible on the screen.
 
-        If the 'setup' method is not explicity called prior to calling
-        this method, then the window will lay itself out prior to
-        displaying itself to the screen.
+        If the window is not already fully initialized, then the 'setup'
+        method will be called prior to making the window visible.
 
         Parameters
         ----------
@@ -57,35 +93,11 @@ class Window(Container):
             backend.
 
         """
-        app = self.toolkit.create_app()
-        if not self.initialized:
-            self.setup(parent)
-            # For now, compute the initial size based using the minimum
-            # size routine from the layout. We'll probably want to have
-            # an initial_size optional attribute or something at some point.
-            size = self.layout_manager.calc_min_size()
-            if size == (0, 0):
-               size = (200, 100)
-            self.resize(*size)
-        self.set_visible(True)
-        self.toolkit.start_app(app)
+        raise NotImplementedError
         
     def hide(self):
         """ Hide the window, but do not destroy the underlying widgets.
 
-        Call this method to hide the window on the screen. This call
-        will always succeed.
-
         """
-        self.set_visible(False)
-
-    def relayout(self):
-        """ Overridden parent class method which sets the minimum size
-        of the window whenever constraints are recomputed.
-
-        """
-        super(Window, self).relayout()
-        if self.layout_manager is not None:
-            size = self.layout_manager.calc_min_size()
-            self.set_min_size(*size)
+        raise NotImplementedError
 
