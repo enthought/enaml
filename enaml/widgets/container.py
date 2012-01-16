@@ -2,15 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import deque
-
-from traits.api import List, Instance, Bool
+from traits.api import List, Instance
 
 from .layout_component import LayoutComponent, AbstractTkLayoutComponent
 from .layout.constraints_layout import ConstraintsLayout
 from .layout.layout_manager import AbstractLayoutManager
-
-from ..guard import guard
+from .layout_task_handler import LayoutTaskHandler
 
 
 class AbstractTkContainer(AbstractTkLayoutComponent):
@@ -24,7 +21,7 @@ class AbstractTkContainer(AbstractTkLayoutComponent):
     pass
 
 
-class Container(LayoutComponent):
+class Container(LayoutTaskHandler, LayoutComponent):
     """ A Component subclass that provides for laying out its layout
     child Components.
 
@@ -41,26 +38,6 @@ class Container(LayoutComponent):
 
     #: Overridden parent class trait.
     abstract_obj = Instance(AbstractTkContainer)
-
-    #: A private boolean flag indictating whether a relayout is pending.
-    _relayout_pending = Bool(False)
-
-    #: A private boolean flag indicating whether a rearrange is pending.
-    _rearrange_pending = Bool(False)
-
-    #: A private queue of callables pending a relayout.
-    _relayout_queue = Instance(deque, ())
-
-    #: A private queue callables pending a rearrange.
-    _rearrange_queue = Instance(deque, ())
-
-    #: A private boolean flag indicating whether processing of the
-    #: relayout queue is occuring.
-    _relayout_queue_processing = Bool(False)
-
-    #: A private boolean flag indicating whether processing of the
-    #: rearrange queue is occuring.
-    _rearrange_queue_processing = Bool(False)
 
     #--------------------------------------------------------------------------
     # Layout Handling
@@ -90,129 +67,113 @@ class Container(LayoutComponent):
         )
 
     def relayout(self):
-        """ A reimplemented parent class method which triggers an update
-        of the constraints and a layout refresh. This is called whenever
-        the layout children of the component should have their layout 
-        refreshed. The constraints update and relayout occur immediately 
-        and are completed before the method returns.
+        """ A reimplemented parent class method which proxies the call
+        to relayout up the heierarchy if necessary. 
 
         """
-        layout_mgr = self.layout_manager
-        if layout_mgr is None:
+        # If our layout manager is None, we have a parent container
+        # that is managing layout for us. In that case, we continue
+        # to proxy the call up the heierarchy.
+        if self.layout_manager is None:
+            self.parent.relayout()
+        else:
             super(Container, self).relayout()
-        else:
-            # Protect against relayout recursion.
-            if not guard.guarded(self, 'relayout'):
-                with guard(self, 'relayout'):
-                    layout_mgr.update_constraints()
-                    layout_mgr.layout()
-                    self._relayout_pending = False
-
-    def relayout_later(self):
-        """ Reimplemented parent class method which triggers an update
-        of the constraints and a layout refresh at some point in the 
-        future.
-
-        """
-        layout_mgr = self.layout_manager
-        if layout_mgr is None:
-            super(Container, self).relayout_later()
-        else:
-            # Squash multiple calls to relayout_later if there is 
-            # already a relayout pending.
-            if not self._relayout_pending:
-                self._relayout_pending = True
-                self.toolkit.invoke_later(self.relayout)
     
-    def rearrange(self):
-        """ Reimplemented parent class method which triggers a rearrange
-        of the layout children. The rearrange occurs immediately and is 
-        completed before the method returns.
+    def refresh(self):
+        """ A reimplemented parent class method which proxies the call
+        to refresh up the heierarchy if necessary. 
 
         """
-        layout_mgr = self.layout_manager
-        if layout_mgr is None:
-            super(Container, self).rearrange()
-        else:
-            # Protect against rearrange recursion.
-            if not guard.guarded(self, 'rearrange'):
-                with guard(self, 'rearrange'):
-                    layout_mgr.layout()
-                    self._rearrange_pending = False
-
-    def rearrange_later(self):
-        """ Reimplemented parent class method which triggers a rearrange
-        of the layout children at some point in the future.
-
-        """
-        layout_mgr = self.layout_manager
-        if layout_mgr is None:
-            super(Container, self).rearrange_later()
-        else:
-            # Squash multiple calls to rearrange_later if there is
-            # already a rearrange pending.
-            if not self._rearrange_pending:
-                self._rearrange_pending = True
-                self.toolkit.invoke_later(self.rearrange)
-
-    def relayout_enqueue(self, callable):
-        """ Reimplemented parent class method which triggers a rearrange
-        after adding the callable to the queue. The queue will be emptied
-        from within a freeze context.
-
-        """
+        # If our layout manager is None, we have a parent container
+        # that is managing layout for us. In that case, we continue
+        # to proxy the call up the heierarchy.
         if self.layout_manager is None:
-            super(Container, self).relayout_enqueue(callable)
+            self.parent.refresh()
         else:
-            self._relayout_queue.append(callable)
-            # Measuring the size of the queue is not a reliable indicator
-            # of when we need to invoke the method to purge the queue,
-            # so we use a flag instead.
-            if not self._relayout_queue_processing:
-                self._relayout_queue_processing = True
-                self.toolkit.invoke_later(self._empty_relayout_queue)
+            super(Container, self).refresh()
 
-    def rearrange_enqueue(self, callable):
-        """ Reimplemented parent class method which trigger a rearrange
-        after after adding the callable to the queue. The queue will
-        be emptied from within a freeze context.
+    def request_relayout(self):
+        """ A reimplemented parent class method which proxies the call
+        to request_relayout up the heierarchy if necessary. 
 
         """
+        # If our layout manager is None, we have a parent container
+        # that is managing layout for us. In that case, we continue
+        # to proxy the call up the heierarchy.
         if self.layout_manager is None:
-            super(Container, self).rearrange_enqueue(callable)
+            self.parent.request_relayout()
         else:
-            self._rearrange_queue.append(callable)
-            # Measuring the size of the queue is not a reliable indicator
-            # of when we need to invoke the method to purge the queue,
-            # so we use a flag instead.
-            if not self._rearrange_queue_processing:
-                self._rearrange_queue_processing = True
-                self.toolkit.invoke_later(self._empty_rearrange_queue)
-        
-    def _empty_relayout_queue(self):
-        """ An internal callback which empties the relayout queue from
-        within a freeze context.
+            super(Container, self).request_relayout()
+
+    def request_refresh(self):
+        """ A reimplemented parent class method which proxies the call
+        to request_refresh up the heierarchy if necessary. 
 
         """
-        with self.freeze():
-            queue = self._relayout_queue
-            while queue:
-                queue.popleft()()
-            self._relayout_queue_processing = False
-            self.relayout()
-        
-    def _empty_rearrange_queue(self):
-        """ An internal callback which empties the rearrange queue from
-        within a freeze context.
+        # If our layout manager is None, we have a parent container
+        # that is managing layout for us. In that case, we continue
+        # to proxy the call up the heierarchy.
+        if self.layout_manager is None:
+            self.parent.request_refresh()
+        else:
+            super(Container, self).request_refresh()
+
+    def request_relayout_task(self, callback, *args, **kwargs):
+        """ A reimplemented parent class method which proxies the call
+        to request_relayout_task up the heierarchy if necessary. 
 
         """
-        with self.freeze():
-            queue = self._rearrange_queue
-            while queue:
-                queue.popleft()()
-            self._rearrange_queue_processing = False
-            self.rearrange()
+        # If our layout manager is None, we have a parent container
+        # that is managing layout for us. In that case, we continue
+        # to proxy the call up the heierarchy.
+        if self.layout_manager is None:
+            self.parent.request_relayout_task(callback, *args, **kwargs)
+        else:
+            sup = super(Container, self)
+            sup.request_relayout_task(callback, *args, **kwargs)
+            
+    def request_refresh_task(self, callback, *args, **kwargs):
+        """ A reimplemented parent class method which proxies the call
+        to request_refresh_task up the heierarchy if necessary. 
+
+        """
+        # If our layout manager is None, we have a parent container
+        # that is managing layout for us. In that case, we continue
+        # to proxy the call up the heierarchy.
+        if self.layout_manager is None:
+            self.parent.request_refresh_task(callback, *args, **kwargs)
+        else:
+            sup = super(Container, self)
+            sup.request_refresh_task(callback, *args, **kwargs)
         
+    #--------------------------------------------------------------------------
+    # Layout Implementation Handlers
+    #--------------------------------------------------------------------------
+    def do_relayout(self):
+        """ A reimplemented LayoutTaskHandler handler method which will
+        actually perform the layout.
+
+        """
+        # At this point, we know that our layout manager is not None
+        # and is the proper manager to do the layout, since the layout
+        # requests are proxied up the tree until the component with 
+        # the active manager is found.
+        layout_mgr = self.layout_manager
+        layout_mgr.update_constraints()
+        layout_mgr.layout()
+    
+    def do_refresh(self):
+        """ A reimplemented LayoutTaskHandler handler method which will
+        actually perform the refresh.
+
+        """
+        # At this point, we know that our layout manager is not None
+        # and is the proper manager to do the layout, since the layout
+        # requests are proxied up the tree until the component with 
+        # the active manager is found.
+        layout_mgr = self.layout_manager
+        layout_mgr.layout()
+    
     #--------------------------------------------------------------------------
     # Default Constraint Generation
     #--------------------------------------------------------------------------
@@ -243,18 +204,15 @@ class Container(LayoutComponent):
         child of the container toggles its visibility.
 
         """
-        # When visibility changes, we need to ensure a relayout takes
-        # place from within a freeze context. We can do this by adding
-        # an empty callable to the queue. This ensures that we don't 
-        # relayout more than is necessary.
-        self.relayout_enqueue(lambda: None)
+        self.request_relayout()
 
     def _on_size_hint_changed(self, child, name, old, new):
         """ A change handler for updaing the layout when the size hint
         of any of the container's layout children have changed.
 
         """
-        if self.layout_manager is None:
+        layout_mgr = self.layout_manager
+        if layout_mgr is None:
             # Our layout is managed by an ancestor, so pass up 
             # the notification.
             #
@@ -263,25 +221,17 @@ class Container(LayoutComponent):
             self.parent._on_size_hint_changed(child, name, old, new)
         else:
             # We want to update the size constraints of the layout 
-            # manager before the relayout takes place. We can do this
-            # by placing a callable on the rearrange queue. This also
-            # ensures that we do not rearrange more than is necessary.
-            # Note, the updating the size constraints is a special cased
-            # operation of the layout manager since it it's likely to
-            # happen more often than a full relayout. Thus it's more
-            # efficient than performing a full relayout.
-            def size_hint_closure():
-                self.layout_manager.update_size_cns(child)
-            self.rearrange_enqueue(size_hint_closure)
+            # manager before the refresh takes place. Note, the updating
+            # the size constraints is a special cased operation of the 
+            # layout manager since it it's likely to happen more often 
+            # than a full relayout. Thus it's more efficient than 
+            # performing a full relayout.
+            self.request_refresh_task(layout_mgr.update_size_cns, child)
 
     def _on_constraints_changed(self):
         """ A change handler that triggers a relayout when the list of 
         constraints for the container change.
 
         """
-        # When constraints change, we need to ensure a relayout takes
-        # place from within a freeze context. We can do this by adding
-        # an empty callable to the queue. This ensures that we don't 
-        # relayout more than is necessary.
-        self.relayout_enqueue(lambda: None)
+        self.request_relayout()
 
