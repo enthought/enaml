@@ -2,64 +2,64 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt_container import QtContainer
+from .qt_component import QtComponent
 
 from ..window import AbstractTkWindow
 
 
-class QtWindow(QtContainer, AbstractTkWindow):
-    """ A Qt implementation of a Window.
-
-    QtWindow uses a QFrame to create a simple top level window which
-    contains other child widgets and layouts.
+class QtWindow(QtComponent, AbstractTkWindow):
+    """ A Qt4 implementation of a Window. It serves as a base class for 
+    QtMainWindow and QtDialog. It is not meant to be used directly.
 
     """
-    _initializing = False
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
+    def create(self, parent):
+        """ Create the underlying Qt widget.
+
+        """
+        msg = 'A QtWindow is a base class and cannot be used directly'
+        raise NotImplementedError(msg)
+
     def initialize(self):
         """ Intializes the attributes on the QWindow.
 
         """
-        self._initializing = True
-        try:
-            super(QtWindow, self).initialize()
-            self.set_title(self.shell_obj.title)
-        finally:
-            self._initializing = False
+        super(QtWindow, self).initialize()
+        self.set_title(self.shell_obj.title)
+        self.update_central_widget()
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
     def shell_title_changed(self, title):
-        """ The change handler for the 'title' attribute.
+        """ The change handler for the 'title' attribute on the shell
+        object.
 
         """
         self.set_title(title)
     
+    def shell_central_widget_changed(self, central_widget):
+        """ The change handler for the 'central_widget' attribute on 
+        the shell object.
+
+        """
+        self.update_central_widget()
+    
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
+    def update_central_widget(self):
+        """ Updates the central widget from the value on the shell 
+        object. This method must be implemented by subclasses.
+
+        """
+        raise NotImplementedError
+
     def set_title(self, title):
-        """ Sets the title of the QFrame.
+        """ Sets the title of the underlying widget.
 
         """
         self.widget.setWindowTitle(title)
-
-    def set_visible(self, visible):
-        """ Overridden from the parent class to raise the window to
-        the front if it should be shown.
-
-        """
-        # Don't show the window if we're not initializing.
-        if not self._initializing:
-            widget = self.widget
-            if visible:
-                widget.setVisible(True)
-                widget.raise_()
-                widget.activateWindow()
-            else:
-                widget.setVisible(False)
 
