@@ -112,10 +112,3 @@ class Action(Component):
 
     # XXX need to handle icons and keyboard shortcuts
 
-
-class Separator(Action):
-    """ A convenience subclass for defining a menu separator.
-
-    """
-    separator = True
-
