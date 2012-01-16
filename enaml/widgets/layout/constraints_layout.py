@@ -12,14 +12,25 @@ import casuarius
 
 
 class ConstraintsLayout(AbstractLayoutManager):
+    """ The default AbstractLayoutManager implementation.
 
+    """
     def __init__(self, component):
+        """ Initialize a ConstraintsLayout
+
+        Parameters
+        ----------
+        component : Instance(Container)
+            The Container instance on which this layout manager should
+            operate. The reference to the container is stored weakly.
+
+        """
         self.component = weakref.ref(component)
 
         # The solver instance to use for this manager
         self.solver = None
 
-        # The constraints for the component which should never need to change
+        # The constraints for the component which should never change
         self.component_cns = None
 
         # The user constraints which may change
@@ -32,7 +43,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         # a childs size_hint is updated
         self.child_size_cns = None
 
-        # A flag to prevent recursion into various method. 
+        # A flag to prevent recursion into various methods. 
         # XXX this may no longer be needed
         self._recursion_guard = False
 
@@ -40,7 +51,7 @@ class ConstraintsLayout(AbstractLayoutManager):
         self._initialized = False
 
     #--------------------------------------------------------------------------
-    # Initalization
+    # Abstract Implementation
     #--------------------------------------------------------------------------
     def initialize(self):
         """ Initializes the solver by creating all of the necessary 
@@ -69,12 +80,14 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         solver = self.solver
 
-        # The list of all descendants participating in constraints-based layout.
+        # The flattened list of all descendants participating in 
+        # constraints-based layout.
         descendants = list(self.traverse_descendants(component))
 
-        # Disable the layout engines on all Containers descending from this one.
-        # FIXME: This destructively sets the .layout_manager attribute to None. It
-        # works, but we might be able to do it more cleanly.
+        # Disable the layout engines on all descendant Containers.
+        #
+        # FIXME: This destructively sets the .layout_manager attribute 
+        # to None. It works, but we might be able to do it more cleanly.
         for desc in descendants:
             if hasattr(desc, 'layout_manager'):
                 if type(desc.layout_manager) is type(self):
@@ -108,25 +121,21 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         solver.autosolve = True
 
-        # Set the minimum size of the component based on the current
-        # set of constraints
-        min_size = self.calc_min_size()
-        component.set_min_size(*min_size)
-
         self._recursion_guard = False
         self._initialized = True
 
-    def add_constraints(self, constraints):
-        """ Add an iterable of constraints to the solver.
+    def update_constraints(self):
+        """ Re-run the initialization routine to build a new solver with
+        updated constraints. This should typically only be called when 
+        the user constraints are updated.
 
         """
-        solver = self.solver
-        for cn in constraints:
-            solver.add_constraint(cn)
+        # FIXME: we may do better by storing the old constraints, getting
+        # the new constraints, finding the differences, and telling the 
+        # solver to remove/add constraints. Or maybe not. Timings needed.
+        self._initialized = False
+        self.initialize()
 
-    #--------------------------------------------------------------------------
-    # Solver Iteration
-    #--------------------------------------------------------------------------
     def layout(self):
         """ Perform an iteration of the solver for the new width and 
         height of the component. This will resolve the system and update
@@ -149,15 +158,22 @@ class ConstraintsLayout(AbstractLayoutManager):
         width_var = component.width
         height_var = component.height
 
-        with solver.suggest_values([(width_var, width), (height_var, height)], casuarius.medium):
-            # Update the geometry of the layout children with their 
-            # new solved values.
+        suggestions = [(width_var, width), (height_var, height)]
+        with solver.suggest_values(suggestions, casuarius.medium):
             for child in self.traverse_descendants(component):
                 child.set_solved_geometry(component)
 
         self._recursion_guard = False
 
-    def calc_min_size(self):
+    def add_constraints(self, constraints):
+        """ Add an iterable of constraints to the solver.
+
+        """
+        solver = self.solver
+        for cn in constraints:
+            solver.add_constraint(cn)
+
+    def get_min_size(self):
         """ Run an iteration of the solver with the suggested size of the
         component set to (0, 0). This will cause the solver to effectively
         compute the minimum size that the window can be to solve the
@@ -174,9 +190,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         width_var = component.width
         height_var = component.height
 
-        # FIXME: here we pick a 'medium' strength like the window resize but
-        # weight it a little less. Uses of 'medium' in constraints should
-        # override this. In the future, we should add more meaningful Strengths.
+        # FIXME: here we pick a 'medium' strength like the window resize
+        # but weight it a little less. Uses of 'medium' in constraints 
+        # should override this. In the future, we should add more 
+        # meaningful Strengths.
         with solver.suggest_values([(width_var, 0.0), (height_var, 0.0)],
             default_strength=casuarius.medium, default_weight=0.1):
             min_width = width_var.value
@@ -184,9 +201,56 @@ class ConstraintsLayout(AbstractLayoutManager):
 
         return (min_width, min_height)
 
+    def get_max_size(self):
+        """ Run an iteration of the solver with the suggested size of 
+        the component set to a very large value. This will cause the 
+        solver to effectively compute the maximum size that the window
+        can be to solve the system. The return value is a tuple numbers.
+        If one of the numbers is -1, it indicates there is no maximum in
+        that direction.
+
+        """
+        component = self.component()
+        if component is None:
+            msg = 'Component weakly referenced by %r disappeared' % self
+            raise RuntimeError(msg)
+        
+        solver = self.solver
+
+        width_var = component.width
+        height_var = component.height
+
+        # Pick a very large, but somewhat arbitrary, maximum value. 
+        # This is value that is used for a maximum by Qt.
+        max_val = 2**24 - 1
+
+        # FIXME: here we pick a 'medium' strength like the window resize
+        # but weight it a little less. Uses of 'medium' in constraints 
+        # should override this. In the future, we should add more 
+        # meaningful Strengths.
+        suggestions = [(width_var, max_val), (height_var, max_val)]
+        with solver.suggest_values(suggestions, 
+            default_strength=casuarius.medium, default_weight=0.1):
+            max_width = width_var.value
+            max_height = height_var.value
+
+        width_diff = abs(max_val - int(round(max_width)))
+        height_diff = abs(max_val - int(round(max_height)))
+
+        if width_diff <= 1:
+            max_width = -1
+
+        if height_diff <= 1:
+            max_height = -1
+
+        return (max_width, max_height)
+
+    #--------------------------------------------------------------------------
+    # Auxiliary Methods
+    #--------------------------------------------------------------------------
     def traverse_descendants(self, component):
-        """ Do a preorder traversal of all visible descendants of the component
-        that participate in the Constraints-base layout.
+        """ Do a preorder traversal of all visible descendants of the 
+        component that participate in the Constraints-base layout.
 
         """
         for child in component.layout_children:
@@ -197,9 +261,6 @@ class ConstraintsLayout(AbstractLayoutManager):
                     for desc in self.traverse_descendants(child):
                         yield desc
 
-    #--------------------------------------------------------------------------
-    # Constraint computation
-    #--------------------------------------------------------------------------
     def compute_component_cns(self, component):
         """ Computes the required constraints of the component.
 
@@ -218,13 +279,19 @@ class ConstraintsLayout(AbstractLayoutManager):
         # Containers have constraints.
         if not hasattr(component, 'constraints'):
             return []
+
         cns = []
-        user_constraints = component.constraints if component.constraints else component.default_user_constraints()
-        for constraint in user_constraints + component.container_constraints():
+
+        user_cns = component.constraints
+        if not user_cns:
+            user_cns = component.default_user_constraints()
+
+        for constraint in user_cns + component.container_constraints():
             if isinstance(constraint, DeferredConstraints):
                 cns.extend(constraint.get_constraint_list(component))
             else:
                 cns.append(constraint)
+
         return cns
     
     def compute_child_cns(self, child):
@@ -269,22 +336,6 @@ class ConstraintsLayout(AbstractLayoutManager):
                 constraints.append(cn)
 
         return constraints
-    
-    #--------------------------------------------------------------------------
-    # Constraint Update 
-    #--------------------------------------------------------------------------
-    def update_constraints(self):
-        """ Re-run the initialization routine to build a new solver with
-        updated constraints. This should typically only be called when 
-        the user constraints are updated.
-
-        """
-        # FIXME: we can probably do better by storing the old constraints,
-        # getting the new constraints, finding the differences, and telling the
-        # solver to remove/add constraints.
-        # Or maybe not. Timings will tell.
-        self._initialized = False
-        self.initialize()
 
     def update_size_cns(self, child):
         """ Update the constraints for the size hint of the given child.
@@ -314,11 +365,6 @@ class ConstraintsLayout(AbstractLayoutManager):
         for new_cn in new_cns:
             solver.add_constraint(new_cn)
 
-        # Recompute the minimum size since the constraint changes
-        # may have an effect on it.
-        min_size = self.calc_min_size()
-        component.set_min_size(*min_size)
-
     def dump_constraints(self):
         """ Print out all of the constraints and values.
 
@@ -326,7 +372,10 @@ class ConstraintsLayout(AbstractLayoutManager):
         lines = []
         lines.append('User:')
         for cn in self.user_cns:
-            lines.append('  {}  ({} {} {}) [error={}]'.format(cn, cn.lhs.value, cn.op, cn.rhs.value, cn.error))
+            fmt = '  {}  ({} {} {}) [error={}]'
+            line = fmt.format(cn, cn.lhs.value, cn.op, cn.rhs.value, cn.error)
+            lines.append(line)
         lines.append('')
         text = '\n'.join(lines)
         return text
+
