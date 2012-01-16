@@ -58,6 +58,24 @@ class AbstractTkResizable(object):
         raise NotImplementedError
 
     @abstractmethod
+    def max_size(self):
+        """ Returns the hard maximum (width, height) of the widget, 
+        ignoring any windowing decorations. A widget will not be able
+        to be resized larger than this value
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def set_max_size(self, max_width, max_height):
+        """ Set the hard maximum width and height of the widget, ignoring
+        any windowing decorations. A widget will not be able to be resized 
+        larger than this value.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
         (x, y) tuple of integers, including any windowing decorations. 
@@ -145,6 +163,22 @@ class Resizable(HasTraits):
         """
         self.abstract_obj.set_min_size(min_width, min_height)
 
+    def max_size(self):
+        """ Returns the hard maximum (width, height) of the widget, 
+        ignoring any windowing decorations. A widget will not be able
+        to be resized larger than this value
+
+        """
+        return self.abstract_obj.max_size()
+
+    def set_max_size(self, max_width, max_height):
+        """ Set the hard maximum width and height of the widget, ignoring
+        any windowing decorations. A widget will not be able to be resized 
+        larger than this value.
+
+        """
+        self.abstract_obj.set_max_size(max_width, max_height)
+        
     def pos(self):
         """ Returns the position tuple as given by the abstract widget.
 

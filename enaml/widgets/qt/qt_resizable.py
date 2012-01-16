@@ -40,8 +40,8 @@ class QtResizable(AbstractTkResizable):
         to be resized smaller than this value
 
         """
-        widget = self.widget
-        return (widget.minimumWidth(), widget.minimumHeight())
+        min_size = self.widget.minimumSize()
+        return (min_size.width(), min_size.height())
 
     def set_min_size(self, min_width, min_height):
         """ Set the hard minimum width and height of the widget, ignoring
@@ -50,6 +50,32 @@ class QtResizable(AbstractTkResizable):
 
         """
         self.widget.setMinimumSize(min_width, min_height)
+
+    def max_size(self):
+        """ Returns the hard maximum (width, height) of the widget, 
+        ignoring any windowing decorations. A widget will not be able
+        to be resized larger than this value
+
+        """
+        max_size = self.widget.maximumSize()
+        return (max_size.width(), max_size.height())
+
+    def set_max_size(self, max_width, max_height):
+        """ Set the hard maximum width and height of the widget, ignoring
+        any windowing decorations. A widget will not be able to be resized 
+        larger than this value.
+
+        """
+        # The hard Qt limit is 16777215 (which is 2**24 - 1) and will
+        # print warnings to the shell if we attemp to set a max size
+        # over that amount. This can be attempted when a QtMainWindow
+        # has a central widget size equal to max size, and it also has
+        # a menu bar and other components. Clipping the max size like
+        # this will not have an effect on layout computation and thus
+        # is relatively safe.
+        max_width = min(max_width, 16777215)
+        max_height = min(max_height, 16777215)
+        self.widget.setMaximumSize(max_width, max_height)
 
     def pos(self):
         """ Returns the position of the internal toolkit widget as an
