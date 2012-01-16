@@ -3,11 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt_component import QtComponent
+from .qt_resizable import QtResizable
 
 from ..window import AbstractTkWindow
 
 
-class QtWindow(QtComponent, AbstractTkWindow):
+class QtWindow(QtComponent, QtResizable, AbstractTkWindow):
     """ A Qt4 implementation of a Window. It serves as a base class for 
     QtMainWindow and QtDialog. It is not meant to be used directly.
 
@@ -23,7 +24,7 @@ class QtWindow(QtComponent, AbstractTkWindow):
         raise NotImplementedError(msg)
 
     def initialize(self):
-        """ Intializes the attributes on the QWindow.
+        """ Intializes the attributes on the underlying Qt widget.
 
         """
         super(QtWindow, self).initialize()
@@ -33,6 +34,24 @@ class QtWindow(QtComponent, AbstractTkWindow):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
+    def maximize(self):
+        """ Maximizes the window to fill the screen.
+
+        """
+        self.widget.showMaximized()
+            
+    def minimize(self):
+        """ Minimizes the window to the task bar.
+
+        """
+        self.widget.showMinimized()
+            
+    def normalize(self):
+        """ Restores the window after it has been minimized or maximized.
+
+        """
+        self.widget.showNormal()
+
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute on the shell
         object.
