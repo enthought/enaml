@@ -222,7 +222,8 @@ class BaseComponent(HasStrictTraits):
     #: _subcomponents and the items they return by calling their
     #: 'get_actual' method. This list should not be manipulated by
     #: user code.
-    children = Property(List, depends_on='_subcomponents:_actual_updated')
+    children = Property(List(Instance('BaseComponent')), 
+                        depends_on='_subcomponents:_actual_updated')
 
     #: Whether the component has been initialized or not. This will be 
     #: set to True after all of the setup() steps defined here are 
@@ -564,7 +565,7 @@ class BaseComponent(HasStrictTraits):
         if parent is not None:
             parent.relayout()
 
-    def relayout_later(self):
+    def request_relayout(self):
         """ A method called when the layout of the component's children
         should be refreshed at some point in the future. By default, this 
         method proxies the call up the hierarchy until an implementor is 
@@ -574,26 +575,26 @@ class BaseComponent(HasStrictTraits):
         """
         parent = self.parent
         if parent is not None:
-            parent.relayout_later()
+            parent.request_relayout()
 
-    def rearrange(self):
+    def refresh(self):
         """ A method called when the positioning of the component's 
         children should be refreshed. By default, this method proxies the 
         call up the hierarchy until an implementor is found. Implementors 
         should ensure that this method takes place immediately, and that
         the refresh is complete before the method returns. 
 
-        Note: This method performs less work than 'relayout' and should 
-            typically only need to be called when the children need to 
-            be repositioned, rather than have all of their layout 
+        Note: This method should perform less work than 'relayout' and 
+            should typically only need to be called when the children 
+            need to be repositioned, rather than have all of their layout 
             relationships recomputed.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.rearrange()
+            parent.refresh()
         
-    def rearrange_later(self):
+    def request_refresh(self):
         """ A method called when the positioning of the component's 
         children should be refreshed at some point in the future. By 
         default, this method proxies the call up the hierarchy until an 
@@ -601,39 +602,43 @@ class BaseComponent(HasStrictTraits):
         returns immediately, and that the refresh is completed at some 
         time in the future.
         
-        Note: This method performs less work than 'relayout' and should 
-            typically only need to be called when the children need to 
-            be repositioned, rather than have all of their layout 
+        Note: This method should perform less work than 'relayout' and 
+            should typically only need to be called when the children 
+            need to be repositioned, rather than have all of their layout 
             relationships recomputed.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.rearrange_later()
+            parent.request_refresh()
         
-    def relayout_enqueue(self, callable):
-        """ Enqueue a callable to be executed in a frozen context on the
-        next relayout pass. By default, this method proxies the call up
-        the hierarchy until an implementor is found. Implementors should
-        ensure that enqueuing the callable results in a relayout later
-        which empties the queue from within a freeze context.
+    def request_relayout_task(self, callback, *args, **kwargs):
+        """ Schedule a callback to be executed, followed by a relayout. 
+        By default, this method proxies the call up the hierarchy until 
+        an implementor is found. Implementors should ensure that the
+        callback is executed with given arguments at some point in the
+        future and is followed by a relayout. It is suggested that 
+        implementors collapse multiple calls to this method which
+        results in a single relayout.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.relayout_enqueue(callable)
+            parent.request_relayout_task(callback, *args, **kwargs)
         
-    def rearrange_enqueue(self, callable):
-        """ Enqueue a callable to be executed in a frozen context on the
-        next rearrange pass. By default, this method proxies the call up
-        the hierarchy until an implementor is found. Implementors should
-        ensure that enqueuing the callable results in a rearrange later
-        which empties the queue from within a freeze context.
+    def request_refresh_task(self, callback, *args, **kwargs):
+        """ Schedule a callback to be executed, followed by a rerfresh. 
+        By default, this method proxies the call up the hierarchy until 
+        an implementor is found. Implementors should ensure that the
+        callback is executed with given arguments at some point in the
+        future and is followed by a relayout. It is suggested that 
+        implementors collapse multiple calls to this method which
+        results in a single refresh.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.rearrange_enqueue(callable)
+            parent.request_refresh_task(callback, *args, **kwargs)
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
