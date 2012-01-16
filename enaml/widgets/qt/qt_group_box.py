@@ -35,10 +35,9 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         """
         super(QtGroupBox, self).initialize()
         shell = self.shell_obj
-        self._set_title(shell.title)
-        self._set_flat(shell.flat)
-        self._set_title_align(shell.title_align)
-        self._reset_layout_margins()
+        self.set_title(shell.title)
+        self.set_flat(shell.flat)
+        self.set_title_align(shell.title_align)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -50,10 +49,7 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         """
         # We perform the title update in a relayout context to 
         # prevent flicker and multiple calls to relayout.
-        def title_update_closure():
-            self._set_title(title)
-            self._reset_layout_margins()
-        self.shell_obj.relayout_enqueue(title_update_closure)
+        self.shell_obj.request_relayout_task(self.set_title, title)
 
     def shell_flat_changed(self, flat):
         """ Update the flat flag of the group box with the new value from
@@ -62,46 +58,39 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
         """
         # We perform the flat update in a relayout context to 
         # prevent flicker and multiple calls to relayout.
-        def flat_update_closure():
-            self._set_flat(flat)
-            self._reset_layout_margins()
-        self.shell_obj.relayout_enqueue(flat_update_closure)
+        self.shell_obj.request_relayout_task(self.set_flat, flat)
 
     def shell_title_align_changed(self, align):
         """ Update the title alignment to the new value from the shell 
         object.
 
         """
-        self._set_title_align(align)
+        self.set_title_align(align)
 
     def get_contents_margins(self):
         """ Return the (top, left, right, bottom) margin values for the
         widget.
 
         """
-        dx, dy, dr, db = self._layout_margins
         m = self.widget.contentsMargins()
-        contents_margins = (
-            m.top() - dy, m.left() - dx, m.right() - dr, m.bottom() - db,
-        )
-        return contents_margins
+        return (m.top(), m.left(), m.right(), m.bottom())
 
     #--------------------------------------------------------------------------
     # Widget Update methods 
     #--------------------------------------------------------------------------
-    def _set_title(self, title):
+    def set_title(self, title):
         """ Updates the title of group box.
 
         """
         self.widget.setTitle(title)
     
-    def _set_flat(self, flat):
+    def set_flat(self, flat):
         """ Updates the flattened appearance of the group box.
 
         """
         self.widget.setFlat(flat)
     
-    def _set_title_align(self, align):
+    def set_title_align(self, align):
         """ Updates the alignment of the title of the group box.
 
         """
