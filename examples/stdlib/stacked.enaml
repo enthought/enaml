@@ -14,38 +14,39 @@ describing the contents of each child switches between the two child Forms.
 from enaml.stdlib.stacked import Stacked
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Stacked Container"
-    constraints = [
-        vbox(hbox(selector, _space_), stack)
-    ]
-    ComboBox:
-        id: selector
-        items = ["Personal Details", "Employer Details"]
-        value = "Personal Details"
-    Stacked:
-        id: stack
-        index << selector.index
-        Form:
-            Label:
-                text = "First name:"
-            Field:
-                pass
-            Label:
-                text = "Last name:"
-            Field:
-                pass
-            Label:
-                text = "Home phone:"
-            Field:
-                pass
-        Form:
-            Label:
-                text = "Employer:"
-            Field:
-                pass
-            Label:
-                text = "Office or Desk phone:"
-            Field:
-                pass
+    Container:  
+        constraints = [
+            vbox(hbox(selector, _space_), stack)
+        ]
+        ComboBox:
+            id: selector
+            items = ["Personal Details", "Employer Details"]
+            value = "Personal Details"
+        Stacked:
+            id: stack
+            index << selector.index
+            Form:
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Home phone:"
+                Field:
+                    pass
+            Form:
+                Label:
+                    text = "Employer:"
+                Field:
+                    pass
+                Label:
+                    text = "Office or Desk phone:"
+                Field:
+                    pass
 

@@ -66,24 +66,25 @@ EmployerForm(Form):
 
 
 defn EmployeeView(employee):
-    Window:
+    MainWindow:
         title << "Employee Record for: %s, %s" % (employee.last_name, 
                                                   employee.first_name)
-        constraints = [
-            vbox(top_box, bottom_box),
-            align('midline', top_form, bottom_form),
-        ]
-        GroupBox:
-            id: top_box
-            title = "Personal Details"
-            EmployeeForm:
-                id: top_form
-                employee = employee
-        GroupBox:
-            id: bottom_box
-            title = "Employer Details"
-            visible << top_form.show_employer
-            EmployerForm:
-                id: bottom_form
-                employer << employee.boss
+        Container:
+            constraints = [
+                vbox(top_box, bottom_box),
+                align('midline', top_form, bottom_form),
+            ]
+            GroupBox:
+                id: top_box
+                title = "Personal Details"
+                EmployeeForm:
+                    id: top_form
+                    employee = employee
+            GroupBox:
+                id: bottom_box
+                title = "Employer Details"
+                visible << top_form.show_employer
+                EmployerForm:
+                    id: bottom_form
+                    employer << employee.boss
 

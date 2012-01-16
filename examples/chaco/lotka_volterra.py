@@ -77,11 +77,11 @@ def main():
     SimplePlot.activate()
 
     with enaml.imports():
-        from lotka_volterra_ui import MainWindow
+        from lotka_volterra_ui import Main
 
     model = LotkaVolterra()
     model.integrate()
-    window = MainWindow(model=model)
+    window = Main(model=model)
     window.show()
 
 

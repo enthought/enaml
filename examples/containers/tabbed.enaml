@@ -44,7 +44,7 @@ TabForm(Form):
         clicked >> setattr(parent, 'button_clicked', not button_clicked) 
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = 'Tabbed'
     Tabbed:
         id: tbd

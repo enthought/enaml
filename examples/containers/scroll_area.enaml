@@ -11,7 +11,7 @@ widget.
 """
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Scroll Area"
     ScrollArea:
         preferred_size = (None, 100)

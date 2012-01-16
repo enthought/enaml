@@ -22,7 +22,8 @@ table_model = TableModel(table)
 :: end ::
 
 
-MainWindow(Window):
+Main(MainWindow):
+    title = 'Splitters'
     Splitter:
         orientation = 'vertical'
         TableView:

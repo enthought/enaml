@@ -22,7 +22,7 @@ PersonForm(Form):
 
 
 defn PersonView(person):
-    Window:
+    MainWindow:
         PersonForm:
             person = person
             

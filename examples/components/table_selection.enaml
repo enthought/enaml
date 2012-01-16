@@ -63,11 +63,6 @@ class Model(HasTraits):
     def _selected_rows_changed(self, new):
         print 'Selected Rows: {!r}'.format(new)
 
-def main():
-    model = Model()
-    view = MainView(model)
-    view.show()
-
 :: end ::
 
 
@@ -76,8 +71,10 @@ def main():
 # And once ListView and TreeView are implemented, will work just fine
 # there as well.
 
-defn MainView(model):
-    Window:
+Main(MainWindow):
+    attr model = Model()
+    title = 'Table Selections'
+    Container:
         constraints = [
             hbox(tv1, tv2),
             width >= 800,

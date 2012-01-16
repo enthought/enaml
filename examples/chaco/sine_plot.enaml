@@ -12,8 +12,10 @@ from numpy import pi
 from range import Range
 
 
-defn MainWindow(model):
-    Window:
+Main(MainWindow):
+    attr model
+    title = 'Sine Plot'
+    Container:
         constraints = [
             hbox(plot, vbox(form, _space_)),
             align('left', phase_range.slider, amp_range.slider, w_range.slider),

@@ -24,14 +24,13 @@ def get_action_label(action):
     return ' - '.join(reversed(parts))
     
 
-def get_recent_file_actions():
+def get_recent_files(filenames):
     """ A simple function that returns a list of PrintActions that
     represent a list of recent files. This would normally be computed
     based on some model information.
 
     """
-    files = ['foo.txt', 'bar.rst', 'report.pdf']
-    return [PrintAction(text=f) for f in files]
+    return [PrintAction(text=fn) for fn in filenames]
 
 :: end ::
 
@@ -45,7 +44,18 @@ PrintAction(Action):
     triggered >> print(get_action_label(action))
 
 
+ViewMenu(Menu):
+    title = 'View'
+    PrintAction:
+        text = 'Refresh Now'
+    Action:
+        separator = True
+    PrintAction:
+        text = 'Selection Columns...'
+
+
 Main(MainWindow):
+    attr show_view_menu: bool = False
     MenuBar:
         Menu:
             id: file_menu
@@ -59,7 +69,8 @@ Main(MainWindow):
             Menu:
                 title = 'Open Recent'
                 Include:
-                    components = get_recent_file_actions()
+                    id: icld
+                    components = get_recent_files(['spam.txt', 'ham.pdf', 'eggs.doc'])
                 Action:
                     separator = True
                 PrintAction:
@@ -74,27 +85,24 @@ Main(MainWindow):
                 text = 'Copy'
             PrintAction:
                 text = 'Paste'
+        Include:
+            components << ViewMenu() if show_view_menu else []
         Menu:
             title = 'Window'
             PrintAction:
                 text = 'Minimize'
             PrintAction:
                 text = 'Zoom'
-    Html:
-        source = '<center><h1>Hello Enaml Menus!</h1></center>'
-    PushButton:
-        text = 'Popup File Menu'
-        clicked >> file_menu.popup()
-
-
-:: python ::
-
-# FIXME - The enaml-run script looks for something name MainWindow
-#   if it can't find a 'main'. Since MainWindow is now the name of
-#   of a widget, we have to use a 'main' in this example. Fix the
-#   enaml-run script.
-def main():
-    Main().show()
-
-:: end ::
+    Container:
+        Html:
+            source = '<center><h1>Hello Enaml Menus!</h1></center>'
+        CheckBox:
+            text = 'Show View Menu'
+            checked := show_view_menu
+        PushButton:
+            text = 'Popup File Menu'
+            clicked >> file_menu.popup()
+        PushButton:
+            text = 'Change Recent Files'
+            clicked >> setattr(icld, 'components', get_recent_files(['one.txt', 'two.pdf', 'three.doc']))
 

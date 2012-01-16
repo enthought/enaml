@@ -35,11 +35,12 @@ defn PersonField(person):
         value := person.name
 
 
-MainWindow(Window):
-    Field:
-        value << ', '.join([person.name for person in people])
-        bg_color = 'lightblue'
-        read_only = True
-    Include:
-        components = [PersonField(person) for person in people]
+Main(MainWindow):
+    Container:
+        Field:
+            value << ', '.join([person.name for person in people])
+            bg_color = 'lightblue'
+            read_only = True
+        Include:
+            components = [PersonField(person) for person in people]
 
