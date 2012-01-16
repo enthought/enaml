@@ -82,7 +82,7 @@ row_sel_model = base_sel_model.clone(shell_loader('row_selection_model')[1])
 
 
 QT_CONSTRUCTORS = dict((
-    constructor('window'),
+    constructor('main_window'),
     constructor('container'),
     constructor('dialog'),
     constructor('calendar'),
@@ -115,7 +115,6 @@ QT_CONSTRUCTORS = dict((
     ('RowSelectionModel', row_sel_model),
     constructor('menu_bar'),
     constructor('menu'),
-    constructor('main_window'),
     constructor('action'),
 ))
 
