@@ -4,7 +4,9 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Unicode, Event, Property, List, cached_property
+from traits.api import (
+    Instance, Either, Unicode, Event, Property, List, cached_property,
+)
 
 from .component import Component, AbstractTkComponent
 
@@ -51,6 +53,9 @@ class AbstractTkMenu(AbstractTkComponent):
         raise NotImplementedError
 
 
+MenuContents = List(Either(Instance('Menu'), Instance(Action)))
+
+
 class Menu(Component):
     """ A declarative Enaml Component which represents a menu in a 
     menu bar.
@@ -67,7 +72,7 @@ class Menu(Component):
 
     #: A read-only cached property which holds the list of menu
     #: contents which are instances of Menu or Action.
-    contents = Property(List, depends_on='children')
+    contents = Property(MenuContents, depends_on='children')
 
     @cached_property
     def _get_contents(self):
@@ -76,7 +81,7 @@ class Menu(Component):
         """
         flt = lambda child: isinstance(child, (Menu, Action))
         return filter(flt, self.children)
-    
+
     def popup(self, pos=None, blocking=True, parent=None):
         """ Create and show the menu as context or popup menu.
 
