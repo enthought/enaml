@@ -4,13 +4,13 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event, Instance, List, Property, cached_property
+from traits.api import Event, Instance, Property, cached_property
 
+from .base_selection_model import BaseSelectionModel
 from .control import Control, AbstractTkControl
 
 from ..item_models.abstract_item_model import AbstractItemModel
 from ..item_models.model_index import ModelIndex
-from .base_selection_model import BaseSelectionModel
 
 
 class AbstractTkItemView(AbstractTkControl):
@@ -28,8 +28,11 @@ class AbstractItemView(Control):
     #: The AbstractItemModel instance being displayed by the view.
     item_model = Instance(AbstractItemModel)
 
-    #: The selection model for this view.
-    selection_model = Property(depends_on='selection_children')
+    #: The selection model for this view. If more than one selection
+    #: model is declared and exception will be raised.
+    selection_model = Property(
+        Instance(BaseSelectionModel), depends_on='children',
+    )
     
     #: The ModelIndex that has just been activated by a user interaction,
     #: usually a double-click or an Enter keypress.
@@ -44,31 +47,24 @@ class AbstractItemView(Control):
     #: Overridden parent class trait.
     abstract_obj = Instance(AbstractTkItemView)
 
-    #: A filtered list of children containing the selection models
-    selection_children = Property(List, depends_on='children')
-
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
     @cached_property
-    def _get_selection_children(self):
-        """ The property getter for the 'selection_children' attribute.
+    def _get_selection_model(self):
+        """ The property getter for the 'selection_model' attribute. It
+        creates a default selection model if one is not provided.
 
         """
         flt = lambda child: isinstance(child, BaseSelectionModel)
-        return filter(flt, self.children)
-
-    @cached_property
-    def _get_selection_model(self):
-        """ The property getter for the 'selection_model' attribute. It
-        creates a default selection model if one is not provided as a 
-        declarative subcomponent.
-
-        """
-        children = self.selection_children
-        if len(children) == 0:
+        sel_models = filter(flt, self.children)
+        n_models = len(sel_models)
+        if n_models == 0:
             res = BaseSelectionModel()
+        elif n_models == 1:
+            res = sel_models[0]
         else:
-            res = children[-1]
+            msg = 'An ItemView can have exactly 1 SelectionModel. %s given.'
+            raise ValueError(msg % n_models)
         return res
 
