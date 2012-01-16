@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 """
-    sphinx.ext.enamldoc
-    ~~~~~~~~~~~~~~~~~~
+    enamldoc
+    ~~~~~~~~
 
     Automatically insert docstrings for enaml built-in and derived widgets and
     components, mirroring and borrowing heavily from the autodoc
     extension. Enaml widgets and components are Python objects that are
     imported in the enaml.imports() context
 
-    :copyright: Copyright 2007-2011 by the Sphinx team, see AUTHORS.
-    :license: BSD, see LICENSE for details.
 """
 
 import re
@@ -18,18 +16,19 @@ from types import FunctionType, BuiltinFunctionType
 
 from sphinx.application import ExtensionError
 from sphinx.util.inspect import getargspec
-
 from sphinx.ext.autodoc import Documenter
 from sphinx.ext.autodoc import ModuleLevelDocumenter
 from sphinx.ext.autodoc import DocstringSignatureMixin
 from sphinx.ext.autodoc import ModuleDocumenter
 
-#import pdb; pdb.set_trace()
 from enaml_domain import EnamlDomain
-from enaml.parsing.enaml_compiler import EnamlDeclaration, EnamlDefn
+
+from enthought.debug.api import called_from
+
 from enaml.import_hooks import EnamlImporter
 EnamlImporter.install()
 
+from enaml.parsing.enaml_compiler import EnamlDeclaration, EnamlDefn
 
 class EnamlComponentDocumenter(ModuleLevelDocumenter):
     """
@@ -186,7 +185,7 @@ def setup(app):
     configuration are minimal.
 
     """
-    
+
     app.add_autodocumenter(EnamlModuleDocumenter)
     app.add_autodocumenter(EnamlDeclarationDocumenter)
     app.add_autodocumenter(EnamlDefnDocumenter)
