@@ -233,24 +233,3 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
         """
         pass
 
-    def set_bg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QItemSelection.
-
-        """
-        pass
-
-    def set_fg_color(self, color):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QItemSelection.
-
-        """
-        pass
-
-    def set_font(self, font):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QItemSelection.
-
-        """
-        pass
-
