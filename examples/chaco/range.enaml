@@ -13,7 +13,7 @@ Range(Container):
     attr minimum: float = 0.0
     attr maximum: float = 1.0
     attr value: float = 0.5
-    attr text_format: str = '{:.2f}'
+    attr text_format: str = '{0:.2f}'
     attr slider: FloatSlider = slider_
     constraints = [
         horizontal(left, 0, min_label, slider, max_label, 0, right),
