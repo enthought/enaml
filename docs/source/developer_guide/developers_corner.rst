@@ -25,15 +25,21 @@ Documentation
 
 Sphinx Configuration
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-Include the enaml import hooks in ``conf.py`` for any project that will use
-``autodoc`` for |Enaml| objects:
 
-::
+A Sphinx extension ``enamldoc`` lets Sphinx recognize and document |Enaml|
+objects.
 
- from enaml.import_hooks import EnamlImporter
- EnamlImporter.install()
+.. automodule:: enamldoc.enamldoc
+    :members:
 
-|Enaml| objects will import as Python functions.
+.. inheritance-diagram::
+    enamldoc.enamldoc.EnamlComponentDocumenter
+    enamldoc.enamldoc.EnamlDeclarationDocumenter
+    enamldoc.enamldoc.EnamlDefnDocumenter
+    enamldoc.enamldoc.EnamlDomain
+
+
+
 
 Including the Sphinx extension ``refactor_doc`` allows use of formatted
 docstrings as described below.
@@ -75,7 +81,7 @@ can be used as a template
 
 Docstrings
 ++++++++++
-
+ 
 The current documentation uses the autodoc extension of the Sphinx
 distribution. The autodoc parsing is also extended to convert heading-based
 docstring descriptions to standard reStructedText role directives.
