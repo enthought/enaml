@@ -7,7 +7,7 @@ from traits.api import (
 )
 
 from .component import Component, AbstractTkComponent
-from .resizable import Resizable, AbstractTkResizable
+from .sizable import Sizable, AbstractTkSizable
 from .stylable import Stylable, AbstractTkStylable
 from .layout.box_model import BoxModel
 
@@ -21,7 +21,7 @@ PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
 # Abstract Toolkit Layout Component Interface
 #------------------------------------------------------------------------------
 class AbstractTkLayoutComponent(AbstractTkComponent, 
-                                AbstractTkResizable, 
+                                AbstractTkSizable, 
                                 AbstractTkStylable):
     """ The abstract toolkit LayoutComponent interface.
 
@@ -36,7 +36,7 @@ class AbstractTkLayoutComponent(AbstractTkComponent,
 #------------------------------------------------------------------------------
 # Enaml Layout Component
 #------------------------------------------------------------------------------
-class LayoutComponent(Component, Resizable, Stylable):
+class LayoutComponent(Component, Sizable, Stylable):
     """ A Component subclass that adds a box model and support for 
     constraints specification. This class represents the most basic
     widget in Enaml that can partake in constraints-base layout.
@@ -310,9 +310,9 @@ class LayoutComponent(Component, Resizable, Stylable):
         dx = 0
         dy = 0
         for ancestor in self.traverse_ancestors(root):
-            anc_dx, anc_dy, _, _ = ancestor.geometry()
+            anc_dx, anc_dy, _, _ = ancestor.layout_geometry()
             dx += anc_dx
             dy += anc_dy
-        self.set_geometry(x - dx, y - dy, width, height)
+        self.set_layout_geometry(x - dx, y - dy, width, height)
         return (dx, dy)
 

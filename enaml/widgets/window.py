@@ -13,7 +13,7 @@ from .component import Component, AbstractTkComponent
 from .container import Container
 from .layout_component import LayoutComponent
 from .layout_task_handler import LayoutTaskHandler
-from .resizable import Resizable, AbstractTkResizable
+from .sizable import Sizable, AbstractTkSizable
 
 
 # The set of strengths that are equal to, or stronger than, the resize
@@ -22,7 +22,7 @@ from .resizable import Resizable, AbstractTkResizable
 STRONGER_THAN_RESIZE = set(('medium', 'strong', 'required'))
 
 
-class AbstractTkWindow(AbstractTkComponent, AbstractTkResizable):
+class AbstractTkWindow(AbstractTkComponent, AbstractTkSizable):
     """ The abstract ToplevelWindow interface.
 
     """
@@ -64,7 +64,7 @@ class AbstractTkWindow(AbstractTkComponent, AbstractTkResizable):
         raise NotImplementedError
 
 
-class Window(LayoutTaskHandler, Component, Resizable):
+class Window(LayoutTaskHandler, Component, Sizable):
     """ A top-level Window component.
 
     A Window component is represents of a top-level visible component
