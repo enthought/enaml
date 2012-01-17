@@ -3,12 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt_component import QtComponent
-from .qt_resizable import QtResizable
+from .qt_sizable import QtSizable
 
 from ..window import AbstractTkWindow
 
 
-class QtWindow(QtComponent, QtResizable, AbstractTkWindow):
+class QtWindow(QtComponent, QtSizable, AbstractTkWindow):
     """ A Qt4 implementation of a Window. It serves as a base class for 
     QtMainWindow and QtDialog. It is not meant to be used directly.
 
