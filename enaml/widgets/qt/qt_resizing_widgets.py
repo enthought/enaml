@@ -7,128 +7,121 @@ pass on notifications of resize events to Enaml.
 
 """
 from abc import ABCMeta
+import os
 
-from .qt import QtCore, QtGui, qt_api
+from .qt import QtCore, QtGui
+
+
+#: A private flag which is used at startup time to enable debug painting
+#: for the Qt resizable widgets.
+_debug = os.environ.get('ENAML_DEBUG_PAINT', False)
 
 
 class QResizingWidget(object):
     """ An abstract base class for testing if a QWidget subclass exposes
-    a `resized` signal.
+    a `resized` signal. Virtual subclasses must explicitly register 
+    themselves with the .register() method.
 
     """
     __metaclass__ = ABCMeta
 
-    @classmethod
-    def __subclasshook__(cls, C):
-        """ Check if a class is a QWidget that has the `resized` signal.
 
-        """
-        if issubclass(C, QtGui.QWidget):
-            if any(isinstance(getattr(B, "resized", None), QtCore.Signal) 
-                   for B in C.__mro__):
-                return True
-        return NotImplemented
+def _resizable(cls):
+    """ A private class decorator/factory which takes a QWidget subclass 
+    and adds code which converts its resize events into a 'resized' 
+    signal. If the debug paint environment flag is set, it adds the 
+    custom painting code as well.
 
-
-# PySide requires a difference mixin base that PyQt4
-if qt_api.lower() == 'pyside':
-    MixinBaseClass = object
-else:
-    MixinBaseClass = QtGui.QWidget
-
-
-class ResizingMixin(MixinBaseClass):
-    """ Add a `resized` signal to the widget and a `resizeEvent()` method 
-    that emits the signal.
-
-    Note: Under PySide 1.0.8, the base class of this mixin must be `object`
-    while under PyQt4, it must be `QWidget`.
-
+    Paramters
+    ---------
+    cls : QWidget subclass
+        The QWidget subclass to which resizing functionality is added.
+    
+    Returns
+    -------
+    result : QWidget subclass
+        A new subclass with the resizing functionality implemented.
+    
     """
-    resized = QtCore.Signal()
+    if _debug:
 
-    def resizeEvent(self, event):
-        super(ResizingMixin, self).resizeEvent(event)
-        self.resized.emit()
+        class QResizable(cls):
+            """ A QWidget subclass that passes its resize events back 
+            to Enaml through a Qt signal.
 
+            """
+            #: A signal which is emitted on a resize event.
+            resized = QtCore.Signal()
 
-class LayoutDebugMixin(MixinBaseClass):
-    """ A mixin that can be added to a container widget to draw the 
-    positions of its children.
+            def resizeEvent(self, event):
+                """ Converts a resize event in into a signal.
 
-    """
-    def paintEvent(self, event):
-        super(LayoutDebugMixin, self).paintEvent(event)
-        qp = QtGui.QPainter()
-        qp.begin(self)
-        try:
-            qp.setPen(QtGui.QColor(0, 0, 0))
-            for child in self.children():
-                layout_item = QtGui.QWidgetItem(child)
-                geom = layout_item.geometry()
-                qp.drawRect(geom)
-        finally:
-            qp.end()
+                """
+                super(QResizable, self).resizeEvent(event)
+                self.resized.emit()
+            
+            def paintEvent(self, event):
+                """ Paints debug layout rects of all the children during
+                a paint event.
 
+                """
+                super(QResizable, self).paintEvent(event)
+                qp = QtGui.QPainter()
+                qp.begin(self)
+                try:
+                    qp.setPen(QtGui.QColor(0, 0, 0))
+                    for child in self.children():
+                        if isinstance(child, QtGui.QWidget):
+                            layout_item = QtGui.QWidgetItem(child)
+                            geom = layout_item.geometry()
+                            qp.drawRect(geom)
+                finally:
+                    qp.end()
+            
+        QResizable.__name__ = cls.__name__ + '_debug_resizable'
+                
+    else:
+        
+        class QResizable(cls):
+            """ A QWidget subclass that passes its resize events back 
+            to Enaml through a Qt signal.
 
-class QResizingFrame(ResizingMixin, QtGui.QFrame):
-    """ A QFrame subclass that passes its resize events back to Enaml 
-    through a Qt signal.
+            """
+            #: A signal which is emitted on a resize event.
+            resized = QtCore.Signal()
 
-    """
-    pass
+            def resizeEvent(self, event):
+                """ Converts a resize event in into a signal.
 
+                """
+                super(QResizable, self).resizeEvent(event)
+                self.resized.emit()
+    
+        QResizable.__name__ = cls.__name__ + '_resizable' 
+          
+    QResizingWidget.register(QResizable)
 
-class QResizingDialog(ResizingMixin, QtGui.QDialog):
-    """ A QDialog subclass that passes its resize events back to Enaml 
-    through a Qt signal.
-
-    """
-    pass
-
-
-class QResizingMainWindow(ResizingMixin, QtGui.QMainWindow):
-    """ A QMainWindow subclass that passes its resize events back to Enaml 
-    through a Qt signal.
-
-    """
-    pass
-
-
-class QResizingGroupBox(ResizingMixin, QtGui.QGroupBox):
-    """ A QGroupBox subclass that passes its resize events back to Enaml 
-    through a Qt signal.
-
-    """
-    pass
-
-
-class QResizingStackedWidget(ResizingMixin, QtGui.QStackedWidget):
-    """ A QStackedWidget subclass that passes its resize events back to 
-    Enaml through a Qt signal.
-
-    """
-    pass
+    return QResizable
 
 
-class QResizingScrollArea(ResizingMixin, QtGui.QScrollArea):
-    """ A QScrollArea subclass that passes its resize events back to Enaml 
-    through a Qt signal.
-
-    """
-    pass
+QResizingFrame = _resizable(QtGui.QFrame)
 
 
-class QResizingTabWidget(ResizingMixin, QtGui.QTabWidget):
-    """ A QTabWidget subclass that passes its resize events back to Enaml 
-    through a Qt signal.
-
-    """
+QResizingDialog = _resizable(QtGui.QDialog)
 
 
-class QResizingSplitter(ResizingMixin, QtGui.QSplitter):
-    """ A QSplitter subclass that passes its resize events back to Enaml 
-    through a Qt signal.
+QResizingMainWindow = _resizable(QtGui.QMainWindow)
 
-    """
+
+QResizingGroupBox = _resizable(QtGui.QGroupBox)
+
+
+QResizingScrollArea = _resizable(QtGui.QScrollArea)
+
+
+QResizingTabWidget = _resizable(QtGui.QTabWidget)
+
+
+QResizingSplitter = _resizable(QtGui.QSplitter)
+
 
