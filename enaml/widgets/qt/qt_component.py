@@ -93,12 +93,25 @@ class QtComponent(AbstractTkComponent):
         """ Disable rendering updates for the underlying Qt widget.
 
         """
-        self.widget.setUpdatesEnabled(False)
+        # Freezing updates on a top-level window seems to cause 
+        # flicker on OSX the updates are reenabled. In this case, 
+        # just freeze the children instead.
+        if self.widget.isWindow():
+            for child in self.shell_obj.children:
+                child.disable_updates()
+        else:
+            self.widget.setUpdatesEnabled(False)
 
     def enable_updates(self):
         """ Enable rendering updates for the underlying Wx widget.
 
         """
+        # Freezing updates on a top-level window seems to cause 
+        # flicker on OSX the updates are reenabled. In this case, 
+        # just freeze the children instead.
+        if self.widget.isWindow():
+            for child in self.shell_obj.children:
+                child.enable_updates()
         self.widget.setUpdatesEnabled(True)
 
     #--------------------------------------------------------------------------
