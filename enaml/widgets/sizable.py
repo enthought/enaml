@@ -98,6 +98,41 @@ class AbstractTkSizable(object):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def size(self):
+        """ Returns the size of the internal toolkit widget, ignoring any
+        windowing decorations, as a (width, height) tuple of integers.
+
+        """
+        raise NotImplementedError
+        
+    @abstractmethod
+    def resize(self, width, height):
+        """ Resizes the internal toolkit widget according the given
+        width and height integers, ignoring any windowing decorations.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def pos(self):
+        """ Returns the position of the internal toolkit widget as an
+        (x, y) tuple of integers, including any windowing decorations. 
+        The coordinates should be relative to the origin of the widget's 
+        parent, or to the screen if the widget is toplevel.
+
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def move(self, x, y):
+        """ Moves the internal toolkit widget according to the given
+        x and y integers which are relative to the origin of the
+        widget's parent and includes any windowing decorations.
+
+        """
+        raise NotImplementedError
+
 
 class Sizable(HasTraits):
     """ A mixin class which declares the sizable interface for an
@@ -179,29 +214,25 @@ class Sizable(HasTraits):
         """ Returns the size tuple as given by the abstract widget.
 
         """
-        _, _, width, height = self.geometry()
-        return (width, height)
+        return self.abstract_obj.size()
 
     def resize(self, width, height):
         """ Resize the abstract widget as specified by the given
         width and height integers.
 
         """
-        x, y, _, _ = self.geometry()
-        self.set_geometry(x, y, width, height)
-        
+        self.abstract_obj.resize(width, height)
+
     def pos(self):
         """ Returns the position tuple as given by the abstract widget.
 
         """
-        x, y, _, _ = self.geometry()
-        return (x, y)
+        return self.abstract_obj.pos()
     
     def move(self, x, y):
         """ Moves the abstract widget to the given x and y integer
         coordinates which are given relative to the parent origin.
 
         """
-        _, _, width, height = self.geometry()
-        self.set_geometry(x, y, width, height)
+        self.abstract_obj.move(x, y)
 

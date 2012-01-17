@@ -129,3 +129,36 @@ class QtSizable(AbstractTkSizable):
         max_height = min(max_height, 16777215)
         self.widget.setMaximumSize(max_width, max_height)
 
+    def size(self):
+        """ Returns the size of the internal toolkit widget, ignoring any
+        windowing decorations, as a (width, height) tuple of integers.
+
+        """
+        size = self.widget.size()
+        return (size.width(), size.height())
+                
+    def resize(self, width, height):
+        """ Resizes the internal toolkit widget according the given
+        width and height integers, ignoring any windowing decorations.
+
+        """
+        self.widget.resize(width, height)
+
+    def pos(self):
+        """ Returns the position of the internal toolkit widget as an
+        (x, y) tuple of integers, including any windowing decorations. 
+        The coordinates should be relative to the origin of the widget's 
+        parent, or to the screen if the widget is toplevel.
+
+        """
+        pos = self.widget.pos()
+        return (pos.x(), pos.y())
+            
+    def move(self, x, y):
+        """ Moves the internal toolkit widget according to the given
+        x and y integers which are relative to the origin of the
+        widget's parent and includes any windowing decorations.
+
+        """
+        self.widget.move(x, y)
+
