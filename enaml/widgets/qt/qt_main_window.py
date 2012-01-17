@@ -58,9 +58,12 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         if menu_bar is None:
             res = 0
         else:
-            res = menu_bar.sizeHint().height()
-            if res > 0:
-                res += 1
+            if isinstance(menu_bar.style(), QtGui.QMacStyle):
+                res = 0
+            else:
+                res = menu_bar.sizeHint().height()
+                if res > 0:
+                    res += 1
         return res
 
     #--------------------------------------------------------------------------
