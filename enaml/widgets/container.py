@@ -78,7 +78,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
             self.parent.relayout()
         else:
             super(Container, self).relayout()
-    
+
     def refresh(self):
         """ A reimplemented parent class method which proxies the call
         to refresh up the heierarchy if necessary. 
@@ -161,7 +161,14 @@ class Container(LayoutTaskHandler, LayoutComponent):
         layout_mgr = self.layout_manager
         layout_mgr.update_constraints()
         layout_mgr.layout()
-    
+
+        # We emit the size hint updated event at this point since
+        # we are still inside a freeze context. This means that if
+        # our parent is a toplevel window, it can set the new size
+        # of the window before leaving the context which helps 
+        # eleminate flicker during the resize.
+        self.size_hint_updated = True
+
     def do_refresh(self):
         """ A reimplemented LayoutTaskHandler handler method which will
         actually perform the refresh.
@@ -225,8 +232,16 @@ class Container(LayoutTaskHandler, LayoutComponent):
             # the size constraints is a special cased operation of the 
             # layout manager since it it's likely to happen more often 
             # than a full relayout. Thus it's more efficient than 
-            # performing a full relayout.
-            self.request_refresh_task(layout_mgr.update_size_cns, child)
+            # performing a full relayout. We also, need to emit a
+            # size hint update event in this case, since some of 
+            # constraint may be updated and may possibly result
+            # in new min/max sizes for the toplevel window.
+            # XXX - this smells a bit. Should we just handle size 
+            # hints like everything else?
+            def closure():
+                layout_mgr.update_size_cns(child)
+                self.size_hint_updated = True
+            self.request_refresh_task(closure)
 
     def _on_constraints_changed(self):
         """ A change handler that triggers a relayout when the list of 

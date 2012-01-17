@@ -6,6 +6,7 @@ from abc import abstractmethod
 
 from traits.api import (
     Str, Instance, Property, cached_property, Int, Tuple, Event, Range,
+    on_trait_change,
 )
 
 from .component import Component, AbstractTkComponent
@@ -150,6 +151,15 @@ class Window(LayoutTaskHandler, Component, Resizable):
             res = None
         else:
             res = widgets[0]
+        
+        # We need to hook up handler on the size hint updated event
+        # of the widge here, since using the extended change grammar
+        # in a decorator doesn't seem to work properly if the object
+        # is computed from a cached_property.
+        if res is not None:
+            handler = self._refresh_minmax_sizes
+            res.on_trait_change(handler, 'size_hint_updated')
+
         return res
 
     #--------------------------------------------------------------------------
@@ -195,7 +205,8 @@ class Window(LayoutTaskHandler, Component, Resizable):
         """
         self.update_maximum_size()
 
-    def _central_widget_changed(self):
+    @on_trait_change('central_widget')
+    def _refresh_minmax_sizes(self):
         """ Updates the minimum and maximum size of the window if the 
         central widget changes after initialization.
 
