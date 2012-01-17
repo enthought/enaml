@@ -7,7 +7,7 @@ from phone_converter import PhoneNumberConverter
 
 EmployeeForm(Form):
     attr employee
-    attr show_employer: bool = True
+    attr show_employer: bool = False
     Label:
         text = "First name:"
     Field:
