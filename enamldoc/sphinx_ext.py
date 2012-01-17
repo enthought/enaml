@@ -31,8 +31,7 @@ EnamlImporter.install()
 from enaml.parsing.enaml_compiler import EnamlDeclaration, EnamlDefn
 
 class EnamlComponentDocumenter(ModuleLevelDocumenter):
-    """
-    Enaml component documenter class
+    """ Enaml component documenter class
 
     The main purpose of this class is to be distinct from Python components and
     change the domain in the Documenter instance to 'enaml'
@@ -46,11 +45,11 @@ class EnamlComponentDocumenter(ModuleLevelDocumenter):
         self.domain = 'enaml'
 
     def check_module(self):
-        """
-        For Enaml objects, the module name returned by self.object.__module__
-        points to the enaml parsing compiler, rather than the logical module
-        name stored in self.modname. Therefore, this check will verify that the
-        module points to enaml.parsing.enaml_compiler.
+        """ For Enaml objects, the module name returned by
+        self.object.__module__ points to the enaml parsing compiler, rather
+        than the logical module name stored in self.modname. Therefore, this
+        check will verify that the module points to
+        enaml.parsing.enaml_compiler.
 
         Note - after a fix to correct the .__module__ and .__file__ attributes,
         this method will not be necessary and will need to be deleted.
@@ -59,10 +58,14 @@ class EnamlComponentDocumenter(ModuleLevelDocumenter):
         return self.get_attr(self.object, '__module__', None) == \
             'enaml.parsing.enaml_compiler'
 
+    def format_signature(self):
+        """ Thin method for debugging signature formatting.
+        """
+        import pdb; pdb.set_trace()
+        super(EnamlComponentDocumenter, self).format_signature()
 
 class EnamlDocstringSignatureMixin(DocstringSignatureMixin):
-    """
-    Mixin for FunctionDocumenter and MethodDocumenter to provide the
+    """ Mixin for FunctionDocumenter and MethodDocumenter to provide the
     feature of reading the signature from the docstring.
 
     identical to the autodoc.DocstringSignatureMixin it subclasses and included
@@ -163,8 +166,7 @@ class EnamlModuleDocumenter(ModuleDocumenter):
     
 
 def add_documenter(cls):
-    """
-    Register a new Documenter.
+    """ Register a new Documenter.
 
     This autodoc function is overridden here solely for the sake of the proper
     error message.
@@ -176,10 +178,10 @@ def add_documenter(cls):
 
 
 def setup(app):
-    """
-    The setup function is called by Sphinx when loading extensions.
-    
-    app is the instance of the calling app, Sphinx in this case.
+    """ enamldoc extension setup function.
+
+    The setup function is called by Sphinx when loading extensions.  app is the
+    instance of the calling app, Sphinx in this case.
 
     enamldoc borrows heavily from autodoc, so additions to setup and
     configuration are minimal.

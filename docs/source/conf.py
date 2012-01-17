@@ -46,7 +46,7 @@ extensions = [
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.autosummary',
     'refactor_doc',
-    'enamldoc',            
+    'enamldoc.sphinx_ext',            
     ]
 
 # Add any paths that contain templates here, relative to this directory.

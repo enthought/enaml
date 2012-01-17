@@ -17,6 +17,9 @@ or even hook the runtime to apply their own expression dependency behavior.
 Indeed, about the only thing not hookable is the Enaml langauge syntax
 itself.
 
+The enamldoc package provides a Sphinx extension for documenting Enaml object
+types "enaml_decl" and "enaml_defn".
+
 Prerequisites
 -------------
 * Python >= 2.6 (not Python 3)
@@ -25,3 +28,4 @@ Prerequisites
 * PySide (only if using the Qt backend)
 * wxPython (only if using the wx backend)
 * PLY (Python Lex-Yacc), for parsing *.enaml* files
+* Sphinx (only if building the docs)
