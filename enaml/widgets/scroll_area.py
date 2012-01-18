@@ -95,22 +95,20 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     def _preferred_size_changed(self):
         """ The change handler for the 'preferred_size' attribute. 
-        This emits a proper notification to the layout system so that 
-        a relayout can take place.
+        This simply requests a relayout.
 
         """
-        self.size_hint_updated = True
+        self.request_relayout()
 
-    def _scrolled_component_changed(self):
-        """ The change handler for the 'scrolled_component' attribute.
-        This makes sure the minimum size of the component gets properly
-        updated.
+    def _on_layout_deps_changed(self):
+        """ A change handler for triggering a relayout when any of the
+        layout dependencies change. It simply requests a relayout.
 
         """
-        self.update_min_scrolled_size()
+        self.request_relayout()
 
     #--------------------------------------------------------------------------
-    # Overrides
+    # Setup Methods
     #--------------------------------------------------------------------------
     def _setup_finalize(self):
         """ Overridden setup method to set the min size of the component
@@ -120,11 +118,30 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
         super(ScrollArea, self)._setup_finalize()
         self.update_min_scrolled_size()
 
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def initialize_layout(self):
+        """ A reimplemented parent class method which hooks up change
+        handlers for child attribute which will cause a change in layout.
+
+        """
+        self.on_trait_change(
+            self._on_layout_deps_changed, (
+                'scrolled_component:size_hint_updated, '
+                'scrolled_component:visible, '
+            )
+        )
+
     def size_hint(self):
         """ Use the given preferred size when specified and the default
         size hint computation when not.
 
         """
+        # TODO - We probably want to honor the hug and clip properties
+        # on the scrolled component when computing its size hint. This
+        # will allow any Container in which we may be embedded to 
+        # compute an appropriate size hint from ours.
         width, height = self.preferred_size
         width_hint, height_hint = super(ScrollArea, self).size_hint()
         if width is None:
@@ -132,6 +149,18 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
         if height is None:
             height = height_hint
         return (width, height)
+
+    def do_relayout(self):
+        """ A reimplemented LayoutTaskHandler handler method which will
+        perform necessary update activity when a relayout it requested.
+
+        """
+        # This method is called whenever a relayout is requested.
+        # We update the size of the scrolled components and fire 
+        # off a size hint updated event so that any parents can
+        # react to our potential new size.
+        self.update_min_scrolled_size()
+        self.size_hint_updated = True
 
     #--------------------------------------------------------------------------
     # Update Methods
