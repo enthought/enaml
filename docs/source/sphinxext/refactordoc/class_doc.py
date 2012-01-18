@@ -63,8 +63,8 @@ class ClassDoc(BaseDoc):
             desc_length = max_desc_length(method_fields)
 
             first_column = len(indent)
-            second_column = first_column + method_length + name_length + 8
-            first_column_str = '=' * (method_length + name_length + 7)
+            second_column = first_column + method_length + name_length + 13
+            first_column_str = '=' * (method_length + name_length + 12)
             second_column_str = '=' * desc_length
 
             border = '{0}{1} {2}'.format(indent,
