@@ -104,7 +104,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     def _on_layout_deps_changed(self):
         """ A change handler for triggering a relayout when any of the
-        layout dependencies change.
+        layout dependencies change. It simply requests a relayout.
 
         """
         self.request_relayout()
@@ -268,7 +268,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
         height = self.height
         size = self.size()
         self.layout_manager.layout(self.apply_layout, width, height, size)
-    
+
     def apply_layout(self):
         """ The callback invoked by the layout manager when there are
         new layout values available. This traverses the children for
