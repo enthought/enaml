@@ -14,7 +14,7 @@ widget.
 Main(MainWindow):
     title = "Scroll Area"
     ScrollArea:
-        preferred_size = (None, 100)
+        preferred_size = (None, 200)
         Form:
             Label:
                 text = "First name:"
