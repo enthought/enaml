@@ -4,10 +4,13 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Either, Enum, Tuple, Int
+from traits.api import (
+    Property, Instance, Either, Enum, Tuple, Int, cached_property,
+)
 
-from .container import Container, AbstractTkContainer
-from .layout.layout_manager import NullLayoutManager
+from .container import Container
+from .layout_component import LayoutComponent, AbstractTkLayoutComponent
+from .layout_task_handler import LayoutTaskHandler
 
 
 #: Enum trait describing the scrollbar policies that can be assigned to 
@@ -15,7 +18,7 @@ from .layout.layout_manager import NullLayoutManager
 ScrollbarPolicy = Enum('as_needed', 'always_on', 'always_off')
 
 
-class AbstractTkScrollArea(AbstractTkContainer):
+class AbstractTkScrollArea(AbstractTkLayoutComponent):
     """ The abstract toolkit ScrollArea interface. A toolkit scroll area 
     is responsible for handling changes on a shell ScrollArea and proxying 
     those changes to and from its internal toolkit widget.
@@ -30,14 +33,20 @@ class AbstractTkScrollArea(AbstractTkContainer):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_layout_children_changed(self, children):
+    def shell_scrolled_component_changed(self, component):
         raise NotImplementedError
 
 
-class ScrollArea(Container):
+class ScrollArea(LayoutTaskHandler, LayoutComponent):
     """ A Container that displays just one of its children at a time.
 
     """
+    #: A read-only property which returns the scrolling component
+    #: for the area, or None if one is not defined.
+    scrolled_component = Property(
+        Instance(LayoutComponent), depends_on='layout_children',
+    )
+
     #: The horizontal scroll policy.
     horizontal_scrollbar_policy = ScrollbarPolicy
 
@@ -53,10 +62,6 @@ class ScrollArea(Container):
     preferred_size = Tuple(Either(None, Int, default=None), 
                            Either(Int, None, default=200))
 
-    #: An object that manages the layout of this component and its 
-    #: direct children. In this case, it does nothing.
-    layout_manager = Instance(NullLayoutManager, ())
-
     #: How strongly a component hugs it's contents' width. Scroll
     #: areas do not hug their width and are free to expand.
     hug_width = 'ignore'
@@ -65,24 +70,82 @@ class ScrollArea(Container):
     #: areas do not hug their height and are free to expand.
     hug_height = 'ignore'
 
+    #--------------------------------------------------------------------------
+    # Property Getters
+    #--------------------------------------------------------------------------
+    @cached_property
+    def _get_scrolled_component(self):
+        """ The property getter for the 'scrolled_component' attribute.
+
+        """
+        children = self.layout_children
+        n = len(children)
+        if n == 0:
+            res = None
+        elif n == 1:
+            res = children[0]
+        else:
+            msg = ('A ScrollArea can have at most 1 layout child. Got '
+                   '%s instead.')
+            raise ValueError(msg % n)
+        return res
+        
+    #--------------------------------------------------------------------------
+    # Change Handlers
+    #--------------------------------------------------------------------------
+    def _preferred_size_changed(self):
+        """ The change handler for the 'preferred_size' attribute. 
+        This emits a proper notification to the layout system so that 
+        a relayout can take place.
+
+        """
+        self.size_hint_updated = True
+
+    def _scrolled_component_changed(self):
+        """ The change handler for the 'scrolled_component' attribute.
+        This makes sure the minimum size of the component gets properly
+        updated.
+
+        """
+        self.update_min_scrolled_size()
+
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def _setup_finalize(self):
+        """ Overridden setup method to set the min size of the component
+        once its layout has been initialized.
+
+        """
+        super(ScrollArea, self)._setup_finalize()
+        self.update_min_scrolled_size()
+
     def size_hint(self):
-        """ Use the given preferred size when specified and the widget's 
-        size hint when not.
+        """ Use the given preferred size when specified and the default
+        size hint computation when not.
 
         """
         width, height = self.preferred_size
-        width_hint, height_hint = self.abstract_obj.size_hint()
+        width_hint, height_hint = super(ScrollArea, self).size_hint()
         if width is None:
             width = width_hint
         if height is None:
             height = height_hint
         return (width, height)
 
-    def _preferred_size_changed(self):
-        """ The change handler for the 'preferred_size' attribute. 
-        This emits a proper notification to the layout system to that 
-        a relayout can take place.
+    #--------------------------------------------------------------------------
+    # Update Methods
+    #--------------------------------------------------------------------------
+    def update_min_scrolled_size(self):
+        """ Updates the minimum size of the scrolled component with its
+        computed minimum size, or its size hint.
 
         """
-        self.size_hint_updated = True
+        scrolled = self.scrolled_component
+        if scrolled is not None:
+            if isinstance(scrolled, Container):
+                min_size = scrolled.get_min_size()
+            else:
+                min_size = scrolled.size_hint()
+            scrolled.set_min_size(*min_size)
 
