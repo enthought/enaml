@@ -53,7 +53,7 @@ class Include(BaseComponent):
         if isinstance(val, BaseComponent):
             val = [val]
         self._components = val
-
+    
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
@@ -86,7 +86,6 @@ class Include(BaseComponent):
         # blocks out into separate methods.
         for child in cmpnts:
             child.parent = parent
-            child._setup_parent_refs()
         
         for child in cmpnts:
             child._setup_create_widgets(toolkit_parent)
@@ -108,6 +107,9 @@ class Include(BaseComponent):
 
         for child in cmpnts:
             child._setup_init_layout()
+
+        for child in cmpnts:
+            child._setup_finalize()
 
         for child in cmpnts:
             child._setup_set_initialized()

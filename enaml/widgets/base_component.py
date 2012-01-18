@@ -305,6 +305,7 @@ class BaseComponent(HasStrictTraits):
         filter or otherwise handle certain subcomponents differently.
 
         """
+        component.parent = self
         self._subcomponents.append(component)
 
     #--------------------------------------------------------------------------
@@ -418,14 +419,14 @@ class BaseComponent(HasStrictTraits):
 
         The setup process is comprised of the following steps:
         
-        1) Child components are given a reference to their parent
-        2) Abstract objects create their internal toolkit object
-        3) Abstract objects initialize their internal toolkit object
-        4) Bound expression values are explicitly applied
-        5) Abstract objects bind their event handlers
-        6) Abstract objects are added as a listeners to the shell object
-        7) Visibility is initialized (toplevel nodes are skipped)
-        8) Layout is initialized
+        1) Abstract objects create their internal toolkit object
+        2) Abstract objects initialize their internal toolkit object
+        3) Bound expression values are explicitly applied
+        4) Abstract objects bind their event handlers
+        5) Abstract objects are added as a listeners to the shell object
+        6) Visibility is initialized
+        7) Layout is initialized
+        8) A finalization pass is made
         9) Nodes are marked as initialized
 
         Many of these setup methods are no-ops, but are defined on this
@@ -441,7 +442,6 @@ class BaseComponent(HasStrictTraits):
             the parent toolkit widget for this component.
 
         """
-        self._setup_parent_refs()
         self._setup_create_widgets(parent)
         self._setup_init_widgets()
         self._setup_eval_expressions()
@@ -449,16 +449,8 @@ class BaseComponent(HasStrictTraits):
         self._setup_listeners()
         self._setup_init_visibility()
         self._setup_init_layout()
+        self._setup_finalize()
         self._setup_set_initialized()
-
-    def _setup_parent_refs(self):
-        """ A setup method which assigns the parent reference to the
-        child subcomponents.
-
-        """
-        for child in self._subcomponents:
-            child.parent = self
-            child._setup_parent_refs()
 
     def _setup_create_widgets(self, parent):
         """ A setup method that, by default, is a no-op. Subclasses 
@@ -526,6 +518,16 @@ class BaseComponent(HasStrictTraits):
         """
         for child in self._subcomponents:
             child._setup_init_layout()
+
+    def _setup_finalize(self):
+        """ A setup method that, by default, is a no-op. Subclasses
+        that need to perform process after layout is initialized but
+        before a node is marked as fully initialized should reimplement
+        this method.
+
+        """
+        for child in self._subcomponents:
+            child._setup_finalize()
 
     def _setup_set_initialized(self):
         """ A setup method which updates the initialized attribute of 
