@@ -74,7 +74,8 @@ defn ConfirmDialog(message):
 
 
 Main(MainWindow):
-    PushButton:
-        text = "Do Something Rash"
-        clicked >> raise_dialog()
+    Container:
+        PushButton:
+            text = "Do Something Rash"
+            clicked >> raise_dialog()
 
