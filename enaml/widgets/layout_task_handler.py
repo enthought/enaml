@@ -52,9 +52,13 @@ class LayoutTaskHandler(HasTraits):
         whenever the layout children of the component should have their 
         layout relationships recomputed. The constraints update and 
         relayout occur immediately and are completed before the method 
-        returns.
+        returns. If the component is not fully initialized, this is a 
+        no-op.
 
         """
+        if not self.initialized:
+            return
+
         # Protect against relayout recursion.
         if not guard.guarded(self, 'relayout'):
             with guard(self, 'relayout'):
@@ -69,9 +73,13 @@ class LayoutTaskHandler(HasTraits):
     def refresh(self):
         """ Reimplemented parent class method which triggers a refresh
         of the layout children. The refresh occurs immediately and is 
-        completed before the method returns.
+        completed before the method returns. If the component is not 
+        fully initialized, this is a no-op.
 
         """
+        if not self.initialized:
+            return
+
         # Protect against refresh recursion.
         if not guard.guarded(self, 'refresh'):
             with guard(self, 'refresh'):
