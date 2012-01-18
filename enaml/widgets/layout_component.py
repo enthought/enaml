@@ -270,6 +270,8 @@ class LayoutComponent(Component, Sizable, Stylable):
         cns = []
         
         width_hint, height_hint = self.size_hint()
+        width = self.width
+        height = self.height
         hug_width = self.hug_width
         hug_height = self.hug_height
         resist_clip_width = self.resist_clip_width
@@ -277,18 +279,18 @@ class LayoutComponent(Component, Sizable, Stylable):
 
         if width_hint >= 0:
             if hug_width != 'ignore':
-                cn = (self.width == width_hint) | hug_width
+                cn = (width == width_hint) | hug_width
                 cns.append(cn)
             if resist_clip_width != 'ignore':
-                cn = (self.width >= width_hint) | resist_clip_width
+                cn = (width >= width_hint) | resist_clip_width
                 cns.append(cn)
         
         if height_hint >= 0:
             if hug_height != 'ignore':
-                cn = (self.height == height_hint) | hug_height
+                cn = (height == height_hint) | hug_height
                 cns.append(cn)
             if resist_clip_height != 'ignore':
-                cn = (self.height >= height_hint) | resist_clip_height
+                cn = (height >= height_hint) | resist_clip_height
                 cns.append(cn)
 
         return cns
