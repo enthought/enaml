@@ -123,7 +123,8 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     def initialize_layout(self):
         """ A reimplemented parent class method which hooks up change
-        handlers for child attribute which will cause a change in layout.
+        handlers for child attributes which will cause a change in 
+        the layout.
 
         """
         self.on_trait_change(
