@@ -151,14 +151,6 @@ class Window(LayoutTaskHandler, Component, Sizable):
             res = None
         else:
             res = widgets[0]
-        
-        # We need to hook up handler on the size hint updated event
-        # of the widge here, since using the extended change grammar
-        # in a decorator doesn't seem to work properly if the object
-        # is computed from a cached_property.
-        if res is not None:
-            handler = self._refresh_minmax_sizes
-            res.on_trait_change(handler, 'size_hint_updated')
 
         return res
 
@@ -205,16 +197,54 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """
         self.update_maximum_size()
 
-    @on_trait_change('central_widget')
-    def _refresh_minmax_sizes(self):
-        """ Updates the minimum and maximum size of the window if the 
-        central widget changes after initialization.
+    def _on_layout_deps_changed(self):
+        """ A change handler for triggering a relayout when any of the
+        layout dependencies change. It simply requests a relayout.
 
         """
-        # Perform the updates after the widget update has taken place 
-        # so that any size hints needed from children are updated.
-        self.request_relayout_task(self.update_minimum_size)
-        self.request_relayout_task(self.update_maximum_size)
+        self.request_relayout()
+
+    #--------------------------------------------------------------------------
+    # Setup Methods 
+    #--------------------------------------------------------------------------
+    def _setup_init_layout(self):
+        """ A reimplemented parent class setup method that performs any
+        layout initialization necessary for the window. The layout is
+        initialized from the bottom up.
+
+        """
+        # This is identical to the code in LayoutComponent, but that
+        # class also comes with constraints baggage that we don't need.
+        # Hence, we just copy-paste this one small bit.
+        super(Window, self)._setup_init_layout()
+        self.initialize_layout()
+
+    def initialize_layout(self):
+        """ Hooks up change handlers for child attributes which will cause 
+        a change in the layout.
+
+        """
+        self.on_trait_change(
+            self._on_layout_deps_changed, (
+                'central_widget:visible, '
+                'central_widget:size_hint_updated, '
+            )
+        )
+
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def do_relayout(self):
+        """ A reimplemented LayoutTaskHandler handler method which will
+        perform necessary update activity when a relayout it requested.
+
+        """
+        # This method is called whenever a relayout is requested. By
+        # default, this when the layout children change. In that case
+        # we just need to update the min and max sizes. We are a top
+        # level window, so no one really cares about our size hint. 
+        self.update_minimum_size()
+        self.update_maximum_size()
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods
