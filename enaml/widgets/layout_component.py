@@ -239,7 +239,7 @@ class LayoutComponent(Component, Sizable, Stylable):
             self.request_relayout()
     
     #--------------------------------------------------------------------------
-    # Auxiliary Methods
+    # Layout Related Methods
     #--------------------------------------------------------------------------
     def initialize_layout(self):
         """ A method that is called when the layout of this component
@@ -249,7 +249,50 @@ class LayoutComponent(Component, Sizable, Stylable):
 
         """
         pass
+
+    def hard_constraints(self):
+        """ Returns a list of constraints that must always apply to the 
+        component under all circumstances. The default is to constrain
+        the size and origin >= (0, 0). This method can be overridden 
+        by sublasses to change the behavior.
+
+        """
+        c = [self.left >= 0, self.top >= 0, self.width >= 0, self.height >= 0]
+        return c
+
+    def size_hint_constraints(self):
+        """ Returns the list of constraints relating to the size hint 
+        of this layout component. The constraints generated here are 
+        responsible for implementing the behavior defined by the 'hug' 
+        and 'resist_clip' attributes.
+
+        """
+        cns = []
         
+        width_hint, height_hint = self.size_hint()
+        hug_width = self.hug_width
+        hug_height = self.hug_height
+        resist_clip_width = self.resist_clip_width
+        resist_clip_height = self.resist_clip_height
+
+        if width_hint >= 0:
+            if hug_width != 'ignore':
+                cn = (self.width == width_hint) | hug_width
+                cns.append(cn)
+            if resist_clip_width != 'ignore':
+                cn = (self.width >= width_hint) | resist_clip_width
+                cns.append(cn)
+        
+        if height_hint >= 0:
+            if hug_height != 'ignore':
+                cn = (self.height == height_hint) | hug_height
+                cns.append(cn)
+            if resist_clip_height != 'ignore':
+                cn = (self.height >= height_hint) | resist_clip_height
+                cns.append(cn)
+
+        return cns
+    
     def set_visible(self, visible):
         """ Set the visibility of the component according to the given
         boolean. This is a reimplemented parent class method that makes
@@ -276,7 +319,7 @@ class LayoutComponent(Component, Sizable, Stylable):
         else:
             self.abstract_obj.set_visible(visible)
 
-    def set_solved_geometry(self, root):
+    def set_solved_geometry(self, dx, dy):
         """ Makes the component take the solved geometry and other 
         constrained variables and set its internal values.
 
@@ -285,34 +328,25 @@ class LayoutComponent(Component, Sizable, Stylable):
 
         Parameters
         ----------
-        root : Container
-            The root container that actually performed the layout for 
-            this component. Implementations will need this to know how 
-            to transform the global solved (x, y) values to local values 
-            relative to their immediate parent.
-
+        dx : int
+            The x-direction offset of the parent of this component from
+            the root component on which the solved dimensions are based.
+        
+        dy : int
+            The y-direction offset of the parent of this component from
+            the root component on which the solved dimensions are based.
+        
         Returns
         -------
-        dx, dy : int
-            The offsets needed to convert (x, y) variable values into 
-            local positions. These are mostly used in overrides of this 
-            method that handle additional variables.
+        result : (x, y)
+            The solved (x, y) position of this component relative to
+            the root component on which the solved dimensions are bsaed.
 
         """
-        x = self.left.value
-        y = self.top.value
-        width = self.width.value
-        height = self.height.value
-        x, y, width, height = (int(round(z)) for z in (x, y, width, height))
-        # This is offset against the root Container. Each Component's 
-        # geometry actually needs to be offset against its parent. Walk 
-        # up the tree and subtract out the parent's offset.
-        dx = 0
-        dy = 0
-        for ancestor in self.traverse_ancestors(root):
-            anc_dx, anc_dy, _, _ = ancestor.layout_geometry()
-            dx += anc_dx
-            dy += anc_dy
+        x = int(round(self.left.value))
+        y = int(round(self.top.value))
+        width = int(round(self.width.value))
+        height = int(round(self.height.value))
         self.set_layout_geometry(x - dx, y - dy, width, height)
-        return (dx, dy)
+        return (x, y)
 

@@ -2,12 +2,44 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import List, Instance
+from traits.api import (
+    List, Instance, Property, cached_property, Bool, WeakRef,
+)
 
 from .layout_component import LayoutComponent, AbstractTkLayoutComponent
 from .layout.constraints_layout import ConstraintsLayout
-from .layout.layout_manager import AbstractLayoutManager
+from .layout.layout_helpers import DeferredConstraints
 from .layout_task_handler import LayoutTaskHandler
+
+
+def _expand_constraints(component, constraints):
+    """ A private function which expands any DeferredConstraints in
+    the provided list. This is generator function which yields the
+    flattened stream of constraints.
+
+    Paramters
+    ---------
+    component : LayoutComponent
+        The layout component with which the constraints are associated.
+        This will be passed to the .get_constraints_list() method of
+        any DeferredConstraint instance.
+    
+    constraints : list
+        The list of constraints, possibly containing instances of 
+        DeferredConstraints.
+    
+    Yields
+    ------
+    constraints
+        The stream of expanded constraints.
+
+    """
+    for cn in constraints:
+        if isinstance(cn, DeferredConstraints):
+            for item in cn.get_constraint_list(component):
+                yield item
+        else:
+            yield cn
 
 
 class AbstractTkContainer(AbstractTkLayoutComponent):
@@ -26,11 +58,18 @@ class Container(LayoutTaskHandler, LayoutComponent):
     child Components.
 
     """
-    #: An object that manages the layout of this component and its
-    #: layout children. The default is constraints based layout.
-    layout_manager = Instance(AbstractLayoutManager)
-    def _layout_manager_default(self):
-        return ConstraintsLayout(self)
+    #: A read-only cached property which returns the constraints layout
+    #: manager for this container, or None in the layout is being managed
+    #: by a parent container.
+    layout_manager = Property(
+        Instance(ConstraintsLayout), depends_on='owns_layout',
+    )
+
+    #: A read-only property which returns True if this container owns
+    #: its layout and is responsible for setting the geometry of its
+    #: children, or False if that responsibility has been transferred
+    #: to another component in the heierarchy.
+    owns_layout = Property(Bool, depends_on='_layout_owner')
 
     #: A list of user-specified linear constraints defined for this 
     #: container.
@@ -39,128 +78,174 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #: Overridden parent class trait.
     abstract_obj = Instance(AbstractTkContainer)
 
+    #: A private trait used to indicate that ownership of the layout 
+    #: for this container.
+    _layout_owner = WeakRef(allow_none=True)
+
+    #--------------------------------------------------------------------------
+    # Property Getters
+    #--------------------------------------------------------------------------
+    @cached_property
+    def _get_layout_manager(self):
+        """ The property getter for the 'layout_manager' attribute.
+
+        """
+        if self.owns_layout:
+            return ConstraintsLayout()
+
+    def _get_owns_layout(self):
+        """ The property getter for the 'owns_layout' attribute.
+
+        """
+        return self._layout_owner is None
+
+    #--------------------------------------------------------------------------
+    # Change Handlers 
+    #--------------------------------------------------------------------------
+    def _on_layout_deps_changed(self):
+        """ A change handler for triggering a relayout when any of the
+        layout dependencies change.
+
+        """
+        self.request_relayout()
+
     #--------------------------------------------------------------------------
     # Layout Handling
     #--------------------------------------------------------------------------
+    def transfer_layout_ownership(self, owner):
+        """ A method which can be called by other components in the
+        heierarchy to gain ownership responsibility for the layout 
+        of the children of this container. By default, the transfer
+        is allowed and is the mechanism which allows constraints to
+        cross widget boundaries. Subclasses should reimplement this 
+        method if different behavior is desired.
+
+        Parameters
+        ----------
+        owner : BaseComponent
+            The component which has taken ownership responsibility
+            for laying out the children of this component. All 
+            relayout and refresh requests will be forwarded to this
+            component.
+        
+        Returns
+        -------
+        results : bool
+            True if the transfer was allowed, False otherwise.
+        
+        """
+        self._layout_owner = owner
+        return True
+
     def initialize_layout(self):
         """ A reimplemented parent class method that initializes the 
         layout manager for the first time, and binds the relevant
         layout change handlers.
 
         """
-        # The layout manager will be destructively set to None by any
-        # parent Containers since they will take over layout management
-        # of their layout children.
-        if self.layout_manager is not None:
-            self.layout_manager.initialize()
-        # These handlers are bound dynamically here instead of via
-        # decorators since the layout children are initially computed 
-        # quietly. Binding the handlers here ensures the listeners are 
+        # We only need to initialize the manager if we own the layout.
+        if self.owns_layout:
+            constraints = self.compute_constraints()
+            self.layout_manager.initialize(constraints)
+
+        # This relayout dep handler is bound here instead of using a
+        # decorator since the layout children are initially computed 
+        # quietly. Binding the handler here ensures the listeners are 
         # properly initialized with their dependencies.
-        self.on_trait_change(self._on_child_visibility, 'layout_children:visible')
-        self.on_trait_change(self._on_constraints_changed, 'constraints[]')
         self.on_trait_change(
-            self._on_size_hint_changed, 
-            'layout_children:size_hint_updated, layout_children:hug_width, '
-            'layout_children:hug_height, layout_children:resist_clip_width, '
-            'layout_children:resist_clip_height'
+            self._on_layout_deps_changed, (
+                'layout_children:visible, '
+                'constraints, '
+                'constraints_items, '
+                'layout_children:size_hint_updated, '
+                'layout_children:hug_width, '
+                'layout_children:hug_height, '
+                'layout_children:resist_clip_width, '
+                'layout_children:resist_clip_height '
+            )
         )
 
     def relayout(self):
-        """ A reimplemented parent class method which proxies the call
-        to relayout up the heierarchy if necessary. 
+        """ A reimplemented parent class method which forwards the call
+        to the layout owner if necessary.
 
         """
-        # If our layout manager is None, we have a parent container
-        # that is managing layout for us. In that case, we continue
-        # to proxy the call up the heierarchy.
-        if self.layout_manager is None:
-            self.parent.relayout()
-        else:
+        if self.owns_layout:
             super(Container, self).relayout()
-
+        else:
+            self._layout_owner.relayout()
+            
     def refresh(self):
-        """ A reimplemented parent class method which proxies the call
-        to refresh up the heierarchy if necessary. 
+        """ A reimplemented parent class method which forwards the call
+        to the layout owner if necessary.
 
         """
-        # If our layout manager is None, we have a parent container
-        # that is managing layout for us. In that case, we continue
-        # to proxy the call up the heierarchy.
-        if self.layout_manager is None:
-            self.parent.refresh()
-        else:
+        if self.owns_layout:
             super(Container, self).refresh()
+        else:
+            self._layout_owner.refresh()
 
     def request_relayout(self):
-        """ A reimplemented parent class method which proxies the call
-        to request_relayout up the heierarchy if necessary. 
+        """ A reimplemented parent class method which forwards the call
+        to the layout owner if necessary.
 
         """
-        # If our layout manager is None, we have a parent container
-        # that is managing layout for us. In that case, we continue
-        # to proxy the call up the heierarchy.
-        if self.layout_manager is None:
-            self.parent.request_relayout()
-        else:
+        if self.owns_layout:
             super(Container, self).request_relayout()
+        else:
+            self._layout_owner.request_relayout()
 
     def request_refresh(self):
-        """ A reimplemented parent class method which proxies the call
-        to request_refresh up the heierarchy if necessary. 
+        """ A reimplemented parent class method which forwards the call
+        to the layout owner if necessary.
 
         """
-        # If our layout manager is None, we have a parent container
-        # that is managing layout for us. In that case, we continue
-        # to proxy the call up the heierarchy.
-        if self.layout_manager is None:
-            self.parent.request_refresh()
-        else:
+        if self.owns_layout:
             super(Container, self).request_refresh()
+        else:
+            self._layout_owner.request_refresh()
 
     def request_relayout_task(self, callback, *args, **kwargs):
-        """ A reimplemented parent class method which proxies the call
-        to request_relayout_task up the heierarchy if necessary. 
+        """ A reimplemented parent class method which forwards the call
+        to the layout owner if necessary.
 
         """
-        # If our layout manager is None, we have a parent container
-        # that is managing layout for us. In that case, we continue
-        # to proxy the call up the heierarchy.
-        if self.layout_manager is None:
-            self.parent.request_relayout_task(callback, *args, **kwargs)
-        else:
+        if self.owns_layout:
             sup = super(Container, self)
             sup.request_relayout_task(callback, *args, **kwargs)
+        else:
+            owner = self._layout_owner
+            owner.request_relayout_task(callback, *args, **kwargs)
             
     def request_refresh_task(self, callback, *args, **kwargs):
-        """ A reimplemented parent class method which proxies the call
-        to request_refresh_task up the heierarchy if necessary. 
+        """ A reimplemented parent class method which forwards the call
+        to the layout owner if necessary.
 
         """
-        # If our layout manager is None, we have a parent container
-        # that is managing layout for us. In that case, we continue
-        # to proxy the call up the heierarchy.
-        if self.layout_manager is None:
-            self.parent.request_refresh_task(callback, *args, **kwargs)
-        else:
+        if self.owns_layout:
             sup = super(Container, self)
             sup.request_refresh_task(callback, *args, **kwargs)
+        else:
+            owner = self._layout_owner
+            owner.request_refresh_task(callback, *args, **kwargs)
         
-    #--------------------------------------------------------------------------
-    # Layout Implementation Handlers
-    #--------------------------------------------------------------------------
     def do_relayout(self):
         """ A reimplemented LayoutTaskHandler handler method which will
         actually perform the layout.
 
         """
-        # At this point, we know that our layout manager is not None
-        # and is the proper manager to do the layout, since the layout
-        # requests are proxied up the tree until the component with 
-        # the active manager is found.
-        layout_mgr = self.layout_manager
-        layout_mgr.update_constraints()
-        layout_mgr.layout()
+        # At this point, we know that we own the layout since the
+        # calls that trigger the call to this method would have 
+        # already been forwarded on to the layout owner. So, at
+        # this point, we just have to recompute the constraints
+        # and do a refresh.
+
+        # TODO There is a big opportunity here to optimize by calling
+        # .update_constraints() on the layout manager instead of just
+        # recomputing everything from scratch. But, that will require
+        # tracking the created constraints.
+        self.layout_manager.initialize(self.compute_constraints())
+        self.do_refresh()
 
         # We emit the size hint updated event at this point since
         # we are still inside a freeze context. This means that if
@@ -174,16 +259,80 @@ class Container(LayoutTaskHandler, LayoutComponent):
         actually perform the refresh.
 
         """
-        # At this point, we know that our layout manager is not None
-        # and is the proper manager to do the layout, since the layout
-        # requests are proxied up the tree until the component with 
-        # the active manager is found.
-        layout_mgr = self.layout_manager
-        layout_mgr.layout()
+        # At this point, we know that we own the layout since the
+        # calls that trigger the call to this method would have 
+        # already been forwarded on to the layout owner. So, at
+        # this point, we just have to recompute the constraints
+        # and do a refresh.
+        width = self.width
+        height = self.height
+        size = self.size()
+        self.layout_manager.layout(self.apply_layout, width, height, size)
     
+    def apply_layout(self):
+        """ The callback invoked by the layout manager when there are
+        new layout values available. This traverses the children for
+        which this container has layout ownership and applies the 
+        geometry updates.
+
+        """
+        stack = [((0, 0), self.layout_children)]
+        pop = stack.pop
+        push = stack.append
+        while stack:
+            offset, children = pop()
+            for child in children:
+                new_offset = child.set_solved_geometry(*offset)
+                if isinstance(child, Container):
+                    if child._layout_owner is self:
+                        push((new_offset, child.layout_children))
+
     #--------------------------------------------------------------------------
-    # Default Constraint Generation
+    # Constraints Computation
     #--------------------------------------------------------------------------
+    def compute_constraints(self):
+        """ Computes the constraints for the layout children of this
+        container as well as any sub container for which it can usurp
+        layout ownership.
+
+        """
+        expand = _expand_constraints
+
+        cns = []
+        cns_extend = cns.extend
+        cns_extend(expand(self, self.hard_constraints()))
+        cns_extend(expand(self, self.user_constraints()))
+        cns_extend(expand(self, self.container_constraints()))
+
+        stack = list(self.layout_children)
+        stack_pop = stack.pop
+        stack_extend = stack.extend
+        while stack:
+            child = stack_pop()
+            if isinstance(child, Container):
+                # We need to change ownership before asking for the size
+                # hint constraints or else a non-initialized container
+                # may attempt to run a solver pass to compute the hint
+                if child.transfer_layout_ownership(self):
+                    cns_extend(expand(child, child.user_constraints()))
+                    cns_extend(expand(child, child.container_constraints()))
+                    stack_extend(child.layout_children)
+            cns_extend(expand(child, child.hard_constraints()))
+            cns_extend(expand(child, child.size_hint_constraints()))
+        
+        return cns
+
+    def user_constraints(self):
+        """ Returns the list of constraints specified by the user or the
+        list of constraints computed by 'default_user_constraints' if the
+        user has not supplied their own list.
+
+        """
+        cns = self.constraints
+        if not cns:
+            cns = self.default_user_constraints()
+        return cns
+
     def default_user_constraints(self):
         """ Constraints to use if the constraints trait is an empty list.
         
@@ -204,53 +353,6 @@ class Container(LayoutTaskHandler, LayoutComponent):
         return []
 
     #--------------------------------------------------------------------------
-    # Change Handlers 
-    #--------------------------------------------------------------------------
-    def _on_child_visibility(self):
-        """ A change handler for triggering a relayout when a layout 
-        child of the container toggles its visibility.
-
-        """
-        self.request_relayout()
-
-    def _on_size_hint_changed(self, child, name, old, new):
-        """ A change handler for updaing the layout when the size hint
-        of any of the container's layout children have changed.
-
-        """
-        layout_mgr = self.layout_manager
-        if layout_mgr is None:
-            # Our layout is managed by an ancestor, so pass up 
-            # the notification.
-            #
-            # XXX this is fragile since it's assuming the parent
-            # will be a Container.
-            self.parent._on_size_hint_changed(child, name, old, new)
-        else:
-            # We want to update the size constraints of the layout 
-            # manager before the refresh takes place. Note, the updating
-            # the size constraints is a special cased operation of the 
-            # layout manager since it it's likely to happen more often 
-            # than a full relayout. Thus it's more efficient than 
-            # performing a full relayout. We also, need to emit a
-            # size hint update event in this case, since some of 
-            # constraint may be updated and may possibly result
-            # in new min/max sizes for the toplevel window.
-            # XXX - this smells a bit. Should we just handle size 
-            # hints like everything else?
-            def closure():
-                layout_mgr.update_size_cns(child)
-                self.size_hint_updated = True
-            self.request_refresh_task(closure)
-
-    def _on_constraints_changed(self):
-        """ A change handler that triggers a relayout when the list of 
-        constraints for the container change.
-
-        """
-        self.request_relayout()
-
-    #--------------------------------------------------------------------------
     # Overrides
     #--------------------------------------------------------------------------
     def size_hint(self):
@@ -267,31 +369,31 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     def get_min_size(self):
         """ Calculates the minimum size of the container which would 
-        allow all constraints to be satisfied. If this container's
-        layout is being managed by a parent, then this method will
-        return (-1, -1).
+        allow all constraints to be satisfied. If this container does
+        not own its layout, then this method will return (-1, -1).
 
         """
-        layout_mgr = self.layout_manager
-        if layout_mgr is None:
-            res = (-1, -1)
-        else:
-            w, h = layout_mgr.get_min_size()
+        if self.owns_layout:
+            width = self.width
+            height = self.height
+            w, h = self.layout_manager.get_min_size(width, height)
             res = (int(round(w)), int(round(h)))
+        else:
+            res = (-1, -1)
         return res
 
     def get_max_size(self):
         """ Calculates the maximum size of the container which would 
-        allow all constraints to be satisfied. If this container's
-        layout is being managed by a parent, then this method will
-        return (-1, -1).
+        allow all constraints to be satisfied. If this container does
+        not own its layout, then this method will return (-1, -1).
 
         """
-        layout_mgr = self.layout_manager
-        if layout_mgr is None:
-            res = (-1, -1)
-        else:
-            w, h = layout_mgr.get_max_size()
+        if self.owns_layout:
+            width = self.width
+            height = self.height
+            w, h = self.layout_manager.get_max_size(width, height)
             res = (int(round(w)), int(round(h)))
+        else:
+            res = (-1, -1)
         return res
 

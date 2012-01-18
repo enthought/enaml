@@ -2,206 +2,139 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from collections import defaultdict
-import weakref
+from casuarius import Solver, medium
 
-from .layout_manager import AbstractLayoutManager
-from .layout_helpers import DeferredConstraints
-
-import casuarius
+from ...guard import guard
 
 
-class ConstraintsLayout(AbstractLayoutManager):
-    """ The default AbstractLayoutManager implementation.
+class ConstraintsLayout(object):
+    """ A class which uses a casuarius solver to manage a system 
+    of constraints.
 
-    """
-    def __init__(self, component):
-        """ Initialize a ConstraintsLayout
+    """ 
+    #: The Casuarius solver instance to use for this manager
+    solver = None
 
-        Parameters
-        ----------
-        component : Instance(Container)
-            The Container instance on which this layout manager should
-            operate. The reference to the container is stored weakly.
-
-        """
-        self.component = weakref.ref(component)
-
-        # The solver instance to use for this manager
-        self.solver = None
-
-        # The constraints for the component which should never change
-        self.component_cns = None
-
-        # The user constraints which may change
-        self.user_cns = None
-
-        # The hard constraints for the children which should never change
-        self.child_cns = None
-
-        # The default child size constraints which will change if a 
-        # a childs size_hint is updated
-        self.child_size_cns = None
-
-        # A flag to prevent recursion into various methods. 
-        # XXX this may no longer be needed
-        self._recursion_guard = False
-
-        # A flag to indicate whether this manager has been initialized.
-        self._initialized = False
-
-    #--------------------------------------------------------------------------
-    # Abstract Implementation
-    #--------------------------------------------------------------------------
-    def initialize(self):
+    def initialize(self, constraints):
         """ Initializes the solver by creating all of the necessary 
         constraints for this components layout children and adding them
         to the solver.
 
+        Parameters
+        ----------
+        constraints : Iterable
+            An iterable that yields the constraints to add to the
+            solvers.
+
         """
-        if self._recursion_guard or self._initialized:
-            return
-        self._recursion_guard = True
-
-        # Rather than intialize in the __init__ method, which in Python 
-        # has the context of only happening once, we use this method 
-        # since the manager will be re-initialized whenever any of the 
-        # constraints of the component's layout children change.
-        self.solver = casuarius.Solver(autosolve=False)
-        self.component_cns = []
-        self.user_cns = []
-        self.child_cns = defaultdict(list)
-        self.child_size_cns = defaultdict(list)
-
-        component = self.component()
-        if component is None:
-            msg = 'Component weakly referenced by %r disappeared' % self
-            raise RuntimeError(msg)
-
-        solver = self.solver
-
-        # The flattened list of all descendants participating in 
-        # constraints-based layout.
-        descendants = list(self.traverse_descendants(component))
-
-        # Disable the layout engines on all descendant Containers.
-        #
-        # FIXME: This destructively sets the .layout_manager attribute 
-        # to None. It works, but we might be able to do it more cleanly.
-        for desc in descendants:
-            if hasattr(desc, 'layout_manager'):
-                if type(desc.layout_manager) is type(self):
-                    desc.layout_manager = None
-
-        # Component default constraints
-        cns = self.compute_component_cns(component)
-        self.component_cns = cns
-        self.add_constraints(cns)
-
-        # User constraints
-        cns = self.compute_user_cns(component)
-        for child in descendants:
-            cns.extend(self.compute_user_cns(child))
-        self.user_cns = cns
-        self.add_constraints(cns)
-
-        # Child default constraints
-        cns_dict = self.child_cns
-        for child in descendants:
-            cns = self.compute_child_cns(child)
-            cns_dict[child].extend(cns)
-            self.add_constraints(cns)
-        
-        # Child size constraints
-        cns_dict = self.child_size_cns
-        for child in descendants:
-            cns = self.compute_child_size_cns(child)
-            cns_dict[child].extend(cns)
-            self.add_constraints(cns)
-
+        self.solver = solver = Solver(autosolve=False)
+        for cn in constraints:
+            solver.add_constraint(cn)
         solver.autosolve = True
 
-        self._recursion_guard = False
-        self._initialized = True
-
-    def update_constraints(self):
+    def update_constraints(self, old_cns, new_cns):
         """ Re-run the initialization routine to build a new solver with
         updated constraints. This should typically only be called when 
         the user constraints are updated.
 
-        """
-        # FIXME: we may do better by storing the old constraints, getting
-        # the new constraints, finding the differences, and telling the 
-        # solver to remove/add constraints. Or maybe not. Timings needed.
-        self._initialized = False
-        self.initialize()
-
-    def layout(self):
-        """ Perform an iteration of the solver for the new width and 
-        height of the component. This will resolve the system and update
-        the geometry of all of the component's layout children.
-
-        """
-        if self._recursion_guard or not self._initialized:
-            return
-        self._recursion_guard = True
-
-        component = self.component()
-        if component is None:
-            msg = 'Component weakly referenced by %r disappeared' % self
-            raise RuntimeError(msg)
-
-        solver = self.solver
-
-        # Grab the info required for the suggestions to the solver
-        width, height = component.size()
-        width_var = component.width
-        height_var = component.height
-
-        suggestions = [(width_var, width), (height_var, height)]
-        with solver.suggest_values(suggestions, casuarius.medium):
-            for child in self.traverse_descendants(component):
-                child.set_solved_geometry(component)
-
-        self._recursion_guard = False
-
-    def add_constraints(self, constraints):
-        """ Add an iterable of constraints to the solver.
+        Parameters
+        ----------
+        old_cns : list
+            The list of constraints to remove from the solver.
+        
+        new_cns : list
+            The list of constraints to add to the solver.
 
         """
         solver = self.solver
-        for cn in constraints:
+        solver.autosolve = False
+        for cn in old_cns:
+            solver.remove_constraint(cn)
+        for cn in new_cns:
             solver.add_constraint(cn)
+        solver.autosolve = True
 
-    def get_min_size(self):
+    def layout(self, cb, width, height, size, strength=medium, weight=1.0):
+        """ Perform an iteration of the solver for the new width and 
+        height of the component.
+
+        Parameters
+        ----------
+        cb : callable
+            A callback which will be called when new values from the
+            solver are available. This will be called from within a 
+            solver context while the solved values are valid. Thus 
+            the new values should be consumed before the callback
+            returns.
+
+        width : Constraint Variable
+            The constraint variable representing the width of the
+            main layout container.
+        
+        height : Constraint Variable
+            The constraint variable representing the height of the
+            main layout container.
+
+        size : (int, int)
+            The (width, height) size tuple which is the current size
+            of the main layout container.
+
+        strength : casuarius strength, optional
+            The strength with which to perform the layout using the
+            current size of the container. i.e. the strength of the
+            resize. The default is casuarius.medium.
+
+        weight : float, optional
+            The weight to apply to the strength. The default is 1.0
+
+        """
+        if not guard.guarded(self, 'layout'):
+            with guard(self, 'layout'):
+                w, h = size
+                values = [(width, w), (height, h)]
+                with self.solver.suggest_values(values, strength, weight):
+                    cb()
+
+    def get_min_size(self, width, height, strength=medium, weight=0.1):
         """ Run an iteration of the solver with the suggested size of the
         component set to (0, 0). This will cause the solver to effectively
         compute the minimum size that the window can be to solve the
-        system. The return value is (min_width, min_height).
+        system. 
+
+        Parameters
+        ----------
+        width : Constraint Variable
+            The constraint variable representing the width of the
+            main layout container.
+        
+        height : Constraint Variable
+            The constraint variable representing the height of the
+            main layout container.
+
+        strength : casuarius strength, optional
+            The strength with which to perform the layout using the
+            current size of the container. i.e. the strength of the
+            resize. The default is casuarius.medium.
+        
+        weight : float, optional
+            The weight to apply to the strength. The default is 0.1
+            so that constraints of medium strength but default weight
+            have a higher precedence than the minimum size.
+        
+        Returns
+        -------
+        result : (float, float)
+            The floating point (min_width, min_height) size of the 
+            container which would best satisfy the set of constraints.
 
         """
-        component = self.component()
-        if component is None:
-            msg = 'Component weakly referenced by %r disappeared' % self
-            raise RuntimeError(msg)
-        
-        solver = self.solver
-
-        width_var = component.width
-        height_var = component.height
-
-        # FIXME: here we pick a 'medium' strength like the window resize
-        # but weight it a little less. Uses of 'medium' in constraints 
-        # should override this. In the future, we should add more 
-        # meaningful Strengths.
-        with solver.suggest_values([(width_var, 0.0), (height_var, 0.0)],
-            default_strength=casuarius.medium, default_weight=0.1):
-            min_width = width_var.value
-            min_height = height_var.value
-
+        values = [(width, 0.0), (height, 0.0)]
+        with self.solver.suggest_values(values, strength, weight):
+            min_width = width.value
+            min_height = height.value
         return (min_width, min_height)
 
-    def get_max_size(self):
+    def get_max_size(self, width, height, strength=medium, weight=0.1):
         """ Run an iteration of the solver with the suggested size of 
         the component set to a very large value. This will cause the 
         solver to effectively compute the maximum size that the window
@@ -209,173 +142,43 @@ class ConstraintsLayout(AbstractLayoutManager):
         If one of the numbers is -1, it indicates there is no maximum in
         that direction.
 
-        """
-        component = self.component()
-        if component is None:
-            msg = 'Component weakly referenced by %r disappeared' % self
-            raise RuntimeError(msg)
+        Parameters
+        ----------
+        width : Constraint Variable
+            The constraint variable representing the width of the
+            main layout container.
         
-        solver = self.solver
+        height : Constraint Variable
+            The constraint variable representing the height of the
+            main layout container.
 
-        width_var = component.width
-        height_var = component.height
+        strength : casuarius strength, optional
+            The strength with which to perform the layout using the
+            current size of the container. i.e. the strength of the
+            resize. The default is casuarius.medium.
+        
+        weight : float, optional
+            The weight to apply to the strength. The default is 0.1
+            so that constraints of medium strength but default weight
+            have a higher precedence than the minimum size.
+        
+        Returns
+        -------
+        result : (float or -1, float or -1)
+            The floating point (max_width, max_height) size of the 
+            container which would best satisfy the set of constraints.
 
-        # Pick a very large, but somewhat arbitrary, maximum value. 
-        # This is value that is used for a maximum by Qt.
-        max_val = 2**24 - 1
-
-        # FIXME: here we pick a 'medium' strength like the window resize
-        # but weight it a little less. Uses of 'medium' in constraints 
-        # should override this. In the future, we should add more 
-        # meaningful Strengths.
-        suggestions = [(width_var, max_val), (height_var, max_val)]
-        with solver.suggest_values(suggestions, 
-            default_strength=casuarius.medium, default_weight=0.1):
-            max_width = width_var.value
-            max_height = height_var.value
-
+        """
+        max_val = 2**24 - 1 # Arbitrary, but the max allowed by Qt.
+        values = [(width, max_val), (height, max_val)]
+        with self.solver.suggest_values(values, strength, weight): 
+            max_width = width.value
+            max_height = height.value
         width_diff = abs(max_val - int(round(max_width)))
         height_diff = abs(max_val - int(round(max_height)))
-
         if width_diff <= 1:
             max_width = -1
-
         if height_diff <= 1:
             max_height = -1
-
         return (max_width, max_height)
-
-    #--------------------------------------------------------------------------
-    # Auxiliary Methods
-    #--------------------------------------------------------------------------
-    def traverse_descendants(self, component):
-        """ Do a preorder traversal of all visible descendants of the 
-        component that participate in the Constraints-base layout.
-
-        """
-        for child in component.layout_children:
-            if child.visible:
-                yield child
-                child_layout = getattr(child, 'layout_manager', None)
-                if child_layout is None or type(child_layout) is type(self):
-                    for desc in self.traverse_descendants(child):
-                        yield desc
-
-    def compute_component_cns(self, component):
-        """ Computes the required constraints of the component.
-
-        """
-        cns = []
-        for name in ('left', 'top', 'width', 'height'):
-            cn = (getattr(component, name) >= 0)
-            cns.append(cn)
-        return cns
-
-    def compute_user_cns(self, component):
-        """ Computes the user supplied constraints for the component.
-
-        """
-        # XXX this is a bit of hack at the moment, since only 
-        # Containers have constraints.
-        if not hasattr(component, 'constraints'):
-            return []
-
-        cns = []
-
-        user_cns = component.constraints
-        if not user_cns:
-            user_cns = component.default_user_constraints()
-
-        for constraint in user_cns + component.container_constraints():
-            if isinstance(constraint, DeferredConstraints):
-                cns.extend(constraint.get_constraint_list(component))
-            else:
-                cns.append(constraint)
-
-        return cns
-    
-    def compute_child_cns(self, child):
-        """ Computes the hard default constraints for a child. These
-        should never change for a given child.
-
-        """
-        constraints = [
-            child.width >= 0,
-            child.height >= 0,
-        ]
-        return constraints
-
-    def compute_child_size_cns(self, child):
-        """ Computes the constraints relating the size hint of a child.
-        These may change if the size hint of a child changes, or the
-        values for its 'hug' or 'resist_clip' attribute changes.
-
-        """
-        constraints = []
-
-        width_hint, height_hint = child.size_hint()
-        hug_width = child.hug_width
-        hug_height = child.hug_height
-        resist_clip_width = child.resist_clip_width
-        resist_clip_height = child.resist_clip_height
-
-        if width_hint >= 0:
-            if hug_width != 'ignore':
-                cn = (child.width == width_hint) | hug_width
-                constraints.append(cn)
-            if resist_clip_width != 'ignore':
-                cn = (child.width >= width_hint) | resist_clip_width
-                constraints.append(cn)
-        
-        if height_hint >= 0:
-            if hug_height != 'ignore':
-                cn = (child.height == height_hint) | hug_height
-                constraints.append(cn)
-            if resist_clip_height != 'ignore':
-                cn = (child.height >= height_hint) | resist_clip_height
-                constraints.append(cn)
-
-        return constraints
-
-    def update_size_cns(self, child):
-        """ Update the constraints for the size hint of the given child.
-        This will be more efficient that calling update_constraints
-        and should be used when size_hint of child changes, or the
-        it 'hug' or 'resist_clip' attributes change.
-
-        """
-        if not self._initialized:
-            return
-        component = self.component()
-        if component is None:
-            msg = 'Component weakly referenced by %r disappeared' % self
-            raise RuntimeError(msg)
-
-        solver = self.solver
-        
-        # Remove the existing constraints for the child's size hint.
-        old_cns = self.child_size_cns[child]
-        for old_cn in old_cns:
-            solver.remove_constraint(old_cn)
-        del self.child_size_cns[child]
-
-        # Add the new constraints for the child's size hint
-        new_cns = self.compute_child_size_cns(child)
-        self.child_size_cns[child].extend(new_cns)
-        for new_cn in new_cns:
-            solver.add_constraint(new_cn)
-
-    def dump_constraints(self):
-        """ Print out all of the constraints and values.
-
-        """
-        lines = []
-        lines.append('User:')
-        for cn in self.user_cns:
-            fmt = '  {}  ({} {} {}) [error={}]'
-            line = fmt.format(cn, cn.lhs.value, cn.op, cn.rhs.value, cn.error)
-            lines.append(line)
-        lines.append('')
-        text = '\n'.join(lines)
-        return text
 
