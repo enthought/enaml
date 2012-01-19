@@ -12,8 +12,19 @@ class ConstraintsLayout(object):
     of constraints.
 
     """ 
-    #: The Casuarius solver instance to use for this manager
-    solver = None
+    #: The internal Casuarius solver instance to use for this layout.
+    _solver = None
+
+    #: The internal flag indicating if the solver is initialized
+    _initialized = False
+
+    @property
+    def initialized(self):
+        """ A read-only property which returns whether or not this solver
+        instance has been initialized.
+
+        """
+        return self._initialized
 
     def initialize(self, constraints):
         """ Initializes the solver by creating all of the necessary 
@@ -27,10 +38,12 @@ class ConstraintsLayout(object):
             solvers.
 
         """
-        self.solver = solver = Solver(autosolve=False)
+        self._initialized = False
+        self._solver = solver = Solver(autosolve=False)
         for cn in constraints:
             solver.add_constraint(cn)
         solver.autosolve = True
+        self._initialized = True
 
     def update_constraints(self, old_cns, new_cns):
         """ Re-run the initialization routine to build a new solver with
@@ -46,7 +59,10 @@ class ConstraintsLayout(object):
             The list of constraints to add to the solver.
 
         """
-        solver = self.solver
+        if not self._initialized:
+            raise RuntimeError('Update constraints on uninitialized solver')
+
+        solver = self._solver
         solver.autosolve = False
         for cn in old_cns:
             solver.remove_constraint(cn)
@@ -88,11 +104,14 @@ class ConstraintsLayout(object):
             The weight to apply to the strength. The default is 1.0
 
         """
+        if not self._initialized:
+            raise RuntimeError('Layout with uninitialized solver')
+
         if not guard.guarded(self, 'layout'):
             with guard(self, 'layout'):
                 w, h = size
                 values = [(width, w), (height, h)]
-                with self.solver.suggest_values(values, strength, weight):
+                with self._solver.suggest_values(values, strength, weight):
                     cb()
 
     def get_min_size(self, width, height, strength=medium, weight=0.1):
@@ -128,8 +147,11 @@ class ConstraintsLayout(object):
             container which would best satisfy the set of constraints.
 
         """
+        if not self._initialized:
+            raise RuntimeError('Get min size on uninitialized solver')
+
         values = [(width, 0.0), (height, 0.0)]
-        with self.solver.suggest_values(values, strength, weight):
+        with self._solver.suggest_values(values, strength, weight):
             min_width = width.value
             min_height = height.value
         return (min_width, min_height)
@@ -169,9 +191,12 @@ class ConstraintsLayout(object):
             container which would best satisfy the set of constraints.
 
         """
+        if not self._initialized:
+            raise RuntimeError('Get max size on uninitialized solver')
+
         max_val = 2**24 - 1 # Arbitrary, but the max allowed by Qt.
         values = [(width, max_val), (height, max_val)]
-        with self.solver.suggest_values(values, strength, weight): 
+        with self._solver.suggest_values(values, strength, weight): 
             max_width = width.value
             max_height = height.value
         width_diff = abs(max_val - int(round(max_width)))
