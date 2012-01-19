@@ -76,9 +76,9 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
     #: ignores its height hug by default, so it expands freely in height.
     hug_height = 'ignore'
 
-    #: The private storage for the selected tab index. This is the 
-    #: attribute should be used by the toolkit implementations to 
-    #: communicate the current selection. A -1 indicates no selection.
+    #: The private storage for the selected tab index. This attribute
+    #: should be used by the toolkit implementations to communicate the 
+    #: current selection. A -1 indicates no selection.
     _selected_index = Int(-1)
 
     #--------------------------------------------------------------------------
@@ -92,7 +92,7 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
         res = []
         for child in self.layout_children:
             if not isinstance(child, Tab):
-                msg = ('The children of a TabGroup must be instance of Tab. '
+                msg = ('The children of a TabGroup must be instances of Tab. '
                        'Got %s instead.' % child)
                 raise TypeError(msg)
             res.append(child)
@@ -107,7 +107,7 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
         n = len(tabs)
         if 0 <= idx < n:
             res = tabs[idx]
-        elif idx == -1 and tabs:
+        elif idx == -1 and n > 0:
             res = tabs[0]
         else:
             res = None
@@ -118,7 +118,7 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
 
         """
         idx = self._selected_index
-        if idx == -1 and self.tabs:
+        if idx == -1 and len(self.tabs) > 0:
             idx = 0
         return idx
 
@@ -160,4 +160,28 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
 
         """
         self.size_hint_updated = True
+
+    #--------------------------------------------------------------------------
+    # Auxiliary Methods 
+    #--------------------------------------------------------------------------
+    def set_selected_tab(self, tab):
+        """ Set the selected tab of the group to the given tab.
+
+        """
+        try:
+            idx = self.tabs.index(tab)
+        except ValueError:
+            msg = ('Cannot set selected tab. Tab %s does not exist in '
+                   'the TabGroup')
+            raise ValueError(msg % tab)
+        self._selected_index = idx
+    
+    def set_selected_index(self, idx):
+        """ Set the selected index of the group to the given index.
+
+        """
+        if idx < 0 or idx >= len(self.tabs):
+            msg = "Tab index %s out of range for TabGroup"
+            raise IndexError(msg % idx)
+        self._selected_index = idx
 
