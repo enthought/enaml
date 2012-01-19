@@ -2,23 +2,61 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.converters import IntConverter, FloatConverter, LongConverter, ComplexConverter
+
+from enaml.converters import IntConverter, FloatConverter, LongConverter, \
+                                HexConverter, OctalConverter, ComplexConverter
 
 
 ErrorField(Field):
     bg_color << 'error' if error else 'none'
 
 
-IntField(ErrorField):
-    converter = IntConverter()
+RangeField(ErrorField):
+    # Base class for text fields that allow editing a data type that has
+    # a natural ordering (e.g. int, float).  This class provides the option
+    # of defining lower and upper bounds of the value.
+
+    # The low end of the valid range.  `None` means no minimum.
+    attr low = None
+
+    # The high end of the valid range.  `None` means no maximum.
+    attr high = None
+
+    # A boolean value that determines if the value of `low` is included in
+    # the valid range.
+    attr allow_low = True
+
+    # A boolean value that determines if the value of `high` is included in
+    # the valid range.
+    attr allow_high = True
+
+    # `converter` must be assigned in subclasses.
+    converter = None
 
 
-LongField(ErrorField):
-    converter = LongConverter()
+IntField(RangeField):
+    converter << IntConverter(low=low, high=high,
+                              allow_low=allow_low, allow_high=allow_high)
 
 
-FloatField(ErrorField):
-    converter = FloatConverter()
+LongField(RangeField):
+    converter << LongConverter(low=low, high=high,
+                               allow_low=allow_low, allow_high=allow_high)
+
+
+FloatField(RangeField):
+    converter << FloatConverter(low=low, high=high,
+                                allow_low=allow_low, allow_high=allow_high)
+
+
+HexField(RangeField):
+    converter << HexConverter(low=low, high=high,
+                              allow_low=allow_low, allow_high=allow_high)
+
+
+OctalField(RangeField):
+    converter << OctalConverter(low=low, high=high,
+                                allow_low=allow_low, allow_high=allow_high)
 
 
 ComplexField(ErrorField):
@@ -27,4 +65,3 @@ ComplexField(ErrorField):
 
 PasswordField(Field):
     password_mode = 'password'
-
