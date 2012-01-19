@@ -24,9 +24,7 @@ tab_pos.next()
 
 TabForm(Form):
     attr button_text: str = 'Click Me!'
-    # XXX we would like a way to proxy an event rather 
-    # than needing to cycle the value of a Boolean
-    attr button_clicked: bool = False
+    event button_clicked
     Label:
         text = 'First'
     Field:
@@ -41,7 +39,7 @@ TabForm(Form):
         pass
     PushButton:
         text = button_text
-        clicked >> setattr(parent, 'button_clicked', not button_clicked) 
+        clicked >> button_clicked()
 
 
 Main(MainWindow):
