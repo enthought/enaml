@@ -58,7 +58,12 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         if menu_bar is None:
             res = 0
         else:
-            if isinstance(menu_bar.style(), QtGui.QMacStyle):
+            # FIXME - QMacStyle doesn't exist on non osx builds
+            try:
+                ismac = isinstance(menu_bar.style(), QtGui.QMacStyle)
+            except AttributeError:
+                ismac = False
+            if ismac:
                 res = 0
             else:
                 res = menu_bar.sizeHint().height()
