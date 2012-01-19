@@ -4,14 +4,14 @@
 #------------------------------------------------------------------------------
 from collections import deque
 
-from traits.api import HasTraits, Instance
+from traits.api import HasStrictTraits, Instance
 
 from .abstract_application import ScheduledTask
 
 from ..guard import guard
 
 
-class LayoutTaskHandler(HasTraits):
+class LayoutTaskHandler(HasStrictTraits):
     """ A mixin class that provides a basic implementation of layout
     task processing. Subclasses that use the mixin must at least be
     subclasses of BaseComponet and should, in addition, provide a
