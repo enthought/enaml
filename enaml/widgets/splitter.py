@@ -54,8 +54,8 @@ class AbstractTkSplitter(AbstractTkLayoutComponent):
 
 
 class Splitter(LayoutTaskHandler, LayoutComponent):
-    """ A Container that displays its children in separate resizable
-    compartements that are connected with a resizing bar.
+    """ A LayoutComponent subclass that displays its children in separate
+    resizable compartements that are connected with a resizing bar.
      
     """
     #: The orientation of the Splitter. 'horizontal' means the children 
@@ -176,7 +176,7 @@ class Splitter(LayoutTaskHandler, LayoutComponent):
         i = ['horizontal', 'vertical'].index(self.orientation)
         for child in self.layout_children:
             if isinstance(child, Container):
-                min_size = child.get_min_size()
+                min_size = child.compute_min_size()
                 child.set_min_size(*min_size)
             hint = child.size_hint()[i]
             if hint <= 0:
