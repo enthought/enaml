@@ -56,7 +56,7 @@ class QtFloatSlider(QtSlider, AbstractTkFloatSlider):
         """ The event handler for a slider moved event.
 
         """
-        self.shell_obj.moved = self.int_to_float(self.widget.sliderPosition())
+        self.shell_obj.moved(self.int_to_float(self.widget.sliderPosition()))
 
     #--------------------------------------------------------------------------
     # Widget Update Methods 
