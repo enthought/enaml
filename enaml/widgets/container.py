@@ -82,8 +82,8 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #: for this container.
     _layout_owner = WeakRef(allow_none=True)
 
-    #: A private cached property which computes the size hint and caches
-    #: it whenever the size_hint_updated event is fired.
+    #: A private cached property which computes the size hint whenever 
+    #: the size_hint_updated event is fired.
     _size_hint = Property(Tuple(Int, Int), depends_on='size_hint_updated')
 
     #--------------------------------------------------------------------------
@@ -163,6 +163,12 @@ class Container(LayoutTaskHandler, LayoutComponent):
         if self.owns_layout:
             constraints = self.compute_constraints()
             self.layout_manager.initialize(constraints)
+            # We fire off a size hint updated event here since, if
+            # for some reason, the size hint was computed before 
+            # the layout was initialized, the value will be wrong
+            # and cached. So we need to clear the cache so that it 
+            # will be recomputed by the next consumer that needs it.
+            self.size_hint_updated = True
 
         # This relayout dep handler is bound here instead of using a
         # decorator since the layout children are initially computed 
@@ -267,10 +273,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
         # we are still inside a freeze context. This means that if
         # our parent is a toplevel window, it can set the new size
         # of the window before leaving the context which helps 
-        # eleminate flicker during the resize. We also reset the 
-        # size hint cache so that the next call to size_hint() will
-        # compute the new value.
-        self._size_hint_cache = None
+        # eleminate flicker during the resize.
         self.size_hint_updated = True
 
     def do_refresh(self):
