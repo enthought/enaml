@@ -2,82 +2,144 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import TraitType, Interface, TraitError
+from traits.api import TraitType, TraitError
 from traits.traits import CTrait
 
 
-class SubClass(TraitType):
-
-    def __init__(self, cls):
-        super(SubClass, self).__init__()
-        if issubclass(cls, Interface):
-            self.info = (cls, True)
-        else:
-            self.info = (cls, False)
-
-    def validate(self, obj, name, value):
-        cls, interface = self.info
-        if interface:
-            if issubclass(value.__implements__, cls):
-                return value
-        else:
-            if issubclass(value, cls):
-                return value
-        if interface:
-            msg = 'Class must be and implementor of %s.' % cls
-            raise TypeError(msg)
-        else:
-            msg = 'Class must be a subclass of %s.' % cls
-            raise TypeError(msg)
-
-
-class ReadOnlyConstruct(TraitType):
-
-    def __init__(self, factory):
-        super(ReadOnlyConstruct, self).__init__()
-        self._factory = factory
-
-    def get(self, obj, name):
-        dct = obj.__dict__
-        if name in dct:
-            res = dct[name]
-        else:
-            res = dct[name] = self._factory(obj, name)
-        return res
-
-
-class NamedLookup(TraitType):
-
-    def __init__(self, lookup_func_name):
-        super(NamedLookup, self).__init__()
-        self._lookup_func_name = lookup_func_name
-
-    def get(self, obj, name):
-        return getattr(obj, self._lookup_func_name)(name)
-
-
-class ORStr(TraitType):
-    """ Allows a space-separated string of any combination of the
-    constituents of the string passed to the constructor.
-
-    i.e. StrFlags("foo bar") will validate only the following strings:
-
-        "", "foo", "foo bar", "bar", "bar foo"
+#------------------------------------------------------------------------------
+# Enaml Instance
+#------------------------------------------------------------------------------
+class EnamlInstance(TraitType):
+    """ A custom TraitType which serves as a simple isinstance(...)
+    validator. This class serves as the base class for other custom
+    trait types such as EnamlEvent and UserAttribute.
 
     """
-    default_value = ""
+    @staticmethod
+    def is_valid_type(obj):
+        """ A static method which returns whether or not the given object
+        can be used as the type in an isinstance(..., type) expression.
 
-    def __init__(self, allowed):
-        self.allowed = set(allowed.strip().split())
+        Paramters
+        ---------
+        obj : object
+            The object which should behave like a type for the purpose
+            of an isinstance check. This means the object is type
+            or defines an '__instancecheck__' method.
 
-    def is_valid(self, val):
-        if not isinstance(val, basestring):
-            return False
-        components = val.strip.split()
-        allowed = self.allowed
-        return all(component in allowed for component in components)
+        Returns
+        -------
+        result : bool
+            True if the object is a type or defines a method named
+            '__instancecheck__', False otherwise.
+
+        """
+        return isinstance(obj, type) or hasattr(obj, '__instancecheck__')
+
+    def __init__(self, base_type=object):
+        """ Initialize a UserAttribute instance.
+
+        Parameters
+        ----------
+        base_type : type-like object, optional
+            An object that behaves like a type for the purposes of a
+            call to isinstance. The staticmethod 'is_valid_attr_type'
+            defined on this class can be used to test a type before
+            creating an instance of this class. It is assumed that the
+            given type passes that test. The default is object.
+
+        """
+        if not EnamlInstance.is_valid_type(base_type):
+            msg = '%s is not a valid type object'
+            raise TypeError(msg % base_type)
+        super(EnamlInstance, self).__init__()
+        self.base_type = base_type
+
+    def validate(self, obj, name, value):
+        """ The validation handler for an EnamlInstace. It performs a 
+        simple isinstance(...) check using the attribute type provided 
+        to the constructor.
+
+        """
+        if not isinstance(value, self.base_type):
+            self.error(obj, name, value)
+        return value
 
 
+#------------------------------------------------------------------------------
+# Enaml Event
+#------------------------------------------------------------------------------
+class EnamlEventDispatcher(object):
+    """ A thin object which is used to dispatch a notification for an
+    EnamlEvent. Instances of this class are callable with at most one
+    argument, which will be the payload of the event. Instances of this
+    dispatcher should not be held onto, since they maintain a strong 
+    reference to the underlying object.
+
+    """
+    __slots__ = ('_trait', '_obj', '_name')
+
+    def __init__(self, trait, obj, name):
+        """ Initialize an event dispatcher.
+
+        Parameters
+        ----------
+        trait : Instance(TraitType)
+            The trait type instance on which validate will be called
+            with the event payload.
+        
+        obj : Instance(HasTraits)
+            The HasTraits object on which the event is being emitted.
+        
+        name : string
+            The name of the event being emitted.
+        
+        """
+        self._trait = trait
+        self._obj = obj
+        self._name = name
+    
+    def __call__(self, payload=None):
+        """ Dispatches the event with the given payload.
+
+        Paramters
+        ---------
+        payload : object, optional
+            The payload argument of the event. This object will be 
+            validated against the type declared for the event.
+            The default payload is None.
+        
+        """
+        obj = self._obj
+        name = self._name
+        self._trait.validate(obj, name, payload)
+        obj.trait_property_changed(name, None, payload)
+
+
+class EnamlEvent(EnamlInstance):
+    """ A custom EnamlInstance that is used to implement the event
+    type in Enaml. An EnamlEvent is read-only, and returns a dispatcher
+    which can be called to emit the event.
+
+    """
+    def get(self, obj, name):
+        """ The trait getter method. Returns an EnamlEventDispatcher
+        instance which can be called to emit the event.
+
+        """
+        return EnamlEventDispatcher(self, obj, name)
+
+    def full_info(self, obj, name, value):
+        """ Overridden parent class method to compute an appropriate info
+        string for use in error messages.
+
+        """
+        return 'emitted with an object of %s' % self.base_type
+
+
+#------------------------------------------------------------------------------
+# Bounded
+#------------------------------------------------------------------------------
 class Bounded(TraitType):
     """ Generic Bounded Trait class.
 

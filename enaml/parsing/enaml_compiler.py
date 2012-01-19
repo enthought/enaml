@@ -223,12 +223,15 @@ class DeclarationCompiler(_NodeVisitor):
                 (bp.LOAD_FAST, 'toolkit'),
                 (bp.LOAD_FAST, 'f_globals'),
                 (bp.CALL_FUNCTION, 0x0003),
-                (bp.CALL_FUNCTION, 0x0002),
+                (bp.LOAD_CONST, node.is_event),
+                (bp.CALL_FUNCTION, 0x0003),
                 (bp.POP_TOP, None),
             ])
         else:
             ops.extend([
-                (bp.CALL_FUNCTION, 0x0001),
+                (bp.LOAD_CONST, 'is_event'),
+                (bp.LOAD_CONST, node.is_event),
+                (bp.CALL_FUNCTION, 0x0101),
                 (bp.POP_TOP, None),
             ])
 

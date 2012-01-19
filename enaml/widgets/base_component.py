@@ -6,11 +6,12 @@ from collections import deque
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
-    cached_property, Event, Dict, TraitType, Disallow, Undefined,
+    cached_property, Event, Dict, TraitType, Disallow,
 )
 
 from ..expressions import AbstractExpression
 from ..toolkit import Toolkit
+from ..util.trait_types import EnamlInstance, EnamlEvent
 
 
 #------------------------------------------------------------------------------
@@ -103,51 +104,15 @@ class UninitializedAttributeError(Exception):
     pass
 
 
-class UserAttribute(TraitType):
-    """ A custom trait type that is used to implement optional attribute
-    typing when adding a new user attribute to an Enaml component.
+class UserAttribute(EnamlInstance):
+    """ An EnamlInstance subclass that is used to implement optional 
+    attribute typing when adding a new user attribute to an Enaml 
+    component.
 
     """
-    @staticmethod
-    def is_valid_attr_type(obj):
-        """ A static method which returns whether or not the given object
-        can be used as the type in an isinstance(..., type) expression.
-
-        Paramters
-        ---------
-        obj : object
-            The object which should behave like a type for the purpose
-            of an isinstance check. This means the object is type
-            or defines an '__instancecheck__' method.
-
-        Returns
-        -------
-        result : bool
-            True if the object is a type or defines a method named
-            '__instancecheck__', False otherwise.
-
-        """
-        return isinstance(obj, type) or hasattr(obj, '__instancecheck__')
-
-    def __init__(self, base_type):
-        """ Initialize a UserAttribute instance.
-
-        Parameters
-        ----------
-        base_type : type-like object
-            An object that behaves like a type for the purposes of a
-            call to isinstance. The staticmethod 'is_valid_attr_type'
-            defined on this class can be used to test a type before
-            creating an instance of this class. It is assumed that the
-            given type passes that test.
-
-        """
-        super(UserAttribute, self).__init__()
-        self.base_type = base_type
-
     def get(self, obj, name):
         """ The trait getter method. Returns the value from the object's
-        dict, or raises an unitialized error if the value doesn't exist.
+        dict, or raises an uninitialized error if the value doesn't exist.
 
         """
         dct = obj.__dict__
@@ -167,7 +132,7 @@ class UserAttribute(TraitType):
 
         dct = obj.__dict__
         if name not in dct:
-            old = Undefined
+            old = None
         else:
             old = dct[name]
 
@@ -189,17 +154,18 @@ class UserAttribute(TraitType):
         string for use in error messages.
 
         """
-        return "an instance of %s" % self.base_type
+        return 'an instance of %s' % self.base_type
 
-    def validate(self, obj, name, value):
-        """ The validation handler for a UserAttribute instance. It 
-        performs a simple isinstance(...) check using the attribute
-        type provided to the constructor.
 
-        """
-        if not isinstance(value, self.base_type):
-            self.error(obj, name, value)
-        return value
+#------------------------------------------------------------------------------
+# User Event
+#------------------------------------------------------------------------------
+class UserEvent(EnamlEvent):
+    """ A simple EnamlEvent subclass used to distinguish between events
+    declared by the framework, and events declared by the user.
+
+    """
+    pass
 
 
 #------------------------------------------------------------------------------
@@ -311,7 +277,7 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Attribute Manipulation
     #--------------------------------------------------------------------------
-    def add_attribute(self, name, attr_type=object):
+    def add_attribute(self, name, attr_type=object, is_event=False):
         """ Adds an attribute to the base component with the given name
         and ensures that values assigned to this attribute are of a
         given type.
@@ -327,36 +293,45 @@ class BaseComponent(HasStrictTraits):
         attr_type : type-like object, optional
             An object that behaves like a type for the purposes of a
             call to isinstance. Defaults to object.
+        
+        is_event : bool, optional
+            If True, the added attribute will behave like an event.
+            Otherwise, it will behave like a normal attribute. The
+            default is False.
 
         """
-        # Make sure we were given a type that can be used for validation
-        if not UserAttribute.is_valid_attr_type(attr_type):
-           msg = '%s is not a valid type for attribute declaration %s'
-           raise TypeError(msg % (attr_type, name))
-        
         # Check to see if a trait is already defined. We don't use
         # hasattr here since that might prematurely trigger a trait
-        # intialization. We allow overriding traits of type Disallow
-        # and UserAttribute. The first is a consequence of using
-        # HasStrictTraits, where non-existing attribute are manifested
-        # as a Disallow trait. The second allows a custom derived
-        # component to specialize the attribute types of the component
-        # from which it is deriving.
+        # intialization. We allow overriding traits of type Disallow,
+        # UserAttribute, and UserEvent. The first is a consequence of 
+        # using HasStrictTraits, where non-existing attributes are 
+        # manifested as a Disallow trait. The others allow a custom 
+        # derived component to specialize the attribute and event types 
+        # of the component from which it is deriving.
         curr = self.trait(name)
         if curr is not None:
             ttype = curr.trait_type
-            if ttype is not Disallow and not isinstance(ttype, UserAttribute):
+            allowed = (UserAttribute, UserEvent)
+            if ttype is not Disallow and not isinstance(ttype, allowed):
                 msg = ("Cannot add '%s' attribute. The '%s' attribute on "
                        "the %s object already exists.")
                 raise TypeError(msg % (name, name, self))
             
-        # At this point we know there are non-overridable traits defined 
-        # for the object, but it is possible that there are methods or 
-        # other non-trait attributes using the given name. We could 
-        # potentially check for those, but its probably more useful to 
-        # allow for overriding such things from Enaml, so we just go 
-        # ahead and add the user attribute.
-        self.add_trait(name, UserAttribute(attr_type))
+        # At this point we know there are non non-overridable traits 
+        # defined for the object, but it is possible that there are 
+        # methods or other non-trait attributes using the given name. 
+        # We could  potentially check for those, but its probably more 
+        # useful to allow for overriding such things from Enaml, so we 
+        # just go ahead and add the attribute.
+        try:
+            if is_event:
+                self.add_trait(name, UserEvent(attr_type))
+            else:
+                self.add_trait(name, UserAttribute(attr_type))
+        except TypeError:
+            msg = ("'%s' is not a valid type for the '%s' attribute "
+                   "declaration on %s")
+            raise TypeError(msg % (attr_type, name, self))
 
     def bind_expression(self, name, expression):
         """ Binds the given expression to the attribute 'name'. If

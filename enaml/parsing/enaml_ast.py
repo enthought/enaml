@@ -142,15 +142,20 @@ class AttributeDeclaration(ASTNode):
     default : AttributeBinding or None
         The default binding of the attribute, or None if no default 
         is provided.
+        
+    is_event : boolean
+        Whether or not this declaration represents a write-only
+        event.
 
     """
-    __slots__ = ('name', 'type_name', 'default')
+    __slots__ = ('name', 'type_name', 'default', 'is_event')
 
-    def __init__(self, name, type_name, default, lineno):
+    def __init__(self, name, type_name, default, is_event, lineno):
         super(AttributeDeclaration, self).__init__(lineno)
         self.name = name
         self.type_name = type_name
         self.default = default
+        self.is_event = is_event
 
 
 class AttributeBinding(ASTNode):

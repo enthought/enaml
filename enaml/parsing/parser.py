@@ -257,40 +257,76 @@ def p_declaration_body_item4(p):
 #------------------------------------------------------------------------------
 # Attribute Declaration
 #------------------------------------------------------------------------------
-def assert_attr_keyword(name, lineno):
-    if name != 'attr':
-        msg = "Expected keyword 'attr', got '%s' instead." % name
-        raise_enaml_syntax_error(msg, lineno)
+def build_attr_declaration(kw, name, type_name, default, lineno, p):
+    """ Builds an ast node for an attr or event declaration.
+
+    Parameters
+    ----------
+    kw : string
+        The keyword used in the declaration. A syntax error is raised if
+        this is not 'attr' or 'event'.
+    
+    name : string
+        The name of the attribute or event being declared.
+    
+    type_name : string or None
+        The name of the type being declared, or None if not using a type.
+    
+    default : AttributeBinding or None
+        The default attribute binding or None if not supply the default.
+
+    lineno : int
+        The line number of the declaration.
+    
+    p : Yacc Production
+        The Ply object passed to the parser rule. This is used to 
+        extract the filename for syntax error reporting.
+    
+    Returns
+    -------
+    result : AttributeDeclaration
+        The Enaml AttributeDeclaration ast node.
+
+    """
+    if kw not in ('attr', 'event'):
+        msg = "Expected keyword 'attr' or 'event', got '%s' instead." % kw
+        raise_syntax_error(msg, p.lexer.filename, lineno)
+    if kw == 'attr':
+        res = enaml_ast.AttributeDeclaration(
+            name, type_name, default, False, lineno,
+        )
+    else:
+        print 'building event'
+        res = enaml_ast.AttributeDeclaration(
+            name, type_name, default, True, lineno,
+        )
+    return res
 
 
 def p_attribute_declaration1(p):
     ''' attribute_declaration : NAME NAME NEWLINE '''
-    assert_attr_keyword(p[1], p.lineno(1))
-    p[0] = enaml_ast.AttributeDeclaration(p[2], None, None, p.lineno(1))
+    p[0] = build_attr_declaration(p[1], p[2], None, None, p.lineno(1), p)
 
 
 def p_attribute_declaration2(p):
     ''' attribute_declaration : NAME NAME COLON NAME NEWLINE '''
-    assert_attr_keyword(p[1], p.lineno(1))
-    p[0] = enaml_ast.AttributeDeclaration(p[2], p[4], None, p.lineno(1))
+    p[0] = build_attr_declaration(p[1], p[2], p[4], None, p.lineno(1), p)
 
 
 def p_attribute_declaration3(p):
     ''' attribute_declaration : NAME NAME binding '''
-    assert_attr_keyword(p[1], p.lineno(1))
     lineno = p.lineno(1)
     name = p[2]
     binding = enaml_ast.AttributeBinding(name, p[3], lineno)
-    p[0] = enaml_ast.AttributeDeclaration(name, None, binding, lineno)
+    p[0] = build_attr_declaration(p[1], name, None, binding, lineno, p)
 
 
 def p_attribute_declaration4(p):
     ''' attribute_declaration : NAME NAME COLON NAME binding '''
-    assert_attr_keyword(p[1], p.lineno(1))
     lineno = p.lineno(1)
     name = p[2]
     binding = enaml_ast.AttributeBinding(name, p[5], lineno)
-    p[0] = enaml_ast.AttributeDeclaration(name, p[4], binding, lineno)
+    p[0] = build_attr_declaration(p[1], name, p[4], binding, lineno, p)
 
 
 #------------------------------------------------------------------------------
