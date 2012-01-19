@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import (
-    List, Instance, Property, cached_property, Bool, WeakRef,
+    List, Instance, Property, cached_property, Bool, WeakRef, Tuple, Int,
 )
 
 from .layout_component import LayoutComponent, AbstractTkLayoutComponent
@@ -82,6 +82,10 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #: for this container.
     _layout_owner = WeakRef(allow_none=True)
 
+    #: A private cached property which computes the size hint and caches
+    #: it whenever the size_hint_updated event is fired.
+    _size_hint = Property(Tuple(Int, Int), depends_on='size_hint_updated')
+
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
@@ -98,6 +102,18 @@ class Container(LayoutTaskHandler, LayoutComponent):
 
         """
         return self._layout_owner is None
+
+    @cached_property
+    def _get__size_hint(self):
+        """ The property getter for the '_size_hint' attribtue.
+
+        """
+        # XXX we can probably do better than the min size. Maybe have 
+        # the layout manager compute a preferred size, or something
+        # similar to a preferred size. But I don't know at the moment
+        # what it would actually mean to have a preferred size from 
+        # a set of constraints.
+        return self.compute_min_size()
 
     #--------------------------------------------------------------------------
     # Change Handlers 
@@ -251,7 +267,10 @@ class Container(LayoutTaskHandler, LayoutComponent):
         # we are still inside a freeze context. This means that if
         # our parent is a toplevel window, it can set the new size
         # of the window before leaving the context which helps 
-        # eleminate flicker during the resize.
+        # eleminate flicker during the resize. We also reset the 
+        # size hint cache so that the next call to size_hint() will
+        # compute the new value.
+        self._size_hint_cache = None
         self.size_hint_updated = True
 
     def do_refresh(self):
@@ -365,9 +384,13 @@ class Container(LayoutTaskHandler, LayoutComponent):
         to get a size hint from the layout manager.
 
         """
-        # XXX we can probably do better than this. Maybe have the 
-        # layout manager compute a preferred size, or some such notion
-        return self.compute_min_size()
+        # Since this may be very frequently by user code, especially 
+        # if the toolkit widget is using it as a replacement for its
+        # internal size hint computation, we must cache the value or
+        # it will be too expensive to use under heavy resize loads.
+        # This returns the value from the cached property which is 
+        # updated whenver the size_hint_updated event is fired.
+        return self._size_hint
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods
