@@ -377,7 +377,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
             # the minimum size for us, otherwise, we use the size hint
             # of the widget as the value.
             if isinstance(widget, Container):
-                min_width, min_height = widget.get_min_size()
+                min_width, min_height = widget.compute_min_size()
             else:
                 min_width, min_height = widget.size_hint()
 
@@ -427,7 +427,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
             # the maximum size for us, otherwise, we use the size hint
             # of the widget as the value.
             if isinstance(widget, Container):
-                max_width, max_height = widget.get_max_size()
+                max_width, max_height = widget.compute_max_size()
             else:
                 max_width, max_height = widget.size_hint()
 
