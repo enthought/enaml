@@ -126,16 +126,11 @@ def p_enaml_module_item1(p):
 
 
 def p_enaml_module_item2(p):
-    ''' enaml_module_item : defn '''
-    p[0] = p[1]
-
-
-def p_enaml_module_item3(p):
     ''' enaml_module_item : declaration '''
     p[0] = p[1]
 
 
-def p_enaml_module_item4(p):
+def p_enaml_module_item3(p):
     ''' enaml_module_item : raw_python '''
     p[0] = p[1]
 
@@ -390,134 +385,6 @@ def p_instantiation_body_item2(p):
 
 def p_instantiation_body_item3(p):
     ''' instantiation_body_item : PASS NEWLINE '''
-    p[0] = None
-
-
-#------------------------------------------------------------------------------
-# Defn
-#------------------------------------------------------------------------------
-def p_defn(p):
-    ''' defn : DEFN NAME defn_parameters COLON defn_body '''
-    doc, items = p[5]
-    p[0] = enaml_ast.Defn(p[2], p[3], doc, items, p.lineno(1))
-
-
-#------------------------------------------------------------------------------
-# Defn Parameters
-#------------------------------------------------------------------------------
-def p_defn_parameters1(p):
-    ''' defn_parameters : LPAR RPAR '''
-    p[0] = enaml_ast.Parameters([], [], p.lineno(1))
-
-
-def p_defn_parameters2(p):
-    ''' defn_parameters : LPAR defn_parameters_list RPAR '''
-    names = []
-    defaults = []
-    lineno = p.lineno(1)
-    for name, node in p[2]:
-        if name in names:
-            msg = 'duplicate parameter name `%s` in defn' % name
-            raise_enaml_syntax_error(msg, lineno)
-        names.append(name)
-        if node is not None:
-            defaults.append(node)
-        else:
-            if defaults:
-                msg = 'Non keyword parameter `%s` after keyword parameter'
-                raise_enaml_syntax_error(msg % name, lineno)
-    p[0] = enaml_ast.Parameters(names, defaults, lineno)
-
-
-def p_defn_parameters_list1(p):
-    ''' defn_parameters_list : defn_parameter '''
-    p[0] = [p[1]]
-
-
-def p_defn_parameters_list2(p):
-    ''' defn_parameters_list : defn_parameter COMMA '''
-    p[0] = [p[1]]
-
-
-def p_defn_parameters_list3(p):
-    ''' defn_parameters_list : defn_parameters_list_list defn_parameter '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_defn_parameters_list4(p):
-    ''' defn_parameters_list : defn_parameters_list_list defn_parameter COMMA '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_defn_parameters_list_list1(p):
-    ''' defn_parameters_list_list : defn_parameter COMMA '''
-    p[0] = [p[1]]
-
-
-def p_defn_parameters_list_list2(p):
-    ''' defn_parameters_list_list : defn_parameters_list_list defn_parameter COMMA '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_defn_parameter1(p):
-    ''' defn_parameter : defn_name_parameter '''
-    p[0] = p[1]
-
-
-def p_defn_parameter2(p):
-    ''' defn_parameter : defn_keyword_parameter '''
-    p[0] = p[1]
-
-
-def p_defn_name_parameter(p):
-    ''' defn_name_parameter : NAME '''
-    p[0] = (p[1], None)
-
-
-def p_defn_keyword_parameter(p):
-    ''' defn_keyword_parameter : NAME EQUAL test '''
-    lineno = p.lineno(1)
-    expr = ast.Expression(body=p[3])
-    set_locations(expr, lineno, 1)
-    code = compile(expr, p.lexer.filename, mode='eval')
-    expr_node = enaml_ast.Python('<untracked>', expr, code, lineno)
-    p[0] = (p[1], expr_node)
-
-
-#------------------------------------------------------------------------------
-# Defn Body
-#------------------------------------------------------------------------------
-def p_defn_body1(p):
-    ''' defn_body : NEWLINE INDENT defn_body_items DEDENT '''
-    # Filter out any pass statements
-    items = filter(None, p[3])
-    p[0] = ('', items)
-
-
-def p_defn_body2(p):
-    ''' defn_body : NEWLINE INDENT STRING NEWLINE defn_body_items DEDENT '''
-    # Filter out any pass statements
-    items = filter(None, p[5])
-    p[0] = (p[3], items)
-
-
-def p_defn_body_items1(p):
-    ''' defn_body_items : defn_body_item '''
-    p[0] = [p[1]]
-
-
-def p_defn_body_items2(p):
-    ''' defn_body_items : defn_body_items defn_body_item '''
-    p[0] = p[1] + [p[2]]
-
-
-def p_defn_body_item1(p):
-    ''' defn_body_item : instantiation '''
-    p[0] = p[1]
-    
-
-def p_defn_body_item2(p):
-    ''' defn_body_item : PASS NEWLINE '''
     p[0] = None
 
 

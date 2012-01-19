@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from ..expressions import ExpressionLocals
 from ..toolkit import Toolkit
 from ..widgets.base_component import BaseComponent
 
@@ -49,9 +48,9 @@ class EnamlFactory(object):
 
         Parameters
         ----------
-        f_locals : ExpressionLocals or None, optional
-            The ExpressionLocals object to use when binding expressions
-            on the component. If None, a new instance will be created.
+        f_locals : Mapping or None, optional
+            The Mapping object to use when binding expressions on the
+            component. If None, a new dict will be created.
         
         toolkit : Toolkit or None, optional
             The Toolkit to use when building the object tree. If None,
@@ -64,7 +63,7 @@ class EnamlFactory(object):
 
         """
         if f_locals is None:
-            f_locals = ExpressionLocals()
+            f_locals = {}
         if toolkit is None:
             toolkit = Toolkit.active_toolkit()
         component = self.__enaml_build__(f_locals, toolkit)
@@ -89,9 +88,9 @@ class EnamlFactory(object):
 
         Parameters
         ----------
-        f_locals : ExpressionLocals
-            The ExpressionLocals object to use when binding expressions
-            on the component.
+        f_locals : Mapping
+            The Mapping object to use when binding expressions on the
+            component.
         
         toolkit : Toolkit
             The Toolkit to use when building the object tree.

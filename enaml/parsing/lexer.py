@@ -114,9 +114,6 @@ class EnamlLexer(object):
         'not': 'NOT',
         'or': 'OR',
         'pass': 'PASS',
-
-        # Enaml reserved
-        'defn': 'DEFN',
     }
 
     tokens = (tokens + 

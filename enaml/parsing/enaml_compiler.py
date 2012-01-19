@@ -9,8 +9,6 @@ from . import byteplay
 from .factory import EnamlFactory
 
 from .. import imports
-from ..expressions import ExpressionLocals
-from ..toolkit import Toolkit
 
 
 #------------------------------------------------------------------------------
@@ -43,26 +41,6 @@ class EnamlDeclaration(EnamlFactory):
 
         """
         return self.__func__(f_locals, toolkit)
-
-
-class EnamlDefn(object):
-    """ A helper class which exposes a compiled Enaml defn function
-    with an interface that is easy to use from Python. It serves 
-    mainly to distinguish an Enaml defn function from a normal
-    function for the purposes of documentation generation.
-
-    """
-    def __init__(self, func):
-        self.__doc__ = func.__doc__
-        self.__name__ = func.__name__
-        self.__func__ = func
-    
-    def __call__(self, *args, **kwargs):
-        """ Invokes the underlying compiled Enaml function which will
-        generate declarative Enaml component(s).
-
-        """
-        return self.__func__(*args, **kwargs)
 
 
 #------------------------------------------------------------------------------
@@ -335,214 +313,6 @@ class DeclarationCompiler(_NodeVisitor):
 
 
 #------------------------------------------------------------------------------
-# Defn Compiler
-#------------------------------------------------------------------------------
-class _DefnCollector(object):
-    """ A private class that is used by the DefnCompiler to collect the
-    components created when calling a defn. It also manages returning 
-    the proper results depending on how many items were created.
-
-    """
-    __slots__ = ('_subcomponents',)
-
-    def __init__(self):
-        self._subcomponents = []
-    
-    def add_subcomponent(self, component):
-        """ Adds the subcomponent to the internal list.
-
-        """
-        self._subcomponents.append(component)
-
-    def results(self):
-        """ Computes the proper return results for a defn depending on
-        how many components were created:
-            
-            n == 0 -> None
-            n == 1 -> components
-            n > 1  -> list of components
-        
-        """
-        cmpnts = self._subcomponents
-        n = len(cmpnts)
-        if n == 0:
-            res = None
-        elif n == 1:
-            res = cmpnts[0]
-        else:
-            res = cmpnts
-        return res
-
-
-class DefnCompiler(_NodeVisitor):
-    """ A visitor which compiles a Defn node into a code object.
-
-    """
-    def __init__(self):
-        self.ops = []
-        self.name_gen = _var_name_generator()
-        self.name_stack = []
-
-    @classmethod
-    def compile(cls, node):
-        """ Compiles the given Defn node into a code object. The bytecode
-        generated is similar to that for the Declaration node, with the
-        exception that a Defn introduces arguments into the scope that
-        need to be taken into account.
-
-        """
-        compiler = cls()
-        compiler.visit(node)
-        ops = compiler.ops
-        code = byteplay.Code(ops, [], node.parameters.names, False, False,
-                             True, node.name, 'Enaml', node.lineno, node.doc)
-        return code.to_code()
-
-    def visit_Defn(self, node):
-        """ Creates the bytecode ops for a defn node.
-
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        name = self.name_gen.next()
-        name_stack.append(name)
-
-        # def FooBar(a, b, c):
-        #     f_locals = ExpressionLocals(**locals())
-        #     f_globals = globals()
-        #     toolkit = Toolkit.active_toolkit()
-        #     root = _DefnCollector()
-        ops.extend([
-            # f_locals = ExpressionLocals(**locals())
-            (bp.LOAD_CONST, ExpressionLocals),
-            (bp.LOAD_GLOBAL, 'locals'),
-            (bp.CALL_FUNCTION, 0x0000),
-            (bp.CALL_FUNCTION_KW, 0x0000),
-            (bp.STORE_FAST, 'f_locals'),
-
-            # f_globals = globals()
-            (bp.LOAD_GLOBAL, 'globals'),
-            (bp.CALL_FUNCTION, 0x0000),
-            (bp.STORE_FAST, 'f_globals'),
-
-            # toolkit = Toolkit.active_toolkit()
-            (bp.LOAD_CONST, Toolkit),
-            (bp.LOAD_ATTR, 'active_toolkit'),
-            (bp.CALL_FUNCTION, 0x0000),
-            (bp.STORE_FAST, 'toolkit'),
-
-            # root = _DefnCollector()
-            (bp.LOAD_CONST, _DefnCollector),
-            (bp.CALL_FUNCTION, 0x0000),
-            (bp.STORE_FAST, name),
-        ])
-
-        for item in node.body:
-            self.visit(item)
-        
-        name_stack.pop()
-
-        # return root.results()
-        ops.extend([
-            (bp.LOAD_FAST, name),
-            (bp.LOAD_ATTR, 'results'),
-            (bp.CALL_FUNCTION, 0x0000),
-            (bp.RETURN_VALUE, None),
-        ])
-
-    def visit_AttributeBinding(self, node):
-        """ Creates the bytecode ops for an attribute binding. This
-        visitor handles loading and calling the appropriate operator.
-
-        """
-        # XXX handle BoundCodeBlock instead of just BoundExpression
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        # Grab the ast and code object for the expression. These will
-        # be passed to the binding operator.
-        expr_ast = node.binding.expr.py_ast
-        expr_code = node.binding.expr.code
-        op_code = compile(node.binding.op, 'Enaml', mode='eval')
-
-        # A binding is accomplished by loading the appropriate binding
-        # operator function and passing it the a number of arguments:
-        #
-        # op = eval('__operator_Equal__', toolkit, f_globals)
-        # op(item, 'a', <ast>, <code>, f_locals, f_globals, toolkit)
-        ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-            (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_CONST, node.name),
-            (bp.LOAD_CONST, expr_ast),
-            (bp.LOAD_CONST, expr_code),
-            (bp.LOAD_FAST, 'f_locals'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.CALL_FUNCTION, 0x0007),
-            (bp.POP_TOP, None),
-        ])
-
-    def visit_Instantiation(self, node):
-        """ Create the bytecode ops for a component instantiation. This 
-        visitor handles calling another derived component and storing
-        its identifier, if given.
-        
-        """
-        bp = byteplay
-        ops = self.ops
-        name_stack = self.name_stack
-
-        # This is similar logic to visit_Declaration
-        name = self.name_gen.next()
-        name_stack.append(name)
-
-        op_code = compile(node.name, 'Enaml', mode='eval')
-        ops.extend([
-            # item_cls = eval('Foo', toolkit, f_globals)
-            # item = item_cls.__enaml_call__(None, toolkit)
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-            (bp.LOAD_ATTR, '__enaml_call__'),
-            (bp.LOAD_CONST, None),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.CALL_FUNCTION, 0x0002),
-            (bp.STORE_FAST, name),
-        ])
-        
-        if node.identifier:
-            ops.extend([
-                (bp.LOAD_FAST, name),
-                (bp.LOAD_FAST, 'f_locals'),
-                (bp.LOAD_CONST, node.identifier),
-                (bp.STORE_SUBSCR, None),
-            ])
-
-        for item in node.body:
-            self.visit(item)
-        
-        name_stack.pop()
-        ops.extend([
-            # foo.add_subcomponent(button)
-            (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_subcomponent'),
-            (bp.LOAD_FAST, name),
-            (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
-        ])
-
-
-#------------------------------------------------------------------------------
 # Enaml Compiler
 #------------------------------------------------------------------------------
 class EnamlCompiler(_NodeVisitor):
@@ -628,16 +398,5 @@ class EnamlCompiler(_NodeVisitor):
         func_code = DeclarationCompiler.compile(node)
         func = types.FunctionType(func_code, self.global_ns)
         wrapper = EnamlDeclaration(node.base.py_txt.strip(), func)
-        self.global_ns[node.name] = wrapper
-    
-    def visit_Defn(self, node):
-        """ The defn node visitor. This will add an instance of EnamlDefn
-        to the module.
-
-        """
-        # XXX Handle arg defaults
-        func_code = DefnCompiler.compile(node)
-        func = types.FunctionType(func_code, self.global_ns)
-        wrapper = EnamlDefn(func)
         self.global_ns[node.name] = wrapper
 
