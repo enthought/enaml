@@ -38,7 +38,8 @@ class AbstractTkScrollArea(AbstractTkLayoutComponent):
 
 
 class ScrollArea(LayoutTaskHandler, LayoutComponent):
-    """ A Container that displays just one of its children at a time.
+    """ A LayoutComponent subclass that displays just a single child in
+    a scrollable area.
 
     """
     #: A read-only property which returns the scrolling component
@@ -174,7 +175,7 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
         scrolled = self.scrolled_component
         if scrolled is not None:
             if isinstance(scrolled, Container):
-                min_size = scrolled.get_min_size()
+                min_size = scrolled.compute_min_size()
             else:
                 min_size = scrolled.size_hint()
             scrolled.set_min_size(*min_size)
