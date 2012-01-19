@@ -1,14 +1,14 @@
 Tabbed Container Example
 ===============================================================================
 
-:download:`tabbed.enaml <../../../examples/containers/tabbed.enaml>`
+:download:`tabbed.enaml <../../../examples/containers/tab_group.enaml>`
 
-.. literalinclude:: ../../../examples/containers/tabbed.enaml
+.. literalinclude:: ../../../examples/containers/tab_group.enaml
     :language: python
 
 ::
 
- $ enaml-run tabbed.enaml
+ $ enaml-run tab_group.enaml
 
 .. image:: images/tabbed0.png
 

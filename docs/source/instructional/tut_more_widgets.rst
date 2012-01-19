@@ -9,8 +9,8 @@ some new attributes including the ``id`` tag and two new |Enaml| operators: the
 subscription operator ``<<`` and the notification operator ``>>`` along with
 some component-specific attributes.
 
-Let's start with a code snip from :download:`progress_bar_simple.enaml
-<../../../examples/components/progress_bar_simple.enaml>`:
+Let's start with a code snip from :download:`progress_bar.enaml
+<../../../examples/components/progress_bar.enaml>`:
 
 ::
 
@@ -150,7 +150,7 @@ Execute from the command line with
 
 ::
 
- $ enaml-run progress_bar_simple.enaml 
+ $ enaml-run progress_bar.enaml 
 
 .. image:: images/progress_bar_simple.png
 
