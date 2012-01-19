@@ -55,16 +55,16 @@ class EnamlTestCase(unittest.TestCase):
         return component.find_by_name(name)
 
     def parse_and_create(self, source, **kwargs):
-        """ Parses and compiles the source. The source should have defn 
-        defined with the name 'MainView' that returns a single component. 
+        """ Parses and compiles the source. The source should have a
+        component defined with the name 'MainView'. 
 
         Arguments
         ---------
         enaml_source : str
             The enaml source file
 
-        *args :
-            The arguments to pass to the defn.
+        **kwargs
+            The default attribute values to pass to the component.
 
         """
         enaml_ast = parse(source)
