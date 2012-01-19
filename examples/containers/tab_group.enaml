@@ -45,8 +45,7 @@ TabForm(Form):
 
 
 Main(MainWindow):
-    title = 'Tabbed'
-    attr bar = False
+    title = 'TabGroup'
     Container:
         TabGroup:
             id: tbd
