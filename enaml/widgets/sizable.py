@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from traits.api import HasTraits
+from traits.api import HasStrictTraits
 
 
 class AbstractTkSizable(object):
@@ -134,7 +134,7 @@ class AbstractTkSizable(object):
         raise NotImplementedError
 
 
-class Sizable(HasTraits):
+class Sizable(HasStrictTraits):
     """ A mixin class which declares the sizable interface for an
     Enaml component. The Component class should be in inheritence 
     heierarchy when the class is used as a mixin.
