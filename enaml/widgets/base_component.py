@@ -178,6 +178,11 @@ class BaseComponent(HasStrictTraits):
     class is not meant to be instantiated directly.
 
     """
+    #: A readonly property which returns the current instance of
+    #: the component. This allows declarative Enaml components to
+    #: access self according to the standard attribute scoping rules.
+    self = Property
+
     #: The parent component of this component. It is stored as a weakref
     #: to mitigate issues with reference cycles. A top-level component's
     #: parent is None.
@@ -239,8 +244,14 @@ class BaseComponent(HasStrictTraits):
     set = Disallow
 
     #--------------------------------------------------------------------------
-    # Children Computation
+    # Property Getters
     #--------------------------------------------------------------------------
+    def _get_self(self):
+        """ The property getter for the 'self' attribute.
+
+        """
+        return self
+        
     @cached_property
     def _get_children(self):
         """ The cached property getter for the 'children' attribute.
