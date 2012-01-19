@@ -9,16 +9,14 @@ The following components are available from the standard library:
 
 Fields
 -------------------------------------------------------------------------------
-
-
 .. automodule:: enaml.stdlib.fields
+
 
 .. _std-lib-radio-group:
 
 Radio Group
 -------------------------------------------------------------------------------
-
-.. automodule:: enaml.stdlib.radio_group
+.. autoenaml_decl:: enaml.stdlib.radio_group.RadioGroup
 
 
 .. _std-lib-stacked:

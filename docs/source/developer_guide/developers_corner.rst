@@ -7,18 +7,18 @@ This section describes a set of guidelines for the developers of the Enaml.
    the guidelines are only suggestions.
 
 
-GitHub Branches
----------------
+.. GitHub Branches
+.. ---------------
 
-The following table provides a summary of the main developing branches and
-their purpose
+.. The following table provides a summary of the main developing branches and
+.. their purpose
 
-================== ============================================
-Label              Description
-================== ============================================
-``master``         main stable branch
-``develop``        developing branch (unstable)
-================== ============================================
+.. ================== ============================================
+.. Label              Description
+.. ================== ============================================
+.. ``master``         main stable branch
+.. ``develop``        developing branch (unstable)
+.. ================== ============================================
 
 Documentation
 -------------------------------------------------------------------------------
@@ -26,20 +26,39 @@ Documentation
 Sphinx Configuration
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-A Sphinx extension ``enamldoc`` lets Sphinx recognize and document |Enaml|
-objects.
+A Sphinx extension, found in :py:mod:`enamldoc.sphinx_ext` lets Sphinx
+recognize and document |Enaml| objects. 
 
-.. automodule:: enamldoc.enamldoc
-    :members:
+Sphinx Directives and Roles
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. rst:directive:: enamldoc:enaml_decl
 
-.. inheritance-diagram::
-    enamldoc.enamldoc.EnamlComponentDocumenter
-    enamldoc.enamldoc.EnamlDeclarationDocumenter
-    enamldoc.enamldoc.EnamlDefnDocumenter
-    enamldoc.enamldoc.EnamlDomain
+    For |Enaml| declarations. It will format similarly to a function, but with
+    the base object in the place arguments.
 
+.. rst:directive:: autoenaml_decl:: import.hierarchy.enaml_declaration
 
+    Automatically generate the object description from an |Enaml| file. Specify
+    the object to document as though you were importing it.
 
+.. rst:directive:: enamldoc:enaml_defn
+
+    For |Enaml| **defn** statements. Arguments display as with functions.
+
+.. rst:directive:: autoenaml_defn:: import.hierarchy.enaml_defn
+
+    Automatically generate the object description from an |Enaml| file. Specify
+    the object to describe as though you were importing it.
+
+.. rst:directive:: automodule::
+
+    automodule works for |Enaml| files as it does for python modules. No
+    special syntax is necessary.
+
+.. rst:role:: enaml_comp
+
+    Use the :rst:role:`enaml_comp` role to create a cross-reference to a
+    previously described ``enaml_decl`` or ``enaml_defn``
 
 Including the Sphinx extension ``refactor_doc`` allows use of formatted
 docstrings as described below.
