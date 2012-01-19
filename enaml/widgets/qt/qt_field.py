@@ -266,7 +266,7 @@ class QtField(QtControl, AbstractTkField):
                 shell = self.shell_obj
                 text = self.widget.text()
                 shell.field_text = text
-                shell.text_edited = text
+                shell.text_edited(text)
                 shell._modified = True
 
     def on_text_changed(self):
@@ -287,7 +287,7 @@ class QtField(QtControl, AbstractTkField):
         """ The event handler for the return pressed event.
 
         """
-        self.shell_obj.return_pressed = True
+        self.shell_obj.return_pressed()
 
     def on_selection_changed(self):
         """ The event handler for a selection event.

@@ -163,7 +163,7 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
         # off a size hint updated event so that any parents can
         # react to our potential new size.
         self.update_min_scrolled_size()
-        self.size_hint_updated = True
+        self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Update Methods

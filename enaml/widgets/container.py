@@ -168,7 +168,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
             # the layout was initialized, the value will be wrong
             # and cached. So we need to clear the cache so that it 
             # will be recomputed by the next consumer that needs it.
-            self.size_hint_updated = True
+            self.size_hint_updated()
 
         # This relayout dep handler is bound here instead of using a
         # decorator since the layout children are initially computed 
@@ -274,7 +274,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
         # our parent is a toplevel window, it can set the new size
         # of the window before leaving the context which helps 
         # eleminate flicker during the resize.
-        self.size_hint_updated = True
+        self.size_hint_updated()
 
     def do_refresh(self):
         """ A reimplemented LayoutTaskHandler handler method which will

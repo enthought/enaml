@@ -171,7 +171,7 @@ class Include(BaseComponent):
             # notifier the first time this component is initialized.
             self.on_trait_change(self._on_components_actual_updated, 
                                  '_components:_actual_updated')
-            self._actual_updated = True
+            self._actual_updated()
     
     @on_trait_change('components')
     def _handle_components_changed(self, obj, name, old, new):
@@ -191,7 +191,7 @@ class Include(BaseComponent):
                 for item in old:
                     item.destroy()
                 self._setup_components()
-                self._actual_updated = True
+                self._actual_updated()
             self.request_relayout_task(closure)
             
     # This notifier is hooked up in the '_handle_initialized' method 
@@ -204,5 +204,5 @@ class Include(BaseComponent):
         which it is nested.
 
         """        
-        self._actual_updated = True
+        self._actual_updated()
 

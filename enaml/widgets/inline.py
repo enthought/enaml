@@ -53,5 +53,5 @@ class Inline(BaseComponent):
         can request the new children and relayout if necessary.
 
         """
-        self._actual_updated = True
+        self._actual_updated()
 

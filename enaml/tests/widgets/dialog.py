@@ -63,7 +63,7 @@ defn MainView():
         self.assertEquals(set(self.event_log), set([
             ('active', True),
             ('_active', True),
-            ('opened', True),
+            ('opened', None),
         ]))
         self.event_log = []
         self.component.accept()
@@ -79,7 +79,7 @@ defn MainView():
         self.assertEquals(set(self.event_log), set([
             ('active', True),
             ('_active', True),
-            ('opened', True),
+            ('opened', None),
         ]))
         self.event_log = []
         self.component.reject()

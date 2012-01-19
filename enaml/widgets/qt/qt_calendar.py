@@ -49,7 +49,7 @@ class QtCalendar(QtBoundedDate, AbstractTkCalendar):
         shell = self.shell_obj
         date = qdate_to_python(qdate)
         shell.date = date
-        shell.activated = date
+        shell.activated(date)
 
     def on_date_selected(self):
         """ The event handler for the calendar's selection event.
@@ -57,7 +57,7 @@ class QtCalendar(QtBoundedDate, AbstractTkCalendar):
         """
         if not guard.guarded(self, 'updating'):
             date = qdate_to_python(self.widget.selectedDate())
-            self.shell_obj.selected = date
+            self.shell_obj.selected(date)
 
     def set_date(self, date):
         """ Sets and validates the component date on the widget.

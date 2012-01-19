@@ -67,7 +67,7 @@ class QtDatetimeEdit(QtBoundedDatetime, AbstractTkDatetimeEdit):
             qdatetime = self.widget.dateTime()
             new_datetime = qdatetime_to_python(qdatetime)
             shell.datetime = new_datetime
-            shell.datetime_changed = new_datetime
+            shell.datetime_changed(new_datetime)
 
     def set_datetime(self, datetime):
         """ Sets and the datetime on the widget.

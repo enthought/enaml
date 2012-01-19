@@ -159,7 +159,7 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
         perform necessary update activity when a relayout it requested.
 
         """
-        self.size_hint_updated = True
+        self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods 

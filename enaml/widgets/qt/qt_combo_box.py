@@ -69,7 +69,7 @@ class QtComboBox(QtControl, AbstractTkComboBox):
 
             # Only fire the selected event if we have a valid selection
             if curr_index != -1:
-                shell.selected = shell.value
+                shell.selected(shell.value)
 
     def set_items(self, str_items):
         """ Sets the items in the combo box.

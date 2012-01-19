@@ -136,12 +136,12 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
         qitem_model = self.item_model
         old = qitem_model.from_q_index(previous)
         new = qitem_model.from_q_index(current)
-        self.shell_obj.current_event = (old, new)
+        self.shell_obj.current_event((old, new))
 
     def _update_selection(self, current, previous):
         old = self.qt_selection_to_py(previous)
         new = self.qt_selection_to_py(current)
-        self.shell_obj.selection_event = (old, new)
+        self.shell_obj.selection_event((old, new))
 
     def clear(self):
         """ Clear the selection and the current index.

@@ -49,7 +49,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         self.set_label(text)
         # If the text of the button changes, the size hint has likely
         # change and the layout system needs to be informed.
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated()
 
     def on_clicked(self):
         """ The event handler for the button's clicked event.
@@ -57,7 +57,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         """
         shell = self.shell_obj
         shell._down = False
-        shell.clicked = True
+        shell.clicked()
 
     def on_pressed(self):
         """ The event handlers for the button's pressed event.
@@ -65,7 +65,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         """
         shell = self.shell_obj
         shell._down = True
-        shell.pressed = True
+        shell.pressed()
 
     def on_released(self):
         """ The event handler for the button's released event.
@@ -74,7 +74,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         shell = self.shell_obj
         if shell._down:
             shell._down = False
-            shell.released = True
+            shell.released()
 
     def set_label(self, label):
         """ Sets the label on the button control.

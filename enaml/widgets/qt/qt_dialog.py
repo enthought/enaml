@@ -132,7 +132,11 @@ class QtDialog(QtWindow, AbstractTkDialog):
             result = 'accepted'
         else:
             result = 'rejected'
-        self.shell_obj.trait_set(_result=result, _active=False, closed=result)
+        
+        shell = self.shell_obj
+        shell._result = result
+        shell._active = False
+        shell.closed(result)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -163,7 +167,8 @@ class QtDialog(QtWindow, AbstractTkDialog):
         widget = self.widget
         shell = self.shell_obj
         if visible:
-            shell.trait_set(_active=True, opened=True)
+            shell._active = True
+            shell.opened()
             widget.setWindowModality(_MODAL_MAP[shell.modality])
             widget.exec_()
         else:

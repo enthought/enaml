@@ -131,7 +131,7 @@ class Splitter(LayoutTaskHandler, LayoutComponent):
         # off a size hint updated event so that any parents can
         # react to our potential new size.
         self.update_splitter_sizes()
-        self.size_hint_updated = True
+        self.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Update Methods

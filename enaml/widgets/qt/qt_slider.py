@@ -147,7 +147,7 @@ class QtSlider(QtControl, AbstractTkSlider):
 
         """
         self.set_tick_position(tick_position)
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated()
         
     def shell_orientation_changed(self, orientation):
         """ The change handler for the 'orientation' attribute on the 
@@ -155,7 +155,7 @@ class QtSlider(QtControl, AbstractTkSlider):
 
         """
         self.set_orientation(orientation)
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Event Handlers 
@@ -170,7 +170,7 @@ class QtSlider(QtControl, AbstractTkSlider):
         """ The event handler for a slider moved event.
 
         """
-        self.shell_obj.moved = self.widget.sliderPosition()
+        self.shell_obj.moved(self.widget.sliderPosition())
 
     def _on_pressed(self):
         """ Update if the left button was pressed.
@@ -182,7 +182,7 @@ class QtSlider(QtControl, AbstractTkSlider):
         """
         shell = self.shell_obj
         shell._down = True
-        shell.pressed = True
+        shell.pressed()
 
     def _on_released(self):
         """ Update if the left button was released
@@ -195,7 +195,7 @@ class QtSlider(QtControl, AbstractTkSlider):
         shell = self.shell_obj
         if shell._down:
             shell._down = False
-            shell.released = True
+            shell.released()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods 

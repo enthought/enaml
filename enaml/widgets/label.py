@@ -45,5 +45,5 @@ class Label(Control):
         a size hint updated event.
 
         """
-        self.size_hint_updated = True
+        self.size_hint_updated()
 
