@@ -84,8 +84,11 @@ class Include(BaseComponent):
         # Also, since we don't need to recurse into any children (an
         # Include can't have children), there is no need to break these
         # blocks out into separate methods.
+
+        # Need to explicitly assign the parent to the components 
+        # since they were not added via the add_subcomponent method.
         for child in cmpnts:
-            child.parent = parent
+            child.parent = self
         
         for child in cmpnts:
             child._setup_create_widgets(toolkit_parent)
