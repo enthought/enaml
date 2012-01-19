@@ -121,35 +121,6 @@ class Splitter(LayoutTaskHandler, LayoutComponent):
             )
         )
 
-    def size_hint(self):
-        """ Reimplemented parent class method to compute the size
-        hint based on the size hints of the layout children.
-
-        """
-        # TODO - We probably want to honor the hug and clip properties
-        # on the scrolled component when computing its size hint. This
-        # will allow any Container in which we may be embedded to 
-        # compute an appropriate size hint from ours.
-        along_hint = 0
-        ortho_hint = 0
-        i = ['horizontal', 'vertical'].index(self.orientation)
-        j = 1 - i
-
-        for child in self.layout_children:
-            if child.visible:
-                size_hint = child.size_hint()
-                if size_hint == (-1, -1):
-                    size_hint = child.min_size()
-                along_hint += size_hint[i]
-                ortho_hint = max(ortho_hint, size_hint[j])
-
-        if self.orientation == 'horizontal':
-            res = (along_hint, ortho_hint)
-        else:
-            res = (ortho_hint, along_hint)
-        
-        return res
-
     def do_relayout(self):
         """ A reimplemented LayoutTaskHandler handler method which will
         perform necessary update activity when a relayout it requested.
