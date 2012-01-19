@@ -21,8 +21,9 @@ class QtTabGroup(QtLayoutComponent, AbstractTkTabGroup):
     """ A Qt implementation of TabGroup.
 
     """
-    # Simpilar to QGroupBox, don't use a widget item to compute layout
-    # geometry, or we end up with too little space between components.
+    # Simpilar to QtGroupBox, don't use a widget item to compute layout
+    # geometry, or layouts dont get enough space between other controls
+    # and the tab widget.
     use_widget_item_for_layout = False
 
     #--------------------------------------------------------------------------
