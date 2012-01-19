@@ -16,7 +16,7 @@ class TestWindow(EnamlTestCase):
 
         enaml_source = """
 defn MainView():
-    Window:
+    MainWindow:
         name = 'window'
         title = 'foo'
 """

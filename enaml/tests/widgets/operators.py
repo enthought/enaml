@@ -29,15 +29,16 @@ class TestLessLess(EnamlTestCase):
     def setUp(self):
         enaml_source = """
 defn MainView():
-    Window:
-        Label:
-            name = 'lb'
-            text << 'CheckBox is {0}'.format(cb.checked)
-        CheckBox:
-            id: cb
-            name = 'cb'
-            text = 'Should be checked'
-            checked = True
+    MainWindow:
+        Container:
+            Label:
+                name = 'lb'
+                text << 'CheckBox is {0}'.format(cb.checked)
+            CheckBox:
+                id: cb
+                name = 'cb'
+                text = 'Should be checked'
+                checked = True
 """
         self.view = self.parse_and_create(enaml_source)
         self.label = self.component_by_name(self.view, 'lb')

@@ -30,7 +30,7 @@ class TestComboBox(EnamlTestCase):
 
         enaml = """
 defn MainView(events):
-    Window:
+    MainWindow:
         ComboBox:
             name = 'cmb'
             items = [int, float, oct]

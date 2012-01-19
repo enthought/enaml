@@ -36,7 +36,7 @@ class TestCheckBox(EnamlTestCase):
 
         enaml_source = """
 defn MainView(events):
-    Window:
+    MainWindow:
         CheckBox:
             name = 'checkb1'
             text = 'checkbox label'

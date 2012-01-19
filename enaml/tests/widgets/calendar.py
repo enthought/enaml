@@ -40,7 +40,7 @@ class TestCalendar(EnamlTestCase):
 
         source = """
 defn MainView(events):
-    Window:
+    MainWindow:
         Calendar:
             name = 'cal'
             selected >> events.append(('selected', args.new))
@@ -188,7 +188,7 @@ defn MainView(events):
         enaml_source = """
 import datetime
 defn MainView(events):
-    Window:
+    MainWindow:
         Calendar:
             name = 'cal'
             date = datetime.date(1980, 1, 1)
@@ -211,7 +211,7 @@ defn MainView(events):
         enaml = """
 import datetime
 defn MainView(events):
-    Window:
+    MainWindow:
         Calendar:
             name = 'cal'
             date = datetime.date(2010, 1, 1)

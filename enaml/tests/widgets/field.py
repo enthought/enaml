@@ -26,7 +26,7 @@ class TestField(EnamlTestCase):
 
         enaml_source = """
 defn MainView(events):
-    Window:
+    MainWindow:
         Field:
             name = 'field'
             max_length = 8

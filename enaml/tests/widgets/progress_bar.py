@@ -32,7 +32,7 @@ class TestProgressBar(EnamlTestCase):
 
         enaml = """
 defn MainView():
-    Window:
+    MainWindow:
         ProgressBar:
             name = 'test'
 """
@@ -134,7 +134,7 @@ defn MainView():
         """
         enaml = """
 defn MainView():
-    Window:
+    MainWindow:
         ProgressBar:
             name = 'test'
             value = 95
@@ -153,7 +153,7 @@ defn MainView():
 
         enaml = """
 defn MainView():
-    Window:
+    MainWindow:
         ProgressBar:
             name = 'test'
             value = 5
