@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from traits.api import HasTraits
+from traits.api import HasStrictTraits
 
 from ..styling.color import ColorTrait
 from ..styling.font import FontTrait
@@ -44,7 +44,7 @@ class AbstractTkStylable(object):
         raise NotImplementedError
 
 
-class Stylable(HasTraits):
+class Stylable(HasStrictTraits):
     """ A mixin class which defines common style themes that certain 
     classes of widgets will wish to support.
 
