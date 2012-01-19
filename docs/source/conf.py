@@ -17,6 +17,9 @@
 
 import sys, os
 
+## from enaml.import_hooks import EnamlImporter
+## EnamlImporter.install()
+
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -31,19 +34,20 @@ needs_sphinx = '1.0.7'
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
 extensions = [
-                'sphinx.ext.autodoc',
-                'sphinx.ext.doctest',
-                'sphinx.ext.intersphinx',
-                'sphinx.ext.todo',
-                'sphinx.ext.coverage',
-                'sphinx.ext.pngmath',
-                'sphinx.ext.ifconfig',
-                'sphinx.ext.viewcode',
-                'sphinx.ext.graphviz',
-                'sphinx.ext.inheritance_diagram',
-                'sphinx.ext.autosummary',
-                'refactor_doc'
-                ]
+    'sphinx.ext.autodoc',
+    'sphinx.ext.doctest',
+    'sphinx.ext.intersphinx',
+    'sphinx.ext.todo',
+    'sphinx.ext.coverage',
+    'sphinx.ext.pngmath',
+    'sphinx.ext.ifconfig',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.graphviz',
+    'sphinx.ext.inheritance_diagram',
+    'sphinx.ext.autosummary',
+    'refactor_doc',
+    'enamldoc',            
+    ]
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -112,8 +116,9 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 ##inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
 ##                              color='dodgerblue1', style='filled')
 
+#: rankdir ['LR', 'TB', 'BT', 'RL']
 inheritance_graph_attrs = dict(
-    #rankdir="LR",
+    rankdir="TB",
     size='"8.0, 20.0"',
     fontsize=14,
     ratio='compress'
