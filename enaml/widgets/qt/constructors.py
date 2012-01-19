@@ -107,7 +107,7 @@ QT_CONSTRUCTORS = dict((
     constructor('group_box'),
     constructor('scroll_area'),
     constructor('progress_bar'),
-    constructor('tabbed'),
+    constructor('tab_group'),
     constructor('tab'),
     constructor('splitter'),
     constructor('float_slider'),
