@@ -296,7 +296,6 @@ def build_attr_declaration(kw, name, type_name, default, lineno, p):
             name, type_name, default, False, lineno,
         )
     else:
-        print 'building event'
         res = enaml_ast.AttributeDeclaration(
             name, type_name, default, True, lineno,
         )
