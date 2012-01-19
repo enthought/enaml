@@ -69,7 +69,7 @@ def _resizable(cls):
                 qp = QtGui.QPainter()
                 qp.begin(self)
                 try:
-                    qp.setPen(QtGui.QColor(0, 0, 0))
+                    qp.setPen(QtGui.QColor(255, 0, 0))
                     for child in self.children():
                         if isinstance(child, QtGui.QWidget):
                             layout_item = QtGui.QWidgetItem(child)
