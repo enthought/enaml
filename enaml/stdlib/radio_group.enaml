@@ -25,8 +25,14 @@ def _radio_buttons(rgroup, to_string, items):
         idx = rgroup.selected_index = -1
     disabled = rgroup.disabled_buttons
     labels = map(to_string, items)
-    return [_RGroupButton(i, label, i==idx, i in disabled)
-            for i, label in enumerate(labels)]
+    res = []
+    for i, label in enumerate(labels):
+        checked = i == idx
+        enabled = i not in disabled
+        res.append(
+            _RGroupButton(idx=i, text=label, checked=checked, enabled=enabled)
+        )
+    return res
 
 
 def _button_toggled(rgroup, idx, checked):
@@ -66,16 +72,15 @@ def _disable_buttons(buttons, indices):
 :: end ::
 
 
-defn _RGroupButton(idx, label, is_checked, is_disabled):
-    """ A private defn which creates a properly bound and initialized
-    RadioButton.
+_RGroupButton(RadioButton):
+    """ A private radio button for use in the RadioGroup which 
+    help handle toggle events.
 
     """
-    RadioButton:
-        text = label
-        checked = is_checked
-        enabled = not is_disabled
-        toggled >> _button_toggled(parent, idx, checked)
+    attr idx
+    # The parent of the radio button is the include. The parent
+    # of the include is the actual radio group.
+    toggled >> _button_toggled(parent.parent, idx, checked)
 
 
 RadioGroup(Container):
