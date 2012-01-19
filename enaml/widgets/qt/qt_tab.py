@@ -20,8 +20,8 @@ class QtTab(QtContainer, AbstractTkTab):
         """
         super(QtTab, self).initialize()
         shell = self.shell_obj
-        self._set_title(shell.title)
-        self._set_icon(shell.icon)
+        self.set_title(shell.title)
+        self.set_icon(shell.icon)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -31,35 +31,32 @@ class QtTab(QtContainer, AbstractTkTab):
         object.
 
         """
-        self._set_title(title)
+        self.set_title(title)
     
     def shell_icon_changed(self, icon):
         """ The change handler for the 'icon' attribute on the shell
         object.
 
         """
-        self._set_icon(icon)
+        self.set_icon(icon)
     
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
-    def _set_title(self, title):
+    def set_title(self, title):
         """ Sets the title of this tab in the parent tab widget.
 
         """
-        # We can't use widget.parent() here to retrieve the tab widget,
-        # though it is tempting. This is because the TabWidget maintains
-        # an internal QStackedWidget control which is actually the parent
-        # of the tab, and that stacked widget doesn't have the methods we
-        # want to use. So, we get at the tab widget by going to the parent
-        # of our shell object.
+        # We use widget.parent().parent() here to retrieve the tab 
+        # widget. This is because the TabWidget maintains an internal 
+        # QStackedWidget control which is actually the parent of the tab.
         widget = self.widget
-        tab_widget = self.shell_obj.parent.toolkit_widget
+        tab_widget = widget.parent().parent()
         idx = tab_widget.indexOf(widget)
         if idx != -1:
             tab_widget.setTabText(idx, title)
      
-    def _set_icon(self, icon):
+    def set_icon(self, icon):
         """ Sets the icon of this tab in the parent tab widget.
 
         """
