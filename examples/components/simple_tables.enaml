@@ -2,6 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+""" Simple Tables Example
+
+An example which shows some simple instances of ListModel and TableModel
+as well as how both can be used in a TableView.
+
+"""
 from enaml.item_models.standard_models import ListModel, TableModel
 from enaml.styling.brush import Brush
 from enaml.styling.color import Color
@@ -73,19 +79,22 @@ def printer(event):
 # And once ListView and TreeView are implemented, will work just fine
 # there as well.
 
-MainWindow(Window):
-    constraints = [
-        hbox(tv1, tv2),
-    ]
-    TableView: 
-        id: tv1
-        hug_width = 'strong'
-        item_model = list_model
-        BaseSelectionModel:
-            selection_mode = 'multi'
-    TableView:
-        id: tv2
-        item_model = table_model
-        BaseSelectionModel:
-            selection_mode = 'extended'
-            selection_event >> printer(args)
+Main(MainWindow):
+    title = 'Simple Tables'
+    Container:
+        constraints = [
+            hbox(tv1, tv2),
+        ]
+        TableView: 
+            id: tv1
+            hug_width = 'strong'
+            item_model = list_model
+            BaseSelectionModel:
+                selection_mode = 'multi'
+        TableView:
+            id: tv2
+            item_model = table_model
+            BaseSelectionModel:
+                selection_mode = 'extended'
+                selection_event >> printer(args)
+

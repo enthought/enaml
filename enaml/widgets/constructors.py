@@ -10,7 +10,13 @@ def include_shell():
     return Include
 
 
+def inline_shell():
+    from .inline import Inline
+    return Inline
+
+
 CONSTRUCTORS = (
     ('Include', Constructor(include_shell)),
+    ('Inline', Constructor(inline_shell)),
 )
 

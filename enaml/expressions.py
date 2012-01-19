@@ -682,6 +682,10 @@ class NotifyingExpression(AbstractExpression):
 
     def __init__(self, *args):
         super(NotifyingExpression, self).__init__(*args)
+        trait = self.obj.trait(self.attr)
+        if trait is None or trait is Disallow:
+            msg = "Cannot bind expression. %s object has no attribute '%s'"
+            raise AttributeError(msg % (self.obj, self.attr))
         self.obj.on_trait_change(self.handle_cmpnt_changed, self.attr)
         NotifyingExpression.instances.setdefault(self.obj, []).append(self)
 

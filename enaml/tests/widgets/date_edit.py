@@ -39,7 +39,7 @@ class TestDateEdit(EnamlTestCase):
         """
         enaml_source = """
 defn MainView(events):
-    Window:
+    MainWindow:
         DateEdit:
             name = 'test'
             date_changed >> events.append(('date_changed', args.new))
@@ -180,7 +180,7 @@ defn MainView(events):
         enaml_source = """
 import datetime
 defn MainView(events):
-    Window:
+    MainWindow:
         DateEdit:
             name = 'test'
             date = datetime.date(2010, 1, 1)
@@ -200,7 +200,7 @@ defn MainView(events):
         enaml_source = """
 import datetime
 defn MainView(events):
-    Window:
+    MainWindow:
         DateEdit:
             name = 'test'
             min_date = datetime.date(1990, 1, 1)

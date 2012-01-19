@@ -39,4 +39,9 @@ class QtEnableCanvas(QtControl, AbstractTkEnableCanvas):
         raise NotImplementedError('changing components not yet supported')
 
     def size_hint(self):
+        """ A reimplemented parent class method to retrieve the 
+        size hint as the preferred size from the enable component.
+
+        """
         return self.shell_obj.component.get_preferred_size()
+

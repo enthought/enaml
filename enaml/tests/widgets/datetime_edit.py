@@ -41,7 +41,7 @@ class TestDatetimeEdit(EnamlTestCase):
         enaml_source = """
 from datetime import datetime as python_datetime
 defn MainView(events):
-    Window:
+    MainWindow:
         DatetimeEdit:
             name = 'test'
             datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
@@ -194,7 +194,7 @@ defn MainView(events):
         enaml_source = """
 from datetime import datetime as python_datetime
 defn MainView(events):
-    Window:
+    MainWindow:
         DatetimeEdit:
             name = 'test'
             datetime = python_datetime(1980, 1, 1, 23, 10, 34)
@@ -215,7 +215,7 @@ defn MainView(events):
         enaml_source = """
 from datetime import datetime as python_datetime
 defn MainView(events):
-    Window:
+    MainWindow:
         DatetimeEdit:
             name = 'test'
             datetime = python_datetime(2010, 1, 1, 9, 12, 34, 14234)

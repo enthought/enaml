@@ -222,7 +222,8 @@ class BaseComponent(HasStrictTraits):
     #: _subcomponents and the items they return by calling their
     #: 'get_actual' method. This list should not be manipulated by
     #: user code.
-    children = Property(List, depends_on='_subcomponents:_actual_updated')
+    children = Property(List(Instance('BaseComponent')), 
+                        depends_on='_subcomponents:_actual_updated')
 
     #: Whether the component has been initialized or not. This will be 
     #: set to True after all of the setup() steps defined here are 
@@ -304,6 +305,7 @@ class BaseComponent(HasStrictTraits):
         filter or otherwise handle certain subcomponents differently.
 
         """
+        component.parent = self
         self._subcomponents.append(component)
 
     #--------------------------------------------------------------------------
@@ -417,14 +419,14 @@ class BaseComponent(HasStrictTraits):
 
         The setup process is comprised of the following steps:
         
-        1) Child components are given a reference to their parent
-        2) Abstract objects create their internal toolkit object
-        3) Abstract objects initialize their internal toolkit object
-        4) Bound expression values are explicitly applied
-        5) Abstract objects bind their event handlers
-        6) Abstract objects are added as a listeners to the shell object
-        7) Visibility is initialized (toplevel nodes are skipped)
-        8) Layout is initialized
+        1) Abstract objects create their internal toolkit object
+        2) Abstract objects initialize their internal toolkit object
+        3) Bound expression values are explicitly applied
+        4) Abstract objects bind their event handlers
+        5) Abstract objects are added as a listeners to the shell object
+        6) Visibility is initialized
+        7) Layout is initialized
+        8) A finalization pass is made
         9) Nodes are marked as initialized
 
         Many of these setup methods are no-ops, but are defined on this
@@ -440,7 +442,6 @@ class BaseComponent(HasStrictTraits):
             the parent toolkit widget for this component.
 
         """
-        self._setup_parent_refs()
         self._setup_create_widgets(parent)
         self._setup_init_widgets()
         self._setup_eval_expressions()
@@ -448,16 +449,8 @@ class BaseComponent(HasStrictTraits):
         self._setup_listeners()
         self._setup_init_visibility()
         self._setup_init_layout()
+        self._setup_finalize()
         self._setup_set_initialized()
-
-    def _setup_parent_refs(self):
-        """ A setup method which assigns the parent reference to the
-        child subcomponents.
-
-        """
-        for child in self._subcomponents:
-            child.parent = self
-            child._setup_parent_refs()
 
     def _setup_create_widgets(self, parent):
         """ A setup method that, by default, is a no-op. Subclasses 
@@ -526,6 +519,16 @@ class BaseComponent(HasStrictTraits):
         for child in self._subcomponents:
             child._setup_init_layout()
 
+    def _setup_finalize(self):
+        """ A setup method that, by default, is a no-op. Subclasses
+        that need to perform process after layout is initialized but
+        before a node is marked as fully initialized should reimplement
+        this method.
+
+        """
+        for child in self._subcomponents:
+            child._setup_finalize()
+
     def _setup_set_initialized(self):
         """ A setup method which updates the initialized attribute of 
         the component to True.
@@ -564,7 +567,7 @@ class BaseComponent(HasStrictTraits):
         if parent is not None:
             parent.relayout()
 
-    def relayout_later(self):
+    def request_relayout(self):
         """ A method called when the layout of the component's children
         should be refreshed at some point in the future. By default, this 
         method proxies the call up the hierarchy until an implementor is 
@@ -574,26 +577,26 @@ class BaseComponent(HasStrictTraits):
         """
         parent = self.parent
         if parent is not None:
-            parent.relayout_later()
+            parent.request_relayout()
 
-    def rearrange(self):
+    def refresh(self):
         """ A method called when the positioning of the component's 
         children should be refreshed. By default, this method proxies the 
         call up the hierarchy until an implementor is found. Implementors 
         should ensure that this method takes place immediately, and that
         the refresh is complete before the method returns. 
 
-        Note: This method performs less work than 'relayout' and should 
-            typically only need to be called when the children need to 
-            be repositioned, rather than have all of their layout 
+        Note: This method should perform less work than 'relayout' and 
+            should typically only need to be called when the children 
+            need to be repositioned, rather than have all of their layout 
             relationships recomputed.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.rearrange()
+            parent.refresh()
         
-    def rearrange_later(self):
+    def request_refresh(self):
         """ A method called when the positioning of the component's 
         children should be refreshed at some point in the future. By 
         default, this method proxies the call up the hierarchy until an 
@@ -601,39 +604,43 @@ class BaseComponent(HasStrictTraits):
         returns immediately, and that the refresh is completed at some 
         time in the future.
         
-        Note: This method performs less work than 'relayout' and should 
-            typically only need to be called when the children need to 
-            be repositioned, rather than have all of their layout 
+        Note: This method should perform less work than 'relayout' and 
+            should typically only need to be called when the children 
+            need to be repositioned, rather than have all of their layout 
             relationships recomputed.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.rearrange_later()
+            parent.request_refresh()
         
-    def relayout_enqueue(self, callable):
-        """ Enqueue a callable to be executed in a frozen context on the
-        next relayout pass. By default, this method proxies the call up
-        the hierarchy until an implementor is found. Implementors should
-        ensure that enqueuing the callable results in a relayout later
-        which empties the queue from within a freeze context.
+    def request_relayout_task(self, callback, *args, **kwargs):
+        """ Schedule a callback to be executed, followed by a relayout. 
+        By default, this method proxies the call up the hierarchy until 
+        an implementor is found. Implementors should ensure that the
+        callback is executed with given arguments at some point in the
+        future and is followed by a relayout. It is suggested that 
+        implementors collapse multiple calls to this method which
+        results in a single relayout.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.relayout_enqueue(callable)
+            parent.request_relayout_task(callback, *args, **kwargs)
         
-    def rearrange_enqueue(self, callable):
-        """ Enqueue a callable to be executed in a frozen context on the
-        next rearrange pass. By default, this method proxies the call up
-        the hierarchy until an implementor is found. Implementors should
-        ensure that enqueuing the callable results in a rearrange later
-        which empties the queue from within a freeze context.
+    def request_refresh_task(self, callback, *args, **kwargs):
+        """ Schedule a callback to be executed, followed by a rerfresh. 
+        By default, this method proxies the call up the hierarchy until 
+        an implementor is found. Implementors should ensure that the
+        callback is executed with given arguments at some point in the
+        future and is followed by a relayout. It is suggested that 
+        implementors collapse multiple calls to this method which
+        results in a single refresh.
 
         """
         parent = self.parent
         if parent is not None:
-            parent.rearrange_enqueue(callable)
+            parent.request_refresh_task(callback, *args, **kwargs)
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods 

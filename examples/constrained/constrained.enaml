@@ -21,50 +21,51 @@ Pressing the Share PushButton will add a new constraint that forces the width
 of that PushButton to increase to 200.
 
 """
-MainWindow(Window):
-    constraints = [
-        # Arrange the Html Frame above the horizontal row of butttons
-        vbox(
-            html_frame, 
-            hbox(
-                add_button, remove_button, _space_, 
-                change_mode_button, _space_, share_button,
+Main(MainWindow):
+    Container:
+        constraints = [
+            # Arrange the Html Frame above the horizontal row of butttons
+            vbox(
+                html_frame, 
+                hbox(
+                    add_button, remove_button, _space_, 
+                    change_mode_button, _space_, share_button,
+                ),
             ),
-        ),
 
-        # Weakly align the centers of the Html frame and the center button
-        align('h_center', html_frame, change_mode_button) | 'weak',
+            # Weakly align the centers of the Html frame and the center button
+            align('h_center', html_frame, change_mode_button) | 'weak',
 
-        # Set a sensible minimum height for the frame
-        html_frame.height >= 150,
-    ]
-    Html:
-        id: html_frame
-        source = '<center><h1>Hello Enaml!</h1></center>'
-    PushButton:
-        id: add_button
-        text = 'Add'
-        # Uncomment the next four lines to see how to play around with 
-        # the hugging and resist_clip properties
-        # hug_width = 'weak'
-        # hug_height = 'strong'
-        # resist_clip_width = 'weak'
-        # resist_clip_height = 'strong'
-    PushButton:
-        id: remove_button
-        text = 'Remove'
-    PushButton:
-        id: change_mode_button
-        text = 'Change Mode'
-        # Click this button to update the button text and have
-        # it expand to fit its contents
-        clicked >> setattr(change_mode_button, 'text', text * 2)
-    PushButton:
-        id: share_button
-        text = 'Share...'
-        # Click this button to force it to have a width of 200
-        # we don't need to access constraints through 'parent' here
-        # since it is in our attribute scope. But we are just doing
-        # it to show that it is possible.
-        clicked >> parent.constraints.append(width == 200)
+            # Set a sensible minimum height for the frame
+            html_frame.height >= 150,
+        ]
+        Html:
+            id: html_frame
+            source = '<center><h1>Hello Enaml!</h1></center>'
+        PushButton:
+            id: add_button
+            text = 'Add'
+            # Uncomment the next four lines to see how to play around with 
+            # the hugging and resist_clip properties
+            # hug_width = 'weak'
+            # hug_height = 'strong'
+            # resist_clip_width = 'weak'
+            # resist_clip_height = 'strong'
+        PushButton:
+            id: remove_button
+            text = 'Remove'
+        PushButton:
+            id: change_mode_button
+            text = 'Change Mode'
+            # Click this button to update the button text and have
+            # it expand to fit its contents
+            clicked >> setattr(change_mode_button, 'text', text * 2)
+        PushButton:
+            id: share_button
+            text = 'Share...'
+            # Click this button to force it to have a width of 200
+            # we don't need to access constraints through 'parent' here
+            # since it is in our attribute scope. But we are just doing
+            # it to show that it is possible.
+            clicked >> parent.constraints.append(width == 200)
 

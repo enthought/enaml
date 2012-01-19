@@ -9,8 +9,6 @@ from traits.api import Instance, Property, Bool
 from .base_component import BaseComponent
 
 from ..guard import guard
-from ..styling.color import ColorTrait
-from ..styling.font import FontTrait
 
 
 #------------------------------------------------------------------------------
@@ -127,8 +125,13 @@ class AbstractTkComponent(object):
         created so that intialization can depend on the existence of 
         other implementation objects.
 
+        Rather than raise the more typical NotImplementedError, this
+        abstractmethod is no-op so that implementors with complex
+        multiple inheritence heierarhies can use super() all the 
+        way to the top.
+
         """
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def bind(self):
@@ -140,8 +143,13 @@ class AbstractTkComponent(object):
         everything has been intialized in order to mitigate extraneous
         event firing.
 
+        Rather than raise the more typical NotImplementedError, this
+        abstractmethod is no-op so that implementors with complex
+        multiple inheritence heierarhies can use super() all the 
+        way to the top.
+
         """
-        raise NotImplementedError
+        pass
 
     @abstractmethod
     def destroy(self):
@@ -187,35 +195,8 @@ class AbstractTkComponent(object):
 
     @abstractmethod
     def shell_enabled_changed(self, enabled):
-        """ The change handler for the 'enabled' attribute on the shell
-        object. Sets the enabled/disabled state of the widget.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_bg_color_changed(self, color):
-        """ The change handler for the 'bg_color' attribute on the shell
-        object. Sets the background color of the internal widget to the 
-        given color.
-        
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_fg_color_changed(self, color):
-        """ The change handler for the 'fg_color' attribute on the shell
-        object. Sets the foreground color of the internal widget to the 
-        given color. For some widgets this may do nothing.
-
-        """
-        raise NotImplementedError
-    
-    @abstractmethod
-    def shell_font_changed(self, font):
-        """ The change handler for the 'font' attribute on the shell
-        object. Sets the font of the internal widget to the given font.
-        For some widgets this may do nothing.
+        """ The change handler for the 'enabled' attribute of the shell
+        object. Sets the widget enabled according to the given boolean.
 
         """
         raise NotImplementedError
@@ -229,16 +210,7 @@ class Component(BaseComponent):
     abstract object. This class represents the most basic widget in Enaml
     that drives a gui toolkit widget.
 
-    """ 
-    #: The background color of the widget.
-    bg_color = ColorTrait
-    
-    #: The foreground color of the widget.
-    fg_color = ColorTrait
-    
-    #: The font used for the widget.
-    font = FontTrait
-
+    """
     #: Whether or not the widget is enabled.
     enabled = Bool(True)
 
@@ -323,15 +295,25 @@ class Component(BaseComponent):
     #--------------------------------------------------------------------------
     def destroy(self):
         """ Overridden parent class destruction method method that adds 
-        additional logic to destroy the underlying toolkit widget.
+        additional logic to destroy the underlying toolkit widget. 
+
+        The destruction happens in dual pass top-down, then bottom-up.
+        On the top-down pass, the traits listeners for the abstract obj
+        are unhooked so that no events get fired during destruction. On
+        the bottom up pass, the abstract obj is destroyed and its ref
+        set to None.
 
         """
         # Remove the abstract object as a trait listener so that it
         # does not try to update after destroying its internal widget.
         self.remove_trait_listener(self.abstract_obj, 'shell')
+
+        # Traverse down the tree and have the children destroy themselves.
+        super(Component, self).destroy()
+        
+        # On pass back up the tree, destroy the abstract_obj.
         self.abstract_obj.destroy()
         self.abstract_obj = None
-        super(Component, self).destroy()
     
     #--------------------------------------------------------------------------
     # Change Handlers
@@ -364,7 +346,14 @@ class Component(BaseComponent):
         else:
             with guard(self, 'set_visible'):
                 self.visible = visible
-        self.abstract_obj.set_visible(visible)
+        
+        # Only set the visibility of the component if it is fully 
+        # initialized or being set to False. This prevents situations 
+        # where a widget is shown prematurely in some toolkit backends
+        # which then causes the entire window hierarchy to be shown
+        # prematurely.
+        if self.initialized or not visible:
+            self.abstract_obj.set_visible(visible)
 
     def disable_updates(self):
         """ Disables rendering updates for the underlying widget.

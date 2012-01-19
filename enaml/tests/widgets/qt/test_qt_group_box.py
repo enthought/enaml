@@ -15,26 +15,32 @@ QT_2_ENAML_ALIGNMENTS = {int(QtCore.Qt.AlignLeft): 'left',
 
 class TestGroupBox(QtTestAssistant, group_box.TestGroupBox):
 
+    # This test is an expected failure since calling process
+    # events on qt still doesn't seem to empty the relayout
+    # queue which has call-later events waiting. Without
+    # those being processed, the title update never happens.
     def get_title(self, component, widget):
         """ Returns the title text from the tookit widget
 
         """
         # The title is set on a deferred call, so we need to pump
-        # the event loop a bit to get the title to change. Yes,
-        # we need to do it twice.
-        self.toolkit.process_events()
-        self.toolkit.process_events()
+        # the event loop a bit to get the title to change.
+        # XXX this doesn't work, see above comment.
+        self.toolkit.app.process_events()
         return widget.title()
 
+    # This test is an expected failure since calling process
+    # events on qt still doesn't seem to empty the relayout
+    # queue which has call-later events waiting. Without
+    # those being processed, the flat update never happens.
     def get_flat(self, component, widget):
         """ Returns the flat style status from the tookit widget
 
         """
         # The flat is set on a deferred call, so we need to pump
-        # the event loop a bit to get the title to change. Yes,
-        # we need to do it twice.
-        self.toolkit.process_events()
-        self.toolkit.process_events()
+        # the event loop a bit to get the title to change.
+        # XXX this doesn't work, see above comment.
+        self.toolkit.app.process_events()
         return widget.isFlat()
 
     def get_title_align(self, component, widget):

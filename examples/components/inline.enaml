@@ -1,0 +1,49 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" An example of using the Inline component to pull items into a parent.
+
+In this example, we are deriving a new component from the builtin Inline.
+The Inline component is a widgetless component which performs the task
+of statically "pulling" its child components into its parent. The effect
+is equivalent as if the children of the Inline were defined as direct
+children of the Inline's parent.
+
+We also show in this example that the Inline component plays perfectly
+nicely with the Include component. The Inlcude is very similar to the
+Inline, except that it allows its child components to be defined
+dynamically at run-time.
+
+The combination of these two components, Inline and Include, provides
+a powerful way of creating dynamic user interfaces.
+
+"""
+InlineItems(Inline):
+    attr label
+    Label:
+        text = label
+    Field:
+        id: bar
+        placeholder_text = "type '%s magic'" % label
+    Include:
+        components << ([Label(text=label), PushButton(text='Click')] 
+                        if bar.value == '%s magic' % label else [])
+
+
+Main(MainWindow):
+    title = 'Magic'
+    Form:
+        Label:
+            text = 'A Label'
+        Field:
+            read_only = True
+            bg_color = 'salmon'
+            value = 'A magic example...'
+        InlineItems:
+            label = 'Foo'
+        InlineItems:
+            label = 'Bar'
+        InlineItems:
+            label = 'Baz'
+                    

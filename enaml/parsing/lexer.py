@@ -117,7 +117,6 @@ class EnamlLexer(object):
 
         # Enaml reserved
         'defn': 'DEFN',
-        'attr': 'ATTR',
     }
 
     tokens = (tokens + 

@@ -1,0 +1,108 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Menu Example
+
+This example shows how to use the MenuBar and popup menu facilities.
+
+"""
+:: python ::
+
+def get_action_label(action):
+    """ A simple function which walks up the tree from the given 
+    action and assembles a string that more-or-less indicates its
+    hierarchy. 
+
+    """
+    parts = [action.text]
+    parent = action.parent
+    # FIXME - this is a bit fragile.
+    while hasattr(parent, 'title'):
+        parts.append(parent.title)
+        parent = parent.parent
+    return ' - '.join(reversed(parts))
+    
+
+def get_recent_files(filenames):
+    """ A simple function that returns a list of PrintActions that
+    represent a list of recent files. This would normally be computed
+    based on some model information.
+
+    """
+    return [PrintAction(text=fn) for fn in filenames]
+
+:: end ::
+
+
+PrintAction(Action):
+    """ A very simple action which prints out its text hierarchy
+    when triggered.
+
+    """
+    id: action
+    triggered >> print(get_action_label(action))
+
+
+ViewMenu(Menu):
+    title = 'View'
+    PrintAction:
+        text = 'Refresh Now'
+    Action:
+        separator = True
+    PrintAction:
+        text = 'Selection Columns...'
+
+
+Main(MainWindow):
+    attr show_view_menu: bool = False
+    MenuBar:
+        Menu:
+            id: file_menu
+            title = 'File'
+            PrintAction:
+                text = 'New File'
+            PrintAction:
+                text = 'Open File...'
+            PrintAction:
+                text = 'Open Folder...'
+            Menu:
+                title = 'Open Recent'
+                Include:
+                    id: icld
+                    components = get_recent_files(['spam.txt', 'ham.pdf', 'eggs.doc'])
+                Action:
+                    separator = True
+                PrintAction:
+                    text = 'Clear Items'
+            PrintAction:
+                text = 'Close'
+        Menu:
+            title = 'Edit'
+            PrintAction:
+                text = 'Cut'
+            PrintAction:
+                text = 'Copy'
+            PrintAction:
+                text = 'Paste'
+        Include:
+            components << ViewMenu() if show_view_menu else []
+        Menu:
+            title = 'Window'
+            PrintAction:
+                text = 'Minimize'
+            PrintAction:
+                text = 'Zoom'
+    Container:
+        Html:
+            source = '<center><h1>Hello Enaml Menus!</h1></center>'
+        CheckBox:
+            text = 'Show View Menu'
+            checked := show_view_menu
+        PushButton:
+            text = 'Popup File Menu'
+            clicked >> file_menu.popup()
+        PushButton:
+            text = 'Change Recent Files'
+            clicked >> setattr(icld, 'components', get_recent_files(['one.txt', 'two.pdf', 'three.doc']))
+

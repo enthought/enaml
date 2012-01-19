@@ -3,10 +3,15 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from traits.api import (
-    List, Instance, Bool, on_trait_change, Property, cached_property, Any,
+    List, Instance, Bool, on_trait_change, Property, cached_property, Either,
 )
 
 from .base_component import BaseComponent
+
+
+IncludeComponents = Either(
+    List(Instance(BaseComponent)), Instance(BaseComponent),
+)
 
 
 class Include(BaseComponent):
@@ -18,7 +23,7 @@ class Include(BaseComponent):
     #: which will accept a single component, or a list of components as
     #: input. If the input is a single component, it will be converted
     #: into a single element list.
-    components = Property(Any, depends_on='_components')
+    components = Property(IncludeComponents, depends_on='_components')
         
     #: A private attribute which stores the underlying list of created
     #: components. This list should not be manipulated by user code.
@@ -48,7 +53,7 @@ class Include(BaseComponent):
         if isinstance(val, BaseComponent):
             val = [val]
         self._components = val
-
+    
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
@@ -81,7 +86,6 @@ class Include(BaseComponent):
         # blocks out into separate methods.
         for child in cmpnts:
             child.parent = parent
-            child._setup_parent_refs()
         
         for child in cmpnts:
             child._setup_create_widgets(toolkit_parent)
@@ -105,6 +109,9 @@ class Include(BaseComponent):
             child._setup_init_layout()
 
         for child in cmpnts:
+            child._setup_finalize()
+
+        for child in cmpnts:
             child._setup_set_initialized()
 
         self._components_initialized = True
@@ -117,8 +124,8 @@ class Include(BaseComponent):
         from being declared for an Include instance.
 
         """
-        msg = ("Cannot add subcomponents to an Include. Assign a list to the "
-               "'components' attribute instead.")
+        msg = ("Cannot add subcomponents to an Include. Assign a component "
+               "or a list components to the 'components' attribute instead.")
         raise ValueError(msg)
 
     def get_actual(self):
@@ -182,7 +189,7 @@ class Include(BaseComponent):
                     item.destroy()
                 self._setup_components()
                 self._actual_updated = True
-            self.relayout_enqueue(closure)
+            self.request_relayout_task(closure)
             
     # This notifier is hooked up in the '_handle_initialized' method 
     # due to issues surrounding trait_setq contexts.

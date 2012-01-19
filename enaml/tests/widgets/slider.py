@@ -77,7 +77,7 @@ class TestSlider(EnamlTestCase):
 
         enaml_source = """
 defn MainView(events):
-    Window:
+    MainWindow:
         Slider:
             name = 'slider'
             moved >> events.append(('moved', args.new))

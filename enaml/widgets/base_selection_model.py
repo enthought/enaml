@@ -7,6 +7,7 @@ from abc import abstractmethod
 from traits.api import Event
 
 from .component import Component, AbstractTkComponent
+
 from ..enums import SelectionMode, SelectionBehavior
 
 
@@ -113,6 +114,7 @@ class BaseSelectionModel(Component):
         selection : list of (ModelIndex, ModelIndex) tuples
             Each tuple is an inclusive range specifying a bounding box
             for a given selection range.
+            
         command : single or sequence of SelectionCommand, optional
             Exactly what action to perform given these selection ranges. 
             See the `SelectionCommand` documentation for the complete 

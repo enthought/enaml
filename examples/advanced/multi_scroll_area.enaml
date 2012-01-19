@@ -102,29 +102,30 @@ LargeForm(Form):
         pass
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Multi Scroll Area"
-    constraints = [
-        vbox(
-            hbox(area1, area2),
-            area3,
-        ),
-        # A couple extra constraints to more explicitly constrain
-        # the widths and heights instead of using the *box(...)
-        # computed defaults.
-        area1.width == 0.75 * area2.width,
-        area3.height == area1.height,
-    ]
-    ScrollArea:
-        id: area1
-        preferred_size = (100, 100)
-        LargeForm:
-            pass
-    TableView:
-        id: area2
-        item_model = MyModel()
-    ScrollArea:
-        id: area3
-        LargeForm:
-            pass
+    Container:
+        constraints = [
+            vbox(
+                hbox(area1, area2),
+                area3,
+            ),
+            # A couple extra constraints to more explicitly constrain
+            # the widths and heights instead of using the *box(...)
+            # computed defaults.
+            area1.width == 0.75 * area2.width,
+            area3.height == area1.height,
+        ]
+        ScrollArea:
+            id: area1
+            preferred_size = (100, 100)
+            LargeForm:
+                pass
+        TableView:
+            id: area2
+            item_model = MyModel()
+        ScrollArea:
+            id: area3
+            LargeForm:
+                pass
 

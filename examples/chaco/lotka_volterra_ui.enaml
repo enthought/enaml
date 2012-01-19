@@ -7,6 +7,8 @@
 Run lotka_volterra.py to view this demo.
 
 """
+from range import Range
+
 
 :: python ::
 
@@ -25,12 +27,11 @@ def pop_bounds(data_low, data_high, margin, tight_bounds):
 
 :: end ::
 
-from range import Range
 
-
-defn MainWindow(model):
-    Window:
-        title = "Lotka-Volterra Model"
+Main(MainWindow):
+    attr model
+    title = "Lotka-Volterra Model"
+    Container:
         constraints = [
             hbox(plot, vbox(form, _space_)),
             align('left', prey0_range.slider, predator0_range.slider,

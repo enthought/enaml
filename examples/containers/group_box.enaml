@@ -35,54 +35,55 @@ def toggle_flat(*boxes):
 :: end ::
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Group Boxes"
-    constraints = [
-        vbox(
-            top_box,
-            bottom_box,
-            hbox(_space_, title_check, flat_check),
-        ),
-        align('midline', top_form, bottom_form),
-    ]
-    GroupBox:
-        id: top_box
-        title = "Personal Details"
-        Form:
-            id: top_form
-            Label:
-                text = "First name:"
-            Field:
-                pass
-            Label:
-                text = "Last name:"
-            Field:
-                pass
-            Label:
-                text = "Home phone:"
-            Field:
-                pass
-    GroupBox:
-        id: bottom_box
-        title = "Employment Details"
-        Form:
-            id: bottom_form
-            Label:
-                text = "Employer:"
-            Field:
-                pass
-            Label:
-                text = "Office or Desk phone:"
-            Field:
-                pass
-    CheckBox:
-        id: title_check
-        text = "Show titles"
-        checked = True
-        toggled >> toggle_title(top_box, bottom_box)
-    CheckBox:
-        id: flat_check
-        text = "Flat"
-        checked = False
-        toggled >> toggle_flat(top_box, bottom_box)
+    Container:
+        constraints = [
+            vbox(
+                top_box,
+                bottom_box,
+                hbox(_space_, title_check, flat_check),
+            ),
+            align('midline', top_form, bottom_form),
+        ]
+        GroupBox:
+            id: top_box
+            title = "Personal Details"
+            Form:
+                id: top_form
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Home phone:"
+                Field:
+                    pass
+        GroupBox:
+            id: bottom_box
+            title = "Employment Details"
+            Form:
+                id: bottom_form
+                Label:
+                    text = "Employer:"
+                Field:
+                    pass
+                Label:
+                    text = "Office or Desk phone:"
+                Field:
+                    pass
+        CheckBox:
+            id: title_check
+            text = "Show titles"
+            checked = True
+            toggled >> toggle_title(top_box, bottom_box)
+        CheckBox:
+            id: flat_check
+            text = "Flat"
+            checked = False
+            toggled >> toggle_flat(top_box, bottom_box)
 

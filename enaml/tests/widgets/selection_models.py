@@ -91,7 +91,7 @@ the_item_model = TableModel(table)
 
 
 defn MainView(events):
-    Window:
+    MainWindow:
         TableView:
             name = 'table_view'
             item_model = the_item_model
@@ -226,7 +226,7 @@ the_item_model = TableModel(table)
 
 
 defn MainView(events):
-    Window:
+    MainWindow:
         TableView:
             name = 'table_view'
             item_model = the_item_model

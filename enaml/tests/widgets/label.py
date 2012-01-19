@@ -24,7 +24,7 @@ class TestLabel(EnamlTestCase):
 
         enaml_source = """
 defn MainView():
-    Window:
+    MainWindow:
         Label:
             name = 'label'
             text = 'foo'

@@ -8,7 +8,6 @@ In this example, we demonstrate connecting a ProgressBar up to a model
 that is modified by a Timer.
 
 """
-
 :: python ::
 
 import random
@@ -16,7 +15,7 @@ import random
 from traits.api import Any, Bool, HasTraits, Int
 
 
-class Model(HasTraits):
+class ProgressModel(HasTraits):
     """ Model a process that does some work on command.
 
     """
@@ -38,7 +37,7 @@ class Model(HasTraits):
         """
         if not self.timer_started:
             self.timer_started = True
-            self.timer_func(1.0, self.do_work)
+            self.timer_func(15.0, self.do_work)
 
     def do_work(self):
         """ Do a random amount of work.
@@ -48,7 +47,7 @@ class Model(HasTraits):
         if self.units_done >= self.work_units:
             self.timer_started = False
         else:
-            self.timer_func(1.0, self.do_work)
+            self.timer_func(15.0, self.do_work)
 
     def reset(self):
         """ Reset the work done back to 0.
@@ -59,9 +58,10 @@ class Model(HasTraits):
 :: end ::
 
 
-defn ModelView(model):
-    Window:
-        title = 'Progress Bar'
+ModelView(MainWindow):
+    attr model: ProgressModel
+    title = 'Progress Bar'
+    Container:
         constraints = [
             vbox(progress,
                 hbox(_space_, label, _space_), 
@@ -82,13 +82,13 @@ defn ModelView(model):
             text << "Start" if progress.value == 0 else "Reset"
             clicked >> model.start_work() if progress.value == 0 else model.reset()
 
+
 :: python ::
 
-# The main function is special cased as the entry point by the enaml-run script
 def main():
-    model = Model()
-    window = ModelView(model)
-    model.timer_func = window.toolkit.invoke_timer
+    model = ProgressModel()
+    window = ModelView(model=model)
+    model.timer_func = window.toolkit.app.timer
     window.show()
 
 :: end ::

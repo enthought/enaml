@@ -4,15 +4,16 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Bool
+from traits.api import Bool
 
-from .container import Container, AbstractTkContainer
-from .layout.layout_manager import NullLayoutManager
+from .container import Container
+from .layout_component import LayoutComponent, AbstractTkLayoutComponent
+from .layout_task_handler import LayoutTaskHandler
 
 from ..enums import Orientation
 
 
-class AbstractTkSplitter(AbstractTkContainer):
+class AbstractTkSplitter(AbstractTkLayoutComponent):
     """ The abstract toolkit Splitter interface.
 
     A toolkit splitter container is responsible for handling changes on 
@@ -21,8 +22,8 @@ class AbstractTkSplitter(AbstractTkContainer):
 
     """
     @abstractmethod
-    def set_initial_sizes(self):
-        """ Set the initial sizes for the children.
+    def set_splitter_sizes(self, sizes):
+        """ Set the splitter sizes for the children.
 
         """
         raise NotImplementedError
@@ -52,9 +53,9 @@ class AbstractTkSplitter(AbstractTkContainer):
         raise NotImplementedError
 
 
-class Splitter(Container):
-    """ A Container that displays its children in separate resizable
-    compartements that are connected with a resizing bar.
+class Splitter(LayoutTaskHandler, LayoutComponent):
+    """ A LayoutComponent subclass that displays its children in separate
+    resizable compartements that are connected with a resizing bar.
      
     """
     #: The orientation of the Splitter. 'horizontal' means the children 
@@ -66,11 +67,6 @@ class Splitter(Container):
     #: is released (False). The default is True.
     live_drag = Bool(True)
 
-    #: An object that manages the layout of this component and its 
-    #: direct children. In this case, it does nothing, since constraints
-    #: may not cross the boundaries of a splitter.
-    layout_manager = Instance(NullLayoutManager, ())
-
     #: How strongly a component hugs it's contents' width. A Splitter
     #: container ignores its width hug by default, so it expands freely
     #: in width.
@@ -81,19 +77,81 @@ class Splitter(Container):
     #: in height.
     hug_height = 'ignore'
 
+    #--------------------------------------------------------------------------
+    # Change Handlers
+    #--------------------------------------------------------------------------
+    def _orientation_changed(self):
+        """ The change handler for the 'orientation' attribute. 
+        This simply requests a relayout.
+
+        """
+        self.request_relayout()
+
+    def _on_layout_deps_changed(self):
+        """ A change handler for triggering a relayout when any of the
+        layout dependencies change. It simply requests a relayout.
+
+        """
+        self.request_relayout()
+
+    #--------------------------------------------------------------------------
+    # Setup Methods
+    #--------------------------------------------------------------------------
+    def _setup_finalize(self):
+        """ Overridden setup method to initialize the sizes of the 
+        splitter.
+
+        """
+        super(Splitter, self)._setup_finalize()
+        self.update_splitter_sizes()
+
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
     def initialize_layout(self):
-        """ Initialize the layout of the children. This is overridden
-        from the parent class to initialize the sizes of the splitter.
+        """ A reimplemented parent class method which hooks up change
+        handlers for child attributes which will cause a change in 
+        the layout.
 
         """
-        super(Splitter, self).initialize_layout()
-        self.abstract_obj.set_initial_sizes()
+        self.on_trait_change(
+            self._on_layout_deps_changed, (
+                'layout_children:visible, '
+                'layout_children:size_hint_updated, '
+            )
+        )
 
-    def _on_size_hint_changed(self, child, name, old, new):
-        """ Overridden parent class method to pass up the size hint 
-        changed notification to the parent so that a window resize 
-        can take place if necessary.
+    def do_relayout(self):
+        """ A reimplemented LayoutTaskHandler handler method which will
+        perform necessary update activity when a relayout it requested.
 
         """
+        # This method is called whenever a relayout is requested.
+        # We update the size of the splitter components and fire 
+        # off a size hint updated event so that any parents can
+        # react to our potential new size.
+        self.update_splitter_sizes()
         self.size_hint_updated = True
 
+    #--------------------------------------------------------------------------
+    # Update Methods
+    #--------------------------------------------------------------------------
+    def update_splitter_sizes(self):
+        """ Update the sizes of each of the splitters based on the size
+        hints of the children and the orientation of the splitter. The
+        minimum sizes of the children are also computed and applied.
+
+        """
+        # TODO - the setting of the min sizes here could be cleaner
+        sizes = []
+        i = ['horizontal', 'vertical'].index(self.orientation)
+        for child in self.layout_children:
+            if isinstance(child, Container):
+                min_size = child.compute_min_size()
+                child.set_min_size(*min_size)
+            hint = child.size_hint()[i]
+            if hint <= 0:
+                hint = child.min_size()[i]
+            sizes.append(hint)
+        self.abstract_obj.set_splitter_sizes(sizes)
+    

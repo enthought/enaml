@@ -30,7 +30,7 @@ class TestPushButton(EnamlTestCase):
 
         enaml_source = """
 defn MainView(events):
-    Window:
+    MainWindow:
         PushButton:
             name = 'pb1'
             text = 'foo'

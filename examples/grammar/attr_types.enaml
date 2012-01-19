@@ -38,26 +38,8 @@ MainContainer(Container):
         clicked >> setattr(parent, 'ham', 18.0)
 
 
-defn GenMain(a):
-    Window:
-        MainContainer:
-            pass
-        Form:
-            Label:
-                text = 'Change local `a`'
-            Field:
-                value := a
-            Label:
-                text = 'Updates on local `a` change'
-            Field:
-                read_only = True
-                value << a
-
-
-:: python ::
-
-def main():
-    GenMain('foozle').show()
-
-:: end ::
+Main(MainWindow):
+    title = 'Attr Types'
+    MainContainer:
+        pass
 

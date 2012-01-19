@@ -15,6 +15,71 @@ _MODAL_MAP = {
 }
 
 
+class QtDialogLayout(QtGui.QLayout):
+    """ A QLayout subclass which can have at most one layout item. This
+    layout item is expanded to fit the allowable space, regardless of its
+    size policy settings. This is similar to how central widgets behave 
+    in a QMainWindow.
+
+    The class is designed for use by QtDialog, other uses are at the 
+    user's own risk.
+
+    """
+    def __init__(self, *args, **kwargs):
+        super(QtDialogLayout, self).__init__(*args, **kwargs)
+        self._layout_item = None
+    
+    def addItem(self, item):
+        """ A virtual method implementation which sets the layout item
+        in the layout. Any old item will be overridden.
+
+        """
+        self._layout_item = item
+        self.update()
+
+    def count(self):
+        """ A virtual method implementation which returns 0 if no layout
+        item is supplied, or 1 if there is a current layout item.
+
+        """
+        return 0 if self._layout_item is None else 1
+
+    def itemAt(self, idx):
+        """ A virtual method implementation which returns the layout item 
+        for the given index or None if one does not exist.
+
+        """
+        if idx == 0:
+            return self._layout_item
+
+    def takeAt(self, idx):
+        """ A virtual method implementation which removes and returns the
+        item at the given index or None if one does not exist.
+
+        """
+        if idx == 0:
+            res = self._layout_item
+            self._layout_item = None
+            return res
+    
+    def sizeHint(self):
+        """ A reimplemented method to return a proper size hint for the
+        layout, and hence the Dialog.
+
+        """
+        return QtCore.QSize(600, 100)
+
+    def setGeometry(self, rect):
+        """ A reimplemented method which sets the geometry of the managed
+        widget to fill the given rect.
+
+        """
+        super(QtDialogLayout, self).setGeometry(rect)
+        item = self._layout_item
+        if item is not None:
+            item.widget().setGeometry(rect)
+
+
 class QtDialog(QtWindow, AbstractTkDialog):
     """ A Qt implementation of a Dialog.
 
@@ -29,9 +94,10 @@ class QtDialog(QtWindow, AbstractTkDialog):
 
         """
         self.widget = QResizingDialog(parent)
+        self.widget.setLayout(QtDialogLayout())
 
-    def initialize(self):
-        """ Intializes the attributes on the QDialog.
+    def bind(self):
+        """ Bind the signal handlers for the dialog.
 
         """
         super(QtDialog, self).initialize()
@@ -71,18 +137,35 @@ class QtDialog(QtWindow, AbstractTkDialog):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def update_central_widget(self):
+        """ Updates the central widget in the dialog with the value from
+        the shell object.
+
+        """
+        # It's possible for the central widget component to be None.
+        # This must be allowed since the central widget may be generated
+        # by an Include component, in which case it will not exist 
+        # during initialization. However, we must have a central widget
+        # for the MainWindow, and in that case we just fill it with a
+        # dummy widget.
+        central_widget = self.shell_obj.central_widget
+        if central_widget is None:
+            child_widget = QtGui.QWidget()
+        else:
+            child_widget = central_widget.toolkit_widget
+        self.widget.layout().addWidget(child_widget)
+
     def set_visible(self, visible):
         """ Overridden from the parent class to properly launch and close 
         the dialog.
 
         """
-        if not self._initializing:
-            widget = self.widget
-            shell = self.shell_obj
-            if visible:
-                shell.trait_set(_active=True, opened=True)
-                widget.setWindowModality(_MODAL_MAP[shell.modality])
-                widget.exec_()
-            else:
-                self.reject()
+        widget = self.widget
+        shell = self.shell_obj
+        if visible:
+            shell.trait_set(_active=True, opened=True)
+            widget.setWindowModality(_MODAL_MAP[shell.modality])
+            widget.exec_()
+        else:
+            self.reject()
 
