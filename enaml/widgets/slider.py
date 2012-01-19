@@ -5,14 +5,13 @@
 from abc import abstractmethod
 
 from traits.api import (
-    Bool, Event, Instance, Property, Int, TraitError, Either, Range, 
-    on_trait_change,
+    Bool, Instance, Property, Int, TraitError, Either, Range, on_trait_change,
 )
 
 from .control import Control, AbstractTkControl
 
 from ..enums import Orientation, TickPosition, PolicyEnum
-from ..util.trait_types import Bounded
+from ..util.trait_types import Bounded, EnamlEvent
 
 
 class AbstractTkSlider(AbstractTkControl):
@@ -122,15 +121,15 @@ class Slider(Control):
     tracking = Bool(True)
 
     #: Fired when the slider is pressed.
-    pressed = Event
+    pressed = EnamlEvent
 
     #: Fired when the slider is released.
-    released = Event
+    released = EnamlEvent
 
     #: Fired when the user drags the slider handle via the mouse.
     #: The event payload will be the position of the slider. This is
     #: always fired regardless of the value of :attr:`tracking`
-    moved = Event
+    moved = EnamlEvent
 
     #: A read only property which indicates whether or not the slider
     #: is pressed down.

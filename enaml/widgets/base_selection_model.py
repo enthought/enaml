@@ -4,11 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event
-
 from .component import Component, AbstractTkComponent
 
 from ..enums import SelectionMode, SelectionBehavior
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkBaseSelectionModel(AbstractTkComponent):
@@ -65,13 +64,13 @@ class BaseSelectionModel(Component):
     """
     #: Updated when the current ModelIndex changes. Gets a 2-tuple of
     #: (old ModelIndex, new ModelIndex)
-    current_event = Event
+    current_event = EnamlEvent
 
     #: Updated when the current selection changes. Gets a 2-tuple of
     #: (deleted items, added items). Each selection is a list of
     #: (top_left ModelIndex, bottom_right ModelIndex) tuples specifying
     #: rectangular ranges of selected cells.
-    selection_event = Event
+    selection_event = EnamlEvent
 
     #: The selection mode.
     selection_mode = SelectionMode

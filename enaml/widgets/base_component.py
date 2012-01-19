@@ -6,7 +6,7 @@ from collections import deque
 
 from traits.api import (
     Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
-    cached_property, Event, Dict, TraitType, Disallow,
+    cached_property, Dict, TraitType, Disallow,
 )
 
 from ..expressions import AbstractExpression
@@ -228,7 +228,7 @@ class BaseComponent(HasStrictTraits):
     #: This event is listened to by the parent of subcomponents in order 
     #: to know when to rebuild its list of children. User code will not 
     #: typically interact with this event.
-    _actual_updated = Event
+    _actual_updated = EnamlEvent
 
     #: The HasTraits class defines a class attribute 'set' which is
     #: a deprecated alias for the 'trait_set' method. The problem

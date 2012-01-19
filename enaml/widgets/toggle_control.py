@@ -4,9 +4,11 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Event, Str, Instance, Property
+from traits.api import Bool, Str, Instance, Property
 
 from .control import Control, AbstractTkControl
+
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkToggleControl(AbstractTkControl):
@@ -39,13 +41,13 @@ class ToggleControl(Control):
     text = Str
     
     #: Fired when the element is toggled.
-    toggled = Event
+    toggled = EnamlEvent
     
     #: Fired when the element is pressed.
-    pressed = Event
+    pressed = EnamlEvent
 
     #: Fired when the element is released.
-    released = Event
+    released = EnamlEvent
 
     #: Internal storage for the down attribute
     _down = Bool

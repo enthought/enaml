@@ -4,9 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import List, Any, Event, Callable, Int, Instance, Property, Str
+from traits.api import List, Any, Callable, Int, Instance, Property, Str
 
 from .control import Control, AbstractTkControl
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkComboBox(AbstractTkControl):
@@ -71,7 +72,7 @@ class ComboBox(Control):
     #: Fired when a new selection is made by the user through the ui,
     #: but not when changed programatically. The args object will contain
     #: the selected value.
-    selected = Event
+    selected = EnamlEvent
     
     #: How strongly a component hugs it's contents' width. ComboBoxes hug 
     #: width weakly, by default.

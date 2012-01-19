@@ -5,8 +5,7 @@
 from abc import abstractmethod
 
 from traits.api import (
-    Str, Instance, Property, cached_property, Int, Tuple, Event, Range,
-    on_trait_change,
+    Str, Instance, Property, cached_property, Tuple, Range, 
 )
 
 from .component import Component, AbstractTkComponent
@@ -82,11 +81,6 @@ class Window(LayoutTaskHandler, Component, Sizable):
     central_widget = Property(
         Instance(LayoutComponent), depends_on='children',
     )
-
-    #: An event which is fired when the window is resized. The payload
-    #: of the event will be with (width, height) size of the window
-    #: excluding any windowing system decorations.
-    resized = Event(Tuple(Int, Int))
     
     #: The initial size to set the window on the first call show()
     #: If the initial size is set to (-1, -1), then a default value

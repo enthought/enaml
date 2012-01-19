@@ -4,9 +4,11 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event, Str, Instance
+from traits.api import Str, Instance
 
 from .bounded_datetime import BoundedDatetime, AbstractTkBoundedDatetime
+
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkDatetimeEdit(AbstractTkBoundedDatetime):
@@ -29,7 +31,7 @@ class DatetimeEdit(BoundedDatetime):
     #: Triggered whenever the user changes the date through the ui
     #: control, but not programmatically. The event payload will be 
     #: the datetime on the control.
-    datetime_changed = Event
+    datetime_changed = EnamlEvent
     
     #: How strongly a component hugs its contents' width. DatetimeEdits 
     #: ignore the width hug by default, so they expand freely in width.

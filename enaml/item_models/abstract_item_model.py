@@ -2,9 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Event, HasTraits
+from traits.api import HasTraits
 
 from .model_index import ModelIndex
+
+from ..util.trait_types import EnamlEvent
 
 
 #------------------------------------------------------------------------------
@@ -43,61 +45,61 @@ class AbstractItemModel(HasTraits):
 
     """
     #: Fired by the begin_insert_columns method
-    columns_about_to_be_inserted = Event
+    columns_about_to_be_inserted = EnamlEvent
 
     #: Fired by the begin_move_columns method
-    columns_about_to_be_moved = Event
+    columns_about_to_be_moved = EnamlEvent
 
     #: Fired by the begin_remove_columns method
-    columns_about_to_be_removed = Event
+    columns_about_to_be_removed = EnamlEvent
 
     #: Fired by the end_insert_columns method
-    columns_inserted = Event
+    columns_inserted = EnamlEvent
 
     #: Fired by the end_move_columns method
-    columns_moved = Event
+    columns_moved = EnamlEvent
 
     #: Fired by the end_remove_rows method
-    columns_removed = Event
+    columns_removed = EnamlEvent
 
     #: Fired by the begin_insert_rows method
-    rows_about_to_be_inserted = Event
+    rows_about_to_be_inserted = EnamlEvent
 
     #: Fired by the begin_move_rows method
-    rows_about_to_be_moved = Event
+    rows_about_to_be_moved = EnamlEvent
 
     #: Fired by the begin_remove_columns method
-    rows_about_to_be_removed = Event
+    rows_about_to_be_removed = EnamlEvent
 
     #: Fired by the end_insert_rows method
-    rows_inserted = Event
+    rows_inserted = EnamlEvent
 
     #: Fired by the end_move_rows method
-    rows_moved = Event
+    rows_moved = EnamlEvent
 
     #: Fired by the end_remove_rows method
-    rows_removed = Event
+    rows_removed = EnamlEvent
 
     #: Fired by the begin_change_layout method
-    layout_about_to_be_changed = Event
+    layout_about_to_be_changed = EnamlEvent
 
     #: Fired by the end_change_layout method
-    layout_changed = Event
+    layout_changed = EnamlEvent
 
     #: Fired by the begin_reset_model method
-    model_about_to_be_reset = Event
+    model_about_to_be_reset = EnamlEvent
 
     #: Fired by the end_reset_model method
-    model_reset = Event
+    model_reset = EnamlEvent
 
     #: Fired by the notify_data_changed method
-    data_changed = Event
+    data_changed = EnamlEvent
     
     #: Fired by the notify_horizontal_header_data_changed method
-    horizontal_header_data_changed = Event
+    horizontal_header_data_changed = EnamlEvent
 
     #: Fired by the notify_vertical_header_data_changed method
-    vertical_header_data_changed = Event
+    vertical_header_data_changed = EnamlEvent
     
     #--------------------------------------------------------------------------
     # Model change notification trigger methods 
@@ -121,7 +123,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.columns_about_to_be_inserted = evt_arg
+        self.columns_about_to_be_inserted(evt_arg)
 
     def begin_move_columns(self, src_parent, src_first, src_last, dst_parent, dst_child):
         """ Begins to move a column.
@@ -145,7 +147,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
-        self.columns_about_to_be_moved = evt_arg
+        self.columns_about_to_be_moved(evt_arg)
 
     def begin_remove_columns(self, parent, first, last):
         """ Begins to remove columns.
@@ -166,7 +168,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.columns_about_to_be_removed = evt_arg
+        self.columns_about_to_be_removed(evt_arg)
 
     def end_insert_columns(self, parent, first, last):
         """ Finish inserting columns.
@@ -187,7 +189,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.columns_inserted = evt_arg
+        self.columns_inserted(evt_arg)
 
     def end_move_columns(self, src_parent, src_first, src_last, dst_parent, dst_child):
         """ Finish moving columns.
@@ -213,7 +215,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
-        self.columns_moved = evt_arg
+        self.columns_moved(evt_arg)
 
     def end_remove_columns(self, parent, first, last):
         """ Finish removing columns.
@@ -233,7 +235,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.columns_removed = evt_arg
+        self.columns_removed(evt_arg)
 
     def begin_insert_rows(self, parent, first, last):
         """ Begins a row insertion.
@@ -254,7 +256,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.rows_about_to_be_inserted = evt_arg
+        self.rows_about_to_be_inserted(evt_arg)
 
     def begin_move_rows(self, src_parent, src_first, src_last,
                         dst_parent, dst_child):
@@ -279,7 +281,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
-        self.rows_about_to_be_moved = evt_arg
+        self.rows_about_to_be_moved(evt_arg)
 
     def begin_remove_rows(self, parent, first, last):
         """ Begins to remove rows.
@@ -300,7 +302,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.rows_about_to_be_removed = evt_arg
+        self.rows_about_to_be_removed(evt_arg)
 
     def end_insert_rows(self, parent, first, last):
         """ Finish inserting rows.
@@ -321,7 +323,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.rows_inserted = evt_arg
+        self.rows_inserted(evt_arg)
 
     def end_move_rows(self, src_parent, src_first, src_last, dst_parent, dst_child):
         """ Finish moving rows
@@ -347,7 +349,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (src_parent, src_first, src_last, dst_parent, dst_child)
-        self.rows_moved = evt_arg
+        self.rows_moved(evt_arg)
 
     def end_remove_rows(self, parent, first, last):
         """ Finish removing rows.
@@ -367,7 +369,7 @@ class AbstractItemModel(HasTraits):
 
         """
         evt_arg = (parent, first, last)
-        self.rows_removed = evt_arg
+        self.rows_removed(evt_arg)
 
     def begin_change_layout(self):
         """ Begin a change to the layout of the model -- e.g., sort it.
@@ -375,7 +377,7 @@ class AbstractItemModel(HasTraits):
         This method must be called before rearranging data in a model.
 
         """
-        self.layout_about_to_be_changed = True
+        self.layout_about_to_be_changed()
 
     def end_change_layout(self):
         """ Finish a change to the layout of the model.
@@ -383,7 +385,7 @@ class AbstractItemModel(HasTraits):
         This method must be called after rearranging data in a model.
 
         """
-        self.layout_changed = True
+        self.layout_changed()
 
     def begin_reset_model(self):
         """ Begin to reset a model.
@@ -394,7 +396,7 @@ class AbstractItemModel(HasTraits):
         This method must be called before a model is reset.
 
         """
-        self.model_about_to_be_reset = True
+        self.model_about_to_be_reset()
 
     def end_reset_model(self):
         """ Finish resetting a model.
@@ -402,7 +404,7 @@ class AbstractItemModel(HasTraits):
         This method must be called after a model is reset.
 
         """
-        self.model_reset = True
+        self.model_reset()
 
     def notify_data_changed(self, top_left, bottom_right):
         """ Create a notification event for the model data has changed.
@@ -416,7 +418,7 @@ class AbstractItemModel(HasTraits):
             The bottom-right boundary of the changed items.
 
         """
-        self.data_changed = (top_left, bottom_right)
+        self.data_changed((top_left, bottom_right))
 
     def notify_horizontal_header_data_changed(self, first, last):
         """ Create a notification that model horizontal header data 
@@ -431,7 +433,7 @@ class AbstractItemModel(HasTraits):
             The last horizontal/column header that has been modified.
 
         """
-        self.horizontal_header_data_changed = (first, last)
+        self.horizontal_header_data_changed((first, last))
 
     def notify_vertical_header_data_changed(self, first, last):
         """ Create a notification that model vertical header data 
@@ -446,7 +448,7 @@ class AbstractItemModel(HasTraits):
             The last vertical/row header that has been modified.
 
         """
-        self.vertical_header_data_changed = (first, last)
+        self.vertical_header_data_changed((first, last))
 
     #--------------------------------------------------------------------------
     # Misc methods 

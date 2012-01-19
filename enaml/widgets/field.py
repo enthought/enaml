@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Event, Int, Str, Enum, Property, Instance, Any
+from traits.api import Bool, Int, Str, Enum, Property, Instance, Any
 
 from .control import Control, AbstractTkControl
 
 from ..converters import Converter, StringConverter
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkField(AbstractTkControl):
@@ -150,10 +151,10 @@ class Field(Control):
     #: Fired when the text is changed by the user explicitly through
     #: the ui but not programmatically. The args object will contain
     #: the text.
-    text_edited = Event
+    text_edited = EnamlEvent
 
     #: Fired when the return/enter key is pressed in the line edit.
-    return_pressed = Event
+    return_pressed = EnamlEvent
     
     #: How strongly a component hugs it's contents' width.
     #: Fields ignore the width hug by default, so they expand freely in width.

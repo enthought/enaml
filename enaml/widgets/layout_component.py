@@ -2,9 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import (
-    List, Instance, Property, Tuple, Event, Enum, cached_property,
-)
+from traits.api import List, Instance, Property, Tuple, Enum, cached_property
 
 from .component import Component, AbstractTkComponent
 from .sizable import Sizable, AbstractTkSizable
@@ -12,6 +10,7 @@ from .stylable import Stylable, AbstractTkStylable
 from .layout.box_model import BoxModel
 
 from ..guard import guard
+from ..util.trait_types import EnamlEvent
 
 
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
@@ -84,7 +83,7 @@ class LayoutComponent(Component, Sizable, Stylable):
 
     #: An event that should be emitted by the abstract obj when its size 
     #: hint has updated due to some change.
-    size_hint_updated = Event
+    size_hint_updated = EnamlEvent
 
     #: A read-only symbolic object that represents the left boundary of 
     #: the component

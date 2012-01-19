@@ -4,9 +4,11 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Event, Unicode
+from traits.api import Bool, Unicode
 
 from .component import Component, AbstractTkComponent
+
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkAction(AbstractTkComponent):
@@ -92,13 +94,13 @@ class Action(Component):
     description = Unicode
 
     #: An event fired when the action is triggered by user interaction.
-    triggered = Event
+    triggered = EnamlEvent
 
     #: An event fired when the user hovers over the action.
-    hovered = Event
+    hovered = EnamlEvent
 
     #: An event fired when a checkable action changes its checked state.
-    toggled = Event
+    toggled = EnamlEvent
 
     #: Whether or not the action can be checked.
     checkable = Bool(False)

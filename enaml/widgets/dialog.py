@@ -4,11 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event, Bool, Instance, Property
+from traits.api import Bool, Instance, Property
 
 from .window import Window, AbstractTkWindow
 
 from ..enums import DialogResult, Modality
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkDialog(AbstractTkWindow):
@@ -42,11 +43,11 @@ class Dialog(Window):
     active = Property(Bool, depends_on='_active')
 
     #: Fired when the dialog is opened.
-    opened = Event
+    opened = EnamlEvent
 
     #: Fired when the dialog is closed. The event payload will be the 
     #: dialog result.
-    closed = Event
+    closed = EnamlEvent
 
     #: A read only property which is set to the result of the dialog; 
     #: 'rejected' if rejected() was called or the window was closed via 

@@ -4,13 +4,14 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event, Instance, Property, cached_property
+from traits.api import Instance, Property, cached_property
 
 from .base_selection_model import BaseSelectionModel
 from .control import Control, AbstractTkControl
 
 from ..item_models.abstract_item_model import AbstractItemModel
 from ..item_models.model_index import ModelIndex
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkItemView(AbstractTkControl):
@@ -36,13 +37,13 @@ class AbstractItemView(Control):
     
     #: The ModelIndex that has just been activated by a user interaction,
     #: usually a double-click or an Enter keypress.
-    activated = Event(Instance(ModelIndex))
+    activated = EnamlEvent(ModelIndex)
 
     #: The ModelIndex that has just been clicked.
-    clicked = Event(Instance(ModelIndex))
+    clicked = EnamlEvent(ModelIndex)
 
     #: The ModelIndex that has just been double-clicked.
-    double_clicked = Event(Instance(ModelIndex))
+    double_clicked = EnamlEvent(ModelIndex)
 
     #: Overridden parent class trait.
     abstract_obj = Instance(AbstractTkItemView)

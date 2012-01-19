@@ -4,9 +4,11 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Event, Instance, Str
+from traits.api import Instance, Str
 
 from .bounded_date import BoundedDate, AbstractTkBoundedDate
+
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkDateEdit(AbstractTkBoundedDate):
@@ -32,7 +34,7 @@ class DateEdit(BoundedDate):
     #: Triggered whenever the user changes the date through the ui
     #: control, but not programmatically. The event payload will be 
     #: the date on the control.
-    date_changed = Event
+    date_changed = EnamlEvent
     
     #: How strongly a component hugs it's contents' width. DateEdits 
     #: ignore the width hug by default, so they expand freely in width.

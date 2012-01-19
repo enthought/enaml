@@ -5,12 +5,13 @@
 from abc import abstractmethod
 
 from traits.api import (
-    Instance, Either, Unicode, Event, Property, List, cached_property,
+    Instance, Either, Unicode, Property, List, cached_property,
 )
 
+from .action import Action
 from .component import Component, AbstractTkComponent
 
-from .action import Action
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkMenu(AbstractTkComponent):
@@ -65,10 +66,10 @@ class Menu(Component):
     title = Unicode
 
     #: An event emitted when the menu is about to be shown.
-    about_to_show = Event
+    about_to_show = EnamlEvent
 
     #: An event emitted when the menu is about to be hidden.
-    about_to_hide = Event
+    about_to_hide = EnamlEvent
 
     #: A read-only cached property which holds the list of menu
     #: contents which are instances of Menu or Action.

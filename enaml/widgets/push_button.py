@@ -4,9 +4,11 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Event, Str, Instance, Property
+from traits.api import Bool, Str, Instance, Property
 
 from .control import Control, AbstractTkControl
+
+from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkPushButton(AbstractTkControl):
@@ -28,13 +30,13 @@ class PushButton(Control):
     text = Str
     
     #: Fired when the button is pressed and released.
-    clicked = Event
+    clicked = EnamlEvent
     
     #: Fired when the button is pressed.
-    pressed = Event
+    pressed = EnamlEvent
 
     #: Fired when the button is released.
-    released = Event
+    released = EnamlEvent
     
     #: How strongly a component hugs it's contents' width. PushButtons 
     #: hug their contents' width weakly.
