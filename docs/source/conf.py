@@ -118,7 +118,7 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 
 #: rankdir ['LR', 'TB', 'BT', 'RL']
 inheritance_graph_attrs = dict(
-    rankdir="TB",
+    rankdir="LR",
     size='"8.0, 20.0"',
     fontsize=14,
     ratio='compress'
