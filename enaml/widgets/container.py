@@ -357,23 +357,29 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     def size_hint(self):
         """ Overridden parent class method to return the size hint of 
-        the container as the computed minimum size.
+        the container from the layout manager. If the container does not
+        own its layout, or if the layout has not been initialized, then
+        this method will return (-1, -1). This method does rely on the
+        size hint computation of the underlying toolkit widget. Thus,
+        the underlying widget may call back into this method as needed
+        to get a size hint from the layout manager.
 
         """
         # XXX we can probably do better than this. Maybe have the 
         # layout manager compute a preferred size, or some such notion
-        return self.get_min_size()
+        return self.compute_min_size()
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods
     #--------------------------------------------------------------------------
-    def get_min_size(self):
+    def compute_min_size(self):
         """ Calculates the minimum size of the container which would 
         allow all constraints to be satisfied. If this container does
-        not own its layout, then this method will return (-1, -1).
+        not own its layout, or if the layout has not been initialized,
+        then this method will return (-1, -1).
 
         """
-        if self.owns_layout:
+        if self.owns_layout and self.layout_manager.initialized:
             width = self.width
             height = self.height
             w, h = self.layout_manager.get_min_size(width, height)
@@ -382,13 +388,14 @@ class Container(LayoutTaskHandler, LayoutComponent):
             res = (-1, -1)
         return res
 
-    def get_max_size(self):
+    def compute_max_size(self):
         """ Calculates the maximum size of the container which would 
         allow all constraints to be satisfied. If this container does
-        not own its layout, then this method will return (-1, -1).
+        not own its layout, or if the layout has not been initialized
+        then this method will return (-1, -1).
 
         """
-        if self.owns_layout:
+        if self.owns_layout and self.layout_manager.initialized:
             width = self.width
             height = self.height
             w, h = self.layout_manager.get_max_size(width, height)
