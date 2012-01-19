@@ -63,6 +63,30 @@ Sphinx Directives and Roles
 Including the Sphinx extension ``refactor_doc`` allows use of formatted
 docstrings as described below.
 
+Documentation
+-------------------------------------------------------------------------------
+
+Sphinx Configuration
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+A Sphinx extension ``enamldoc`` lets Sphinx recognize and document |Enaml|
+objects.
+
+.. automodule:: enamldoc.enamldoc
+    :members:
+
+.. inheritance-diagram::
+    enamldoc.enamldoc.EnamlComponentDocumenter
+    enamldoc.enamldoc.EnamlDeclarationDocumenter
+    enamldoc.enamldoc.EnamlDefnDocumenter
+    enamldoc.enamldoc.EnamlDomain
+
+
+
+
+Including the Sphinx extension ``refactor_doc`` allows use of formatted
+docstrings as described below.
+
 Sphinx Source
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
