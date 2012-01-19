@@ -88,25 +88,3 @@ class QtScrollArea(QtLayoutComponent, AbstractTkScrollArea):
         else:
             self.widget.setWidget(component.toolkit_widget)
 
-    #--------------------------------------------------------------------------
-    # Overrides
-    #--------------------------------------------------------------------------
-    def size_hint(self):
-        """ Overriden to ask the child widget for its size hint. Fall back 
-        to the minimum size if there is no size hint.
-
-        """
-        child = self.widget.widget()
-        if child is None:
-            # Arbitrary, but the default for QAbstractScrollArea
-            return (256, 192) 
-
-        size_hint = child.sizeHint()
-        if not size_hint.isValid():
-            size_hint = child.minimumSize()
-
-        width = size_hint.width()
-        height = size_hint.height()
-        
-        return (width, height)
-
