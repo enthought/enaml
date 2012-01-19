@@ -257,18 +257,27 @@ def p_declaration_body_item4(p):
 #------------------------------------------------------------------------------
 # Attribute Declaration
 #------------------------------------------------------------------------------
+def assert_attr_keyword(name, lineno):
+    if name != 'attr':
+        msg = "Expected keyword 'attr', got '%s' instead." % name
+        raise_enaml_syntax_error(msg, lineno)
+
+
 def p_attribute_declaration1(p):
-    ''' attribute_declaration : ATTR NAME NEWLINE '''
+    ''' attribute_declaration : NAME NAME NEWLINE '''
+    assert_attr_keyword(p[1], p.lineno(1))
     p[0] = enaml_ast.AttributeDeclaration(p[2], None, None, p.lineno(1))
 
 
 def p_attribute_declaration2(p):
-    ''' attribute_declaration : ATTR NAME COLON NAME NEWLINE '''
+    ''' attribute_declaration : NAME NAME COLON NAME NEWLINE '''
+    assert_attr_keyword(p[1], p.lineno(1))
     p[0] = enaml_ast.AttributeDeclaration(p[2], p[4], None, p.lineno(1))
 
 
 def p_attribute_declaration3(p):
-    ''' attribute_declaration : ATTR NAME binding '''
+    ''' attribute_declaration : NAME NAME binding '''
+    assert_attr_keyword(p[1], p.lineno(1))
     lineno = p.lineno(1)
     name = p[2]
     binding = enaml_ast.AttributeBinding(name, p[3], lineno)
@@ -276,7 +285,8 @@ def p_attribute_declaration3(p):
 
 
 def p_attribute_declaration4(p):
-    ''' attribute_declaration : ATTR NAME COLON NAME binding '''
+    ''' attribute_declaration : NAME NAME COLON NAME binding '''
+    assert_attr_keyword(p[1], p.lineno(1))
     lineno = p.lineno(1)
     name = p[2]
     binding = enaml_ast.AttributeBinding(name, p[5], lineno)
