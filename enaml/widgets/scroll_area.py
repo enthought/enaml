@@ -136,8 +136,9 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
         )
 
     def size_hint(self):
-        """ Use the given preferred size when specified and the default
-        size hint computation when not.
+        """ A reimplemented parent class method which uses the given 
+        preferred size when computing the size hint, but falls back
+        to the default implementation if a preferred is not given.
 
         """
         # TODO - We probably want to honor the hug and clip properties
