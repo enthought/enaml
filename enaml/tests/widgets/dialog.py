@@ -23,10 +23,9 @@ class TestDialog(TestWindow):
         """
 
         enaml_source = """
-defn MainView():
-    Dialog:
-        name = 'dialog'
-        title = 'foo'
+MainView(Dialog):
+    name = 'dialog'
+    title = 'foo'
 """
 
         self.view = self.parse_and_create(enaml_source)

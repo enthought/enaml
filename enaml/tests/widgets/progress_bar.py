@@ -31,10 +31,9 @@ class TestProgressBar(EnamlTestCase):
         """
 
         enaml = """
-defn MainView():
-    MainWindow:
-        ProgressBar:
-            name = 'test'
+MainView(MainWindow):
+    ProgressBar:
+        name = 'test'
 """
 
         self.view = self.parse_and_create(enaml)
@@ -133,13 +132,12 @@ defn MainView():
 
         """
         enaml = """
-defn MainView():
-    MainWindow:
-        ProgressBar:
-            name = 'test'
-            value = 95
-            minimum = 10
-            maximum = 90
+MainView(MainWindow):
+    ProgressBar:
+        name = 'test'
+        value = 95
+        minimum = 10
+        maximum = 90
 """
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
@@ -152,13 +150,12 @@ defn MainView():
         """
 
         enaml = """
-defn MainView():
-    MainWindow:
-        ProgressBar:
-            name = 'test'
-            value = 5
-            minimum = 10
-            maximum = 90
+MainView(MainWindow):
+    ProgressBar:
+        name = 'test'
+        value = 5
+        minimum = 10
+        maximum = 90
 """
 
         # FIXME: need make a more refined check, this is not the best way

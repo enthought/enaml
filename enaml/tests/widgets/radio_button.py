@@ -28,16 +28,15 @@ class TestRadioButton(EnamlTestCase):
         label_2 = 'Label 2'
 
         enaml_source = """
-defn MainView():
-    MainWindow:
-        Container:
-            RadioButton:
-                name = 'radio1'
-                text = '{0}'
-                checked = True
-            RadioButton:
-                name = 'radio2'
-                text = '{1}'
+MainView(MainWindow):
+    Container:
+        RadioButton:
+            name = 'radio1'
+            text = '{0}'
+            checked = True
+        RadioButton:
+            name = 'radio2'
+            text = '{1}'
 """.format(label_1, label_2)
 
         self.events = []

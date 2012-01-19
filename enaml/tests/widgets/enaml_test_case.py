@@ -54,7 +54,7 @@ class EnamlTestCase(unittest.TestCase):
         """
         return component.find_by_name(name)
 
-    def parse_and_create(self, source, *args):
+    def parse_and_create(self, source, **kwargs):
         """ Parses and compiles the source. The source should have defn 
         defined with the name 'MainView' that returns a single component. 
 
@@ -74,8 +74,8 @@ class EnamlTestCase(unittest.TestCase):
         toolkit = self.toolkit
 
         with toolkit:
-            defn = enaml_module['MainView']
-            cmpnt = defn(*args)
+            view = enaml_module['MainView']
+            cmpnt = view(**kwargs)
 
         toolkit.app.initialize()
         cmpnt.setup()

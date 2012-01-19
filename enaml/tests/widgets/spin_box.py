@@ -44,19 +44,19 @@ class TestSpinBox(EnamlTestCase):
 
         enaml_source = """
 from enaml.converters import IntConverter
-defn MainView(events):
-    MainWindow:
-        SpinBox:
-            name = 'spinbox'
-            low = -10
-            high = 21
-            step = 2
-            value = -4
-            wrap = True
+MainView(MainWindow):
+    attr events
+    SpinBox:
+        name = 'spinbox'
+        low = -10
+        high = 21
+        step = 2
+        value = -4
+        wrap = True
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'spinbox')
         self.widget = self.component.toolkit_widget
 

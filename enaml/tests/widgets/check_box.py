@@ -35,19 +35,19 @@ class TestCheckBox(EnamlTestCase):
         self.check_box_label = 'checkbox label'
 
         enaml_source = """
-defn MainView(events):
-    MainWindow:
-        CheckBox:
-            name = 'checkb1'
-            text = 'checkbox label'
-            checked = True
-            toggled >> events.append('toggled')
-            pressed >> events.append('pressed')
-            released >> events.append('released')
+MainView(MainWindow):
+    attr events
+    CheckBox:
+        name = 'checkb1'
+        text = 'checkbox label'
+        checked = True
+        toggled >> events.append('toggled')
+        pressed >> events.append('pressed')
+        released >> events.append('released')
 """.format(self.check_box_label)
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'checkb1')
         self.widget = self.component.toolkit_widget
 

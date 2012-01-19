@@ -90,17 +90,17 @@ the_item_model = TableModel(table)
 :: end ::
 
 
-defn MainView(events):
-    MainWindow:
-        TableView:
-            name = 'table_view'
-            item_model = the_item_model
-            BaseSelectionModel:
-                name = 'selection_model'
+MainView(MainWindow):
+    attr events
+    TableView:
+        name = 'table_view'
+        item_model = the_item_model
+        BaseSelectionModel:
+            name = 'selection_model'
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.table_view = self.component_by_name(self.view, 'table_view')
         self.component = self.table_view.selection_model
         self.item_model = self.table_view.item_model
@@ -225,17 +225,17 @@ the_item_model = TableModel(table)
 :: end ::
 
 
-defn MainView(events):
-    MainWindow:
-        TableView:
-            name = 'table_view'
-            item_model = the_item_model
-            RowSelectionModel:
-                name = 'selection_model'
+MainView(MainWindow):
+    attr events
+    TableView:
+        name = 'table_view'
+        item_model = the_item_model
+        RowSelectionModel:
+            name = 'selection_model'
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.table_view = self.component_by_name(self.view, 'table_view')
         self.component = self.table_view.selection_model
         self.item_model = self.table_view.item_model

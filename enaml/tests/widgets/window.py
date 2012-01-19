@@ -15,10 +15,9 @@ class TestWindow(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainView():
-    MainWindow:
-        name = 'window'
-        title = 'foo'
+MainView(MainWindow):
+    name = 'window'
+    title = 'foo'
 """
 
         self.view = self.parse_and_create(enaml_source)

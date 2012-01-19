@@ -38,14 +38,14 @@ class TestDateEdit(EnamlTestCase):
 
         """
         enaml_source = """
-defn MainView(events):
-    MainWindow:
-        DateEdit:
-            name = 'test'
-            date_changed >> events.append(('date_changed', args.new))
+MainView(MainWindow):
+    attr events
+    DateEdit:
+        name = 'test'
+        date_changed >> events.append(('date_changed', args.new))
 """
         self.events = []
-        self.view = self.parse_and_create(enaml_source, self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'test')
         self.widget = self.component.toolkit_widget
 
@@ -179,19 +179,19 @@ defn MainView(events):
         """
         enaml_source = """
 import datetime
-defn MainView(events):
-    MainWindow:
-        DateEdit:
-            name = 'test'
-            date = datetime.date(2010, 1, 1)
-            min_date = datetime.date(1990, 1, 1)
-            max_date = datetime.date(2000, 1, 1)
-            date_changed >> events.append('date_changed')
+MainView(MainWindow):
+    attr events
+    DateEdit:
+        name = 'test'
+        date = datetime.date(2010, 1, 1)
+        min_date = datetime.date(1990, 1, 1)
+        max_date = datetime.date(2000, 1, 1)
+        date_changed >> events.append('date_changed')
 """
         events = []
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            self.parse_and_create(enaml_source, events)
+            self.parse_and_create(enaml_source, events=events)
 
     def test_initial_too_early(self):
         """ Check initialization with an invalid early date.
@@ -199,19 +199,19 @@ defn MainView(events):
         """
         enaml_source = """
 import datetime
-defn MainView(events):
-    MainWindow:
-        DateEdit:
-            name = 'test'
-            min_date = datetime.date(1990, 1, 1)
-            max_date = datetime.date(2000, 1, 1)
-            date = datetime.date(1980, 1, 1)
-            date_changed >> events.append('date_changed')
+MainView(MainWindow):
+    attr events
+    DateEdit:
+        name = 'test'
+        min_date = datetime.date(1990, 1, 1)
+        max_date = datetime.date(2000, 1, 1)
+        date = datetime.date(1980, 1, 1)
+        date_changed >> events.append('date_changed')
 """
         events = []
         # FIXME: need make a more refined check, this is not the best way
         with self.assertRaises(TraitError):
-            self.parse_and_create(enaml_source, events)
+            self.parse_and_create(enaml_source, events=events)
 
     #--------------------------------------------------------------------------
     # Abstract methods

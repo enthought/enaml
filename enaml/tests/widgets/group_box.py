@@ -36,24 +36,23 @@ class TestGroupBox(EnamlTestCase):
 
         """
         enaml_source = """
-defn MainView():
-    MainWindow:
-        name = 'win'
-        Container:
-            constraints = [horizontal(left, gb, right), vertical(top, gb, bottom),
-                           vertical(label1, label2), align_left(label1, label2)]
-            GroupBox:
-                id: gb
-                name = 'gb'
-                title = 'MyGroup'
-                flat = True
-                title_align = 'center'
-                Label:
-                    id: label1
-                    text = 'foofoofoofoofoofoofoofoofoofoofoofoo'
-                Label:
-                    id: label2
-                    text = 'barbarbarbarbarbarbarbarbarbar'
+MainView(MainWindow):
+    name = 'win'
+    Container:
+        constraints = [horizontal(left, gb, right), vertical(top, gb, bottom),
+                       vertical(label1, label2), align_left(label1, label2)]
+        GroupBox:
+            id: gb
+            name = 'gb'
+            title = 'MyGroup'
+            flat = True
+            title_align = 'center'
+            Label:
+                id: label1
+                text = 'foofoofoofoofoofoofoofoofoofoofoofoo'
+            Label:
+                id: label2
+                text = 'barbarbarbarbarbarbarbarbarbar'
 """
         self.view = self.parse_and_create(enaml_source)
         self.component = self.component_by_name(self.view, 'gb')

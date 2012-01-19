@@ -25,20 +25,20 @@ class TestField(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainView(events):
-    MainWindow:
-        Field:
-            name = 'field'
-            max_length = 8
-            cursor_position = 1
-            placeholder_text = 'hold'
-            value = 'abc'
-            text_edited >> events.append('text_edited')
-            return_pressed >> events.append('return_pressed')
+MainView(MainWindow):
+    attr events
+    Field:
+        name = 'field'
+        max_length = 8
+        cursor_position = 1
+        placeholder_text = 'hold'
+        value = 'abc'
+        text_edited >> events.append('text_edited')
+        return_pressed >> events.append('return_pressed')
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'field')
         self.gain_focus_if_needed(self.widget)
 

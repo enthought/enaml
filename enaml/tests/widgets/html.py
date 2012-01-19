@@ -24,11 +24,10 @@ class TestHtml(EnamlTestCase):
 
         """
         enaml_source = """
-defn MainView():
-    MainWindow:
-        Html:
-            name = 'html'
-            source = '<b>{0}</b>'
+MainView(MainWindow):
+    Html:
+        name = 'html'
+        source = '<b>{0}</b>'
 """.format(self.text)
 
         self.view = self.parse_and_create(enaml_source)

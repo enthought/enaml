@@ -23,11 +23,10 @@ class TestLabel(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainView():
-    MainWindow:
-        Label:
-            name = 'label'
-            text = 'foo'
+MainView(MainWindow):
+    Label:
+        name = 'label'
+        text = 'foo'
 """
 
         self.view = self.parse_and_create(enaml_source)

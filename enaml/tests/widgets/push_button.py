@@ -29,18 +29,18 @@ class TestPushButton(EnamlTestCase):
         """
 
         enaml_source = """
-defn MainView(events):
-    MainWindow:
-        PushButton:
-            name = 'pb1'
-            text = 'foo'
-            clicked >> events.append('clicked')
-            pressed >> events.append('pressed')
-            released >> events.append('released')
+MainView(MainWindow):
+    attr events
+    PushButton:
+        name = 'pb1'
+        text = 'foo'
+        clicked >> events.append('clicked')
+        pressed >> events.append('pressed')
+        released >> events.append('released')
 """
 
         self.events = []
-        self.view = self.parse_and_create(enaml_source, self.events)
+        self.view = self.parse_and_create(enaml_source, events=self.events)
         self.component = self.component_by_name(self.view, 'pb1')
         self.widget = self.component.toolkit_widget
 
