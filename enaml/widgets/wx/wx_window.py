@@ -2,137 +2,83 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import wx
-
-from .wx_container import WXContainer
+from .wx_component import WXComponent
+from .wx_sizable import WXSizable
 
 from ..window import AbstractTkWindow
 
 
-class WXWindow(WXContainer, AbstractTkWindow):
-    """ A wxPython implementation of a Window.
-
-    WXWindow uses a combined set of wx.Frame - wx.Window widget to create
-    a simple top level window which contains other child widgets and
-    layouts. Because of this dual behaviour some enaml calls need
-    to be delegated to the wx.Frame and some to the wx.Window.
+class WXWindow(WXComponent, WXSizable, AbstractTkWindow):
+    """ A wxPython implementation of a Window. It serves as a base class
+    for WXMainWindow and WXDialog. It is not meant to be used directly.
 
     """
-    _initializing = False
-
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self, parent):
-        """ Creates the underlying wx.Frame control.
+        """ Create the underlying Wx widget.
 
         """
-        # FIXME: this is an ugly hack since the wx.Frame does not show
-        # well. It is advised in the wxWidget documentation to add a
-        # Panel or Window control before adding the children.
-        self._frame = wx.Frame(parent)
-        self.widget = wx.Panel(self._frame)
+        msg = 'A WXWindow is a base class and cannot be used directly'
+        raise NotImplementedError(msg)
 
     def initialize(self):
         """ Intializes the attributes on the wx.Frame.
 
         """
-        self._initializing = True
-        try:
-            super(WXWindow, self).initialize()
-            self.set_title(self.shell_obj.title)
-        finally:
-            self._initializing = False
+        super(WXWindow, self).initialize()
+        self.set_title(self.shell_obj.title)
+        self.update_central_widget()
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
+    def maximize(self):
+        """ Maximizes the window to fill the screen.
+
+        """
+        self.widget.Maximize(True)
+            
+    def minimize(self):
+        """ Minimizes the window to the task bar.
+
+        """
+        self.widget.Iconize(True)
+            
+    def normalize(self):
+        """ Restores the window after it has been minimized or maximized.
+
+        """
+        self.widget.Maximize(False)
+
     def shell_title_changed(self, title):
-        """ The change handler for the 'title' attribute.
+        """ The change handler for the 'title' attribute on the shell
+        object.
 
         """
         self.set_title(title)
     
+    def shell_central_widget_changed(self, central_widget):
+        """ The change handler for the 'central_widget' attribute on 
+        the shell object.
+
+        """
+        self.update_central_widget()
+       
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
+    def update_central_widget(self):
+        """ Updates the central widget from the value on the shell 
+        object. This method must be implemented by subclasses.
+
+        """
+        raise NotImplementedError
+
     def set_title(self, title):
         """ Sets the title of the frame.
 
         """
-        self._frame.SetTitle(title)
-    
-    def set_visible(self, visible):
-        """ Overridden from the parent class to raise the window to
-        the front if it should be shown.
-
-        """
-        if not self._initializing:
-            if visible:
-                # Wx doesn't reliably emit resize events when making a 
-                # ui visible. So this extra call to relayout helps make 
-                # sure things are arranged nicely.
-                self.shell_obj.relayout_later()
-                self._frame.Show()
-            else:
-                self._frame.Hide()
-
-    #--------------------------------------------------------------------------
-    # Overridden Geometry Methods 
-    #--------------------------------------------------------------------------
-    def resize(self, width, height):
-        """ Overridden parent class method to do the resize on the 
-        internal wx.Frame object.
-
-        """
-        self._resize(self._frame, width, height)
-    
-    def min_size(self):
-        """ Overridden parent class method to get the min size on 
-        the internal wx.Frame object.
-
-        """
-        return self._min_size(self._frame)
-        
-    def set_min_size(self, min_width, min_height):
-        """ Overridden parent class method to set the min size on the
-        internal wx.Frame object.
-
-        """
-        self._set_min_size(self._frame, min_width, min_height)
-        
-    def pos(self):
-        """ Overridden parent class method to get the position of
-        the internal wx.Frame object.
-
-        """
-        return self._pos(self._frame)
-
-    def move(self, x, y):
-        """ Overridden parent class method to do the move on the internal
-        wx.Frame object.
-
-        """
-        self._move(self._frame, x, y)
-        
-    def frame_geometry(self):
-        """ Overridden parent class method to get the frame geometry
-        of the internal wx.Frame object.
-
-        """
-        return self._frame_geometry(self._frame)
-
-    def geometry(self):
-        """ Overridden parent class method to get the geometry
-        of the internal wx.Frame object.
-
-        """
-        return self._geometry(self._frame)
-    
-    def set_geometry(self, x, y, width, height):
-        """ Overridden parent class method to set the geometry
-        of the internal wx.Frame object.
-
-        """
-        self._set_geometry(self._frame, x, y, width, height)
+        self.widget.SetTitle(title)
 
