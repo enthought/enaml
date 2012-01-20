@@ -70,4 +70,4 @@ class QtAbstractItemView(QtControl, AbstractTkItemView):
         """
         model = self.model_wrapper
         index = model.from_q_index(qindex)
-        setattr(self.shell_obj, trait, index)
+        getattr(self.shell_obj, trait)(index)
