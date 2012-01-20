@@ -150,8 +150,7 @@ class QtDialog(QtWindow, AbstractTkDialog):
         # This must be allowed since the central widget may be generated
         # by an Include component, in which case it will not exist 
         # during initialization. However, we must have a central widget
-        # for the MainWindow, and in that case we just fill it with a
-        # dummy widget.
+        # for the Dialog, and so we just fill it with a dummy widget.
         central_widget = self.shell_obj.central_widget
         if central_widget is None:
             child_widget = QtGui.QWidget()
