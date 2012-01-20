@@ -38,3 +38,10 @@ ComplexField(ErrorField):
 PasswordField(Field):
     password_mode = 'password'
 
+
+TextField(TextEditor):
+    """ A multi-line text field based on TextEditor """
+    attr value: basestring = ""
+    
+    initialized >> set_text(value)
+    text_changed >> setattr(self, 'value', get_text())
