@@ -67,10 +67,10 @@ class ExpressionScope(object):
     probably best to create these scope objects on-the-fly as needed.
 
     """
-    __slots__ = ('obj', 'f_locals', 'f_globals', 'toolkit', 'overrides', 
+    __slots__ = ('obj', 'identifiers', 'f_globals', 'toolkit', 'overrides', 
                  'binder', 'temp_locals')
 
-    def __init__(self, obj, f_locals, f_globals, toolkit, overrides=None, binder=None):
+    def __init__(self, obj, identifiers, f_globals, toolkit, overrides=None, binder=None):
         """ Initialize an expression locals instance.
 
         Parameters
@@ -78,9 +78,10 @@ class ExpressionScope(object):
         obj : object
             The python object on which to start looking for attributes.
 
-        f_locals : Mapping
-            The locals mapping to check before checking the attribute 
-            space of the given object.
+        identifiers : dict
+            The dictionary of identifiers that are available to the
+            expression. These are checked before the attribute space
+            of the object.
 
         f_globals : dict
             The globals dict to check after checking the attribute space
@@ -91,7 +92,7 @@ class ExpressionScope(object):
 
         overrides : dict or None
             An optional dictionary of override values to check before
-            f_locals.
+            identifiers.
 
         binder : callable or None
             An optional callable which is called when an implicit 
@@ -101,7 +102,7 @@ class ExpressionScope(object):
 
         """
         self.obj = obj
-        self.f_locals = f_locals
+        self.identifiers = identifiers
         self.f_globals = f_globals
         self.toolkit = toolkit
         self.overrides = overrides
@@ -115,7 +116,7 @@ class ExpressionScope(object):
         following precedence rules binding notifiers where appropriate:
             1) temp_locals
             2) overrides (if provided)
-            3) f_locals
+            3) identifiers
             4) implicit attrs
             5) f_globals
             6) toolkit
@@ -132,9 +133,10 @@ class ExpressionScope(object):
             The value associated with the name, if found.
 
         """
-        # Try temp locals first. The temp locals are assigned via 
-        # __setitem__ when a STORE_NAME op_code is encountered, 
-        # such as the loop variables of a list comp.
+        # The temp locals are assigned to via __setitem__ when a 
+        # STORE_NAME opcode is encountered. The will happen, for
+        # example, with the loop variables of a list comprehension.
+        # Thus, those must take highest precedence.
         try:
             return self.temp_locals[name]
         except KeyError:
@@ -148,9 +150,9 @@ class ExpressionScope(object):
             except KeyError:
                 pass
         
-        # Next, check locals mapping.
+        # Next, check the identifiers.
         try:
-            return self.f_locals[name]
+            return self.identifiers[name]
         except KeyError:
             pass
 
@@ -179,7 +181,9 @@ class ExpressionScope(object):
         return self.toolkit[name]
 
     def __setitem__(self, name, val):
-        """ Stores the value in temp locals.
+        """ Stores the value into the temp locals dict. This operation
+        will occur whenever a STORE_NAME opcode is encountered such
+        as with the loop variables of a list comprehension.
 
         """
         self.temp_locals[name] = val
@@ -192,10 +196,10 @@ class AbstractExpression(object):
 
     __metaclass__ = ABCMeta
 
-    __slots__ = ('obj_ref', 'attr', 'code', 'f_locals', 'f_globals',
+    __slots__ = ('obj_ref', 'attr', 'code', 'identifiers', 'f_globals',
                  'toolkit', '__weakref__')
 
-    def __init__(self, obj, attr, code, f_locals, f_globals, toolkit):
+    def __init__(self, obj, attr, code, identifiers, f_globals, toolkit):
         """ Initializes and expression object.
 
         Parameters
@@ -212,8 +216,8 @@ class AbstractExpression(object):
         code : types.CodeType object
             The compiled code object for the provided ast node.
 
-        f_locals : Mapping
-            The locals mapping that forms the local scope for the
+        identifiers : dict
+            The dictionary of identifiers that are available to the
             expression.
 
         f_globals : dict
@@ -228,9 +232,9 @@ class AbstractExpression(object):
         self.obj_ref = weakref.ref(obj)
         self.attr = attr
         self.code = code
+        self.identifiers = identifiers
         self.f_globals = f_globals
         self.toolkit = toolkit
-        self.f_locals = f_locals
 
     @property
     def obj(self):
@@ -259,7 +263,7 @@ class SimpleExpression(AbstractExpression):
 
         """
         scope = ExpressionScope(
-            self.obj, self.f_locals, self.f_globals, self.toolkit,
+            self.obj, self.identifiers, self.f_globals, self.toolkit,
         )
         # f_globals is passed as the globals even though the scope
         # object will handle that part of the lookup. The only effect
@@ -378,7 +382,7 @@ class SubscriptionExpression(AbstractExpression):
         self.notifiers.clear()
 
         scope = ExpressionScope(
-            self.obj, self.f_locals, self.f_globals, self.toolkit, 
+            self.obj, self.identifiers, self.f_globals, self.toolkit, 
             binder=self.bind_attribute,
         )
 
@@ -388,6 +392,33 @@ class SubscriptionExpression(AbstractExpression):
         # avoid the need to create a new "globals" dict each time we
         # do an eval.
         return eval(self.code, self.f_globals, scope)
+
+
+def _set_implicit_attr(obj, name, val):
+    """ A private delegating expression helper which walks up the object 
+    tree and attempts to perform the setattr operation on an attribute. 
+    If the attribute is not found in the tree, a NameError is raised.
+
+    Parameters
+    ----------
+    obj : BaseComponent
+        The BaseComponent instance at which we should begin looking
+        for a valid attribute to set.
+    
+    name : string
+        The name of the attribute we are wanting to set.
+    
+    val : object
+        The value to set on the attribute.
+
+    """
+    while obj is not None:
+        if hasattr(obj, name):
+            setattr(obj, name, val)
+            return
+        else:
+            obj = obj.parent
+    raise NameError("name '%s' is not defined" % name)
 
 
 class DelegatingExpression(SubscriptionExpression):
@@ -403,37 +434,66 @@ class DelegatingExpression(SubscriptionExpression):
         self.obj.on_trait_change(self.update_expression, self.attr)
 
     def make_setter_code(self, code):
-        wr_self = weakref.ref(self)
-        def value_getter():
-            this = wr_self()
-            if this is not None:
-                return getattr(this.obj, this.attr)
-        
+        """ Create the bytecode expression which performs the setattr
+        part of the delegation. This is implemented by copying the
+        bytecode of the getattr expression, and modifying its tail
+        to convert it into a setting operation.
+
+        """
+        # The last opcode is always RETURN_VALUE. The one before that
+        # will determine whether we have a delegatable expression.
         bp_code = bp.Code.from_code(code)
         attr_code, attr_arg = bp_code.code[-2]
         new_code = bp_code.code[:-2]
+
+        # In both of the below cases, we end with a LOAD_ATTR and 
+        # RETURN_VALUE so that the calling code can determine if
+        # the setting operation caused a change in the value, if
+        # it did, it will attempt to cycle again to find stability.
+
+        # If the tail of the expression is a getattr, we replace it
+        # with a setattr(tail(), tail_attr, getattr(self, self_attr))
         if attr_code == bp.LOAD_ATTR:
             new_code.extend([
                 (bp.DUP_TOP, None),
-                (bp.LOAD_CONST, value_getter),
-                (bp.CALL_FUNCTION, 0x0000),
+                (bp.LOAD_NAME, 'self'),
+                (bp.LOAD_ATTR, self.attr),
                 (bp.ROT_TWO, None),
                 (bp.STORE_ATTR, attr_arg),
                 (bp.LOAD_ATTR, attr_arg),
                 (bp.RETURN_VALUE, None),
             ])
+        
+        # If the expression is simply a name, then we assume its an 
+        # implicit attribute lookup since, delegating to an identifier
+        # would be irresponsible (we check for this). We convert the 
+        # load name into an implicit attribute setter using a helper 
+        # function which walks up the tree.
         elif attr_code == bp.LOAD_NAME and len(new_code) == 1:
+            if attr_arg in self.identifiers:
+                msg = "Cannot delegate to identifier '%s'"
+                raise ValueError(msg % attr_arg)
             new_code.extend([
-                (bp.LOAD_CONST, value_getter),
-                (bp.CALL_FUNCTION, 0x0000),
-                (bp.STORE_NAME, attr_arg),
+                (bp.LOAD_CONST, _set_implicit_attr),
+                (bp.LOAD_NAME, 'self'),
+                (bp.DUP_TOP, None),
+                (bp.LOAD_CONST, attr_arg),
+                (bp.ROT_TWO, None),
+                (bp.LOAD_ATTR, self.attr),
+                (bp.CALL_FUNCTION, 0x0003),
+                (bp.POP_TOP, None),
                 (bp.LOAD_NAME, attr_arg),
                 (bp.RETURN_VALUE, None),
             ])
+
+        # Otherise, we are unable to delegate to the expression
+        # and we raise an error to that effect.
         else:
             # XXX need error message that reports enaml line numbers
             raise TypeError('Invalid Expression for Delegation')
+
         bp_code.code = new_code
+        
         return bp_code.to_code()
 
     def update_component(self):
@@ -470,7 +530,7 @@ class DelegatingExpression(SubscriptionExpression):
 
     def eval_setter(self):
         scope = ExpressionScope(
-            self.obj, self.f_locals, self.f_globals, self.toolkit, 
+            self.obj, self.identifiers, self.f_globals, self.toolkit, 
         )
         return eval(self.setter_code, self.f_globals, scope)
 
@@ -519,7 +579,7 @@ class NotifyingExpression(AbstractExpression):
             args = self.arguments(obj, name, old, new)
             overrides = {'args': args}
             scope = ExpressionScope(
-                obj, self.f_locals, self.f_globals, self.toolkit, 
+                obj, self.identifiers, self.f_globals, self.toolkit, 
                 overrides=overrides,
             )
             eval(self.code, self.f_globals, scope)
