@@ -29,15 +29,15 @@ class Constructor(EnamlFactory):
         self.shell_loader = shell_loader
         self.abstract_loader = abstract_loader
 
-    def __enaml_build__(self, f_locals, toolkit):
+    def __enaml_build__(self, identifiers, toolkit):
         """ An abstractmethod implementation that builds an Enaml
         component using the classes returned from the provided
         loaders.
 
         """
         # This default constructor implementation simply ignores
-        # the f_locals and toolkit, since they are no longer needed
-        # at the point when this method is called.
+        # the identifiers and toolkit, since they are no longer 
+        # needed at the point when this method is called.
         shell_cls = self.shell_loader()
         shell_obj = shell_cls()
         abstract_loader = self.abstract_loader

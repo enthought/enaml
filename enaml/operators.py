@@ -6,23 +6,23 @@ from .expressions import (SimpleExpression, SubscriptionExpression,
                           DelegatingExpression, NotifyingExpression)
 
 
-def op_simple(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
-    expr = SimpleExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
+def op_simple(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+    expr = SimpleExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
     cmpnt.bind_expression(attr, expr)
 
 
-def op_subscribe(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
-    expr = SubscriptionExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
+def op_subscribe(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+    expr = SubscriptionExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
     cmpnt.bind_expression(attr, expr)
 
 
-def op_delegate(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
-    expr = DelegatingExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
+def op_delegate(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+    expr = DelegatingExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
     cmpnt.bind_expression(attr, expr)
 
 
-def op_notify(cmpnt, attr, ast, code, f_locals, f_globals, toolkit):
-    NotifyingExpression(cmpnt, attr, code, f_locals, f_globals, toolkit)
+def op_notify(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+    NotifyingExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
 
 
 #: The builtin Enaml expression operators

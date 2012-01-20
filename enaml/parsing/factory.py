@@ -42,15 +42,15 @@ class EnamlFactory(object):
         component.trait_set(**kwargs)
         return component
 
-    def __enaml_call__(self, f_locals=None, toolkit=None):
+    def __enaml_call__(self, identifiers=None, toolkit=None):
         """ Invokes the underlying Enaml build function, creating the 
         locals and toolkit if necessary.
 
         Parameters
         ----------
-        f_locals : Mapping or None, optional
-            The Mapping object to use when binding expressions on the
-            component. If None, a new dict will be created.
+        identifiers : dict or None, optional
+            The dict of identifiers to use when binding expressions
+            on the component. If None, a new dict will be created.
         
         toolkit : Toolkit or None, optional
             The Toolkit to use when building the object tree. If None,
@@ -62,11 +62,11 @@ class EnamlFactory(object):
             The BaseComponent instance that was created.
 
         """
-        if f_locals is None:
-            f_locals = {}
+        if identifiers is None:
+            identifiers = {}
         if toolkit is None:
             toolkit = Toolkit.active_toolkit()
-        component = self.__enaml_build__(f_locals, toolkit)
+        component = self.__enaml_build__(identifiers, toolkit)
         component.toolkit = toolkit
         component._bases.insert(0, self)
         return component
@@ -82,15 +82,15 @@ class EnamlFactory(object):
         return False
 
     @abstractmethod
-    def __enaml_build__(self, f_locals, toolkit):
+    def __enaml_build__(self, identifiers, toolkit):
         """ An abstract method which must be implemented by subclasses
         to build an return an instance of BaseComponent.
 
         Parameters
         ----------
-        f_locals : Mapping
-            The Mapping object to use when binding expressions on the
-            component.
+        identifiers : dict
+            The dict of identifiers to use when binding expressions
+            on the component.
         
         toolkit : Toolkit
             The Toolkit to use when building the object tree.
