@@ -3,9 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-defn MyMessageToTheWorld(message):
-    MainWindow:
-        Container:
-            Label:
-                text = message
+MyMessageToTheWorld(MainWindow):
+    attr message
+    Container:
+        Label:
+            text = message
             

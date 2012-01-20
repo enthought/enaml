@@ -8,15 +8,15 @@ def main():
     """ The main() function is a special case entry point for enaml-run.
     
     """
-    view = MyMessageToTheWorld("Hola, Mundo!")
+    view = MyMessageToTheWorld(message="Hola, Mundo!")
     view.show()
 
 :: end::
 
 
-defn MyMessageToTheWorld(message):
-    MainWindow:
-        Container:
-            Label:
-                text = message
+MyMessageToTheWorld(MainWindow):
+    attr message
+    Container:
+        Label:
+            text = message
             

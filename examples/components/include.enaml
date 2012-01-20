@@ -4,10 +4,10 @@
 #------------------------------------------------------------------------------
 """ Include Example
 
-This example shows how to use the Include component along with a defn
-to generate a list of fields to edit a list of model objects. It also 
-demonstrates how the << operator is capable of listening to changes on 
-items within a list comprehension.
+This example shows how to use the Include component to generate a list 
+of fields to edit a list of model objects. It also demonstrates how 
+the << operator is capable of listening to changes on items within a 
+list comprehension.
 
 """
 :: python ::
@@ -30,9 +30,9 @@ people = [Person(name=name) for name in names]
 :: end ::
 
 
-defn PersonField(person):
-    Field:
-        value := person.name
+PersonField(Field):
+    attr person: Person
+    value := person.name
 
 
 Main(MainWindow):
@@ -42,5 +42,5 @@ Main(MainWindow):
             bg_color = 'lightblue'
             read_only = True
         Include:
-            components = [PersonField(person) for person in people]
+            components = [PersonField(person=person) for person in people]
 

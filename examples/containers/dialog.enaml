@@ -13,64 +13,64 @@ information Dialog will be raised to tell you the result of your action.
 :: python ::
 
 def raise_dialog():
-    cdlg = ConfirmDialog('Do you really want to do something rash?')
+    cdlg = ConfirmDialog(message='Do you really want to do something rash?')
     cdlg.show()
 
     if cdlg.result == 'accepted':
-        idlg = InformDialog('You confirmed that you DID want to do something rash.')
+        idlg = InformDialog(message='You confirmed that you DID want to do something rash.')
     else:
-        idlg = InformDialog('You confirmed that you DID NOT want to do something rash.')
+        idlg = InformDialog(message='You confirmed that you DID NOT want to do something rash.')
     idlg.show()
 
 :: end ::
 
 
-defn InformDialog(message):
-    Dialog:
-        id: dialog
-        title = "Inform"
-        modality = "application_modal"
-        Container:
-            constraints = [
-                vbox(
-                    label,
-                    hbox(_space_, ok_button),
-                ),
-            ]
-            Label:
-                id: label
-                text = message
-                fg_color = 'red'
-                font = 'times 18 bold'
-            PushButton:
-                id: ok_button
-                text = "OK"
-                clicked >> dialog.accept()
+InformDialog(Dialog):
+    id: dialog
+    attr message: basestring
+    title = "Inform"
+    modality = "application_modal"
+    Container:
+        constraints = [
+            vbox(
+                label,
+                hbox(_space_, ok_button),
+            ),
+        ]
+        Label:
+            id: label
+            text = message
+            fg_color = 'red'
+            font = 'times 18 bold'
+        PushButton:
+            id: ok_button
+            text = "OK"
+            clicked >> dialog.accept()
 
 
-defn ConfirmDialog(message):
-    Dialog:
-        id: dialog
-        title = "Confirm"
-        modality = "application_modal"
-        Container:
-            constraints = [
-                vbox(
-                    label,
-                    hbox(_space_, ok_button, cancel_button),
-                ),
-            ]
-            Label:
-                id: label
-                text = message
-            PushButton:
-                id: ok_button
-                text = "OK"
-                clicked >> dialog.accept()
-            PushButton:
-                id: cancel_button
-                text = "Cancel"
-                clicked >> dialog.reject()
+ConfirmDialog(Dialog):
+    id: dialog
+    attr message: basestring
+    title = "Confirm"
+    modality = "application_modal"
+    Container:
+        constraints = [
+            vbox(
+                label,
+                hbox(_space_, ok_button, cancel_button),
+            ),
+        ]
+        Label:
+            id: label
+            text = message
+        PushButton:
+            id: ok_button
+            text = "OK"
+            clicked >> dialog.accept()
+        PushButton:
+            id: cancel_button
+            text = "Cancel"
+            clicked >> dialog.reject()
 
 
 Main(MainWindow):
