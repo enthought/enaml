@@ -265,9 +265,9 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         widget = self.widget
         shell = self.shell_obj
         self.update_shell_selection()
-        shell.text_edited = True
+        shell.text_edited(True)
         shell._modified = True
-        shell.text_changed = True
+        shell.text_changed(True)
 
     def on_selection(self):
         """ The event handler for a selection (really a left up) event.

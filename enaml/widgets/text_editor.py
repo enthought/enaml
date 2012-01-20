@@ -8,6 +8,7 @@ from traits.api import Bool, Event, Int, Str, Enum, Property, Instance, Any
 
 from .control import Control, AbstractTkControl
 
+from ..util.trait_types import EnamlEvent
 
 class AbstractTkTextEditor(AbstractTkControl):
     """ A text editor widget capable of editing plain text with styles.
@@ -147,13 +148,13 @@ class TextEditor(Control):
     #: Fired when the text is changed programmatically, or by the user
     #: via the ui. The event object is just True, not the text. Use the
     #: `get_text()` method if you need the current text.
-    text_changed = Event
+    text_changed = EnamlEvent
 
     #: Fired when the text is changed by the user explicitly through
     #: the ui and not programmatically. The event object is just True,
     #: not the text. Use the `get_text()` method if you need the current
     #: text.
-    text_edited = Event
+    text_edited = EnamlEvent
 
     #: How strongly a component hugs it's contents' width.
     #: TextEditors ignore the width hug by default, so they expand freely in width.
