@@ -289,7 +289,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         shell = self.shell_obj
         cursor = self.widget.textCursor()
         selected_text = cursor.selectedText()
-        selected_text.replace('\u2029', '\n') # replace unicode line break
+        selected_text = selected_text.replace(u'\u2029', '\n') # replace unicode line break
         shell._selected_text = selected_text
         self.setting_text = True
         shell.cursor_position = cursor.position()
