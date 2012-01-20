@@ -8,6 +8,7 @@ from .qt_control import QtControl
 
 from ..text_editor import AbstractTkTextEditor
 
+from ...guard import guard
 
 class QtTextEditor(QtControl, AbstractTkTextEditor):
     """ A Qt implementation of a Field.
@@ -15,9 +16,6 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
     QtTextEditor uses a QPlainTextEdit to provide a simple text editor widget.
 
     """
-    # A flag which set to True when we're applying updates to the 
-    # model. Allows us to avoid unnecessary notification recursion.
-    setting_text = False
 
     #--------------------------------------------------------------------------
     # SetupMethods
@@ -69,7 +67,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the parent.
 
         """
-        if not self.setting_text:
+        if guard.guarded('setting_text'):
             self.set_cursor_position(cursor_position)
 
     def shell_anchor_position_changed(self, anchor_position):
@@ -77,7 +75,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the parent.
 
         """
-        if not self.setting_text:
+        if guard.guarded('setting_text'):
             self.set_anchor_position(anchor_position)
     
     def shell_overwrite_changed(self, overwrite):
@@ -291,12 +289,11 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         selected_text = cursor.selectedText()
         selected_text = selected_text.replace(u'\u2029', '\n') # replace unicode line break
         shell._selected_text = selected_text
-        self.setting_text = True
-        shell.cursor_position = cursor.position()
-        shell.anchor_position = cursor.anchor()
-        shell._cursor_column = cursor.positionInBlock()
-        shell._cursor_line = cursor.blockNumber()
-        self.setting_text = False
+        with guard('setting_text'):
+            shell.cursor_position = cursor.position()
+            shell.anchor_position = cursor.anchor()
+            shell._cursor_column = cursor.positionInBlock()
+            shell._cursor_line = cursor.blockNumber()
 
     def get_text(self):
         """ Get the text currently in the widget.
