@@ -74,6 +74,7 @@ class WXStylable(AbstractTkStylable):
         the provided Enaml Font object.
 
         """
-        wx_font = wx_font_from_font(font)
-        self.widget.SetFont(wx_font)
+        if not font:
+            wx_font = wx_font_from_font(font)
+            self.widget.SetFont(wx_font)
 
