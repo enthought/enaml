@@ -65,6 +65,10 @@ class Font(tuple):
     """
     __slots__ = ()
 
+    #: A default font instance that will be set at the end of the
+    #: definition of this class. It is useful for comparison.
+    default_font = None
+
     @classmethod
     def from_string(cls, font_string):
         """ Convert a space separated string into a font object.
@@ -244,6 +248,9 @@ class Font(tuple):
 
     def __str__(self):
         return self.__repr__()
+            
+    def __nonzero__(self):
+        return self != self.default_font
         
     def clone(self, family=None, point_size=None, weight=None, style=None, 
         underline=None, strikethrough=None, family_hint=None, 
@@ -303,6 +310,10 @@ class Font(tuple):
     def stretch(self):
         return self[10]
              
+
+# Create an instance of a default font for comparison purposes
+Font.default_font = Font()
+
 
 class FontTrait(StyleTrait):
     
