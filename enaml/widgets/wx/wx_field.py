@@ -402,7 +402,7 @@ class WXField(WXControl, AbstractTkField):
 
         """
         event.Skip()
-        self.shell_obj.return_pressed = True
+        self.shell_obj.return_pressed(True)
 
     def _on_selection_changed(self, event):
         """ The event handler for a selection event.
@@ -510,5 +510,5 @@ class WXField(WXControl, AbstractTkField):
         # we need to have a relayout anyway to put the new widget in the
         # proper position. This seems to be performant enough at the 
         # moment, so we can just leave it as is.
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated(True)
 

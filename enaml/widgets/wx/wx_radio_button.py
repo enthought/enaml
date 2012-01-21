@@ -161,6 +161,6 @@ class WXRadioButton(WXToggleControl, AbstractTkRadioButton):
         """
         shell = self.shell_obj
         shell.checked = self.widget.GetValue()
-        shell.toggled = True
+        shell.toggled()
         event.Skip()
 

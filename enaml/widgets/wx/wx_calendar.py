@@ -41,18 +41,18 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
         shell = self.shell_obj
         date = self.widget.PyGetDate()
         shell.date = date
-        shell.activated = date
+        shell.activated(date)
 
     def _on_date_selected(self, event):
         """ The event handler for the calendar's selection event.
 
         """
-        self.shell_obj.selected = event.PyGetDate()
+        self.shell_obj.selected(event.PyGetDate())
 
     #---------------------------------------------------------------------------
     # Private methods
     #---------------------------------------------------------------------------
-    def _set_date(self, date):
+    def set_date(self, date):
         """ Sets the component date in the widget.
 
         """
@@ -60,13 +60,13 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
         # setting the date, so we don't need a feedback guard here.
         self.widget.PySetDate(date)
 
-    def _set_min_date(self, date):
+    def set_min_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
 
         """
         self.widget.PySetLowerDateLimit(date)
 
-    def _set_max_date(self, date):
+    def set_max_date(self, date):
         """ Sets the maximum date on the widget with the provided value.
 
         """

@@ -67,12 +67,12 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         """
         new_date = from_wx_date(event.GetDate())
         self.shell_obj.date = new_date
-        self.shell_obj.date_changed = new_date
+        self.shell_obj.date_changed(new_date)
 
     #--------------------------------------------------------------------------
     # Private methods
     #--------------------------------------------------------------------------
-    def _set_date(self, date):
+    def set_date(self, date):
         """ Sets the date on the widget.
 
         """
@@ -80,14 +80,14 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         # value, so we do not need any feeback guards here.
         self.widget.SetValue(to_wx_date(date))
 
-    def _set_min_date(self, date):
+    def set_min_date(self, date):
         """ Sets the minimum date on the widget with the provided value.
 
         """
         widget = self.widget
         widget.SetRange(to_wx_date(date), widget.GetUpperLimit())
 
-    def _set_max_date(self, date):
+    def set_max_date(self, date):
         """ Sets the maximum date on the widget with the provided value.
 
         """

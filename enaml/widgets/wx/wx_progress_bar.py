@@ -28,9 +28,9 @@ class WXProgressBar(WXControl, AbstractTkProgressBar):
         """
         super(WXControl, self).initialize()
         shell = self.shell_obj
-        self._set_minimum(shell.minimum)
-        self._set_maximum(shell.maximum)
-        self._set_value(shell.value)
+        self.set_minimum(shell.minimum)
+        self.set_maximum(shell.maximum)
+        self.set_value(shell.value)
 
     #--------------------------------------------------------------------------
     # Abstract Implementation Methods
@@ -40,40 +40,40 @@ class WXProgressBar(WXControl, AbstractTkProgressBar):
         object.
 
         """
-        self._set_value(value)
+        self.set_value(value)
 
     def shell_minimum_changed(self, minimum):
         """ The change handler for the 'minimum' attribute of the shell
         object.
 
         """
-        self._set_minimum(minimum)
+        self.set_minimum(minimum)
             
     def shell_maximum_changed(self, maximum):
         """ The change handler for the 'maximum' attribute of the shell
         object
 
         """
-        self._set_maximum(maximum)
+        self.set_maximum(maximum)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def _set_value(self, value):
+    def set_value(self, value):
         """ Sets the value of the progress bar.
 
         """
         gauge_value = value - self.shell_obj.minimum
         self.widget.SetValue(gauge_value)
 
-    def _set_minimum(self, minimum):
+    def set_minimum(self, minimum):
         """ Sets the minimum value of the progress bar.
 
         """
         gauge_range = self.shell_obj.maximum - minimum
         self.widget.SetRange(gauge_range)
     
-    def _set_maximum(self, maximum):
+    def set_maximum(self, maximum):
         """ Sets the maximum value of the progress bar.
 
         """

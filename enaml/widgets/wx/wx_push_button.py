@@ -49,7 +49,7 @@ class WXPushButton(WXControl, AbstractTkPushButton):
         self.set_label(text)
         # If the text of the button changes, the size hint has likely
         # change and the layout system needs to be informed.
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated()
 
     def on_clicked(self, event):
         """ The event handler for the button's clicked event.
@@ -57,7 +57,7 @@ class WXPushButton(WXControl, AbstractTkPushButton):
         """
         shell = self.shell_obj
         shell._down = False
-        shell.clicked = True
+        shell.clicked()
         event.Skip()
 
     def on_pressed(self, event):
@@ -66,7 +66,7 @@ class WXPushButton(WXControl, AbstractTkPushButton):
         """
         shell = self.shell_obj
         shell._down = True
-        shell.pressed = True
+        shell.pressed()
         event.Skip()
 
     def on_released(self, event):
@@ -80,7 +80,7 @@ class WXPushButton(WXControl, AbstractTkPushButton):
         shell = self.shell_obj
         if shell._down:
             shell._down = False
-            shell.released = True
+            shell.released()
         event.Skip()
 
     def set_label(self, label):

@@ -56,7 +56,7 @@ class WXFloatSlider(WXSlider, AbstractTkFloatSlider):
         # Since this event is only fired when the drag handle is 
         # moved with the mouse, it's safe to fire the move event
         # with no further checks.
-        shell.moved = value
+        shell.moved(value)
 
         event.Skip()
 
@@ -99,7 +99,7 @@ class WXFloatSlider(WXSlider, AbstractTkFloatSlider):
 
         if hit:
             shell._down = True
-            shell.pressed = True
+            shell.pressed()
         
         event.Skip()
 
@@ -114,7 +114,7 @@ class WXFloatSlider(WXSlider, AbstractTkFloatSlider):
         shell.value = value
         if shell._down:
             shell._down = False
-            shell.released = True
+            shell.released()
         event.Skip()
 
     #--------------------------------------------------------------------------

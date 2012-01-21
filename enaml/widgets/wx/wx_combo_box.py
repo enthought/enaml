@@ -67,7 +67,7 @@ class WXComboBox(WXControl, AbstractTkComboBox):
 
         # Only fire the selected event if we have a valid selection
         if curr_index != -1:
-            shell.selected = shell.value
+            shell.selected(shell.value)
 
         event.Skip()
 
