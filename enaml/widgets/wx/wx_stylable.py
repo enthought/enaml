@@ -11,6 +11,10 @@ class WXStylable(AbstractTkStylable):
     """ A Wx implementation of Stylable.
 
     """
+    #: A flag used to indicate that the instance has a font which is
+    #: different from its default value.
+    _has_default_wx_font = True
+     
     def initialize(self):
         """ Initialize the attributes of the underlying widget.
 
@@ -74,7 +78,14 @@ class WXStylable(AbstractTkStylable):
         the provided Enaml Font object.
 
         """
-        if not font:
-            wx_font = wx_font_from_font(font)
-            self.widget.SetFont(wx_font)
+        # There's no such thing as a NullFont on wx, so if the font is
+        # equivalent to the Enaml default font, and we haven't yet changed 
+        # the font for this instance, then we don't change it. Otherwise
+        # the fonts won't be equivalelnt to the default.
+        if not font and self._has_default_wx_font:
+            return
+
+        wx_font = wx_font_from_font(font)
+        self.widget.SetFont(wx_font)
+        self._has_default_wx_font = False
 
