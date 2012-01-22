@@ -28,13 +28,13 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
         """
         super(WXCalendar, self).bind()
         widget = self.widget
-        widget.Bind(EVT_CALENDAR, self._on_date_activated)
-        widget.Bind(EVT_CALENDAR_SEL_CHANGED, self._on_date_selected)
+        widget.Bind(EVT_CALENDAR, self.on_date_activated)
+        widget.Bind(EVT_CALENDAR_SEL_CHANGED, self.on_date_selected)
 
     #--------------------------------------------------------------------------
-    # Signal handlers
+    # Event Handlers
     #--------------------------------------------------------------------------
-    def _on_date_activated(self, event):
+    def on_date_activated(self, event):
         """ The event handler for the calendar's activation event.
 
         """
@@ -43,14 +43,14 @@ class WXCalendar(WXBoundedDate, AbstractTkCalendar):
         shell.date = date
         shell.activated(date)
 
-    def _on_date_selected(self, event):
+    def on_date_selected(self, event):
         """ The event handler for the calendar's selection event.
 
         """
         self.shell_obj.selected(event.PyGetDate())
 
     #---------------------------------------------------------------------------
-    # Private methods
+    # Widget Update Methods
     #---------------------------------------------------------------------------
     def set_date(self, date):
         """ Sets the component date in the widget.
