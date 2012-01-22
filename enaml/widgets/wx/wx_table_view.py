@@ -173,7 +173,14 @@ class WXTableView(WXControl, AbstractTkTableView):
         self.widget.Refresh()
         self.model_wrapper = model_wrapper
 
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
     def size_hint(self):
+        """ A reimplemented parent class method which computes the size 
+        hint for the table view.
+
+        """
         # This size hint is taken from QAbstractScrollArea::sizeHint
         # which is the size hint implementation for QTableView.
         # The wx GetBestSize() call returns the size for the entire
