@@ -39,12 +39,19 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         """
         self.widget = wx.DatePickerCtrl(parent)
 
+    def initialize(self):
+        """ Initializes the attributes of the control.
+
+        """
+        super(WXDateEdit, self).initialize()
+        self.set_format(self.shell_obj.date_format)
+
     def bind(self):
         """ Binds the event handlers for the date widget.
 
         """
         super(WXDateEdit, self).bind()
-        self.widget.Bind(wx.EVT_DATE_CHANGED, self._on_date_changed)
+        self.widget.Bind(wx.EVT_DATE_CHANGED, self.on_date_changed)
 
     #--------------------------------------------------------------------------
     # Component attribute notifiers
@@ -52,16 +59,13 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
     def shell_date_format_changed(self, date_format):
         """ The change handler for the 'format' attribute.
 
-        .. note:: Changing the format on wx is not supported.
-                  See http://trac.wxwidgets.org/ticket/10988
-
         """
-        pass
+        self.set_format(date_format)
 
     #--------------------------------------------------------------------------
     # Signal handlers
     #--------------------------------------------------------------------------
-    def _on_date_changed(self, event):
+    def on_date_changed(self, event):
         """ The event handler for the date's changed event.
 
         """
@@ -93,4 +97,13 @@ class WXDateEdit(WXBoundedDate, AbstractTkDateEdit):
         """
         widget = self.widget
         widget.SetRange(widget.GetLowerLimit(), to_wx_date(date))
+
+    def set_format(self, date_format):
+        """ Sets the display format on the widget with the provided value.
+
+        .. note:: Changing the format on wx is not supported.
+                  See http://trac.wxwidgets.org/ticket/10988
+
+        """
+        pass
 
