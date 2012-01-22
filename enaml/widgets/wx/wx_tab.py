@@ -20,8 +20,12 @@ class WXTab(WXContainer, AbstractTkTab):
         """
         super(WXTab, self).initialize()
         shell = self.shell_obj
-        self._set_title(shell.title)
-        self._set_icon(shell.icon)
+        # We don't want to set the title during initialization on wx
+        # because it will lead to segfaults (!). It's not a huge deal
+        # however, because the title will be set when the tab is added
+        # to the notebook.
+        # self.set_title(shell.title)
+        self.set_icon(shell.icon)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -31,19 +35,19 @@ class WXTab(WXContainer, AbstractTkTab):
         object.
 
         """
-        self._set_title(title)
+        self.set_title(title)
     
     def shell_icon_changed(self, icon):
         """ The change handler for the 'icon' attribute on the shell
         object.
 
         """
-        self._set_icon(icon)
+        self.set_icon(icon)
     
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
-    def _set_title(self, title):
+    def set_title(self, title):
         """ Sets the title of this tab in the parent tab widget.
 
         """
@@ -54,7 +58,7 @@ class WXTab(WXContainer, AbstractTkTab):
                 tab_widget.SetPageText(idx, title)
                 break
      
-    def _set_icon(self, icon):
+    def set_icon(self, icon):
         """ Sets the icon of this tab in the parent tab widget.
 
         """
