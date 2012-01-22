@@ -48,7 +48,7 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
         self.set_label(text)
         # If the label of the control changes, its size hint has likely
         # updated and the layout system needs to be informed
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated()
 
     def on_toggled(self, event):
         """ The event handler for the toggled event.
@@ -57,7 +57,7 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
         shell = self.shell_obj
         shell.checked = self.widget.GetValue()
         shell._down = False
-        shell.toggled = True
+        shell.toggled()
         event.Skip()
 
     def on_pressed(self, event):
@@ -66,7 +66,7 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
         """
         shell = self.shell_obj
         shell._down = True
-        shell.pressed = True
+        shell.pressed()
         event.Skip()
 
     def on_released(self, event):
@@ -76,7 +76,7 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
         shell = self.shell_obj
         if shell._down:
             shell._down = False
-            shell.released = True
+            shell.released()
         event.Skip()
 
     def set_label(self, label):
