@@ -91,10 +91,21 @@ class WXSizable(AbstractTkSizable):
         client_width, client_height = widget.GetClientSizeTuple()
         min_width = min_width + (widget_width - client_width)
         min_height = min_height + (widget_height - client_height)
+
+        # Wx won't automatically reset the max size if the min size
+        # is larger. Ugh....
+        max_width, max_height = self.max_size()
+        max_width = max(min_width, max_width)
+        max_height = max(min_height, max_height)
+        self.widget.SetMaxSize((max_width, max_height))
+
         widget.SetMinSize((min_width, min_height))
 
         # If the min size is now smaller that the existing size, resize
         # the widget to meet the min size.
+        #
+        # XXX this is a bit wrong, it should only resize the offending
+        # dimension.
         new_width = max(widget_width, min_width)
         new_height = max(widget_height, min_height)
         new_size = (new_width, new_height)
@@ -132,7 +143,26 @@ class WXSizable(AbstractTkSizable):
         max_height = max_height + (widget_height - client_height)
         max_width = min(max_width, 16777215)
         max_height = min(max_height, 16777215)
+
+        # Wx won't automatically reset the min size if the max size
+        # is smaller. Ugh....
+        min_width, min_height = self.min_size()
+        min_width = min(min_width, max_width)
+        min_height = min(min_height, max_height)
+        self.widget.SetMinSize((min_width, min_height))
+
         self.widget.SetMaxSize((max_width, max_height))
+
+        # If the max size is now larger that the existing size, resize
+        # the widget to meet the max size.
+        #
+        # XXX this is a bit wrong, it should only resize the offending
+        # dimension.
+        new_width = min(widget_width, max_width)
+        new_height = min(widget_height, max_height)
+        new_size = (new_width, new_height)
+        if new_size != (widget_width, widget_height):
+            widget.SetSize(new_size)
 
     def size(self):
         """ Returns the size of the internal toolkit widget, ignoring any
