@@ -143,7 +143,7 @@ class WXSlider(WXControl, AbstractTkSlider):
 
         """
         self.set_tick_position(tick_position)
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated()
 
     def shell_orientation_changed(self, orientation):
         """ The change handler for the 'orientation' attribute on the 
@@ -151,7 +151,7 @@ class WXSlider(WXControl, AbstractTkSlider):
 
         """
         self.set_orientation(orientation)
-        self.shell_obj.size_hint_updated = True
+        self.shell_obj.size_hint_updated()
 
     #--------------------------------------------------------------------------
     # Event Handlers 
@@ -170,7 +170,7 @@ class WXSlider(WXControl, AbstractTkSlider):
         # Since this event is only fired when the drag handle is 
         # moved with the mouse, it's safe to fire the move event
         # with no further checks.
-        shell.moved = value
+        shell.moved(value)
 
         event.Skip()
 
@@ -213,7 +213,7 @@ class WXSlider(WXControl, AbstractTkSlider):
 
         if hit:
             shell._down = True
-            shell.pressed = True
+            shell.pressed()
         
         event.Skip()
 
@@ -228,7 +228,7 @@ class WXSlider(WXControl, AbstractTkSlider):
         shell.value = value
         if shell._down:
             shell._down = False
-            shell.released = True
+            shell.released()
         event.Skip()
 
     #--------------------------------------------------------------------------
