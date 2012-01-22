@@ -20,7 +20,7 @@ class WXComponent(AbstractTkComponent):
     widget = None
 
     #--------------------------------------------------------------------------
-    # Abstract Implementation 
+    # Setup Methods 
     #--------------------------------------------------------------------------
     def create(self, parent):
         """ Create the underlying Wx widget. As necessary, subclasses
