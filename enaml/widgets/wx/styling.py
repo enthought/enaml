@@ -39,7 +39,7 @@ font_family_hint_map = {
 }
 
 
-# A cache of the default font that is create on demand
+# A cache of the default font which is created on demand
 _cached_wx_default_font = None
 def _wx_default_font():
     global _cached_wx_default_font
