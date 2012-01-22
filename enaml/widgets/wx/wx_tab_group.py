@@ -4,9 +4,9 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_container import WXContainer
+from .wx_layout_component import WXLayoutComponent
 
-from ..tabbed import AbstractTkTabbed
+from ..tab_group import AbstractTkTabGroup
 
 
 #: A mapping from TabPosition enum values to qt tab positions.
@@ -18,7 +18,7 @@ _TAB_POSITION_MAP = {
 }
 
 
-class WXTabbed(WXContainer, AbstractTkTabbed):
+class WXTabGroup(WXLayoutComponent, AbstractTkTabGroup):
     """ A wx implementation of the Tabbed container.
 
     """
@@ -26,7 +26,7 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
     # Setup Methods 
     #--------------------------------------------------------------------------
     def create(self, parent):
-        """ Create the underlying QTabWidget control.
+        """ Create the underlying wxNotebook control.
 
         """
         # Changing the tab position of the notebook dynamically is not
@@ -35,32 +35,30 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         style = _TAB_POSITION_MAP[self.shell_obj.tab_position]
         self.widget = wx.Notebook(parent, style=style)
     
+    def initialize(self):
+        """ Initialize the attributes of the wxNotebook.
+
+        """
+        super(WXTabGroup, self).initialize()
+        self.update_tabs()
+        self.set_selected_index(self.shell_obj.selected_index)
+
     def bind(self):
         """ Bind to the events emitted by the underlying control.
 
         """
-        super(WXTabbed, self).bind()
-        self.update_children()
-        self.set_index(self.shell_obj.index)
+        super(WXTabGroup, self).bind()
         self.widget.Bind(wx.EVT_NOTEBOOK_PAGE_CHANGED, self._on_page_changed)
 
     #--------------------------------------------------------------------------
     # Implementation 
     #--------------------------------------------------------------------------
-    def shell_index_changed(self, index):
-        """ Update the widget index with the new value from the shell 
+    def shell_tabs_changed(self, tabs):
+        """ The change handler for the 'tabs' attribute of the shell 
         object.
 
         """
-        self.set_index(index)
-        self.shell_obj.size_hint_updated = True
-            
-    def shell_layout_children_changed(self, children):
-        """ The change handler for the 'layout_children' attribute of 
-        the shell object.
-
-        """
-        self.update_children()
+        self.update_tabs()
 
     def shell_tab_position_changed(self, tab_position):
         """ The change handler for the 'tab_position' attribute of the
@@ -70,6 +68,13 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         # Changing tab position dynamically on wx is not supported.
         pass
 
+    def shell_selected_index_changed(self, index):
+        """ Update the widget index with the new value from the shell 
+        object.
+
+        """
+        self.set_selected_index(index)
+
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
         the suggested size of the widget for its current state. This
@@ -77,13 +82,22 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         space to allocate the widget.
 
         """
+        # XXX - This size hint computation needs some work. Need to 
+        # look at the source for wxNotebook::GetBestSize and see what
+        # is does and compare against QTabWidget::sizeHint. Like always,
+        # the Qt implementation does the right thing and wx does not.
         widget = self.widget
         shell = self.shell_obj
-        curr_shell = shell.layout_children[shell.index]
+        curr_shell = shell.selected_tab
+
+        if curr_shell is None:
+            # QTabWidget default for no tabs
+            return (6, 6)
+        
         size_hint = curr_shell.size_hint()
 
         if size_hint == (-1, -1):
-            size_hint = tuple(curr_shell.toolkit_widget.GetMinSize())
+            size_hint = curr_shell.min_size()
         
         width_hint, height_hint = size_hint
 
@@ -93,37 +107,17 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         # will probably break down with different fonts or icons. I've
         # found no other way to measure the height of the tab bar.
         tab_size = wx.RendererNative.Get().GetHeaderButtonHeight(widget)
-        tab_length = self._estimate_tab_bar_length()
 
         # Offset the size hint by the tab bar size
         style = widget.GetWindowStyle()
         if (style & wx.NB_TOP) or (style & wx.NB_BOTTOM):
             height_hint += tab_size
-            width_hint = max(width_hint, tab_length)
         else:
             width_hint += tab_size
-            height_hint = max(height_hint, tab_length)
+        
+        width_hint = max(width_hint, 200)
 
         return (width_hint, height_hint)
-
-    def _estimate_tab_bar_length(self):
-        """ Estimates the length of the tab bar based on the title text
-        of the tab pages. There doesn't seem to be a better wx api for
-        getting this information. This is a rough estimate only that was
-        empirically determined on Windows 7 using default fonts and does
-        account for things like icons or multiline text.
-
-        """
-        dc = wx.ClientDC(self.widget)
-        f = wx.SystemSettings.GetFont(wx.SYS_DEFAULT_GUI_FONT)
-        dc.SetFont(f)
-        length = 0
-        padding = 10
-        for child in self.shell_obj.layout_children:
-            w, h = dc.GetTextExtent(child.title)
-            w = max(w, 35)
-            length += w + padding
-        return length
 
     #--------------------------------------------------------------------------
     # Event Handlers 
@@ -136,19 +130,20 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         event.Skip()
         # Use event.GetSelection since widget.GetSelection returns the
         # wrong value during this event handler.
-        self.shell_obj.index = event.GetSelection()
+        self.shell_obj._selected_index = event.GetSelection()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
-    def set_index(self, index):
+    def set_selected_index(self, index):
         """ Sets the current index of the tab widget. This is overridden
         from the parent class.
 
         """
-        self.widget.SetSelection(index)
+        if index != -1:
+            self.widget.SetSelection(index)
     
-    def update_children(self):
+    def update_tabs(self):
         """ Populates the notebook with the child notebook pages. This
         is an overridden parent class method which sets the title of
         of notebook pages properly.
@@ -158,26 +153,12 @@ class WXTabbed(WXContainer, AbstractTkTabbed):
         # for now just remove all present widgets and add the current 
         # ones. If we use DeleteAllPages(), then the child widgets would
         # be destroyed, which is not the behavior we want.
-        shell = self.shell_obj
         widget = self.widget
-        selected_index = shell.index
+        old_idx = widget.GetSelection()
         while widget.GetPageCount():
             widget.RemovePage(0)
-        
-        # Reparent all of the child widgets to the new parent. This
-        # ensures that any new children are properly parented.
-        for idx, child in enumerate(shell.layout_children):
-            child_widget = child.toolkit_widget
-            child_widget.Reparent(widget)
-            widget.AddPage(child_widget, child.title)
-            if idx == selected_index:
-                child.visible = True
-            else:
-                child.visible = False
-
-        # Finally, update the selected index of the of the widget 
-        # and notify the layout of the size hint update
-        self.set_index(selected_index)
-        shell.size_hint_updated = True
-
+        for tab in self.shell_obj.tabs:
+            widget.AddPage(tab.toolkit_widget, tab.title)
+        if old_idx != -1:
+            widget.SetSelection(old_idx)        
         
