@@ -24,55 +24,73 @@ from ..scroll_area import AbstractTkScrollArea
 # in order to get smooth drag scrolling and sacrifice some usability
 # on the scroll buttons.
 SCROLLBAR_POLICY_MAP = {
-     'as_needed': 1,
-     'always_off': 0,
-     'always_on': 1,
+    'as_needed': 1,
+    'always_off': 0,
+    'always_on': 1,
 }
 
 
-class ScrollSizer(wx.PySizer):
-    """ A custom wx Sizer for use in the WXScrollArea. It manages the
-    necessary resizing of the child container when the scroll area
-    is resized.
+class WXScrollAreaSizer(wx.PySizer):
+    """ A custom wx Sizer for use in the WXScrollArea. This sizer expands
+    its child to fit the allowable space, regardless of the settings on
+    the child settings.
+
+    There can only be one component in this sizer at a time and it 
+    should be added via the .Add(...) method. Old items will be removed 
+    automatically (but not destroyed).
 
     """
-    def __init__(self, child):
-        """ Initializes a ScrollSizer
+    #: The child component which is manipulated by the sizer.
+    _child = None
 
-        Parameters
-        ----------
-        child :
-            The child container this size is managing.
-        
+    def Add(self, component):
+        """ Adds the given child component to the sizer, removing the 
+        old widget if present. The old widget is not destroyed.
+
         """
-        super(ScrollSizer, self).__init__()
-        self.child = child
+        self.Clear(deleteWindows=False)
+        self._child = component
+        if component is not None:
+            child_widget = component.toolkit_widget
+            res = super(WXScrollAreaSizer, self).Add(child_widget)
+            # We need to call Layout here, because it's not done
+            # automatically by wx and otherwise the new item won't
+            # be layed out properly.
+            self.Layout()
+            return res
 
     def CalcMin(self):
-        """ Returns the minimum size of the child this sizer is managing.
+        """ Returns the minimum size for the children this sizer is 
+        managing. Since the size of the Dialog is managed externally,
+        this always returns (-1, -1).
 
         """
-        return self.child.min_size()
+        component = self._child
+        if component is not None:
+            res = component.min_size()
+        else:
+            res = (-1, -1)
+        return res
     
     def RecalcSizes(self):
         """ Resizes the child to fit the available space of the scroll
         area.
 
         """
-        # XXX this probably wont do the right thing if the child
-        # is not a container and shouldn't be resized.
-        self.child.resize(*self.GetSizeTuple())
+        component = self._child
+        if component is not None:
+            component.resize(*self.GetSizeTuple())
 
 
 class WXScrollArea(WXContainer, AbstractTkScrollArea):
     """ Wx implementation of the ScrollArea Container.
 
     ..Note: The 'always_on' scrollbar policy is not supported on wx. Wx
-        *does* allow the scollbars to be always show, but said window 
+        *does* allow the scollbars to be always shown, but said window 
         style applies to *both* horizontal and vertical directions, and
         it must be applied at widget creation time. It does not reliably
         toggle on/off dynamically after the widget has been created. As
-        it's not reliable, we simple support that mode on wx. Should it
+        it's not reliable, we simply don't support it on wx. Should it
         become a highly desired feature, this decision can be revisited.
 
     """
@@ -85,16 +103,17 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         """
         style = wx.HSCROLL | wx.VSCROLL | wx.BORDER_SIMPLE 
         self.widget = wx.ScrolledWindow(parent, style=style)
-    
+        self.widget.SetSizer(WXScrollAreaSizer())
+
     def initialize(self):
         """ Intializes the widget with the attributes of this instance.
 
         """
         super(WXScrollArea, self).initialize()
         shell = self.shell_obj
-        self._set_horiz_policy(shell.horizontal_scrollbar_policy)
-        self._set_vert_policy(shell.vertical_scrollbar_policy)
-        self._update_children()
+        self.set_horizontal_policy(shell.horizontal_scrollbar_policy)
+        self.set_vertical_policy(shell.vertical_scrollbar_policy)
+        self.update_scrolled_component()
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -104,21 +123,21 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         attribute of the shell object.
 
         """
-        self._set_horiz_policy(policy)
+        self.set_horizontal_policy(policy)
 
     def shell_vertical_scrollbar_policy_changed(self, policy):
         """ The change handler for the 'vertical_scrollbar_policy'
         attribute of the shell object.
 
         """
-        self._set_vert_policy(policy)
+        self.set_vertical_policy(policy)
 
-    def shell_layout_children_changed(self, children):
+    def shell_scrolled_component_changed(self, component):
         """ The change handler for the 'layout_children' attribute of 
         the shell object.
 
         """
-        self._update_children()
+        self.update_scrolled_component()
     
     def size_hint(self):
         """ Returns a (width, height) tuple of integers for the size hint
@@ -128,14 +147,18 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         """
         # Trying to have wx compute a decent size hint is probably
         # the most painful thing i've experienced in programming. It's 
-        # just not worth the effort. For now, just return the default 
-        # size hint used by QAbstractScrollArea.
-        return (256, 192)
+        # just not worth the effort. For now, we try to compute from the
+        # min size of the sizer, and if that fails just return the size 
+        # hint used by QAbstractScrollArea.
+        res = self.widget.GetSizer().CalcMin()
+        if res == (-1, -1):
+            res = (256, 192)
+        return res
 
     #--------------------------------------------------------------------------
     # Widget Update
     #--------------------------------------------------------------------------
-    def _set_horiz_policy(self, policy):
+    def set_horizontal_policy(self, policy):
         """ Set the horizontal scrollbar policy of the widget.
 
         """
@@ -143,7 +166,7 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         vert = SCROLLBAR_POLICY_MAP[self.shell_obj.vertical_scrollbar_policy]
         self.widget.SetScrollRate(horiz, vert)
 
-    def _set_vert_policy(self, policy):
+    def set_vertical_policy(self, policy):
         """ Set the vertical scrollbar policy of the widget.
 
         """
@@ -151,27 +174,10 @@ class WXScrollArea(WXContainer, AbstractTkScrollArea):
         vert = SCROLLBAR_POLICY_MAP[policy]
         self.widget.SetScrollRate(horiz, vert)
    
-    def _update_children(self):
+    def update_scrolled_component(self):
         """ Update the QScrollArea's children with the current children.
 
         """
-        # Setup a custom sizer for the child widget so that it receives
-        # resize events at the appropriate times. There doesn't seem to
-        # be any other way to make this work in wx.
-
-        # XXX at the moment, we don't really handle children updates
-        # properly. This can be done, but we'll need some contracts
-        # in place about the safety of calling a re-setup on a child
-        # when its added or removed from a component dynamically.
-        # For now, we just assume that there is one child, and
-        # that it never changes.
-        #
-        # XXX is the above comment still True? Does Include solve this?
-        children = self.shell_obj.layout_children
-        if len(children) == 0:
-            pass
-        else:
-            sizer = ScrollSizer(children[0])
-            self.widget.SetSizer(sizer)
-            self.widget.Refresh()
+        sizer = self.widget.GetSizer()
+        sizer.Add(self.shell_obj.scrolled_component)
 
