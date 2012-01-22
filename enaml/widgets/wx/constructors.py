@@ -38,9 +38,9 @@ def constructor(base_path):
 
 
 WX_CONSTRUCTORS = dict((
-    constructor('window'),
-    constructor('container'),
+    constructor('main_window'),
     constructor('dialog'),
+    constructor('container'),
     constructor('calendar'),
     constructor('check_box'),
     constructor('combo_box'),
@@ -61,11 +61,10 @@ WX_CONSTRUCTORS = dict((
     constructor('group_box'),
     constructor('progress_bar'),
     constructor('scroll_area'),
-    constructor('tabbed'),
+    constructor('tab_group'),
     constructor('tab'),
     constructor('splitter'),
     constructor('float_slider'),
-    constructor('main_window'),
     constructor('menu_bar'),
     constructor('menu'),
 ))
