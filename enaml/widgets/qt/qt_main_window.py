@@ -65,6 +65,8 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
                 ismac = False
             if ismac:
                 res = 0
+            elif menu_bar.isVisible():
+                res = menu_bar.height()
             else:
                 res = menu_bar.sizeHint().height()
                 if res > 0:
