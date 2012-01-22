@@ -126,39 +126,16 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
         """ Return a size hint for the widget.
 
         """
+        # XXX We're punting here for now. What we need to do is compute
+        # the combined size hints for the children using the algorithm
+        # implementation in QSplitter::sizeHint
         return (296, 172)
-        # along_hint = 0
-        # ortho_hint = 0
-        # shell = self.shell_obj
-        # i = ['horizontal', 'vertical'].index(shell.orientation)
-        # j = 1 - i
-        # for child in shell.children:
-        #     if child.visible:
-        #         size_hint = child.size_hint()
-        #         if size_hint == (-1, -1):
-        #             min_size = child.toolkit_widget.minimumSize()
-        #             size_hint = (min_size.width(), min_size.height())
-        #         # FIXME: Add handle widths? QSplitter doesn't.
-        #         along_hint += size_hint[i]
-        #         ortho_hint = max(ortho_hint, size_hint[j])
-        # if shell.orientation == 'horizontal':
-        #     return (along_hint, ortho_hint)
-        # else:
-        #     return (ortho_hint, along_hint)
 
-    def set_initial_sizes(self):
+    def set_splitter_sizes(self, sizes):
         """ Set the initial sizes for the children.
 
         """
+        # XXX We're punting here for now. We need to do is implement
+        # QSplitter::setSizes
         return
-        # shell = self.shell_obj
-        # i = ['horizontal', 'vertical'].index(shell.orientation)
-        # sizes = []
-        # for child in shell.children:
-        #     hint = child.size_hint()[i]
-        #     if hint <= 0:
-        #         min_size = child.toolkit_widget.minimumSize()
-        #         hint = (min_size.width(), min_size.height())[i]
-        #     sizes.append(hint)
-        # self.widget.setSizes(sizes)
 
