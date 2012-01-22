@@ -214,9 +214,9 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
         """
         super(WXGroupBox, self).initialize()
         shell = self.shell_obj
-        self._set_title(shell.title)
-        self._set_flat(shell.flat)
-        self._set_title_align(shell.title_align)
+        self.set_title(shell.title)
+        self.set_flat(shell.flat)
+        self.set_title_align(shell.title_align)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -226,29 +226,21 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
         shell object.
 
         """
-        # We perform the title update in a relayout context to 
-        # prevent flicker and multiple calls to relayout.
-        def title_update_closure():
-            self._set_title(title)
-        self.shell_obj.relayout_enqueue(title_update_closure)
+        self.shell_obj.request_relayout_task(self.set_title, title)
 
     def shell_flat_changed(self, flat):
         """ Update the flat flag of the group box with the new value from
         the shell object.
 
         """
-        # We perform the title update in a relayout context to 
-        # prevent flicker and multiple calls to relayout.
-        def flat_update_closure():
-            self._set_flat(flat)
-        self.shell_obj.relayout_enqueue(flat_update_closure)
+        self.shell_obj.request_relayout_task(self.set_flat, flat)
 
     def shell_title_align_changed(self, align):
         """ Update the title alignment to the new value from the shell
         object.
 
         """
-        self._set_title_align(align)
+        self.set_title_align(align)
 
     def get_contents_margins(self):
         """ Return the (top, left, right, bottom) margin values for the
@@ -260,19 +252,19 @@ class WXGroupBox(WXContainer, AbstractTkGroupBox):
     #--------------------------------------------------------------------------
     # Widget Update methods
     #--------------------------------------------------------------------------
-    def _set_title(self, title):
+    def set_title(self, title):
         """ Update the title of the group box.
 
         """
         self.widget.SetTitle(title)
 
-    def _set_flat(self, flat):
+    def set_flat(self, flat):
         """ Updates the flattened appearance of the group box.
 
         """
         self.widget.SetFlat(flat)
     
-    def _set_title_align(self, align):
+    def set_title_align(self, align):
         """ Updates the alignment of the title of the group box.
 
         """
