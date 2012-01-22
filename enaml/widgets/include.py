@@ -19,6 +19,14 @@ class Include(BaseComponent):
     included into a parent.
 
     """
+    #: A read-only property which returns the toolkit widget for this
+    #: component. This call is proxied to the parent and will return
+    #: None if the parent does not have a toolkit widget defined. 
+    #: It is necessary to proxy the toolkit_widget so that any child
+    #: Include components can access the proper toolkit widget to 
+    #: pass down to their dynamic components.
+    toolkit_widget = Property
+
     #: The dynamic components of the Include. This is a cached property
     #: which will accept a single component, or a list of components as
     #: input. If the input is a single component, it will be converted
@@ -54,6 +62,16 @@ class Include(BaseComponent):
             val = [val]
         self._components = val
     
+    def _get_toolkit_widget(self):
+        """ The property getter for the 'toolkit_widget' attribute.
+
+        """
+        try:
+            res = self.parent.toolkit_widget
+        except AttributeError:
+            res = None
+        return res
+
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
