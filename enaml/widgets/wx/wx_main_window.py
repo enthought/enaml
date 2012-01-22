@@ -48,11 +48,15 @@ class  WXMainWindow(WXWindow, AbstractTkMainWindow):
         this method returns Zero.
 
         """
-        # XXX can we do better than this?
-        if wx.Platform == '__WXMAC__':
+        menu_bar = self.widget.GetMenuBar()
+        if menu_bar is None:
             res = 0
         else:
-            res = 20
+            # XXX can we do better than this?
+            if wx.Platform == '__WXMAC__':
+                res = 0
+            else:
+                res = 21
         return res
 
     #--------------------------------------------------------------------------
@@ -74,6 +78,9 @@ class  WXMainWindow(WXWindow, AbstractTkMainWindow):
         value from the shell object.
 
         """
+        # We shouldn't need to do anything here since the new widget
+        # will already have been parented properly by the Include and
+        # a relayout will have been requested.
         pass
 
     def set_visible(self, visible):
