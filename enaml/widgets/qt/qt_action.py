@@ -118,13 +118,13 @@ class QtAction(QtComponent, AbstractTkAction):
         """ A signal handler for the 'triggered' signal of the QAction.
 
         """
-        self.shell_obj.triggered = True
+        self.shell_obj.triggered()
 
     def on_hovered(self):
         """ A signal handler for the 'hovered' signal of the QAction.
 
         """
-        self.shell_obj.hovered = True
+        self.shell_obj.hovered()
 
     def on_toggled(self):
         """ A signal handler for the 'toggled' signal of the QAction.
@@ -132,7 +132,7 @@ class QtAction(QtComponent, AbstractTkAction):
         """
         shell = self.shell_obj
         shell.checked = self.widget.isChecked()
-        shell.toggled = True
+        shell.toggled()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods 

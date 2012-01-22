@@ -66,13 +66,13 @@ class QtMenu(QtComponent, AbstractTkMenu):
         """ A signal handler for the 'aboutToShow' signal of the QMenu.
 
         """
-        self.shell_obj.about_to_show = True
+        self.shell_obj.about_to_show()
 
     def on_about_to_hide(self):
         """ A signal handler for the 'aboutToHide' signal of the QMenu.
 
         """
-        self.shell_obj.about_to_hide = True
+        self.shell_obj.about_to_hide()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods 
