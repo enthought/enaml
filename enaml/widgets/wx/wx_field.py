@@ -394,15 +394,15 @@ class WXField(WXControl, AbstractTkField):
             shell = self.shell_obj
             text = self.widget.GetValue()
             shell.field_text = text
-            shell.text_edited = text
             shell._modified = True
+            shell.text_edited(text)
 
     def _on_return_pressed(self, event):
         """ The event handler for the return pressed event.
 
         """
         event.Skip()
-        self.shell_obj.return_pressed(True)
+        self.shell_obj.return_pressed()
 
     def _on_selection_changed(self, event):
         """ The event handler for a selection event.
@@ -506,9 +506,7 @@ class WXField(WXControl, AbstractTkField):
         self.widget = new_widget
         self.bind()
         new_widget.Show()
-        # The size hint *shouldn't* have changed, but it may have, and
-        # we need to have a relayout anyway to put the new widget in the
-        # proper position. This seems to be performant enough at the 
-        # moment, so we can just leave it as is.
-        self.shell_obj.size_hint_updated(True)
+        # We need to have a relayout anyway to put the new widget in the
+        # proper position.
+        self.shell_obj.request_relayout()
 
