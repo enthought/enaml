@@ -36,7 +36,7 @@ class QtTabGroup(QtLayoutComponent, AbstractTkTabGroup):
         self.widget = QtGui.QTabWidget(parent)
 
     def initialize(self):
-        """ Initialize the attributes of the Tabbed container.
+        """ Initialize the attributes of the QTabWidget.
 
         """
         super(QtTabGroup, self).initialize()
