@@ -5,7 +5,8 @@
 """ Command-line tool to run .enaml files.
 
 """
-import argparse
+import optparse
+import sys
 
 import enaml
 from enaml.parsing.parser import parse
@@ -19,29 +20,36 @@ toolkits = {
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
-        description=__doc__,
-    )
-    parser.add_argument('-c', '--component', default='Main',
-        help="The component to view.")
-    parser.add_argument('-t', '--toolkit', default='default',
-        choices=['default', 'wx', 'qt'],
-        help='The toolkit backend to use')
-    parser.add_argument('enaml_file', help='The .enaml file to show.')
+    usage = 'usage: %prog [options] enaml_file'
+    parser = optparse.OptionParser(usage=usage, description=__doc__)
+    parser.add_option('-c', '--component', default='Main',
+                      help='The component to view')
+    parser.add_option('-t', '--toolkit', default='default',
+                      choices=['default', 'wx', 'qt'],
+                      help='The toolkit backend to use')
+    
+    options, args = parser.parse_args()
 
-    args = parser.parse_args()
+    if len(args) == 0:
+        print 'No .enaml file specified'
+        sys.exit()
+    elif len(args) > 1:
+        print 'Too many files specified'
+        sys.exit()
+    else:
+        enaml_file = args[0]
 
-    with open(args.enaml_file) as f:
+    with open(enaml_file) as f:
         enaml_code = f.read()
-    ast = parse(enaml_code, filename=args.enaml_file)
-    ns = {}
+    
+    ast = parse(enaml_code, filename=enaml_file)
 
+    ns = {}
     with enaml.imports():
         EnamlCompiler.compile(ast, ns)
 
-    with toolkits[args.toolkit]():
-        requested = args.component
+    with toolkits[options.toolkit]():
+        requested = options.component
         if requested in ns:
             component = ns[requested]
             window = component()
@@ -49,8 +57,9 @@ def main():
         elif 'main' in ns:
             ns['main']()
         else:
-            msg = "Could not find component '%s'" % args.component
+            msg = "Could not find component '%s'" % options.component
             print msg
+
 
 if __name__ == '__main__':
     main()
