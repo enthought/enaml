@@ -35,15 +35,11 @@ class AbstractTkMenu(AbstractTkComponent):
         raise NotImplementedError
         
     @abstractmethod
-    def popup(self, pos=None, blocking=True):
+    def popup(self, blocking=True):
         """ Create and show the menu as context or popup menu.
 
         Parameters
         ----------
-        pos : (x, y) tuple or None, optional
-            The global position of the origin of the popup menu.
-            If None, the current mouse position is used.
-        
         blocking : boolean, optional
             Whether or not the popup menu should be displayed in a 
             blocking context. If False, then this menu object must
@@ -83,7 +79,7 @@ class Menu(Component):
         flt = lambda child: isinstance(child, (Menu, Action))
         return filter(flt, self.children)
 
-    def popup(self, pos=None, blocking=True, parent=None):
+    def popup(self, blocking=True, parent=None):
         """ Create and show the menu as context or popup menu.
 
         If the menu has not been initialized when this method is
@@ -91,15 +87,12 @@ class Menu(Component):
 
         Parameters
         ----------
-        pos : (x, y) tuple or None, optional
-            The global position of the origin of the popup menu.
-            If None, the current mouse position is used.
-
         blocking : boolean, optional
             Whether or not the popup menu should be displayed in a 
             blocking context. If False, then this menu object must
             be stored on the heap or it will be immediately garbage
-            collected. Defaults to True.
+            collected. Defaults to True. This option may not be 
+            supported on all toolkit backends. 
         
         parent : Toolkit widget or None, optional
             The parent on which to popup the menu. This only has an
@@ -112,5 +105,5 @@ class Menu(Component):
         """
         if not self.initialized:
             self.setup(parent)
-        self.abstract_obj.popup(pos=pos, blocking=blocking)
+        self.abstract_obj.popup(blocking=blocking)
 
