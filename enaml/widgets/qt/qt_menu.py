@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui, QtCore
+from .qt import QtGui
 from .qt_component import QtComponent
 
 from ..menu import AbstractTkMenu
@@ -29,8 +29,7 @@ class QtMenu(QtComponent, AbstractTkMenu):
 
         """
         super(QtMenu, self).initialize()
-        shell = self.shell_obj
-        self.set_title(shell.title)
+        self.set_title(self.shell_obj.title)
         self.update_contents()
     
     def bind(self):
@@ -91,8 +90,11 @@ class QtMenu(QtComponent, AbstractTkMenu):
             child_widget = item.toolkit_widget
             if isinstance(child_widget, QtGui.QMenu):
                 widget.addMenu(child_widget)
-            else:
+            elif isinstance(child_widget, QtGui.QAction):
                 widget.addAction(child_widget)
+            else:
+                msg = 'Invalid child for QMenu: %s'
+                raise TypeError(msg % child_widget)
 
     def set_title(self, title):
         """ Sets the title of the QMenu object.
@@ -103,16 +105,12 @@ class QtMenu(QtComponent, AbstractTkMenu):
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
     #--------------------------------------------------------------------------
-    def popup(self, pos=None, blocking=True):
-        """ Pops up the menu at the appropriate position using a blocking
-        context if requested.
+    def popup(self, blocking=True):
+        """ Pops up the menu using a blocking context if requested,
+        using the current position of the cursor.
 
         """
-        if pos is None:
-            pos = QtGui.QCursor.pos()
-        else:
-            pos = QtCore.QPoint(*pos)
-
+        pos = QtGui.QCursor.pos()
         if blocking:
             self.widget.exec_(pos)
         else:
