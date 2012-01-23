@@ -154,11 +154,20 @@ class WXTabGroup(WXLayoutComponent, AbstractTkTabGroup):
         # ones. If we use DeleteAllPages(), then the child widgets would
         # be destroyed, which is not the behavior we want.
         widget = self.widget
-        old_idx = widget.GetSelection()
+        shell = self.shell_obj
         while widget.GetPageCount():
             widget.RemovePage(0)
-        for tab in self.shell_obj.tabs:
+        for idx, tab in enumerate(shell.tabs):
             widget.AddPage(tab.toolkit_widget, tab.title)
-        if old_idx != -1:
-            widget.SetSelection(old_idx)        
-        
+
+        # This bit of logic is required or all the tabs draw on
+        # top of themselves initially.
+        selected = self.shell_obj.selected_tab
+        if selected is not None:
+            for idx, tab in enumerate(shell.tabs):
+                if tab is not selected:
+                    tab.set_visible(False)
+                else:
+                    tab.set_visible(True)
+                    widget.SetSelection(idx)
+
