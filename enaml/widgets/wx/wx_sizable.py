@@ -89,14 +89,16 @@ class WXSizable(AbstractTkSizable):
         widget = self.widget
         widget_width, widget_height = widget.GetSizeTuple()
         client_width, client_height = widget.GetClientSizeTuple()
-        min_width = min_width + (widget_width - client_width)
-        min_height = min_height + (widget_height - client_height)
+        delta_width = widget_width - client_width
+        delta_height = widget_height - client_height
+        min_width = min_width + delta_width
+        min_height = min_height + delta_height
 
         # Wx won't automatically reset the max size if the min size
         # is larger. Ugh....
         max_width, max_height = self.max_size()
-        max_width = max(min_width, max_width)
-        max_height = max(min_height, max_height)
+        max_width = max(min_width, max_width + delta_width)
+        max_height = max(min_height, max_height + delta_height)
         self.widget.SetMaxSize((max_width, max_height))
 
         widget.SetMinSize((min_width, min_height))
@@ -138,17 +140,19 @@ class WXSizable(AbstractTkSizable):
         # now, we just fake computation and use the Qt limits.
         widget = self.widget
         widget_width, widget_height = widget.GetSizeTuple()
-        client_width, client_height = widget.GetClientSizeTuple() 
-        max_width = max_width + (widget_width - client_width)
-        max_height = max_height + (widget_height - client_height)
+        client_width, client_height = widget.GetClientSizeTuple()
+        delta_width = widget_width - client_width
+        delta_height = widget_height - client_height 
+        max_width = max_width + delta_width
+        max_height = max_height + delta_height
         max_width = min(max_width, 16777215)
         max_height = min(max_height, 16777215)
 
         # Wx won't automatically reset the min size if the max size
         # is smaller. Ugh....
         min_width, min_height = self.min_size()
-        min_width = min(min_width, max_width)
-        min_height = min(min_height, max_height)
+        min_width = min(min_width + delta_width, max_width)
+        min_height = min(min_height + delta_height, max_height)
         self.widget.SetMinSize((min_width, min_height))
 
         self.widget.SetMaxSize((max_width, max_height))
