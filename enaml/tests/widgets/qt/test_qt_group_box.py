@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from unittest import expectedFailure
+
 from enaml.widgets.qt.qt import QtCore
 from .qt_test_assistant import QtTestAssistant
 from .. import group_box
@@ -19,6 +21,10 @@ class TestQtGroupBox(QtTestAssistant, group_box.TestGroupBox):
     # events on qt still doesn't seem to empty the relayout
     # queue which has call-later events waiting. Without
     # those being processed, the title update never happens.
+    @expectedFailure
+    def test_title_changed(self):
+        super(TestGroupBox, self).test_title_changed(self)
+
     def get_title(self, component, widget):
         """ Returns the title text from the tookit widget
 
@@ -33,6 +39,10 @@ class TestQtGroupBox(QtTestAssistant, group_box.TestGroupBox):
     # events on qt still doesn't seem to empty the relayout
     # queue which has call-later events waiting. Without
     # those being processed, the flat update never happens.
+    @expectedFailure
+    def test_flat_style_changed(self):
+        super(TestGroupBox, self).test_flat_style_changed(self)
+
     def get_flat(self, component, widget):
         """ Returns the flat style status from the tookit widget
 

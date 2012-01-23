@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from unittest import expectedFailure
-
 from traits.api import TraitError
 
 from .enaml_test_case import EnamlTestCase, required_method
@@ -73,7 +71,6 @@ MainView(MainWindow):
 
     # This is an expected failure on Qt since the call later event
     # do not get process without the event loop running.
-    @expectedFailure
     def test_title_changed(self):
         """ Change the title text of the GroupBox.
 
@@ -84,7 +81,6 @@ MainView(MainWindow):
 
     # This is an expected failure on Qt since the call later event
     # do not get process without the event loop running.
-    @expectedFailure
     def test_flat_style_changed(self):
         """ Change the flat style border of the GroupBox.
 
