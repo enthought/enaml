@@ -13,6 +13,5 @@ class TestWXWindow(WXTestAssistant, window.TestWindow):
         """ Get a window's title.
 
         """
-        frame = widget.GetParent()
-        return frame.GetTitle()
+        return widget.GetTitle()
 
