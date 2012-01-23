@@ -13,7 +13,7 @@ QT_2_ENAML_ALIGNMENTS = {int(QtCore.Qt.AlignLeft): 'left',
                          int(QtCore.Qt.AlignHCenter): 'center'}
 
 
-class TestGroupBox(QtTestAssistant, group_box.TestGroupBox):
+class TestQtGroupBox(QtTestAssistant, group_box.TestGroupBox):
 
     # This test is an expected failure since calling process
     # events on qt still doesn't seem to empty the relayout
