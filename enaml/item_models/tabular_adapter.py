@@ -1,3 +1,8 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2011, Enthought, Inc.
+# All rights reserved.
+#------------------------------------------------------------------------------
+
 from collections import Sequence
 
 from traits.api import Any, Bool, Instance, Str

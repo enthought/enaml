@@ -120,5 +120,3 @@ Main(MainWindow):
             clicked >> company.give_raise()
             enabled << company.employee is not None
 
-
-
