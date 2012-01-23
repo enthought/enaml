@@ -3,8 +3,9 @@
 # All rights reserved.
 #------------------------------------------------------------------------------
 from abc import abstractmethod
+from itertools import izip_longest
 
-from traits.api import Bool
+from traits.api import Bool, List, Either, Int
 
 from .container import Container
 from .layout_component import LayoutComponent, AbstractTkLayoutComponent
@@ -66,7 +67,11 @@ class Splitter(LayoutTaskHandler, LayoutComponent):
     #: (True), or if a simple indicator is drawn until the drag handle
     #: is released (False). The default is True.
     live_drag = Bool(True)
-
+    
+    #: A list of preferred sizes for each compartment of the splitter, or None
+    #: if there is no preference for the size.
+    preferred_sizes = List(Either(None, Int, default=None))
+    
     #: How strongly a component hugs it's contents' width. A Splitter
     #: container ignores its width hug by default, so it expands freely
     #: in width.
@@ -143,15 +148,19 @@ class Splitter(LayoutTaskHandler, LayoutComponent):
 
         """
         # TODO - the setting of the min sizes here could be cleaner
+        num_children = len(self.layout_children)
         sizes = []
         i = ['horizontal', 'vertical'].index(self.orientation)
-        for child in self.layout_children:
-            if isinstance(child, Container):
-                min_size = child.compute_min_size()
-                child.set_min_size(*min_size)
-            hint = child.size_hint()[i]
-            if hint <= 0:
-                hint = child.min_size()[i]
-            sizes.append(hint)
+        for child, size in izip_longest(self.layout_children, self.preferred_sizes[:num_children]):
+            if size is None:
+                if isinstance(child, Container):
+                    min_size = child.compute_min_size()
+                    child.set_min_size(*min_size)
+                hint = child.size_hint()[i]
+                if hint <= 0:
+                    hint = child.min_size()[i]
+                sizes.append(hint)
+            else:
+                sizes.append(size)
         self.abstract_obj.set_splitter_sizes(sizes)
     
