@@ -9,7 +9,7 @@ from .enaml_test_case import EnamlTestCase, required_method
 
 
 class TestEvents(object):
-    """ Events required by the testcase. 
+    """ Events required by the testcase.
 
     """
     #: The left button is pressed
@@ -143,7 +143,7 @@ MainView(MainWindow):
         self.assertEqual(self.events, [])
 
     def test_change_maximum_invalid(self):
-        """ Test attempting to set an invalid value to the maximum range 
+        """ Test attempting to set an invalid value to the maximum range
         of the slider.
 
         """
@@ -156,7 +156,7 @@ MainView(MainWindow):
         self.assertEqual(self.events, [])
 
     def test_change_minimum_invalid(self):
-        """ Test attempting to set an invalid value to the minimum range 
+        """ Test attempting to set an invalid value to the minimum range
         of the slider.
 
         """
@@ -299,11 +299,10 @@ MainView(MainWindow):
         component.value = 50
         self.send_event(self.widget, TestEvents.PRESSED)
         self.assertEqual(['pressed'], events)
-    
-    # This fails on windows because the underlying size of the
+
+    # This fails on windows under wx because the underlying size of the
     # of the widget is not reliable. So the precomputed mouse
     # position for the mouse event which is sent can be wrong.
-    @expectedFailure
     def test_releasing_the_thumb(self):
         """ Test firing events when the thumb is released.
 
@@ -351,7 +350,7 @@ MainView(MainWindow):
         self.assertEqual(events, [])
 
     def test_move_down_by_one_step(self):
-        """ Test firing events and value when the thumb is moved by one 
+        """ Test firing events and value when the thumb is moved by one
         step down.
 
         """
@@ -363,7 +362,7 @@ MainView(MainWindow):
         self.assertEqual(events, [])
 
     def test_move_up_by_one_step(self):
-        """ Test firing events and value when the thumb is moved by one 
+        """ Test firing events and value when the thumb is moved by one
         step up.
 
         """
@@ -375,7 +374,7 @@ MainView(MainWindow):
         self.assertEqual(events, [])
 
     def test_move_down_by_one_page(self):
-        """ Test firing events and value when the thumb is moved by one 
+        """ Test firing events and value when the thumb is moved by one
         page down.
 
         """
@@ -387,7 +386,7 @@ MainView(MainWindow):
         self.assertEqual(events, [])
 
     def test_move_up_by_one_page(self):
-        """ Test firing events and value when the thumb is moved by one 
+        """ Test firing events and value when the thumb is moved by one
         page up.
 
         """
