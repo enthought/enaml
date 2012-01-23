@@ -1,0 +1,124 @@
+#------------------------------------------------------------------------------
+# Copyright (c) 2011, Enthought, Inc.
+# All rights reserved.
+#------------------------------------------------------------------------------
+""" Demonstrate the use of a legacy Traits UI TabularAdapter in an Enaml
+TableView.
+
+This example displays a list of company employees and their salaries. The
+formatting of the data is controlled by a Traits UI TabularAdapter. Below the
+table is a button that you can use to give the selected employee a raise. This
+button is disabled until the user selects an employee. The amount of the raise
+is editable in the field next to the button. When the user presses the button,
+the selected employee's salary will immediately increase by the given amount.
+
+"""
+
+
+from enaml.stdlib.fields import IntField
+from enaml.item_models.tabular_adapter import TabularAdapterModel
+
+:: python ::
+
+import locale
+
+from traits.api import HasTraits, Instance, Int, List, Property, Str
+from traitsui.tabular_adapter import TabularAdapter
+
+
+class Employee(HasTraits):
+    name = Str()
+    salary = Int()
+
+class EmployeeAdapter(TabularAdapter):
+    columns = [
+        ('Name', 'name'),
+        ('Salary', 'salary'),
+    ]
+
+    salary_text = Property()
+    def _get_salary_text(self):
+        """ Nicely format the salary amount.
+
+        """
+        locale.setlocale(locale.LC_MONETARY, 'en_US.utf-8')
+        try:
+            text = locale.currency(self.item.salary)
+        finally:
+            locale.resetlocale()
+        return text
+
+
+class Company(HasTraits):
+    employees = List(Employee)
+    employee = Instance(Employee)
+    pay_raise = Int(1000)
+
+    def give_raise(self):
+        """ Give an employee a raise.
+
+        """
+        if self.employee is not None:
+            self.employee.salary += self.pay_raise
+
+
+def _get_selected_items(selection_model):
+    # FIXME: We should roll this up somewhere in the selection models or
+    # TabularAdapterModel.
+    selection = selection_model.get_selection()
+    items = [selection_model.item_model.item(rect[0]) for rect in selection]
+    return items
+
+def _get_selected_item(selection_model):
+    item = None
+    selection = selection_model.get_selection()
+    if selection:
+        item = selection_model.item_model.item(selection[0][0])
+    return item
+
+:: end ::
+
+
+TabularSelectionModel(RowSelectionModel):
+    attr item_model: object = None
+    attr selected_items: list = []
+    attr selected_item: object = None
+    selection_event >> self.trait_set(selected_items=_get_selected_items(self))
+    selection_event >> self.trait_set(selected_item=_get_selected_item(self))
+
+
+Main(MainWindow):
+    attr company: Company = Company(employees=[
+        Employee(name = 'Fred',   salary = 45000),
+        Employee(name = 'Sally',  salary = 52000),
+        Employee(name = 'Jim',    salary = 39000),
+        Employee(name = 'Helen',  salary = 41000),
+        Employee(name = 'George', salary = 49000),
+        ])
+    Container:
+        constraints = [
+            vbox(tv, hbox(label, pay_raise, _space_, give_raise)),
+        ]
+        TableView:
+            id: tv
+            item_model = TabularAdapterModel(company, 'employees',
+                adapter=EmployeeAdapter(), auto_update=True)
+            vertical_header_visible = False
+            TabularSelectionModel:
+                item_model = parent.item_model
+                selection_mode = 'single'
+                selected_item := company.employee
+        Label:
+            id: label
+            text = 'Pay increase:'
+        IntField:
+            id: pay_raise
+            value := company.pay_raise
+        PushButton:
+            id: give_raise
+            text = 'Give Raise'
+            clicked >> company.give_raise()
+            enabled << company.employee is not None
+
+
+
