@@ -78,6 +78,7 @@ class EnamlTestCase(unittest.TestCase):
             cmpnt = view(**kwargs)
 
         toolkit.app.initialize()
+        self.app = toolkit.app.app_object()
         cmpnt.setup()
         return cmpnt
 
