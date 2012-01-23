@@ -67,5 +67,6 @@ WX_CONSTRUCTORS = dict((
     constructor('float_slider'),
     constructor('menu_bar'),
     constructor('menu'),
+    constructor('action'),
 ))
 
