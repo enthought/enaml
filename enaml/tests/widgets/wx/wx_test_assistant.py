@@ -11,8 +11,7 @@ import wx
 from enaml.toolkit import wx_toolkit
 
 
-# temporarily disable the wx tests until its refactor has caught up.
-skip_nonwindows = skipUnless(False, #sys.platform.startswith('win'),
+skip_nonwindows = skipUnless(sys.platform.startswith('win'),
     "The wx backend is only supported on Windows.")
 
 
