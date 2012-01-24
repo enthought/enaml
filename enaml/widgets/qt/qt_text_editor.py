@@ -246,6 +246,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """ Find the text in the editor.
         
         Returns True and sets the cursor position if found, otherwise returns False
+        
         """
         options = QtGui.QTextDocument.FindFlags()
         if backwards:

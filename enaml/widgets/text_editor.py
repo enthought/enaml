@@ -15,6 +15,7 @@ class AbstractTkTextEditor(AbstractTkControl):
     
     This is not a general text edit widget with general capabilties for sophistcated
     formatting or image display.
+    
     """
     
     @abstractmethod
@@ -102,6 +103,7 @@ class AbstractTkTextEditor(AbstractTkControl):
         """ Find the text in the editor.
         
         Returns True and sets the cursor position if found, otherwise returns False
+        
         """
         raise NotImplementedError
 
@@ -110,6 +112,7 @@ class TextEditor(Control):
     
     This is not a general text edit widget with general capabilties for sophistcated
     formatting or image display.
+    
     """
 
     #: Whether or not the editor is read only.
@@ -330,6 +333,7 @@ class TextEditor(Control):
         """ Find the text in the editor.
         
         Returns True and sets the cursor position if found, otherwise returns False
+        
         """
         self.abstract_obj.find(text, backwards, case_sensitive, whole_words)
 
