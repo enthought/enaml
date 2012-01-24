@@ -32,7 +32,7 @@ class imports(object):
 
     @classmethod
     def get_importers(cls):
-        """ Returns the currently active importers in use for the 
+        """ Returns a tuple of currently active importers in use for the
         framework.
 
         """
@@ -43,7 +43,7 @@ class imports(object):
             # have at least one importer . 
             from .import_hooks import EnamlImporter
             importers[0] = EnamlImporter
-        return importers
+        return tuple(importers)
 
     @classmethod
     def append_importer(cls, importer):
@@ -76,10 +76,7 @@ class imports(object):
         """ Initializes an Enaml import context.
 
         """
-        # We create a copy of the importers list, so can make sure
-        # to uninstall them at the end of the context, even if 
-        # they were removed from the importers list during operation.
-        self.importers = list(self.get_importers())
+        self.importers = self.get_importers()
 
     def __enter__(self):
         """ Installs the current importer upon entering the context.
