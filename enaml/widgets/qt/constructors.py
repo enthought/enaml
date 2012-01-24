@@ -98,6 +98,8 @@ QT_CONSTRUCTORS = dict((
     constructor('spin_box'),
     constructor('traitsui_item'),
     constructor('enable_canvas'),
+    constructor('text_editor'),
+    constructor('code_editor'),
     constructor('list_view'),
     constructor('table_view'),
     constructor('tree_view'),

@@ -1,0 +1,83 @@
+from enaml.styling.font import Font
+
+EditorPanel(Container):
+    editor = None
+    GroupBox:
+        title = 'Properties'
+        flat = True
+        CheckBox:
+            text = 'Wrap lines'
+            checked := editor.wrap_lines
+        CheckBox:
+            text = 'Read only'
+            checked := editor.read_only
+        CheckBox:
+            text = 'Overwrite'
+            checked := editor.overwrite
+        ComboBox:
+            value := editor.language
+            lexers = {
+                'python': 'Python',
+                'c': 'C',
+                'c++': 'C++',
+                'html': 'HTML',
+            }
+            items = sorted(lexers.keys())
+            to_string = lexers.get
+        PushButton:
+            text = 'Comment'
+            clicked >> editor.block_comment()
+        PushButton:
+            text = 'Indent'
+            clicked >> editor.block_indent()
+        PushButton:
+            text = 'Unindent'
+            clicked >> editor.block_unindent()
+    Container:
+        constraints = [
+            vbox(find_field,
+                hbox(case_sensitive, whole_words, _space_),
+                hbox(_space_, next, prev),
+            ),
+            align('top', case_sensitive, whole_words),
+            align('top', next, prev),
+            case_sensitive.width == whole_words.width,
+            next.width == prev.width,
+        ]
+        Field:
+            id: find_field
+            value >> editor.find(value, False, case_sensitive.checked, whole_words.checked)
+        CheckBox:
+            id: case_sensitive
+            text = "Case Sensitive"
+        CheckBox:
+            id: whole_words
+            text = "Whole Words"
+        PushButton:
+            id: next
+            text = 'Next'
+            clicked >> editor.find(find_field.value, False, case_sensitive.checked, whole_words.checked)
+        PushButton:
+            id: prev
+            text = 'Prev'
+            clicked >> editor.find(find_field.value, True, case_sensitive.checked, whole_words.checked)
+
+defn MainWindow():
+    Window:
+        title = "Text Editor"
+        constraints = [
+            hbox(vbox(code_editor, cursor_info),
+                vbox(editor_panel, _space_)),
+        ]
+        CodeEditor:
+            id: code_editor
+            initialized >> set_text('Test')
+            font = 'Courier 12'
+            language = 'python'
+        Label:
+            id: cursor_info
+            text << '%d/%d' % (code_editor.cursor_line, code_editor.cursor_column)
+        EditorPanel:
+            id: editor_panel
+            editor = code_editor
+            pass

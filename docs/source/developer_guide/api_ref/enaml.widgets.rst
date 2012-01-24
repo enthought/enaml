@@ -21,6 +21,7 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.bounded_datetime.BoundedDatetime
     enaml.widgets.calendar.Calendar
     enaml.widgets.check_box.CheckBox
+    enaml.widgets.code_editor.CodeEditor
     enaml.widgets.combo_box.ComboBox
     enaml.widgets.component.Component
     enaml.widgets.container.Container
@@ -37,6 +38,7 @@ user-facing views and the underlying graphical toolkits.
     enaml.widgets.slider.Slider
     enaml.widgets.spin_box.SpinBox
     enaml.widgets.table_view.TableView
+    enaml.widgets.text_editor.TextEditor
     enaml.widgets.toggle_control.ToggleControl
     enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.window.Window
@@ -62,6 +64,7 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.bounded_datetime.AbstractTkBoundedDatetime
     enaml.widgets.calendar.AbstractTkCalendar
     enaml.widgets.check_box.AbstractTkCheckBox
+    enaml.widgets.code_editor.AbstractTkCodeEditor
     enaml.widgets.combo_box.AbstractTkComboBox
     enaml.widgets.component.AbstractTkComponent
     enaml.widgets.container.AbstractTkContainer
@@ -78,6 +81,7 @@ class, which wraps an actual toolkit widget.
     enaml.widgets.slider.AbstractTkSlider
     enaml.widgets.spin_box.AbstractTkSpinBox
     enaml.widgets.table_view.AbstractTkTableView
+    enaml.widgets.text_editor.AbstractTkTextEditor
     enaml.widgets.toggle_control.AbstractTkToggleControl
     enaml.widgets.traitsui_item.AbstractTkTraitsUIItem
     enaml.widgets.window.AbstractTkWindow
@@ -144,6 +148,8 @@ Special widgets
     :template: widget.rst
 
     enaml.widgets.html.Html
+    enaml.widgets.text_editor.TextEditor
+    enaml.widgets.code_editor.CodeEditor
     enaml.widgets.traitsui_item.TraitsUIItem
     enaml.widgets.enable_canvas.EnableCanvas
     enaml.widgets.table_view.TableView
