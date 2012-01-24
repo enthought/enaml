@@ -25,10 +25,60 @@ class imports(object):
     down all of their other imports.
 
     """
+    #: The framework-wide importer in use for importing Enaml modules
+    __importer = None
+
+    @classmethod
+    def get_importer(cls):
+        """ Returns the currently active importer in use for the 
+        framework.
+
+        """
+        importer = cls.__importer
+        if importer is None:
+            # This avoid a circular import between the compiler, this
+            # module, and the import hooks.
+            from .import_hooks import EnamlImporter
+            cls.__importer = importer = EnamlImporter
+        return importer
+
+    @classmethod
+    def set_importer(cls, importer):
+        """ Sets the framework-wide importer to use for importing
+        Enaml modules. It must be a subclass of AbstractEnamlImporter.
+
+        """
+        # This avoid a circular import between the compiler, this
+        # module, and the import hooks.
+        from .import_hooks import AbstractEnamlImporter
+        if not issubclass(importer, AbstractEnamlImporter):
+            msg = ('An Enaml importer must be a subclass of '
+                   'AbstractEnamlImporter. Got %s instead.')
+            raise TypeError(msg % importer)
+        cls.__importer = importer
+    
+    @classmethod
+    def reset_importer(cls):
+        """ Resets any custom installed enaml importer to the default.
+
+        """
+        cls.__importer = None
+
+    def __init__(self):
+        """ Initializes an Enaml import context.
+
+        """
+        self.importer = self.get_importer()
+
     def __enter__(self):
-        from .import_hooks import EnamlImporter
-        EnamlImporter.install()
+        """ Installs the current importer upon entering the context.
+
+        """
+        self.importer.install()
     
     def __exit__(self, *args, **kwargs):
-        from .import_hooks import EnamlImporter
-        EnamlImporter.uninstall()
+        """ Uninstalls the current importer when leaving the context.
+
+        """
+        self.importer.uninstall()
+

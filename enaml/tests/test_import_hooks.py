@@ -26,22 +26,26 @@ class TestImportHooks(unittest.TestCase):
         """ Test that EnamlImporter can be installed in a nested manner.
 
         """
-        self.assertEquals(import_hooks.EnamlImporter.install_count, 0)
-        self.assertEquals(len(import_hooks.sys.meta_path), 0)
+        importer = import_hooks.EnamlImporter
+        counts = importer._install_count
+        meta_path = import_hooks.sys.meta_path
 
-        import_hooks.EnamlImporter.install()
-        self.assertEquals(import_hooks.EnamlImporter.install_count, 1)
-        self.assertEquals(len(import_hooks.sys.meta_path), 1)
+        self.assertEquals(counts[importer], 0)
+        self.assertEquals(len(meta_path), 0)
 
-        import_hooks.EnamlImporter.install()
-        self.assertEquals(import_hooks.EnamlImporter.install_count, 2)
-        self.assertEquals(len(import_hooks.sys.meta_path), 1)
+        importer.install()
+        self.assertEquals(counts[importer], 1)
+        self.assertEquals(len(meta_path), 1)
 
-        import_hooks.EnamlImporter.uninstall()
-        self.assertEquals(import_hooks.EnamlImporter.install_count, 1)
-        self.assertEquals(len(import_hooks.sys.meta_path), 1)
+        importer.install()
+        self.assertEquals(counts[importer], 2)
+        self.assertEquals(len(meta_path), 1)
 
-        import_hooks.EnamlImporter.uninstall()
-        self.assertEquals(import_hooks.EnamlImporter.install_count, 0)
-        self.assertEquals(len(import_hooks.sys.meta_path), 0)
+        importer.uninstall()
+        self.assertEquals(counts[importer], 1)
+        self.assertEquals(len(meta_path), 1)
+
+        importer.uninstall()
+        self.assertEquals(counts[importer], 0)
+        self.assertEquals(len(meta_path), 0)
 
