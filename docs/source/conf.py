@@ -45,7 +45,7 @@ extensions = [
     'sphinx.ext.graphviz',
     'sphinx.ext.inheritance_diagram',
     'sphinx.ext.autosummary',
-    'refactor_doc',
+    'refactordoc',
     'enamldoc.sphinx_ext',            
     ]
 

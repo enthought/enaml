@@ -88,8 +88,6 @@ objects.
     enamldoc.sphinx_ext.EnamlDomain
 
 
-
-
 Including the Sphinx extension ``refactor_doc`` allows use of formatted
 docstrings as described below.
 
