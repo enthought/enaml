@@ -10,13 +10,14 @@ from ..text_editor import AbstractTkTextEditor
 
 from ...guard import guard
 
+
 class QtTextEditor(QtControl, AbstractTkTextEditor):
     """ A Qt implementation of a Field.
 
-    QtTextEditor uses a QPlainTextEdit to provide a simple text editor widget.
+    QtTextEditor uses a QPlainTextEdit to provide a simple text editor
+    widget.
 
     """
-
     #--------------------------------------------------------------------------
     # SetupMethods
     #--------------------------------------------------------------------------
@@ -24,7 +25,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """ Creates the underlying QTextEditor.
 
         """
-        self.widget = QtGui.QPlainTextEdit(parent=parent)
+        self.widget = QtGui.QPlainTextEdit(parent)
 
     def initialize(self):
         """ Initializes the attributes of the Qt widget.
@@ -32,9 +33,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         super(QtTextEditor, self).initialize()
         shell = self.shell_obj
-        self.set_read_only(shell.read_only)
-        
         shell._modified = False
+        self.set_read_only(shell.read_only)
         self.set_cursor_position(shell.cursor_position)
         self.set_anchor_position(shell.anchor_position)
         self.set_wrap_lines(shell.wrap_lines)
@@ -50,11 +50,9 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         widget.selectionChanged.connect(self.on_selection)
         widget.cursorPositionChanged.connect(self.on_cursor)
 
-
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-
     def shell_read_only_changed(self, read_only):
         """ The change handler for the 'read_only' attribute on the
         parent.
@@ -67,7 +65,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the parent.
 
         """
-        if guard.guarded('setting_text'):
+        if not guard.guarded(self, 'setting_cursor'):
             self.set_cursor_position(cursor_position)
 
     def shell_anchor_position_changed(self, anchor_position):
@@ -75,17 +73,19 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the parent.
 
         """
-        if guard.guarded('setting_text'):
+        if not guard.guarded(self, 'setting_cursor'):
             self.set_anchor_position(anchor_position)
     
     def shell_overwrite_changed(self, overwrite):
-        """ The change handler for the 'overwrite' attribute on the parent.
+        """ The change handler for the 'overwrite' attribute on the 
+        parent.
 
         """
         self.set_overwrite(overwrite)
     
     def shell_wrap_lines_changed(self, wrap_lines):
-        """ The change handler for the 'wrap_lines' attribute on the parent.
+        """ The change handler for the 'wrap_lines' attribute on the 
+        parent.
 
         """
         self.set_wrap_lines(wrap_lines)
@@ -131,8 +131,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
     def backspace(self):
         """ Simple backspace functionality.
 
-        If no text is selected, deletes the character to the left
-        of the cursor. Otherwise, it deletes the selected text.
+        If no text is selected, deletes the character to the left of 
+        the cursor. Otherwise, it deletes the selected text.
 
         """
         self.widget.backspace()
@@ -141,8 +141,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
     def delete(self):
         """ Simple delete functionality.
 
-        If no text is selected, deletes the character to the right
-        of the cursor. Otherwise, it deletes the selected text.
+        If no text is selected, deletes the character to the right of 
+        the cursor. Otherwise, it deletes the selected text.
 
         """
         self.widget.del_()
@@ -154,8 +154,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         Arguments
         ---------
         mark : bool, optional
-            If True, select the text from the current position to the end of
-            the line edit. Defaults to False.
+            If True, select the text from the current position to the 
+            end of the line edit. Defaults to False.
 
         """
         widget = self.widget
@@ -173,8 +173,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         Arguments
         ---------
         mark : bool, optional
-            If True, select the text from the current position to
-            the beginning of the line edit. Defaults to False.
+            If True, select the text from the current position to the 
+            beginning of the line edit. Defaults to False.
 
         """
         widget = self.widget
@@ -189,8 +189,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
     def cut(self):
         """ Cuts the selected text from the line edit.
 
-        Copies the selected text to the clipboard then deletes the selected
-        text from the line edit.
+        Copies the selected text to the clipboard then deletes the 
+        selected text from the line edit.
 
         """
         self.widget.cut()
@@ -206,8 +206,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
     def paste(self):
         """ Paste the contents of the clipboard into the line edit.
 
-        Inserts the contents of the clipboard into the line edit at
-        the current cursor position, replacing any selected text.
+        Inserts the contents of the clipboard into the line edit at the 
+        current cursor position, replacing any selected text.
 
         """
         self.widget.paste()
@@ -216,8 +216,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
     def insert(self, text):
         """ Insert the text into the line edit.
 
-        Inserts the given text at the current cursor position,
-        replacing any selected text.
+        Inserts the given text at the current cursor position, replacing
+        any selected text.
 
         Arguments
         ---------
@@ -243,9 +243,29 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         self.update_shell_selection()
 
     def find(self, text, backwards=False, case_sensitive=False, whole_words=False):
-        """ Find the text in the editor.
+        """ Finds the text in the editor and sets the cursor to that 
+        position.
+
+        Parameters
+        ----------
+        text : string
+            The text to find in the buffer
+
+        backwards : bool, optional
+            If True search starting at the end of the buffer. Defaults
+            to False.
         
-        Returns True and sets the cursor position if found, otherwise returns False
+        case_sensitive : bool, optional
+            If True, the text matching is case sensitive. Defaults to 
+            False.
+        
+        whole_words : bool, optional
+            If True, only complete words are matched. Defaults to False.
+
+        Returns
+        -------
+        result : bool
+            True if the text was found, False otherwise.
         
         """
         options = QtGui.QTextDocument.FindFlags()
@@ -261,12 +281,11 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """ The event handler for the text update event.
 
         """
-        widget = self.widget
         shell = self.shell_obj
         self.update_shell_selection()
-        shell.text_edited(True)
         shell._modified = True
-        shell.text_changed(True)
+        shell.text_edited()
+        shell.text_changed()
 
     def on_selection(self):
         """ The event handler for a selection (really a left up) event.
@@ -281,8 +300,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         self.update_shell_selection()
 
     def update_shell_selection(self):
-        """ Updates the selection and cursor position of the parent
-        to reflect the current state of the widget.
+        """ Updates the selection and cursor position of the parent to 
+        reflect the current state of the widget.
 
         """
         shell = self.shell_obj
@@ -290,7 +309,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         selected_text = cursor.selectedText()
         selected_text = selected_text.replace(u'\u2029', '\n') # replace unicode line break
         shell._selected_text = selected_text
-        with guard('setting_text'):
+        with guard(self, 'setting_cursor'):
             shell.cursor_position = cursor.position()
             shell.anchor_position = cursor.anchor()
             shell._cursor_column = cursor.positionInBlock()
@@ -345,3 +364,4 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
 
         """
         self.widget.setOverwriteMode(overwrite)
+

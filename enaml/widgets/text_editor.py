@@ -4,20 +4,20 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Event, Int, Str, Enum, Property, Instance, Any
+from traits.api import Bool, Int, Str, Property, Instance
 
 from .control import Control, AbstractTkControl
 
 from ..util.trait_types import EnamlEvent
 
+
 class AbstractTkTextEditor(AbstractTkControl):
     """ A text editor widget capable of editing plain text with styles.
     
-    This is not a general text edit widget with general capabilties for sophistcated
-    formatting or image display.
+    This is not a general text edit widget with general capabilties for 
+    sophistcated formatting or image display.
     
     """
-    
     @abstractmethod
     def shell_cursor_position_changed(self, cursor_position):
         raise NotImplementedError
@@ -100,26 +100,46 @@ class AbstractTkTextEditor(AbstractTkControl):
     
     @abstractmethod
     def find(self, text, backwards=False, case_sensitive=False, whole_words=False):
-        """ Find the text in the editor.
+        """ Finds the text in the editor and sets the cursor to that 
+        position.
+
+        Parameters
+        ----------
+        text : string
+            The text to find in the buffer
+
+        backwards : bool, optional
+            If True search starting at the end of the buffer. Defaults
+            to False.
         
-        Returns True and sets the cursor position if found, otherwise returns False
+        case_sensitive : bool, optional
+            If True, the text matching is case sensitive. Defaults to 
+            False.
+        
+        whole_words : bool, optional
+            If True, only complete words are matched. Defaults to False.
+
+        Returns
+        -------
+        result : bool
+            True if the text was found, False otherwise.
         
         """
         raise NotImplementedError
 
+
 class TextEditor(Control):
     """ A text editor widget capable of editing plain text with styles.
     
-    This is not a general text edit widget with general capabilties for sophistcated
-    formatting or image display.
+    This is not a general text edit widget with general capabilties for 
+    sophistcated formatting or image display.
     
     """
-
     #: Whether or not the editor is read only.
-    read_only = Bool
+    read_only = Bool(False)
     
-    #: Whether to wrap text in the editor or not.  If True, keep words together
-    #: if possible.
+    #: Whether to wrap text in the editor or not. If True, keep words
+    #: together if possible.
     wrap_lines = Bool(True)
     
     #: Whether to overwrite or insert text when the user types.
@@ -149,23 +169,21 @@ class TextEditor(Control):
     selected_text = Property(Str, depends_on='_selected_text')
 
     #: Fired when the text is changed programmatically, or by the user
-    #: via the ui. The event object is just True, not the text. Use the
-    #: `get_text()` method if you need the current text.
+    #: via the ui. The event does not carry a payload. To retrieve the
+    #: current text, use the `get_text()` method.
     text_changed = EnamlEvent
 
     #: Fired when the text is changed by the user explicitly through
-    #: the ui and not programmatically. The event object is just True,
-    #: not the text. Use the `get_text()` method if you need the current
-    #: text.
+    #: the ui and not programmatically. The event does not carry a 
+    #: payload. To retrieve the current text, call `get_text()`.
     text_edited = EnamlEvent
 
-    #: How strongly a component hugs it's contents' width.
-    #: TextEditors ignore the width hug by default, so they expand freely in width.
+    #: How strongly a component hugs it's contents' width. TextEditors 
+    #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
     
-    #: How strongly a component hugs it's contents' height.
-    #: TextEditors ignore the height hug by default, so they expand freely
-    #: in height.
+    #: How strongly a component hugs it's contents' height. TextEditors 
+    #: ignore the height hug by default, so they expand freely in height.
     hug_height = 'ignore'
 
     #: An internal attribute that is used by the implementation object
@@ -202,8 +220,8 @@ class TextEditor(Control):
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.
 
-        If the indices are invalid, no selection will be made,
-        and any current selection will be cleared.
+        If the indices are invalid, no selection will be made, and any
+        current selection will be cleared.
 
         Arguments
         ---------
@@ -240,8 +258,8 @@ class TextEditor(Control):
     def backspace(self):
         """ Simple backspace functionality.
 
-        If no text is selected, deletes the character to the left
-        of the cursor. Otherwise, it deletes the selected text.
+        If no text is selected, deletes the character to the left of 
+        the cursor. Otherwise, it deletes the selected text.
 
         """
         self.abstract_obj.backspace()
@@ -249,8 +267,8 @@ class TextEditor(Control):
     def delete(self):
         """ Simple delete functionality.
 
-        If no text is selected, deletes the character to the right
-        of the cursor. Otherwise, it deletes the selected text.
+        If no text is selected, deletes the character to the right of
+        the cursor. Otherwise, it deletes the selected text.
 
         """
         self.abstract_obj.delete()
@@ -261,8 +279,8 @@ class TextEditor(Control):
         Arguments
         ---------
         mark : bool, optional
-            If True, select the text from the current position to
-            the end of the line edit. Defaults to False.
+            If True, select the text from the current position to the
+            end of the line edit. Defaults to False.
 
         """
         self.abstract_obj.end(mark=mark)
@@ -273,8 +291,8 @@ class TextEditor(Control):
         Arguments
         ---------
         mark : bool, optional
-            If True, select the text from the current position to
-            the beginning of the line edit. Defaults to False.
+            If True, select the text from the current position to the 
+            beginning of the line edit. Defaults to False.
 
         """
         self.abstract_obj.home(mark=mark)
@@ -306,8 +324,8 @@ class TextEditor(Control):
     def insert(self, text):
         """ Insert the text into the line edit.
 
-        Inserts the given text at the current cursor position,
-        replacing any selected text.
+        Inserts the given text at the current cursor position, replacing
+        any selected text.
 
         Arguments
         ---------
@@ -330,12 +348,32 @@ class TextEditor(Control):
         self.abstract_obj.redo()
 
     def find(self, text, backwards=False, case_sensitive=False, whole_words=False):
-        """ Find the text in the editor.
+        """ Finds the text in the editor and sets the cursor to that 
+        position.
+
+        Parameters
+        ----------
+        text : string
+            The text to find in the buffer
+
+        backwards : bool, optional
+            If True search starting at the end of the buffer. Defaults
+            to False.
         
-        Returns True and sets the cursor position if found, otherwise returns False
+        case_sensitive : bool, optional
+            If True, the text matching is case sensitive. Defaults to 
+            False.
+        
+        whole_words : bool, optional
+            If True, only complete words are matched. Defaults to False.
+
+        Returns
+        -------
+        result : bool
+            True if the text was found, False otherwise.
         
         """
-        self.abstract_obj.find(text, backwards, case_sensitive, whole_words)
+        return self.abstract_obj.find(text, backwards, case_sensitive, whole_words)
 
     #--------------------------------------------------------------------------
     # Property methods 
@@ -363,5 +401,4 @@ class TextEditor(Control):
 
         """
         return self._selected_text
-    
     
