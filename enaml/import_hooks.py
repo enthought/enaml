@@ -103,7 +103,7 @@ class AbstractEnamlImporter(object):
         Returns
         -------
         results : Instance(AbstractEnamlImporter) or None
-            If the Enaml module is located and instance of the importer
+            If the Enaml module is located an instance of the importer
             that will perform the rest of the operations is returned. 
             Otherwise, returns None.
         
@@ -152,7 +152,7 @@ class EnamlImporter(AbstractEnamlImporter):
         Returns
         -------
         results : Instance(AbstractEnamlImporter) or None
-            If the Enaml module is located and instance of the importer
+            If the Enaml module is located an instance of the importer
             that will perform the rest of the operations is returned. 
             Otherwise, returns None.
         
