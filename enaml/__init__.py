@@ -25,27 +25,32 @@ class imports(object):
     down all of their other imports.
 
     """
-    #: The framework-wide importer in use for importing Enaml modules
-    __importer = None
+    #: The framework-wide importers in use. The None will be 
+    #: replaced with the default importer upon first use in 
+    #: order to avoid a circular import.
+    __importers = [None]
 
     @classmethod
-    def get_importer(cls):
-        """ Returns the currently active importer in use for the 
+    def get_importers(cls):
+        """ Returns the currently active importers in use for the 
         framework.
 
         """
-        importer = cls.__importer
-        if importer is None:
+        importers = cls.__importers
+        if importers[0] is None:
             # This avoid a circular import between the compiler, this
-            # module, and the import hooks.
+            # module, and the import hooks, and makes sure we always
+            # have at least one importer . 
             from .import_hooks import EnamlImporter
-            cls.__importer = importer = EnamlImporter
-        return importer
+            importers[0] = EnamlImporter
+        return importers
 
     @classmethod
-    def set_importer(cls, importer):
-        """ Sets the framework-wide importer to use for importing
-        Enaml modules. It must be a subclass of AbstractEnamlImporter.
+    def append_importer(cls, importer):
+        """ Appends an importer to the list of importers for use with 
+        the framework. It must be a subclass of AbstractEnamlImporter.
+        The most recently appended importer is used first when 
+        attempting to import.
 
         """
         # This avoid a circular import between the compiler, this
@@ -55,30 +60,42 @@ class imports(object):
             msg = ('An Enaml importer must be a subclass of '
                    'AbstractEnamlImporter. Got %s instead.')
             raise TypeError(msg % importer)
-        cls.__importer = importer
+        cls.__importers.append(importer)
     
     @classmethod
-    def reset_importer(cls):
-        """ Resets any custom installed enaml importer to the default.
+    def remove_importer(cls, importer):
+        """ Removes the importer from the list of active importers. 
+        If the importer is not in the list, this is a no-op.
 
         """
-        cls.__importer = None
+        importers = cls.__importers
+        if importer in importers:
+            importers.remove(importer)
 
     def __init__(self):
         """ Initializes an Enaml import context.
 
         """
-        self.importer = self.get_importer()
+        # We create a copy of the importers list, so can make sure
+        # to uninstall them at the end of the context, even if 
+        # they were removed from the importers list during operation.
+        self.importers = list(self.get_importers())
 
     def __enter__(self):
         """ Installs the current importer upon entering the context.
 
         """
-        self.importer.install()
+        # Install the importers reversed so that the newest ones 
+        # get first crack at the import on sys.meta_path.
+        for importer in reversed(self.importers):
+            importer.install()
     
     def __exit__(self, *args, **kwargs):
         """ Uninstalls the current importer when leaving the context.
 
         """
-        self.importer.uninstall()
+        # We removed in standard order since thats a more efficient
+        # operation on sys.meta_path.
+        for importer in self.importers:
+            importer.uninstall()
 
