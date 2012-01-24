@@ -104,8 +104,8 @@ class EnamlDeclarationDocumenter(EnamlDocstringSignatureMixin,
 
         """
         
-        import pdb; pdb.set_trace()
-        return '({0} hello anyone home?)'.format(self.object.__base__)
+        ## import pdb; pdb.set_trace()
+        return ' (derives from {0})'.format(self.object.__base__)
 
     def document_members(self, all_members=False):
         pass

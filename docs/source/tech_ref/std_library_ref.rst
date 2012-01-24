@@ -23,4 +23,5 @@ Radio Group
 
 Stacked
 -------------------------------------------------------------------------------
- .. automodule:: enaml.stdlib.stacked
+ .. automodule:: enaml.stdlib.stacked 
+
