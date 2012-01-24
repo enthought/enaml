@@ -7,6 +7,7 @@
 #------------------------------------------------------------------------------
 from function_doc import FunctionDoc
 from class_doc import ClassDoc
+from enaml_decl_doc import EnamlDeclDoc
 
 #------------------------------------------------------------------------------
 # Extension definition
@@ -21,6 +22,8 @@ def refactor_docstring(app, what, name, obj, options, lines):
         ClassDoc(lines, verbose=verbose)
     elif ('function' in what) or ('method' in what):
         FunctionDoc(lines, verbose=verbose)
+    elif ('enaml_decl' in what):
+        EnamlDeclDoc(lines, verbose=verbose)
 
 def setup(app):
     app.setup_extension('sphinx.ext.autodoc')

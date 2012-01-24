@@ -1,7 +1,8 @@
-﻿# -*- coding: UTF-8 -*-
+# -*- coding: UTF-8 -*-
 #------------------------------------------------------------------------------
 #  file: base_doc.py
 #  License: LICENSE.TXT
+#  Author: Ioannis Tziakos
 #
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
