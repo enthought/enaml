@@ -40,17 +40,19 @@ class imports(object):
         if importers[0] is None:
             # This avoid a circular import between the compiler, this
             # module, and the import hooks, and makes sure we always
-            # have at least one importer . 
+            # have at least the base importer available, so long as
+            # it's not every explicitly removed.
             from .import_hooks import EnamlImporter
             importers[0] = EnamlImporter
         return tuple(importers)
 
     @classmethod
-    def append_importer(cls, importer):
-        """ Appends an importer to the list of importers for use with 
-        the framework. It must be a subclass of AbstractEnamlImporter.
-        The most recently appended importer is used first when 
-        attempting to import.
+    def add_importer(cls, importer):
+        """ Add an importer to the list of importers for use with the 
+        framework. It must be a subclass of AbstractEnamlImporter.
+        The most recently appended importer is used first. If the 
+        importer has already been added, this is a no-op. To move
+        an importer up in precedence, remove it and add it again.
 
         """
         # This avoid a circular import between the compiler, this
@@ -60,7 +62,9 @@ class imports(object):
             msg = ('An Enaml importer must be a subclass of '
                    'AbstractEnamlImporter. Got %s instead.')
             raise TypeError(msg % importer)
-        cls.__importers.append(importer)
+        importers = cls.__importers
+        if importer not in importers:
+            importers.append(importer)
     
     @classmethod
     def remove_importer(cls, importer):
