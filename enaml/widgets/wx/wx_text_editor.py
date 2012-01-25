@@ -48,9 +48,7 @@ class WXTextEditor(WXControl, AbstractTkTextEditor):
         super(WXTextEditor, self).bind()
         widget = self.widget
         widget.Bind(wx.stc.EVT_STC_CHANGE, self.on_text_updated) # XXX or should we bind to textEdited?
-        widget.Bind(wx.EVT_MOTION, self.on_motion)
-        widget.Bind(wx.EVT_LEFT_UP, self.on_selection)
-        widget.Bind(wx.EVT_KEY_DOWN, self.on_key_down)
+        widget.Bind(wx.stc.EVT_STC_UPDATEUI, self.on_selection)
 
 
     #--------------------------------------------------------------------------
@@ -108,6 +106,13 @@ class WXTextEditor(WXControl, AbstractTkTextEditor):
         """
         self.widget.SetText(text)
     
+    def get_selected_text(self):
+        """ Get the text currently selected in the widget.
+
+        """
+        text = self.widget.GetSelectedText()
+        return text
+
     def set_selection(self, start, end):
         """ Sets the selection in the widget between the start and 
         end positions, inclusive.
@@ -195,8 +200,7 @@ class WXTextEditor(WXControl, AbstractTkTextEditor):
         
         """
         widget = self.widget
-        old_start = widget.GetSelectionStart()
-        old_end = widget.GetSelectionEnd()
+        old_start, old_end = widget.GetSelection()
         flags = 0
         if case_sensitive:
             flags |= wx.stc.STC_FIND_MATCHCASE
@@ -260,12 +264,13 @@ class WXTextEditor(WXControl, AbstractTkTextEditor):
         """
         widget = self.widget
         shell = self.shell_obj
-        shell._selected_text = widget.GetSelectedText()
         with guard(self, 'setting_cursor'):
             cursor_position = shell.cursor_position = widget.GetCurrentPos()
             shell.anchor_position = widget.GetAnchor()
             shell._cursor_column = widget.GetColumn(cursor_position)
             shell._cursor_line = widget.LineFromPosition(cursor_position)
+        shell.selected_text_changed()
+        print widget.GetAnchor(), widget.GetCurrentPos(), widget.GetSelectedText()
 
     def set_read_only(self, read_only):
         """ Sets read only state of the widget.

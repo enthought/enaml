@@ -178,6 +178,10 @@ class TextEditor(Control):
     #: payload. To retrieve the current text, call `get_text()`.
     text_edited = EnamlEvent
 
+    #: Fired when the selected text changes.  The event does not carry a
+    #: payload.  To retrieve the currently selected text, call `get_selected_text()`
+    selected_text_changed = EnamlEvent
+
     #: How strongly a component hugs it's contents' width. TextEditors 
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
@@ -198,10 +202,6 @@ class TextEditor(Control):
     #: to update the value of 'modified'.
     _modified = Bool(False)
 
-    #: An internal attribute that is used by the implementation object
-    #: to update the value of 'selected_text'.
-    _selected_text = Str
-
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkTextEditor)
 
@@ -216,6 +216,12 @@ class TextEditor(Control):
 
         """
         return self.abstract_obj.set_text(text)
+
+    def get_selected_text(self):
+        """ Get the currently selected text as a string.
+
+        """
+        return self.abstract_obj.get_selected_text()
 
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.

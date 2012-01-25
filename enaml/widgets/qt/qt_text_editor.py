@@ -47,7 +47,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         super(QtTextEditor, self).bind()
         widget = self.widget
         widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
-        widget.selectionChanged.connect(self.on_selection)
+        #widget.selectionChanged.connect(self.on_selection)
         widget.cursorPositionChanged.connect(self.on_cursor)
 
     #--------------------------------------------------------------------------
@@ -319,14 +319,12 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         shell = self.shell_obj
         cursor = self.widget.textCursor()
-        selected_text = cursor.selectedText()
-        selected_text = selected_text.replace(u'\u2029', '\n') # replace unicode line break
-        shell._selected_text = selected_text
         with guard(self, 'setting_cursor'):
             shell.cursor_position = cursor.position()
             shell.anchor_position = cursor.anchor()
             shell._cursor_column = cursor.positionInBlock()
             shell._cursor_line = cursor.blockNumber()
+            shell.selected_text_changed()
 
     def get_text(self):
         """ Get the text currently in the widget.
@@ -342,6 +340,15 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
 
         """
         self.widget.setPlainText(text)
+    
+    def get_selected_text(self):
+        """ Get the text currently selected in the widget.
+
+        """
+        cursor = self.widget.textCursor()
+        selected_text = cursor.selectedText()
+        selected_text = selected_text.replace(u'\u2029', '\n') # replace unicode line break
+        return selected_text
     
     def set_read_only(self, read_only):
         """ Sets read only state of the widget.
