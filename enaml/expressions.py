@@ -183,10 +183,23 @@ class ExpressionScope(object):
     def __setitem__(self, name, val):
         """ Stores the value into the temp locals dict. This operation
         will occur whenever a STORE_NAME opcode is encountered such
-        as with the loop variables of a list comprehension.
+        as with the loop variables of a list comprehension, or on
+        Python 2.6 to store the list itself. See the docstring of
+        __delitem__ for more info.
 
         """
         self.temp_locals[name] = val
+
+    def __delitem__(self, name):
+        """ Deletes the value from the temp locals dict. This operation
+        will occur on Python 2.6 during a list comprehension. In that
+        version of Python, the list in a list comp is stored in a mangled
+        local variable which is not a valid Python name. Presumably, this
+        is because the LIST_APPEND opcode on 2.6 consumes the TOS, while
+        on 2.7 it does not.
+
+        """
+        del self.temp_locals[name]
 
 
 #------------------------------------------------------------------------------
