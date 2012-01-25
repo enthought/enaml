@@ -3,8 +3,9 @@
 "Hello World" tutorial
 ===============================================================================
 
-This is a basic tutorial to explain the basic features of an |Enaml| user
-interface. It sets up a minimal GUI to display a simple message.
+Our goal in this tutorial is to show a minimal example of an |Enaml| user
+interface and introduce a few basic concepts. It sets up a minimal GUI to
+display a simple message.
 
 |Enaml| supports implementing a `model-view-controller architecture
 <http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_ . An
@@ -16,20 +17,17 @@ most/all of the *controller* aspects of the GUI.
 Let's get started with a basic "hello world" example:
 
 Here is our minimalist .enaml file describing a message-displaying GUI
-(:download:`download here <../../../examples/hello_world/hello_world.enaml>`):
+(:download:`download here <../../../examples/hello_world/hello_world_minimal.enaml>`):
 
-.. literalinclude:: ../../../examples/hello_world/hello_world.enaml
+.. literalinclude:: ../../../examples/hello_world/hello_world_minimal.enaml
     :language: python
 
-Here is the Python code to use the GUI (:download:`download here
-<../../../examples/hello_world/hello_world.py>`):
-
-.. literalinclude:: ../../../examples/hello_world/hello_world.py
-    :language: python
+Run it from the command line with :literal:`enaml-run
+hello_world_minimal.enaml`.
 
 The resulting GUI looks like this (in Mac OS):
 
-.. image:: images/hello_world.png
+.. image:: images/hello_world_minimal.png
 
 Let's take a closer look at the |Enaml| file.
 
@@ -42,7 +40,7 @@ a comment line and is ignored during lexing and parsing.
 ::
 
  #-----------------------------------------------------------------------------
- #  Copyright (c) 2011, Enthought, Inc.
+ #  Copyright (c) 2012, Enthought, Inc.
  #  All rights reserved.
  #-----------------------------------------------------------------------------
 
