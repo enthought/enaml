@@ -7,7 +7,7 @@ thin layer over backend widgets and produce the traits View objects.
 :mod:`enums` Module
 -------------------
 
-.. inheritance-diagram:: enaml.enums
+.. inheritance-diagram:: enaml.enums.Enum
     :parts: 1
 
 .. automodule:: enaml.enums
@@ -23,10 +23,22 @@ thin layer over backend widgets and produce the traits View objects.
 :mod:`expressions` Module
 -------------------------
 
-.. inheritance-diagram:: enaml.expressions
+.. inheritance-diagram:: enaml.expressions.ExpressionScope
+    :parts: 1
+
+.. inheritance-diagram:: enaml.expressions.TraitAttributeNotifier
+    :parts: 1
+
+.. inheritance-diagram:: enaml.expressions.AbstractExpression
+                         enaml.expressions.SimpleExpression
+			 enaml.expressions.SubscriptionExpression
+			 enaml.expressions.NotifyingExpression
+			 enaml.expressions.DelegatingExpression
     :parts: 1
 
 .. automodule:: enaml.expressions
+    :special-members:
+    :no-undoc-members:
 
 :mod:`exceptions` Module
 -------------------------
