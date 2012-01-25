@@ -8,3 +8,5 @@
 /dist
 /docs/build
 
+.gitignore~
+*.orig

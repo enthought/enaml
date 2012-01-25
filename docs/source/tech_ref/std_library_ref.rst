@@ -5,7 +5,7 @@
 
 The following components are available from the standard library:
 
-.. _std-lib-fields:
+.. _std-lib-fields: 
 
 Fields
 -------------------------------------------------------------------------------
@@ -23,4 +23,5 @@ Radio Group
 
 Stacked
 -------------------------------------------------------------------------------
- .. automodule:: enaml.stdlib.stacked
+ .. automodule:: enaml.stdlib.stacked 
+

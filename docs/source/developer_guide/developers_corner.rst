@@ -31,17 +31,23 @@ recognize and document |Enaml| objects.
 
 Sphinx Directives and Roles
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. rst:directive:: enamldoc:enaml_decl
+.. rst:directive:: enaml:enaml_decl
 
     For |Enaml| declarations. It will format similarly to a function, but with
     the base object in the place arguments.
+
+..  enaml:enaml_decl:: Foo(Bar)
+
+..  enaml:enaml_decl:: enaml.stdlib.fields.RandomField 
 
 .. rst:directive:: autoenaml_decl:: import.hierarchy.enaml_declaration
 
     Automatically generate the object description from an |Enaml| file. Specify
     the object to document as though you were importing it.
 
-.. rst:directive:: enamldoc:enaml_defn
+..  autoenaml_decl:: enaml.stdlib.fields.ErrorField
+
+.. rst:directive:: enaml:enaml_defn
 
     For |Enaml| **defn** statements. Arguments display as with functions.
 
@@ -50,7 +56,7 @@ Sphinx Directives and Roles
     Automatically generate the object description from an |Enaml| file. Specify
     the object to describe as though you were importing it.
 
-.. rst:directive:: automodule::
+.. rst:directive:: automodule:: 
 
     automodule works for |Enaml| files as it does for python modules. No
     special syntax is necessary.
@@ -72,16 +78,14 @@ Sphinx Configuration
 A Sphinx extension ``enamldoc`` lets Sphinx recognize and document |Enaml|
 objects.
 
-.. automodule:: enamldoc.enamldoc
+.. automodule:: enamldoc.sphinx_ext
     :members:
 
 .. inheritance-diagram::
-    enamldoc.enamldoc.EnamlComponentDocumenter
-    enamldoc.enamldoc.EnamlDeclarationDocumenter
-    enamldoc.enamldoc.EnamlDefnDocumenter
-    enamldoc.enamldoc.EnamlDomain
-
-
+    enamldoc.sphinx_ext.EnamlComponentDocumenter
+    enamldoc.sphinx_ext.EnamlDeclarationDocumenter
+    enamldoc.sphinx_ext.EnamlDefnDocumenter
+    enamldoc.sphinx_ext.EnamlDomain
 
 
 Including the Sphinx extension ``refactor_doc`` allows use of formatted
