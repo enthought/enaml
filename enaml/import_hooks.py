@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from abc import ABCMeta, abstractmethod
 from collections import defaultdict
 import os
 import sys
@@ -11,11 +12,21 @@ from .parsing.enaml_compiler import EnamlCompiler
 from .parsing.parser import parse
 
 
+# Backport of Py3k abstractclassmethod
+class abstractclassmethod(classmethod):
+    __isabstractmethod__ = True
+    def __init__(self, func):
+        func.__isabstractmethod__ = True
+        super(abstractclassmethod, self).__init__(func)
+
+
 class AbstractEnamlImporter(object):
     """ An abstract base class which defines the api required to 
     implement an Enaml importer.
 
     """
+    __metaclass__ = ABCMeta
+
     # Count the number of times an importer has been installed. 
     # Only uninstall it when the count hits 0 again. This permits 
     # proper nesting of import contexts.
@@ -86,7 +97,7 @@ class AbstractEnamlImporter(object):
     #--------------------------------------------------------------------------
     # Abstract API
     #--------------------------------------------------------------------------
-    @classmethod
+    @abstractclassmethod
     def locate_module(cls, fullname, path=None):
         """ Searches for the given Enaml module and returns an instance 
         of this class on success.
@@ -108,11 +119,12 @@ class AbstractEnamlImporter(object):
             Otherwise, returns None.
         
         """
-        msg = ('locate_module is an abstract method of the class '
+        msg = ('locate_module is an abstract classmethod of the class '
                'AbstractEnamlImporter and must be implemented by '
                'subclasses.')
         raise NotImplementedError(msg)
 
+    @abstractmethod
     def get_source(self):
         """ Reads and returns the enaml source code for the module being
         imported and the full path to the file from which it was read.
