@@ -111,7 +111,12 @@ pygments_style = 'sphinx'
 todo_include_todos = True
 
 autodoc_member_order = 'bysource'
-autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
+autodoc_default_flags = [
+    'members',
+    #'undoc-members',
+    'special-members',
+    'show-inheritance',
+    ]
 
 ##inheritance_node_attrs = dict(shape='ellipse', fontsize=14, height=0.75,
 ##                              color='dodgerblue1', style='filled')
@@ -119,7 +124,8 @@ autodoc_default_flags = ['members', 'undoc-members', 'show-inheritance']
 #: rankdir ['LR', 'TB', 'BT', 'RL']
 inheritance_graph_attrs = dict(
     rankdir="LR",
-    size='"8.0, 20.0"',
+    width="8.0",
+    #size='"8.0, 20.0"',
     fontsize=14,
     ratio='compress'
     )
