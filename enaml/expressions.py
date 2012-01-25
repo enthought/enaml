@@ -114,13 +114,14 @@ class ExpressionScope(object):
 
         Returns the named item from the namespace according to the
         following precedence rules binding notifiers where appropriate:
-            1) temp_locals
-            2) overrides (if provided)
-            3) identifiers
-            4) implicit attrs
-            5) f_globals
-            6) toolkit
-            7) builtins
+        
+        1. temp_locals
+        2. overrides (if provided)
+        3. identifiers
+        4. implicit attrs
+        5. f_globals
+        6. toolkit
+        7. builtins
         
         Parameters
         ----------
