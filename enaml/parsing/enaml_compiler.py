@@ -93,17 +93,17 @@ class DeclarationCompiler(_NodeVisitor):
     def compile(cls, node):
         """ Compiles the given Declaration node into a code object.
 
-        Given this sample declaration:
+        Given this sample declaration in Enaml::
           
-            FooWindow(Window) 
+            FooWindow(Window):
                 id: foo
                 a = '12'
                 PushButton:
                     id: btn
                     text = 'clickme'
         
-        We generate bytecode that would correspond to a function that 
-        looks similar to this:
+        We generate bytecode that would correspond to a Python function that
+        looks similar to this::
         
             def FooWindow(identifiers, toolkit):
                 f_globals = globals()
