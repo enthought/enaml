@@ -16,7 +16,7 @@ Main(MainWindow):
             wrap_lines = True
 
             cursor_position >> print(cursor_position)
-            selected_text_changed >> print(get_selected_text())
+            selection_changed >> print(get_selected_text())
         Field:
             id: find
         PushButton:

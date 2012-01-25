@@ -46,8 +46,14 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         super(QtTextEditor, self).bind()
         widget = self.widget
-        widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
-        #widget.selectionChanged.connect(self.on_selection)
+        widget.textChanged.connect(self.on_text_updated)
+        # We bind to cursorPositionChanged rather than selectionChanged because
+        # on left mouse drag events selectionChanged uses a fuzzy algorithm to
+        # guess if the range of characters that has been selected has changed,
+        # and on OS X this fires too frequently.  This means we need to do a
+        # little analysis of why cursorPositionChanged so we don't
+        # selection_changed events when there is no selection but the cursor
+        # moved
         widget.cursorPositionChanged.connect(self.on_cursor)
 
     #--------------------------------------------------------------------------
@@ -300,12 +306,6 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         shell.text_edited()
         shell.text_changed()
 
-    def on_selection(self):
-        """ The event handler for a selection (really a left up) event.
-
-        """
-        self.update_shell_selection()
-
     def on_cursor(self):
         """ The event handler for a cursor move.
 
@@ -319,12 +319,16 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         shell = self.shell_obj
         cursor = self.widget.textCursor()
+        old_selection_length = abs(shell.cursor_position-shell.anchor_position)
         with guard(self, 'setting_cursor'):
             shell.cursor_position = cursor.position()
             shell.anchor_position = cursor.anchor()
             shell._cursor_column = cursor.positionInBlock()
             shell._cursor_line = cursor.blockNumber()
-            shell.selected_text_changed()
+            # don't fire selection changed when nothing selected before or after
+            new_selection_length = abs(shell.cursor_position-shell.anchor_position)
+            if not(0 == old_selection_length == new_selection_length):
+                shell.selection_changed()
 
     def get_text(self):
         """ Get the text currently in the widget.

@@ -164,10 +164,6 @@ class TextEditor(Control):
     #: False if the text is programmatically changed.
     modified = Property(Bool, depends_on='_modified')
 
-    #: A read only property that is updated with the text selected
-    #: in the editor.
-    selected_text = Property(Str, depends_on='_selected_text')
-
     #: Fired when the text is changed programmatically, or by the user
     #: via the ui. The event does not carry a payload. To retrieve the
     #: current text, use the `get_text()` method.
@@ -178,9 +174,11 @@ class TextEditor(Control):
     #: payload. To retrieve the current text, call `get_text()`.
     text_edited = EnamlEvent
 
-    #: Fired when the selected text changes.  The event does not carry a
-    #: payload.  To retrieve the currently selected text, call `get_selected_text()`
-    selected_text_changed = EnamlEvent
+    #: Fired when the selection changes.  The event does not carry a
+    #: payload.  To retrieve the currently selected text, call
+    #: `get_selected_text()`.  To retrieve the start and end of the
+    #: selection use `cursor_position` and `anchor_position`.
+    selection_changed = EnamlEvent
 
     #: How strongly a component hugs it's contents' width. TextEditors 
     #: ignore the width hug by default, so they expand freely in width.
@@ -401,10 +399,4 @@ class TextEditor(Control):
 
         """
         return self._modified
-
-    def _get_selected_text(self):
-        """ The property getter for the 'selected' attribute.
-
-        """
-        return self._selected_text
     

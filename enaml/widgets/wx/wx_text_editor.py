@@ -264,13 +264,16 @@ class WXTextEditor(WXControl, AbstractTkTextEditor):
         """
         widget = self.widget
         shell = self.shell_obj
+        old_selection_length = abs(shell.cursor_position-shell.anchor_position)
         with guard(self, 'setting_cursor'):
             cursor_position = shell.cursor_position = widget.GetCurrentPos()
             shell.anchor_position = widget.GetAnchor()
             shell._cursor_column = widget.GetColumn(cursor_position)
             shell._cursor_line = widget.LineFromPosition(cursor_position)
-        shell.selected_text_changed()
-        print widget.GetAnchor(), widget.GetCurrentPos(), widget.GetSelectedText()
+            # don't fire selection changed when nothing selected before or after
+            new_selection_length = abs(shell.cursor_position-shell.anchor_position)
+            if not(0 == old_selection_length == new_selection_length):
+                shell.selection_changed()
 
     def set_read_only(self, read_only):
         """ Sets read only state of the widget.
