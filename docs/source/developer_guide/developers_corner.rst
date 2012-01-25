@@ -84,11 +84,10 @@ objects.
 .. inheritance-diagram::
     enamldoc.sphinx_ext.EnamlComponentDocumenter
     enamldoc.sphinx_ext.EnamlDeclarationDocumenter
-    enamldoc.sphinx_ext.EnamlDefnDocumenter
     enamldoc.sphinx_ext.EnamlDomain
 
 
-Including the Sphinx extension ``refactor_doc`` allows use of formatted
+Including the Sphinx extension ``refactordoc`` allows use of formatted
 docstrings as described below.
 
 Sphinx Source
