@@ -152,7 +152,7 @@ class WXField(WXControl, AbstractTkField):
         self._set_placeholder_text(shell.placeholder_text)
 
         text = shell.field_text
-        if text is not None:
+        if text:
             self._set_text(text)
 
         shell._modified = False
