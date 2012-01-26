@@ -9,7 +9,7 @@ from traits.api import (
     cached_property, Dict, TraitType, Disallow,
 )
 
-from ..expressions import AbstractExpression
+from ..expressions import AbstractEvalExpression, AbstractNotifyExpression
 from ..toolkit import Toolkit
 from ..util.trait_types import EnamlInstance, EnamlEvent
 
@@ -214,8 +214,13 @@ class BaseComponent(HasStrictTraits):
     #: attributes on this component. It should not be manipulated by
     #: user. Rather, expressions should be added by calling the 
     #: 'bind_expression' method.
-    _expressions = Dict(Str, Instance(AbstractExpression))
+    _expressions = Dict(Str, Instance(AbstractEvalExpression))
 
+    #: The private dictionary of notifier expressions to call when an
+    #: attribute on the object changes.
+    _notify_expressions = Dict(Str, List(Instance(AbstractNotifyExpression)))
+
+    #: The private dictionary of notification expression
     #: The private list of virtual base classes that were used to 
     #: instantiate this component from Enaml source code. The 
     #: EnamlFactory class of the Enaml runtime will directly append
@@ -346,7 +351,7 @@ class BaseComponent(HasStrictTraits):
 
     def bind_expression(self, name, expression):
         """ Binds the given expression to the attribute 'name'. If
-        the attribute does not exist, one is created.
+        the attribute does not exist, an exception is raised.
 
         If the object is not yet initialized, the expression will be 
         evaulated as the default value of the attribute on-demand.
@@ -392,6 +397,35 @@ class BaseComponent(HasStrictTraits):
             self._expressions[name] = expression
             setattr(self, name, expression.eval())
 
+    def notify_expression(self, name, notifier):
+        """ Notify an instance of AbstractNotifyExpression to changes on
+        the attribute 'name'. If the attribue does not exist, this method
+        will raise an exception.
+
+        """
+        curr = self.trait(name)
+        if curr is None or curr.trait_type is Disallow:
+            msg = "Cannot bind notifier. %s object has no attribute '%s'"
+            raise AttributeError(msg % (self, name))
+        
+        notify_exprs = self._notify_expressions
+        if name in notify_exprs:
+            notify_exprs[name].append(notifier)
+        else:
+            notify_exprs[name] = [notifier]
+            if self.initialized:
+                self.on_trait_change(self._handle_notification, name)
+    
+    def _handle_notification(self, obj, name, old, new):
+        """ A private method which handles notifications for attribute
+        which have notifier expressions installed.
+
+        """
+        notify_exprs = self._notify_expressions
+        if name in notify_exprs:
+            for handler in notify_exprs[name]:
+                handler.notify(obj, name, old, new)
+    
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
@@ -405,16 +439,17 @@ class BaseComponent(HasStrictTraits):
 
         The setup process is comprised of the following steps:
         
-        1) Abstract objects create their internal toolkit object
-        2) Abstract objects initialize their internal toolkit object
-        3) Bound expression values are explicitly applied
-        4) Abstract objects bind their event handlers
-        5) Abstract objects are added as a listeners to the shell object
-        6) Visibility is initialized
-        7) Layout is initialized
-        8) A finalization pass is made
-        9) Nodes are marked as initialized
-
+        1)  Abstract objects create their internal toolkit object
+        2)  Abstract objects initialize their internal toolkit object
+        3)  Bound expression values are explicitly applied
+        4)  Abstract objects bind their event handlers
+        5)  Abstract objects are added as a listeners to the shell object
+        6)  Visibility is initialized
+        7)  Layout is initialized
+        8)  A finalization pass is made
+        9)  Notifier expressions are initialized
+        10) Nodes are marked as initialized
+        
         Many of these setup methods are no-ops, but are defined on this
         BaseComponent for simplicity and continuity. Subclasses that
         need to partake in certain portions of the layout process 
@@ -436,6 +471,7 @@ class BaseComponent(HasStrictTraits):
         self._setup_init_visibility()
         self._setup_init_layout()
         self._setup_finalize()
+        self._setup_init_notifiers()
         self._setup_set_initialized()
 
     def _setup_create_widgets(self, parent):
@@ -514,6 +550,18 @@ class BaseComponent(HasStrictTraits):
         """
         for child in self._subcomponents:
             child._setup_finalize()
+
+    def _setup_init_notifiers(self):
+        """ A setup method which hooks up a listener for each of the
+        bound notifier expressions.
+
+        """
+        otc = self.on_trait_change
+        handler = self._handle_notification
+        for name in self._notify_expressions:
+            otc(handler, name)
+        for child in self._subcomponents:
+            child._setup_init_notifiers()
 
     def _setup_set_initialized(self):
         """ A setup method which updates the initialized attribute of 
