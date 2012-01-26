@@ -17,7 +17,7 @@ Fields
 Radio Group
 -------------------------------------------------------------------------------
 .. autoenaml_decl:: enaml.stdlib.radio_group.RadioGroup
-
+ 
 
 .. _std-lib-stacked:
 

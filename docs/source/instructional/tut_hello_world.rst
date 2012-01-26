@@ -7,14 +7,9 @@ Our goal in this tutorial is to show a minimal example of an |Enaml| user
 interface and introduce a few basic concepts. It sets up a minimal GUI to
 display a simple message.
 
-|Enaml| supports implementing a `model-view-controller architecture
-<http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_ . An
-'.enaml' file describes the *view*, and the *model* is treated by Python code,
-usually in the form of `Traits objects
-<http://code.enthought.com/projects/traits/>`_ . The |Enaml| module handles
-most/all of the *controller* aspects of the GUI.
-
-Let's get started with a basic "hello world" example:
+Let's get started with a minimalist "hello world" example. |Enaml| interfaces
+are described in a file with the ".enaml" extension. While the code has some
+similarities to Python, |Enaml| is a separate language.
 
 Here is our minimalist .enaml file describing a message-displaying GUI
 (:download:`download here <../../../examples/hello_world/hello_world_minimal.enaml>`):
@@ -22,8 +17,10 @@ Here is our minimalist .enaml file describing a message-displaying GUI
 .. literalinclude:: ../../../examples/hello_world/hello_world_minimal.enaml
     :language: python
 
-Run it from the command line with :literal:`enaml-run
-hello_world_minimal.enaml`.
+Use the special helper function ``enaml-run`` to run it from the command line
+with ::
+
+    $ enaml-run hello_world_minimal.enaml
 
 The resulting GUI looks like this (in Mac OS):
 
@@ -31,44 +28,38 @@ The resulting GUI looks like this (in Mac OS):
 
 Let's take a closer look at the |Enaml| file.
 
-Comment Blocks
+Enaml Declarations
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The .enaml file begins with some comment lines. As in Python code, ``#`` begins
-a comment line and is ignored during lexing and parsing.
+An |Enaml| view is made up of a series of component *declarations* that look a
+lot like Python classes. In the first line of code, we are declaring a new
+component, ``Main``, which derives from ``MainWindow``, a component in the
+|Enaml| standard library.
 
 ::
 
- #-----------------------------------------------------------------------------
- #  Copyright (c) 2012, Enthought, Inc.
- #  All rights reserved.
- #-----------------------------------------------------------------------------
+ Main(MainWindow):
 
-.. _defn-block-tut:
+With the this line of code, we have declared the start of a *declaration
+block*.
+ 
+In general, we could call this almost anything we want, as long as it is a
+Python-valid name. In this case, however, by giving it the special name "Main"
+we get to run it from the command line with the special ``enaml-run``
+tool. ``enaml-run`` looks for a component named "Main" and runs it as a
+standalone application.
 
-``defn`` Blocks
+
+Declaration Structure
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Next, we use a ``defn`` block to construct a view that is available for
-external Python functions to import. The syntax is similar to that of `Python
-compound statements <http://docs.python.org/reference/compound_stmts.html>`_
-. The header line starts with the |Enaml| keyword **defn** and ends with a
-colon. With the header line, we specify any *arguments* that will be passed in
-by the calling Python function. In this case, ``message`` is passed in as a
-parameter.
-
-::
-
- defn MyMessageToTheWorld(message):
-     Window:
-         Label:
-             text = message
-
-Next, we specify a hierarchy tree of view components. `As in Python
+Inside a declaration block, the view is defined in a hierarchical tree of view
+components. `As in Python
 <http://docs.python.org/reference/lexical_analysis.html#indentation>`_ ,
 indentation is used to specify code block structure. That is, statements
 beginning at a certain indentation level refer to the header line at the next
-lower indentation level.
+lower indentation level. So in our simple example, the ``Label:`` belongs to
+``Main``.
 
 Our view is made up of a ``Window`` containing a ``Label``, whose ``text``
 attribute we set equal to ``message``, which is passed in by the calling
