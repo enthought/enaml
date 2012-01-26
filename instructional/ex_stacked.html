@@ -107,40 +107,41 @@ describing the contents of each child switches between the two child Forms.
 from enaml.stdlib.stacked import Stacked
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Stacked Container"
-    constraints = [
-        vbox(hbox(selector, _space_), stack)
-    ]
-    ComboBox:
-        id: selector
-        items = ["Personal Details", "Employer Details"]
-        value = "Personal Details"
-    Stacked:
-        id: stack
-        index &lt;&lt; selector.index
-        Form:
-            Label:
-                text = "First name:"
-            Field:
-                pass
-            Label:
-                text = "Last name:"
-            Field:
-                pass
-            Label:
-                text = "Home phone:"
-            Field:
-                pass
-        Form:
-            Label:
-                text = "Employer:"
-            Field:
-                pass
-            Label:
-                text = "Office or Desk phone:"
-            Field:
-                pass
+    Container:  
+        constraints = [
+            vbox(hbox(selector, _space_), stack)
+        ]
+        ComboBox:
+            id: selector
+            items = ["Personal Details", "Employer Details"]
+            value = "Personal Details"
+        Stacked:
+            id: stack
+            index &lt;&lt; selector.index
+            Form:
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Home phone:"
+                Field:
+                    pass
+            Form:
+                Label:
+                    text = "Employer:"
+                Field:
+                    pass
+                Label:
+                    text = "Office or Desk phone:"
+                Field:
+                    pass
 
 </pre>
 </div>
@@ -181,8 +182,8 @@ MainWindow(Window):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

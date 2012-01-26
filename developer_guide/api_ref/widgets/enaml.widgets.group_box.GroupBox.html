@@ -229,6 +229,12 @@ type of container.</p>
 boundaries of the container and its content rectangle.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="enaml.widgets.group_box.GroupBox.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.group_box.GroupBox.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="section" id="backends">
@@ -236,11 +242,11 @@ boundaries of the container and its content rectangle.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-7aee667d0af254b083908942e9f2c7c9946d7da6.png" alt="Inheritance diagram of enaml.widgets.qt.qt_group_box.QtGroupBox" usemap="#inheritance65205d504c" class="inheritance"/>
+<img src="../../../_images/inheritance-afaef1f3fda6dbca495c5958624905888508d8b9.png" alt="Inheritance diagram of enaml.widgets.qt.qt_group_box.QtGroupBox" usemap="#inheritance65205d504c" class="inheritance"/>
 <map id="inheritance65205d504c" name="inheritance65205d504c">
-<area shape="rect" id="node1" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="41,160,153,189"/>
-<area shape="rect" id="node9" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="53,237,152,267"/>
-<area shape="rect" id="node8" href="#enaml.widgets.qt.qt_group_box.QtGroupBox" title="QtGroupBox" alt="" coords="128,315,228,344"/>
+<area shape="rect" id="node23" href="#enaml.widgets.qt.qt_group_box.QtGroupBox" title="QtGroupBox" alt="" coords="686,66,764,89"/>
+<area shape="rect" id="node24" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="549,86,626,109"/>
+<area shape="rect" id="node7" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="209,128,295,150"/>
 </map>
 </p>
 <dl class="class">
@@ -248,6 +254,13 @@ boundaries of the container and its content rectangle.</p>
 <em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_group_box.</tt><tt class="descname">QtGroupBox</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_group_box.html#QtGroupBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_group_box.QtGroupBox" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="enaml.widgets.qt.qt_container.QtContainer"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_container.QtContainer</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.group_box.AbstractTkGroupBox</span></tt></p>
 <p>A Qt4 implementation of GroupBox.</p>
+<dl class="attribute">
+<dt id="enaml.widgets.qt.qt_group_box.QtGroupBox.use_widget_item_for_layout">
+<tt class="descname">use_widget_item_for_layout</tt><em class="property"> = False</em><a class="headerlink" href="#enaml.widgets.qt.qt_group_box.QtGroupBox.use_widget_item_for_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Don&#8217;t use a widget item to compute the layout rect for a group
+box, it results in not enough space around neighbors.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="enaml.widgets.qt.qt_group_box.QtGroupBox.create">
 <tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_group_box.html#QtGroupBox.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_group_box.QtGroupBox.create" title="Permalink to this definition">¶</a></dt>
@@ -288,17 +301,35 @@ object.</p>
 widget.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_group_box.QtGroupBox.set_title">
+<tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_group_box.QtGroupBox.set_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the title of group box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_group_box.QtGroupBox.set_flat">
+<tt class="descname">set_flat</tt><big>(</big><em>flat</em><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_group_box.QtGroupBox.set_flat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the flattened appearance of the group box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_group_box.QtGroupBox.set_title_align">
+<tt class="descname">set_title_align</tt><big>(</big><em>align</em><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_group_box.QtGroupBox.set_title_align" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the alignment of the title of the group box.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-c563f6c599470cd2724d6681cf01e6afb7b3c8ca.png" alt="Inheritance diagram of enaml.widgets.wx.wx_group_box.WXGroupBox" usemap="#inheritance2876bec728" class="inheritance"/>
+<img src="../../../_images/inheritance-866f5c7d51560548e1d1d1889ab5e5741c7d7c62.png" alt="Inheritance diagram of enaml.widgets.wx.wx_group_box.WXGroupBox" usemap="#inheritance2876bec728" class="inheritance"/>
 <map id="inheritance2876bec728" name="inheritance2876bec728">
-<area shape="rect" id="node5" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="189,237,293,267"/>
-<area shape="rect" id="node10" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="190,160,305,189"/>
-<area shape="rect" id="node4" href="#enaml.widgets.wx.wx_group_box.WXGroupBox" title="WXGroupBox" alt="" coords="111,315,216,344"/>
+<area shape="rect" id="node16" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="546,45,625,67"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="205,4,294,27"/>
+<area shape="rect" id="node19" href="#enaml.widgets.wx.wx_group_box.WXGroupBox" title="WXGroupBox" alt="" coords="683,65,763,88"/>
 </map>
 </p>
 <dl class="class">
@@ -346,6 +377,24 @@ object.</p>
 widget.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_group_box.WXGroupBox.set_title">
+<tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_group_box.WXGroupBox.set_title" title="Permalink to this definition">¶</a></dt>
+<dd><p>Update the title of the group box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_group_box.WXGroupBox.set_flat">
+<tt class="descname">set_flat</tt><big>(</big><em>flat</em><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_group_box.WXGroupBox.set_flat" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the flattened appearance of the group box.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_group_box.WXGroupBox.set_title_align">
+<tt class="descname">set_title_align</tt><big>(</big><em>align</em><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_group_box.WXGroupBox.set_title_align" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the alignment of the title of the group box.</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -385,8 +434,8 @@ widget.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

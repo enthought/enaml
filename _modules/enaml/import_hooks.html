@@ -155,7 +155,7 @@
                 <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">enaml_path</span><span class="p">):</span>
                     <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">enaml_path</span><span class="p">)</span>
 </div>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enaml_module_path</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlImporter.__init__"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enaml_module_path</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initialize an importer object.</span>
 
 <span class="sd">        Parameters</span>
@@ -165,7 +165,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">enaml_module_path</span> <span class="o">=</span> <span class="n">enaml_module_path</span>
-
+</div>
 <div class="viewcode-block" id="EnamlImporter.load_module"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.import_hooks.EnamlImporter.load_module">[docs]</a>    <span class="k">def</span> <span class="nf">load_module</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fullname</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Loads and returns the Python module for the given enaml path.</span>
 <span class="sd">        The created module is added to sys.modules.</span>
@@ -205,8 +205,8 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

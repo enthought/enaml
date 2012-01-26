@@ -106,23 +106,24 @@ information Dialog will be raised to tell you the result of your action.
 :: python ::
 
 def raise_dialog():
-    cdlg = ConfirmDialog('Do you really want to do something rash?')
+    cdlg = ConfirmDialog(message='Do you really want to do something rash?')
     cdlg.show()
 
     if cdlg.result == 'accepted':
-        idlg = InformDialog('You confirmed that you DID want to do something rash.')
+        idlg = InformDialog(message='You confirmed that you DID want to do something rash.')
     else:
-        idlg = InformDialog('You confirmed that you DID NOT want to do something rash.')
+        idlg = InformDialog(message='You confirmed that you DID NOT want to do something rash.')
     idlg.show()
 
 :: end ::
 
 
-defn InformDialog(message):
-    Dialog:
-        id: dialog
-        title = "Inform"
-        modality = "application_modal"
+InformDialog(Dialog):
+    id: dialog
+    attr message: basestring
+    title = "Inform"
+    modality = "application_modal"
+    Container:
         constraints = [
             vbox(
                 label,
@@ -132,8 +133,7 @@ defn InformDialog(message):
         Label:
             id: label
             text = message
-            bg_color = "red"
-            fg_color = 'blue'
+            fg_color = 'red'
             font = 'times 18 bold'
         PushButton:
             id: ok_button
@@ -141,11 +141,12 @@ defn InformDialog(message):
             clicked &gt;&gt; dialog.accept()
 
 
-defn ConfirmDialog(message):
-    Dialog:
-        id: dialog
-        title = "Confirm"
-        modality = "application_modal"
+ConfirmDialog(Dialog):
+    id: dialog
+    attr message: basestring
+    title = "Confirm"
+    modality = "application_modal"
+    Container:
         constraints = [
             vbox(
                 label,
@@ -165,11 +166,11 @@ defn ConfirmDialog(message):
             clicked &gt;&gt; dialog.reject()
 
 
-MainWindow(Window):
-    PushButton:
-        id: dlg_button
-        text = "Do Something Rash"
-        clicked &gt;&gt; raise_dialog()
+Main(MainWindow):
+    Container:
+        PushButton:
+            text = "Do Something Rash"
+            clicked &gt;&gt; raise_dialog()
 
 </pre>
 </div>
@@ -211,8 +212,8 @@ MainWindow(Window):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -127,12 +127,6 @@ defined before the class can be created.</p>
 <p>Base class for testing Enaml object widgets.</p>
 <p>This class provide utility methods and assertion functions to help
 the testing of enaml components</p>
-<dl class="attribute">
-<dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.toolkit">
-<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function op_subscribe at 0x1925230&gt;, '__invoke_later__': &lt;function invoke_later at 0x1913fb0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x65ac6c0&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x65ac750&gt;, 'align_v_center': &lt;function align_v_center at 0x47aad70&gt;, 'Include': &lt;enaml.toolkit.Constructor object at 0x65ac0f0&gt;, 'align_right': &lt;function align_right at 0x47aacb0&gt;, '__operator_GreaterGreater__': &lt;function op_notify at 0x1925170&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x65ac990&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x65ac7e0&gt;, '__operator_ColonEqual__': &lt;function op_delegate at 0x19251b0&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x1dd89b0&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x65b01b0&gt;, 'FloatSlider': &lt;enaml.toolkit.Constructor object at 0x65aca20&gt;, 'align': &lt;function align at 0x47aadf0&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1130200&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x65acfc0&gt;, 'align_top': &lt;function align_top at 0x47aacf0&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x65ac240&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x65ac2d0&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x65ac360&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x65ac3f0&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x65ac510&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x65ac5a0&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x65ac630&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x65ac870&gt;, 'hbox': &lt;function hbox at 0x47aabf0&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x65acab0&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x65acb40&gt;, 'align_h_center': &lt;function align_h_center at 0x47aadb0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x65acbd0&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x65accf0&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x2013690&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x65acea0&gt;, '__process_events__': &lt;function process_events_qt4 at 0x1dd89f0&gt;, '__create_app__': &lt;function get_app_qt4 at 0x1dd8930&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x65ac120&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x65ac1b0&gt;, 'vertical': &lt;function vertical at 0x47aabb0&gt;, 'align_left': &lt;function align_left at 0x47aac70&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x65ac480&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x65acd80&gt;, 'horizontal': &lt;function horizontal at 0x47aab70&gt;, 'align_bottom': &lt;function align_bottom at 0x47aad30&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x65ac900&gt;, '__operator_Equal__': &lt;function op_simple at 0x19251f0&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x65acc60&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x65ace10&gt;, 'vbox': &lt;function vbox at 0x47aac30&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x47a60f0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x65acf30&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x65b0090&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x65b0120&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.toolkit" title="Permalink to this definition">¶</a></dt>
-<dd><p>default toolkit to use for the enaml source parsing</p>
-</dd></dl>
-
 <dl class="method">
 <dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.component_by_name">
 <tt class="descname">component_by_name</tt><big>(</big><em>component</em>, <em>name</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#EnamlTestCase.component_by_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.component_by_name" title="Permalink to this definition">¶</a></dt>
@@ -143,18 +137,8 @@ should have the name set its &#8216;name&#8217; attribute.</p>
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>component</strong> &#8211; The enaml based BaseComponent object</li>
-<li><strong>name</strong> &#8211; <p>The name of the enaml component to find in the tree.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">returns:</th><td class="field-body"></td>
-</tr>
-</tbody>
-</table>
-<p>The corresponding component or None.</p>
-</li>
+<li><strong>component</strong> (<em>BaseComponent</em>) &#8211; The enaml based BaseComponent object.</li>
+<li><strong>name</strong> &#8211; The name of the enaml component to find in the tree.</li>
 </ul>
 </td>
 </tr>
@@ -164,16 +148,16 @@ should have the name set its &#8216;name&#8217; attribute.</p>
 
 <dl class="method">
 <dt id="enaml.tests.widgets.enaml_test_case.EnamlTestCase.parse_and_create">
-<tt class="descname">parse_and_create</tt><big>(</big><em>source</em>, <em>*args</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#EnamlTestCase.parse_and_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.parse_and_create" title="Permalink to this definition">¶</a></dt>
-<dd><p>Parses and compiles the source. The source should have defn 
-defined with the name &#8216;MainView&#8217; that returns a single component.</p>
+<tt class="descname">parse_and_create</tt><big>(</big><em>source</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/enaml_test_case.html#EnamlTestCase.parse_and_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.enaml_test_case.EnamlTestCase.parse_and_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses and compiles the source. The source should have a
+component defined with the name &#8216;MainView&#8217;.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
 <tbody valign="top">
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>enaml_source</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The enaml source file</li>
-<li><strong>*args</strong> &#8211; The arguments to pass to the defn.</li>
+<li><strong>source</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; The enaml source file</li>
+<li><strong>kwargs</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; The default attribute values to pass to the component.</li>
 </ul>
 </td>
 </tr>
@@ -248,11 +232,6 @@ test suite.</p>
 class for the components tests of the wx backend. It sets the correct
 toolkit attribute and provides some useful methods to mock events in
 wx.</p>
-<dl class="attribute">
-<dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.toolkit">
-<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function op_subscribe at 0x1925230&gt;, '__invoke_later__': &lt;function invoke_later at 0x14af8170&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x14afa510&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x14afa5a0&gt;, 'align_v_center': &lt;function align_v_center at 0x47aad70&gt;, 'Include': &lt;enaml.toolkit.Constructor object at 0x14af6f00&gt;, 'align_right': &lt;function align_right at 0x47aacb0&gt;, '__operator_GreaterGreater__': &lt;function op_notify at 0x1925170&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x14afa630&gt;, '__operator_ColonEqual__': &lt;function op_delegate at 0x19251b0&gt;, '__start_app__': &lt;function start_event_loop_wx at 0x1dd88b0&gt;, 'FloatSlider': &lt;enaml.toolkit.Constructor object at 0x14afa7e0&gt;, 'align': &lt;function align at 0x47aadf0&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1130200&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x14afad80&gt;, 'align_top': &lt;function align_top at 0x47aacf0&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x14afa090&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x14afa120&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x14afa1b0&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x14afa240&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x14afa360&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x14afa3f0&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x14afa480&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x14afa6c0&gt;, 'hbox': &lt;function hbox at 0x47aabf0&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x14afa870&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x14afa900&gt;, 'align_h_center': &lt;function align_h_center at 0x47aadb0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x14afa990&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x14afaab0&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x14af6150&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x14afac60&gt;, '__process_events__': &lt;function process_events_wx at 0x1dd88f0&gt;, '__create_app__': &lt;function get_app_wx at 0x1dd8830&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x14af6f30&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x14af6fc0&gt;, 'vertical': &lt;function vertical at 0x47aabb0&gt;, 'align_left': &lt;function align_left at 0x47aac70&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x14afa2d0&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x14afab40&gt;, 'horizontal': &lt;function horizontal at 0x47aab70&gt;, 'align_bottom': &lt;function align_bottom at 0x47aad30&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x14afa750&gt;, '__operator_Equal__': &lt;function op_simple at 0x19251f0&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x14afaa20&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x14afabd0&gt;, 'vbox': &lt;function vbox at 0x47aac30&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x14af81b0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x14afacf0&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x14afae10&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x14afaea0&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 <dl class="method">
 <dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.process_wx_events">
 <tt class="descname">process_wx_events</tt><big>(</big><em>app</em><big>)</big><a class="reference internal" href="../../_modules/enaml/tests/widgets/wx/wx_test_assistant.html#WXTestAssistant.process_wx_events"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.process_wx_events" title="Permalink to this definition">¶</a></dt>
@@ -273,6 +252,12 @@ response take place need to call this method.</p>
 <dd><p>Send a wxPython widget an mouse event (e.g., EVT_BUTTON).</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.tests.widgets.wx.wx_test_assistant.WXTestAssistant.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
 </dd></dl>
 
 </div>
@@ -288,9 +273,10 @@ class for the components tests of the qt backend. It sets the correct
 toolkit attribute and (in the future) provide some useful methods for
 testin Qt based components.</p>
 <dl class="attribute">
-<dt id="enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.toolkit">
-<tt class="descname">toolkit</tt><em class="property"> = {'__operator_LessLess__': &lt;function op_subscribe at 0x1925230&gt;, '__invoke_later__': &lt;function invoke_later at 0x1913fb0&gt;, 'Html': &lt;enaml.toolkit.Constructor object at 0x14a5f600&gt;, 'Tabbed': &lt;enaml.toolkit.Constructor object at 0x14a5f8d0&gt;, 'align_v_center': &lt;function align_v_center at 0x47aad70&gt;, 'Include': &lt;enaml.toolkit.Constructor object at 0x148b6630&gt;, 'align_right': &lt;function align_right at 0x47aacb0&gt;, '__operator_GreaterGreater__': &lt;function op_notify at 0x1925170&gt;, 'ListView': &lt;enaml.toolkit.Constructor object at 0x1477cdb0&gt;, 'Dialog': &lt;enaml.toolkit.Constructor object at 0x14a5f750&gt;, '__operator_ColonEqual__': &lt;function op_delegate at 0x19251b0&gt;, '__start_app__': &lt;function start_event_loop_qt4 at 0x1dd89b0&gt;, 'TreeView': &lt;enaml.toolkit.Constructor object at 0x1477c540&gt;, 'FloatSlider': &lt;enaml.toolkit.Constructor object at 0x1477cd20&gt;, 'align': &lt;function align at 0x47aadf0&gt;, '_space_': &lt;enaml.widgets.layout.layout_helpers._space_ object at 0x1130200&gt;, 'Tab': &lt;enaml.toolkit.Constructor object at 0x1477ca20&gt;, 'align_top': &lt;function align_top at 0x47aacf0&gt;, 'CheckBox': &lt;enaml.toolkit.Constructor object at 0x148b6480&gt;, 'Container': &lt;enaml.toolkit.Constructor object at 0x148b63f0&gt;, 'EnableCanvas': &lt;enaml.toolkit.Constructor object at 0x148b6360&gt;, 'PushButton': &lt;enaml.toolkit.Constructor object at 0x148b62d0&gt;, 'Label': &lt;enaml.toolkit.Constructor object at 0x148b6180&gt;, 'Field': &lt;enaml.toolkit.Constructor object at 0x148b60f0&gt;, 'Window': &lt;enaml.toolkit.Constructor object at 0x148b6060&gt;, 'DateEdit': &lt;enaml.toolkit.Constructor object at 0x14a5f870&gt;, 'hbox': &lt;function hbox at 0x47aabf0&gt;, 'Form': &lt;enaml.toolkit.Constructor object at 0x1477c720&gt;, 'DatetimeEdit': &lt;enaml.toolkit.Constructor object at 0x1477c990&gt;, 'align_h_center': &lt;function align_h_center at 0x47aadb0&gt;, 'ComboBox': &lt;enaml.toolkit.Constructor object at 0x1477c630&gt;, 'Component': &lt;enaml.toolkit.Constructor object at 0x1477cb10&gt;, '__style_sheet__': &lt;enaml.styling.style_sheet.StyleSheet object at 0x2013690&gt;, 'Slider': &lt;enaml.toolkit.Constructor object at 0x1477cba0&gt;, '__process_events__': &lt;function process_events_qt4 at 0x1dd89f0&gt;, '__create_app__': &lt;function get_app_qt4 at 0x1dd8930&gt;, 'Splitter': &lt;enaml.toolkit.Constructor object at 0x148b65d0&gt;, 'ScrollArea': &lt;enaml.toolkit.Constructor object at 0x148b6510&gt;, 'vertical': &lt;function vertical at 0x47aabb0&gt;, 'align_left': &lt;function align_left at 0x47aac70&gt;, 'SpinBox': &lt;enaml.toolkit.Constructor object at 0x148b6210&gt;, 'RadioButton': &lt;enaml.toolkit.Constructor object at 0x1477c7b0&gt;, 'horizontal': &lt;function horizontal at 0x47aab70&gt;, 'align_bottom': &lt;function align_bottom at 0x47aad30&gt;, 'TableView': &lt;enaml.toolkit.Constructor object at 0x1477e660&gt;, '__operator_Equal__': &lt;function op_simple at 0x19251f0&gt;, '__control_exception_handler__': None, 'Image': &lt;enaml.toolkit.Constructor object at 0x1477ccf0&gt;, 'ProgressBar': &lt;enaml.toolkit.Constructor object at 0x1477c030&gt;, 'vbox': &lt;function vbox at 0x47aac30&gt;, '__invoke_timer__': &lt;function invoke_timer at 0x47a60f0&gt;, 'GroupBox': &lt;enaml.toolkit.Constructor object at 0x1477c7e0&gt;, 'TraitsuiItem': &lt;enaml.toolkit.Constructor object at 0x1477c9f0&gt;, 'Calendar': &lt;enaml.toolkit.Constructor object at 0x1477c690&gt;}</em><a class="headerlink" href="#enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.toolkit" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dt id="enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.tests.widgets.qt.qt_test_assistant.QtTestAssistant.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -376,8 +362,8 @@ testin Qt based components.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

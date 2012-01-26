@@ -219,12 +219,12 @@
     <span class="sd">&quot;&quot;&quot; Convert between dates and strings.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_string</span><span class="o">=</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="DateConverter.__init__"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.DateConverter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_string</span><span class="o">=</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Default the date format YYYY-MM-DD.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">format_string</span> <span class="o">=</span> <span class="n">format_string</span>
-
+</div>
 <div class="viewcode-block" id="DateConverter.to_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.DateConverter.to_component">[docs]</a>    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Convert from a date to a string.</span>
 
@@ -242,7 +242,7 @@
     <span class="sd">&quot;&quot;&quot; Convert between datetime objects and strings.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_string</span><span class="o">=</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">T%H:%M:%S&#39;</span><span class="p">):</span>
+<div class="viewcode-block" id="DateTimeConverter.__init__"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.DateTimeConverter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format_string</span><span class="o">=</span><span class="s">&#39;%Y-%m-</span><span class="si">%d</span><span class="s">T%H:%M:%S&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Default to the ISO 8601 date and time format.</span>
 
 <span class="sd">        Example</span>
@@ -253,7 +253,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">format_string</span> <span class="o">=</span> <span class="n">format_string</span>
-
+</div>
 <div class="viewcode-block" id="DateTimeConverter.to_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.DateTimeConverter.to_component">[docs]</a>    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Convert from a datetime to a string.</span>
 
@@ -290,8 +290,8 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -65,7 +65,7 @@
 <ul>
 <li><a class="reference internal" href="#">Enaml Standard Widget Library</a><ul>
 <li><a class="reference internal" href="#module-enaml.stdlib.fields">Fields</a></li>
-<li><a class="reference internal" href="#module-enaml.stdlib.radio_group">Radio Group</a></li>
+<li><a class="reference internal" href="#radio-group">Radio Group</a></li>
 <li><a class="reference internal" href="#stacked">Stacked</a></li>
 </ul>
 </li>
@@ -104,75 +104,82 @@
 <span id="fields"></span><span id="std-lib-fields"></span><h2>Fields<a class="headerlink" href="#module-enaml.stdlib.fields" title="Permalink to this headline">¶</a></h2>
 <p>Enaml Standard Library - Fields</p>
 <p>This is a library of Enaml components deriving from the built-in Field.</p>
-<dl class="enaml_decl">
-<dt id="enaml.stdlib.fields.ComplexField">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ComplexField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.ComplexField" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="enaml_decl">
-<dt id="enaml.stdlib.fields.ErrorField">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ErrorField</tt><big>(</big><em>Field</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.ErrorField" title="Permalink to this definition">¶</a></dt>
-<dd><p>ErrorField changes background color when the error state is True.</p>
-</dd></dl>
-
-<dl class="enaml_decl">
-<dt id="enaml.stdlib.fields.FloatField">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">FloatField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.FloatField" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="enaml_decl">
-<dt id="enaml.stdlib.fields.IntField">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">IntField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.IntField" title="Permalink to this definition">¶</a></dt>
-<dd><p>IntField - an ErrorField with built-in string-to-Int converter.</p>
-</dd></dl>
-
-<dl class="enaml_decl">
-<dt id="enaml.stdlib.fields.LongField">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongField</tt><big>(</big><em>ErrorField</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.LongField" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="enaml_decl">
-<dt id="enaml.stdlib.fields.PasswordField">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">PasswordField</tt><big>(</big><em>Field</em><big>)</big><a class="headerlink" href="#enaml.stdlib.fields.PasswordField" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </div>
-<div class="section" id="module-enaml.stdlib.radio_group">
-<span id="radio-group"></span><span id="std-lib-radio-group"></span><h2>Radio Group<a class="headerlink" href="#module-enaml.stdlib.radio_group" title="Permalink to this headline">¶</a></h2>
-<p>A custom RadioGroup component.</p>
-<p>A RadioGroup makes it easier to work with a group of radio buttons
-since it manages the various toggle behavior internally and yields
-output in the form of selected item, index, and label.</p>
+<div class="section" id="radio-group">
+<span id="std-lib-radio-group"></span><h2>Radio Group<a class="headerlink" href="#radio-group" title="Permalink to this headline">¶</a></h2>
 <dl class="enaml_decl">
 <dt id="enaml.stdlib.radio_group.RadioGroup">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.radio_group.</tt><tt class="descname">RadioGroup</tt><big>(</big><em>Container</em><big>)</big><a class="headerlink" href="#enaml.stdlib.radio_group.RadioGroup" title="Permalink to this definition">¶</a></dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.radio_group.</tt><tt class="descname">RadioGroup</tt><big>(</big><em>derives from Container</em><big>)</big><a class="headerlink" href="#enaml.stdlib.radio_group.RadioGroup" title="Permalink to this definition">¶</a></dt>
 <dd><p>A Container that automatically generates a group of RadioButtons.</p>
-<dl class="docutils">
-<dt>orientation <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
-<dd>The orientation of the group of radio buttons, either
-&#8216;horizontal&#8217; or &#8216;vertical&#8217;. Defaults to &#8216;horizontal&#8217;.</dd>
-<dt>items <span class="classifier-delimiter">:</span> <span class="classifier">list</span></dt>
-<dd>The list of items which represent the underlying radio 
-buttons.</dd>
-<dt>to_string <span class="classifier-delimiter">:</span> <span class="classifier">callable</span></dt>
-<dd>A callable which get mapped across the list of items to 
-generate the list of labels for the buttons.</dd>
-</dl>
-<dl class="docutils">
-<dt>selected <span class="classifier-delimiter">:</span> <span class="classifier">object</span></dt>
-<dd>An attribute which is updated with the item associated
-with the currently selected radio button. Changing this
-value will cause a corresponding change the appropriate
-button.</dd>
-</dl>
-<dl class="docutils">
-<dt>selected_index <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
-<dd>The integer index of the currently selected radio button. This
-attribute is updated after the &#8216;selected&#8217; attribute is updated.</dd>
-<dt>selected_label <span class="classifier-delimiter">:</span> <span class="classifier">string</span></dt>
-<dd>The label of the currently selected radio button. This attribute
-is updated after the &#8216;selected_index&#8217; attribute is updated.</dd>
-</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Input Attributes:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="enaml.stdlib.fields.RadioGroup.orientation">
+<tt class="descname">orientation</tt><em class="property"> = string</em><a class="headerlink" href="#enaml.stdlib.fields.RadioGroup.orientation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The orientation of the group of radio buttons, either
+&#8216;horizontal&#8217; or &#8216;vertical&#8217;. Defaults to &#8216;horizontal&#8217;.</p>
+<dl class="attribute">
+<dt id="enaml.stdlib.fields.RadioGroup.items">
+<tt class="descname">items</tt><em class="property"> = Sequence</em><a class="headerlink" href="#enaml.stdlib.fields.RadioGroup.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The sequence of items which represent the underlying radio
+buttons. Defaults to an empty list.</p>
+<dl class="attribute">
+<dt id="enaml.stdlib.fields.RadioGroup.to_string">
+<tt class="descname">to_string</tt><em class="property"> = Callable</em><a class="headerlink" href="#enaml.stdlib.fields.RadioGroup.to_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A callable which get mapped across the list of items to
+generate the list of labels for the buttons. Defaults
+to str.</p>
+<dl class="attribute">
+<dt id="enaml.stdlib.fields.RadioGroup.disabled_buttons">
+<tt class="descname">disabled_buttons</tt><em class="property"> = Iterable</em><a class="headerlink" href="#enaml.stdlib.fields.RadioGroup.disabled_buttons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>An iterable of integers which indicate which radio buttons
+should be disabled. Defaults to an empty list.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Synchronized Attributes:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="enaml.stdlib.fields.RadioGroup.selected_index">
+<tt class="descname">selected_index</tt><em class="property"> = integer</em><a class="headerlink" href="#enaml.stdlib.fields.RadioGroup.selected_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>An attribute which is updated with the index of the object
+in the list of items that is associated with the currently
+selected radio button. Changing this value will cause a
+corresponding change the appropriately toggled button.
+Setting this value to -1 will result in no radio buttons
+being selected. Defaults to -1.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Output Attributes:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="enaml.stdlib.fields.RadioGroup.selected_item">
+<tt class="descname">selected_item</tt><em class="property"> = object</em><a class="headerlink" href="#enaml.stdlib.fields.RadioGroup.selected_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The currently selected item from the list of items, or None
+if the list is empty or the selected index is -1.</p>
+<dl class="attribute">
+<dt id="enaml.stdlib.fields.RadioGroup.selected_label">
+<tt class="descname">selected_label</tt><em class="property"> = string</em><a class="headerlink" href="#enaml.stdlib.fields.RadioGroup.selected_label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="last">The label of the currently selected radio button, or &#8216;&#8217; if
+the list is empty or the selected index is -1.</p>
+</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 </div>
@@ -180,24 +187,10 @@ is updated after the &#8216;selected_index&#8217; attribute is updated.</dd>
 <span id="std-lib-stacked"></span><h2>Stacked<a class="headerlink" href="#stacked" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><span class="target" id="module-enaml.stdlib.stacked"></span><p>A Stacked widget implementation in pure Enaml.</p>
-<p>A Stacked widget provides a virtual &#8216;stack&#8217; of children, of which only
-one may be visible at a time. The visible child is determined by an
+<p>A Stacked widget provides a virtual &#8216;stack&#8217; of layout children, of which 
+only one may be visible at a time. The visible child is determined by an
 integer &#8216;index&#8217; attribute of the Stacked widget. Changing this index
-changes which children are visible.</p>
-<dl class="enaml_decl">
-<dt id="enaml.stdlib.stacked.Stacked">
-<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.stacked.</tt><tt class="descname">Stacked</tt><big>(</big><em>Container</em><big>)</big><a class="headerlink" href="#enaml.stdlib.stacked.Stacked" title="Permalink to this definition">¶</a></dt>
-<dd><p>A Container derivative which holds a stack of children.</p>
-<p>A Stacked widget provides a virtual &#8216;stack&#8217; of children, only one
-of which may be visible at a time. The visible child is selected
-via an integer &#8216;index&#8217;.</p>
-<dl class="docutils">
-<dt>index <span class="classifier-delimiter">:</span> <span class="classifier">integer</span></dt>
-<dd>The index of the visible child. Changing this index will change
-which child of the stack is visible.</dd>
-</dl>
-</dd></dl>
-
+changes which child is visible.</p>
 </div></blockquote>
 </div>
 </div>
@@ -232,8 +225,8 @@ which child of the stack is visible.</dd>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

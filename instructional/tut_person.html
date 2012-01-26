@@ -30,7 +30,7 @@
     <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="next" title="enaml-run and Python code tags in Enaml files" href="tut_python_code.html" />
-    <link rel="prev" title="“Hello World” tutorial" href="tut_hello_world.html" /> 
+    <link rel="prev" title="“Hello World” tutorial - Part II" href="tut_hello_world_ii.html" /> 
   </head>
   <body>
     <div class="related">
@@ -46,7 +46,7 @@
           <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tut_hello_world.html" title="“Hello World” tutorial"
+          <a href="tut_hello_world_ii.html" title="“Hello World” tutorial - Part II"
              accesskey="P">previous</a> |</li>
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
@@ -107,7 +107,7 @@
             
   <div class="section" id="john-doe-tutorial">
 <span id="john-doe"></span><h1>John Doe tutorial<a class="headerlink" href="#john-doe-tutorial" title="Permalink to this headline">¶</a></h1>
-<p>This tutorial expands on the <a class="reference internal" href="tut_hello_world.html#hello-world"><em>&#8220;Hello World&#8221; Tutorial</em></a> to
+<p>This tutorial expands on the <a class="reference internal" href="tut_hello_world_ii.html#hello-world"><em>&#8220;Hello World&#8221; Tutorial</em></a> to
 introduce the concepts of reusable component declarations and components from
 the standard library in Enaml. It sets up a GUI with the name and age of a
 person.</p>
@@ -120,7 +120,7 @@ from enaml.stdlib.fields import IntField
 
 
 PersonForm(Form):
-    person = None
+    attr person
     Label:
         text = 'First Name'
     Field:
@@ -135,10 +135,10 @@ PersonForm(Form):
         value := person.age 
 
 
-defn PersonView(person):
-    Window:
-        PersonForm:
-            person = person
+PersonView(MainWindow):
+    attr person
+    PersonForm:
+        person = parent.person
             
 </pre>
 </div>
@@ -178,7 +178,7 @@ defn PersonView(person):
     
     <span class="n">john</span> <span class="o">=</span> <span class="n">Person</span><span class="p">(</span><span class="n">first_name</span><span class="o">=</span><span class="s">&#39;John&#39;</span><span class="p">,</span> <span class="n">last_name</span><span class="o">=</span><span class="s">&#39;Doe&#39;</span><span class="p">,</span> <span class="n">age</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
     
-    <span class="n">view</span> <span class="o">=</span> <span class="n">PersonView</span><span class="p">(</span><span class="n">john</span><span class="p">)</span>
+    <span class="n">view</span> <span class="o">=</span> <span class="n">PersonView</span><span class="p">(</span><span class="n">person</span><span class="o">=</span><span class="n">john</span><span class="p">)</span>
     <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -186,7 +186,7 @@ defn PersonView(person):
 <img alt="../_images/john_doe.png" src="../_images/john_doe.png" />
 <div class="section" id="enaml-imports">
 <h2>Enaml Imports<a class="headerlink" href="#enaml-imports" title="Permalink to this headline">¶</a></h2>
-<p>This .enaml file begins like the <a class="reference internal" href="tut_hello_world.html#hello-world"><em>&#8220;Hello World&#8221;</em></a> example
+<p>This .enaml file begins like the <a class="reference internal" href="tut_hello_world_ii.html#hello-world"><em>&#8220;Hello World&#8221;</em></a> example
 with comments, but next we see that we can do imports in Enaml, like in Python.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">enaml.stdlib.fields</span> <span class="kn">import</span> <span class="n">IntField</span>
 </pre></div>
@@ -351,7 +351,7 @@ when we make a change in the GUI and see</p>
           <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
              >next</a> |</li>
         <li class="right" >
-          <a href="tut_hello_world.html" title="“Hello World” tutorial"
+          <a href="tut_hello_world_ii.html" title="“Hello World” tutorial - Part II"
              >previous</a> |</li>
         <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
@@ -363,8 +363,8 @@ when we make a change in the GUI and see</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

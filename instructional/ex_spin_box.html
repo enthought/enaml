@@ -131,13 +131,15 @@ class MonthSpinConverter(Converter):
 :: end ::
 
 
-MainWindow(Window):
-    SpinBox:
-        converter = MonthSpinConverter()
-        low = 1
-        high = 12
-        value &gt;&gt; print('new value', value)
-        wrap = True
+Main(MainWindow):
+    title = 'SpinBox'
+    Container:
+        SpinBox:
+            converter = MonthSpinConverter()
+            low = 1
+            high = 12
+            value &gt;&gt; print('new value', value)
+            wrap = True
 
 </pre>
 </div>
@@ -180,8 +182,8 @@ new value 2</pre>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

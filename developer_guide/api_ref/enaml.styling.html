@@ -122,7 +122,7 @@
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>color_string</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#str" title="(in Python v2.7)"><em>str</em></a>) &#8211; String describing color in hexadecimal format or a CSS color
 name. The hex formats supported are #rrggbb and #rrggbbaa.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>color</strong> (Instance(Color)) - The rgba color tuple representation in enaml.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>color</strong> (Instance(Color)) &#8211; The rgba color tuple representation in enaml.</td>
 </tr>
 </tbody>
 </table>
@@ -141,105 +141,24 @@ fully opaque.</p>
 <div class="section" id="style-node-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">style_node</span></tt> Module<a class="headerlink" href="#style-node-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../../_images/inheritance-8d93e3b3d3165d1b85fc51331cbfc37091fa083e.png" alt="Inheritance diagram of enaml.styling.style_node" usemap="#inheritancea5636f1228" class="inheritance"/>
-<map id="inheritancea5636f1228" name="inheritancea5636f1228">
-<area shape="rect" id="node4" href="#enaml.styling.style_node.StyleClassTrait" title="StyleClassTrait" alt="" coords="14,237,129,267"/>
-<area shape="rect" id="node11" href="#enaml.styling.style_node.StyleNode" title="StyleNode" alt="" coords="289,160,375,189"/>
-</map>
+<img src="../../_images/inheritance-ce2c98769f0fd13b993c3dc71ea716ba69d7fd16.png" alt="Inheritance diagram of enaml.styling.style_node" class="inheritance"/>
 </p>
-<span class="target" id="module-enaml.styling.style_node"></span><dl class="class">
-<dt id="enaml.styling.style_node.StyleClassTrait">
-<em class="property">class </em><tt class="descclassname">enaml.styling.style_node.</tt><tt class="descname">StyleClassTrait</tt><big>(</big><em>*types</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_node.html#StyleClassTrait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_node.StyleClassTrait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_types.BaseTuple</span></tt></p>
-<dl class="method">
-<dt id="enaml.styling.style_node.StyleClassTrait.validate">
-<tt class="descname">validate</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_node.html#StyleClassTrait.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_node.StyleClassTrait.validate" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="class">
-<dt id="enaml.styling.style_node.StyleNode">
-<em class="property">class </em><tt class="descclassname">enaml.styling.style_node.</tt><tt class="descname">StyleNode</tt><a class="reference internal" href="../../_modules/enaml/styling/style_node.html#StyleNode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_node.StyleNode" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.alignment">
-<tt class="descname">alignment</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.alignment" title="Permalink to this definition">¶</a></dt>
-<dd><p>The alignment of a widget in its parent layout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.fgcolor">
-<tt class="descname">fgcolor</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.fgcolor" title="Permalink to this definition">¶</a></dt>
-<dd><p>The foreground color of a widget. This is usually text color.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.bgcolor">
-<tt class="descname">bgcolor</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.bgcolor" title="Permalink to this definition">¶</a></dt>
-<dd><p>The background color of a widget.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.font">
-<tt class="descname">font</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.font" title="Permalink to this definition">¶</a></dt>
-<dd><p>The font to use for the widget.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.margins">
-<tt class="descname">margins</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.margins" title="Permalink to this definition">¶</a></dt>
-<dd><p>The margins to place around a layout.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.size">
-<tt class="descname">size</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.size" title="Permalink to this definition">¶</a></dt>
-<dd><p>The suggested (w, h) size of the widget.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.size_policy">
-<tt class="descname">size_policy</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.size_policy" title="Permalink to this definition">¶</a></dt>
-<dd><p>How the widget should be resized when placed in a layout.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.spacing">
-<tt class="descname">spacing</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.spacing" title="Permalink to this definition">¶</a></dt>
-<dd><p>The interelement spacing in a layout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.stretch">
-<tt class="descname">stretch</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.stretch" title="Permalink to this definition">¶</a></dt>
-<dd><p>The stretch factor to use when adding the widget to a layout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_node.StyleNode.style_class">
-<tt class="descname">style_class</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_node.StyleNode.style_class" title="Permalink to this definition">¶</a></dt>
-<dd><p>The string name of the style class to use for this node.</p>
-</dd></dl>
-
-</dd></dl>
-
-</div>
+<span class="target" id="module-enaml.styling.style_node"></span></div>
 <div class="section" id="style-sheet-module">
 <h2><tt class="xref py py-mod docutils literal"><span class="pre">style_sheet</span></tt> Module<a class="headerlink" href="#style-sheet-module" title="Permalink to this headline">¶</a></h2>
 <p class="graphviz">
-<img src="../../_images/inheritance-63c5936d4ba4c51ff2baa46489e8391afb268d13.png" alt="Inheritance diagram of enaml.styling.style_sheet" usemap="#inheritancec23f0d1252" class="inheritance"/>
+<img src="../../_images/inheritance-187c622e78c38d3b3ee2d6d70c0d5855bcc7d452.png" alt="Inheritance diagram of enaml.styling.style_sheet" usemap="#inheritancec23f0d1252" class="inheritance"/>
 <map id="inheritancec23f0d1252" name="inheritancec23f0d1252">
-<area shape="rect" id="node1" href="#enaml.styling.style_sheet.style" title="style" alt="" coords="5,5,77,35"/>
-<area shape="rect" id="node2" href="#enaml.styling.style_sheet.IStyleNodeData" title="IStyleNodeData" alt="" coords="42,237,160,267"/>
-<area shape="rect" id="node5" href="#enaml.styling.style_sheet.Selector" title="Selector" alt="" coords="185,237,257,267"/>
-<area shape="rect" id="node14" href="#enaml.styling.style_sheet.QualSelector" title="QualSelector" alt="" coords="14,315,116,344"/>
-<area shape="rect" id="node20" href="#enaml.styling.style_sheet.TypeSelector" title="TypeSelector" alt="" coords="140,315,243,344"/>
-<area shape="rect" id="node22" href="#enaml.styling.style_sheet.ClassSelector" title="ClassSelector" alt="" coords="268,315,375,344"/>
-<area shape="rect" id="node24" href="#enaml.styling.style_sheet.IDSelector" title="IDSelector" alt="" coords="398,315,484,344"/>
-<area shape="rect" id="node17" href="#enaml.styling.style_sheet.StyleSheet" title="StyleSheet" alt="" coords="282,237,368,267"/>
-<area shape="rect" id="node8" href="#enaml.styling.style_sheet.StyleValue" title="StyleValue" alt="" coords="436,83,523,112"/>
-<area shape="rect" id="node9" href="#enaml.styling.style_sheet.BoxedValue" title="BoxedValue" alt="" coords="432,5,528,35"/>
+<area shape="rect" id="node1" href="#enaml.styling.style_sheet.style" title="style" alt="" coords="19,497,91,527"/>
+<area shape="rect" id="node2" href="#enaml.styling.style_sheet.StyleSheet" title="StyleSheet" alt="" coords="470,143,557,172"/>
+<area shape="rect" id="node5" href="#enaml.styling.style_sheet.Selector" title="Selector" alt="" coords="477,196,550,225"/>
+<area shape="rect" id="node7" href="#enaml.styling.style_sheet.ClassSelector" title="ClassSelector" alt="" coords="621,116,728,145"/>
+<area shape="rect" id="node15" href="#enaml.styling.style_sheet.QualSelector" title="QualSelector" alt="" coords="623,169,726,199"/>
+<area shape="rect" id="node19" href="#enaml.styling.style_sheet.TypeSelector" title="TypeSelector" alt="" coords="623,223,727,252"/>
+<area shape="rect" id="node23" href="#enaml.styling.style_sheet.IDSelector" title="IDSelector" alt="" coords="631,276,718,305"/>
+<area shape="rect" id="node9" href="#enaml.styling.style_sheet.IStyleNodeData" title="IStyleNodeData" alt="" coords="454,249,573,279"/>
+<area shape="rect" id="node12" href="#enaml.styling.style_sheet.StyleValue" title="StyleValue" alt="" coords="152,5,240,35"/>
+<area shape="rect" id="node13" href="#enaml.styling.style_sheet.BoxedValue" title="BoxedValue" alt="" coords="6,5,103,35"/>
 </map>
 </p>
 <span class="target" id="module-enaml.styling.style_sheet"></span><dl class="class">
@@ -247,11 +166,6 @@ fully opaque.</p>
 <em class="property">class </em><tt class="descclassname">enaml.styling.style_sheet.</tt><tt class="descname">BoxedValue</tt><big>(</big><em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#BoxedValue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.BoxedValue" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>A lightweight object which boxes another object.</p>
-<dl class="attribute">
-<dt id="enaml.styling.style_sheet.BoxedValue.value">
-<tt class="descname">value</tt><a class="headerlink" href="#enaml.styling.style_sheet.BoxedValue.value" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
 </dd></dl>
 
 <dl class="class">
@@ -262,6 +176,12 @@ fully opaque.</p>
 returning style matches. This allows other application code to
 distinguish between values retrieved from the style sheet and
 values provided by the user.</p>
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.StyleValue.__weakref__">
+<tt class="descname">__weakref__</tt><a class="headerlink" href="#enaml.styling.style_sheet.StyleValue.__weakref__" title="Permalink to this definition">¶</a></dt>
+<dd><p>list of weak references to the object (if defined)</p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -269,15 +189,23 @@ values provided by the user.</p>
 <em class="property">class </em><tt class="descclassname">enaml.styling.style_sheet.</tt><tt class="descname">style</tt><big>(</big><em>*selectors</em>, <em>**properties</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#style"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.style" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>An object which represents a style declaration in a style sheet.</p>
-<dl class="attribute">
-<dt id="enaml.styling.style_sheet.style.selectors">
-<tt class="descname">selectors</tt><a class="headerlink" href="#enaml.styling.style_sheet.style.selectors" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_sheet.style.properties">
-<tt class="descname">properties</tt><a class="headerlink" href="#enaml.styling.style_sheet.style.properties" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="method">
+<dt id="enaml.styling.style_sheet.style.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>*selectors</em>, <em>**properties</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#style.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.style.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructs a style object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>selectors</strong> (<a class="reference external" href="http://docs.python.org/library/functions.html#list" title="(in Python v2.7)"><em>list</em></a>) &#8211; A list of strings following the selector syntax.</li>
+<li><strong>properties</strong> (<a class="reference external" href="http://docs.python.org/library/stdtypes.html#dict" title="(in Python v2.7)"><em>dict</em></a>) &#8211; A sequence of keywords specifiying the styling values.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
 
 </dd></dl>
 
@@ -313,6 +241,12 @@ iterable of strings.</p>
 element being styled.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.IStyleNodeData.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.styling.style_sheet.IStyleNodeData.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="class">
@@ -325,29 +259,29 @@ Subclasses can override the match() method to implemented more
 restrictive selectors.</p>
 <dl class="attribute">
 <dt id="enaml.styling.style_sheet.Selector.properies">
-<tt class="descname">properies</tt><a class="headerlink" href="#enaml.styling.style_sheet.Selector.properies" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>(Dict(Str, Any))</em>
-The style properties for this match.</p>
+<tt class="descname">properies</tt><em class="property"> = Dict(Str, Any)</em><a class="headerlink" href="#enaml.styling.style_sheet.Selector.properies" title="Permalink to this definition">¶</a></dt>
+<dd><p>The style properties for this match.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="enaml.styling.style_sheet.Selector.order">
-<tt class="descname">order</tt><a class="headerlink" href="#enaml.styling.style_sheet.Selector.order" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>(Int)</em>
-A integer which is modified by the style sheet to maintain     information about the order in which selectors appear.</p>
+<tt class="descname">order</tt><em class="property"> = Int</em><a class="headerlink" href="#enaml.styling.style_sheet.Selector.order" title="Permalink to this definition">¶</a></dt>
+<dd><p>A integer which is modified by the style sheet to maintain
+information about the order in which selectors appear.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="enaml.styling.style_sheet.Selector.touch">
-<tt class="descname">touch</tt><a class="headerlink" href="#enaml.styling.style_sheet.Selector.touch" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>(Int)</em>
-A value that is incremented by the style sheet whenever the     selector is updated. This helps to break ties between selectors     that match with identical specificity.</p>
+<tt class="descname">touch</tt><em class="property"> = Int</em><a class="headerlink" href="#enaml.styling.style_sheet.Selector.touch" title="Permalink to this definition">¶</a></dt>
+<dd><p>A value that is incremented by the style sheet whenever the
+selector is updated. This helps to break ties between selectors
+that match with identical specificity.</p>
 </dd></dl>
 
 <table border="1" class="docutils">
 <colgroup>
-<col width="42%" />
-<col width="58%" />
+<col width="45%" />
+<col width="55%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Methods</th>
@@ -360,9 +294,6 @@ A value that is incremented by the style sheet whenever the     selector is upda
 </tr>
 </tbody>
 </table>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
 <dl class="method">
 <dt id="enaml.styling.style_sheet.Selector.match">
 <tt class="descname">match</tt><big>(</big><em>node_data</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#Selector.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.Selector.match" title="Permalink to this definition">¶</a></dt>
@@ -374,10 +305,16 @@ A value that is incremented by the style sheet whenever the     selector is upda
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node_data</strong> (<em>IStyleNodeData</em>) &#8211; An object for the node being styled which implements the
 IStyleNodeData interface.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool, (int, properties)) - If first return value is False, the selector does not match the node. Otherwise, the second return value is a tuple of (specificity, order, properties).</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (bool, (int, properties)) &#8211; If first return value is False, the selector does not match the node. Otherwise, the second return value is a tuple of (specificity, order, properties).</td>
 </tr>
 </tbody>
 </table>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.Selector.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.styling.style_sheet.Selector.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
 </dd></dl>
 
 </dd></dl>
@@ -389,10 +326,11 @@ IStyleNodeData interface.</td>
 <p>A style selector which matches element types.</p>
 <p class="rubric">See Also</p>
 <p>Selector</p>
-<dl class="method">
-<dt id="enaml.styling.style_sheet.TypeSelector.match">
-<tt class="descname">match</tt><big>(</big><em>node_data</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#TypeSelector.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.TypeSelector.match" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.TypeSelector.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.styling.style_sheet.TypeSelector.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -403,10 +341,11 @@ IStyleNodeData interface.</td>
 <p>A style selector which matches style classes.</p>
 <p class="rubric">See Also</p>
 <p>Selector</p>
-<dl class="method">
-<dt id="enaml.styling.style_sheet.ClassSelector.match">
-<tt class="descname">match</tt><big>(</big><em>node_data</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#ClassSelector.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.ClassSelector.match" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.ClassSelector.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.styling.style_sheet.ClassSelector.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -417,10 +356,11 @@ IStyleNodeData interface.</td>
 <p>A style selector which matches type qualified classes.</p>
 <p class="rubric">See Also</p>
 <p>Selector</p>
-<dl class="method">
-<dt id="enaml.styling.style_sheet.QualSelector.match">
-<tt class="descname">match</tt><big>(</big><em>node_data</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#QualSelector.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.QualSelector.match" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.QualSelector.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.styling.style_sheet.QualSelector.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -431,10 +371,11 @@ IStyleNodeData interface.</td>
 <p>A style selector which matches element ids.</p>
 <p class="rubric">See Also</p>
 <p>Selector</p>
-<dl class="method">
-<dt id="enaml.styling.style_sheet.IDSelector.match">
-<tt class="descname">match</tt><big>(</big><em>node_data</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#IDSelector.match"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.IDSelector.match" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.IDSelector.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.styling.style_sheet.IDSelector.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
 
 </dd></dl>
 
@@ -449,15 +390,17 @@ The value for a style property which matches style criteria can be
 retrieved through the &#8216;get_property&#8217; method.</p>
 <dl class="attribute">
 <dt id="enaml.styling.style_sheet.StyleSheet.updated">
-<tt class="descname">updated</tt><a class="headerlink" href="#enaml.styling.style_sheet.StyleSheet.updated" title="Permalink to this definition">¶</a></dt>
-<dd><p><em>(Event)</em>
-An event which is fired when the style sheet has changed. The     payload of the event will be a set of property names that have     been updated. This event is not fired when the sheet is first     instantiated.</p>
+<tt class="descname">updated</tt><em class="property"> = Event</em><a class="headerlink" href="#enaml.styling.style_sheet.StyleSheet.updated" title="Permalink to this definition">¶</a></dt>
+<dd><p>An event which is fired when the style sheet has changed. The
+payload of the event will be a set of property names that have
+been updated. This event is not fired when the sheet is first
+instantiated.</p>
 </dd></dl>
 
 <table border="1" class="docutils">
 <colgroup>
-<col width="26%" />
-<col width="74%" />
+<col width="28%" />
+<col width="72%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Methods</th>
@@ -466,16 +409,27 @@ An event which is fired when the style sheet has changed. The     payload of the
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><a class="reference internal" href="#enaml.styling.style_sheet.StyleSheet.update" title="enaml.styling.style_sheet.StyleSheet.update"><tt class="xref py py-meth docutils literal"><span class="pre">update(*styles)</span></tt></a></td>
-<td>Update the style sheet with the given style objects. This     will trigger an &#8216;updated&#8217; event.</td>
+<td>Update the style sheet with the given style objects. This will trigger an &#8216;updated&#8217; event.</td>
 </tr>
 <tr class="row-odd"><td><a class="reference internal" href="#enaml.styling.style_sheet.StyleSheet.replace" title="enaml.styling.style_sheet.StyleSheet.replace"><tt class="xref py py-meth docutils literal"><span class="pre">replace(*styles)</span></tt></a></td>
-<td>Replace the style sheet with the give style objects. This     will trigger an &#8216;updated&#8217; event.</td>
+<td>Replace the style sheet with the give style objects. This will trigger an &#8216;updated&#8217; event.</td>
 </tr>
 </tbody>
 </table>
-<div class="line-block">
-<div class="line"><br /></div>
-</div>
+<dl class="method">
+<dt id="enaml.styling.style_sheet.StyleSheet.__init__">
+<tt class="descname">__init__</tt><big>(</big><em>*styles</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#StyleSheet.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.StyleSheet.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a style sheet object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>styles</strong> (<em>Sequence of &#8216;style&#8217; objects.</em>) &#8211; The style objects with which to populate the sheet.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 <dl class="method">
 <dt id="enaml.styling.style_sheet.StyleSheet.update">
 <tt class="descname">update</tt><big>(</big><em>*styles</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#StyleSheet.update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.StyleSheet.update" title="Permalink to this definition">¶</a></dt>
@@ -505,6 +459,12 @@ An event which is fired when the style sheet has changed. The     payload of the
 </table>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="enaml.styling.style_sheet.StyleSheet.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.styling.style_sheet.StyleSheet.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
 <dl class="method">
 <dt id="enaml.styling.style_sheet.StyleSheet.get_property">
 <tt class="descname">get_property</tt><big>(</big><em>tag</em>, <em>node_data</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_sheet.html#StyleSheet.get_property"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_sheet.StyleSheet.get_property" title="Permalink to this definition">¶</a></dt>
@@ -519,7 +479,7 @@ node data object.</p>
 <tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>node_data</strong> (<em>IStyleNodeData</em>) &#8211; An object for the node being styled which implements the
 IStyleNodeData interface.</td>
 </tr>
-<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (style property or NO_STYLE) - Returns the style property for the most specific match of the sheet, or NO_STYLE if no match is found.</td>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>result</strong> (style property or NO_STYLE) &#8211; Returns the style property for the most specific match of the sheet, or NO_STYLE if no match is found.</td>
 </tr>
 </tbody>
 </table>
@@ -543,150 +503,12 @@ style sheet.</p>
 </div>
 <div class="section" id="module-enaml.styling.style_manager">
 <span id="style-manager-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">style_manager</span></tt> Module<a class="headerlink" href="#module-enaml.styling.style_manager" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="enaml.styling.style_manager.StyleManager">
-<em class="property">class </em><tt class="descclassname">enaml.styling.style_manager.</tt><tt class="descname">StyleManager</tt><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasStrictTraits</span></tt></p>
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.sheet_changed">
-<tt class="descname">sheet_changed</tt><big>(</big><em>sheet</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.sheet_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.sheet_changed" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.sheet_updated">
-<tt class="descname">sheet_updated</tt><big>(</big><em>tags</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.sheet_updated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.sheet_updated" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.apply">
-<tt class="descname">apply</tt><big>(</big><em>set_listen=True</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.apply"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.apply" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.update_tags">
-<tt class="descname">update_tags</tt><big>(</big><em>tags</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.update_tags"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.update_tags" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.node_id">
-<tt class="descname">node_id</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.node_id"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.node_id" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the id of the element being styled as a string.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.node_classes">
-<tt class="descname">node_classes</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.node_classes"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.node_classes" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the classes of the element being styled as a space
-separated string.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.node_type">
-<tt class="descname">node_type</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.node_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.node_type" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns the type of the element being styled as a string.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_manager.StyleManager.parent_node">
-<tt class="descname">parent_node</tt><big>(</big><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_manager.html#StyleManager.parent_node"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_manager.StyleManager.parent_node" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns an IStyleNodeData object for the parent element of the
-element being styled.</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-enaml.styling.style_mixin">
 <span id="style-mixin-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">style_mixin</span></tt> Module<a class="headerlink" href="#module-enaml.styling.style_mixin" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="enaml.styling.style_mixin.StyleMixin">
-<em class="property">class </em><tt class="descclassname">enaml.styling.style_mixin.</tt><tt class="descname">StyleMixin</tt><a class="reference internal" href="../../_modules/enaml/styling/style_mixin.html#StyleMixin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.has_traits.HasTraits</span></tt></p>
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.alignment">
-<tt class="descname">alignment</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.alignment" title="Permalink to this definition">¶</a></dt>
-<dd><p>The alignment of a widget in its parent layout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.fgcolor">
-<tt class="descname">fgcolor</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.fgcolor" title="Permalink to this definition">¶</a></dt>
-<dd><p>The foreground color of a widget. This is usually text color.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.bgcolor">
-<tt class="descname">bgcolor</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.bgcolor" title="Permalink to this definition">¶</a></dt>
-<dd><p>The background color of a widget.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.font">
-<tt class="descname">font</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.font" title="Permalink to this definition">¶</a></dt>
-<dd><p>The font to use for the widget.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.margins">
-<tt class="descname">margins</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.margins" title="Permalink to this definition">¶</a></dt>
-<dd><p>The margins to place around a layout.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.size_policy">
-<tt class="descname">size_policy</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.size_policy" title="Permalink to this definition">¶</a></dt>
-<dd><p>How the widget should be resized when placed in a layout.</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.spacing">
-<tt class="descname">spacing</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.spacing" title="Permalink to this definition">¶</a></dt>
-<dd><p>The interelement spacing in a layout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.stretch">
-<tt class="descname">stretch</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.stretch" title="Permalink to this definition">¶</a></dt>
-<dd><p>The stretch factor to use when adding the widget to a layout</p>
-</dd></dl>
-
-<dl class="attribute">
-<dt id="enaml.styling.style_mixin.StyleMixin.style_class">
-<tt class="descname">style_class</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.styling.style_mixin.StyleMixin.style_class" title="Permalink to this definition">¶</a></dt>
-<dd><p>The string name of the style class to use for this node.</p>
-</dd></dl>
-
-</dd></dl>
-
 </div>
 <div class="section" id="module-enaml.styling.style_trait">
 <span id="style-trait-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">style_trait</span></tt> Module<a class="headerlink" href="#module-enaml.styling.style_trait" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="enaml.styling.style_trait.StyleTrait">
-<em class="property">class </em><tt class="descclassname">enaml.styling.style_trait.</tt><tt class="descname">StyleTrait</tt><big>(</big><em>default_value=&lt;object object at 0x1130208&gt;</em>, <em>factory=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_trait.html#StyleTrait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_trait.StyleTrait" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
-<dl class="method">
-<dt id="enaml.styling.style_trait.StyleTrait.get">
-<tt class="descname">get</tt><big>(</big><em>obj</em>, <em>name</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_trait.html#StyleTrait.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_trait.StyleTrait.get" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_trait.StyleTrait.set">
-<tt class="descname">set</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_trait.html#StyleTrait.set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_trait.StyleTrait.set" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_trait.StyleTrait.create_default">
-<tt class="descname">create_default</tt><big>(</big><em>obj</em>, <em>name</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_trait.html#StyleTrait.create_default"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_trait.StyleTrait.create_default" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="method">
-<dt id="enaml.styling.style_trait.StyleTrait.convert">
-<tt class="descname">convert</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/styling/style_trait.html#StyleTrait.convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.styling.style_trait.StyleTrait.convert" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
 </div>
 </div>
 
@@ -722,8 +544,8 @@ element being styled.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

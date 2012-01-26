@@ -90,7 +90,7 @@
             
   <div class="section" id="tabbed-container-example">
 <h1>Tabbed Container Example<a class="headerlink" href="#tabbed-container-example" title="Permalink to this headline">¶</a></h1>
-<p><a class="reference download internal" href="../_downloads/tabbed.enaml"><tt class="xref download docutils literal"><span class="pre">tabbed.enaml</span></tt></a></p>
+<p><a class="reference download internal" href="../_downloads/tab_group.enaml"><tt class="xref download docutils literal"><span class="pre">tabbed.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
@@ -116,10 +116,8 @@ tab_pos.next()
 
 
 TabForm(Form):
-    button_text = 'Click Me!'
-    # XXX we would like a way to proxy an event rather 
-    # than needing to cycle the value of a Boolean
-    button_clicked = False
+    attr button_text: str = 'Click Me!'
+    event button_clicked
     Label:
         text = 'First'
     Field:
@@ -134,31 +132,36 @@ TabForm(Form):
         pass
     PushButton:
         text = button_text
-        clicked &gt;&gt; setattr(parent, 'button_clicked', not button_clicked) 
+        clicked &gt;&gt; button_clicked()
 
 
-MainWindow(Window):
-    title = 'Tabbed'
-    Tabbed:
-        id: tbd
-        selected &gt;&gt; print('Selected Tab:', selected.title)
-        Tab:
-            title = 'Spam'
-            TabForm:
-                button_text = 'spam'
-        Tab:
-            title = 'Ham'
-            TabForm:
-                button_text = 'ham'
-        Tab:
-            title = 'Toggle'
-            TabForm:
-                button_text = 'Cycle Tab Position'
-                button_clicked &gt;&gt; setattr(tbd, 'tab_position', tab_pos.next())
+Main(MainWindow):
+    title = 'TabGroup'
+    Container:
+        TabGroup:
+            id: tbd
+            hug_height = 'strong'
+            selected_tab &gt;&gt; print('Selected Tab:', selected_tab.title)
+            Tab:
+                id: spam_tab
+                title = 'Spam'
+                TabForm:
+                    button_text = 'Select Ham'
+                    button_clicked &gt;&gt; set_selected_index(1)
+            Tab:
+                title = 'Ham'
+                TabForm:
+                    button_text = 'Select Spam'
+                    button_clicked &gt;&gt; set_selected_tab(spam_tab)
+            Tab:
+                title = 'Toggle'
+                TabForm:
+                    button_text = 'Cycle Tab Position'
+                    button_clicked &gt;&gt; setattr(tbd, 'tab_position', tab_pos.next())
 
 </pre>
 </div>
-<div class="highlight-python"><pre>$ enaml-run tabbed.enaml</pre>
+<div class="highlight-python"><pre>$ enaml-run tab_group.enaml</pre>
 </div>
 <img alt="../_images/tabbed0.png" src="../_images/tabbed0.png" />
 <p>After two clicks on <em class="guilabel">Cycle Tab Position</em></p>
@@ -196,8 +199,8 @@ MainWindow(Window):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -57,7 +57,6 @@ class, which wraps an actual toolkit widget.
 *Standard Implementations*
 
 .. inheritance-diagram::
-    enaml.widgets.base_component.AbstractTkBaseComponent
     enaml.widgets.bounded_date.AbstractTkBoundedDate
     enaml.widgets.bounded_datetime.AbstractTkBoundedDatetime
     enaml.widgets.calendar.AbstractTkCalendar

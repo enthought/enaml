@@ -9,46 +9,47 @@ Note:
    cross most Container boundaries.
 
 """
-MainWindow(Window):
+Main(MainWindow):
     title = "Form Layout"
-    constraints = [
-        vbox(
-            hbox(top_label, _space_>=0),
-            top_form,
-            hbox(bottom_label, _space_>=0),
-            bottom_form,
-            _space_,
-        ),
-        top_form.midline == bottom_form.midline,
-    ]
-    Label:
-        id: top_label
-        text = "Personal Details"
-    Form:
-        id: top_form
+    Container:
+        constraints = [
+            vbox(
+                hbox(top_label, _space_>=0),
+                top_form,
+                hbox(bottom_label, _space_>=0),
+                bottom_form,
+                _space_,
+            ),
+            top_form.midline == bottom_form.midline,
+        ]
         Label:
-            text = "First name:"
-        Field:
-            pass
+            id: top_label
+            text = "Personal Details"
+        Form:
+            id: top_form
+            Label:
+                text = "First name:"
+            Field:
+                pass
+            Label:
+                text = "Last name:"
+            Field:
+                pass
+            Label:
+                text = "Home phone:"
+            Field:
+                pass
         Label:
-            text = "Last name:"
-        Field:
-            pass
-        Label:
-            text = "Home phone:"
-        Field:
-            pass
-    Label:
-        id: bottom_label
-        text = "Employment Details"
-    Form:
-        id: bottom_form
-        Label:
-            text = "Employer:"
-        Field:
-            pass
-        Label:
-            text = "Office or Desk phone:"
-        Field:
-            pass
+            id: bottom_label
+            text = "Employment Details"
+        Form:
+            id: bottom_form
+            Label:
+                text = "Employer:"
+            Field:
+                pass
+            Label:
+                text = "Office or Desk phone:"
+            Field:
+                pass
 

@@ -257,7 +257,7 @@
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;obj_ref&#39;</span><span class="p">,</span> <span class="s">&#39;attr&#39;</span><span class="p">,</span> <span class="s">&#39;expr_ast&#39;</span><span class="p">,</span> <span class="s">&#39;code&#39;</span><span class="p">,</span> <span class="s">&#39;f_globals&#39;</span><span class="p">,</span>
                  <span class="s">&#39;toolkit&#39;</span><span class="p">,</span> <span class="s">&#39;f_locals&#39;</span><span class="p">,</span> <span class="s">&#39;__weakref__&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">expr_ast</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">toolkit</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractExpression.__init__"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.AbstractExpression.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">expr_ast</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">f_globals</span><span class="p">,</span> <span class="n">toolkit</span><span class="p">,</span> <span class="n">f_locals</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Initializes and expression object.</span>
 
 <span class="sd">        Parameters</span>
@@ -294,7 +294,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">f_globals</span> <span class="o">=</span> <span class="n">f_globals</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span> <span class="o">=</span> <span class="n">toolkit</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">f_locals</span> <span class="o">=</span> <span class="n">f_locals</span>
-
+</div>
     <span class="nd">@property</span>
 <div class="viewcode-block" id="AbstractExpression.obj"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.expressions.AbstractExpression.obj">[docs]</a>    <span class="k">def</span> <span class="nf">obj</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_ref</span><span class="p">()</span>
@@ -590,8 +590,8 @@
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

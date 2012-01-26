@@ -107,14 +107,24 @@
 <dl class="class">
 <dt id="enaml.widgets.container.Container">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.container.</tt><tt class="descname">Container</tt><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="enaml.widgets.component.Component"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.component.Component</span></tt></a></p>
-<p>A Component subclass that provides for laying out its child 
-Components.</p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.layout_task_handler.LayoutTaskHandler</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.layout_component.LayoutComponent</span></tt></p>
+<p>A Component subclass that provides for laying out its layout
+child Components.</p>
 <dl class="attribute">
 <dt id="enaml.widgets.container.Container.layout_manager">
 <tt class="descname">layout_manager</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.layout_manager" title="Permalink to this definition">¶</a></dt>
-<dd><p>An object that manages the layout of this component and its
-direct children. The default is constraints based layout.</p>
+<dd><p>A read-only cached property which returns the constraints layout
+manager for this container, or None in the layout is being managed
+by a parent container.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.owns_layout">
+<tt class="descname">owns_layout</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.owns_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which returns True if this container owns
+its layout and is responsible for setting the geometry of its
+children, or False if that responsibility has been transferred
+to another component in the heierarchy.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -127,68 +137,128 @@ container.</p>
 <dl class="attribute">
 <dt id="enaml.widgets.container.Container.abstract_obj">
 <tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.container.Container.abstract_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class trait</p>
+<dd><p>Overridden parent class trait.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.transfer_layout_ownership">
+<tt class="descname">transfer_layout_ownership</tt><big>(</big><em>owner</em><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.transfer_layout_ownership" title="Permalink to this definition">¶</a></dt>
+<dd><p>A method which can be called by other components in the
+heierarchy to gain ownership responsibility for the layout 
+of the children of this container. By default, the transfer
+is allowed and is the mechanism which allows constraints to
+cross widget boundaries. Subclasses should reimplement this 
+method if different behavior is desired.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>owner</strong> (<em>BaseComponent</em>) &#8211; The component which has taken ownership responsibility
+for laying out the children of this component. All
+relayout and refresh requests will be forwarded to this
+component.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><strong>results</strong> (bool) &#8211; True if the transfer was allowed, False otherwise.</td>
+</tr>
+</tbody>
+</table>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.widgets.container.Container.initialize_layout">
 <tt class="descname">initialize_layout</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.initialize_layout"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.initialize_layout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize the layout for the first time. Called at the end
-of the setup process.</p>
+<dd><p>A reimplemented parent class method that initializes the 
+layout manager for the first time, and binds the relevant
+layout change handlers.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.widgets.container.Container.relayout">
 <tt class="descname">relayout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.relayout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reimplemented parent class method which triggers an update
-of the constraints and a layout refresh. This is called whenever
-the children of the component should have their layout refreshed. 
-The constraints update and relayout occur immediately and are 
-completed before the method returns.</p>
+<dd><p>A reimplemented parent class method which forwards the call
+to the layout owner if necessary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.widgets.container.Container.relayout_later">
-<tt class="descname">relayout_later</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.relayout_later" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reimplemented parent class method which triggers an update
-of the constraints and a layout refresh at some point in the 
-future.</p>
+<dt id="enaml.widgets.container.Container.refresh">
+<tt class="descname">refresh</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method which forwards the call
+to the layout owner if necessary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.widgets.container.Container.rearrange">
-<tt class="descname">rearrange</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.rearrange" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reimplemented parent class method which triggers a rearrange
-of the children.</p>
+<dt id="enaml.widgets.container.Container.request_relayout">
+<tt class="descname">request_relayout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.request_relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method which forwards the call
+to the layout owner if necessary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.widgets.container.Container.rearrange_later">
-<tt class="descname">rearrange_later</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.rearrange_later" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reimplemented parent class method which triggers a rearrange
-of the children at some point in the future.</p>
+<dt id="enaml.widgets.container.Container.request_refresh">
+<tt class="descname">request_refresh</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.request_refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method which forwards the call
+to the layout owner if necessary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.widgets.container.Container.relayout_enqueue">
-<tt class="descname">relayout_enqueue</tt><big>(</big><em>callable</em><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.relayout_enqueue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reimplemented parent class method which triggers a rearrange
-after adding the callable to the queue.</p>
+<dt id="enaml.widgets.container.Container.request_relayout_task">
+<tt class="descname">request_relayout_task</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.request_relayout_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method which forwards the call
+to the layout owner if necessary.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.widgets.container.Container.rearrange_enqueue">
-<tt class="descname">rearrange_enqueue</tt><big>(</big><em>callable</em><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.rearrange_enqueue" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reimplemented parent class method which trigger a rearrange
-after after adding the callable to the queue.</p>
+<dt id="enaml.widgets.container.Container.request_refresh_task">
+<tt class="descname">request_refresh_task</tt><big>(</big><em>callback</em>, <em>*args</em>, <em>**kwargs</em><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.request_refresh_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented parent class method which forwards the call
+to the layout owner if necessary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.do_relayout">
+<tt class="descname">do_relayout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.do_relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented LayoutTaskHandler handler method which will
+actually perform the layout.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.do_refresh">
+<tt class="descname">do_refresh</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.do_refresh" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented LayoutTaskHandler handler method which will
+actually perform the refresh.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.apply_layout">
+<tt class="descname">apply_layout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.apply_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>The callback invoked by the layout manager when there are
+new layout values available. This traverses the children for
+which this container has layout ownership and applies the 
+geometry updates.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.compute_constraints">
+<tt class="descname">compute_constraints</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.compute_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the constraints for the layout children of this
+container as well as any sub container for which it can usurp
+layout ownership.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.user_constraints">
+<tt class="descname">user_constraints</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.user_constraints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list of constraints specified by the user or the
+list of constraints computed by &#8216;default_user_constraints&#8217; if the
+user has not supplied their own list.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.widgets.container.Container.default_user_constraints">
 <tt class="descname">default_user_constraints</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/container.html#Container.default_user_constraints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.container.Container.default_user_constraints" title="Permalink to this definition">¶</a></dt>
 <dd><p>Constraints to use if the constraints trait is an empty list.</p>
-<p>Default behaviour is to put the children into a vertical layout.
-Subclasses of Container which implement container_constraints will
+<p>Default behaviour is to put the layout children into a vertical 
+layout. Subclasses which implement container_constraints will
 probably want to override this (possibly to return an empty list).</p>
 </dd></dl>
 
@@ -200,6 +270,42 @@ type of container. This should be implemented by subclasses
 such as Form to set up their standard constraints.</p>
 </dd></dl>
 
+<dl class="method">
+<dt id="enaml.widgets.container.Container.size_hint">
+<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.size_hint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overridden parent class method to return the size hint of 
+the container from the layout manager. If the container does not
+own its layout, or if the layout has not been initialized, then
+this method will return (-1, -1). This method does rely on the
+size hint computation of the underlying toolkit widget. Thus,
+the underlying widget may call back into this method as needed
+to get a size hint from the layout manager.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.compute_min_size">
+<tt class="descname">compute_min_size</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.compute_min_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the minimum size of the container which would 
+allow all constraints to be satisfied. If this container does
+not own its layout, or if the layout has not been initialized,
+then this method will return (-1, -1).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.container.Container.compute_max_size">
+<tt class="descname">compute_max_size</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.container.Container.compute_max_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the maximum size of the container which would 
+allow all constraints to be satisfied. If this container does
+not own its layout, or if the layout has not been initialized
+then this method will return (-1, -1).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.container.Container.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.container.Container.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="section" id="backends">
@@ -207,20 +313,17 @@ such as Form to set up their standard constraints.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-eae40c7c9e3612c461ee89bca41897a3c0ae453b.png" alt="Inheritance diagram of enaml.widgets.qt.qt_container.QtContainer" usemap="#inheritance0b0f07e7f8" class="inheritance"/>
+<img src="../../../_images/inheritance-5112e57d93d3724282c4ec9cfcaf87f77fdc68f4.png" alt="Inheritance diagram of enaml.widgets.qt.qt_container.QtContainer" usemap="#inheritance0b0f07e7f8" class="inheritance"/>
 <map id="inheritance0b0f07e7f8" name="inheritance0b0f07e7f8">
-<area shape="rect" id="node1" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="41,160,153,189"/>
-<area shape="rect" id="node10" href="#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="126,237,225,267"/>
+<area shape="rect" id="node4" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="263,161,372,189"/>
+<area shape="rect" id="node21" href="#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="665,83,762,112"/>
 </map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_container.QtContainer">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_container.</tt><tt class="descname">QtContainer</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_container.html#QtContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_container.QtContainer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="enaml.widgets.qt.qt_component.QtComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_component.QtComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.AbstractTkContainer</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_layout_component.QtLayoutComponent</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.AbstractTkContainer</span></tt></p>
 <p>A Qt4 implementation of Container.</p>
-<p>QtContainer is usually to be used as a base class for other container
-widgets. However, it may also be used directly as an undecorated 
-container for widgets for layout purposes.</p>
 <dl class="method">
 <dt id="enaml.widgets.qt.qt_container.QtContainer.create">
 <tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_container.html#QtContainer.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_container.QtContainer.create" title="Permalink to this definition">¶</a></dt>
@@ -240,54 +343,33 @@ container for widgets for layout purposes.</p>
 has been resized.</p>
 </dd></dl>
 
-<dl class="method">
-<dt id="enaml.widgets.qt.qt_container.QtContainer.size_hint">
-<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_container.html#QtContainer.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_container.QtContainer.size_hint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Returns a (width, height) tuple of integers which represent
-the suggested size of the widget for its current state, ignoring
-any windowing decorations. This value is used by the layout
-manager to determine how much space to allocate the widget.</p>
-</dd></dl>
-
 </dd></dl>
 
 </div>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-4b0a72003db17bd31858890fdcf269c3c3ec06ff.png" alt="Inheritance diagram of enaml.widgets.wx.wx_container.WXContainer" usemap="#inheritance11982c541a" class="inheritance"/>
+<img src="../../../_images/inheritance-e9fe4a22dad5f074881162441df72acd32fe957b.png" alt="Inheritance diagram of enaml.widgets.wx.wx_container.WXContainer" usemap="#inheritance11982c541a" class="inheritance"/>
 <map id="inheritance11982c541a" name="inheritance11982c541a">
-<area shape="rect" id="node1" href="#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="125,237,229,267"/>
-<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="39,160,155,189"/>
+<area shape="rect" id="node16" href="#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="663,82,763,111"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="259,5,371,33"/>
 </map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_container.WXContainer">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_container.</tt><tt class="descname">WXContainer</tt><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_container.html#WXContainer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_container.WXContainer" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="enaml.widgets.wx.wx_component.WXComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_component.WXComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.AbstractTkContainer</span></tt></p>
-<p>A wxPython implementation of Container.</p>
-<p>WXContainer is usually to be used as a base class for other container
-widgets. However, it may also be used directly as an undecorated 
-container for widgets for layout purposes.</p>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<ul class="last simple">
-<li>The default behaviour of the WXContainer is to return as it&#8217;s size
-hint the tuple (-1, -1). This is valid for widgets that cannot
-determine a hint size.</li>
-</ul>
-</div>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_layout_component.WXLayoutComponent</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.AbstractTkContainer</span></tt></p>
+<p>A Wx implementation of a Container.</p>
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_container.WXContainer.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_container.WXContainer.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates the underlying Wx widget.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="enaml.widgets.wx.wx_container.WXContainer.bind">
 <tt class="descname">bind</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_container.html#WXContainer.bind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_container.WXContainer.bind" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bind the widget to the wx.EVT_SIZE.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_container.WXContainer.size_hint">
-<tt class="descname">size_hint</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_container.html#WXContainer.size_hint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_container.WXContainer.size_hint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return default value (-1, -1) as a size hint for the generic
-containers in wx backend.</p>
 </dd></dl>
 
 <dl class="method">
@@ -336,8 +418,8 @@ has been resized.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

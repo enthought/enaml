@@ -3,8 +3,8 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-defn MainWindow():
-    Window:
+Main(MainWindow):
+    Container:
         Label:
             text = "Bonjour, Monde!"
             

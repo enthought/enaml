@@ -112,18 +112,26 @@ printed to the shell.
 from enaml.stdlib.radio_group import RadioGroup
 
 
-MainWindow(Window):
-    how_many = 10
-    SpinBox:
-        value := how_many
-    ComboBox:
-        id: switch
-        items = ['horizontal', 'vertical']
-        value = items[0]
-    RadioGroup:
-        orientation &lt;&lt; switch.value
-        selected &gt;&gt; print('selected:', selected)
-        items &lt;&lt; range(how_many)
+Main(MainWindow):
+    attr how_many: int = 10
+    Container:
+        SpinBox:
+            value := how_many
+        ComboBox:
+            id: switch
+            items = ['horizontal', 'vertical']
+            value = items[0]
+        RadioGroup:
+            id: rgroup
+            orientation &lt;&lt; switch.value
+            selected_index &gt;&gt; print('selected index:', selected_index)
+            items &lt;&lt; range(how_many)
+        PushButton:
+            text = 'Disable 3, 4, 5'
+            clicked &gt;&gt; setattr(rgroup, 'disabled_buttons', [3, 4, 5])
+        PushButton:
+            text = 'Disable 1, 7, 9'
+            clicked &gt;&gt; setattr(rgroup, 'disabled_buttons', [1, 7, 9])
 
 </pre>
 </div>
@@ -163,8 +171,8 @@ MainWindow(Window):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

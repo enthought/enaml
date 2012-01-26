@@ -6,7 +6,7 @@ from enaml.stdlib.fields import IntField
 
 
 PersonForm(Form):
-    person = None
+    attr person
     Label:
         text = 'First Name'
     Field:
@@ -21,8 +21,8 @@ PersonForm(Form):
         value := person.age 
 
 
-defn PersonView(person):
-    Window:
-        PersonForm:
-            person = person
+PersonView(MainWindow):
+    attr person
+    PersonForm:
+        person = parent.person
             

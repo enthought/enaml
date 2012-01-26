@@ -18,7 +18,7 @@ objective function is unbounded.
 
 """
 LabeledField(Container):
-    label_text = 'Label'
+    attr label_text: str = 'Label'
     constraints = [
         hbox(label, field),
         align('v_center', label, field)
@@ -31,47 +31,48 @@ LabeledField(Container):
         resist_clip_width = 'weak'
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Nested Containers"
-    constraints = [
-        vbox(
-            hbox(top_left_cntr, top_right_cntr),
-            bottom_cntr,
-        ),
-        top_left_cntr.width == 1.2 * top_right_cntr.width,
-    ]
-    LabeledField:
-        id: top_left_cntr
-        label_text = "Left:"
-    LabeledField:
-        id: top_right_cntr 
-        label_text = "Right:"
     Container:
-        id: bottom_cntr
         constraints = [
             vbox(
-                html_frame, 
-                hbox(
-                    add_button, remove_button, _space_, 
-                    change_mode_button, _space_, share_button,
-                ),
+                hbox(top_left_cntr, top_right_cntr),
+                bottom_cntr,
             ),
-            align('h_center', html_frame, change_mode_button) | 'weak',
-            html_frame.height >= 150,
+            top_left_cntr.width == 1.2 * top_right_cntr.width,
         ]
-        Html:
-            id: html_frame
-            source = '<center><h1>Hello Enaml!</h1></center>'
-        PushButton:
-            id: add_button
-            text = 'Add'
-        PushButton:
-            id: remove_button
-            text = 'Remove'
-        PushButton:
-            id: change_mode_button
-            text = 'Change Mode'
-        PushButton:
-            id: share_button
-            text = 'Share...'
+        LabeledField:
+            id: top_left_cntr
+            label_text = "Left:"
+        LabeledField:
+            id: top_right_cntr 
+            label_text = "Right:"
+        Container:
+            id: bottom_cntr
+            constraints = [
+                vbox(
+                    html_frame, 
+                    hbox(
+                        add_button, remove_button, _space_, 
+                        change_mode_button, _space_, share_button,
+                    ),
+                ),
+                align('h_center', html_frame, change_mode_button) | 'weak',
+                html_frame.height >= 150,
+            ]
+            Html:
+                id: html_frame
+                source = '<center><h1>Hello Enaml!</h1></center>'
+            PushButton:
+                id: add_button
+                text = 'Add'
+            PushButton:
+                id: remove_button
+                text = 'Remove'
+            PushButton:
+                id: change_mode_button
+                text = 'Change Mode'
+            PushButton:
+                id: share_button
+                text = 'Share...'
 

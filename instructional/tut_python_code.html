@@ -129,8 +129,8 @@ function:</p>
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-defn MainWindow():
-    Window:
+Main(MainWindow):
+    Container:
         Label:
             text = "Bonjour, Monde!"
             
@@ -162,21 +162,21 @@ code that used to be in &#8220;hello_world.py&#8221; into the enaml file. Rememb
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-
 :: python ::
 
 def main():
+    """ The main() function is a special case entry point for enaml-run.
+    
     """
-    The main() function is a special case entry point for enaml-run.
-    """
-    import sys
-    view = MyMessageToTheWorld("Hola, Mundo!")
+    view = MyMessageToTheWorld(message="Hola, Mundo!")
     view.show()
 
 :: end::
 
-defn MyMessageToTheWorld(message):
-    Window:
+
+MyMessageToTheWorld(MainWindow):
+    attr message
+    Container:
         Label:
             text = message
             
@@ -221,8 +221,8 @@ and run it from the command line:</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

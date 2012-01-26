@@ -48,10 +48,10 @@ def main():
     SimplePlot.activate()
 
     with enaml.imports():
-        from sine_plot import MainWindow
+        from sine_plot import Main
 
     model = SineModel()
-    window = MainWindow(model=model)
+    window = Main(model=model)
     window.show()
 
 

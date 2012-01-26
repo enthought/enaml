@@ -107,12 +107,13 @@
 <dl class="class">
 <dt id="enaml.widgets.window.Window">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.window.</tt><tt class="descname">Window</tt><a class="reference internal" href="../../../_modules/enaml/widgets/window.html#Window"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="enaml.widgets.container.Container"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.Container</span></tt></a></p>
-<p>The base top-level Window widget.</p>
-<p>Window widgets are top-level components which provide window frame
-decorations and other window  related functionality. Only components
-which inherit from Window can be shown on the screen. A Window is
-not expected to have a parent in most cases.</p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.layout_task_handler.LayoutTaskHandler</span></tt>, <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="enaml.widgets.component.Component"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.component.Component</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.sizable.Sizable</span></tt></p>
+<p>A top-level Window component.</p>
+<p>A Window component is represents of a top-level visible component
+with a frame decoration. It has exactly one central widget which
+is expanded to fit the size of the window. This class serves as
+the base class for MainWindow and Dialog. It is and abstract class
+and not meant to be used directly.</p>
 <dl class="attribute">
 <dt id="enaml.widgets.window.Window.title">
 <tt class="descname">title</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.title" title="Permalink to this definition">¶</a></dt>
@@ -120,10 +121,68 @@ not expected to have a parent in most cases.</p>
 </dd></dl>
 
 <dl class="attribute">
-<dt id="enaml.widgets.window.Window.visible">
-<tt class="descname">visible</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.visible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Whether the widget is visible or not (windows are not visible by
-default).</p>
+<dt id="enaml.widgets.window.Window.central_widget">
+<tt class="descname">central_widget</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.central_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>A read-only property which holds the central widget. Declaring
+more than one central widget is an error.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.initial_size">
+<tt class="descname">initial_size</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.initial_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initial size to set the window on the first call show()
+If the initial size is set to (-1, -1), then a default value
+will be computed more-or-less intelligently. This attribute
+is only used the first time the window is shown to the screen.
+Further changes to the attribute will have no effect. The
+constituent values must be &gt;= -1. The default is (-1, -1).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.initial_size_default">
+<tt class="descname">initial_size_default</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.initial_size_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>The initial size of the window to use if the attempt to compute
+one intelligently fails. This is the &#8220;last resort&#8221; of determining
+the initial size. The constituent values must be &gt;= 0. The
+default is (200, 100).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.minimum_size">
+<tt class="descname">minimum_size</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.minimum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The minimum size allowable for the window. If the min size is
+set to (-1, -1), then the minimum will be computed based on
+the children of the window, and in such cases the minimum size
+that is in use can be retrieved with the min_size() method.
+The constituent values must be &gt;= -1. The default is (-1, -1).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.minimum_size_default">
+<tt class="descname">minimum_size_default</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.minimum_size_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>The minimum size of the window to use if the attempt to compute
+one intelligently fails. This is the &#8220;last resort&#8221; of determining
+the minimum size. The constituent values must be &gt;= 0. The
+default is (0, 0).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.maximum_size">
+<tt class="descname">maximum_size</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.maximum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum size allowable for the window. If the max size is
+set to (-1, -1), then the maximum will be computed based on
+the children of the window, and in such cases the maximum size
+that is in use can be retrieved with the max_size() method.
+The consituent values must be &gt;= -1. The default is (-1, -1).</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.maximum_size_default">
+<tt class="descname">maximum_size_default</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.window.Window.maximum_size_default" title="Permalink to this definition">¶</a></dt>
+<dd><p>The maximum size of the window to use if the attempt to compute
+one intelligently fails. This is the &#8220;last resort&#8221; of determining
+the minimum size. The constituent values must be &gt;= 0. The
+default is (2**24 - 1, 2**24 - 1)</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -136,9 +195,8 @@ default).</p>
 <dt id="enaml.widgets.window.Window.show">
 <tt class="descname">show</tt><big>(</big><em>parent=None</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/window.html#Window.show"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.show" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make the window visible on the screen.</p>
-<p>If the &#8216;setup&#8217; method is not explicity called prior to calling
-this method, then the window will lay itself out prior to
-displaying itself to the screen.</p>
+<p>If the window is not already fully initialized, then the &#8216;setup&#8217;
+method will be called prior to making the window visible.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
 <col class="field-body" />
@@ -156,15 +214,93 @@ backend.</td>
 <dt id="enaml.widgets.window.Window.hide">
 <tt class="descname">hide</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/window.html#Window.hide"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.window.Window.hide" title="Permalink to this definition">¶</a></dt>
 <dd><p>Hide the window, but do not destroy the underlying widgets.</p>
-<p>Call this method to hide the window on the screen. This call
-will always succeed.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.widgets.window.Window.relayout">
-<tt class="descname">relayout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.relayout" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method which sets the minimum size
-of the window whenever constraints are recomputed.</p>
+<dt id="enaml.widgets.window.Window.initialize_layout">
+<tt class="descname">initialize_layout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.initialize_layout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Hooks up change handlers for child attributes which will cause 
+a change in the layout.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.do_relayout">
+<tt class="descname">do_relayout</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.do_relayout" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reimplemented LayoutTaskHandler handler method which will
+perform necessary update activity when a relayout it requested.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.maximize">
+<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.maximize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximizes the window to fill the screen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.minimize">
+<tt class="descname">minimize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimizes the window to the task bar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.normalize">
+<tt class="descname">normalize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restores the window after it has been minimized or maximized.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.resize_to_initial">
+<tt class="descname">resize_to_initial</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.resize_to_initial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resizes the window to the computed initial size, provided 
+that the window has been initialized.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.update_minimum_size">
+<tt class="descname">update_minimum_size</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.update_minimum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the minimum size of the window based on its computed
+value, provided that the window has been initialized. This may 
+result in a resize if the computed value is more than the current
+size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.resize_to_minimum">
+<tt class="descname">resize_to_minimum</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.resize_to_minimum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resizes the window to the computed minimum size, provided 
+that the window has been initialized.</p>
+<dl class="docutils">
+<dt>Note: This is not equivalent to making the window minimize</dt>
+<dd>into the task bar. For that, use the &#8216;minimize()&#8217; method.</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.update_maximum_size">
+<tt class="descname">update_maximum_size</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.update_maximum_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the maximum size of the window based on its computed
+value, provided that the window has been initialized. This may 
+result in a resize if the computed value is less than the current
+size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.window.Window.resize_to_maximum">
+<tt class="descname">resize_to_maximum</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.window.Window.resize_to_maximum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resizes the window to the computed maximum size, provided 
+that the window has been initialized.</p>
+<dl class="docutils">
+<dt>Note: This is a potentially very expensive operation if the </dt>
+<dd>maximum size is very large. This is not equivalent to 
+resizin a window to fit the screen. For that, use the 
+&#8216;maximize()&#8217; method.</dd>
+</dl>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.window.Window.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.window.Window.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
 </dd></dl>
 
 </dd></dl>
@@ -174,43 +310,73 @@ of the window whenever constraints are recomputed.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-1f0c9ddef4b87103b472ebc61261b3d5a0de2ef2.png" alt="Inheritance diagram of enaml.widgets.qt.qt_window.QtWindow" usemap="#inheritancebc2967eea7" class="inheritance"/>
+<img src="../../../_images/inheritance-e99d836070b381fff1bc3b75844ab072d254a063.png" alt="Inheritance diagram of enaml.widgets.qt.qt_window.QtWindow" usemap="#inheritancebc2967eea7" class="inheritance"/>
 <map id="inheritancebc2967eea7" name="inheritancebc2967eea7">
-<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="138,315,224,344"/>
-<area shape="rect" id="node2" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="59,237,159,267"/>
-<area shape="rect" id="node6" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="41,160,153,189"/>
+<area shape="rect" id="node10" href="#enaml.widgets.qt.qt_window.QtWindow" title="QtWindow" alt="" coords="411,59,498,88"/>
+<area shape="rect" id="node4" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="236,5,348,35"/>
 </map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_window.QtWindow">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_window.</tt><tt class="descname">QtWindow</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_window.html#QtWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="enaml.widgets.qt.qt_container.QtContainer"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_container.QtContainer</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.AbstractTkWindow</span></tt></p>
-<p>A Qt implementation of a Window.</p>
-<p>QtWindow uses a QFrame to create a simple top level window which
-contains other child widgets and layouts.</p>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="enaml.widgets.qt.qt_component.QtComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_component.QtComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_sizable.QtSizable</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.AbstractTkWindow</span></tt></p>
+<p>A Qt4 implementation of a Window. It serves as a base class for 
+QtMainWindow and QtDialog. It is not meant to be used directly.</p>
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.create">
+<tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the underlying Qt widget.</p>
+</dd></dl>
+
 <dl class="method">
 <dt id="enaml.widgets.qt.qt_window.QtWindow.initialize">
 <tt class="descname">initialize</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_window.html#QtWindow.initialize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.initialize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Intializes the attributes on the QWindow.</p>
+<dd><p>Intializes the attributes on the underlying Qt widget.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.maximize">
+<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.maximize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximizes the window to fill the screen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.minimize">
+<tt class="descname">minimize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimizes the window to the task bar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.normalize">
+<tt class="descname">normalize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restores the window after it has been minimized or maximized.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.widgets.qt.qt_window.QtWindow.shell_title_changed">
 <tt class="descname">shell_title_changed</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_window.html#QtWindow.shell_title_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.shell_title_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>The change handler for the &#8216;title&#8217; attribute.</p>
+<dd><p>The change handler for the &#8216;title&#8217; attribute on the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.shell_central_widget_changed">
+<tt class="descname">shell_central_widget_changed</tt><big>(</big><em>central_widget</em><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.shell_central_widget_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;central_widget&#8217; attribute on 
+the shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.qt.qt_window.QtWindow.update_central_widget">
+<tt class="descname">update_central_widget</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.update_central_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the central widget from the value on the shell 
+object. This method must be implemented by subclasses.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.widgets.qt.qt_window.QtWindow.set_title">
 <tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_window.html#QtWindow.set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.set_title" title="Permalink to this definition">¶</a></dt>
-<dd><p>Sets the title of the QFrame.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.qt.qt_window.QtWindow.set_visible">
-<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_window.html#QtWindow.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_window.QtWindow.set_visible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden from the parent class to raise the window to
-the front if it should be shown.</p>
+<dd><p>Sets the title of the underlying widget.</p>
 </dd></dl>
 
 </dd></dl>
@@ -219,26 +385,22 @@ the front if it should be shown.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-a4dff2c62a7fe12fbaec16156f8530ddc74641b0.png" alt="Inheritance diagram of enaml.widgets.wx.wx_window.WXWindow" usemap="#inheritance199fc6d954" class="inheritance"/>
+<img src="../../../_images/inheritance-1ff01e07b6f0079778ab1a819edd607d788fa8f7.png" alt="Inheritance diagram of enaml.widgets.wx.wx_window.WXWindow" usemap="#inheritance199fc6d954" class="inheritance"/>
 <map id="inheritance199fc6d954" name="inheritance199fc6d954">
-<area shape="rect" id="node13" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="183,237,287,267"/>
-<area shape="rect" id="node8" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="190,160,305,189"/>
-<area shape="rect" id="node12" href="#enaml.widgets.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="116,315,207,344"/>
+<area shape="rect" id="node7" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="234,112,350,141"/>
+<area shape="rect" id="node6" href="#enaml.widgets.wx.wx_window.WXWindow" title="WXWindow" alt="" coords="412,59,503,88"/>
 </map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_window.WXWindow">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_window.</tt><tt class="descname">WXWindow</tt><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="enaml.widgets.wx.wx_container.WXContainer"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_container.WXContainer</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.AbstractTkWindow</span></tt></p>
-<p>A wxPython implementation of a Window.</p>
-<p>WXWindow uses a combined set of wx.Frame - wx.Window widget to create
-a simple top level window which contains other child widgets and
-layouts. Because of this dual behaviour some enaml calls need
-to be delegated to the wx.Frame and some to the wx.Window.</p>
+<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="enaml.widgets.wx.wx_component.WXComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_component.WXComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_sizable.WXSizable</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.window.AbstractTkWindow</span></tt></p>
+<p>A wxPython implementation of a Window. It serves as a base class
+for WXMainWindow and WXDialog. It is not meant to be used directly.</p>
 <dl class="method">
 <dt id="enaml.widgets.wx.wx_window.WXWindow.create">
 <tt class="descname">create</tt><big>(</big><em>parent</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.create" title="Permalink to this definition">¶</a></dt>
-<dd><p>Creates the underlying wx.Frame control.</p>
+<dd><p>Create the underlying Wx widget.</p>
 </dd></dl>
 
 <dl class="method">
@@ -248,78 +410,48 @@ to be delegated to the wx.Frame and some to the wx.Window.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.maximize">
+<tt class="descname">maximize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.maximize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Maximizes the window to fill the screen.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.minimize">
+<tt class="descname">minimize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.minimize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Minimizes the window to the task bar.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.normalize">
+<tt class="descname">normalize</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><p>Restores the window after it has been minimized or maximized.</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="enaml.widgets.wx.wx_window.WXWindow.shell_title_changed">
 <tt class="descname">shell_title_changed</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.shell_title_changed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.shell_title_changed" title="Permalink to this definition">¶</a></dt>
-<dd><p>The change handler for the &#8216;title&#8217; attribute.</p>
+<dd><p>The change handler for the &#8216;title&#8217; attribute on the shell
+object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.shell_central_widget_changed">
+<tt class="descname">shell_central_widget_changed</tt><big>(</big><em>central_widget</em><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.shell_central_widget_changed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The change handler for the &#8216;central_widget&#8217; attribute on 
+the shell object.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="enaml.widgets.wx.wx_window.WXWindow.update_central_widget">
+<tt class="descname">update_central_widget</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.update_central_widget" title="Permalink to this definition">¶</a></dt>
+<dd><p>Updates the central widget from the value on the shell 
+object. This method must be implemented by subclasses.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.widgets.wx.wx_window.WXWindow.set_title">
 <tt class="descname">set_title</tt><big>(</big><em>title</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_title"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_title" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the title of the frame.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.set_visible">
-<tt class="descname">set_visible</tt><big>(</big><em>visible</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_visible"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_visible" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden from the parent class to raise the window to
-the front if it should be shown.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.resize">
-<tt class="descname">resize</tt><big>(</big><em>width</em>, <em>height</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.resize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.resize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to do the resize on the 
-internal wx.Frame object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.min_size">
-<tt class="descname">min_size</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.min_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.min_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to get the min size on 
-the internal wx.Frame object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.set_min_size">
-<tt class="descname">set_min_size</tt><big>(</big><em>min_width</em>, <em>min_height</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_min_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_min_size" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to set the min size on the
-internal wx.Frame object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.pos">
-<tt class="descname">pos</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.pos"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.pos" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to get the position of
-the internal wx.Frame object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.move">
-<tt class="descname">move</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.move"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.move" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to do the move on the internal
-wx.Frame object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.frame_geometry">
-<tt class="descname">frame_geometry</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.frame_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.frame_geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to get the frame geometry
-of the internal wx.Frame object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.geometry">
-<tt class="descname">geometry</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to get the geometry
-of the internal wx.Frame object.</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.widgets.wx.wx_window.WXWindow.set_geometry">
-<tt class="descname">set_geometry</tt><big>(</big><em>x</em>, <em>y</em>, <em>width</em>, <em>height</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_window.html#WXWindow.set_geometry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_window.WXWindow.set_geometry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class method to set the geometry
-of the internal wx.Frame object.</p>
 </dd></dl>
 
 </dd></dl>
@@ -361,8 +493,8 @@ of the internal wx.Frame object.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

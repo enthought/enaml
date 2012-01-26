@@ -92,14 +92,14 @@
 <h1>Hello World Example<a class="headerlink" href="#hello-world-example" title="Permalink to this headline">¶</a></h1>
 <p><a class="reference download internal" href="../_downloads/hello_world.enaml"><tt class="xref download docutils literal"><span class="pre">hello_world.enaml</span></tt></a></p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-defn MyMessageToTheWorld(message):
-    Window:
+Main(MainWindow):
+    Container:
         Label:
-            text = message
+            text = "Hello, world!"
             
 </pre>
 </div>
@@ -113,7 +113,7 @@ defn MyMessageToTheWorld(message):
 <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
     <span class="kn">from</span> <span class="nn">hello_world</span> <span class="kn">import</span> <span class="n">MyMessageToTheWorld</span>
 
-<span class="n">view</span> <span class="o">=</span> <span class="n">MyMessageToTheWorld</span><span class="p">(</span><span class="s">&quot;Hello, world!&quot;</span><span class="p">)</span>
+<span class="n">view</span> <span class="o">=</span> <span class="n">MyMessageToTheWorld</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&quot;Hello, world!&quot;</span><span class="p">)</span>
 <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -153,8 +153,8 @@ defn MyMessageToTheWorld(message):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

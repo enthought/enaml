@@ -128,56 +128,57 @@ def toggle_flat(*boxes):
 :: end ::
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Group Boxes"
-    constraints = [
-        vbox(
-            top_box,
-            bottom_box,
-            hbox(_space_, title_check, flat_check),
-        ),
-        align('midline', top_form, bottom_form),
-    ]
-    GroupBox:
-        id: top_box
-        title = "Personal Details"
-        Form:
-            id: top_form
-            Label:
-                text = "First name:"
-            Field:
-                pass
-            Label:
-                text = "Last name:"
-            Field:
-                pass
-            Label:
-                text = "Home phone:"
-            Field:
-                pass
-    GroupBox:
-        id: bottom_box
-        title = "Employment Details"
-        Form:
-            id: bottom_form
-            Label:
-                text = "Employer:"
-            Field:
-                pass
-            Label:
-                text = "Office or Desk phone:"
-            Field:
-                pass
-    CheckBox:
-        id: title_check
-        text = "Show titles"
-        checked = True
-        toggled &gt;&gt; toggle_title(top_box, bottom_box)
-    CheckBox:
-        id: flat_check
-        text = "Flat"
-        checked = False
-        toggled &gt;&gt; toggle_flat(top_box, bottom_box)
+    Container:
+        constraints = [
+            vbox(
+                top_box,
+                bottom_box,
+                hbox(_space_, title_check, flat_check),
+            ),
+            align('midline', top_form, bottom_form),
+        ]
+        GroupBox:
+            id: top_box
+            title = "Personal Details"
+            Form:
+                id: top_form
+                Label:
+                    text = "First name:"
+                Field:
+                    pass
+                Label:
+                    text = "Last name:"
+                Field:
+                    pass
+                Label:
+                    text = "Home phone:"
+                Field:
+                    pass
+        GroupBox:
+            id: bottom_box
+            title = "Employment Details"
+            Form:
+                id: bottom_form
+                Label:
+                    text = "Employer:"
+                Field:
+                    pass
+                Label:
+                    text = "Office or Desk phone:"
+                Field:
+                    pass
+        CheckBox:
+            id: title_check
+            text = "Show titles"
+            checked = True
+            toggled &gt;&gt; toggle_title(top_box, bottom_box)
+        CheckBox:
+            id: flat_check
+            text = "Flat"
+            checked = False
+            toggled &gt;&gt; toggle_flat(top_box, bottom_box)
 
 </pre>
 </div>
@@ -219,8 +220,8 @@ MainWindow(Window):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -111,7 +111,7 @@ objective function is unbounded.
 
 """
 LabeledField(Container):
-    label_text = 'Label'
+    attr label_text: str = 'Label'
     constraints = [
         hbox(label, field),
         align('v_center', label, field)
@@ -124,49 +124,50 @@ LabeledField(Container):
         resist_clip_width = 'weak'
 
 
-MainWindow(Window):
+Main(MainWindow):
     title = "Nested Containers"
-    constraints = [
-        vbox(
-            hbox(top_left_cntr, top_right_cntr),
-            bottom_cntr,
-        ),
-        top_left_cntr.width == 1.2 * top_right_cntr.width,
-    ]
-    LabeledField:
-        id: top_left_cntr
-        label_text = "Left:"
-    LabeledField:
-        id: top_right_cntr 
-        label_text = "Right:"
     Container:
-        id: bottom_cntr
         constraints = [
             vbox(
-                html_frame, 
-                hbox(
-                    add_button, remove_button, _space_, 
-                    change_mode_button, _space_, share_button,
-                ),
+                hbox(top_left_cntr, top_right_cntr),
+                bottom_cntr,
             ),
-            align('h_center', html_frame, change_mode_button) | 'weak',
-            html_frame.height &gt;= 150,
+            top_left_cntr.width == 1.2 * top_right_cntr.width,
         ]
-        Html:
-            id: html_frame
-            source = '&lt;center&gt;&lt;h1&gt;Hello Enaml!&lt;/h1&gt;&lt;/center&gt;'
-        PushButton:
-            id: add_button
-            text = 'Add'
-        PushButton:
-            id: remove_button
-            text = 'Remove'
-        PushButton:
-            id: change_mode_button
-            text = 'Change Mode'
-        PushButton:
-            id: share_button
-            text = 'Share...'
+        LabeledField:
+            id: top_left_cntr
+            label_text = "Left:"
+        LabeledField:
+            id: top_right_cntr 
+            label_text = "Right:"
+        Container:
+            id: bottom_cntr
+            constraints = [
+                vbox(
+                    html_frame, 
+                    hbox(
+                        add_button, remove_button, _space_, 
+                        change_mode_button, _space_, share_button,
+                    ),
+                ),
+                align('h_center', html_frame, change_mode_button) | 'weak',
+                html_frame.height &gt;= 150,
+            ]
+            Html:
+                id: html_frame
+                source = '&lt;center&gt;&lt;h1&gt;Hello Enaml!&lt;/h1&gt;&lt;/center&gt;'
+            PushButton:
+                id: add_button
+                text = 'Add'
+            PushButton:
+                id: remove_button
+                text = 'Remove'
+            PushButton:
+                id: change_mode_button
+                text = 'Change Mode'
+            PushButton:
+                id: share_button
+                text = 'Share...'
 
 </pre>
 </div>
@@ -206,8 +207,8 @@ MainWindow(Window):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

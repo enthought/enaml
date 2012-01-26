@@ -108,7 +108,7 @@
 <dt id="enaml.widgets.form.Form">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.form.</tt><tt class="descname">Form</tt><a class="reference internal" href="../../../_modules/enaml/widgets/form.html#Form"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.form.Form" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="enaml.widgets.container.Container.html#enaml.widgets.container.Container" title="enaml.widgets.container.Container"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.container.Container</span></tt></a></p>
-<p>A Container subclass that arranges child Components as a two
+<p>A Container subclass that arranges its layout children as a two 
 column form.</p>
 <p>The left column is typically Labels (but this is not a requirement).
 The right are the actual widgets for data entry. The children should
@@ -141,6 +141,12 @@ All constraints are supplied by &#8216;container_constraints()&#8217;.</p>
 children.</p>
 </dd></dl>
 
+<dl class="attribute">
+<dt id="enaml.widgets.form.Form.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.form.Form.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+</dd></dl>
+
 </dd></dl>
 
 <div class="section" id="backends">
@@ -148,11 +154,11 @@ children.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-33d7514f65f22b040020a094d95f012b48b2ca2f.png" alt="Inheritance diagram of enaml.widgets.qt.qt_form.QtForm" usemap="#inheritanceaa4266d757" class="inheritance"/>
+<img src="../../../_images/inheritance-6d813afbd1f79c97a7f3304d56243d574e76fb55.png" alt="Inheritance diagram of enaml.widgets.qt.qt_form.QtForm" usemap="#inheritanceaa4266d757" class="inheritance"/>
 <map id="inheritanceaa4266d757" name="inheritanceaa4266d757">
-<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_form.QtForm" title="QtForm" alt="" coords="151,315,223,344"/>
-<area shape="rect" id="node2" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="69,237,168,267"/>
-<area shape="rect" id="node6" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="41,160,153,189"/>
+<area shape="rect" id="node4" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="223,136,315,160"/>
+<area shape="rect" id="node17" href="enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer" title="QtContainer" alt="" coords="572,92,654,116"/>
+<area shape="rect" id="node16" href="#enaml.widgets.qt.qt_form.QtForm" title="QtForm" alt="" coords="704,70,764,94"/>
 </map>
 </p>
 <dl class="class">
@@ -166,11 +172,11 @@ children.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-3ae96df2813e29396f005c7804b828d407f1cf89.png" alt="Inheritance diagram of enaml.widgets.wx.wx_form.WXForm" usemap="#inheritance471432f12f" class="inheritance"/>
+<img src="../../../_images/inheritance-f67f0d2e48ef6d714b90780964c8e137bcd18963.png" alt="Inheritance diagram of enaml.widgets.wx.wx_form.WXForm" usemap="#inheritance471432f12f" class="inheritance"/>
 <map id="inheritance471432f12f" name="inheritance471432f12f">
-<area shape="rect" id="node11" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="175,237,279,267"/>
-<area shape="rect" id="node6" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="190,160,305,189"/>
-<area shape="rect" id="node10" href="#enaml.widgets.wx.wx_form.WXForm" title="WXForm" alt="" coords="120,315,193,344"/>
+<area shape="rect" id="node18" href="enaml.widgets.container.Container.html#enaml.widgets.wx.wx_container.WXContainer" title="WXContainer" alt="" coords="570,91,655,115"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="219,4,314,28"/>
+<area shape="rect" id="node17" href="#enaml.widgets.wx.wx_form.WXForm" title="WXForm" alt="" coords="703,70,764,94"/>
 </map>
 </p>
 <dl class="class">
@@ -217,8 +223,8 @@ children.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -1,10 +1,10 @@
 #------------------------------------------------------------------------------
-#  Copyright (c) 2011, Enthought, Inc.
+#  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-defn MyMessageToTheWorld(message):
-    Window:
+Main(MainWindow):
+    Container:
         Label:
-            text = message
+            text = "Hello, world!"
             

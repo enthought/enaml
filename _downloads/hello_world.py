@@ -7,6 +7,6 @@ import enaml
 with enaml.imports():
     from hello_world import MyMessageToTheWorld
 
-view = MyMessageToTheWorld("Hello, world!")
+view = MyMessageToTheWorld(message="Hello, world!")
 view.show()
 

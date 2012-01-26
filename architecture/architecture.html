@@ -350,10 +350,10 @@ which is consistent with the rest of the toolkit widgets.</p>
 </li>
 <li><p class="first">if you are adding a new control type that is specific to your
 code and not part of the main Enaml system, then you will need
-to manually create an <a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.toolkit.Constructor" title="enaml.toolkit.Constructor"><tt class="xref py py-class docutils literal"><span class="pre">Constructor</span></tt></a>
+to manually create an <tt class="xref py py-class docutils literal"><span class="pre">Constructor</span></tt>
 instance and add it to an appropriate toolkit.  Building a
 constructor is simply a matter of creating a new
-<a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.toolkit.Constructor" title="enaml.toolkit.Constructor"><tt class="xref py py-class docutils literal"><span class="pre">Constructor</span></tt></a> with your Enaml shell
+<tt class="xref py py-class docutils literal"><span class="pre">Constructor</span></tt> with your Enaml shell
 class from step (2) and your toolkit backend class from step (3).</p>
 <p>Typical code for this would look like:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">enaml.toolkit</span> <span class="kn">import</span> <span class="n">Constructor</span>
@@ -508,7 +508,7 @@ that all model objects with this new reaction mechanism inherit from, or some
 other simple way that these model instances can be distinguished from regular
 Python or Traits instances.</p>
 <p>You may then need to implement subclasses of
-<a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.AbstractExpression" title="enaml.expressions.AbstractExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.AbstractExpression</span></tt></a> that correctly handle the
+<tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.AbstractExpression</span></tt> that correctly handle the
 interactions that your notification system supports for its models.  These
 subclasses will need to implement appropriate versions of the <tt class="xref py py-meth docutils literal"><span class="pre">bind()</span></tt>
 and <tt class="xref py py-meth docutils literal"><span class="pre">eval_expression()</span></tt> methods.</p>
@@ -637,8 +637,8 @@ the rest of the Enaml file.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

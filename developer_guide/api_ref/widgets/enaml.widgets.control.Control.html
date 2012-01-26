@@ -107,10 +107,10 @@
 <dl class="class">
 <dt id="enaml.widgets.control.Control">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.control.</tt><tt class="descname">Control</tt><a class="reference internal" href="../../../_modules/enaml/widgets/control.html#Control"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.control.Control" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.component.Component" title="enaml.widgets.component.Component"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.component.Component</span></tt></a></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.layout_component.LayoutComponent</span></tt></p>
 <p>The base class of all leaf widgets in Enaml. Controls cannot
-have children and attempts to add children to a control will
-raise an exception.</p>
+have subcomponents and attempt to add a subcomponent to a control 
+will raise an exception.</p>
 <dl class="attribute">
 <dt id="enaml.widgets.control.Control.error">
 <tt class="descname">error</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.control.Control.error" title="Permalink to this definition">¶</a></dt>
@@ -133,14 +133,21 @@ user interaction or setting a value trait on the Control.</p>
 <dl class="method">
 <dt id="enaml.widgets.control.Control.capture_exceptions">
 <tt class="descname">capture_exceptions</tt><big>(</big><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/control.html#Control.capture_exceptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.control.Control.capture_exceptions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a ShellExceptionContext that will capture error state automatically.</p>
+<dd><p>Return a ShellExceptionContext that will capture error state 
+automatically.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.widgets.control.Control.capture_notification_exceptions">
 <tt class="descname">capture_notification_exceptions</tt><big>(</big><em>handler=None</em>, <em>reraise_exceptions=True</em>, <em>main=False</em>, <em>locked=False</em><big>)</big><a class="reference internal" href="../../../_modules/enaml/widgets/control.html#Control.capture_notification_exceptions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.control.Control.capture_notification_exceptions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a ShellNotificationContext that will set error state automatically,
-including TraitErrors in listeners.</p>
+<dd><p>Return a ShellNotificationContext that will set error state 
+automatically, including TraitErrors in listeners.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.widgets.control.Control.__implements__">
+<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.control.Control.__implements__" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
 </dd></dl>
 
 </dd></dl>
@@ -150,32 +157,32 @@ including TraitErrors in listeners.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-a2adb38782f305754118f9e571d8c2af4a6f27a5.png" alt="Inheritance diagram of enaml.widgets.qt.qt_control.QtControl" usemap="#inheritancecd13c04652" class="inheritance"/>
+<img src="../../../_images/inheritance-10bbc91d2bb815ee49ae5b5cce26cdcf8bacb2aa.png" alt="Inheritance diagram of enaml.widgets.qt.qt_control.QtControl" usemap="#inheritancecd13c04652" class="inheritance"/>
 <map id="inheritancecd13c04652" name="inheritancecd13c04652">
-<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="138,237,221,267"/>
-<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="49,160,161,189"/>
+<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="678,85,762,114"/>
+<area shape="rect" id="node9" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="269,58,380,87"/>
 </map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.qt.qt_control.QtControl">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.qt.qt_control.</tt><tt class="descname">QtControl</tt><a class="reference internal" href="../../../_modules/enaml/widgets/qt/qt_control.html#QtControl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.qt.qt_control.QtControl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="enaml.widgets.qt.qt_component.QtComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_component.QtComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.AbstractTkControl</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.qt.qt_layout_component.QtLayoutComponent</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.AbstractTkControl</span></tt></p>
 </dd></dl>
 
 </div>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-64946bfc02fc9da911f7e6a5ab8f8bd89b2fad49.png" alt="Inheritance diagram of enaml.widgets.wx.wx_control.WXControl" usemap="#inheritance38ceacb872" class="inheritance"/>
+<img src="../../../_images/inheritance-e4d39a33786eb83714571e64ef47578ecb7a00e5.png" alt="Inheritance diagram of enaml.widgets.wx.wx_control.WXControl" usemap="#inheritance38ceacb872" class="inheritance"/>
 <map id="inheritance38ceacb872" name="inheritance38ceacb872">
-<area shape="rect" id="node4" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="47,160,163,189"/>
-<area shape="rect" id="node10" href="#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="137,237,225,267"/>
+<area shape="rect" id="node21" href="#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="675,84,762,112"/>
+<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="263,5,377,34"/>
 </map>
 </p>
 <dl class="class">
 <dt id="enaml.widgets.wx.wx_control.WXControl">
 <em class="property">class </em><tt class="descclassname">enaml.widgets.wx.wx_control.</tt><tt class="descname">WXControl</tt><a class="reference internal" href="../../../_modules/enaml/widgets/wx/wx_control.html#WXControl"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.wx.wx_control.WXControl" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="enaml.widgets.wx.wx_component.WXComponent"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_component.WXComponent</span></tt></a>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.AbstractTkControl</span></tt></p>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.wx.wx_layout_component.WXLayoutComponent</span></tt>, <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.AbstractTkControl</span></tt></p>
 </dd></dl>
 
 </div>
@@ -215,8 +222,8 @@ including TraitErrors in listeners.</p>
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -114,52 +114,53 @@ Pressing the Share PushButton will add a new constraint that forces the width
 of that PushButton to increase to 200.
 
 """
-MainWindow(Window):
-    constraints = [
-        # Arrange the Html Frame above the horizontal row of butttons
-        vbox(
-            html_frame, 
-            hbox(
-                add_button, remove_button, _space_, 
-                change_mode_button, _space_, share_button,
+Main(MainWindow):
+    Container:
+        constraints = [
+            # Arrange the Html Frame above the horizontal row of butttons
+            vbox(
+                html_frame, 
+                hbox(
+                    add_button, remove_button, _space_, 
+                    change_mode_button, _space_, share_button,
+                ),
             ),
-        ),
 
-        # Weakly align the centers of the Html frame and the center button
-        align('h_center', html_frame, change_mode_button) | 'weak',
+            # Weakly align the centers of the Html frame and the center button
+            align('h_center', html_frame, change_mode_button) | 'weak',
 
-        # Set a sensible minimum height for the frame
-        html_frame.height &gt;= 150,
-    ]
-    Html:
-        id: html_frame
-        source = '&lt;center&gt;&lt;h1&gt;Hello Enaml!&lt;/h1&gt;&lt;/center&gt;'
-    PushButton:
-        id: add_button
-        text = 'Add'
-        # Uncomment the next four lines to see how to play around with 
-        # the hugging and resist_clip properties
-        # hug_width = 'weak'
-        # hug_height = 'strong'
-        # resist_clip_width = 'weak'
-        # resist_clip_height = 'strong'
-    PushButton:
-        id: remove_button
-        text = 'Remove'
-    PushButton:
-        id: change_mode_button
-        text = 'Change Mode'
-        # Click this button to update the button text and have
-        # it expand to fit its contents
-        clicked &gt;&gt; setattr(change_mode_button, 'text', text * 2)
-    PushButton:
-        id: share_button
-        text = 'Share...'
-        # Click this button to force it to have a width of 200
-        # we don't need to access constraints through 'parent' here
-        # since it is in our attribute scope. But we are just doing
-        # it to show that it is possible.
-        clicked &gt;&gt; parent.constraints.append(width == 200)
+            # Set a sensible minimum height for the frame
+            html_frame.height &gt;= 150,
+        ]
+        Html:
+            id: html_frame
+            source = '&lt;center&gt;&lt;h1&gt;Hello Enaml!&lt;/h1&gt;&lt;/center&gt;'
+        PushButton:
+            id: add_button
+            text = 'Add'
+            # Uncomment the next four lines to see how to play around with 
+            # the hugging and resist_clip properties
+            # hug_width = 'weak'
+            # hug_height = 'strong'
+            # resist_clip_width = 'weak'
+            # resist_clip_height = 'strong'
+        PushButton:
+            id: remove_button
+            text = 'Remove'
+        PushButton:
+            id: change_mode_button
+            text = 'Change Mode'
+            # Click this button to update the button text and have
+            # it expand to fit its contents
+            clicked &gt;&gt; setattr(change_mode_button, 'text', text * 2)
+        PushButton:
+            id: share_button
+            text = 'Share...'
+            # Click this button to force it to have a width of 200
+            # we don't need to access constraints through 'parent' here
+            # since it is in our attribute scope. But we are just doing
+            # it to show that it is possible.
+            clicked &gt;&gt; parent.constraints.append(width == 200)
 
 </pre>
 </div>
@@ -204,8 +205,8 @@ MainWindow(Window):
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -98,13 +98,12 @@
 """ ProgressBar component
 
 In this example, we demonstrate connecting a ProgressBar up to a model.
-This example is entirely synchronous for simplicity. The model will do a chunk
-of work when the user presses a button. A more typical use case would have
-a background thread or timer updating the work progress bar as work is
-accomplished.
+This example is entirely synchronous for simplicity. The model will do 
+a chunk of work when the user presses a button. A more typical use case 
+would have a background thread or timer updating the work progress bar 
+as work is accomplished.
 
 """
-
 :: python ::
 
 import random
@@ -112,7 +111,7 @@ import random
 from traits.api import HasTraits, Int
 
 
-class Model(HasTraits):
+class ProgressModel(HasTraits):
     """ Model a process that does some work on command.
 
     """
@@ -139,9 +138,10 @@ class Model(HasTraits):
 :: end ::
 
 
-defn ModelView(model):
-    Window:
-        title = 'Progress Bar'
+Main(MainWindow):
+    attr model: ProgressModel = ProgressModel()
+    title = 'Progress Bar'
+    Container:
         constraints = [
             vbox(progress,
                 hbox(_space_, label, _space_), 
@@ -160,17 +160,6 @@ defn ModelView(model):
             id: work_button
             text &lt;&lt; "Do Some Work" if progress.percentage &lt; 100 else "Reset"
             clicked &gt;&gt; model.do_work() if progress.percentage &lt; 100 else model.reset()
-
-
-:: python ::
-
-# A 'main' function is special cased as an entry point by the enaml-run script
-def main():
-    model = Model()
-    window = ModelView(model)
-    window.show()
-
-:: end ::
 
 </pre>
 </div>
@@ -210,8 +199,8 @@ def main():
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2011, Enthought, Inc..
-      Last updated on Jan 12, 2012.
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on Jan 25, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

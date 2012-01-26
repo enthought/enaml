@@ -19,16 +19,24 @@ printed to the shell.
 from enaml.stdlib.radio_group import RadioGroup
 
 
-MainWindow(Window):
-    how_many = 10
-    SpinBox:
-        value := how_many
-    ComboBox:
-        id: switch
-        items = ['horizontal', 'vertical']
-        value = items[0]
-    RadioGroup:
-        orientation << switch.value
-        selected >> print('selected:', selected)
-        items << range(how_many)
+Main(MainWindow):
+    attr how_many: int = 10
+    Container:
+        SpinBox:
+            value := how_many
+        ComboBox:
+            id: switch
+            items = ['horizontal', 'vertical']
+            value = items[0]
+        RadioGroup:
+            id: rgroup
+            orientation << switch.value
+            selected_index >> print('selected index:', selected_index)
+            items << range(how_many)
+        PushButton:
+            text = 'Disable 3, 4, 5'
+            clicked >> setattr(rgroup, 'disabled_buttons', [3, 4, 5])
+        PushButton:
+            text = 'Disable 1, 7, 9'
+            clicked >> setattr(rgroup, 'disabled_buttons', [1, 7, 9])
 

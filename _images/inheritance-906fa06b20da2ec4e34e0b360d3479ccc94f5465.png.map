@@ -1,5 +1,0 @@
-<map id="inheritanceae0d0dab04" name="inheritanceae0d0dab04">
-<area shape="rect" id="node1" href="#enaml.widgets.qt.qt_progress_bar.QtProgressBar" title="QtProgressBar" alt="" coords="676,25,763,48"/>
-<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="540,4,606,27"/>
-<area shape="rect" id="node6" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="373,4,459,27"/>
-</map>
