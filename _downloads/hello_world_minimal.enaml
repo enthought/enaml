@@ -1,0 +1,4 @@
+Main(MainWindow):
+    Label:
+        text = "Hello, world!"
+            

@@ -1,0 +1,6 @@
+<map id="inheritancef8381afabf" name="inheritancef8381afabf">
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="459,37,513,55"/>
+<area shape="rect" id="node7" href="enaml.widgets.toggle_control.ToggleControl.html#enaml.widgets.qt.qt_toggle_control.QtToggleControl" title="QtToggleControl" alt="" coords="582,37,663,55"/>
+<area shape="rect" id="node13" href="#enaml.widgets.qt.qt_check_box.QtCheckBox" title="QtCheckBox" alt="" coords="701,53,764,72"/>
+<area shape="rect" id="node17" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="170,37,240,55"/>
+</map>
