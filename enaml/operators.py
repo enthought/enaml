@@ -3,7 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .expressions import (SimpleExpression, SubscriptionExpression, 
-                          DelegatingExpression, NotifyingExpression)
+                          DelegatingExpression, NotificationExpression)
+
+from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 
 
 def op_simple(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
@@ -11,8 +13,14 @@ def op_simple(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
     cmpnt.bind_expression(attr, expr)
 
 
+def op_notify(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+    expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
+    cmpnt.notify_expression(attr, expr)
+
+
 def op_subscribe(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
-    expr = SubscriptionExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
+    monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
+    expr = SubscriptionExpression(monitors, cmpnt, attr, code, identifiers, f_globals, toolkit)
     cmpnt.bind_expression(attr, expr)
 
 
@@ -21,8 +29,7 @@ def op_delegate(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
     cmpnt.bind_expression(attr, expr)
 
 
-def op_notify(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
-    NotifyingExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
+
 
 
 #: The builtin Enaml expression operators
