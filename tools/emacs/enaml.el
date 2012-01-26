@@ -14,7 +14,7 @@
      1 font-lock-builtin-face)
     ;; highlight these as types
     (,(regexp-opt '("attr" "event") 'words)
-     1 font-lock-builtin-face))
+     1 font-lock-type-face))
   "Additional font lock keywords for Enaml mode.")
 
 (define-derived-mode
