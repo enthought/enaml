@@ -577,14 +577,17 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     def destroy(self):
         """ Destroys the component by clearing the list of subcomponents
-        and calling 'destroy' on all of the old subcomponents. Subclasses
-        that need more control over destruction should reimplement this
-        method.
+        and calling 'destroy' on all of the old subcomponents, then gets
+        rid of all references to the subcomponents and bound expressions.
+        Subclasses that need more control over destruction should 
+        reimplement this method.
 
         """
         for child in self._subcomponents:
             child.destroy()
-        self._subcomponents = []
+        del self._subcomponents[:]
+        self._expressions.clear()
+        self._notify_expressions.clear()
 
     #--------------------------------------------------------------------------
     # Layout Stubs
