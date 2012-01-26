@@ -69,10 +69,10 @@ class style(object):
 
         Parameters
         ----------
-        *selectors
-            A sequence of strings following the selector syntax.
+        selectors : list
+            A list of strings following the selector syntax.
 
-        **properties
+        properties : dict
             A sequence of keywords specifiying the styling values.
 
         """

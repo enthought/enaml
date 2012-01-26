@@ -32,7 +32,7 @@ class EnamlTestCase(unittest.TestCase):
     the testing of enaml components
 
     """
-    #: default toolkit to use for the enaml source parsing
+    # default toolkit to use for the enaml source parsing
     toolkit = default_toolkit()
 
     def component_by_name(self, component, name):
@@ -41,10 +41,10 @@ class EnamlTestCase(unittest.TestCase):
 
         Arguments
         ---------
-        component :
-            The enaml based BaseComponent object
+        component : BaseComponent
+            The enaml based BaseComponent object.
 
-        name :
+        name : str
             The name of the enaml component to find in the tree.
 
         Returns
@@ -60,10 +60,10 @@ class EnamlTestCase(unittest.TestCase):
 
         Arguments
         ---------
-        enaml_source : str
+        source : str
             The enaml source file
 
-        **kwargs
+        kwargs : dict
             The default attribute values to pass to the component.
 
         """
