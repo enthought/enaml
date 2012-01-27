@@ -17,15 +17,14 @@ from .signaling import Signal
 # Expression Scope
 #------------------------------------------------------------------------------
 class ExpressionScope(object):
-    """ A mapping object that implements the scope resolution order for
-    Enaml expressions.
+    """ A custom mapping object that implements the scope resolution 
+    order for Enaml expressions.
 
     Notes
     -----
     Strong references are kept to all objects passed to the constructor,
-    so care should be taken in managing the lifetime of these scope
-    objects since their use is likely to create reference cycles. It is
-    probably best to create these scope objects on-the-fly as needed.
+    so these scope objects should be created as needed and discarded in
+    order to avoid issues with reference cycles.
 
     """
     __slots__ = ('obj', 'identifiers', 'f_globals', 'toolkit', 
@@ -36,17 +35,17 @@ class ExpressionScope(object):
 
         Parameters
         ----------
-        obj : object
-            The python object on which to start looking for attributes.
+        obj : BaseComponent
+            The BaseComponent instance on which the expression is bound.
 
         identifiers : dict
             The dictionary of identifiers that are available to the
             expression. These are checked before the attribute space
-            of the object.
+            of the component.
 
         f_globals : dict
             The globals dict to check after checking the attribute space
-            of the given object, but before checking the toolkit.
+            of the given component, but before checking the toolkit.
 
         toolkit : Toolkit
             The toolkit to check after checking the globals.
@@ -56,8 +55,8 @@ class ExpressionScope(object):
 
         binder : callable or None
             An callable which is called when an implicit attribute is 
-            looked up on the object and should binds any notifiers 
-            necessary. The arguments passed are the object and the
+            looked up on the object. It should binds any notifiers which
+            are necessary. The arguments passed are the object and the
             attribute name.
 
         """
@@ -73,7 +72,8 @@ class ExpressionScope(object):
         """ Lookup an item from the namespace.
 
         Returns the named item from the namespace according to the
-        following precedence rules binding notifiers where appropriate:
+        following precedence rules:
+
             1) temp_locals
             2) override
             3) identifiers
@@ -92,6 +92,11 @@ class ExpressionScope(object):
         result : object
             The value associated with the name, if found.
 
+        Raises
+        ------
+        KeyError
+            If the name is not found, a KeyError is raise.
+
         """
         # The temp locals are assigned to via __setitem__ when a 
         # STORE_NAME opcode is encountered. The will happen, for
@@ -101,18 +106,20 @@ class ExpressionScope(object):
         if name in dct:
             return dct[name]
 
-        # Next, check the override
+        # The overrides have the highest precedence of all framework
+        # supplied values.
         dct = self.override
         if name in dct:
             return dct[name]
         
-        # Next, check the identifiers
+        # Identifiers have the highest precedence of value able to
+        # be supplied by a user of the framework.
         dct = self.identifiers
         if name in dct:
             return dct[name]
 
-        # Next, walk up the ancestor tree starting at self.obj
-        # looking for attributes of the given name.
+        # After identifiers, the implicit attributes of the component
+        # heierarchy have precedence.
         parent = self.obj
         while parent is not None:
             try:
@@ -126,12 +133,13 @@ class ExpressionScope(object):
                     binder(parent, name)
                 return res
 
-        # Next, check the globals dictionary
+        # Global variables come after implicit attributes
         dct = self.f_globals
         if name in dct:
             return dct[name]
         
-        # Finally, check the toolkit (will raise KeyError on failure)
+        # End with the toolkit which will raise KeyError on failure.
+        # Builtins will be checked by Python using the global dict.
         return self.toolkit[name]
 
     def __setitem__(self, name, val):
@@ -164,8 +172,7 @@ class AbstractExpression(object):
     for Expression handlers. These objects are typically created by
     the Enaml operators. Subclasses should ensure that they properly
     declare __slots__, since the potential for having large numbers
-    of these expressions is high and saving the memory could be 
-    beneficial.
+    of these expressions is high and saving the memory is important.
 
     """
     __metaclass__ = ABCMeta
@@ -175,7 +182,7 @@ class AbstractExpression(object):
 
     #: A signal which is emitted when the expression has changed. It is
     #: emmitted with three arguments: expression, name, and value; where 
-    #: expression is the instance which emitted the signa, name is the 
+    #: expression is the instance which emitted the signal, name is the 
     #: attribute name to which the expression is bound, and value is the
     #: computed value of the expression.
     expression_changed = Signal()
@@ -193,7 +200,7 @@ class AbstractExpression(object):
             expression is bound.
 
         code : types.CodeType object
-            The compiled code object for the provided ast node.
+            The compiled code object for the Python expression.
 
         identifiers : dict
             The dictionary of identifiers that are available to the
@@ -231,9 +238,8 @@ class AbstractExpression(object):
 
     @abstractmethod
     def notify(self, old, new):
-        """ A method called by the component when the trait on which it
-        is bound has changed. This is called by the BaseComponent which
-        owns the expression.
+        """ A method called by the owner component when the trait on 
+        which it is bound has changed.
 
         Parameters
         ----------
@@ -305,9 +311,9 @@ class NotificationExpression(AbstractExpression):
         return NotImplemented
 
     def notify(self, old, new):
-        """ Evaluates the underlying expression, while providing an 
+        """ Evaluates the underlying expression, and provides an 
         'event' object in the evaluation scope which contains 
-        information about the change.
+        information about the trait change.
 
         """
         obj = self.obj_ref()
@@ -328,12 +334,13 @@ class NotificationExpression(AbstractExpression):
 #------------------------------------------------------------------------------
 class _ImplicitAttributeBinder(object):
     """ A thin class which supports attaching a notifier to an implicit
-    attribute lookup. This doesn't need to be provided as a monitor
-    because implicit attribute lookups, when successful, will always
-    be on an instance of BaseComponent and should never need to be
-    hooked by an Enaml extension.
+    attribute lookup.
 
     """
+    # This doesn't need to be provided as a monitor because implicit 
+    # attribute lookups, when successful, will always be on an instance
+    # of BaseComponent and should never need to be hooked by an Enaml 
+    # extension.
     __slots__ = ('parent_ref', '__weakref__')
 
     def __init__(self, parent):
@@ -358,7 +365,7 @@ class _ImplicitAttributeBinder(object):
             The BaseComponent instance that owns the attribute.
         
         name : string
-            The attribute name to which we're binding.
+            The attribute name of interest
              
         """
         trait = obj.trait(name)
@@ -484,7 +491,7 @@ class SubscriptionExpression(AbstractExpression):
 class DelegationExpression(SubscriptionExpression):
     """ A SubscriptionExpression subclass that adds notification support
     by setting the value on the contituents of the expression according
-    to any value setters.
+    to any provide inverters.
 
     """
     __slots__ = ('inverters',)
@@ -495,7 +502,9 @@ class DelegationExpression(SubscriptionExpression):
         Parameters
         ----------
         inverter_classes : iterable of AbstractInverter subclasses
-            An iterable of concrete AbstractInverter subclasses
+            An iterable of concrete AbstractInverter subclasses which
+            will invert the given expression code into a mirrored 
+            operation which sets the value on the appropriate object.
         
         *args
             The arguments required to initialize a SubscriptionExpression
@@ -536,9 +545,18 @@ class DelegationExpression(SubscriptionExpression):
         
         # We don't need to attempt the inversion if the new value
         # is the same as the last value generated by the expression.
-        #if new == self.old_value:
-        #    return
+        # This helps prevent bouncing back and forth which can be
+        # induced by excessive notification.
+        if new == self.old_value:
+            return
 
+        # The override dict is populated with information about the
+        # expression and the change. The values allow the generated
+        # inverter codes to access the information which is required
+        # to perform the operation. The items are added using names
+        # which are not valid Python identifiers and therefore do
+        # not risk clashing with names in the expression. This is
+        # the same technique used by the Python interpreter itself.
         identifiers = self.identifiers
         f_globals = self.f_globals
         toolkit = self.toolkit
@@ -548,9 +566,9 @@ class DelegationExpression(SubscriptionExpression):
             obj, identifiers, f_globals, toolkit, override, None,
         )
 
-        # The through the inverters, giving each a chance to do the
+        # Run through the inverters, giving each a chance to do the
         # inversion. The process ends with the first success. If 
-        # none of the invertors are successful we raise an error.
+        # none of the invertors are successful an error is raised.
         for inverter in self.inverters:
             if eval(inverter, f_globals, scope):
                 break
