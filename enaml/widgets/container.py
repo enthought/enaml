@@ -176,9 +176,10 @@ class Container(LayoutTaskHandler, LayoutComponent):
         # properly initialized with their dependencies.
         self.on_trait_change(
             self._on_layout_deps_changed, (
-                'layout_children:visible, '
                 'constraints, '
                 'constraints_items, '
+                'layout_children, '
+                'layout_children:visible, '
                 'layout_children:size_hint_updated, '
                 'layout_children:hug_width, '
                 'layout_children:hug_height, '
