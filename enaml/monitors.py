@@ -22,8 +22,8 @@ class AbstractMonitor(object):
     will be inserted into a Python expression and which inspects the
     Python stack during the evaluation to determine if it is appropriate
     to attach some form of notifier to the constiuents. If a notifier is 
-    warranted, it should make the appropriate connections and call the
-    notify method on the provided notifier object.
+    warranted, it should make the appropriate connections to emit the
+    expression_changed signal when the expression has changed.
 
     """
     __metaclass__ = ABCMeta
@@ -52,11 +52,10 @@ class AbstractMonitor(object):
 
         Notes
         -----
-            The generated instertion code *must* have a net-zero effect
-            on the Python stack. This means that the inserted code should
-            leave the stack exactly the way it found it. If this is not
-            maintained, then random exceptions and/or crashes *will*
-            result.
+        The generated instertion code *must* have a net-zero effect on 
+        the Python stack. This means that the inserted code should leave
+        the stack exactly the way it found it. If this is not maintained,
+        then random exceptions and/or crashes *will* result.
 
         """
         raise NotImplementedError
@@ -84,28 +83,6 @@ class AbstractAttributeMonitor(AbstractMonitor):
         the expression code object to monitor attribute accesses. When
         an attribute access occurs, the 'monitor_attribute' method will 
         be called with the object and attribute name as arguments.
-
-        Parameters
-        ----------
-        code_list : list of (op_code, op_arg)
-            The list of byteplay code operations for the expression.
-            If no code need be generated, an empty list should be 
-            returned.
-
-        Returns
-        -------
-        result : list of (insertion_idx, code_ops)
-            A list of 2-tuples where the first item is an integer index
-            into the original code_list and the second item is the list
-            of byteplay code operations to insert into the final code.
-
-        Notes
-        -----
-            The generated instertion code *must* have a net-zero effect
-            on the Python stack. This means that the inserted code should
-            leave the stack exactly the way it found it. If this is not
-            maintained, then random exceptions and/or crashes *will*
-            result.
 
         """
         # A weak closure which is injected into the stack to call the
@@ -172,28 +149,6 @@ class AbstractCallMonitor(AbstractMonitor):
         the expression code object to monitor function calls. When an
         attribute access occurs, the 'monitor_function' method will be 
         called with the object, args, and kwargs.
-
-        Parameters
-        ----------
-        code_list : list of (op_code, op_arg)
-            The list of byteplay code operations for the expression.
-            If no code need be generated, an empty list should be 
-            returned.
-
-        Returns
-        -------
-        result : list of (insertion_idx, code_ops)
-            A list of 2-tuples where the first item is an integer index
-            into the original code_list and the second item is the list
-            of byteplay code operations to insert into the final code.
-
-        Notes
-        -----
-            The generated instertion code *must* have a net-zero effect
-            on the Python stack. This means that the inserted code should
-            leave the stack exactly the way it found it. If this is not
-            maintained, then random exceptions and/or crashes *will*
-            result.
 
         """
         # A weak closure which is injected into the stack to call the
@@ -272,7 +227,7 @@ class AbstractCallMonitor(AbstractMonitor):
 #------------------------------------------------------------------------------
 # Trait Notification Handler
 #------------------------------------------------------------------------------
-class TraitNotificationHandler(object):
+class _TraitNotificationHandler(object):
     """ A thin class which makes it easier to manage the lifetime of 
     a trait notifier.
 
@@ -284,23 +239,23 @@ class TraitNotificationHandler(object):
 
         Parameters
         ----------
+        parent : AbstractMonitor
+            The AbstractMonitor instance which is the parent of this
+            handler. Only a weak reference to the parent is kept.
+
         obj : HasTraits
             The HasTraits instance on which we are attaching a listener.
         
         attr : string
             The trait attribute on the object to which we should listen.
 
-        notifier : NotifierProxy
-            The NotifierProxy instance to notify with an event when the
-            underlying trait attribute changes.
-
         """
         self._parent_ref = ref(parent)
         obj.on_trait_change(self.notify, attr)
 
     def notify(self):
-        """ The trait change callback which emits an event to the 
-        NotifierProxy when the trait attribute changes.
+        """ The trait change callback which will emit the expression
+        changed signal on the parent.
 
         """
         parent = self._parent_ref()
@@ -337,20 +292,21 @@ class TraitHandlerMixin(object):
         a valid trait on the object.
 
         """
+        # Don't hook up multiple identifiers to the same object/attr
+        # pair. Use the id of the object to prevent an accidental ref
+        # cycle to the object.
+        handlers = self._handlers
+        key = (id(obj), attr)
+        if key in handlers:
+            return
         if isinstance(obj, HasTraits):
-            # Only hook up a notifier if the attribute access refers
-            # to a proper trait. We check for Disallow trait types 
-            # since those can be returned by instances of HasStrictTraits
+            # Only hook up a notifier if the attribute access refers to
+            # a proper trait. We check for Disallow trait types since 
+            # those can be returned by instances of HasStrictTraits
             trait = obj.trait(attr)
             if trait is not None and trait.trait_type is not Disallow:
-                # Don't hook up multiple identifiers to the same object
-                # attribute pair. Use the id of the object to prevent
-                # keeping an accidental strong ref to the object.
-                handlers = self._handlers
-                key = (id(obj), attr)
-                if key not in handlers:
-                    handler = TraitNotificationHandler(self, obj, attr)
-                    handlers[key] = handler
+                handler = _TraitNotificationHandler(self, obj, attr)
+                handlers[key] = handler
 
 
 #------------------------------------------------------------------------------
@@ -382,9 +338,9 @@ class TraitAttributeMonitor(TraitHandlerMixin, AbstractAttributeMonitor):
 # Trait Getattr Monitor
 #------------------------------------------------------------------------------
 class TraitGetattrMonitor(TraitHandlerMixin, AbstractCallMonitor):
-    """ An AbstractCallMonitor implementation which binds listeners
-    to trait attributes on HasTraits classes which are accessed via
-    getattr.
+    """ An AbstractCallMonitor implementation which binds listeners to
+    trait attributes on HasTraits classes which are accessed through a
+    call to the builtin getattr.
 
     """
     def monitor_function(self, func_obj, args, kwargs):
@@ -408,10 +364,8 @@ class TraitGetattrMonitor(TraitHandlerMixin, AbstractCallMonitor):
         n_args = len(args)
         if func_obj is not getattr or n_args < 2 or n_args > 3 or kwargs:
             return
-        
         obj, attr = args[0], args[1]
         if not isinstance(attr, basestring):
             return
-
         self.do_binding(obj, attr)
 
