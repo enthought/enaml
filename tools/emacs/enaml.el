@@ -21,5 +21,9 @@
   enaml-mode python-mode "Enaml"
   "Major mode for editing Enaml files"
   (setcar font-lock-defaults
-          (append py-font-lock-keywords enaml-font-lock-keywords)))
+          (if (boundp 'python-font-lock-keywords)
+              ;; support python.el
+              (append python-font-lock-keywords enaml-font-lock-keywords)
+            ;; support python-mode.el
+            (append py-font-lock-keywords enaml-font-lock-keywords))))
 (provide 'enaml)
