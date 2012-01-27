@@ -36,7 +36,7 @@ MainView(MainWindow):
         items = [int, float, oct]
         value = float
         to_string = lambda x: str(x) + '!' if x is not None else ''
-        selected >> events.append(('selected', args.new))
+        selected >> events.append(('selected', event.new))
 """
 
         self.events = []

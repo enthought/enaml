@@ -149,7 +149,7 @@ class Field(Control):
     selected_text = Property(Str, depends_on='_selected_text')
 
     #: Fired when the text is changed by the user explicitly through
-    #: the ui but not programmatically. The args object will contain
+    #: the ui but not programmatically. The event object will contain
     #: the text.
     text_edited = EnamlEvent
 

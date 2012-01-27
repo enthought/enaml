@@ -42,7 +42,7 @@ MainView(MainWindow):
     attr events
     DateEdit:
         name = 'test'
-        date_changed >> events.append(('date_changed', args.new))
+        date_changed >> events.append(('date_changed', event.new))
 """
         self.events = []
         self.view = self.parse_and_create(enaml_source, events=self.events)

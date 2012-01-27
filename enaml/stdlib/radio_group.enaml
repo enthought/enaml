@@ -133,11 +133,11 @@ RadioGroup(Container):
     attr items: Sequence = []
     attr to_string: Callable = str
     attr disabled_buttons: Iterable = []
-    disabled_buttons >> _disable_buttons(layout_children, args.new)
+    disabled_buttons >> _disable_buttons(layout_children, event.new)
 
     # Synchronized Attributes
     attr selected_index: int = -1
-    selected_index >> _sync_button(layout_children, args.new)
+    selected_index >> _sync_button(layout_children, event.new)
 
     # Output Attributes
     attr selected_item << items[selected_index] if (0 <= selected_index < len(items)) else None
