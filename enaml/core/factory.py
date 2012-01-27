@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from ..toolkit import Toolkit
-from ..widgets.base_component import BaseComponent
+from .base_component import BaseComponent
+from .toolkit import Toolkit
 
 
 class EnamlFactory(object):
