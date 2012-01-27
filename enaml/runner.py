@@ -7,6 +7,7 @@
 """
 import optparse
 import sys
+import types
 
 import enaml
 from enaml.parsing.parser import parse
@@ -44,7 +45,11 @@ def main():
     
     ast = parse(enaml_code, filename=enaml_file)
 
-    ns = {}
+    # Create a proper module for the compiler so that 
+    # exceptions get reported with better meaning
+    module = types.ModuleType('__main__')
+    ns = module.__dict__
+
     with enaml.imports():
         EnamlCompiler.compile(ast, ns)
 
