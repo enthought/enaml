@@ -5,7 +5,10 @@
 import itertools
 import types
 
-from . import byteplay
+from .byteplay import (
+    Code, LOAD_FAST, CALL_FUNCTION, LOAD_GLOBAL, STORE_FAST, LOAD_CONST,
+    LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP,
+)
 from .factory import EnamlFactory
 
 from .. import imports
@@ -124,8 +127,8 @@ class DeclarationCompiler(_NodeVisitor):
         compiler = cls()
         compiler.visit(node)
         ops = compiler.ops
-        code = byteplay.Code(ops, [], ['identifiers', 'toolkit'], False, False,
-                             True, node.name, 'Enaml', node.lineno, node.doc)
+        code = Code(ops, [], ['identifiers', 'toolkit'], False, False, True, 
+                    node.name, 'Enaml', node.lineno, node.doc)
         return code.to_code()
 
     def visit_Declaration(self, node):
@@ -134,7 +137,6 @@ class DeclarationCompiler(_NodeVisitor):
         if one is given.
 
         """
-        bp = byteplay
         ops = self.ops
         name_stack = self.name_stack
 
@@ -142,31 +144,31 @@ class DeclarationCompiler(_NodeVisitor):
         name_stack.append(name)
         ops.extend([
             # f_globals = globals()
-            (bp.LOAD_GLOBAL, 'globals'),
-            (bp.CALL_FUNCTION, 0x0000),
-            (bp.STORE_FAST, 'f_globals'),
+            (LOAD_GLOBAL, 'globals'),
+            (CALL_FUNCTION, 0x0000),
+            (STORE_FAST, 'f_globals'),
 
             # foo_cls = eval('Window', toolkit, f_globals)
             # foo = foo_cls.__enaml_call__(identifiers, toolkit)
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, node.base.code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-            (bp.LOAD_ATTR, '__enaml_call__'),
-            (bp.LOAD_FAST, 'identifiers'),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.CALL_FUNCTION, 0x0002),
-            (bp.STORE_FAST, name),
+            (LOAD_CONST, eval),
+            (LOAD_CONST, node.base.code),
+            (LOAD_FAST, 'toolkit'),
+            (LOAD_FAST, 'f_globals'),
+            (CALL_FUNCTION, 0x0003),
+            (LOAD_ATTR, '__enaml_call__'),
+            (LOAD_FAST, 'identifiers'),
+            (LOAD_FAST, 'toolkit'),
+            (CALL_FUNCTION, 0x0002),
+            (STORE_FAST, name),
         ])
 
         if node.identifier:
             ops.extend([
                 # identifiers['foo'] = foo
-                (bp.LOAD_FAST, name),
-                (bp.LOAD_FAST, 'identifiers'),
-                (bp.LOAD_CONST, node.identifier),
-                (bp.STORE_SUBSCR, None),
+                (LOAD_FAST, name),
+                (LOAD_FAST, 'identifiers'),
+                (LOAD_CONST, node.identifier),
+                (STORE_SUBSCR, None),
             ])
 
         for item in node.body:
@@ -174,8 +176,8 @@ class DeclarationCompiler(_NodeVisitor):
         
         ops.extend([
             # return foo
-            (bp.LOAD_FAST, name),
-            (bp.RETURN_VALUE, None),
+            (LOAD_FAST, name),
+            (RETURN_VALUE, None),
         ])
 
         name_stack.pop()
@@ -185,16 +187,15 @@ class DeclarationCompiler(_NodeVisitor):
         visitor handles adding a new attribute to a component.
 
         """
-        bp = byteplay
         ops = self.ops
         name_stack = self.name_stack
 
         # Load the method that's going to be called and the
         # name of the attribute being declared.
         ops.extend([
-            (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_attribute'),
-            (bp.LOAD_CONST, node.name),
+            (LOAD_FAST, name_stack[-1]),
+            (LOAD_ATTR, 'add_attribute'),
+            (LOAD_CONST, node.name),
         ])
 
         # Generate the ops the load the type (if one was given),
@@ -203,21 +204,21 @@ class DeclarationCompiler(_NodeVisitor):
         if type_name is not None:
             op_code = compile(node.type_name, 'Enaml', mode='eval')
             ops.extend([
-                (bp.LOAD_CONST, eval),
-                (bp.LOAD_CONST, op_code),
-                (bp.LOAD_FAST, 'toolkit'),
-                (bp.LOAD_FAST, 'f_globals'),
-                (bp.CALL_FUNCTION, 0x0003),
-                (bp.LOAD_CONST, node.is_event),
-                (bp.CALL_FUNCTION, 0x0003),
-                (bp.POP_TOP, None),
+                (LOAD_CONST, eval),
+                (LOAD_CONST, op_code),
+                (LOAD_FAST, 'toolkit'),
+                (LOAD_FAST, 'f_globals'),
+                (CALL_FUNCTION, 0x0003),
+                (LOAD_CONST, node.is_event),
+                (CALL_FUNCTION, 0x0003),
+                (POP_TOP, None),
             ])
         else:
             ops.extend([
-                (bp.LOAD_CONST, 'is_event'),
-                (bp.LOAD_CONST, node.is_event),
-                (bp.CALL_FUNCTION, 0x0101),
-                (bp.POP_TOP, None),
+                (LOAD_CONST, 'is_event'),
+                (LOAD_CONST, node.is_event),
+                (CALL_FUNCTION, 0x0101),
+                (POP_TOP, None),
             ])
 
         # Visit the default attribute binding if one exists.
@@ -231,7 +232,6 @@ class DeclarationCompiler(_NodeVisitor):
 
         """
         # XXX handle BoundCodeBlock instead of just BoundExpression
-        bp = byteplay
         ops = self.ops
         name_stack = self.name_stack
 
@@ -247,20 +247,20 @@ class DeclarationCompiler(_NodeVisitor):
         # op = eval('__operator_Equal__', toolkit, f_globals)
         # op(item, 'a', <ast>, <code>, identifiers, f_globals, toolkit)
         ops.extend([
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-            (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_CONST, node.name),
-            (bp.LOAD_CONST, expr_ast),
-            (bp.LOAD_CONST, expr_code),
-            (bp.LOAD_FAST, 'identifiers'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.CALL_FUNCTION, 0x0007),
-            (bp.POP_TOP, None),
+            (LOAD_CONST, eval),
+            (LOAD_CONST, op_code),
+            (LOAD_FAST, 'toolkit'),
+            (LOAD_FAST, 'f_globals'),
+            (CALL_FUNCTION, 0x0003),
+            (LOAD_FAST, name_stack[-1]),
+            (LOAD_CONST, node.name),
+            (LOAD_CONST, expr_ast),
+            (LOAD_CONST, expr_code),
+            (LOAD_FAST, 'identifiers'),
+            (LOAD_FAST, 'f_globals'),
+            (LOAD_FAST, 'toolkit'),
+            (CALL_FUNCTION, 0x0007),
+            (POP_TOP, None),
         ])
 
     def visit_Instantiation(self, node):
@@ -269,7 +269,6 @@ class DeclarationCompiler(_NodeVisitor):
         its identifier, if given.
         
         """
-        bp = byteplay
         ops = self.ops
         name_stack = self.name_stack
 
@@ -285,24 +284,24 @@ class DeclarationCompiler(_NodeVisitor):
             # identifiers, so that it creates it's own new identifiers
             # scope. This means that derived declarations share ids,
             # but the composed children have an isolated id space.
-            (bp.LOAD_CONST, eval),
-            (bp.LOAD_CONST, op_code),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.LOAD_FAST, 'f_globals'),
-            (bp.CALL_FUNCTION, 0x0003),
-            (bp.LOAD_ATTR, '__enaml_call__'),
-            (bp.LOAD_CONST, None),
-            (bp.LOAD_FAST, 'toolkit'),
-            (bp.CALL_FUNCTION, 0x0002),
-            (bp.STORE_FAST, name),
+            (LOAD_CONST, eval),
+            (LOAD_CONST, op_code),
+            (LOAD_FAST, 'toolkit'),
+            (LOAD_FAST, 'f_globals'),
+            (CALL_FUNCTION, 0x0003),
+            (LOAD_ATTR, '__enaml_call__'),
+            (LOAD_CONST, None),
+            (LOAD_FAST, 'toolkit'),
+            (CALL_FUNCTION, 0x0002),
+            (STORE_FAST, name),
         ])
         
         if node.identifier:
             ops.extend([
-                (bp.LOAD_FAST, name),
-                (bp.LOAD_FAST, 'identifiers'),
-                (bp.LOAD_CONST, node.identifier),
-                (bp.STORE_SUBSCR, None),
+                (LOAD_FAST, name),
+                (LOAD_FAST, 'identifiers'),
+                (LOAD_CONST, node.identifier),
+                (STORE_SUBSCR, None),
             ])
 
         for item in node.body:
@@ -311,11 +310,11 @@ class DeclarationCompiler(_NodeVisitor):
         name_stack.pop()
         ops.extend([
             # foo.add_subcomponent(button)
-            (bp.LOAD_FAST, name_stack[-1]),
-            (bp.LOAD_ATTR, 'add_subcomponent'),
-            (bp.LOAD_FAST, name),
-            (bp.CALL_FUNCTION, 0x0001),
-            (bp.POP_TOP, None),
+            (LOAD_FAST, name_stack[-1]),
+            (LOAD_ATTR, 'add_subcomponent'),
+            (LOAD_FAST, name),
+            (CALL_FUNCTION, 0x0001),
+            (POP_TOP, None),
         ])
 
 
