@@ -9,7 +9,7 @@ from traits.api import Bool, Int, Str, Enum, Property, Instance, Any
 from .control import Control, AbstractTkControl
 
 from ..converters import Converter, StringConverter
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkField(AbstractTkControl):

@@ -8,7 +8,7 @@ from traits.api import Bool, Int, Str, Property, Instance
 
 from .control import Control, AbstractTkControl
 
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkTextEditor(AbstractTkControl):

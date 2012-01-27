@@ -7,7 +7,8 @@ from abc import abstractmethod
 from traits.api import List, Any, Callable, Int, Instance, Property, Str
 
 from .control import Control, AbstractTkControl
-from ..util.trait_types import EnamlEvent
+
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkComboBox(AbstractTkControl):

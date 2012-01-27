@@ -6,7 +6,7 @@ from traits.api import (
     List, Instance, Bool, on_trait_change, Property, cached_property, Either,
 )
 
-from .base_component import BaseComponent
+from ..core.base_component import BaseComponent
 
 
 IncludeComponents = Either(

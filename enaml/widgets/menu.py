@@ -11,7 +11,7 @@ from traits.api import (
 from .action import Action
 from .component import Component, AbstractTkComponent
 
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkMenu(AbstractTkComponent):

@@ -7,7 +7,7 @@ from abc import abstractmethod
 from .component import Component, AbstractTkComponent
 
 from ..enums import SelectionMode, SelectionBehavior
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkBaseSelectionModel(AbstractTkComponent):

@@ -8,8 +8,8 @@ from traits.api import Bool, Instance, Property
 
 from .window import Window, AbstractTkWindow
 
+from ..core.trait_types import EnamlEvent
 from ..enums import DialogResult, Modality
-from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkDialog(AbstractTkWindow):

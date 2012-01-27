@@ -8,7 +8,7 @@ from traits.api import Bool, Str, Instance, Property
 
 from .control import Control, AbstractTkControl
 
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkPushButton(AbstractTkControl):

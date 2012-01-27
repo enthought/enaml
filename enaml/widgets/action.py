@@ -8,7 +8,7 @@ from traits.api import Bool, Unicode
 
 from .component import Component, AbstractTkComponent
 
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkAction(AbstractTkComponent):
