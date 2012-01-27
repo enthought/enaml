@@ -9,8 +9,9 @@ from traits.api import (
     cached_property, Dict, TraitType, Disallow,
 )
 
-from ..expressions import AbstractExpression
-from ..toolkit import Toolkit
+from .expressions import AbstractExpression
+from .toolkit import Toolkit
+
 from ..util.trait_types import EnamlInstance, EnamlEvent
 
 
