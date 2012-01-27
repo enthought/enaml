@@ -5,7 +5,7 @@
 import sys
 import unittest
 
-from .. import import_hooks
+from enaml.core import import_hooks
 
 
 class FakeSys(object):

@@ -60,8 +60,8 @@ def wx_toolkit():
     """ Creates and return a toolkit object for the Wx backend.
 
     """
+    from .core.operators import OPERATORS
     from .core.toolkit import Toolkit
-    from .operators import OPERATORS
     from .widgets.constructors import CONSTRUCTORS
     from .widgets.layout.layout_helpers import LAYOUT_HELPERS
     from .widgets.wx.constructors import WX_CONSTRUCTORS
