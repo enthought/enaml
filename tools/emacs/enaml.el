@@ -26,4 +26,7 @@
               (append python-font-lock-keywords enaml-font-lock-keywords)
             ;; support python-mode.el
             (append py-font-lock-keywords enaml-font-lock-keywords))))
+
+(add-to-list 'auto-mode-alist '("\\.enaml\\'" . enaml-mode))
+
 (provide 'enaml)
