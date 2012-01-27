@@ -8,7 +8,7 @@ from weakref import ref
 
 from traits.api import Disallow
 
-from . import byteplay as bp
+from .byteplay import Code
 from .monitors import AbstractMonitor
 from .signaling import Signal
 
@@ -422,7 +422,7 @@ class SubscriptionExpression(AbstractExpression):
 
         # Collect the generated code from the monitors that will be
         # inserted into the code for the expression.
-        bp_code = bp.Code.from_code(self.code)
+        bp_code = Code.from_code(self.code)
         code_list = list(bp_code.code)
         insertions = defaultdict(list)
         for monitor in monitors:
@@ -513,7 +513,7 @@ class DelegationExpression(SubscriptionExpression):
         super(DelegationExpression, self).__init__(*args)
         
         inverters = []
-        bp_code = bp.Code.from_code(self.code)
+        bp_code = Code.from_code(self.code)
         code_list = bp_code.code
 
         for inv_cls in inverter_classes:
