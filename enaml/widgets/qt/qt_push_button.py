@@ -3,7 +3,6 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-
 from .qt_control import QtControl
 
 from ..push_button import AbstractTkPushButton
