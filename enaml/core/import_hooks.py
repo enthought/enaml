@@ -8,8 +8,8 @@ import os
 import sys
 import types
 
-from .parsing.enaml_compiler import EnamlCompiler
-from .parsing.parser import parse
+from .enaml_compiler import EnamlCompiler
+from .parser import parse
 
 
 # Backport of Py3k abstractclassmethod
