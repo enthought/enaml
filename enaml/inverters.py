@@ -102,7 +102,7 @@ class AbstractAttributeInverter(AbstractInverter):
         """ Returns a function which accepts three arguments: an object,
         an attribute name, and a value, and performs a setattr operation
         with the items. The function that performs the operation should 
-        return True on success and False on failure.This method must be 
+        return True on success and False on failure. This method must be 
         implemented by subclasses.
 
         """
@@ -227,7 +227,7 @@ class GetattrInverter(AbstractCallInverter):
 class AbstractNameInverter(AbstractInverter):
     """ An AbstractInverter subclass which converts a bytecode expression
     which consists soley of a LOAD_NAME op_code into an appropriate 
-    expression which calls a  delegate to do the setattr operation.
+    expression which calls a delegate to do the setattr operation.
 
     """
     def get_inverted_code(self, code_list):
