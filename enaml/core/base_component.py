@@ -11,8 +11,7 @@ from traits.api import (
 
 from .expressions import AbstractExpression
 from .toolkit import Toolkit
-
-from ..util.trait_types import EnamlInstance, EnamlEvent
+from .trait_types import EnamlInstance, EnamlEvent
 
 
 #------------------------------------------------------------------------------
