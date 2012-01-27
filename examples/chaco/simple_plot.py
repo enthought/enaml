@@ -15,7 +15,7 @@ from traits.api import (
     Array, Bool, DelegatesTo, Dict, Enum, Instance, List, Str, on_trait_change,
 )
 
-from enaml.toolkit import Toolkit
+from enaml.core.toolkit import Toolkit
 from enaml.widgets.enable_canvas import EnableCanvas
 
 
