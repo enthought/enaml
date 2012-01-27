@@ -8,8 +8,8 @@ from weakref import ref
 
 from traits.api import Disallow
 
+from . import byteplay as bp
 from .monitors import AbstractMonitor
-from .parsing import byteplay as bp
 from .signaling import Signal
 
 
