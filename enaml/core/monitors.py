@@ -161,7 +161,7 @@ class AbstractCallMonitor(AbstractMonitor):
             if this is not None:
                 nargs = arg_spec & 0xFF
                 args = arg_tuple[:nargs]
-                kwargs = dict(zip(arg_tuple[nargs:], arg_tuple[nargs+1:]))
+                kwargs = dict(zip(arg_tuple[nargs::2], arg_tuple[nargs+1::2]))
                 this.monitor_function(func_obj, args, kwargs)
             # The UNPACK_SEQUENCE op_codes which will unpack these 
             # return values will unpack things onto the stack in the

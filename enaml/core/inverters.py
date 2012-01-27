@@ -155,7 +155,7 @@ class AbstractCallInverter(AbstractInverter):
         def closure(func_obj, arg_tuple, arg_spec, value):
             nargs = arg_spec & 0xFF
             args = arg_tuple[:nargs]
-            kwargs = dict(zip(arg_tuple[nargs:], arg_tuple[nargs+1:]))
+            kwargs = dict(zip(arg_tuple[nargs::2], arg_tuple[nargs+1::2]))
             return handler(func_obj, args, kwargs, value)
         return closure
 
