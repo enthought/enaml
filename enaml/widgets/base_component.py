@@ -19,7 +19,10 @@ from ..util.trait_types import EnamlInstance, EnamlEvent
 #------------------------------------------------------------------------------
 class ExpressionTrait(TraitType):
     """ A custom trait type which is used to help implement expression 
-    binding.
+    binding. Instances of this trait are added to an object, but swap
+    themselves out and replace the old trait the first time they are
+    accessed. This allows bound expressions to be initialized in the
+    proper order without requiring an explicit initialization graph.
 
     """
     def __init__(self, old_trait):
@@ -216,7 +219,6 @@ class BaseComponent(HasStrictTraits):
     #: 'bind_expression' method.
     _expressions = Dict(Str, List(Instance(AbstractExpression)))
 
-    #: The private dictionary of notification expression
     #: The private list of virtual base classes that were used to 
     #: instantiate this component from Enaml source code. The 
     #: EnamlFactory class of the Enaml runtime will directly append
@@ -248,14 +250,16 @@ class BaseComponent(HasStrictTraits):
     # Special Methods
     #--------------------------------------------------------------------------
     def __repr__(self):
-        """ An overridden repr which returns the repr of factory from
-        which this component is derived, provided that it is not the
-        root constructor. Otherwise, defaults to super.
+        """ An overridden repr which returns the repr of the factory 
+        from which this component is derived, provided that it is not 
+        simply a root constructor. Otherwise, it defaults to the super
+        class' repr implementation.
 
         """
-        # If there are any bases, the last on in the list will always be
-        # a constructor, and we want to ignore that and focus on the
-        # repr if the component was derived from within Enaml code.
+        # If there are any bases, the last one in the list will always 
+        # be a constructor. We want to ignore that one and focus on the
+        # repr of the virtual base class from which the component was 
+        # derived in the Enaml source code.
         bases = self._bases
         if len(bases) >= 2:
             base = bases[0]
@@ -285,7 +289,7 @@ class BaseComponent(HasStrictTraits):
     # Component Manipulation
     #--------------------------------------------------------------------------
     def get_actual(self):
-        """ Returns the list of BaseComponent instance which should be
+        """ Returns the list of BaseComponent instances which should be
         included as proper children of our parent. By default this 
         simply returns [self]. This method should be reimplemented by 
         subclasses which need to contribute different components to their
@@ -321,7 +325,7 @@ class BaseComponent(HasStrictTraits):
         2)  Abstract objects initialize their internal toolkit object
         3)  Bound expression values are explicitly applied
         4)  Abstract objects bind their event handlers
-        5)  Abstract objects are added as a listeners to the shell object
+        5)  Abstract objects are added as listeners to the shell object
         6)  Visibility is initialized
         7)  Layout is initialized
         8)  A finalization pass is made
@@ -429,12 +433,12 @@ class BaseComponent(HasStrictTraits):
 
     def _setup_set_initialized(self):
         """ A setup method which updates the initialized attribute of 
-        the component to True.
+        the component to True. This is performed bottom-up.
 
         """
-        self.initialized = True
         for child in self._subcomponents:
             child._setup_set_initialized()
+        self.initialized = True
 
     #--------------------------------------------------------------------------
     # Teardown Methods
@@ -588,7 +592,7 @@ class BaseComponent(HasStrictTraits):
         # At this point we know there are no non-overridable traits 
         # defined for the object, but it is possible that there are 
         # methods or other non-trait attributes using the given name. 
-        # We could  potentially check for those, but its probably more 
+        # We could potentially check for those, but its probably more 
         # useful to allow for overriding such things from Enaml, so we 
         # just go ahead and add the attribute.
         try:
@@ -602,14 +606,13 @@ class BaseComponent(HasStrictTraits):
             raise TypeError(msg % (attr_type, name, self))
 
     def bind_expression(self, name, expression, notify_only=False):
-        """ Binds the given expression to the attribute 'name'. If
-        the attribute does not exist, an exception is raised. 
-
-        If the object is not yet initialized, the expression will be 
-        evaulated as the default value of the attribute on-demand.
-        If the object is already initialized, then the expression
-        is evaluated immediately and the attribute set with the value. 
-        A strong reference to the expression object is kept internally.
+        """ Binds the given expression to the attribute 'name'.
+         
+        If the attribute does not exist, an exception is raised. A 
+        strong reference to the expression object is kept internally.
+        If the expression is not notify_only and the object is already
+        fully initialized, the value of the expression will be applied
+        immediately.
 
         Parameters
         ----------
@@ -644,7 +647,7 @@ class BaseComponent(HasStrictTraits):
 
         # There can be multiple notify_only expressions bound to a 
         # single attribute, so they just get appended to the end of
-        # the list. Otherwise, the left associate expression gets
+        # the list. Otherwise, the left associative expression gets
         # placed at the zero position of the list, overriding any
         # existing expression.
         if notify_only:
@@ -688,7 +691,7 @@ class BaseComponent(HasStrictTraits):
 
         """
         # The check for None is for the case where there are no left 
-        # associated expressions bound to the attribute, so the first
+        # associative expressions bound to the attribute, so the first
         # entry in the list is still None.
         if self.initialized:
             for expr in self._expressions[name]:
