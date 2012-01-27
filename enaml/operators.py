@@ -2,9 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .expressions import (SimpleExpression, SubscriptionExpression, 
-                          DelegatingExpression, NotificationExpression)
-
+from .expressions import (SimpleExpression, NotificationExpression,
+                          SubscriptionExpression, DelegationExpression)
+from .inverters import (GenericAttributeInverter, GetattrInverter,
+                        ImplicitAttrInverter)
 from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 
 
@@ -15,7 +16,7 @@ def op_simple(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
 
 def op_notify(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
     expr = NotificationExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
-    cmpnt.notify_expression(attr, expr)
+    cmpnt.bind_expression(attr, expr, notify_only=True)
 
 
 def op_subscribe(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
@@ -25,11 +26,10 @@ def op_subscribe(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
 
 
 def op_delegate(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
-    expr = DelegatingExpression(cmpnt, attr, code, identifiers, f_globals, toolkit)
+    inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
+    monitors = [TraitAttributeMonitor, TraitGetattrMonitor]
+    expr = DelegationExpression(inverters, monitors, cmpnt, attr, code, identifiers, f_globals, toolkit)
     cmpnt.bind_expression(attr, expr)
-
-
-
 
 
 #: The builtin Enaml expression operators
