@@ -7,7 +7,10 @@ from weakref import ref
 
 from traits.api import HasTraits, Disallow
 
-from .parsing import byteplay as bp
+from .byteplay import (
+    CALL_FUNCTION, ROT_THREE, LOAD_CONST, LOAD_ATTR, ROT_TWO, BUILD_TUPLE, 
+    UNPACK_SEQUENCE, POP_TOP, DUP_TOP,
+)
 from .signaling import Signal
 
 
@@ -104,14 +107,14 @@ class AbstractAttributeMonitor(AbstractMonitor):
             # return value of the binder is discarded. This leaves the
             # original TOS and pending attribute access to continue on
             # as normal
-            if op == bp.LOAD_ATTR:
+            if op == LOAD_ATTR:
                 code = [
-                    (bp.DUP_TOP, None),
-                    (bp.LOAD_CONST, code_binder),
-                    (bp.ROT_TWO, None),
-                    (bp.LOAD_CONST, op_arg),
-                    (bp.CALL_FUNCTION, 0x0002),
-                    (bp.POP_TOP, None),
+                    (DUP_TOP, None),
+                    (LOAD_CONST, code_binder),
+                    (ROT_TWO, None),
+                    (LOAD_CONST, op_arg),
+                    (CALL_FUNCTION, 0x0002),
+                    (POP_TOP, None),
                 ]
                 insertion_code.append((idx, code))
 
@@ -180,7 +183,7 @@ class AbstractCallMonitor(AbstractMonitor):
             # arg_tuple. This return tuple is unpacked, and then the 
             # arg_tuple is unpacked and the function call proceeds as 
             # normal.
-            if op == bp.CALL_FUNCTION:
+            if op == CALL_FUNCTION:
                 # This computes the number of objects on the stack 
                 # between TOS and the object being called. Only the
                 # last 16bits of the op_arg are signifcant. The lowest
@@ -190,13 +193,13 @@ class AbstractCallMonitor(AbstractMonitor):
                 # since the values on the stack alternate name, value.
                 n_stack_args = (op_arg & 0xFF) + 2 * ((op_arg >> 8) & 0xFF)
                 code = [
-                    (bp.BUILD_TUPLE, n_stack_args),
-                    (bp.LOAD_CONST, code_binder),
-                    (bp.ROT_THREE, None),
-                    (bp.LOAD_CONST, op_arg),
-                    (bp.CALL_FUNCTION, 0x0003),
-                    (bp.UNPACK_SEQUENCE, 2),
-                    (bp.UNPACK_SEQUENCE, n_stack_args),
+                    (BUILD_TUPLE, n_stack_args),
+                    (LOAD_CONST, code_binder),
+                    (ROT_THREE, None),
+                    (LOAD_CONST, op_arg),
+                    (CALL_FUNCTION, 0x0003),
+                    (UNPACK_SEQUENCE, 2),
+                    (UNPACK_SEQUENCE, n_stack_args),
                 ]
                 insertion_code.append((idx, code))
             
