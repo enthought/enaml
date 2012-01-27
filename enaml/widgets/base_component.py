@@ -451,7 +451,6 @@ class BaseComponent(HasStrictTraits):
             child.destroy()
         del self._subcomponents[:]
         self._expressions.clear()
-        self._notify_expressions.clear()
 
     #--------------------------------------------------------------------------
     # Layout Stubs
