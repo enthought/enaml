@@ -9,10 +9,9 @@ import optparse
 import sys
 import types
 
-import enaml
+from enaml import imports, default_toolkit, wx_toolkit, qt_toolkit
 from enaml.core.parser import parse
 from enaml.core.enaml_compiler import EnamlCompiler
-from enaml.toolkit import default_toolkit, wx_toolkit, qt_toolkit
 
 
 toolkits = {
@@ -50,7 +49,7 @@ def main():
     module = types.ModuleType('__main__')
     ns = module.__dict__
 
-    with enaml.imports():
+    with imports():
         EnamlCompiler.compile(ast, ns)
 
     with toolkits[options.toolkit]():
