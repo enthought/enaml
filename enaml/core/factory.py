@@ -66,7 +66,7 @@ class EnamlFactory(object):
             identifiers = {}
         if toolkit is None:
             toolkit = Toolkit.active_toolkit()
-        component = self.__enaml_build__(identifiers, toolkit)
+        component = self.build(identifiers, toolkit)
         component.toolkit = toolkit
         component._bases.insert(0, self)
         return component
@@ -82,7 +82,7 @@ class EnamlFactory(object):
         return False
 
     @abstractmethod
-    def __enaml_build__(self, identifiers, toolkit):
+    def build(self, identifiers, toolkit):
         """ An abstract method which must be implemented by subclasses
         to build an return an instance of BaseComponent.
 

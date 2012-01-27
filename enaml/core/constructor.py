@@ -29,7 +29,7 @@ class Constructor(EnamlFactory):
         self.shell_loader = shell_loader
         self.abstract_loader = abstract_loader
 
-    def __enaml_build__(self, identifiers, toolkit):
+    def build(self, identifiers, toolkit):
         """ An abstractmethod implementation that builds an Enaml
         component using the classes returned from the provided
         loaders.
