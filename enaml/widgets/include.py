@@ -133,9 +133,6 @@ class Include(BaseComponent):
             child._setup_finalize()
 
         for child in cmpnts:
-            child._setup_init_notifiers()
-
-        for child in cmpnts:
             child._setup_set_initialized()
 
         self._components_initialized = True
