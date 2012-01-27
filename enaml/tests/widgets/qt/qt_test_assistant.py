@@ -2,7 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.toolkit import qt_toolkit
+from enaml import qt_toolkit
+
 
 class QtTestAssistant(object):
     """ Assistant class for testing wx based components.

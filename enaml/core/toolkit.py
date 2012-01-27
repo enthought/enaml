@@ -2,12 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-import os
-
-
-#------------------------------------------------------------------------------
-# Toolkit
-#------------------------------------------------------------------------------
 class Toolkit(dict):
     """ The Enaml Toolkit class which facilitates toolkit independent
     development. 
@@ -47,6 +41,7 @@ class Toolkit(dict):
         """
         tk = cls.__default_toolkit__
         if tk is None:
+            from enaml import default_toolkit
             tk = cls.__default_toolkit__ = default_toolkit()
         return tk
 
@@ -80,61 +75,4 @@ class Toolkit(dict):
         self.__toolkit_app__ = val
 
     app = property(_get_toolkit_app, _set_toolkit_app)
-
-
-#------------------------------------------------------------------------------
-# Toolkit Factory Functions
-#------------------------------------------------------------------------------
-def default_toolkit():
-    """ Creates an returns the default toolkit object based on
-    the user's current ETS_TOOLKIT environment variables.
-
-    """
-    toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower()
-
-    if toolkit == 'qt' or toolkit == 'qt4':
-        return qt_toolkit()
-
-    if toolkit == 'wx':
-        return wx_toolkit()
-
-    raise ValueError('Invalid Toolkit: %s' % toolkit)
-
-
-def qt_toolkit():
-    """ Creates and return a toolkit object for the Qt backend.
-
-    """
-    from .operators import OPERATORS
-    from .widgets.constructors import CONSTRUCTORS
-    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    from .widgets.qt.constructors import QT_CONSTRUCTORS
-    from .widgets.qt.qt_application import QtApplication
-
-    toolkit = Toolkit(QT_CONSTRUCTORS)
-    toolkit.update(CONSTRUCTORS)
-    toolkit.update(OPERATORS)
-    toolkit.update(LAYOUT_HELPERS)
-    toolkit.app = QtApplication()
-
-    return toolkit
-
-
-def wx_toolkit():
-    """ Creates and return a toolkit object for the Wx backend.
-
-    """
-    from .operators import OPERATORS
-    from .widgets.constructors import CONSTRUCTORS
-    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    from .widgets.wx.constructors import WX_CONSTRUCTORS
-    from .widgets.wx.wx_application import WXApplication
-
-    toolkit = Toolkit(WX_CONSTRUCTORS)
-    toolkit.update(CONSTRUCTORS)
-    toolkit.update(OPERATORS)
-    toolkit.update(LAYOUT_HELPERS)
-    toolkit.app = WXApplication()
-
-    return toolkit
 

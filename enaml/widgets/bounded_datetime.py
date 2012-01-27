@@ -11,7 +11,7 @@ from traits.api import (
 
 from .control import Control, AbstractTkControl
 
-from ..util.trait_types import Bounded
+from ..core.trait_types import Bounded
 
 
 Datetime = BaseInstance(py_datetime)

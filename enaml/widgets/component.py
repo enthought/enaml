@@ -6,8 +6,7 @@ from abc import ABCMeta, abstractmethod, abstractproperty
 
 from traits.api import Instance, Property, Bool
 
-from .base_component import BaseComponent
-
+from ..core.base_component import BaseComponent
 from ..guard import guard
 
 

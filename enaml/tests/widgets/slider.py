@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from unittest import expectedFailure
 from traits.api import TraitError
 
 from .enaml_test_case import EnamlTestCase, required_method
@@ -81,7 +80,7 @@ MainView(MainWindow):
     attr events
     Slider:
         name = 'slider'
-        moved >> events.append(('moved', args.new))
+        moved >> events.append(('moved', event.new))
         pressed >> events.append('pressed')
         released >> events.append('released')
 """

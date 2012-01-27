@@ -8,7 +8,7 @@ from traits.api import Int, Instance, Property, TraitError, on_trait_change
 
 from .control import Control, AbstractTkControl
 
-from ..util.trait_types import Bounded
+from ..core.trait_types import Bounded
 
 
 class AbstractTkProgressBar(AbstractTkControl):

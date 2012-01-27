@@ -6,7 +6,7 @@ from traits.api import HasTraits
 
 from .model_index import ModelIndex
 
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 #------------------------------------------------------------------------------

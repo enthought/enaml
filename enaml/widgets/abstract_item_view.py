@@ -9,9 +9,9 @@ from traits.api import Instance, Property, cached_property
 from .base_selection_model import BaseSelectionModel
 from .control import Control, AbstractTkControl
 
+from ..core.trait_types import EnamlEvent
 from ..item_models.abstract_item_model import AbstractItemModel
 from ..item_models.model_index import ModelIndex
-from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkItemView(AbstractTkControl):

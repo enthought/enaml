@@ -5,7 +5,8 @@
 from traits.api import Instance
 
 from .bounded_date import BoundedDate, AbstractTkBoundedDate
-from ..util.trait_types import EnamlEvent
+
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkCalendar(AbstractTkBoundedDate):

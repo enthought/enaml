@@ -9,8 +9,8 @@ from .sizable import Sizable, AbstractTkSizable
 from .stylable import Stylable, AbstractTkStylable
 from .layout.box_model import BoxModel
 
+from ..core.trait_types import EnamlEvent
 from ..guard import guard
-from ..util.trait_types import EnamlEvent
 
 
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')

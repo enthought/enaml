@@ -8,8 +8,8 @@ import os
 import sys
 import types
 
-from .parsing.enaml_compiler import EnamlCompiler
-from .parsing.parser import parse
+from .enaml_compiler import EnamlCompiler
+from .parser import parse
 
 
 # Backport of Py3k abstractclassmethod
@@ -20,6 +20,9 @@ class abstractclassmethod(classmethod):
         super(abstractclassmethod, self).__init__(func)
 
 
+#------------------------------------------------------------------------------
+# Abstract Enaml Importer
+#------------------------------------------------------------------------------
 class AbstractEnamlImporter(object):
     """ An abstract base class which defines the api required to 
     implement an Enaml importer.
@@ -142,6 +145,9 @@ class AbstractEnamlImporter(object):
         raise NotImplementedError(msg)
 
 
+#------------------------------------------------------------------------------
+# Default Enaml Importer
+#------------------------------------------------------------------------------
 class EnamlImporter(AbstractEnamlImporter):
     """ The standard Enaml importer which can import Enaml modules from
     standard locations on the python path.
@@ -215,4 +221,78 @@ class EnamlImporter(AbstractEnamlImporter):
         with open(path) as f:
             source = f.read()
         return (source, path)
+
+
+#------------------------------------------------------------------------------
+# Enaml Imports Context
+#------------------------------------------------------------------------------
+class imports(object):
+    """ A context manager that hooks/unhooks the enaml meta path
+    importer for the duration of the block. The helps user avoid
+    unintended consequences of a having a meta path importer slow
+    down all of their other imports.
+
+    """
+    #: The framework-wide importers in use. We always have the default
+    #: importer available, unless it is explicitly removed.
+    __importers = [EnamlImporter]
+
+    @classmethod
+    def get_importers(cls):
+        """ Returns a tuple of currently active importers in use for the
+        framework.
+
+        """
+        return tuple(cls.__importers)
+
+    @classmethod
+    def add_importer(cls, importer):
+        """ Add an importer to the list of importers for use with the 
+        framework. It must be a subclass of AbstractEnamlImporter.
+        The most recently appended importer is used first. If the 
+        importer has already been added, this is a no-op. To move
+        an importer up in precedence, remove it and add it again.
+
+        """
+        if not issubclass(importer, AbstractEnamlImporter):
+            msg = ('An Enaml importer must be a subclass of '
+                   'AbstractEnamlImporter. Got %s instead.')
+            raise TypeError(msg % importer)
+        importers = cls.__importers
+        if importer not in importers:
+            importers.append(importer)
+    
+    @classmethod
+    def remove_importer(cls, importer):
+        """ Removes the importer from the list of active importers. 
+        If the importer is not in the list, this is a no-op.
+
+        """
+        importers = cls.__importers
+        if importer in importers:
+            importers.remove(importer)
+
+    def __init__(self):
+        """ Initializes an Enaml import context.
+
+        """
+        self.importers = self.get_importers()
+
+    def __enter__(self):
+        """ Installs the current importer upon entering the context.
+
+        """
+        # Install the importers reversed so that the newest ones 
+        # get first crack at the import on sys.meta_path.
+        for importer in reversed(self.importers):
+            importer.install()
+    
+    def __exit__(self, *args, **kwargs):
+        """ Uninstalls the current importer when leaving the context.
+
+        """
+        # We removed in standard order since thats a more efficient
+        # operation on sys.meta_path.
+        for importer in self.importers:
+            importer.uninstall()
 

@@ -5,9 +5,9 @@
 import unittest
 import inspect
 
-from enaml.parsing.parser import parse
-from enaml.parsing.enaml_compiler import EnamlCompiler
-from enaml.toolkit import default_toolkit
+from enaml import default_toolkit
+from enaml.core.parser import parse
+from enaml.core.enaml_compiler import EnamlCompiler
 
 
 def required_method(function_object):

@@ -2,9 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .base_component import BaseComponent
-
 from traits.api import Property, on_trait_change
+
+from ..core.base_component import BaseComponent
 
 
 class Inline(BaseComponent):

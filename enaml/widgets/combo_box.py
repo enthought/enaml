@@ -7,7 +7,8 @@ from abc import abstractmethod
 from traits.api import List, Any, Callable, Int, Instance, Property, Str
 
 from .control import Control, AbstractTkControl
-from ..util.trait_types import EnamlEvent
+
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkComboBox(AbstractTkControl):
@@ -70,7 +71,7 @@ class ComboBox(Control):
     selected_text = Property(Str, depends_on=['to_string', 'value'])
 
     #: Fired when a new selection is made by the user through the ui,
-    #: but not when changed programatically. The args object will contain
+    #: but not when changed programatically. The event object will contain
     #: the selected value.
     selected = EnamlEvent
     

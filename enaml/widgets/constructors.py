@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..constructor import Constructor
+from ..core.constructor import Constructor
 
 
 def include_shell():

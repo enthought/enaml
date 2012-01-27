@@ -506,7 +506,17 @@ class WXField(WXControl, AbstractTkField):
         self.widget = new_widget
         self.bind()
         new_widget.Show()
-        # We need to have a relayout anyway to put the new widget in the
-        # proper position.
+        # We need a relayout to put the new widget in the proper position.
         self.shell_obj.request_relayout()
+    
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def size_hint(self):
+        """ Overridden size_hint method to add 44 pixels in width to 
+        the field. This makes Wx consistent with Qt.
+
+        """
+        w, h = super(WXField, self).size_hint()
+        return (w + 44, h)
 

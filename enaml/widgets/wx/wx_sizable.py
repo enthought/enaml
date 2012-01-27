@@ -6,7 +6,7 @@ from ..sizable import AbstractTkSizable
 
 
 class WXSizable(AbstractTkSizable):
-    """ A Qt4 implementation of Sizable.
+    """ A Wx implementation of Sizable.
 
     """
     def size_hint(self):

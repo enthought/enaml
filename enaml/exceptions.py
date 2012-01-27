@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from contextlib import contextmanager, nested
+from contextlib import contextmanager
 from traits.api import push_exception_handler, pop_exception_handler
 
 class EnamlError(Exception):

@@ -8,7 +8,7 @@ from traits.api import Str, Instance
 
 from .bounded_datetime import BoundedDatetime, AbstractTkBoundedDatetime
 
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkDatetimeEdit(AbstractTkBoundedDatetime):

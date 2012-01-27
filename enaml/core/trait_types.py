@@ -65,6 +65,13 @@ class EnamlInstance(TraitType):
             self.error(obj, name, value)
         return value
 
+    def full_info(self, obj, name, value):
+        """ Overridden parent class method to compute an appropriate info
+        string for use in error messages.
+
+        """
+        return 'an instance of %s' % self.base_type
+
 
 #------------------------------------------------------------------------------
 # Enaml Event

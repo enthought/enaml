@@ -108,7 +108,14 @@ class MainWindow(Window):
             self.resize_to_initial()
             self.update_minimum_size()
             self.update_maximum_size()
-        self.set_visible(True)
+        # Some Gui's don't like to process all events from a single 
+        # call to process events (Qt), and pumping the loop is not
+        # reliable. Instead, we just schedule the call to set_visible 
+        # to occur after we start the event loop and with a priority 
+        # that is less than any relayouts the may be triggered by 
+        # pending events. This means that the layout queue should 
+        # finish processing, and then the window will be shown.
+        app.schedule(self.set_visible, (True,), priority=75)
         app.start_event_loop()
         
     def hide(self):

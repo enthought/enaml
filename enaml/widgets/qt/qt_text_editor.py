@@ -2,8 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from qt import QtGui
-
+from .qt import QtGui
 from .qt_control import QtControl
 
 from ..text_editor import AbstractTkTextEditor

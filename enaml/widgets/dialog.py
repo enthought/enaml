@@ -8,8 +8,8 @@ from traits.api import Bool, Instance, Property
 
 from .window import Window, AbstractTkWindow
 
+from ..core.trait_types import EnamlEvent
 from ..enums import DialogResult, Modality
-from ..util.trait_types import EnamlEvent
 
 
 class AbstractTkDialog(AbstractTkWindow):
@@ -103,17 +103,24 @@ class Dialog(Window):
             backend.
 
         """
-        self.toolkit.app.initialize()
+        app = self.toolkit.app
+        app.initialize()
         if not self.initialized:
             self.setup(parent)
             self.resize_to_initial()
             self.update_minimum_size()
             self.update_maximum_size()
-            
         # Note that we don't start the event loop after making a Dialog
         # visible. Dialogs are shown modally and typically start their 
         # own event loop. Thus, set_visble(True) will block and starting
-        # an event loop after it returns may cause a dead lock
+        # an event loop after it returns may cause a dead lock.
+        #
+        # XXX pumping the event loop here is a bit of hack. The trick
+        # we used on main window doesn't work here because the set
+        # visible call actually starts the event loop, we can probably
+        # do better.
+        for _ in range(10):
+            app.process_events()
         self.set_visible(True)
         
     def hide(self):

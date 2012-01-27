@@ -7,11 +7,11 @@
 """
 import optparse
 import sys
+import types
 
-import enaml
-from enaml.parsing.parser import parse
-from enaml.parsing.enaml_compiler import EnamlCompiler
-from enaml.toolkit import default_toolkit, wx_toolkit, qt_toolkit
+from enaml import imports, default_toolkit, wx_toolkit, qt_toolkit
+from enaml.core.parser import parse
+from enaml.core.enaml_compiler import EnamlCompiler
 
 
 toolkits = {
@@ -44,8 +44,12 @@ def main():
     
     ast = parse(enaml_code, filename=enaml_file)
 
-    ns = {}
-    with enaml.imports():
+    # Create a proper module for the compiler so that 
+    # exceptions get reported with better meaning
+    module = types.ModuleType('__main__')
+    ns = module.__dict__
+
+    with imports():
         EnamlCompiler.compile(ast, ns)
 
     with toolkits[options.toolkit]():

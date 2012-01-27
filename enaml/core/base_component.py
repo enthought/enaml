@@ -9,9 +9,9 @@ from traits.api import (
     cached_property, Dict, TraitType, Disallow,
 )
 
-from ..expressions import AbstractExpression
-from ..toolkit import Toolkit
-from ..util.trait_types import EnamlInstance, EnamlEvent
+from .expressions import AbstractExpression
+from .toolkit import Toolkit
+from .trait_types import EnamlInstance, EnamlEvent
 
 
 #------------------------------------------------------------------------------
@@ -19,7 +19,10 @@ from ..util.trait_types import EnamlInstance, EnamlEvent
 #------------------------------------------------------------------------------
 class ExpressionTrait(TraitType):
     """ A custom trait type which is used to help implement expression 
-    binding.
+    binding. Instances of this trait are added to an object, but swap
+    themselves out and replace the old trait the first time they are
+    accessed. This allows bound expressions to be initialized in the
+    proper order without requiring an explicit initialization graph.
 
     """
     def __init__(self, old_trait):
@@ -58,20 +61,33 @@ class ExpressionTrait(TraitType):
                 if hasattr(notifier, 'owner'):
                     notifier.owner = notifiers
 
+    def compute_default(self, obj, name):
+        """ Returns the default value as computed by the most recently
+        bound expression. If a value cannot be provided, NotImplemented
+        is returned.
+
+        """
+        res = NotImplemented
+        expr = obj._expressions[name][0]
+        if expr is not None:
+            res = expr.eval()
+        return res
+
     def get(self, obj, name):
-        """ Handle the computing the initial value for the expression
-        trait. This method first restores the old trait, then evaluates
-        the expression and sets the value on the trait. It then performs
+        """ Handle computing the initial value for the expression trait. 
+        This method first restores the old trait, then evaluates the 
+        expression and sets the value on the trait. It then performs
         a getattr to return the new value of the trait. If the object
         is not yet fully initialized, the value is set quietly.
 
         """
         self.swapout(obj, name)
-        val = obj._expressions[name].eval()
-        if not obj.initialized:
-            obj.trait_setq(**{name: val})
-        else:    
-            setattr(obj, name, val)
+        val = self.compute_default(obj, name)
+        if val is not NotImplemented:
+            if not obj.initialized:
+                obj.trait_setq(**{name: val})
+            else:    
+                setattr(obj, name, val)
         return getattr(obj, name, val)
 
     def set(self, obj, name, val):
@@ -90,7 +106,7 @@ class ExpressionTrait(TraitType):
 
 
 #------------------------------------------------------------------------------
-# UserAttribute
+# User Attribute and Event
 #------------------------------------------------------------------------------
 class UninitializedAttributeError(Exception):
     """ A custom Exception used by UserAttribute to signal the access 
@@ -100,7 +116,8 @@ class UninitializedAttributeError(Exception):
     # XXX - We can't inherit from AttributeError because the local 
     # scope object used by expressions captures an AttributeError
     # and converts it into in a KeyError in order to implement
-    # dynamic attribute scoping. 
+    # dynamic attribute scoping. We actually want this exception
+    # to propagate.
     pass
 
 
@@ -124,20 +141,16 @@ class UserAttribute(EnamlInstance):
         """ The trait setter method. Sets the value in the object's 
         dict if it is valid, and emits a change notification if the
         value has changed. The first time the value is set the change
-        notification will carry the traits Undefined object as the old
-        value.
+        notification will carry None as the old value.
 
         """
         value = self.validate(obj, name, value)
-
         dct = obj.__dict__
         if name not in dct:
             old = None
         else:
             old = dct[name]
-
         dct[name] = value
-        
         if old != value:
             obj.trait_property_changed(name, old, value)
 
@@ -149,17 +162,7 @@ class UserAttribute(EnamlInstance):
         msg = "Cannot access the uninitialized '%s' attribute of the %s object"
         raise UninitializedAttributeError(msg % (name, obj))
 
-    def full_info(self, obj, name, value):
-        """ Overridden parent class method to compute an appropriate info
-        string for use in error messages.
 
-        """
-        return 'an instance of %s' % self.base_type
-
-
-#------------------------------------------------------------------------------
-# User Event
-#------------------------------------------------------------------------------
 class UserEvent(EnamlEvent):
     """ A simple EnamlEvent subclass used to distinguish between events
     declared by the framework, and events declared by the user.
@@ -212,9 +215,9 @@ class BaseComponent(HasStrictTraits):
 
     #: The private dictionary of expression objects that are bound to 
     #: attributes on this component. It should not be manipulated by
-    #: user. Rather, expressions should be added by calling the 
+    #: user code. Rather, expressions should be bound by calling the 
     #: 'bind_expression' method.
-    _expressions = Dict(Str, Instance(AbstractExpression))
+    _expressions = Dict(Str, List(Instance(AbstractExpression)))
 
     #: The private list of virtual base classes that were used to 
     #: instantiate this component from Enaml source code. The 
@@ -244,6 +247,26 @@ class BaseComponent(HasStrictTraits):
     set = Disallow
 
     #--------------------------------------------------------------------------
+    # Special Methods
+    #--------------------------------------------------------------------------
+    def __repr__(self):
+        """ An overridden repr which returns the repr of the factory 
+        from which this component is derived, provided that it is not 
+        simply a root constructor. Otherwise, it defaults to the super
+        class' repr implementation.
+
+        """
+        # If there are any bases, the last one in the list will always 
+        # be a constructor. We want to ignore that one and focus on the
+        # repr of the virtual base class from which the component was 
+        # derived in the Enaml source code.
+        bases = self._bases
+        if len(bases) >= 2:
+            base = bases[0]
+            return repr(base)
+        return super(BaseComponent, self).__repr__()
+
+    #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
     def _get_self(self):
@@ -266,7 +289,7 @@ class BaseComponent(HasStrictTraits):
     # Component Manipulation
     #--------------------------------------------------------------------------
     def get_actual(self):
-        """ Returns the list of BaseComponent instance which should be
+        """ Returns the list of BaseComponent instances which should be
         included as proper children of our parent. By default this 
         simply returns [self]. This method should be reimplemented by 
         subclasses which need to contribute different components to their
@@ -284,114 +307,7 @@ class BaseComponent(HasStrictTraits):
         """
         component.parent = self
         self._subcomponents.append(component)
-
-    #--------------------------------------------------------------------------
-    # Attribute Manipulation
-    #--------------------------------------------------------------------------
-    def add_attribute(self, name, attr_type=object, is_event=False):
-        """ Adds an attribute to the base component with the given name
-        and ensures that values assigned to this attribute are of a
-        given type.
-
-        If the object already has an attribute with the given name,
-        an exception will be raised.
-
-        Parameters
-        ----------
-        name : string
-            The name of the attribute to add.
-        
-        attr_type : type-like object, optional
-            An object that behaves like a type for the purposes of a
-            call to isinstance. Defaults to object.
-        
-        is_event : bool, optional
-            If True, the added attribute will behave like an event.
-            Otherwise, it will behave like a normal attribute. The
-            default is False.
-
-        """
-        # Check to see if a trait is already defined. We don't use
-        # hasattr here since that might prematurely trigger a trait
-        # intialization. We allow overriding traits of type Disallow,
-        # UserAttribute, and UserEvent. The first is a consequence of 
-        # using HasStrictTraits, where non-existing attributes are 
-        # manifested as a Disallow trait. The others allow a custom 
-        # derived component to specialize the attribute and event types 
-        # of the component from which it is deriving.
-        curr = self.trait(name)
-        if curr is not None:
-            ttype = curr.trait_type
-            allowed = (UserAttribute, UserEvent)
-            if ttype is not Disallow and not isinstance(ttype, allowed):
-                msg = ("Cannot add '%s' attribute. The '%s' attribute on "
-                       "the %s object already exists.")
-                raise TypeError(msg % (name, name, self))
-            
-        # At this point we know there are non non-overridable traits 
-        # defined for the object, but it is possible that there are 
-        # methods or other non-trait attributes using the given name. 
-        # We could  potentially check for those, but its probably more 
-        # useful to allow for overriding such things from Enaml, so we 
-        # just go ahead and add the attribute.
-        try:
-            if is_event:
-                self.add_trait(name, UserEvent(attr_type))
-            else:
-                self.add_trait(name, UserAttribute(attr_type))
-        except TypeError:
-            msg = ("'%s' is not a valid type for the '%s' attribute "
-                   "declaration on %s")
-            raise TypeError(msg % (attr_type, name, self))
-
-    def bind_expression(self, name, expression):
-        """ Binds the given expression to the attribute 'name'. If
-        the attribute does not exist, one is created.
-
-        If the object is not yet initialized, the expression will be 
-        evaulated as the default value of the attribute on-demand.
-        If the object is already initialized, then the expression
-        is evaluated immediately and the attribute set with the value. 
-        A strong reference to the expression object is kept internally.
-        
-        Parameters
-        ----------
-        name : string
-            The name of the attribute on which to bind the expression.
-        
-        expression : AbstractExpression
-            An implementation of enaml.expressions.AbstractExpression.
-        
-        """
-        # In the below clauses of the if-block, the line of code which
-        # assigns into the _expressions dict is repeated on purpose, 
-        # instead of being pulled out to this level. This is because the
-        # _expressions dict needs to be updated before we add an 
-        # ExpressionTrait or perform a setattr but *not* if the inner 
-        # if-clause of the if-block raises an exception.
-        if not self.initialized:
-            curr = self.trait(name)
-            if curr is None or curr.trait_type is Disallow:
-                msg = "Cannot bind expression. %s object has no attribute '%s'"
-                raise AttributeError(msg % (self, name))
-        
-            # This explicitly overrides any existing bound expression 
-            # for the given attribute, which means that the most 
-            # recently bound expression takes precedence.
-            self._expressions[name] = expression
-
-            # We only need to add an ExpressionTrait once since it 
-            # will reach back into the _expressions dict when needed
-            # and retrieve the bound expression.
-            if not isinstance(curr.trait_type, ExpressionTrait):
-                self.add_trait(name, ExpressionTrait(curr))
-        else:
-            # This explicitly overrides any existing bound expression 
-            # for the given attribute, which means that the most 
-            # recently bound expression takes precedence.
-            self._expressions[name] = expression
-            setattr(self, name, expression.eval())
-
+    
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
@@ -405,16 +321,16 @@ class BaseComponent(HasStrictTraits):
 
         The setup process is comprised of the following steps:
         
-        1) Abstract objects create their internal toolkit object
-        2) Abstract objects initialize their internal toolkit object
-        3) Bound expression values are explicitly applied
-        4) Abstract objects bind their event handlers
-        5) Abstract objects are added as a listeners to the shell object
-        6) Visibility is initialized
-        7) Layout is initialized
-        8) A finalization pass is made
-        9) Nodes are marked as initialized
-
+        1)  Abstract objects create their internal toolkit object
+        2)  Abstract objects initialize their internal toolkit object
+        3)  Bound expression values are explicitly applied
+        4)  Abstract objects bind their event handlers
+        5)  Abstract objects are added as listeners to the shell object
+        6)  Visibility is initialized
+        7)  Layout is initialized
+        8)  A finalization pass is made
+        9)  Nodes are marked as initialized
+        
         Many of these setup methods are no-ops, but are defined on this
         BaseComponent for simplicity and continuity. Subclasses that
         need to partake in certain portions of the layout process 
@@ -517,26 +433,28 @@ class BaseComponent(HasStrictTraits):
 
     def _setup_set_initialized(self):
         """ A setup method which updates the initialized attribute of 
-        the component to True.
+        the component to True. This is performed bottom-up.
 
         """
-        self.initialized = True
         for child in self._subcomponents:
             child._setup_set_initialized()
+        self.initialized = True
 
     #--------------------------------------------------------------------------
     # Teardown Methods
     #--------------------------------------------------------------------------
     def destroy(self):
         """ Destroys the component by clearing the list of subcomponents
-        and calling 'destroy' on all of the old subcomponents. Subclasses
-        that need more control over destruction should reimplement this
-        method.
+        and calling 'destroy' on all of the old subcomponents, then gets
+        rid of all references to the subcomponents and bound expressions.
+        Subclasses that need more control over destruction should 
+        reimplement this method.
 
         """
         for child in self._subcomponents:
             child.destroy()
-        self._subcomponents = []
+        del self._subcomponents[:]
+        self._expressions.clear()
 
     #--------------------------------------------------------------------------
     # Layout Stubs
@@ -627,6 +545,158 @@ class BaseComponent(HasStrictTraits):
         parent = self.parent
         if parent is not None:
             parent.request_refresh_task(callback, *args, **kwargs)
+
+    #--------------------------------------------------------------------------
+    # Bound Attribute Handling
+    #--------------------------------------------------------------------------
+    def add_attribute(self, name, attr_type=object, is_event=False):
+        """ Adds an attribute to the base component with the given name
+        and ensures that values assigned to this attribute are of a
+        given type.
+
+        If the object already has an attribute with the given name,
+        an exception will be raised.
+
+        Parameters
+        ----------
+        name : string
+            The name of the attribute to add.
+        
+        attr_type : type-like object, optional
+            An object that behaves like a type for the purposes of a
+            call to isinstance. Defaults to object.
+        
+        is_event : bool, optional
+            If True, the added attribute will behave like an event.
+            Otherwise, it will behave like a normal attribute. The 
+            default is False.
+
+        """
+        # Check to see if a trait is already defined. We don't use
+        # hasattr here since that might prematurely trigger a trait
+        # intialization. We allow overriding traits of type Disallow,
+        # UserAttribute, and UserEvent. The first is a consequence of 
+        # using HasStrictTraits, where non-existing attributes are 
+        # manifested as a Disallow trait. The others allow a custom 
+        # derived component to specialize the attribute and event types 
+        # of the component from which it is deriving.
+        curr = self.trait(name)
+        if curr is not None:
+            ttype = curr.trait_type
+            allowed = (UserAttribute, UserEvent)
+            if ttype is not Disallow and not isinstance(ttype, allowed):
+                msg = ("Cannot add '%s' attribute. The '%s' attribute on "
+                       "the %s object already exists.")
+                raise TypeError(msg % (name, name, self))
+            
+        # At this point we know there are no non-overridable traits 
+        # defined for the object, but it is possible that there are 
+        # methods or other non-trait attributes using the given name. 
+        # We could potentially check for those, but its probably more 
+        # useful to allow for overriding such things from Enaml, so we 
+        # just go ahead and add the attribute.
+        try:
+            if is_event:
+                self.add_trait(name, UserEvent(attr_type))
+            else:
+                self.add_trait(name, UserAttribute(attr_type))
+        except TypeError:
+            msg = ("'%s' is not a valid type for the '%s' attribute "
+                   "declaration on %s")
+            raise TypeError(msg % (attr_type, name, self))
+
+    def bind_expression(self, name, expression, notify_only=False):
+        """ Binds the given expression to the attribute 'name'.
+         
+        If the attribute does not exist, an exception is raised. A 
+        strong reference to the expression object is kept internally.
+        If the expression is not notify_only and the object is already
+        fully initialized, the value of the expression will be applied
+        immediately.
+
+        Parameters
+        ----------
+        name : string
+            The name of the attribute on which to bind the expression.
+        
+        expression : AbstractExpression
+            A concrete implementation of AbstractExpression.
+        
+        notify_only : bool, optional
+            If True, the expression is only a notifier, in which case
+            multiple binding is allowed, otherwise the new expression
+            overrides any old non-notify expression. Defaults to False.
+
+        """
+        curr = self.trait(name)
+        if curr is None or curr.trait_type is Disallow:
+            msg = "Cannot bind expression. %s object has no attribute '%s'"
+            raise AttributeError(msg % (self, name))
+
+        # If this is the first time an expression is being bound to the
+        # given attribute, then we hook up a change handler. This ensures
+        # that we only get one notification event per bound attribute.
+        # We also create the notification entry in the dict, which is 
+        # a list with at least one item. The first item will always be
+        # the left associative expression (or None) and all following
+        # items will be the notify_only expressions.
+        expressions = self._expressions
+        if name not in expressions:
+            self.on_trait_change(self._on_bound_attr_changed, name)
+            expressions[name] = [None]
+
+        # There can be multiple notify_only expressions bound to a 
+        # single attribute, so they just get appended to the end of
+        # the list. Otherwise, the left associative expression gets
+        # placed at the zero position of the list, overriding any
+        # existing expression.
+        if notify_only:
+            expressions[name].append(expression)
+        else:
+            handler = self._on_expression_changed
+            old = expressions[name][0]
+            if old is not None:
+                old.expression_changed.disconnect(handler)
+            expression.expression_changed.connect(handler)
+            expressions[name][0] = expression
+        
+            # Hookup support for default value computation.
+            if not self.initialized:
+                # We only need to add an ExpressionTrait once, since it 
+                # will reach back into the _expressions dict as needed
+                # and retrieve the bound expression.
+                if not isinstance(curr.trait_type, ExpressionTrait):
+                    self.add_trait(name, ExpressionTrait(curr))
+            else:
+                # If the component is already initialized, and the given
+                # expression supports evaluation, update the attribute 
+                # with the current value.
+                val = expression.eval()
+                if val is not NotImplemented:
+                    setattr(self, name, val)
+
+    def _on_expression_changed(self, expression, name, value):
+        """ A private signal callback for the expression_changed signal
+        of the bound expressions. It updates the value of the attribute
+        with the new value from the expression.
+
+        """
+        setattr(self, name, value)
+    
+    def _on_bound_attr_changed(self, obj, name, old, new):
+        """ A private handler which is called when any attribute which
+        has a bound signal changes. It calls the notify method on each
+        of the expressions bound to that attribute, but only after the
+        component has been fully initialized.
+
+        """
+        # The check for None is for the case where there are no left 
+        # associative expressions bound to the attribute, so the first
+        # entry in the list is still None.
+        if self.initialized:
+            for expr in self._expressions[name]:
+                if expr is not None:
+                    expr.notify(old, new)
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods 

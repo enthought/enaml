@@ -10,8 +10,8 @@ from traits.api import (
 
 from .control import Control, AbstractTkControl
 
+from ..core.trait_types import Bounded, EnamlEvent
 from ..enums import Orientation, TickPosition, PolicyEnum
-from ..util.trait_types import Bounded, EnamlEvent
 
 
 class AbstractTkSlider(AbstractTkControl):

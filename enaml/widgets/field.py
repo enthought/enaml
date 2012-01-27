@@ -9,7 +9,7 @@ from traits.api import Bool, Int, Str, Enum, Property, Instance, Any
 from .control import Control, AbstractTkControl
 
 from ..converters import Converter, StringConverter
-from ..util.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkField(AbstractTkControl):
@@ -149,7 +149,7 @@ class Field(Control):
     selected_text = Property(Str, depends_on='_selected_text')
 
     #: Fired when the text is changed by the user explicitly through
-    #: the ui but not programmatically. The args object will contain
+    #: the ui but not programmatically. The event object will contain
     #: the text.
     text_edited = EnamlEvent
 

@@ -8,7 +8,7 @@ from unittest import skipUnless
 
 import wx
 
-from enaml.toolkit import wx_toolkit
+from enaml import wx_toolkit
 
 
 skip_nonwindows = skipUnless(sys.platform.startswith('win'),
