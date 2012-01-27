@@ -6,7 +6,7 @@ from traits.api import HasTraits, Callable, Any, Int
 
 from .abstract_item_model import (
     AbstractListModel, AbstractTableModel, ITEM_IS_SELECTABLE,
-    ITEM_IS_ENABLED, ITEM_IS_EDITABLE
+    ITEM_IS_ENABLED, ITEM_IS_EDITABLE,
 )
 
 
