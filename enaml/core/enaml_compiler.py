@@ -10,7 +10,6 @@ from .byteplay import (
     LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP,
 )
 from .factory import EnamlFactory
-from .import_hooks import imports
 
 
 #------------------------------------------------------------------------------
@@ -386,6 +385,8 @@ class EnamlCompiler(_NodeVisitor):
         are performed with the enaml import hook in-place.
 
         """
+        # This avoids a circular import
+        from .import_hooks import imports
         with imports():
             try:
                 exec node.code in self.global_ns

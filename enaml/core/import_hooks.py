@@ -233,10 +233,9 @@ class imports(object):
     down all of their other imports.
 
     """
-    #: The framework-wide importers in use. The None will be 
-    #: replaced with the default importer upon first use in 
-    #: order to avoid a circular import.
-    __importers = [None]
+    #: The framework-wide importers in use. We always have the default
+    #: importer available, unless it is explicitly removed.
+    __importers = [EnamlImporter]
 
     @classmethod
     def get_importers(cls):
@@ -244,15 +243,7 @@ class imports(object):
         framework.
 
         """
-        importers = cls.__importers
-        if importers[0] is None:
-            # This avoid a circular import between the compiler, this
-            # module, and the import hooks, and makes sure we always
-            # have at least the base importer available, so long as
-            # it's not every explicitly removed.
-            from .import_hooks import EnamlImporter
-            importers[0] = EnamlImporter
-        return tuple(importers)
+        return tuple(cls.__importers)
 
     @classmethod
     def add_importer(cls, importer):
@@ -263,9 +254,6 @@ class imports(object):
         an importer up in precedence, remove it and add it again.
 
         """
-        # This avoid a circular import between the compiler, this
-        # module, and the import hooks.
-        from .import_hooks import AbstractEnamlImporter
         if not issubclass(importer, AbstractEnamlImporter):
             msg = ('An Enaml importer must be a subclass of '
                    'AbstractEnamlImporter. Got %s instead.')
