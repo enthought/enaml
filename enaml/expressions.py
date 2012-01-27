@@ -3,53 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
-from collections import namedtuple
-import weakref
+from collections import namedtuple, defaultdict
+from weakref import ref
 
-from traits.api import HasTraits, Disallow
-
+from .monitors import AbstractMonitor
 from .parsing import byteplay as bp
-
-
-#------------------------------------------------------------------------------
-# Trait Attribute Notifier
-#------------------------------------------------------------------------------
-class TraitAttributeNotifier(object):
-    """ A thin object which manages a trait change notification for
-    a SubscriptionExpression affording easy subscription lifetime 
-    management.
-
-    """
-    __slots__ = ('expr_ref', '__weakref__')
-
-    def __init__(self, obj, attr, expr):
-        """ Initialize a TraitAttributeNotifier.
-
-        Parameters
-        ----------
-        obj : Instance(HasTraits)
-            The HasTraits object with the attribute of interest.
-        
-        attr : string
-            The name of the trait attribute on the object which
-            should emit a notification on change.
-        
-        expr : Instance(AbstractExpression)
-            The expression object which should be notified when the
-            trait attribute on the object changes. Only a weak 
-            reference is maintained to this object.
-        
-        """
-        self.expr_ref = weakref.ref(expr)
-        obj.on_trait_change(self.notify, attr)
-
-    def notify(self, obj, name, old, new):
-        """ The change handler for the subscribed trait attribute.
-
-        """
-        expr = self.expr_ref()
-        if expr is not None:
-            expr.notify(obj, name, old, new)
+from .signaling import Signal
 
 
 #------------------------------------------------------------------------------
@@ -67,10 +26,10 @@ class ExpressionScope(object):
     probably best to create these scope objects on-the-fly as needed.
 
     """
-    __slots__ = ('obj', 'identifiers', 'f_globals', 'toolkit', 'overrides', 
-                 'binder', 'temp_locals')
+    __slots__ = ('obj', 'identifiers', 'f_globals', 'toolkit', 
+                 'override', 'binder', 'temp_locals')
 
-    def __init__(self, obj, identifiers, f_globals, toolkit, overrides=None, binder=None):
+    def __init__(self, obj, identifiers, f_globals, toolkit, override, binder):
         """ Initialize an expression locals instance.
 
         Parameters
@@ -90,22 +49,21 @@ class ExpressionScope(object):
         toolkit : Toolkit
             The toolkit to check after checking the globals.
 
-        overrides : dict or None
-            An optional dictionary of override values to check before
-            identifiers.
+        override : dict
+            An dictionary of override values to check before identifiers.
 
         binder : callable or None
-            An optional callable which is called when an implicit 
-            attribute is looked up on the object and should binds any 
-            notifiers necessary. The arguments passed are the object
-            and the attribute name.
+            An callable which is called when an implicit attribute is 
+            looked up on the object and should binds any notifiers 
+            necessary. The arguments passed are the object and the
+            attribute name.
 
         """
         self.obj = obj
         self.identifiers = identifiers
         self.f_globals = f_globals
         self.toolkit = toolkit
-        self.overrides = overrides
+        self.override = override
         self.binder = binder
         self.temp_locals = {}
 
@@ -115,7 +73,7 @@ class ExpressionScope(object):
         Returns the named item from the namespace according to the
         following precedence rules binding notifiers where appropriate:
             1) temp_locals
-            2) overrides (if provided)
+            2) override
             3) identifiers
             4) implicit attrs
             5) f_globals
@@ -137,24 +95,19 @@ class ExpressionScope(object):
         # STORE_NAME opcode is encountered. The will happen, for
         # example, with the loop variables of a list comprehension.
         # Thus, those must take highest precedence.
-        try:
-            return self.temp_locals[name]
-        except KeyError:
-            pass
+        dct = self.temp_locals
+        if name in dct:
+            return dct[name]
 
-        # Next, check the overrides if given
-        overrides = self.overrides
-        if overrides is not None:
-            try:
-                return overrides[name]
-            except KeyError:
-                pass
+        # Next, check the override
+        dct = self.override
+        if name in dct:
+            return dct[name]
         
-        # Next, check the identifiers.
-        try:
-            return self.identifiers[name]
-        except KeyError:
-            pass
+        # Next, check the identifiers
+        dct = self.identifiers
+        if name in dct:
+            return dct[name]
 
         # Next, walk up the ancestor tree starting at self.obj
         # looking for attributes of the given name.
@@ -172,10 +125,9 @@ class ExpressionScope(object):
                 return res
 
         # Next, check the globals dictionary
-        try:
-            return self.f_globals[name]
-        except KeyError:
-            pass
+        dct = self.f_globals
+        if name in dct:
+            return dct[name]
         
         # Finally, check the toolkit (will raise KeyError on failure)
         return self.toolkit[name]
@@ -206,25 +158,37 @@ class ExpressionScope(object):
 # Abstract Expression
 #------------------------------------------------------------------------------
 class AbstractExpression(object):
+    """ The base abstract expression class which defines the base api
+    for Expression handlers. These objects are typically created by
+    the Enaml operators. Subclasses should ensure that they properly
+    declare __slots__, since the potential for having large numbers
+    of these expressions is high and saving the memory could be 
+    beneficial.
 
+    """
     __metaclass__ = ABCMeta
 
-    __slots__ = ('obj_ref', 'attr', 'code', 'identifiers', 'f_globals',
+    __slots__ = ('obj_ref', 'name', 'code', 'identifiers', 'f_globals', 
                  'toolkit', '__weakref__')
 
-    def __init__(self, obj, attr, code, identifiers, f_globals, toolkit):
+    #: A signal which is emitted when the expression has changed. It is
+    #: emmitted with three arguments: expression, name, and value; where 
+    #: expression is the instance which emitted the signa, name is the 
+    #: attribute name to which the expression is bound, and value is the
+    #: computed value of the expression.
+    expression_changed = Signal()
+
+    def __init__(self, obj, name, code, identifiers, f_globals, toolkit):
         """ Initializes and expression object.
 
         Parameters
         ----------
-        obj : HasTraits instance
-            The HasTraits instance to which we are binding the expression.
+        obj : BaseComponent
+            The base component to which this expression is being bound.
 
-        attr : string
-            The attribute name on `obj` to which this expression is bound.
-
-        expr_ast : ast.Expression instance
-            An ast.Expression node instance which is the rhs expression.
+        name : string
+            The name of the attribute on the owner to which this 
+            expression is bound.
 
         code : types.CodeType object
             The compiled code object for the provided ast node.
@@ -241,32 +205,53 @@ class AbstractExpression(object):
             the expression should execute.
 
         """
-        # We keep a weakref to obj to avoid ref cycles
-        self.obj_ref = weakref.ref(obj)
-        self.attr = attr
+        self.obj_ref = ref(obj)
+        self.name = name
         self.code = code
         self.identifiers = identifiers
         self.f_globals = f_globals
         self.toolkit = toolkit
 
-    @property
-    def obj(self):
-        return self.obj_ref()
-
     @abstractmethod
     def eval(self):
-        """ Evaluate the expression and return the result.
+        """ Evaluates the expression and returns the result. If an 
+        expression does not provide (or cannot provide) a value, it 
+        should return NotImplemented.
+        
+        Returns
+        -------
+        result : object or NotImplemented
+            The result of evaluating the expression or NotImplemented
+            if the expression is unable to provide a value.
+        
+        """
+        raise NotImplementedError
 
+    @abstractmethod
+    def notify(self, old, new):
+        """ A method called by the component when the trait on which it
+        is bound has changed. This is called by the BaseComponent which
+        owns the expression.
+
+        Parameters
+        ----------
+        old : object
+            The old value of the attribute.
+        
+        new : object
+            The new value of the attribute.
+    
         """
         raise NotImplementedError
 
 
 #------------------------------------------------------------------------------
-# Standard Expression Classes
+# Simple Expression
 #------------------------------------------------------------------------------
 class SimpleExpression(AbstractExpression):
-    """ A concrete implementation of AbstractExpression that provides
-    a default attribute value by evaluating the expression.
+    """ A concrete implementation of AbstractEvalExpression. An instance
+    of SimpleExpression does not track changes in the expression or emit
+    the expression_changed signal. Is also does not support notification.
 
     """
     __slots__ = ()
@@ -275,325 +260,249 @@ class SimpleExpression(AbstractExpression):
         """ Evaluates and returns the results of the expression.
 
         """
+        obj = self.obj_ref()
+        if obj is None:
+            return NotImplemented
+        identifiers = self.identifiers
+        f_globals = self.f_globals
+        toolkit = self.toolkit
         scope = ExpressionScope(
-            self.obj, self.identifiers, self.f_globals, self.toolkit,
+            obj, identifiers, f_globals, toolkit, {}, None,
         )
-        # f_globals is passed as the globals even though the scope
-        # object will handle that part of the lookup. The only effect
-        # it has here is to make sure that builtins are accesible and
-        # avoid the need to create a new "gobals" dict each time we
-        # do an eval.
-        return eval(self.code, self.f_globals, scope)
+        return eval(self.code, f_globals, scope)
 
-
-class SubscriptionExpression(AbstractExpression):
-    """ A dynamically updating concrete expression object. This 
-    expression will hookup the necessary notifiers during execution
-    so that the expression can be reevaluation when any of its 
-    subcriptions are fired.
-
-    """
-    __slots__ = ('notifiers',)
-
-    def __init__(self, *args):
-        super(SubscriptionExpression, self).__init__(*args)
-        self.code = self.inject_binding_code(self.code)
-        self.notifiers = weakref.WeakKeyDictionary()
-
-    def inject_binding_code(self, code):
-        """ Injects code into the code object which will call a binder 
-        callback when attributes are accessed.
+    def notify(self, old, new):
+        """ A no-op notification method since SimpleExpression does not
+        support notification.
 
         """
-        # Create a closure which holds a weak reference to this expression
-        # so that it is suitable to pass into code object without leaking
-        # memory or creating undue reference cycles. The closure will 
-        # bind a listener to a trait attribute on a given object.
-        wr_self = weakref.ref(self)
-        def code_binder(obj, attr):
-            this = wr_self()
-            if this is not None:
-                this.bind_attribute(obj, attr)
-
-        new_code = []
-        bp_code = bp.Code.from_code(code)
-        for op, op_arg in bp_code.code:
-            if op == bp.LOAD_ATTR:
-                new_code.extend([
-                    (bp.DUP_TOP, None),
-                    (bp.LOAD_CONST, code_binder),
-                    (bp.ROT_TWO, None),
-                    (bp.LOAD_CONST, op_arg),
-                    (bp.CALL_FUNCTION, 0x0002),
-                    (bp.POP_TOP, None),
-                ])
-            new_code.append((op, op_arg))
-        bp_code.code = new_code
-        return bp_code.to_code()
-
-    def notify(self, obj, name, old, new):
-        """ The callback to be use by notifiers when the component should
-        be updated with the new value of the expression.
-
-        """
-        self.update_component()
-    
-    def update_component(self):
-        """ Updates the value of the component attribute with the new
-        value of the expression.
-
-        """
-        setattr(self.obj, self.attr, self.eval())
-
-    def bind_attribute(self, obj, attr):
-        """ Hooks up the necessary notifier for the given object and
-        attribute which, when fired, will update the value of the 
-        attribute on the component.
-
-        """
-        # Only hook up a notifier if one does not already exist.
-        notifiers = self.notifiers
-        if obj in notifiers:
-            if attr in notifiers[obj]:
-                return
-
-        notifier = None
-        if isinstance(obj, HasTraits):
-            # Only hook up a notifier if the attribute access refers
-            # to a proper trait. We check for Disallow trait types 
-            # since those can be returned by instances of HasStrictTraits
-            trait = obj.trait(attr)
-            if trait is not None and trait.trait_type is not Disallow:
-                # A notifier object is used here instead of binding to a 
-                # method on this Expression instance since the lifetime 
-                # of the trait change notification is tied to the that
-                # of the notifier object. Hence, using such an object
-                # eliminates the need for us to explicitly unsubscribe
-                # any old handlers each time we evaluate the expression.
-                # We simply just delete the old notifiers.
-                notifier = TraitAttributeNotifier(obj, attr, self)
-        
-        if notifier is not None:
-            if obj in notifiers:
-                notifiers[obj][attr] = notifier
-            else:
-                notifiers[obj] = {attr: notifier}
-
-    def eval(self):
-        # Notifiers are hooked up every time the expression is evaluated
-        # this is required if we want to avoid maintaining a ton of state.
-        # Consider an expression such as [a.b for a in foo()]. We need
-        # to update the value of this expression whenever the 'b' attr
-        # of an item in bar.foo changes or when bar.foo changes. Let's 
-        # assume bar.foo changes, there is no guarantee that the items
-        # of the old bar.foo have been destroyted, so in order to unhook
-        # the old notifiers, we would need to keep the state of what has
-        # been previously bound. Rather than consume that memory, we bind
-        # and destroy the notifiers on every cycle of the expression. We 
-        # clear the notifiers before evaluation so that we don't get 
-        # duplicate notifications.
-        self.notifiers.clear()
-
-        scope = ExpressionScope(
-            self.obj, self.identifiers, self.f_globals, self.toolkit, 
-            binder=self.bind_attribute,
-        )
-
-        # f_globals is passed as the globals even though the scope
-        # object will handle that part of the lookup. The only effect
-        # it has here is to make sure that builtins are accesible and
-        # avoid the need to create a new "globals" dict each time we
-        # do an eval.
-        return eval(self.code, self.f_globals, scope)
+        pass
 
 
-def _set_implicit_attr(obj, name, val):
-    """ A private delegating expression helper which walks up the object 
-    tree and attempts to perform the setattr operation on an attribute. 
-    If the attribute is not found in the tree, a NameError is raised.
-
-    Parameters
-    ----------
-    obj : BaseComponent
-        The BaseComponent instance at which we should begin looking
-        for a valid attribute to set.
-    
-    name : string
-        The name of the attribute we are wanting to set.
-    
-    val : object
-        The value to set on the attribute.
-
-    """
-    while obj is not None:
-        if hasattr(obj, name):
-            setattr(obj, name, val)
-            return
-        else:
-            obj = obj.parent
-    raise NameError("name '%s' is not defined" % name)
-
-
-class DelegatingExpression(SubscriptionExpression):
-    """ A SubscriptionExpression subclass that performs two-way binding
-    and restricts the expression to the form "<expr>.attr".
-
-    """
-    __slots__ = ('setter_code',)
-
-    def __init__(self, *args):
-        super(DelegatingExpression, self).__init__(*args)
-        self.setter_code = self.make_setter_code(self.code)
-        self.obj.on_trait_change(self.update_expression, self.attr)
-
-    def make_setter_code(self, code):
-        """ Create the bytecode expression which performs the setattr
-        part of the delegation. This is implemented by copying the
-        bytecode of the getattr expression, and modifying its tail
-        to convert it into a setting operation.
-
-        """
-        # The last opcode is always RETURN_VALUE. The one before that
-        # will determine whether we have a delegatable expression.
-        bp_code = bp.Code.from_code(code)
-        attr_code, attr_arg = bp_code.code[-2]
-        new_code = bp_code.code[:-2]
-
-        # In both of the below cases, we end with a LOAD_ATTR and 
-        # RETURN_VALUE so that the calling code can determine if
-        # the setting operation caused a change in the value, if
-        # it did, it will attempt to cycle again to find stability.
-
-        # If the tail of the expression is a getattr, we replace it
-        # with a setattr(tail(), tail_attr, getattr(self, self_attr))
-        if attr_code == bp.LOAD_ATTR:
-            new_code.extend([
-                (bp.DUP_TOP, None),
-                (bp.LOAD_NAME, 'self'),
-                (bp.LOAD_ATTR, self.attr),
-                (bp.ROT_TWO, None),
-                (bp.STORE_ATTR, attr_arg),
-                (bp.LOAD_ATTR, attr_arg),
-                (bp.RETURN_VALUE, None),
-            ])
-        
-        # If the expression is simply a name, then we assume its an 
-        # implicit attribute lookup since, delegating to an identifier
-        # would be irresponsible (we check for this). We convert the 
-        # load name into an implicit attribute setter using a helper 
-        # function which walks up the tree.
-        elif attr_code == bp.LOAD_NAME and len(new_code) == 1:
-            if attr_arg in self.identifiers:
-                msg = "Cannot delegate to identifier '%s'"
-                raise ValueError(msg % attr_arg)
-            new_code.extend([
-                (bp.LOAD_CONST, _set_implicit_attr),
-                (bp.LOAD_NAME, 'self'),
-                (bp.DUP_TOP, None),
-                (bp.LOAD_CONST, attr_arg),
-                (bp.ROT_TWO, None),
-                (bp.LOAD_ATTR, self.attr),
-                (bp.CALL_FUNCTION, 0x0003),
-                (bp.POP_TOP, None),
-                (bp.LOAD_NAME, attr_arg),
-                (bp.RETURN_VALUE, None),
-            ])
-
-        # Otherise, we are unable to delegate to the expression
-        # and we raise an error to that effect.
-        else:
-            # XXX need error message that reports enaml line numbers
-            raise TypeError('Invalid Expression for Delegation')
-
-        bp_code.code = new_code
-        
-        return bp_code.to_code()
-
-    def update_component(self):
-        """ The notification handler to update the component object.
-
-        When this method is called, the delegate expression is evaluated
-        and the results are assigned to the appropriate attribute on
-        the component.
-
-        """
-        obj = self.obj
-        attr = self.attr
-        val = self.eval()
-        setattr(obj, attr, val)
-        new_val = getattr(obj, attr)
-        if val != new_val:
-            self.update_expression()
-
-    def update_expression(self):
-        """ The notification handler to update the delegate object.
-
-        When this method is called, the delegate expression is updated
-        with the appropriate value from the component.
-
-        We guard against circular notifications, but try to ensure that we
-        end up in a consistent state, ie. when all is said and done, the
-        object and the delegate end up with the same value.
-
-        """
-        val = getattr(self.obj, self.attr)
-        new_val = self.eval_setter()
-        if val != new_val:
-            self.update_component()
-
-    def eval_setter(self):
-        scope = ExpressionScope(
-            self.obj, self.identifiers, self.f_globals, self.toolkit, 
-        )
-        return eval(self.setter_code, self.f_globals, scope)
-
-
-class NotifyingExpression(AbstractExpression):
-    """ A concrete expression object that will evaluate an expression 
-    when the attribute on the object changes.
+#------------------------------------------------------------------------------
+# Notifification Expression
+#------------------------------------------------------------------------------
+class NotificationExpression(AbstractExpression):
+    """ A concrete implementation of AbstractExpression. An instance 
+    of NotificationExpression does not support evaluation and does not
+    emit the expression_changed signal, but it does support notification. 
+    An 'event' object will be added to the scope of the expression which
+    will contain information about the trait change.
 
     """
     __slots__ = ()
 
     #: A namedtuple which is used to pass arguments to the expression.
-    arguments = namedtuple('arguments', 'obj name old new')
-
-    #: A WeakKeyDictionary which is used to hold the instances of the
-    #: NotifyingExpression. The keys of the dict are the components
-    #: to which the expressions are listening and the values are lists
-    #: of instances. Thus, there is no need to store these instances
-    #: on a component. The instances are added as they are created.
-    instances = weakref.WeakKeyDictionary()
-
-    def __init__(self, *args):
-        super(NotifyingExpression, self).__init__(*args)
-        trait = self.obj.trait(self.attr)
-        if trait is None or trait is Disallow:
-            msg = "Cannot bind expression. %s object has no attribute '%s'"
-            raise AttributeError(msg % (self.obj, self.attr))
-        self.obj.on_trait_change(self.handle_cmpnt_changed, self.attr)
-        NotifyingExpression.instances.setdefault(self.obj, []).append(self)
+    event = namedtuple('event', 'obj name old new')
 
     def eval(self):
-        """ Evaluates the expression and return the results. A notifying
-        expression does not return results so this method simply returns
-        None. The expression is properly evaluated whenever the object
-        attribute changes.
+        """ A no-op eval method since NotificationExpression does not
+        support evaluation.
 
         """
-        return None
+        return NotImplemented
 
-    def handle_cmpnt_changed(self, obj, name, old, new):
-        """ Evaluates the expression while adding an 'args' object to the
-        expression scope.
+    def notify(self, old, new):
+        """ Evaluates the underlying expression, while providing an 
+        'event' object in the evaluation scope which contains 
+        information about the change.
 
         """
-        if obj.initialized:
-            args = self.arguments(obj, name, old, new)
-            overrides = {'args': args}
-            scope = ExpressionScope(
-                obj, self.identifiers, self.f_globals, self.toolkit, 
-                overrides=overrides,
-            )
-            eval(self.code, self.f_globals, scope)
+        obj = self.obj_ref()
+        if obj is None:
+            return
+        identifiers = self.identifiers
+        f_globals = self.f_globals
+        toolkit = self.toolkit
+        override = {'event': self.event(obj, self.name, old, new)}
+        scope = ExpressionScope(
+            obj, identifiers, f_globals, toolkit, override, None,
+        )
+        eval(self.code, f_globals, scope)
+
+
+#------------------------------------------------------------------------------
+# Subscription Expression
+#------------------------------------------------------------------------------
+class SubscriptionExpression(AbstractExpression):
+    """ A concrete implementation of AbstractExpression. An instance 
+    of SubcriptionExpression emits the expression_changed signal when
+    the value of the underlying expression changes. It does not 
+    support notification.
+
+    """
+    __slots__ = ('eval_code', 'monitors', 'old_value')
+
+    def __init__(self, monitor_classes, *args):
+        """ Initialize a SubscriptionExpression
+
+        Parameters
+        ----------
+        monitor_classes : iterable of AbstractMonitor subclasses
+            An iterable of AbstractMonitor subclasses which will
+            be used to generating the monitoring code for the
+            expression.
+        
+        *args
+            The arguments required to initialize an AbstractExpression
+        
+        """
+        super(SubscriptionExpression, self).__init__(*args)
+        
+        # Create the monitor instances and connect their signals
+        monitors = []
+        handler = self._on_monitor_changed
+        for mcls in monitor_classes:
+            if not issubclass(mcls, AbstractMonitor):
+                msg = ('Monitors must be subclasses of AbstractMonitor. '
+                       'Got %s instead.')
+                raise TypeError(msg % mcls)
+            monitor = mcls()
+            monitor.expression_changed.connect(handler)
+            monitors.append(monitor)
+
+        # Collect the generated code from the monitors that will be
+        # inserted into the code for the expression.
+        bp_code = bp.Code.from_code(self.code)
+        code_list = list(bp_code.code)
+        insertions = defaultdict(list)
+        for monitor in monitors:
+            for idx, code in monitor.get_insertion_code(code_list):
+                insertions[idx].extend(code)
+        
+        # Create a new code list which interleaves the code generated
+        # by the monitors at the appropriate location in the expression.
+        new_code = []
+        for idx, code_op in enumerate(code_list):
+            if idx in insertions:
+                new_code.extend(insertions[idx])
+            new_code.append(code_op)
+        
+        bp_code.code = new_code
+        self.eval_code = bp_code.to_code()
+        self.monitors = monitors
+        self.old_value = NotImplemented
+
+    def _on_monitor_changed(self):
+        """ The signal callback which is fired from a monitor when the
+        expression changes. It will fire the expression_changed signal
+        provided that the value of the expression has actually changed.
+
+        """
+        old_value = self.old_value
+        new_value = self.eval()
+        if old_value != new_value:
+            self.old_value = new_value
+            self.expression_changed(self, self.name, new_value)
+
+    def eval(self):
+        """ Evaluates the expression and returns the result. It also
+        resets the monitors before evaluating the expression to help
+        ensures that duplicate notifications are avoided.
+
+        """
+        # Reset the monitors before every evaluation so that any old 
+        # notifiers are disconnected. This avoids muti-notifications.
+        for monitor in self.monitors:
+            monitor.reset()
+        obj = self.obj_ref()
+        if obj is None:
+            return NotImplemented
+        identifiers = self.identifiers
+        f_globals = self.f_globals
+        toolkit = self.toolkit
+        scope = ExpressionScope(
+            obj, identifiers, f_globals, toolkit, {}, None,
+        )
+        return eval(self.eval_code, f_globals, scope)
+
+    def notify(self, old, new):
+        """ A no-op notification method since SubscriptionExpression does
+        not support notification.
+
+        """
+        pass
+
+
+#------------------------------------------------------------------------------
+# Delegation Expression
+#------------------------------------------------------------------------------
+class DelegationExpression(SubscriptionExpression):
+    """ A SubscriptionExpression subclass that adds notification support
+    by setting the value on the contituents of the expression according
+    to any value setters.
+
+    """
+    __slots__ = ('inverters',)
+
+    def __init__(self, inverter_classes, *args):
+        """ Initialize a DelegationExpression
+
+        Parameters
+        ----------
+        inverter_classes : iterable of AbstractInverter subclasses
+            An iterable of concrete AbstractInverter subclasses
+        
+        *args
+            The arguments required to initialize a SubscriptionExpression
+        
+        """
+        super(DelegationExpression, self).__init__(*args)
+        
+        inverters = []
+        bp_code = bp.Code.from_code(self.code)
+        code_list = bp_code.code
+
+        for inv_cls in inverter_classes:
+            inverter = inv_cls()
+            new_code = inverter.get_inverted_code(code_list)
+            if new_code is not None:
+                bp_code.code = new_code
+                inverters.append(bp_code.to_code())
+        
+        if not inverters:
+            msg = ("Unable to delegate expression to the '%s' attribute of "
+                   "the %s object. The provided expression is not structured "
+                   "in a way which is suitable for delegation by any of "
+                   "the supplied code inverters.")
+            raise ValueError(msg % (self.name, self.obj_ref()))
+
+        self.inverters = inverters
+    
+    def notify(self, old, new):
+        """ A notification method which runs through the list of inverted
+        code objects which attempt to set the value. The process stops on
+        the first successful inversion. If none of the invertors are 
+        successful, a RuntimeError is raised.
+
+        """
+        obj = self.obj_ref()
+        if obj is None:
+            return
+        
+        # We don't need to attempt the inversion if the new value
+        # is the same as the last value generated by the expression.
+        #if new == self.old_value:
+        #    return
+
+        identifiers = self.identifiers
+        f_globals = self.f_globals
+        toolkit = self.toolkit
+        override = {'_[expr]': self, '_[obj]': obj, '_[name]': self.name,
+                    '_[old]': old, '_[new]': new}
+        scope = ExpressionScope(
+            obj, identifiers, f_globals, toolkit, override, None,
+        )
+
+        # The through the inverters, giving each a chance to do the
+        # inversion. The process ends with the first success. If 
+        # none of the invertors are successful we raise an error.
+        for inverter in self.inverters:
+            if eval(inverter, f_globals, scope):
+                break
+        else:
+            msg = ("Unable to delegate expression to the '%s' attribute of "
+                   "the %s object. None of the provided inverters were "
+                   "successful in assigning the value.")
+            raise RuntimeError(msg)
 
