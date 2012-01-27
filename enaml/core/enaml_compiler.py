@@ -10,8 +10,7 @@ from .byteplay import (
     LOAD_ATTR, STORE_SUBSCR, RETURN_VALUE, POP_TOP,
 )
 from .factory import EnamlFactory
-
-from .. import imports
+from .import_hooks import imports
 
 
 #------------------------------------------------------------------------------

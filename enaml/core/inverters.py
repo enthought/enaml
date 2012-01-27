@@ -4,7 +4,10 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 
-from .parsing import byteplay as bp
+from .byteplay import (
+    LOAD_NAME, CALL_FUNCTION, ROT_THREE, LOAD_CONST, LOAD_ATTR, ROT_TWO,
+    BUILD_TUPLE, RETURN_VALUE,
+)
 
 
 #------------------------------------------------------------------------------
@@ -84,16 +87,16 @@ class AbstractAttributeInverter(AbstractInverter):
 
         """
         attr_code, attr_arg = code_list[-2]
-        if attr_code == bp.LOAD_ATTR:
+        if attr_code == LOAD_ATTR:
             handler = self.get_setattr_handler()
             new_code = code_list[:-2]
             new_code.extend([
-                (bp.LOAD_CONST, handler),
-                (bp.ROT_TWO, None),
-                (bp.LOAD_CONST, attr_arg),
-                (bp.LOAD_NAME, '_[new]'),
-                (bp.CALL_FUNCTION, 0x0003),
-                (bp.RETURN_VALUE, None),
+                (LOAD_CONST, handler),
+                (ROT_TWO, None),
+                (LOAD_CONST, attr_arg),
+                (LOAD_NAME, '_[new]'),
+                (CALL_FUNCTION, 0x0003),
+                (RETURN_VALUE, None),
             ])
             return new_code
 
@@ -162,18 +165,18 @@ class AbstractCallInverter(AbstractInverter):
 
         """
         func_code, func_arg = code_list[-2]
-        if func_code == bp.CALL_FUNCTION:
+        if func_code == CALL_FUNCTION:
             handler = self._call_wrapper(self.get_call_handler())
             new_code = code_list[:-2]
             n_stack_args = (func_arg & 0xFF) + 2 * ((func_arg >> 8) & 0xFF)
             new_code.extend([
-                (bp.BUILD_TUPLE, n_stack_args),
-                (bp.LOAD_CONST, handler),
-                (bp.ROT_THREE, None),
-                (bp.LOAD_CONST, func_arg),
-                (bp.LOAD_NAME, '_[new]'),
-                (bp.CALL_FUNCTION, 0x0004),
-                (bp.RETURN_VALUE, None),
+                (BUILD_TUPLE, n_stack_args),
+                (LOAD_CONST, handler),
+                (ROT_THREE, None),
+                (LOAD_CONST, func_arg),
+                (LOAD_NAME, '_[new]'),
+                (CALL_FUNCTION, 0x0004),
+                (RETURN_VALUE, None),
             ])
             return new_code
 
@@ -236,18 +239,18 @@ class AbstractNameInverter(AbstractInverter):
 
         """
         name_code, name_arg = code_list[-2]
-        if name_code == bp.LOAD_NAME and len(code_list) == 3:
+        if name_code == LOAD_NAME and len(code_list) == 3:
             handler = self.get_name_handler()
             new_code = code_list[:-2]
             new_code.extend([
-                (bp.LOAD_CONST, handler),
-                (bp.LOAD_NAME, '_[expr]'),
-                (bp.LOAD_NAME, '_[obj]'),
-                (bp.LOAD_NAME, '_[name]'),
-                (bp.LOAD_CONST, name_arg),
-                (bp.LOAD_NAME, '_[new]'),
-                (bp.CALL_FUNCTION, 0x0005),
-                (bp.RETURN_VALUE, None),
+                (LOAD_CONST, handler),
+                (LOAD_NAME, '_[expr]'),
+                (LOAD_NAME, '_[obj]'),
+                (LOAD_NAME, '_[name]'),
+                (LOAD_CONST, name_arg),
+                (LOAD_NAME, '_[new]'),
+                (CALL_FUNCTION, 0x0005),
+                (RETURN_VALUE, None),
             ])
             return new_code
 
