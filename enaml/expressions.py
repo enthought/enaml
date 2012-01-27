@@ -6,6 +6,8 @@ from abc import ABCMeta, abstractmethod
 from collections import namedtuple, defaultdict
 from weakref import ref
 
+from traits.api import Disallow
+
 from .monitors import AbstractMonitor
 from .parsing import byteplay as bp
 from .signaling import Signal
@@ -324,6 +326,56 @@ class NotificationExpression(AbstractExpression):
 #------------------------------------------------------------------------------
 # Subscription Expression
 #------------------------------------------------------------------------------
+class _ImplicitAttributeBinder(object):
+    """ A thin class which supports attaching a notifier to an implicit
+    attribute lookup. This doesn't need to be provided as a monitor
+    because implicit attribute lookups, when successful, will always
+    be on an instance of BaseComponent and should never need to be
+    hooked by an Enaml extension.
+
+    """
+    __slots__ = ('parent_ref', '__weakref__')
+
+    def __init__(self, parent):
+        """ Initialize an _ImplicitAttributeBinder
+
+        Parameters
+        ----------
+        parent : SubscriptionExpression
+            The parent SubscriptionExpression instance. Only a weak
+            reference to the parent is stored.
+
+        """
+        self.parent_ref = ref(parent)
+    
+    def __call__(self, obj, name):
+        """ Binds the change handler to the given object/attribute
+        pair, provided the attribute points to a valid trait.
+
+        Parameters
+        ----------
+        obj : BaseComponent
+            The BaseComponent instance that owns the attribute.
+        
+        name : string
+            The attribute name to which we're binding.
+             
+        """
+        trait = obj.trait(name)
+        if trait is not None and trait is not Disallow:
+            obj.on_trait_change(self.notify, name)
+    
+    def notify(self):
+        """ The trait change handler callback. It calls the monitor
+        changed method on the parent when the trait changes, provided 
+        the parent has not already been garbage collected.
+        
+        """
+        parent = self.parent_ref()
+        if parent is not None:
+            parent._on_monitor_changed()
+
+
 class SubscriptionExpression(AbstractExpression):
     """ A concrete implementation of AbstractExpression. An instance 
     of SubcriptionExpression emits the expression_changed signal when
@@ -331,7 +383,7 @@ class SubscriptionExpression(AbstractExpression):
     support notification.
 
     """
-    __slots__ = ('eval_code', 'monitors', 'old_value')
+    __slots__ = ('eval_code', 'monitors', 'old_value', 'implicit_binder')
 
     def __init__(self, monitor_classes, *args):
         """ Initialize a SubscriptionExpression
@@ -381,6 +433,7 @@ class SubscriptionExpression(AbstractExpression):
         bp_code.code = new_code
         self.eval_code = bp_code.to_code()
         self.monitors = monitors
+        self.implicit_binder = _ImplicitAttributeBinder(self)
         self.old_value = NotImplemented
 
     def _on_monitor_changed(self):
@@ -403,6 +456,7 @@ class SubscriptionExpression(AbstractExpression):
         """
         # Reset the monitors before every evaluation so that any old 
         # notifiers are disconnected. This avoids muti-notifications.
+        self.implicit_binder = binder = _ImplicitAttributeBinder(self)
         for monitor in self.monitors:
             monitor.reset()
         obj = self.obj_ref()
@@ -412,7 +466,7 @@ class SubscriptionExpression(AbstractExpression):
         f_globals = self.f_globals
         toolkit = self.toolkit
         scope = ExpressionScope(
-            obj, identifiers, f_globals, toolkit, {}, None,
+            obj, identifiers, f_globals, toolkit, {}, binder,
         )
         return eval(self.eval_code, f_globals, scope)
 
