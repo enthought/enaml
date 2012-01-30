@@ -42,15 +42,18 @@ def main():
     with open(enaml_file) as f:
         enaml_code = f.read()
     
+    # Parse and compile the Enaml source into a code object    
     ast = parse(enaml_code, filename=enaml_file)
+    code = EnamlCompiler.compile(ast, enaml_file)
 
-    # Create a proper module for the compiler so that 
-    # exceptions get reported with better meaning
+    # Create a proper module in which to execute the compiled code so
+    # that exceptions get reported with better meaning
     module = types.ModuleType('__main__')
+    module.__file__ = enaml_file
     ns = module.__dict__
 
     with imports():
-        EnamlCompiler.compile(ast, ns)
+        exec code in ns
 
     with toolkits[options.toolkit]():
         requested = options.component
@@ -67,3 +70,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
