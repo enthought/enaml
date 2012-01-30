@@ -123,7 +123,13 @@ class AbstractEnamlImporter(object):
             mod = sys.modules[fullname] = types.ModuleType(fullname)
         mod.__loader__ = self
         mod.__file__ = path
-        exec code in mod.__dict__
+        # Even though the import hook is already installed, this is a 
+        # safety net to avoid potentially hard to find bugs if code has
+        # manually installed and removed a hook. The contract here is 
+        # that the import hooks are always installed when executing the
+        # module code of an Enaml file.
+        with imports():
+            exec code in mod.__dict__
         return mod
 
     #--------------------------------------------------------------------------
