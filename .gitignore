@@ -4,6 +4,7 @@
 *.egg-info
 *.so
 *.DS_Store
+*.enamlc
 /build
 /dist
 /docs/build
