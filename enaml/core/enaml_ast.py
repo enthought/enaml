@@ -51,24 +51,12 @@ class Python(ASTNode):
     py_ast : ast.AST
         A Python ast node.
     
-    code : types.CodeType
-        The compiled Python code object for the py_ast.
-    
     """
-    __slots__ = ('py_txt', 'py_ast', 'code')
+    __slots__ = ('py_ast',)
 
-    def __init__(self, py_txt, py_ast, code, lineno):
+    def __init__(self, py_ast, lineno):
         super(Python, self).__init__(lineno)
-        self.py_txt = py_txt
         self.py_ast = py_ast
-        self.code = code
-
-
-class Import(Python):
-    """ A _PyNode representing a normal Python import statement.
-
-    """
-    __slots__ = ()
 
 
 class Declaration(ASTNode):
@@ -135,25 +123,25 @@ class AttributeDeclaration(ASTNode):
     name : str
         The name of the attribute being declared.
 
-    type_name : str or None
-        The name of the type of the attribute. If None, the attribute
-        can be of any type.
+    type : Python or None
+        A Python node representing the type of the attribute, or None
+        if no type was given. If None the attribute can be of any type.
 
     default : AttributeBinding or None
         The default binding of the attribute, or None if no default 
         is provided.
         
     is_event : boolean
-        Whether or not this declaration represents a write-only
-        event.
+        Whether or not this declaration represents an event.
+        i.e. was declared with 'event' instead of 'attr'.
 
     """
-    __slots__ = ('name', 'type_name', 'default', 'is_event')
+    __slots__ = ('name', 'type', 'default', 'is_event')
 
-    def __init__(self, name, type_name, default, is_event, lineno):
+    def __init__(self, name, type, default, is_event, lineno):
         super(AttributeDeclaration, self).__init__(lineno)
         self.name = name
-        self.type_name = type_name
+        self.type = type
         self.default = default
         self.is_event = is_event
 
@@ -166,8 +154,8 @@ class AttributeBinding(ASTNode):
     name : str
         The name of the attribute being bound.
     
-    binding : ast node
-        The ast node which represents the binding.
+    binding : BoundExpression
+        The BoundExpression ast node which represents the binding.
     
     """
     __slots__ = ('name', 'binding')
