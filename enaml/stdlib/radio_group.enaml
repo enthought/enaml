@@ -80,7 +80,7 @@ _RGroupButton(RadioButton):
     attr idx
     # The parent of the radio button is the include. The parent
     # of the include is the actual radio group.
-    toggled >> _button_toggled(parent.parent, idx, checked)
+    toggled :: _button_toggled(parent.parent, idx, checked)
 
 
 RadioGroup(Container):
@@ -133,11 +133,11 @@ RadioGroup(Container):
     attr items: Sequence = []
     attr to_string: Callable = str
     attr disabled_buttons: Iterable = []
-    disabled_buttons >> _disable_buttons(layout_children, event.new)
+    disabled_buttons :: _disable_buttons(layout_children, event.new)
 
     # Synchronized Attributes
     attr selected_index: int = -1
-    selected_index >> _sync_button(layout_children, event.new)
+    selected_index :: _sync_button(layout_children, event.new)
 
     # Output Attributes
     attr selected_item << items[selected_index] if (0 <= selected_index < len(items)) else None
