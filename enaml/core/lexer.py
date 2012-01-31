@@ -51,22 +51,9 @@ class EnamlLexer(object):
         (r'~', 'TILDE'),
         (r'\|', 'VBAR'),
         (r'\|=', 'VBAREQUAL'),
-
-        # These are not *real* operators, but we want to distinguish
-        # these from a generic OPERATOR token in the parser for the
-        # purpose of slicing.
         (r'::', 'DOUBLECOLON'),
         (r'\.\.\.', 'ELLIPSIS'),
-        
-        # Enaml expression operators. These are in addition to the 
-        # ones we override from Python (=, <<, >>, &=, |=)
         (r':=', 'COLONEQUAL'),
-        (r'@=', 'ATEQUAL'),
-        (r'\$=', 'DOLLAREQUAL'),
-        (r'<\-', 'LESSMINUS'),
-        (r'\->', 'MINUSGREATER'),
-        (r'<\|', 'LESSVBAR'),
-        (r'\|>', 'VBARGREATER'),
     )
 
     tokens = (
@@ -93,7 +80,6 @@ class EnamlLexer(object):
         'STRING_END',
 
         # Enaml tokens
-        'OPERATOR',
         'PY_BLOCK',
         'PY_BLOCK_START',
         'PY_BLOCK_END',
@@ -114,6 +100,7 @@ class EnamlLexer(object):
         'not': 'NOT',
         'or': 'OR',
         'pass': 'PASS',
+        'print': 'PRINT',
     }
 
     tokens = (tokens + 
@@ -430,7 +417,7 @@ class EnamlLexer(object):
 
     def input(self, txt):
         self.lexer.input(txt)
-        self.token_stream = self.make_token_stream()
+        self.next_token = self.make_token_stream().next
 
         # State initialization
         self.paren_count = 0
@@ -439,13 +426,10 @@ class EnamlLexer(object):
 
     def token(self):
         try:
-            tok = self.token_stream.next()
+            tok = self.next_token()
             return tok
         except StopIteration:
             pass
-    
-    def __iter__(self):
-        return self.token_stream
    
     def dedent(self, lineno):
         # Synthesize a DEDENT Token
@@ -509,12 +493,21 @@ class EnamlLexer(object):
                     nl_tok.lineno = start_tok.lineno
                 msg = 'Newline required after a ":: python ::" tag'
                 raise_syntax_error(msg, self.filename, nl_tok.lineno)
-
+            
             # yield the newline token since it's needed by the parser
             yield nl_tok
 
+            # The newline token that was just yielded will contain
+            # all of the newlines up to the first python statement.
+            # We want line number report to be one less than that
+            # to account for the nl taken by the tag itself. This
+            # is just a dummy token that will never be yielded to 
+            # the parser.
+            tok = lex.LexToken()
+            tok.value = nl_tok.value[1:]
+
             # Collect the Python code from the block
-            py_toks = []
+            py_toks = [tok]
             end_tok = None
             for tok in token_stream:
                 if tok.type == 'PY_BLOCK_END':
@@ -646,11 +639,17 @@ class EnamlLexer(object):
         for token in token_stream:
             token.at_line_start = at_line_start
 
-            if token.type == "COLON":
+            # The double colon serves double purpose: in slice operations
+            # and also as the notification operator. In the case of a 
+            # slice operation, newline continuation is already allowed
+            # by suppressing NEWLINE tokens in a multiline expression.
+            # So, we can treat double colon the same as colon here for
+            # handling the logic surrounding indentation state.
+            if token.type in ("COLON", "DOUBLECOLON"):
                 at_line_start = False
                 indent = MAY_INDENT
                 token.must_indent = False
-                
+            
             elif token.type == "NEWLINE":
                 at_line_start = True
                 if indent == MAY_INDENT:

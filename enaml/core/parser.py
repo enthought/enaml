@@ -12,6 +12,7 @@ from .lexer import raise_syntax_error, EnamlLexer
 
 from ..exceptions import EnamlSyntaxError
 
+
 # Get a save directory for the lex and parse tables
 _enaml_dir = os.path.join(os.path.expanduser('~'), '.enaml')
 try:
@@ -21,21 +22,49 @@ except OSError:
     _enaml_dir = os.getcwd()
 
 
-# Need to expose the lexer tokens.
+# Lexer tokens which need to be exposed to the parser
 tokens = EnamlLexer.tokens
 
 
 # The translation table for expression operators
 operator_table = {
-    '@': 'At',
-    '&': 'Amper',
-    '-': 'Minus',
     '=': 'Equal',
     '<': 'Less',
     '>': 'Greater',
-    '$': 'Dollar',
-    '|': 'Bar',
     ':': 'Colon',
+}
+
+
+# The allowed ast node types for ast.Store contexts
+allowed_store = set([
+    ast.Attribute,
+    ast.Subscript,
+    ast.Name,
+    ast.List,
+    ast.Tuple,
+])
+
+
+# The disallowed ast node types for ast.Store contexts and 
+# the associated message tag for error reporting.
+disallowed_store = {
+    ast.Lambda: 'lambda',
+    ast.Call: 'function call',
+    ast.BoolOp: 'operator',
+    ast.BinOp: 'operator',
+    ast.UnaryOp: 'operator',
+    ast.GeneratorExp: 'generator expression',
+    ast.Yield: 'yield expression',
+    ast.ListComp: 'list comprehension',
+    ast.SetComp: 'set comprehension',
+    ast.DictComp: 'dict comprehension',
+    ast.Dict: 'literal',
+    ast.Set: 'literal',
+    ast.Num: 'literal',
+    ast.Str: 'literal',
+    ast.Ellipsis: 'Ellipsis',
+    ast.Compare: 'comparison',
+    ast.IfExp: 'conditional expression',
 }
 
 
@@ -59,16 +88,37 @@ def raise_enaml_syntax_error(msg, lineno):
     raise EnamlSyntaxError(msg)
 
 
-def set_locations(node, lineno, col_offset):
-    """ Recursively set the line number and col_offset on every node in the tree
-    descended from node.  Similar to ast.fix_locations, but forces changes.
+def set_store_ctxt(node):
+    """ Recursively sets the context of the node to ast.Store. If the
+    node is not one of the allowed types for a store context, an error
+    is raised with an appropriate message.
+
     """
-    # XXX this is slightly suboptimal, in that we mis-report the line for a 
-    # XXX multiline expression. This is a rare enough situation, that this 
-    # XXX is probably not a big deal
-    for n in ast.walk(node):
-        n.lineno = lineno
-        n.col_offset = col_offset
+    items = None
+    err_msg = ''
+    node_type = type(node)
+    if node_type in allowed_store:
+        node.ctx = ast.Store()
+        if node_type == ast.Tuple:
+            if len(node.elts) == 0:
+                err_msg = '()'
+            else:
+                items = node.elts
+        elif node_type == ast.List:
+            items = node.elts
+    elif node_type in disallowed_store:
+        err_msg = disallowed_store[node_type]
+    else:
+        msg = 'unexpected expression in assignment %d (line %d)'
+        raise SystemError(msg % (node_type.__name__, node.lineno))
+    
+    if err_msg:
+        msg = "can't assign to %s" % err_msg
+        raise EnamlSyntaxError(msg)
+    
+    if items is not None:
+        for item in items:
+            set_store_ctxt(item)
 
 
 #------------------------------------------------------------------------------
@@ -78,8 +128,8 @@ def set_locations(node, lineno, col_offset):
 # are because of the various lexer states that deal with python blocks
 # and enaml code, as well as completely empty files.
 def p_enaml1(p):
-    ''' enaml : enaml_module ENDMARKER
-              | enaml_module NEWLINE ENDMARKER '''
+    ''' enaml : enaml_module NEWLINE ENDMARKER
+              | enaml_module ENDMARKER '''
     p[0] = p[1]
 
 
@@ -142,15 +192,14 @@ def p_enaml_raw_python(p):
     ''' raw_python : PY_BLOCK_START NEWLINE PY_BLOCK PY_BLOCK_END NEWLINE '''
     # XXX update me to handle Python code without the start/end tags
     # Adding leading newlines before parsing so that any syntax errors
-    # during compilation are reported with proper line numbers
+    # during parsing are reported with proper line numbers.
     py_txt = p[3]
     compile_txt = '\n' * p.lineno(1) + py_txt
     try:
         py_ast = ast.parse(compile_txt, p.lexer.filename, mode='exec')
-        py_code = compile(py_ast, p.lexer.filename, mode='exec')
     except SyntaxError as e:
         raise_syntax_error('invalid syntax', e.filename, e.lineno)
-    p[0] = enaml_ast.Python(py_txt, py_ast, py_code, p.lineno(1))
+    p[0] = enaml_ast.Python(py_ast, p.lineno(1))
 
 
 #------------------------------------------------------------------------------
@@ -160,8 +209,7 @@ def p_enaml_import(p):
     ''' enaml_import : import_stmt '''
     imprt = p[1]
     mod = ast.Module(body=[imprt])
-    mod_code = compile(mod, p.lexer.filename, mode='exec')
-    p[0] = enaml_ast.Import('<untracked>', mod, mod_code, imprt.lineno)
+    p[0] = enaml_ast.Python(mod, imprt.lineno)
 
 
 #------------------------------------------------------------------------------
@@ -169,15 +217,12 @@ def p_enaml_import(p):
 #------------------------------------------------------------------------------
 def p_declaration(p):
     ''' declaration : NAME LPAR test RPAR COLON declaration_body '''
-    start_pos = p.lexpos(2) + 1
-    end_pos = p.lexpos(4)
     lineno = p.lineno(1)
-    py_txt = p.lexer.lexer.lexdata[start_pos:end_pos]
     doc, idn, items = p[6]
     base = ast.Expression(body=p[3])
-    set_locations(base, lineno, 1)
-    code = compile(base, p.lexer.filename, mode='eval')
-    base_node = enaml_ast.Python(py_txt, base, code, lineno)
+    base.lineno = lineno
+    ast.fix_missing_locations(base)
+    base_node = enaml_ast.Python(base, lineno)
     p[0] = enaml_ast.Declaration(p[1], base_node, idn, doc, items, lineno)
 
 
@@ -252,7 +297,7 @@ def p_declaration_body_item4(p):
 #------------------------------------------------------------------------------
 # Attribute Declaration
 #------------------------------------------------------------------------------
-def build_attr_declaration(kw, name, type_name, default, lineno, p):
+def build_attr_declaration(kw, name, type_node, default, lineno, p):
     """ Builds an ast node for an attr or event declaration.
 
     Parameters
@@ -264,8 +309,9 @@ def build_attr_declaration(kw, name, type_name, default, lineno, p):
     name : string
         The name of the attribute or event being declared.
     
-    type_name : string or None
-        The name of the type being declared, or None if not using a type.
+    type_node : enaml_ast.Python node or None
+        The expression node for the type being declared, or None if not 
+        using a type.
     
     default : AttributeBinding or None
         The default attribute binding or None if not supply the default.
@@ -288,11 +334,11 @@ def build_attr_declaration(kw, name, type_name, default, lineno, p):
         raise_syntax_error(msg, p.lexer.filename, lineno)
     if kw == 'attr':
         res = enaml_ast.AttributeDeclaration(
-            name, type_name, default, False, lineno,
+            name, type_node, default, False, lineno,
         )
     else:
         res = enaml_ast.AttributeDeclaration(
-            name, type_name, default, True, lineno,
+            name, type_node, default, True, lineno,
         )
     return res
 
@@ -303,8 +349,13 @@ def p_attribute_declaration1(p):
 
 
 def p_attribute_declaration2(p):
-    ''' attribute_declaration : NAME NAME COLON NAME NEWLINE '''
-    p[0] = build_attr_declaration(p[1], p[2], p[4], None, p.lineno(1), p)
+    ''' attribute_declaration : NAME NAME COLON test NEWLINE '''
+    lineno = p.lineno(1) 
+    expr = ast.Expression(body=p[4])
+    expr.lineno = lineno
+    ast.fix_missing_locations(expr)
+    expr_node = enaml_ast.Python(expr, lineno)
+    p[0] = build_attr_declaration(p[1], p[2], expr_node, None, p.lineno(1), p)
 
 
 def p_attribute_declaration3(p):
@@ -316,11 +367,15 @@ def p_attribute_declaration3(p):
 
 
 def p_attribute_declaration4(p):
-    ''' attribute_declaration : NAME NAME COLON NAME binding '''
+    ''' attribute_declaration : NAME NAME COLON test binding '''
     lineno = p.lineno(1)
+    expr = ast.Expression(body=p[4])
+    expr.lineno = lineno
+    ast.fix_missing_locations(expr)
+    expr_node = enaml_ast.Python(expr, lineno)
     name = p[2]
     binding = enaml_ast.AttributeBinding(name, p[5], lineno)
-    p[0] = build_attr_declaration(p[1], name, p[4], binding, lineno, p)
+    p[0] = build_attr_declaration(p[1], name, expr_node, binding, lineno, p)
 
 
 #------------------------------------------------------------------------------
@@ -396,41 +451,169 @@ def p_attribute_binding(p):
     p[0] = enaml_ast.AttributeBinding(p[1], p[2], p.lineno(1))
 
 
-def p_binding(p):
-    ''' binding : enaml_operator test NEWLINE '''
-    # XXX extend me to support code blocks
-    start_pos, lineno, op = p[1]
-    end_pos = p.lexpos(3)
-    py_text = p.lexer.lexer.lexdata[start_pos:end_pos]
-    operator = translate_operator(op)
+def p_binding1(p):
+    ''' binding : EQUAL test NEWLINE
+                | COLONEQUAL test NEWLINE
+                | LEFTSHIFT test NEWLINE
+                | RIGHTSHIFT test NEWLINE '''
+    lineno = p.lineno(1) 
+    operator = translate_operator(p[1])
     expr = ast.Expression(body=p[2])
-    set_locations(expr, lineno, 1)
-    code = compile(expr, p.lexer.filename, mode='eval')
-    expr_node = enaml_ast.Python(py_text, expr, code, lineno)
+    expr.lineno = lineno
+    ast.fix_missing_locations(expr)
+    expr_node = enaml_ast.Python(expr, lineno)
     p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
 
 
-def p_enaml_operator(p):
-    ''' enaml_operator : EQUAL
-                       | COLONEQUAL
-                       | LEFTSHIFT
-                       | RIGHTSHIFT
-                       | ATEQUAL
-                       | AMPEREQUAL
-                       | DOLLAREQUAL
-                       | VBAREQUAL
-                       | LESSMINUS
-                       | MINUSGREATER
-                       | VBARGREATER
-                       | LESSVBAR '''
-    start_pos = p.lexpos(1) + 1
+def p_binding2(p):
+    ''' binding : DOUBLECOLON simple_stmt_line '''
     lineno = p.lineno(1)
-    p[0] = (start_pos, lineno, p[1])
+    operator = translate_operator(p[1])
+    mod = ast.Module()
+    mod.body = [p[2]]
+    expr_node = enaml_ast.Python(mod, lineno)
+    p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
+
+
+def p_binding3(p):
+    ''' binding : DOUBLECOLON simple_stmt_suite '''
+    lineno = p.lineno(1)
+    operator = translate_operator(p[1])
+    mod = ast.Module()
+    mod.body = p[2]
+    expr_node = enaml_ast.Python(mod, lineno)
+    p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
+
+
+def p_simple_stmt_suite(p):
+    ''' simple_stmt_suite : NEWLINE INDENT simple_stmt_list DEDENT '''
+    p[0] = p[3]
+
+
+def p_simple_stmt_list1(p):
+    ''' simple_stmt_list : simple_stmt_line simple_stmt_list '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_simple_stmt_list2(p):
+    ''' simple_stmt_list : simple_stmt_line '''
+    p[0] = [p[1]]
+
+
+def p_simple_stmt_line(p):
+    ''' simple_stmt_line : simple_stmt NEWLINE '''
+    stmt = p[1]
+    stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(stmt)
+    p[0] = stmt
 
 
 #==============================================================================
 # Begin Python Grammar
 #==============================================================================
+
+#------------------------------------------------------------------------------
+# Statement Grammar
+#------------------------------------------------------------------------------
+def p_simple_stmt(p):
+    ''' simple_stmt : small_stmt '''
+    p[0] = p[1]
+
+
+def p_small_stmt1(p):
+    ''' small_stmt : expr_stmt '''
+    p[0] = p[1]
+
+
+def p_small_stmt2(p):
+    ''' small_stmt : print_stmt '''
+    p[0] = p[1]
+
+
+def p_print_stmt1(p):
+    ''' print_stmt : PRINT '''
+    prnt = ast.Print()
+    prnt.dest = None
+    prnt.values = []
+    prnt.nl = True
+    p[0] = prnt
+
+
+def p_print_stmt2(p):
+    ''' print_stmt : PRINT testlist '''
+    prnt = ast.Print()
+    prnt.dest = None
+    prnt.values = p[2]
+    prnt.nl = True
+    p[0] = prnt
+
+
+def p_expr_stmt1(p):
+    ''' expr_stmt : testlist '''
+    rhs = p[1]
+    if len(rhs) > 1:
+        value = ast.Tuple()
+        value.elts = rhs
+        value.ctx = ast.Load()
+    else:
+        value = rhs[0]
+        value.ctx = ast.Load()
+    expr = ast.Expr()
+    expr.value = value
+    p[0] = expr
+
+
+def p_expr_stmt2(p):
+    ''' expr_stmt : testlist EQUAL testlist '''
+    lineno = p.lineno(2)
+    lhs = p[1]
+    rhs = p[3]
+    for item in lhs:
+        set_store_ctxt(item)
+    if len(rhs) > 1:
+        value = ast.Tuple()
+        value.elts = rhs
+        value.ctx = ast.Load()
+    else:
+        value = rhs[0]
+        value.ctx = ast.Load()
+    assg = ast.Assign()
+    assg.targets = lhs
+    assg.value = value
+    assg.lineno = lineno
+    ast.fix_missing_locations(assg)
+    p[0] = assg
+
+
+def p_testlist1(p):
+    ''' testlist : test '''
+    p[0] = [p[1]]
+
+
+def p_testlist2(p):
+    ''' testlist : test COMMA '''
+    p[0] = [p[1]]
+
+
+def p_testlist3(p):
+    ''' testlist : test testlist_list '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_testlist4(p):
+    ''' testlist : test testlist_list COMMA '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_testlist_list1(p):
+    ''' testlist_list : COMMA test '''
+    p[0] = [p[2]]
+
+
+def p_testlist_list2(p):
+    ''' testlist_list : testlist_list COMMA test '''
+    p[0] = p[1] + [p[3]]
+
 
 #------------------------------------------------------------------------------
 # Python Parsing Helper Objects
@@ -1357,50 +1540,40 @@ def p_subscript14(p):
     p[0] = ast.Slice(lower=p[1], upper=None, step=p[3])
 
 
-# exprlist is used as the assignment target in a comprehension;
-# The i, j in [<stuff> for i, j in <more_stuff>]. These targets
-# must have a Store() context in order to bring the variables into 
-# scope. By default, we assign Name a Load() context since we aren't 
-# in the business of assigning to variables with this expression
-# parser.
-def _store_exprs_context(exprs):
-    for expr in exprs:
-        if isinstance(expr, ast.Name):
-            expr.ctx = ast.Store()
-        elif isinstance(expr, ast.Tuple):
-            expr.ctx = ast.Store()
-            for name in expr.elts:
-                name.ctx = ast.Store()
-
-
 def p_exprlist1(p):
     ''' exprlist : expr '''
     # expr will match a tuple or a name, so we need to handle 
     # the store context for both.
     expr = p[1]
-    _store_exprs_context([expr])
+    set_store_ctxt(expr)
     p[0] = expr
 
 
 def p_exprlist2(p):
     ''' exprlist : expr COMMA '''
     exprs = [p[1]]
-    _store_exprs_context(exprs)
-    p[0] = ast.Tuple(elts=exprs, ctx=ast.Store())
+    tup = ast.Tuple()
+    tup.elts = exprs
+    set_store_ctxt(tup)
+    p[0] = tup
 
 
 def p_exprlist3(p):
     ''' exprlist : expr exprlist_list '''
     exprs = [p[1]] + p[2]
-    _store_exprs_context(exprs)
-    p[0] = ast.Tuple(elts=exprs, ctx=ast.Store())
+    tup = ast.Tuple()
+    tup.elts = exprs
+    set_store_ctxt(tup)
+    p[0] = tup
 
 
 def p_exprlist4(p):
     ''' exprlist : expr exprlist_list COMMA '''
     exprs = [p[1]] + p[2]
-    _store_exprs_context(exprs)
-    p[0] = ast.Tuple(elts=exprs, ctx=ast.Store())
+    tup = ast.Tuple()
+    tup.elts = exprs
+    set_store_ctxt(tup)
+    p[0] = tup
 
 
 def p_exprlist_list1(p):
@@ -1444,7 +1617,7 @@ def p_dictorsetmaker5(p):
 
 def p_dictorsetmaker6(p):
     ''' dictorsetmaker : test comp_for '''
-    p[0] = GeneratorInfo(elt=p[1], generators=p[4])
+    p[0] = GeneratorInfo(elt=p[1], generators=p[2])
 
 
 def p_dictorsetmaker7(p):
@@ -1970,19 +2143,28 @@ def p_fplist1(p):
 
 def p_fplist2(p):
     ''' fplist : fpdef COMMA '''
-    p[0] = ast.Tuple(elts=[p[1]], ctx=ast.Store())
+    tup = ast.Tuple()
+    tup.elts = [p[1]]
+    set_store_ctxt(tup)
+    p[0] = tup
 
 
 def p_fplist3(p):
     ''' fplist : fpdef fplist_list '''
     elts = [p[1]] + p[2]
-    p[0] = ast.Tuple(elts=elts, ctx=ast.Store())
+    tup = ast.Tuple()
+    tup.elts = elts
+    set_store_ctxt(tup)
+    p[0] = tup
 
 
 def p_fplist4(p):
     ''' fplist : fpdef fplist_list COMMA '''
     elts = [p[1]] + p[2]
-    p[0] = ast.Tuple(elts=elts, ctx=ast.Store())
+    tup = ast.Tuple()
+    tup.elts = elts
+    set_store_ctxt(tup)
+    p[0] = tup
 
 
 def p_fplist_list1(p):
