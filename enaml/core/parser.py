@@ -349,9 +349,9 @@ def p_attribute_declaration1(p):
 
 
 def p_attribute_declaration2(p):
-    ''' attribute_declaration : NAME NAME COLON test NEWLINE '''
+    ''' attribute_declaration : NAME NAME COLON NAME NEWLINE '''
     lineno = p.lineno(1) 
-    expr = ast.Expression(body=p[4])
+    expr = ast.Expression(body=ast.Name(id=p[4], ctx=ast.Load()))
     expr.lineno = lineno
     ast.fix_missing_locations(expr)
     expr_node = enaml_ast.Python(expr, lineno)
@@ -367,9 +367,9 @@ def p_attribute_declaration3(p):
 
 
 def p_attribute_declaration4(p):
-    ''' attribute_declaration : NAME NAME COLON test binding '''
+    ''' attribute_declaration : NAME NAME COLON NAME binding '''
     lineno = p.lineno(1)
-    expr = ast.Expression(body=p[4])
+    expr = ast.Expression(body=ast.Name(id=p[4], ctx=ast.Load()))
     expr.lineno = lineno
     ast.fix_missing_locations(expr)
     expr_node = enaml_ast.Python(expr, lineno)
