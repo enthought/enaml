@@ -41,9 +41,9 @@ MainView(MainWindow):
         name = 'checkb1'
         text = 'checkbox label'
         checked = True
-        toggled >> events.append('toggled')
-        pressed >> events.append('pressed')
-        released >> events.append('released')
+        toggled :: events.append('toggled')
+        pressed :: events.append('pressed')
+        released :: events.append('released')
 """.format(self.check_box_label)
 
         self.events = []

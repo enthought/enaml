@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import unittest
 import inspect
+import types
 
 from enaml import default_toolkit
 from enaml.core.parser import parse
@@ -68,13 +69,15 @@ class EnamlTestCase(unittest.TestCase):
 
         """
         enaml_ast = parse(source)
-        enaml_module = {}
-        EnamlCompiler.compile(enaml_ast, enaml_module)
+        enaml_module = types.ModuleType('__tests__')
+        ns = enaml_module.__dict__
+        code = EnamlCompiler.compile(enaml_ast, '__enaml_tests__')
 
         toolkit = self.toolkit
 
         with toolkit:
-            view = enaml_module['MainView']
+            exec code in ns
+            view = ns['MainView']
             cmpnt = view(**kwargs)
 
         toolkit.app.initialize()

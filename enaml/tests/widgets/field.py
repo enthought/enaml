@@ -33,8 +33,8 @@ MainView(MainWindow):
         cursor_position = 1
         placeholder_text = 'hold'
         value = 'abc'
-        text_edited >> events.append('text_edited')
-        return_pressed >> events.append('return_pressed')
+        text_edited :: events.append('text_edited')
+        return_pressed :: events.append('return_pressed')
 """
 
         self.events = []
