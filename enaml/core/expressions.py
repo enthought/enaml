@@ -330,6 +330,100 @@ class NotificationExpression(AbstractExpression):
 
 
 #------------------------------------------------------------------------------
+# Update Expression
+#------------------------------------------------------------------------------
+class UpdateExpression(AbstractExpression):
+    """ A concrete implementation of AbstractExpression which sets the 
+    value on the contituents of the expression according to any provided
+    inverters.
+
+    """
+    __slots__ = ('inverters',)
+
+    def __init__(self, inverter_classes, *args):
+        """ Initialize an UpdateExpression
+
+        Parameters
+        ----------
+        inverter_classes : iterable of AbstractInverter subclasses
+            An iterable of concrete AbstractInverter subclasses which
+            will invert the given expression code into a mirrored 
+            operation which sets the value on the appropriate object.
+        
+        *args
+            The arguments required to initialize an AbstractExpression
+        
+        """
+        super(UpdateExpression, self).__init__(*args)
+        
+        inverters = []
+        bp_code = Code.from_code(self.code)
+        code_list = bp_code.code
+
+        for inv_cls in inverter_classes:
+            inverter = inv_cls()
+            new_code = inverter.get_inverted_code(code_list)
+            if new_code is not None:
+                bp_code.code = new_code
+                inverters.append(bp_code.to_code())
+        
+        if not inverters:
+            msg = ("Unable to delegate expression to the '%s' attribute of "
+                   "the %s object. The provided expression is not structured "
+                   "in a way which is suitable for delegation by any of "
+                   "the supplied code inverters.")
+            raise ValueError(msg % (self.name, self.obj_ref()))
+
+        self.inverters = inverters
+    
+    def eval(self):
+        """ A no-op eval method since UpdateExpression does not support 
+        evaluation.
+
+        """
+        return NotImplemented
+
+    def notify(self, old, new):
+        """ A notification method which runs through the list of inverted
+        code objects which attempt to set the value. The process stops on
+        the first successful inversion. If none of the invertors are 
+        successful, a RuntimeError is raised.
+
+        """
+        obj = self.obj_ref()
+        if obj is None:
+            return
+
+        # The override dict is populated with information about the
+        # expression and the change. The values allow the generated
+        # inverter codes to access the information which is required
+        # to perform the operation. The items are added using names
+        # which are not valid Python identifiers and therefore do
+        # not risk clashing with names in the expression. This is
+        # the same technique used by the Python interpreter itself.
+        identifiers = self.identifiers
+        f_globals = self.f_globals
+        toolkit = self.toolkit
+        override = {'_[expr]': self, '_[obj]': obj, '_[name]': self.name,
+                    '_[old]': old, '_[new]': new}
+        scope = ExpressionScope(
+            obj, identifiers, f_globals, toolkit, override, None,
+        )
+
+        # Run through the inverters, giving each a chance to do the
+        # inversion. The process ends with the first success. If 
+        # none of the invertors are successful an error is raised.
+        for inverter in self.inverters:
+            if eval(inverter, f_globals, scope):
+                break
+        else:
+            msg = ("Unable to delegate expression to the '%s' attribute of "
+                   "the %s object. None of the provided inverters were "
+                   "successful in assigning the value.")
+            raise RuntimeError(msg)
+
+
+#------------------------------------------------------------------------------
 # Subscription Expression
 #------------------------------------------------------------------------------
 class _ImplicitAttributeBinder(object):

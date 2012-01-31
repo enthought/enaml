@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .expressions import (
     SimpleExpression, NotificationExpression, SubscriptionExpression, 
-    DelegationExpression,
+    DelegationExpression, UpdateExpression,
 )
 from .inverters import (
     GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter,
@@ -25,10 +25,6 @@ from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 #:      attr : string
 #:          The name of the attribute on the component which is being
 #:          bound.
-#:
-#:      ast : ast.Expression
-#:          The ast.Expression root node which represents the Python
-#:          expression given by the user.
 #:
 #:      code : types.CodeType
 #:          The compiled code object for the Python expression given
@@ -56,9 +52,9 @@ from .monitors import TraitAttributeMonitor, TraitGetattrMonitor
 #: create and bind Enaml expression objects to the component. However,
 #: this is not a requirement and developers who are extending enaml
 #: are free to get creative with the operators.
- 
 
-def op_simple(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+
+def op_simple(cmpnt, attr, code, identifiers, f_globals, toolkit):
     """ The default Enaml operator for '=' expressions. It binds an
     instance of SimpleExpression to the component.
 
@@ -67,8 +63,8 @@ def op_simple(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
     cmpnt.bind_expression(attr, expr)
 
 
-def op_notify(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
-    """ The default Enaml operator for '>>' expressions. It binds an
+def op_notify(cmpnt, attr, code, identifiers, f_globals, toolkit):
+    """ The default Enaml operator for '::' expressions. It binds an
     instance of NotificationExpression to the component.
 
     """
@@ -76,7 +72,17 @@ def op_notify(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
     cmpnt.bind_expression(attr, expr, notify_only=True)
 
 
-def op_subscribe(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+def op_update(cmpnt, attr, code, identifiers, f_globals, toolkit):
+    """ The default Enaml operator for '>>' expressions. It binds an
+    instance of UpdateExpression to the component.
+
+    """
+    inverters = [GenericAttributeInverter, GetattrInverter, ImplicitAttrInverter]
+    expr = UpdateExpression(inverters, cmpnt, attr, code, identifiers, f_globals, toolkit)
+    cmpnt.bind_expression(attr, expr, notify_only=True)
+
+
+def op_subscribe(cmpnt, attr, code, identifiers, f_globals, toolkit):
     """ The default Enaml operator for '<<' expressions. It binds an
     instance of SubscriptionExpression to the component using monitors
     which understand traits attribute access via dotted notation and
@@ -88,7 +94,7 @@ def op_subscribe(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
     cmpnt.bind_expression(attr, expr)
 
 
-def op_delegate(cmpnt, attr, ast, code, identifiers, f_globals, toolkit):
+def op_delegate(cmpnt, attr, code, identifiers, f_globals, toolkit):
     """ The default Enaml operator for ':=' expressions. It binds an
     instance of DelegationExpression to the component using monitors
     which understand traits attribute access via dotted notation and
@@ -107,6 +113,7 @@ OPERATORS = {
     '__operator_Equal__': op_simple,
     '__operator_LessLess__': op_subscribe,
     '__operator_ColonEqual__': op_delegate,
-    '__operator_GreaterGreater__': op_notify,
+    '__operator_ColonColon__': op_notify,
+    '__operator_GreaterGreater__': op_update,
 }
 
