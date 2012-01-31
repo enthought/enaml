@@ -216,10 +216,10 @@ def p_enaml_import(p):
 # Declaration
 #------------------------------------------------------------------------------
 def p_declaration(p):
-    ''' declaration : NAME LPAR test RPAR COLON declaration_body '''
+    ''' declaration : NAME LPAR NAME RPAR COLON declaration_body '''
     lineno = p.lineno(1)
     doc, idn, items = p[6]
-    base = ast.Expression(body=p[3])
+    base = ast.Expression(body=ast.Name(id=p[3], ctx=ast.Load()))
     base.lineno = lineno
     ast.fix_missing_locations(base)
     base_node = enaml_ast.Python(base, lineno)
