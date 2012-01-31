@@ -90,9 +90,9 @@ Main(MainWindow):
         TableView:
             id: tv2
             item_model = table_model
-            activated >> printer(event)
-            clicked >> printer(event)
-            double_clicked >> printer(event)
+            activated :: printer(event)
+            clicked :: printer(event)
+            double_clicked :: printer(event)
             RowSelectionModel:
                 selection_mode = 'extended'
                 selected_rows := model.selected_rows

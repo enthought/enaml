@@ -66,5 +66,5 @@ Main(MainWindow):
         PushButton:
             id: work_button
             text << "Do Some Work" if progress.percentage < 100 else "Reset"
-            clicked >> model.do_work() if progress.percentage < 100 else model.reset()
+            clicked :: model.do_work() if progress.percentage < 100 else model.reset()
 

@@ -96,5 +96,5 @@ Main(MainWindow):
             item_model = table_model
             BaseSelectionModel:
                 selection_mode = 'extended'
-                selection_event >> printer(args)
+                selection_event :: printer(event)
 

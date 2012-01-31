@@ -17,25 +17,25 @@ MainContainer(Container):
 
     PushButton:
         text = 'print foo'
-        clicked >> print(foo)
+        clicked :: print foo
     PushButton:
         text = 'print bar'
-        clicked >> print(bar)
+        clicked :: print bar
     PushButton:
         text = 'print ham'
-        clicked >> print(ham)
+        clicked :: print ham
     PushButton:
         text = 'print spam'
-        clicked >> print(spam)
+        clicked :: print spam
     PushButton:
         text = 'set foo'
-        clicked >> setattr(parent, 'foo', 148)
+        clicked :: parent.foo = 148
     PushButton:
         text = 'set ham valid'
-        clicked >> setattr(parent, 'ham', 18)
+        clicked :: parent.ham = 18
     PushButton:
         text = 'set ham invalid'
-        clicked >> setattr(parent, 'ham', 18.0)
+        clicked :: parent.ham = 18.0
 
 
 Main(MainWindow):

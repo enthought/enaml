@@ -45,6 +45,6 @@ Main(MainWindow):
             converter = MonthSpinConverter()
             low = 1
             high = 12
-            value >> print('new value', value)
+            value :: print 'new value', value
             wrap = True
 

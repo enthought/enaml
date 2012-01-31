@@ -26,7 +26,6 @@ def raise_dialog():
 
 
 InformDialog(Dialog):
-    id: dialog
     attr message: basestring
     title = "Inform"
     modality = "application_modal"
@@ -45,11 +44,10 @@ InformDialog(Dialog):
         PushButton:
             id: ok_button
             text = "OK"
-            clicked >> dialog.accept()
+            clicked :: accept()
 
 
 ConfirmDialog(Dialog):
-    id: dialog
     attr message: basestring
     title = "Confirm"
     modality = "application_modal"
@@ -66,16 +64,16 @@ ConfirmDialog(Dialog):
         PushButton:
             id: ok_button
             text = "OK"
-            clicked >> dialog.accept()
+            clicked :: accept()
         PushButton:
             id: cancel_button
             text = "Cancel"
-            clicked >> dialog.reject()
+            clicked :: reject()
 
 
 Main(MainWindow):
     Container:
         PushButton:
             text = "Do Something Rash"
-            clicked >> raise_dialog()
+            clicked :: raise_dialog()
 

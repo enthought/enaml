@@ -34,7 +34,7 @@ EmployeeForm(Form):
         text = 'Password'
     Field:
         password_mode << 'password' if not pw_cb.checked else 'normal'
-        value >> print('Password:', value)
+        value :: print 'Password:', value
     Label:
         text = 'Show Password:'
     CheckBox:

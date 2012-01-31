@@ -80,7 +80,7 @@ ModelView(MainWindow):
         PushButton:
             id: work_button
             text << "Start" if progress.value == 0 else "Reset"
-            clicked >> model.start_work() if progress.value == 0 else model.reset()
+            clicked :: model.start_work() if progress.value == 0 else model.reset()
 
 
 :: python ::

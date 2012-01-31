@@ -40,8 +40,7 @@ PrintAction(Action):
     when triggered.
 
     """
-    id: action
-    triggered >> print(get_action_label(action))
+    triggered :: print get_action_label(self)
 
 
 ViewMenu(Menu):
@@ -101,8 +100,10 @@ Main(MainWindow):
             checked := show_view_menu
         PushButton:
             text = 'Popup File Menu'
-            clicked >> file_menu.popup()
+            clicked :: file_menu.popup()
         PushButton:
             text = 'Change Recent Files'
-            clicked >> setattr(icld, 'components', get_recent_files(['one.txt', 'two.pdf', 'three.doc']))
+            clicked :: 
+                actions = get_recent_files(['one.txt', 'two.pdf', 'three.doc'])
+                icld.components = actions
 

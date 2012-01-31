@@ -3,8 +3,9 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-Main(MainWindow):
+MyMessageToTheWorld(MainWindow):
+    attr message
     Container:
         Label:
-            text = "Hello, world!"
+            text = message
             

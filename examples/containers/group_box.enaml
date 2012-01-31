@@ -80,10 +80,10 @@ Main(MainWindow):
             id: title_check
             text = "Show titles"
             checked = True
-            toggled >> toggle_title(top_box, bottom_box)
+            toggled :: toggle_title(top_box, bottom_box)
         CheckBox:
             id: flat_check
             text = "Flat"
             checked = False
-            toggled >> toggle_flat(top_box, bottom_box)
+            toggled :: toggle_flat(top_box, bottom_box)
 
