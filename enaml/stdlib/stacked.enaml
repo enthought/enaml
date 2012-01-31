@@ -43,6 +43,6 @@ Stacked(Container):
     """
     id: stckd
     attr index: int = 0
-    initialized >> _update_stacked_vis(stckd) 
-    index >> _update_stacked_vis(stckd)
+    initialized :: _update_stacked_vis(stckd) 
+    index :: _update_stacked_vis(stckd)
 
