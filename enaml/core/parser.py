@@ -168,6 +168,19 @@ def ast_for_testlist(testlist):
     return value
 
 
+def ast_for_dotted_name(dotted_name):
+    parts = dotted_name.split('.')
+    name = ast.Name(id=parts.pop(0), ctx=Load)
+    res = name
+    for part in parts:
+        attr = ast.Attribute()
+        attr.value = res
+        attr.attr = part
+        attr.ctx = Load
+        res = attr
+    return res
+
+
 #------------------------------------------------------------------------------
 # Enaml Module
 #------------------------------------------------------------------------------
@@ -763,7 +776,9 @@ def p_pass_stmt(p):
 def p_flow_stmt(p):
     ''' flow_stmt : break_stmt
                   | continue_stmt 
-                  | raise_stmt '''
+                  | return_stmt
+                  | raise_stmt
+                  | yield_stmt '''
     p[0] = p[1]
 
 
@@ -779,6 +794,21 @@ def p_continue_stmt(p):
     continue_stmt = ast.Continue()
     continue_stmt.lineno = p.lineno(1)
     p[0] = continue_stmt
+
+
+def p_return_stmt1(p):
+    ''' return_stmt : RETURN '''
+    ret = ast.Return()
+    ret.value = None
+    p[0] = ret
+
+
+def p_return_stmt2(p):
+    ''' return_stmt : RETURN testlist '''
+    value = ast_for_testlist(p[2])
+    ret = ast.Return()
+    ret.value = value
+    p[0] = ret
 
 
 def p_raise_stmt1(p):
@@ -815,6 +845,22 @@ def p_raise_stmt4(p):
     raise_stmt.inst = p[4]
     raise_stmt.tback = p[6]
     p[0] = raise_stmt
+
+
+def p_yield_stmt(p):
+    ''' yield_stmt : yield_expr '''
+    p[0] = ast.Expr(value=p[1])
+
+
+def p_yield_expr1(p):
+    ''' yield_expr : YIELD '''
+    p[0] = ast.Yield(value=None, lineno=p.lineno(1))
+
+
+def p_yield_expr2(p):
+    ''' yield_expr : YIELD testlist '''
+    value = ast_for_testlist(p[2])
+    p[0] = ast.Yield(value=value, lineno=p.lineno(1))
 
 
 def p_global_stmt1(p):
@@ -894,7 +940,8 @@ def p_expr_stmt1(p):
 
 
 def p_expr_stmt2(p):
-    ''' expr_stmt : testlist augassign testlist '''
+    ''' expr_stmt : testlist augassign testlist
+                  | testlist augassign yield_expr '''
     op, lineno = p[2]
     lhs = ast_for_testlist(p[1])
     rhs = ast_for_testlist(p[3])
@@ -915,6 +962,9 @@ def p_expr_stmt3(p):
     targets = map(ast_for_testlist, all_items) 
     value = targets.pop()
     for item in targets:
+        if type(item) == ast.Yield:
+            msg = "assignment to yield expression not possible"
+            raise_enaml_syntax_error(msg, item.lineno)
         set_context(item, Store)
     assg = ast.Assign()
     assg.targets = targets
@@ -941,12 +991,14 @@ def p_augassign(p):
 
 
 def p_equal_list1(p):
-    ''' equal_list : EQUAL testlist '''
+    ''' equal_list : EQUAL testlist
+                   | EQUAL yield_expr '''
     p[0] = [p[2]]
 
 
 def p_equal_list2(p):
-    ''' equal_list : EQUAL testlist equal_list '''
+    ''' equal_list : EQUAL testlist equal_list
+                   | EQUAL yield_expr equal_list '''
     p[0] = [p[2]] + p[3]
 
 
@@ -985,7 +1037,10 @@ def p_compound_stmt(p):
                       | while_stmt
                       | for_stmt
                       | try_stmt
-                      | with_stmt '''
+                      | with_stmt
+                      | funcdef 
+                      | classdef
+                      | decorated '''
     p[0] = p[1]
 
 
@@ -1280,6 +1335,121 @@ def p_with_item_list1(p):
 def p_with_item_list2(p):
     ''' with_item_list : COMMA with_item '''
     p[0]  = [p[2]]
+
+
+def p_funcdef(p):
+    ''' funcdef : DEF NAME parameters COLON suite '''
+    funcdef = ast.FunctionDef()
+    funcdef.name = p[2]
+    funcdef.args = p[3]
+    funcdef.body = p[5]
+    funcdef.decorator_list = []
+    funcdef.lineno = p.lineno(1)
+    ast.fix_missing_locations(funcdef)
+    p[0] = funcdef
+
+
+def p_parameters1(p):
+    ''' parameters : LPAR RPAR '''
+    p[0] = ast.arguments(args=[], defaults=[], vararg=None, kwarg=None)
+
+
+def p_parameters2(p):
+    ''' parameters : LPAR varargslist RPAR '''
+    p[0] = p[2]
+
+
+def p_classdef1(p):
+    ''' classdef : CLASS NAME COLON suite '''
+    classdef = ast.ClassDef()
+    classdef.name = p[2]
+    classdef.bases = []
+    classdef.body = p[4]
+    classdef.decorator_list = []
+    classdef.lineno = p.lineno(1)
+    ast.fix_missing_locations(classdef)
+    p[0] = classdef
+
+
+def p_classdef2(p):
+    ''' classdef : CLASS NAME LPAR RPAR COLON suite '''
+    classdef = ast.ClassDef()
+    classdef.name = p[2]
+    classdef.bases = []
+    classdef.body = p[6]
+    classdef.decorator_list = []
+    classdef.lineno = p.lineno(1)
+    ast.fix_missing_locations(classdef)
+    p[0] = classdef
+
+
+def p_classdef3(p):
+    ''' classdef : CLASS NAME LPAR testlist RPAR COLON suite '''
+    classdef = ast.ClassDef()
+    classdef.name = p[2]
+    bases = p[4]
+    if not isinstance(bases, list):
+        bases = [bases]
+    classdef.bases = bases
+    classdef.body = p[7]
+    classdef.decorator_list = []
+    classdef.lineno = p.lineno(1)
+    ast.fix_missing_locations(classdef)
+    p[0] = classdef
+
+
+def p_decorated(p):
+    ''' decorated : decorators funcdef
+                  | decorators classdef '''
+    decs = p[1]
+    target = p[2]
+    target.decorator_list = decs
+    p[0] = target
+
+
+def p_decorators1(p):
+    ''' decorators : decorator decorators '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_decorators2(p):
+    ''' decorators : decorator '''
+    p[0] = [p[1]]
+
+
+def p_decorator1(p):
+    ''' decorator : AT dotted_name NEWLINE '''
+    name = ast_for_dotted_name(p[2])
+    name.lineno = p.lineno(1)
+    ast.fix_missing_locations(name)
+    p[0] = name
+
+
+def p_decorator2(p):
+    ''' decorator : AT dotted_name LPAR RPAR NEWLINE '''
+    call = ast.Call()
+    call.func = ast_for_dotted_name(p[2])
+    call.args = []
+    call.keywords = []
+    call.stargs = None
+    call.kwargs = None
+    call.lineno = p.lineno(1)
+    ast.fix_missing_locations(call)
+    p[0] = call
+
+
+def p_decorator3(p):
+    ''' decorator : AT dotted_name LPAR arglist RPAR NEWLINE '''
+    args = p[4]
+    call = ast.Call()
+    call.func = ast_for_dotted_name(p[2])
+    call.args = args.args
+    call.keywords = args.keywords
+    call.starargs = args.starargs
+    call.kwargs = args.kwargs
+    call.lineno = p.lineno(1)
+    ast.fix_missing_locations(call)
+    p[0] = call
 
 
 #------------------------------------------------------------------------------
@@ -1884,6 +2054,11 @@ def p_atom1(p):
 
 
 def p_atom2(p):
+    ''' atom : LPAR yield_expr RPAR '''
+    p[0] = p[2]
+
+
+def p_atom3(p):
     ''' atom : LPAR testlist_comp RPAR '''
     info = p[2]
     if isinstance(info, CommaSeparatedList):
@@ -1897,12 +2072,12 @@ def p_atom2(p):
     p[0] = node
 
 
-def p_atom3(p):
+def p_atom4(p):
     ''' atom : LSQB RSQB '''
     p[0] = ast.List(elts=[], ctx=Load)
 
 
-def p_atom4(p):
+def p_atom5(p):
     ''' atom : LSQB listmaker RSQB '''
     info = p[2]
     if isinstance(info, CommaSeparatedList):
@@ -1914,12 +2089,12 @@ def p_atom4(p):
     p[0] = node
     
 
-def p_atom5(p):
+def p_atom6(p):
     ''' atom : LBRACE RBRACE '''
     p[0] = ast.Dict(keys=[], values=[])
 
 
-def p_atom6(p):
+def p_atom7(p):
     ''' atom : LBRACE dictorsetmaker RBRACE '''
     info = p[2]
     if isinstance(info, GeneratorInfo):
@@ -1940,18 +2115,18 @@ def p_atom6(p):
     p[0] = node
 
 
-def p_atom7(p):
+def p_atom8(p):
     ''' atom : NAME '''
     p[0] = ast.Name(id=p[1], ctx=Load)
 
 
-def p_atom8(p):
+def p_atom9(p):
     ''' atom : NUMBER '''
     n = ast.Num(n=eval(p[1]))
     p[0] = n
 
 
-def p_atom9(p):
+def p_atom10(p):
     ''' atom : atom_string_list '''
     s = ast.Str(s=p[1])
     p[0] = s

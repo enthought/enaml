@@ -27,6 +27,7 @@ class EnamlLexer(object):
     # Token Declarations
     #--------------------------------------------------------------------------
     operators = (
+        (r'@', 'AT'),
         (r'&', 'AMPER'),
         (r'&=', 'AMPEREQUAL'),
         (r'\^', 'CIRCUMFLEX'),
@@ -102,7 +103,9 @@ class EnamlLexer(object):
         'as': 'AS',
         'assert': 'ASSERT',
         'break': 'BREAK',
+        'class': 'CLASS',
         'continue': 'CONTINUE',
+        'def': 'DEF',
         'del': 'DEL',
         'elif': 'ELIF',
         'else': 'ELSE',
@@ -122,9 +125,11 @@ class EnamlLexer(object):
         'pass': 'PASS',
         'print': 'PRINT',
         'raise': 'RAISE',
+        'return': 'RETURN',
         'try': 'TRY',
         'while': 'WHILE',
         'with': 'WITH',
+        'yield': 'YIELD',
     }
 
     tokens = (tokens + 
