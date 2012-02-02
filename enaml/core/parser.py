@@ -22,6 +22,12 @@ except OSError:
     _enaml_dir = os.getcwd()
 
 
+# Ast Context Singletons
+Store = ast.Store()
+Load = ast.Load()
+Del = ast.Del()
+
+
 # Lexer tokens which need to be exposed to the parser
 tokens = EnamlLexer.tokens
 
@@ -36,7 +42,7 @@ operator_table = {
 
 
 # The allowed ast node types for ast.Store contexts
-allowed_store = set([
+context_allowed = set([
     ast.Attribute,
     ast.Subscript,
     ast.Name,
@@ -47,7 +53,7 @@ allowed_store = set([
 
 # The disallowed ast node types for ast.Store contexts and 
 # the associated message tag for error reporting.
-disallowed_store = {
+context_disallowed = {
     ast.Lambda: 'lambda',
     ast.Call: 'function call',
     ast.BoolOp: 'operator',
@@ -65,6 +71,31 @@ disallowed_store = {
     ast.Ellipsis: 'Ellipsis',
     ast.Compare: 'comparison',
     ast.IfExp: 'conditional expression',
+}
+
+
+# The node types allowed in aug assignment
+aug_assign_allowed = set([
+    ast.Name,
+    ast.Attribute,
+    ast.Subscript,
+])
+
+
+# A mapping of aug assignment operators to ast types
+augassign_table = {
+    '&=': ast.BitAnd(),
+    '^=': ast.BitXor(),
+    '//=': ast.FloorDiv(),
+    '<<=': ast.LShift(),
+    '-=': ast.Sub(),
+    '%=': ast.Mod(),
+    '+=': ast.Add(),
+    '>>=': ast.RShift(),
+    '/=': ast.Div(),
+    '*=': ast.Mult(),
+    '|=': ast.BitOr(),
+    '**=': ast.Pow(),
 }
 
 
@@ -88,37 +119,53 @@ def raise_enaml_syntax_error(msg, lineno):
     raise EnamlSyntaxError(msg)
 
 
-def set_store_ctxt(node):
-    """ Recursively sets the context of the node to ast.Store. If the
-    node is not one of the allowed types for a store context, an error
-    is raised with an appropriate message.
+def set_context(node, ctx):
+    """ Recursively sets the context of the node to the given context
+    which should be Store or Del. If the node is not one of the allowed
+    types for the context, an erro is raised with an appropriate message.
 
     """
     items = None
     err_msg = ''
     node_type = type(node)
-    if node_type in allowed_store:
-        node.ctx = ast.Store()
-        if node_type == ast.Tuple:
-            if len(node.elts) == 0:
-                err_msg = '()'
-            else:
+    if node_type in context_allowed:
+        node.ctx = ctx
+        if ctx == Store:
+            if node_type == ast.Tuple:
+                if len(node.elts) == 0:
+                    err_msg = '()'
+                else:
+                    items = node.elts
+            elif node_type == ast.List:
                 items = node.elts
-        elif node_type == ast.List:
-            items = node.elts
-    elif node_type in disallowed_store:
-        err_msg = disallowed_store[node_type]
+    elif node_type in context_disallowed:
+        err_msg = context_disallowed[node_type]
     else:
         msg = 'unexpected expression in assignment %d (line %d)'
         raise SystemError(msg % (node_type.__name__, node.lineno))
     
     if err_msg:
-        msg = "can't assign to %s" % err_msg
+        m = 'assign to' if ctx == Store else 'delete'
+        msg = "can't %s %s" % (m, err_msg)
         raise EnamlSyntaxError(msg)
     
     if items is not None:
         for item in items:
-            set_store_ctxt(item)
+            set_context(item, ctx)
+
+
+def ast_for_testlist(testlist):
+    """ If the testlist is a list, returns an ast.Tuple with a Load
+    context, otherwise returns the orginal node.
+
+    """
+    if isinstance(testlist, list):
+        value = ast.Tuple()
+        value.elts = testlist
+        value.ctx = Load
+    else:
+        value = testlist
+    return value
 
 
 #------------------------------------------------------------------------------
@@ -206,10 +253,13 @@ def p_enaml_raw_python(p):
 # Enaml Import
 #------------------------------------------------------------------------------
 def p_enaml_import(p):
-    ''' enaml_import : import_stmt '''
+    ''' enaml_import : import_stmt NEWLINE '''
+    lineno = p.lineno(1)
     imprt = p[1]
+    imprt.lineno = lineno
+    ast.fix_missing_locations(imprt)
     mod = ast.Module(body=[imprt])
-    p[0] = enaml_ast.Python(mod, imprt.lineno)
+    p[0] = enaml_ast.Python(mod, lineno)
 
 
 #------------------------------------------------------------------------------
@@ -219,7 +269,7 @@ def p_declaration(p):
     ''' declaration : NAME LPAR NAME RPAR COLON declaration_body '''
     lineno = p.lineno(1)
     doc, idn, items = p[6]
-    base = ast.Expression(body=ast.Name(id=p[3], ctx=ast.Load()))
+    base = ast.Expression(body=ast.Name(id=p[3], ctx=Load))
     base.lineno = lineno
     ast.fix_missing_locations(base)
     base_node = enaml_ast.Python(base, lineno)
@@ -351,7 +401,7 @@ def p_attribute_declaration1(p):
 def p_attribute_declaration2(p):
     ''' attribute_declaration : NAME NAME COLON NAME NEWLINE '''
     lineno = p.lineno(1) 
-    expr = ast.Expression(body=ast.Name(id=p[4], ctx=ast.Load()))
+    expr = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
     expr.lineno = lineno
     ast.fix_missing_locations(expr)
     expr_node = enaml_ast.Python(expr, lineno)
@@ -369,7 +419,7 @@ def p_attribute_declaration3(p):
 def p_attribute_declaration4(p):
     ''' attribute_declaration : NAME NAME COLON NAME binding '''
     lineno = p.lineno(1)
-    expr = ast.Expression(body=ast.Name(id=p[4], ctx=ast.Load()))
+    expr = ast.Expression(body=ast.Name(id=p[4], ctx=Load))
     expr.lineno = lineno
     ast.fix_missing_locations(expr)
     expr_node = enaml_ast.Python(expr, lineno)
@@ -466,17 +516,7 @@ def p_binding1(p):
 
 
 def p_binding2(p):
-    ''' binding : DOUBLECOLON simple_stmt_line '''
-    lineno = p.lineno(1)
-    operator = translate_operator(p[1])
-    mod = ast.Module()
-    mod.body = [p[2]]
-    expr_node = enaml_ast.Python(mod, lineno)
-    p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
-
-
-def p_binding3(p):
-    ''' binding : DOUBLECOLON simple_stmt_suite '''
+    ''' binding : DOUBLECOLON suite '''
     lineno = p.lineno(1)
     operator = translate_operator(p[1])
     mod = ast.Module()
@@ -485,135 +525,9 @@ def p_binding3(p):
     p[0] = enaml_ast.BoundExpression(operator, expr_node, lineno)
 
 
-def p_simple_stmt_suite(p):
-    ''' simple_stmt_suite : NEWLINE INDENT simple_stmt_list DEDENT '''
-    p[0] = p[3]
-
-
-def p_simple_stmt_list1(p):
-    ''' simple_stmt_list : simple_stmt_line simple_stmt_list '''
-    p[0] = [p[1]] + p[2]
-
-
-def p_simple_stmt_list2(p):
-    ''' simple_stmt_list : simple_stmt_line '''
-    p[0] = [p[1]]
-
-
-def p_simple_stmt_line(p):
-    ''' simple_stmt_line : simple_stmt NEWLINE '''
-    stmt = p[1]
-    stmt.lineno = p.lineno(1)
-    ast.fix_missing_locations(stmt)
-    p[0] = stmt
-
-
 #==============================================================================
 # Begin Python Grammar
 #==============================================================================
-
-#------------------------------------------------------------------------------
-# Statement Grammar
-#------------------------------------------------------------------------------
-def p_simple_stmt(p):
-    ''' simple_stmt : small_stmt '''
-    p[0] = p[1]
-
-
-def p_small_stmt1(p):
-    ''' small_stmt : expr_stmt '''
-    p[0] = p[1]
-
-
-def p_small_stmt2(p):
-    ''' small_stmt : print_stmt '''
-    p[0] = p[1]
-
-
-def p_print_stmt1(p):
-    ''' print_stmt : PRINT '''
-    prnt = ast.Print()
-    prnt.dest = None
-    prnt.values = []
-    prnt.nl = True
-    p[0] = prnt
-
-
-def p_print_stmt2(p):
-    ''' print_stmt : PRINT testlist '''
-    prnt = ast.Print()
-    prnt.dest = None
-    prnt.values = p[2]
-    prnt.nl = True
-    p[0] = prnt
-
-
-def p_expr_stmt1(p):
-    ''' expr_stmt : testlist '''
-    rhs = p[1]
-    if len(rhs) > 1:
-        value = ast.Tuple()
-        value.elts = rhs
-        value.ctx = ast.Load()
-    else:
-        value = rhs[0]
-        value.ctx = ast.Load()
-    expr = ast.Expr()
-    expr.value = value
-    p[0] = expr
-
-
-def p_expr_stmt2(p):
-    ''' expr_stmt : testlist EQUAL testlist '''
-    lineno = p.lineno(2)
-    lhs = p[1]
-    rhs = p[3]
-    for item in lhs:
-        set_store_ctxt(item)
-    if len(rhs) > 1:
-        value = ast.Tuple()
-        value.elts = rhs
-        value.ctx = ast.Load()
-    else:
-        value = rhs[0]
-        value.ctx = ast.Load()
-    assg = ast.Assign()
-    assg.targets = lhs
-    assg.value = value
-    assg.lineno = lineno
-    ast.fix_missing_locations(assg)
-    p[0] = assg
-
-
-def p_testlist1(p):
-    ''' testlist : test '''
-    p[0] = [p[1]]
-
-
-def p_testlist2(p):
-    ''' testlist : test COMMA '''
-    p[0] = [p[1]]
-
-
-def p_testlist3(p):
-    ''' testlist : test testlist_list '''
-    p[0] = [p[1]] + p[2]
-
-
-def p_testlist4(p):
-    ''' testlist : test testlist_list COMMA '''
-    p[0] = [p[1]] + p[2]
-
-
-def p_testlist_list1(p):
-    ''' testlist_list : COMMA test '''
-    p[0] = [p[2]]
-
-
-def p_testlist_list2(p):
-    ''' testlist_list : testlist_list COMMA test '''
-    p[0] = p[1] + [p[3]]
-
 
 #------------------------------------------------------------------------------
 # Python Parsing Helper Objects
@@ -641,23 +555,744 @@ class Arguments(object):
 
 
 #------------------------------------------------------------------------------
+# Statement Grammar
+#------------------------------------------------------------------------------
+def p_suite1(p):
+    ''' suite : simple_stmt '''
+    # stmt may be a list of simple_stmt due to this piece of grammar:
+    # simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE
+    stmt = p[1]
+    if isinstance(stmt, list):
+        res = stmt
+    else:
+        res = [stmt]
+    p[0] = res
+
+
+def p_suite2(p):
+    ''' suite : NEWLINE INDENT stmt_list DEDENT '''
+    p[0] = p[3]
+
+
+def p_stmt_list1(p):
+    ''' stmt_list : stmt stmt_list '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_stmt_list2(p):
+    ''' stmt_list : stmt '''
+    # stmt may be a list of simple_stmt due to this piece of grammar:
+    # simple_stmt: small_stmt (';' small_stmt)* [';'] NEWLINE
+    stmt = p[1]
+    if isinstance(stmt, list):
+        res = stmt
+    else:
+        res = [stmt]
+    p[0] = res
+
+
+def p_stmt(p):
+    ''' stmt : simple_stmt
+             | compound_stmt '''
+    p[0] = p[1]
+
+
+def p_simple_stmt1(p):
+    ''' simple_stmt : small_stmt NEWLINE '''
+    stmt = p[1]
+    stmt.lineno = p.lineno(2)
+    ast.fix_missing_locations(stmt)
+    p[0] = stmt
+
+
+def p_simple_stmt2(p):
+    ''' simple_stmt : small_stmt_list NEWLINE '''
+    lineno = p.lineno(2)
+    stmts = p[1]
+    for stmt in stmts:
+        stmt.lineno = lineno
+        ast.fix_missing_locations(stmt)
+    p[0] = stmts
+
+
+def p_small_stmt_list1(p):
+    ''' small_stmt_list : small_stmt SEMI '''
+    p[0] = [p[1]]
+
+
+def p_small_stmt_list2(p):
+    ''' small_stmt_list : small_stmt small_stmt_list_list '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_small_stmt_list3(p):
+    ''' small_stmt_list : small_stmt small_stmt_list_list SEMI '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_small_stmt_list_list1(p):
+    ''' small_stmt_list_list : SEMI small_stmt '''
+    p[0] = [p[2]]
+
+
+def p_small_stmt_list_list2(p):
+    ''' small_stmt_list_list : small_stmt_list_list SEMI small_stmt '''
+    p[0] = p[1] + [p[3]]
+
+
+def p_small_stmt1(p):
+    ''' small_stmt : expr_stmt
+                   | print_stmt
+                   | del_stmt
+                   | pass_stmt
+                   | flow_stmt
+                   | import_stmt 
+                   | global_stmt
+                   | exec_stmt
+                   | assert_stmt '''
+    p[0] = p[1]
+
+
+def p_print_stmt1(p):
+    ''' print_stmt : PRINT '''
+    prnt = ast.Print()
+    prnt.dest = None
+    prnt.values = []
+    prnt.nl = True
+    p[0] = prnt
+
+
+def p_print_stmt2(p):
+    ''' print_stmt : PRINT test '''
+    prnt = ast.Print()
+    prnt.dest = None
+    prnt.values = [p[2]]
+    prnt.nl = True
+    p[0] = prnt
+
+
+def p_print_stmt3(p):
+    ''' print_stmt : PRINT print_list '''
+    prnt = ast.Print()
+    all_values = p[2]
+    good_values = [item for item in all_values if item is not None]
+    if all_values[-1] is None:
+        nl = False
+    else:
+        nl = True
+    prnt.dest = None
+    prnt.values = good_values
+    prnt.nl = nl
+    p[0] = prnt
+
+
+def p_print_stmt4(p):
+    ''' print_stmt : PRINT RIGHTSHIFT test '''
+    prnt = ast.Print()
+    prnt.dest = p[3]
+    prnt.values = []
+    prnt.nl = True
+    p[0] = prnt
+
+
+def p_print_stmt5(p):
+    ''' print_stmt : PRINT RIGHTSHIFT test COMMA test '''
+    prnt = ast.Print()
+    prnt.dest = p[3]
+    prnt.values = [p[5]]
+    prnt.nl = True
+    p[0] = prnt
+
+
+def p_print_stmt6(p):
+    ''' print_stmt : PRINT RIGHTSHIFT test COMMA print_list '''
+    prnt = ast.Print()
+    all_values = p[5]
+    good_values = [item for item in all_values if item is not None]
+    if all_values[-1] is None:
+        nl = False
+    else:
+        nl = True
+    prnt.dest = p[3]
+    prnt.values = good_values
+    prnt.nl = nl
+    p[0] = prnt
+
+
+def p_print_list1(p):
+    ''' print_list : test COMMA '''
+    p[0] = [p[1], None]
+
+
+def p_print_list2(p):
+    ''' print_list : test print_list_list '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_print_list3(p):
+    ''' print_list : test print_list_list COMMA '''
+    p[0] = [p[1]] + p[2] + [None]
+
+
+def p_print_list_list1(p):
+    ''' print_list_list : COMMA test '''
+    p[0] = [p[2]]
+
+
+def p_print_list_list2(p):
+    ''' print_list_list : print_list_list COMMA test '''
+    p[0] = p[1] + [p[3]]
+
+
+def p_del_stmt(p):
+    ''' del_stmt : DEL exprlist '''
+    exprlist = p[2]
+    set_context(exprlist, Del)
+    del_stmt = ast.Delete()
+    del_stmt.targets = [exprlist]
+    p[0] = del_stmt
+
+
+def p_pass_stmt(p):
+    ''' pass_stmt : PASS '''
+    pass_stmt = ast.Pass()
+    pass_stmt.lineno = p.lineno(1)
+    p[0] = pass_stmt
+
+
+def p_flow_stmt(p):
+    ''' flow_stmt : break_stmt
+                  | continue_stmt 
+                  | raise_stmt '''
+    p[0] = p[1]
+
+
+def p_break_stmt(p):
+    ''' break_stmt : BREAK '''
+    break_stmt = ast.Break()
+    break_stmt.lineno = p.lineno(1)
+    p[0] = break_stmt
+
+
+def p_continue_stmt(p):
+    ''' continue_stmt : CONTINUE '''
+    continue_stmt = ast.Continue()
+    continue_stmt.lineno = p.lineno(1)
+    p[0] = continue_stmt
+
+
+def p_raise_stmt1(p):
+    ''' raise_stmt : RAISE '''
+    raise_stmt = ast.Raise()
+    raise_stmt.type = None
+    raise_stmt.inst = None
+    raise_stmt.tback = None
+    p[0] = raise_stmt
+
+
+def p_raise_stmt2(p):
+    ''' raise_stmt : RAISE test '''
+    raise_stmt = ast.Raise()
+    raise_stmt.type = p[2]
+    raise_stmt.inst = None
+    raise_stmt.tback = None
+    p[0] = raise_stmt
+
+
+def p_raise_stmt3(p):
+    ''' raise_stmt : RAISE test COMMA test '''
+    raise_stmt = ast.Raise()
+    raise_stmt.type = p[2]
+    raise_stmt.inst = p[4]
+    raise_stmt.tback = None
+    p[0] = raise_stmt
+
+
+def p_raise_stmt4(p):
+    ''' raise_stmt : RAISE test COMMA test COMMA test '''
+    raise_stmt = ast.Raise()
+    raise_stmt.type = p[2]
+    raise_stmt.inst = p[4]
+    raise_stmt.tback = p[6]
+    p[0] = raise_stmt
+
+
+def p_global_stmt1(p):
+    ''' global_stmt : GLOBAL NAME '''
+    global_stmt = ast.Global()
+    global_stmt.names = [p[2]]
+    global_stmt.lineno = p.lineno(1)
+    p[0] = global_stmt
+
+
+def p_global_stmt2(p):
+    ''' global_stmt : GLOBAL NAME globals_list '''
+    global_stmt = ast.Global()
+    global_stmt.names = [p[2]] + p[3]
+    global_stmt.lineno = p.lineno(1)
+    p[0] = global_stmt
+
+
+def p_globals_list1(p):
+    ''' globals_list : COMMA NAME globals_list '''
+    p[0] = [p[2]] + p[3]
+
+
+def p_globals_list2(p):
+    ''' globals_list : COMMA NAME '''
+    p[0] = [p[2]]
+
+
+def p_exec_stmt1(p):
+    ''' exec_stmt : EXEC expr '''
+    exec_stmt = ast.Exec()
+    exec_stmt.body = p[2]
+    exec_stmt.globals = None
+    exec_stmt.locals = None
+    p[0] = exec_stmt
+
+
+def p_exec_stmt2(p):
+    ''' exec_stmt : EXEC expr IN test '''
+    exec_stmt = ast.Exec()
+    exec_stmt.body = p[2]
+    exec_stmt.globals= p[4]
+    exec_stmt.locals = None
+    p[0] = exec_stmt
+
+
+def p_exec_stmt3(p):
+    ''' exec_stmt : EXEC expr IN test COMMA test '''
+    exec_stmt = ast.Exec()
+    exec_stmt.body = p[2]
+    exec_stmt.globals = p[4]
+    exec_stmt.locals = p[6]
+    p[0] = exec_stmt
+
+
+def p_assert_stmt1(p):
+    ''' assert_stmt : ASSERT test '''
+    assert_stmt = ast.Assert()
+    assert_stmt.test = p[2]
+    assert_stmt.msg = None
+    p[0] = assert_stmt
+
+
+def p_assert_stmt2(p):
+    ''' assert_stmt : ASSERT test COMMA test '''
+    assert_stmt = ast.Assert()
+    assert_stmt.test = p[2]
+    assert_stmt.msg = p[4]
+    p[0] = assert_stmt
+
+
+def p_expr_stmt1(p):
+    ''' expr_stmt : testlist '''
+    expr = ast.Expr()
+    expr.value = ast_for_testlist(p[1])
+    p[0] = expr
+
+
+def p_expr_stmt2(p):
+    ''' expr_stmt : testlist augassign testlist '''
+    op, lineno = p[2]
+    lhs = ast_for_testlist(p[1])
+    rhs = ast_for_testlist(p[3])
+    set_context(lhs, Store)
+    if type(lhs) not in aug_assign_allowed:
+        msg = 'illegal expression for augmented assignment'
+        raise_enaml_syntax_error(msg, lineno)
+    aug = ast.AugAssign()
+    aug.target = lhs
+    aug.value = rhs
+    aug.op = op
+    p[0] = aug
+
+
+def p_expr_stmt3(p):
+    ''' expr_stmt : testlist equal_list '''
+    all_items = [p[1]] + p[2]
+    targets = map(ast_for_testlist, all_items) 
+    value = targets.pop()
+    for item in targets:
+        set_context(item, Store)
+    assg = ast.Assign()
+    assg.targets = targets
+    assg.value = value   
+    p[0] = assg
+
+
+def p_augassign(p):
+    ''' augassign : AMPEREQUAL
+                  | CIRCUMFLEXEQUAL
+                  | DOUBLESLASHEQUAL
+                  | DOUBLESTAREQUAL
+                  | LEFTSHIFTEQUAL
+                  | MINUSEQUAL
+                  | PERCENTEQUAL
+                  | PLUSEQUAL
+                  | RIGHTSHIFTEQUAL
+                  | SLASHEQUAL
+                  | STAREQUAL
+                  | VBAREQUAL '''
+    lineno = p.lineno(1)
+    op = augassign_table[p[1]]
+    p[0] = (op, lineno)
+
+
+def p_equal_list1(p):
+    ''' equal_list : EQUAL testlist '''
+    p[0] = [p[2]]
+
+
+def p_equal_list2(p):
+    ''' equal_list : EQUAL testlist equal_list '''
+    p[0] = [p[2]] + p[3]
+
+
+def p_testlist1(p):
+    ''' testlist : test '''
+    p[0] = p[1]
+
+
+def p_testlist2(p):
+    ''' testlist : test COMMA '''
+    p[0] = [p[1]]
+
+
+def p_testlist3(p):
+    ''' testlist : test testlist_list '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_testlist4(p):
+    ''' testlist : test testlist_list COMMA '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_testlist_list1(p):
+    ''' testlist_list : COMMA test '''
+    p[0] = [p[2]]
+
+
+def p_testlist_list2(p):
+    ''' testlist_list : testlist_list COMMA test '''
+    p[0] = p[1] + [p[3]]
+
+
+def p_compound_stmt(p):
+    ''' compound_stmt : if_stmt 
+                      | while_stmt
+                      | for_stmt
+                      | try_stmt
+                      | with_stmt '''
+    p[0] = p[1]
+
+
+def p_if_stmt1(p):
+    ''' if_stmt : IF test COLON suite '''
+    if_stmt = ast.If()
+    if_stmt.test = p[2]
+    if_stmt.body = p[4]
+    if_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(if_stmt)
+    if_stmt.orelse = []
+    p[0] = if_stmt
+
+
+def p_if_stmt2(p):
+    ''' if_stmt : IF test COLON suite elif_stmts '''
+    if_stmt = ast.If()
+    if_stmt.test = p[2]
+    if_stmt.body = p[4]
+    if_stmt.lineno = p.lineno(1)
+    if_stmt.orelse = [p[5]]
+    ast.fix_missing_locations(if_stmt)
+    p[0] = if_stmt
+
+
+def p_if_stmt3(p):
+    ''' if_stmt : IF test COLON suite else_stmt '''
+    if_stmt = ast.If()
+    if_stmt.test = p[2]
+    if_stmt.body = p[4]
+    if_stmt.lineno = p.lineno(1)
+    if_stmt.orelse = p[5]
+    ast.fix_missing_locations(if_stmt)
+    p[0] = if_stmt
+
+
+def p_if_stmt4(p):
+    ''' if_stmt : IF test COLON suite elif_stmts else_stmt '''
+    if_stmt = ast.If()
+    if_stmt.test = p[2]
+    if_stmt.body = p[4]
+    if_stmt.lineno = p.lineno(1)
+    elif_stmt = p[5]
+    if_stmt.orelse = [elif_stmt]
+    else_stmt = p[6]
+    while elif_stmt.orelse:
+        elif_stmt = elif_stmt.orelse[0]
+    elif_stmt.orelse = else_stmt
+    ast.fix_missing_locations(if_stmt)
+    p[0] = if_stmt
+
+
+def p_elif_stmts1(p):
+    ''' elif_stmts : elif_stmts elif_stmt '''
+    elif_stmt = p[1]
+    elif_stmt.orelse = [p[2]]
+    p[0] = elif_stmt
+
+
+def p_elif_stmts2(p):
+   ''' elif_stmts : elif_stmt '''
+   p[0] = p[1]
+
+
+def p_elif_stmt(p):
+    ''' elif_stmt : ELIF test COLON suite '''
+    if_stmt = ast.If()
+    if_stmt.test = p[2]
+    if_stmt.body = p[4]
+    if_stmt.lineno = p.lineno(1)
+    if_stmt.orelse = []
+    ast.fix_missing_locations(if_stmt)
+    p[0] = if_stmt
+
+ 
+def p_else_stmt(p):
+    ''' else_stmt : ELSE COLON suite '''
+    p[0] = p[3]
+
+
+def p_while_stmt1(p):
+    ''' while_stmt : WHILE test COLON suite '''
+    while_stmt = ast.While()
+    while_stmt.test = p[2]
+    while_stmt.body = p[4]
+    while_stmt.orelse = []
+    while_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(while_stmt)
+    p[0] = while_stmt
+
+
+def p_while_stmt2(p):
+    ''' while_stmt : WHILE test COLON suite ELSE COLON suite '''
+    while_stmt = ast.While()
+    while_stmt.test = p[2]
+    while_stmt.body = p[4]
+    while_stmt.orelse = p[7]
+    while_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(while_stmt)
+    p[0] = while_stmt
+
+
+def p_for_stmt1(p):
+    ''' for_stmt : FOR exprlist IN testlist COLON suite '''
+    for_stmt = ast.For()
+    target = p[2]
+    set_context(target, Store)
+    for_stmt.target = target
+    for_stmt.iter = ast_for_testlist(p[4])
+    for_stmt.body = p[6]
+    for_stmt.orelse = []
+    for_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(for_stmt)
+    p[0] = for_stmt
+
+
+def p_for_stmt2(p):
+    ''' for_stmt : FOR exprlist IN testlist COLON suite ELSE COLON suite '''
+    for_stmt = ast.For()
+    target = p[2]
+    set_context(target, Store)
+    for_stmt.target = target
+    for_stmt.iter = ast_for_testlist(p[4])
+    for_stmt.body = p[6]
+    for_stmt.orelse = p[9]
+    for_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(for_stmt)
+    p[0] = for_stmt
+
+
+def p_try_stmt1(p):
+    ''' try_stmt : TRY COLON suite FINALLY COLON suite '''
+    try_finally = ast.TryFinally()
+    try_finally.body = p[3]
+    try_finally.finalbody = p[6]
+    try_finally.lineno = p.lineno(1)
+    ast.fix_missing_locations(try_finally)
+    p[0] = try_finally
+
+
+def p_try_stmt2(p):
+    ''' try_stmt : TRY COLON suite except_clauses '''
+    try_stmt = ast.TryExcept()
+    try_stmt.body = p[3]
+    try_stmt.handlers = p[4]
+    try_stmt.orelse = []
+    try_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(try_stmt)
+    p[0] = try_stmt
+
+
+def p_try_stmt3(p):
+    ''' try_stmt : TRY COLON suite except_clauses ELSE COLON suite '''
+    try_stmt = ast.TryExcept()
+    try_stmt.body = p[3]
+    try_stmt.handlers = p[4]
+    try_stmt.orelse = p[7]
+    try_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(try_stmt)
+    p[0] = try_stmt
+
+
+def p_try_stmt4(p):
+    ''' try_stmt : TRY COLON suite except_clauses FINALLY COLON suite '''
+    lineno = p.lineno(1)
+    try_finally = ast.TryFinally()
+    try_stmt = ast.TryExcept()
+    try_stmt.body = p[3]
+    try_stmt.handlers = p[4]
+    try_stmt.orelse = []
+    try_stmt.lineno = lineno
+    ast.fix_missing_locations(try_stmt)
+    try_finally.body = [try_stmt]
+    try_finally.finalbody = p[7]
+    try_finally.lineno = lineno
+    ast.fix_missing_locations(try_finally)
+    p[0] = try_finally
+
+
+def p_try_stmt5(p):
+    ''' try_stmt : TRY COLON suite except_clauses ELSE COLON suite FINALLY COLON suite '''
+    lineno = p.lineno(1)
+    try_finally = ast.TryFinally()
+    try_stmt = ast.TryExcept()
+    try_stmt.body = p[3]
+    try_stmt.handlers = p[4]
+    try_stmt.orelse = p[7]
+    try_stmt.lineno = lineno
+    ast.fix_missing_locations(try_stmt)
+    try_finally.body = [try_stmt]
+    try_finally.finalbody = p[10]
+    try_finally.lineno = lineno
+    ast.fix_missing_locations(try_finally)
+    p[0] = try_finally
+
+
+def p_except_clauses1(p):
+    ''' except_clauses : except_clause except_clauses '''
+    p[0] = [p[1]] + p[2]
+
+
+def p_except_clauses2(p):
+    ''' except_clauses : except_clause '''
+    p[0] = [p[1]]
+
+
+def p_except_clause1(p):
+    ''' except_clause : EXCEPT COLON suite '''
+    excpt = ast.ExceptHandler()
+    excpt.type = None
+    excpt.name = None
+    excpt.body = p[3]
+    excpt.lineno = p.lineno(1)
+    ast.fix_missing_locations(excpt)
+    p[0] = excpt
+
+
+def p_except_clause2(p):
+    ''' except_clause : EXCEPT test COLON suite '''
+    excpt = ast.ExceptHandler()
+    excpt.type = p[2]
+    excpt.name = None
+    excpt.body = p[4]
+    excpt.lineno = p.lineno(1)
+    ast.fix_missing_locations(excpt)
+    p[0] = excpt
+
+
+def p_except_clause3(p):
+    ''' except_clause : EXCEPT test AS test COLON suite 
+                      | EXCEPT test COMMA test COLON suite '''
+    excpt = ast.ExceptHandler()
+    excpt.type = p[2]
+    name = p[4]
+    set_context(name, Store)
+    excpt.name = name
+    excpt.body = p[6]
+    excpt.lineno = p.lineno(1)
+    ast.fix_missing_locations(excpt)
+    p[0] = excpt
+
+
+def p_with_stmt1(p):
+    ''' with_stmt : WITH with_item COLON suite '''
+    with_stmt = ast.With()
+    ctxt, opt_vars = p[2]
+    with_stmt.context_expr = ctxt
+    with_stmt.optional_vars = opt_vars
+    with_stmt.body = p[4]
+    with_stmt.lineno = p.lineno(1)
+    ast.fix_missing_locations(with_stmt)
+    p[0] = with_stmt
+
+
+def p_with_stmt2(p):
+    ''' with_stmt : WITH with_item with_item_list COLON suite '''
+    with_stmt = ast.With()
+    ctxt, opt_vars = p[2]
+    with_stmt.context_expr = ctxt
+    with_stmt.optional_vars = opt_vars
+    root = with_stmt
+    last = with_stmt
+    for ctxt, opt_vars in p[3]:
+        with_stmt = ast.With()
+        with_stmt.context_expr = ctxt
+        with_stmt.optional_vars = opt_vars
+        last.body = [with_stmt]
+        last = with_stmt
+    last.body = p[5]
+    root.lineno = p.lineno(1)
+    ast.fix_missing_locations(root)
+    p[0] = root
+
+
+def p_with_item1(p):
+    ''' with_item : test '''
+    p[0] = (p[1], None)
+
+
+def p_with_item2(p):
+    ''' with_item : test AS expr '''
+    expr = p[3]
+    set_context(expr, Store)
+    p[0] = (p[1], expr)
+
+
+def p_with_item_list1(p):
+    ''' with_item_list : COMMA with_item with_item_list '''
+    p[0] = [p[2]] + p[3]
+
+
+def p_with_item_list2(p):
+    ''' with_item_list : COMMA with_item '''
+    p[0]  = [p[2]]
+
+
+#------------------------------------------------------------------------------
 # Import Grammar
 #------------------------------------------------------------------------------
 def p_import_stmt1(p):
-    ''' import_stmt : import_name NEWLINE '''
-    imprt = p[1]
-    imprt.lineno = p.lineno(2)
-    ast.fix_missing_locations(imprt)
-    p[0] = imprt
+    ''' import_stmt : import_name '''
+    p[0] = p[1]
 
     
 def p_import_stmt2(p):
-    ''' import_stmt : import_from NEWLINE '''
-    imprt = p[1]
-    imprt.lineno = p.lineno(2)
-    ast.fix_missing_locations(imprt)
-    p[0] = imprt
-
+    ''' import_stmt : import_from '''
+    p[0] = p[1]
 
 def p_import_name(p):
     ''' import_name : IMPORT dotted_as_names '''
@@ -1245,14 +1880,14 @@ def p_power_list2(p):
 
 def p_atom1(p):
     ''' atom : LPAR RPAR '''
-    p[0] = ast.Tuple(elts=[], ctx=ast.Load())
+    p[0] = ast.Tuple(elts=[], ctx=Load)
 
 
 def p_atom2(p):
     ''' atom : LPAR testlist_comp RPAR '''
     info = p[2]
     if isinstance(info, CommaSeparatedList):
-        node = ast.Tuple(elts=info.values, ctx=ast.Load())
+        node = ast.Tuple(elts=info.values, ctx=Load)
     elif isinstance(info, GeneratorInfo):
         node = ast.GeneratorExp(elt=info.elt, generators=info.generators)
     else:
@@ -1264,14 +1899,14 @@ def p_atom2(p):
 
 def p_atom3(p):
     ''' atom : LSQB RSQB '''
-    p[0] = ast.List(elts=[], ctx=ast.Load())
+    p[0] = ast.List(elts=[], ctx=Load)
 
 
 def p_atom4(p):
     ''' atom : LSQB listmaker RSQB '''
     info = p[2]
     if isinstance(info, CommaSeparatedList):
-        node = ast.List(elts=info.values, ctx=ast.Load())
+        node = ast.List(elts=info.values, ctx=Load)
     elif isinstance(info, GeneratorInfo):
         node = ast.ListComp(elt=info.elt, generators=info.generators)
     else:
@@ -1307,7 +1942,7 @@ def p_atom6(p):
 
 def p_atom7(p):
     ''' atom : NAME '''
-    p[0] = ast.Name(id=p[1], ctx=ast.Load())
+    p[0] = ast.Name(id=p[1], ctx=Load)
 
 
 def p_atom8(p):
@@ -1425,12 +2060,12 @@ def p_trailer2(p):
 
 def p_trailer3(p):
     ''' trailer : LSQB subscriptlist RSQB '''
-    p[0] = ast.Subscript(slice=p[2], ctx=ast.Load())
+    p[0] = ast.Subscript(slice=p[2], ctx=Load)
 
 
 def p_trailer4(p):
     ''' trailer : DOT NAME '''
-    p[0] = ast.Attribute(attr=p[2], ctx=ast.Load())
+    p[0] = ast.Attribute(attr=p[2], ctx=Load)
     
 
 def p_subscriptlist1(p):
@@ -1483,7 +2118,7 @@ def p_subscript3(p):
 
 def p_subscript4(p):
     ''' subscript : DOUBLECOLON '''
-    name = ast.Name(id='None', ctx=ast.Load())
+    name = ast.Name(id='None', ctx=Load)
     p[0] = ast.Slice(lower=None, upper=None, step=name)
 
 
@@ -1494,7 +2129,7 @@ def p_subscript5(p):
 
 def p_subscrip6(p):
     ''' subscript : test DOUBLECOLON '''
-    name = ast.Name(id='None', ctx=ast.Load())
+    name = ast.Name(id='None', ctx=Load)
     p[0] = ast.Slice(lower=p[1], upper=None, step=name)
 
 
@@ -1505,7 +2140,7 @@ def p_subscript7(p):
 
 def p_subscript8(p):
     ''' subscript : COLON test COLON '''
-    name = ast.Name(id='None', ctx=ast.Load())
+    name = ast.Name(id='None', ctx=Load)
     p[0] = ast.Slice(lower=None, upper=p[2], step=name)
 
 
@@ -1521,7 +2156,7 @@ def p_subscript10(p):
 
 def p_subscript11(p):
     ''' subscript : test COLON test COLON '''
-    name = ast.Name(id='None', ctx=ast.Load())
+    name = ast.Name(id='None', ctx=Load)
     p[0] = ast.Slice(lower=p[1], upper=p[3], step=name)
 
 
@@ -1542,37 +2177,27 @@ def p_subscript14(p):
 
 def p_exprlist1(p):
     ''' exprlist : expr '''
-    # expr will match a tuple or a name, so we need to handle 
-    # the store context for both.
-    expr = p[1]
-    set_store_ctxt(expr)
-    p[0] = expr
+    p[0] = p[1]
 
 
 def p_exprlist2(p):
     ''' exprlist : expr COMMA '''
-    exprs = [p[1]]
     tup = ast.Tuple()
-    tup.elts = exprs
-    set_store_ctxt(tup)
+    tup.elts = [p[1]]
     p[0] = tup
 
 
 def p_exprlist3(p):
     ''' exprlist : expr exprlist_list '''
-    exprs = [p[1]] + p[2]
     tup = ast.Tuple()
-    tup.elts = exprs
-    set_store_ctxt(tup)
+    tup.elts = [p[1]] + p[2]
     p[0] = tup
 
 
 def p_exprlist4(p):
     ''' exprlist : expr exprlist_list COMMA '''
-    exprs = [p[1]] + p[2]
     tup = ast.Tuple()
-    tup.elts = exprs
-    set_store_ctxt(tup)
+    tup.elts = [p[1]] + p[2]
     p[0] = tup
 
 
@@ -1781,13 +2406,17 @@ def p_argument3(p):
 
 def p_list_for1(p):
     ''' list_for : FOR exprlist IN testlist_safe '''
-    p[0] = [ast.comprehension(target=p[2], iter=p[4], ifs=[])]
+    target = p[2]
+    set_context(target, Store)
+    p[0] = [ast.comprehension(target=target, iter=p[4], ifs=[])]
 
 
 def p_list_for2(p):
     ''' list_for : FOR exprlist IN testlist_safe list_iter '''
+    target = p[2]
+    set_context(target, Store)
     gens = []
-    gens.append(ast.comprehension(target=p[2], iter=p[4], ifs=[]))
+    gens.append(ast.comprehension(target=target, iter=p[4], ifs=[]))
     for item in p[5]:
         if isinstance(item, ast.comprehension):
             gens.append(item)
@@ -1818,13 +2447,17 @@ def p_list_if2(p):
 
 def p_comp_for1(p):
     ''' comp_for : FOR exprlist IN or_test '''
-    p[0] = [ast.comprehension(target=p[2], iter=p[4], ifs=[])]
+    target = p[2]
+    set_context(target, Store)
+    p[0] = [ast.comprehension(target=target, iter=p[4], ifs=[])]
 
 
 def p_comp_for2(p):
     ''' comp_for : FOR exprlist IN or_test comp_iter '''
+    target = p[2]
+    set_context(target, Store)
     gens = []
-    gens.append(ast.comprehension(target=p[2], iter=p[4], ifs=[]))
+    gens.append(ast.comprehension(target=target, iter=p[4], ifs=[]))
     for item in p[5]:
         if isinstance(item, ast.comprehension):
             gens.append(item)
@@ -1861,13 +2494,13 @@ def p_testlist_safe1(p):
 def p_testlist_safe2(p):
     ''' testlist_safe : old_test testlist_safe_list '''
     values = [p[1]] + p[2]
-    p[0] = ast.Tuple(elts=values, ctx=ast.Load())
+    p[0] = ast.Tuple(elts=values, ctx=Load)
 
 
 def p_testlist_safe3(p):
     ''' testlist_safe : old_test testlist_safe_list COMMA '''
     values = [p[1]] + p[2]
-    p[0] = ast.Tuple(elts=values, ctx=ast.Load())
+    p[0] = ast.Tuple(elts=values, ctx=Load)
 
 
 def p_testlist_safe_list1(p):
@@ -2145,7 +2778,7 @@ def p_fplist2(p):
     ''' fplist : fpdef COMMA '''
     tup = ast.Tuple()
     tup.elts = [p[1]]
-    set_store_ctxt(tup)
+    set_context(tup, Store)
     p[0] = tup
 
 
@@ -2154,7 +2787,7 @@ def p_fplist3(p):
     elts = [p[1]] + p[2]
     tup = ast.Tuple()
     tup.elts = elts
-    set_store_ctxt(tup)
+    set_context(tup, Store)
     p[0] = tup
 
 
@@ -2163,7 +2796,7 @@ def p_fplist4(p):
     elts = [p[1]] + p[2]
     tup = ast.Tuple()
     tup.elts = elts
-    set_store_ctxt(tup)
+    set_context(tup, Store)
     p[0] = tup
 
 
@@ -2181,11 +2814,11 @@ def p_error(t):
     raise_syntax_error('invalid syntax.', t.lexer.filename, t.lineno)
 
 
-_parser = yacc.yacc(debug=False, tabmodule='enaml_parsetab', 
-                    outputdir=_enaml_dir, errorlog=yacc.NullLogger())
+_parser = yacc.yacc(debug=True, tabmodule='enaml_parsetab', 
+                    outputdir=_enaml_dir)#, errorlog=yacc.NullLogger())
 
 
 def parse(enaml_source, filename='Enaml'):
     _lexer = EnamlLexer(filename)
-    return _parser.parse(enaml_source, lexer=_lexer)
+    return _parser.parse(enaml_source, debug=0, lexer=_lexer)
 
