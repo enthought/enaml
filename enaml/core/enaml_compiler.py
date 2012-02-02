@@ -341,6 +341,7 @@ class EnamlCompiler(_NodeVisitor):
         # Generate the startup code for the module
         for start in STARTUP:
             start_code = compile(start, filename, mode='exec')
+            # Skip the SetLineo and ReturnValue codes
             extend_ops(Code.from_code(start_code).code[1:-2])
 
         # Add in the code ops for the module
@@ -349,6 +350,7 @@ class EnamlCompiler(_NodeVisitor):
         # Generate the cleanup code for the module
         for end in CLEANUP:
             end_code = compile(end, filename, mode='exec')
+            # Skip the SetLineo and ReturnValue codes
             extend_ops(Code.from_code(end_code).code[1:-2])
         
         # Add in the final return value ops
@@ -391,7 +393,8 @@ class EnamlCompiler(_NodeVisitor):
         # code object.
         py_code = compile(node.py_ast, self.filename, mode='exec')
         bpc = Code.from_code(py_code)
-        self.code_ops.extend(bpc.code[:-2])
+        # Skip the SetLineo and ReturnValue codes
+        self.code_ops.extend(bpc.code[1:-2])
 
     def visit_Declaration(self, node):
         """ The declaration node visitor. This will add an instance
