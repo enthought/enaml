@@ -28,8 +28,7 @@ from enthought.debug.api import called_from
 from enaml.core.import_hooks import EnamlImporter
 EnamlImporter.install()
 
-from enaml.core.enaml_compiler import EnamlDeclaration
-
+from enaml.core.factory import EnamlDeclaration
 
 class EnamlComponentDocumenter(ModuleLevelDocumenter):
     """ Enaml component documenter class
