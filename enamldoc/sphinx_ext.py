@@ -25,10 +25,10 @@ from enaml_domain import EnamlDomain
 
 from enthought.debug.api import called_from
 
-from enaml.import_hooks import EnamlImporter
+from enaml.core.import_hooks import EnamlImporter
 EnamlImporter.install()
 
-from enaml.parsing.enaml_compiler import EnamlDeclaration
+from enaml.core.enaml_compiler import EnamlDeclaration
 
 
 class EnamlComponentDocumenter(ModuleLevelDocumenter):
@@ -68,7 +68,7 @@ class EnamlComponentDocumenter(ModuleLevelDocumenter):
         """ Thin method for debugging signature formatting.
 
         """
-        
+
         super(EnamlComponentDocumenter, self).format_signature()
 
 
@@ -103,7 +103,7 @@ class EnamlDeclarationDocumenter(EnamlDocstringSignatureMixin,
         function prototype.
 
         """
-        
+
         ## import pdb; pdb.set_trace()
         return ' (derives from {0})'.format(self.object.__base__)
 
