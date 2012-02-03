@@ -11,14 +11,16 @@ import struct
 import sys
 import types
 
-from .enaml_compiler import EnamlCompiler
+from .enaml_compiler import EnamlCompiler, COMPILER_VERSION
 from .parser import parse
 
 
 # The magic number as symbols for the current Python interpreter. These
 # define the naming scheme used when create cached files and directories.
 MAGIC = imp.get_magic()
-MAGIC_TAG = 'enaml-%s%s' % (sys.version_info.major, sys.version_info.minor)
+MAGIC_TAG = 'enaml-py%s%s-cv%s' % (
+    sys.version_info.major, sys.version_info.minor, COMPILER_VERSION,
+)
 CACHEDIR = '__enamlcache__'
 
 
