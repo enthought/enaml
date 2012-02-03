@@ -10,32 +10,7 @@ toggle the presence of the titles and whether they should be shown in a
 "flat" style or the default style.
 
 """
-:: python ::
-
-def toggle_title(top_box, bottom_box):
-    """ Toggle the presence of titles on the two GroupBoxes. 
-
-    """
-    if top_box.title:
-        top_box.title = ""
-    else:
-        top_box.title = "Personal Details"
-    if bottom_box.title:
-        bottom_box.title = ""
-    else:
-        bottom_box.title = "Employment Details"
-
-def toggle_flat(*boxes):
-    """ Toggle the `flat` flag on the two GroupBoxes.
-
-    """
-    for box in boxes:
-        box.flat = not box.flat
-
-:: end ::
-
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Group Boxes"
     Container:
         constraints = [
@@ -80,10 +55,20 @@ Main(MainWindow):
             id: title_check
             text = "Show titles"
             checked = True
-            toggled :: toggle_title(top_box, bottom_box)
+            toggled ::
+                if top_box.title:
+                    top_box.title = ""
+                else:
+                    top_box.title = "Personal Details"
+                if bottom_box.title:
+                    bottom_box.title = ""
+                else:
+                    bottom_box.title = "Employment Details"
         CheckBox:
             id: flat_check
             text = "Flat"
             checked = False
-            toggled :: toggle_flat(top_box, bottom_box)
+            toggled ::
+                for box in (top_box, bottom_box):
+                    box.flat = not box.flat
 

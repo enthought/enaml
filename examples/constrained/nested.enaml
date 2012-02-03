@@ -6,18 +6,18 @@
 
 We have three Containers under the window, two sharing space on top and one
 taking up the entire horizontal space on the bottom. The two on top simply
-consist of a Label and a Field. The Container on the left is constrained to be
-slightly larger than the other by a constant multiplier.
+consist of a Label and a Field. The Container on the left is constrained to 
+be slightly larger than the other by a constant multiplier.
 
 The Container on the bottom contains the more complicated example from
 constrained.enaml to demonstrate that a complicated layout works inside
 a nested Container, too.
 
-FIXME: Occasionally, this example fails with a solver error stating that the
-objective function is unbounded.
+FIXME: Occasionally, this example fails with a solver error stating that 
+the objective function is unbounded.
 
 """
-LabeledField(Container):
+enamldef LabeledField(Container):
     attr label_text: str = 'Label'
     constraints = [
         hbox(label, field),
@@ -31,7 +31,7 @@ LabeledField(Container):
         resist_clip_width = 'weak'
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Nested Containers"
     Container:
         constraints = [

@@ -10,8 +10,6 @@ the << operator is capable of listening to changes on items within a
 list comprehension.
 
 """
-:: python ::
-
 from traits.api import HasTraits, Str
 
 
@@ -27,15 +25,13 @@ class Person(HasTraits):
 names = ['Mary', 'John', 'Bill', 'Amy', 'Maria', 'Ray']
 people = [Person(name=name) for name in names]
 
-:: end ::
 
-
-PersonField(Field):
+enamldef PersonField(Field):
     attr person: Person
     value := person.name
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     Container:
         Field:
             value << ', '.join([person.name for person in people])

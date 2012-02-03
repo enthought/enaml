@@ -8,7 +8,7 @@ and maximum.
 The Range component is used by the other examples in this directory.
 
 """
-Range(Container):
+enamldef Range(Container):
     id: range
     attr minimum: float = 0.0
     attr maximum: float = 1.0

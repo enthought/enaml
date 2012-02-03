@@ -19,7 +19,7 @@ printed to the shell.
 from enaml.stdlib.radio_group import RadioGroup
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr how_many: int = 10
     Container:
         SpinBox:

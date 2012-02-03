@@ -21,7 +21,7 @@ Pressing the Share PushButton will add a new constraint that forces the width
 of that PushButton to increase to 200.
 
 """
-Main(MainWindow):
+enamldef Main(MainWindow):
     Container:
         constraints = [
             # Arrange the Html Frame above the horizontal row of butttons

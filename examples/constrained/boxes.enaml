@@ -7,7 +7,7 @@
 FIXME: this is a dumb example.
 
 """
-Main(MainWindow):
+enamldef Main(MainWindow):
     Container:
         id: main_window
         constraints = [

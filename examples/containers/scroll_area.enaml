@@ -9,9 +9,7 @@ with a limited vertical extent, but gets its initial width from the contained
 widget.
 
 """
-
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Scroll Area"
     ScrollArea:
         preferred_size = (None, 200)

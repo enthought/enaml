@@ -5,7 +5,7 @@
 from enaml.stdlib.fields import IntField
 
 
-PersonForm(Form):
+enamldef PersonForm(Form):
     attr person
     Label:
         text = 'First Name'
@@ -21,7 +21,7 @@ PersonForm(Form):
         value := person.age 
 
 
-PersonView(MainWindow):
+enamldef PersonView(MainWindow):
     attr person
     PersonForm:
         person = parent.person

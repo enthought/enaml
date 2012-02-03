@@ -8,9 +8,8 @@ An demonstration of how to use a spin box to select from a list
 of months.
 
 """
-:: python ::
-
 from enaml.converters import Converter
+
 
 class MonthSpinConverter(Converter):
 
@@ -35,10 +34,8 @@ class MonthSpinConverter(Converter):
             i = int(txt) 
         return i
 
-:: end ::
 
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'SpinBox'
     Container:
         SpinBox:

@@ -9,14 +9,11 @@ since it manages the various toggle behavior internally and yields
 output in the form of selected item, index, and label.
 
 """
-:: python ::
-
 from collections import Sequence, Iterable, Callable
 
 
 def _radio_buttons(rgroup, to_string, items):
-    """ A Python helper function to generate the underlying radio
-    buttons.
+    """ A helper function to generate the underlying radio buttons.
 
     """
     # Reset the selected index if it's out of range.
@@ -35,55 +32,20 @@ def _radio_buttons(rgroup, to_string, items):
     return res
 
 
-def _button_toggled(rgroup, idx, checked):
-    """ A Python helper function to set the selected index on the
-    radio group if the button is checked.
-
-    """
-    # XXX - this wont be needed when we support RHS code blocks in
-    # notification expressions.
-    if checked:
-        rgroup.selected_index = idx
-
-
-def _sync_button(buttons, idx):
-    """ A Python helper function to set the checked state of the 
-    selected radio button.
-
-    """
-    # XXX - this wont be needed when we support RHS code blocks in
-    # notification expressions.
-    if idx == -1:
-        for button in buttons:
-            button.checked = False
-    elif idx < len(buttons):
-        buttons[idx].checked = True
-    else:
-        raise IndexError('Index %s has no RadioButton' % idx)
-
-
-def _disable_buttons(buttons, indices):
-    """ A Python helper function to disable the given buttons.
-
-    """
-    for idx, button in enumerate(buttons):
-        button.enabled = not (idx in indices)
-
-:: end ::
-
-
-_RGroupButton(RadioButton):
+enamldef _RGroupButton(RadioButton):
     """ A private radio button for use in the RadioGroup which 
     help handle toggle events.
 
     """
     attr idx
-    # The parent of the radio button is the include. The parent
-    # of the include is the actual radio group.
-    toggled :: _button_toggled(parent.parent, idx, checked)
+    toggled :: 
+        if checked:
+            # The parent of the radio button is the include. The parent
+            # of the include is the actual radio group.
+            parent.parent.selected_index = idx
 
 
-RadioGroup(Container):
+enamldef RadioGroup(Container):
     """ A Container that automatically generates a group of RadioButtons.
 
     Input Attributes
@@ -128,26 +90,53 @@ RadioGroup(Container):
     """
     id: rgroup
 
+    #--------------------------------------------------------------------------
     # Input Attributes
+    #--------------------------------------------------------------------------
     attr orientation: str = 'horizontal'
     attr items: Sequence = []
     attr to_string: Callable = str
     attr disabled_buttons: Iterable = []
-    disabled_buttons :: _disable_buttons(layout_children, event.new)
 
+    #--------------------------------------------------------------------------
     # Synchronized Attributes
+    #--------------------------------------------------------------------------
     attr selected_index: int = -1
-    selected_index :: _sync_button(layout_children, event.new)
 
+    #--------------------------------------------------------------------------
     # Output Attributes
+    #--------------------------------------------------------------------------
     attr selected_item << items[selected_index] if (0 <= selected_index < len(items)) else None
     attr selected_label << to_string(selected_item) if selected_item is not None else ''
 
+    #--------------------------------------------------------------------------
     # Internal Logic
+    #--------------------------------------------------------------------------
     constraints << [
         hbox(*layout_children) if orientation == 'horizontal' else vbox(*layout_children)
     ]
 
+    # Disable the appropriate children when the disabled indices change
+    disabled_buttons ::
+        disabled = set(disabled_buttons)
+        for idx, button in enumerate(layout_children):
+            button.enabled = not (idx in disabled)
+    
+    # Synchronize the buttons when the selected index is changed
+    selected_index ::
+        idx = selected_index
+        buttons = layout_children
+        if idx == -1:
+            for button in buttons:
+                button.checked = False
+        elif idx < len(buttons):
+            buttons[idx].checked = True
+        else:
+            raise IndexError('Index %s has no RadioButton' % idx)
+    
+    #--------------------------------------------------------------------------
+    # Children
+    #--------------------------------------------------------------------------
     Include:
         # We need to build new radio buttons whenever the 'to_string'
         # or 'items' attributes change.

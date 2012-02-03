@@ -14,7 +14,7 @@ describing the contents of each child switches between the two child Forms.
 from enaml.stdlib.stacked import Stacked
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Stacked Container"
     Container:  
         constraints = [

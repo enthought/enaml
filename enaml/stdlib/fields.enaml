@@ -5,35 +5,39 @@
 """ Enaml Standard Library - Fields
 
 This is a library of Enaml components deriving from the built-in Field.
+
 """
-from enaml.converters import IntConverter, FloatConverter, LongConverter, ComplexConverter
+from enaml.converters import (
+    IntConverter, FloatConverter, LongConverter, ComplexConverter,
+)
 
 
-ErrorField(Field):
+enamldef ErrorField(Field):
     """ ErrorField changes background color when the error state is True.
     
     """
     bg_color << 'error' if error else 'none'
 
 
-IntField(ErrorField):
+enamldef IntField(ErrorField):
     """ IntField - an ErrorField with built-in string-to-Int converter.
     
     """
     converter = IntConverter()
 
 
-LongField(ErrorField):
+enamldef LongField(ErrorField):
     converter = LongConverter()
 
 
-FloatField(ErrorField):
+enamldef FloatField(ErrorField):
     converter = FloatConverter()
 
 
-ComplexField(ErrorField):
+enamldef ComplexField(ErrorField):
     converter = ComplexConverter()
 
 
-PasswordField(Field):
+enamldef PasswordField(Field):
     password_mode = 'password'
+

@@ -19,7 +19,7 @@ The combination of these two components, Inline and Include, provides
 a powerful way of creating dynamic user interfaces.
 
 """
-InlineItems(Inline):
+enamldef InlineItems(Inline):
     attr label
     Label:
         text = label
@@ -31,7 +31,7 @@ InlineItems(Inline):
                         if bar.value == '%s magic' % label else [])
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'Magic'
     Form:
         Label:

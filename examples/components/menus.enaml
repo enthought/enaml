@@ -7,23 +7,6 @@
 This example shows how to use the MenuBar and popup menu facilities.
 
 """
-:: python ::
-
-def get_action_label(action):
-    """ A simple function which walks up the tree from the given 
-    action and assembles a string that more-or-less indicates its
-    hierarchy. 
-
-    """
-    parts = [action.text]
-    parent = action.parent
-    # FIXME - this is a bit fragile.
-    while hasattr(parent, 'title'):
-        parts.append(parent.title)
-        parent = parent.parent
-    return ' - '.join(reversed(parts))
-    
-
 def get_recent_files(filenames):
     """ A simple function that returns a list of PrintActions that
     represent a list of recent files. This would normally be computed
@@ -32,18 +15,23 @@ def get_recent_files(filenames):
     """
     return [PrintAction(text=fn) for fn in filenames]
 
-:: end ::
 
-
-PrintAction(Action):
+enamldef PrintAction(Action):
     """ A very simple action which prints out its text hierarchy
     when triggered.
 
     """
-    triggered :: print get_action_label(self)
+    triggered :: 
+        parts = [text]
+        # FIXME - this is a bit fragile.
+        while parent is not None:
+            if parent.parent is not None and hasattr(parent, 'title'):
+                parts.append(parent.title)
+            parent = parent.parent
+        print ' - '.join(reversed(parts))
 
 
-ViewMenu(Menu):
+enamldef ViewMenu(Menu):
     title = 'View'
     PrintAction:
         text = 'Refresh Now'
@@ -53,7 +41,7 @@ ViewMenu(Menu):
         text = 'Selection Columns...'
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr show_view_menu: bool = False
     MenuBar:
         Menu:

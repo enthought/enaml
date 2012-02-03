@@ -13,8 +13,6 @@ from enaml.styling.brush import Brush
 from enaml.styling.color import Color
 
 
-:: python ::
-
 # A single row of data with 100k elements
 row = range(1000000)
 
@@ -66,20 +64,12 @@ class ColoredTable(TableModel):
 
 table_model = ColoredTable(table, data_setter=table_setter)
 
-def printer(event):
-    print 'Removed:', event.new[0]
-    print 'Added:  ', event.new[1]
-    print
-
-:: end ::
-
 
 # ListModel and TableModel are both subclasses of AbstractItemModel
 # which means they can both be passed to TableView and work just fine.
 # And once ListView and TreeView are implemented, will work just fine
 # there as well.
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'Simple Tables'
     Container:
         constraints = [
@@ -96,5 +86,8 @@ Main(MainWindow):
             item_model = table_model
             BaseSelectionModel:
                 selection_mode = 'extended'
-                selection_event :: printer(event)
+                selection_event :: 
+                    print 'Removed:', event.new[0]
+                    print 'Added:', event.new[1]
+                    print
 

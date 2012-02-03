@@ -10,7 +10,7 @@ integer 'index' attribute of the Stacked widget. Changing this index
 changes which child is visible.
 
 """
-Stacked(Container):
+enamldef Stacked(Container):
     """ A Container derivative which holds a stack of children.
 
     A Stacked widget provides a virtual 'stack' of children, only one

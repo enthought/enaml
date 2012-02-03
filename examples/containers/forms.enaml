@@ -9,7 +9,7 @@ Note:
    cross most Container boundaries.
 
 """
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Form Layout"
     Container:
         constraints = [

@@ -5,7 +5,7 @@
 from collections import Iterable
 
 
-MainContainer(Container):
+enamldef MainContainer(Container):
     attr foo
     attr bar = 42
     attr ham: int
@@ -38,7 +38,7 @@ MainContainer(Container):
         clicked :: parent.ham = 18.0
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'Attr Types'
     MainContainer:
         pass

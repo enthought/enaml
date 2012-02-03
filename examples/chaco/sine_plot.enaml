@@ -12,7 +12,7 @@ from numpy import pi
 from range import Range
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr model
     title = 'Sine Plot'
     Container:

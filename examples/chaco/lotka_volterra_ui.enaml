@@ -10,8 +10,6 @@ Run lotka_volterra.py to view this demo.
 from range import Range
 
 
-:: python ::
-
 def pop_bounds(data_low, data_high, margin, tight_bounds):
     """ Return "nice" boundaries for the given population data range.
 
@@ -25,10 +23,8 @@ def pop_bounds(data_low, data_high, margin, tight_bounds):
     high = q * 20.0
     return (0.0, high)
 
-:: end ::
 
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr model
     title = "Lotka-Volterra Model"
     Container:
