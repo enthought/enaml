@@ -507,7 +507,7 @@ class EnamlLexer(object):
         for lineno, line in enumerate(txt.splitlines()):
             if DECL.match(line):
                 warn_old_decl_syntax(lineno)
-                line = 'decl ' + line
+                line = 'viewdef ' + line
             new.append(line)
         txt = '\n'.join(new)
         self.lexer.input(txt)
