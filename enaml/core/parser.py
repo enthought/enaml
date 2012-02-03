@@ -77,6 +77,21 @@ except AttributeError:
         return call
 
 
+# Python 2.6 compatibility. Transform set literal in set(list_literal)
+try:
+    Set = ast.Set
+except AttributeError:
+    def Set(elts):
+        lst = ast.List(elts=elts, ctx=Load)
+        call = ast.Call()
+        call.func = ast.Name(id='set', ctx=Load)
+        call.args = [lst]
+        call.keywords = []
+        call.starargs = None
+        call.kwargs = None
+        return call
+
+
 # The disallowed ast node types for ast.Store contexts and 
 # the associated message tag for error reporting.
 context_disallowed = {
@@ -91,7 +106,7 @@ context_disallowed = {
     SetComp: 'set comprehension',
     DictComp: 'dict comprehension',
     ast.Dict: 'literal',
-    ast.Set: 'literal',
+    Set: 'literal',
     ast.Num: 'literal',
     ast.Str: 'literal',
     ast.Ellipsis: 'Ellipsis',
@@ -2117,7 +2132,7 @@ def p_atom7(p):
             keys, values = zip(*info.values)
             node = ast.Dict(keys=list(keys), values=list(values))
         else:
-            node = ast.Set(elts=info.values)
+            node = Set(elts=info.values)
     else:
         raise TypeError('Unexpected node for dictorsetmaker: %s' % info)
     p[0] = node
