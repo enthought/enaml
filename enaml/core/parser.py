@@ -46,6 +46,37 @@ context_allowed = set([
 ])
 
 
+# Python 2.6 compatibility. Transform set comprehension into set(generator)
+try:
+    SetComp = ast.SetComp
+except AttributeError:
+    def SetComp(elt, generators):
+        gen = ast.GeneratorExp(elt=elt, generators=generators)
+        call = ast.Call()
+        call.func = ast.Name(id='set', ctx=Load)
+        call.args = [gen]
+        call.keywords = []
+        call.starargs = None
+        call.kwargs = None
+        return call
+
+
+# Python 2.6 compatibility. Transform dict comprehension into dict(generator)
+try:
+    DictComp = ast.DictComp
+except AttributeError:
+    def DictComp(key, value, generators):
+        elt = ast.Tuple(elts=[key, value], ctx=Load)
+        gen = ast.GeneratorExp(elt=elt, generators=generators)
+        call = ast.Call()
+        call.func = ast.Name(id='dict', ctx=Load)
+        call.args = [gen]
+        call.keywords = []
+        call.starargs = None
+        call.kwargs = None
+        return call
+
+
 # The disallowed ast node types for ast.Store contexts and 
 # the associated message tag for error reporting.
 context_disallowed = {
@@ -57,8 +88,8 @@ context_disallowed = {
     ast.GeneratorExp: 'generator expression',
     ast.Yield: 'yield expression',
     ast.ListComp: 'list comprehension',
-    ast.SetComp: 'set comprehension',
-    ast.DictComp: 'dict comprehension',
+    SetComp: 'set comprehension',
+    DictComp: 'dict comprehension',
     ast.Dict: 'literal',
     ast.Set: 'literal',
     ast.Num: 'literal',
@@ -2078,9 +2109,9 @@ def p_atom7(p):
         if isinstance(info.elt, tuple):
             key, value = info.elt
             generators = info.generators
-            node = ast.DictComp(key=key, value=value, generators=generators)
+            node = DictComp(key=key, value=value, generators=generators)
         else:
-            node = ast.SetComp(elt=info.elt, generators=info.generators)
+            node = SetComp(elt=info.elt, generators=info.generators)
     elif isinstance(info, CommaSeparatedList):
         if isinstance(info.values[0], tuple):
             keys, values = zip(*info.values)
