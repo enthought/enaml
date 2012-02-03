@@ -17,7 +17,7 @@ DECL = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*
 
 
 def warn_old_decl_syntax(lineno):
-    msg = ("Declaring a component without the keyword 'decl' is deprecated "
+    msg = ("Declaring a component without the keyword 'viewdef' is deprecated "
            "and will be removed in futures versions. The keyword has been "
            "automatically added on line number %s")
     warnings.warn(msg % lineno, DeprecationWarning)
@@ -183,7 +183,6 @@ class EnamlLexer(object):
         'break': 'BREAK',
         'class': 'CLASS',
         'continue': 'CONTINUE',
-        'decl': 'DECL',
         'def': 'DEF',
         'del': 'DEL',
         'elif': 'ELIF',
@@ -206,6 +205,7 @@ class EnamlLexer(object):
         'raise': 'RAISE',
         'return': 'RETURN',
         'try': 'TRY',
+        'viewdef': 'VIEWDEF',
         'while': 'WHILE',
         'with': 'WITH',
         'yield': 'YIELD',
