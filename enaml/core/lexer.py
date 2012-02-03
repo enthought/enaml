@@ -2,11 +2,17 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import os
 import re
 import tokenize
 import warnings
 
 import ply.lex as lex
+
+
+# Get a save directory for the lex and parse tables
+_lex_dir = os.path.join(os.path.dirname(__file__), 'parse_tab')
+_lex_module = 'enaml.core.parse_tab.lextab'
 
 
 #------------------------------------------------------------------------------
@@ -485,7 +491,9 @@ class EnamlLexer(object):
     # Normal Class Items
     #--------------------------------------------------------------------------
     def __init__(self, filename='Enaml'):
-        self.lexer = lex.lex(module=self)
+        self.lexer = lex.lex(
+            module=self, outputdir=_lex_dir, lextab=_lex_module, optimize=1,
+        )
         self.token_stream = None
         self.filename = filename
 

@@ -2998,16 +2998,10 @@ def p_error(t):
 # End Parsing Rules
 #==============================================================================
 # Get a save directory for the lex and parse tables
-_enaml_dir = os.path.join(os.path.expanduser('~'), '.enaml')
-try:
-    if not os.path.exists(_enaml_dir):
-        os.mkdir(_enaml_dir)
-except OSError:
-    _enaml_dir = os.getcwd()
-
-
+_parse_dir = os.path.join(os.path.dirname(__file__), 'parse_tab')
+_parse_module = 'enaml.core.parse_tab.parsetab'
 _parser = yacc.yacc(
-    debug=0, tabmodule='enaml_parsetab', outputdir=_enaml_dir, 
+    debug=0, outputdir=_parse_dir, tabmodule=_parse_module, optimize=1,
     errorlog=yacc.NullLogger(),
 )
 
