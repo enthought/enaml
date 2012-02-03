@@ -10,23 +10,6 @@ integer 'index' attribute of the Stacked widget. Changing this index
 changes which child is visible.
 
 """
-:: python ::
-
-def _update_stacked_vis(stacked):
-    """ A Stacked widget helper function which toggles the visibility
-    of the appropriate child.
-
-    """
-    stack_idx = stacked.index
-    for idx, child in enumerate(stacked.layout_children):
-        if idx == stack_idx:
-            child.set_visible(True)
-        else:
-            child.set_visible(False)
-
-:: end ::
-
-
 Stacked(Container):
     """ A Container derivative which holds a stack of children.
 
@@ -41,8 +24,13 @@ Stacked(Container):
         which child of the stack is visible.
     
     """
-    id: stckd
     attr index: int = 0
-    initialized :: _update_stacked_vis(stckd) 
-    index :: _update_stacked_vis(stckd)
+    event _vis_changed ::
+        for idx, child in enumerate(layout_children):
+            if idx == index:
+                child.set_visible(True)
+            else:
+                child.set_visible(False)
+    initialized :: _vis_changed()
+    index :: _vis_changed()
 
