@@ -12,6 +12,19 @@ from .byteplay import (
 )
 
 
+# Increment this number whenever the compiler changes the code which it
+# generates. This number is used by the import hooks to know which version
+# of a .enamlc file is valid for the Enaml compiler version in use. If 
+# this number is not incremented on change, it may result in .enamlc
+# files which fail on import.
+#
+# Version History
+# ---------------
+# 1 : Initial compiler version 2 February 2012
+#
+COMPILER_VERSION = 1
+
+
 #------------------------------------------------------------------------------
 # Compiler Helpers
 #------------------------------------------------------------------------------
@@ -69,7 +82,8 @@ class DeclarationCompiler(_NodeVisitor):
     """
     @classmethod
     def compile(cls, node, filename):
-        """ Compiles the given Declaration node into a code object.
+        """ Compiles the given Declaration node into a byteplay code 
+        object.
 
         Given this sample declaration in Enaml::
           
@@ -107,7 +121,7 @@ class DeclarationCompiler(_NodeVisitor):
             code_ops, [], ['identifiers', 'toolkit'], False, False, True, 
             node.name, filename, node.lineno, node.doc,
         )
-        return code.to_code()
+        return code
 
     def __init__(self, filename):
         self.filename = filename
