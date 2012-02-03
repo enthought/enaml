@@ -375,14 +375,12 @@ class EnamlCompiler(_NodeVisitor):
 
         # Generate and return the module code object.
         mod_code = Code(
-            module_ops, [], [], False, False, False, '',  filename, 0,
-            compiler.module_doc,
+            module_ops, [], [], False, False, False, '',  filename, 0, '',
         )
         return mod_code.to_code()
 
     def __init__(self, filename):
         self.code_ops = []
-        self.module_doc = ''
         self.filename = filename
 
     def visit_Module(self, node):
@@ -390,9 +388,6 @@ class EnamlCompiler(_NodeVisitor):
         compiler.
 
         """
-        doc = node.doc
-        if doc:
-            self.module_doc = doc
         for item in node.body:
             self.visit(item)
     

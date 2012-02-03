@@ -283,7 +283,7 @@ def p_enaml1(p):
 def p_enaml2(p):
     ''' enaml : NEWLINE ENDMARKER
               | ENDMARKER '''
-    p[0] = enaml_ast.Module('', [], -1)
+    p[0] = enaml_ast.Module([], -1)
 
 
 def p_enaml_module(p):
@@ -304,7 +304,7 @@ def p_enaml_module(p):
     if python_nodes:
         mod = ast.Module(body=python_nodes)
         body_nodes.append(enaml_ast.Python(mod, -1))
-    p[0] = enaml_ast.Module('', body_nodes, -1)
+    p[0] = enaml_ast.Module(body_nodes, -1)
 
 
 def p_enaml_module_body1(p):
