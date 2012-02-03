@@ -44,7 +44,7 @@ class TestSpinBox(EnamlTestCase):
 
         enaml_source = """
 from enaml.converters import IntConverter
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     SpinBox:
         name = 'spinbox'

@@ -40,7 +40,7 @@ class TestDatetimeEdit(EnamlTestCase):
 
         enaml_source = """
 from datetime import datetime as python_datetime
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     DatetimeEdit:
         name = 'test'
@@ -193,7 +193,7 @@ MainView(MainWindow):
         """
         enaml_source = """
 from datetime import datetime as python_datetime
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     DatetimeEdit:
         name = 'test'
@@ -214,7 +214,7 @@ MainView(MainWindow):
         """
         enaml_source = """
 from datetime import datetime as python_datetime
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     DatetimeEdit:
         name = 'test'

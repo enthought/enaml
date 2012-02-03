@@ -34,7 +34,7 @@ class TestGroupBox(EnamlTestCase):
 
         """
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     name = 'win'
     Container:
         constraints = [horizontal(left, gb, right), vertical(top, gb, bottom),

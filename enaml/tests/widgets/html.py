@@ -24,7 +24,7 @@ class TestHtml(EnamlTestCase):
 
         """
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     Html:
         name = 'html'
         source = '<b>{0}</b>'

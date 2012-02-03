@@ -29,7 +29,7 @@ class TestComboBox(EnamlTestCase):
         """
 
         enaml = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     ComboBox:
         name = 'cmb'

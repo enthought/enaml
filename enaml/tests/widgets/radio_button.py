@@ -28,7 +28,7 @@ class TestRadioButton(EnamlTestCase):
         label_2 = 'Label 2'
 
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     Container:
         RadioButton:
             name = 'radio1'

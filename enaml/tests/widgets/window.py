@@ -15,7 +15,7 @@ class TestWindow(EnamlTestCase):
         """
 
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     name = 'window'
     title = 'foo'
 """

@@ -25,7 +25,7 @@ class TestField(EnamlTestCase):
         """
 
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     Field:
         name = 'field'

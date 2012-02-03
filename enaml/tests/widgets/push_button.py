@@ -29,7 +29,7 @@ class TestPushButton(EnamlTestCase):
         """
 
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     PushButton:
         name = 'pb1'

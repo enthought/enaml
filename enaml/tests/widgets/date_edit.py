@@ -38,7 +38,7 @@ class TestDateEdit(EnamlTestCase):
 
         """
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     DateEdit:
         name = 'test'
@@ -179,7 +179,7 @@ MainView(MainWindow):
         """
         enaml_source = """
 import datetime
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     DateEdit:
         name = 'test'
@@ -199,7 +199,7 @@ MainView(MainWindow):
         """
         enaml_source = """
 import datetime
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     DateEdit:
         name = 'test'

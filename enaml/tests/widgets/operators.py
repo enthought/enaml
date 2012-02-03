@@ -28,7 +28,7 @@ class TestLessLess(EnamlTestCase):
     """
     def setUp(self):
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     Container:
         Label:
             name = 'lb'

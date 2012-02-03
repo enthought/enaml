@@ -23,7 +23,7 @@ class TestDialog(TestWindow):
         """
 
         enaml_source = """
-MainView(Dialog):
+enamldef MainView(Dialog):
     name = 'dialog'
     title = 'foo'
 """

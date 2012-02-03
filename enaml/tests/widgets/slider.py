@@ -76,7 +76,7 @@ class TestSlider(EnamlTestCase):
         """
 
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     Slider:
         name = 'slider'

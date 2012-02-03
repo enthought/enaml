@@ -23,7 +23,7 @@ class TestLabel(EnamlTestCase):
         """
 
         enaml_source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     Label:
         name = 'label'
         text = 'foo'

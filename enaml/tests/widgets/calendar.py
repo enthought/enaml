@@ -39,7 +39,7 @@ class TestCalendar(EnamlTestCase):
         """
 
         source = """
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     Calendar:
         name = 'cal'
@@ -187,7 +187,7 @@ MainView(MainWindow):
         """
         enaml_source = """
 import datetime
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     Calendar:
         name = 'cal'
@@ -210,7 +210,7 @@ MainView(MainWindow):
         """
         enaml = """
 import datetime
-MainView(MainWindow):
+enamldef MainView(MainWindow):
     attr events
     Calendar:
         name = 'cal'
