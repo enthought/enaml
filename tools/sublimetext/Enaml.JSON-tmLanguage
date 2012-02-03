@@ -4,10 +4,11 @@
   "patterns": [
     {
       "comment": "Enaml Declaration",
-      "match": "^([A-Za-z_][A-Za-z0-9_]*)\\((.*?)\\):\\s*$",
+      "match": "^(enamldef)\\s*([A-Za-z_][A-Za-z0-9_]*)\\((.*?)\\):\\s*$",
       "captures": {
-        "1": { "name": "entity.name.type" },
-        "2": { "name": "entity.other.inherited-class" }
+        "1": { "name": "storage.type"},
+        "2": { "name": "entity.name.type" },
+        "3": { "name": "entity.other.inherited-class" }
       }
     },
     {
@@ -80,49 +81,7 @@
       ],
       "end": "$"
     },
-    { 
-      "comment": "Enaml Comment",
-      "match": "^\\s*(#.*)$",
-      "captures": {
-        "1": { "name": "comment.line.number-sign" }
-      }
-    },
-    { 
-      "comment": "Enaml Import",
-      "match": "\\b(?:(import)|(from))\\b",
-      "captures": {
-        "1": { "name": "keyword.control.import.python" },
-        "2": { "name": "keyword.control.import.from.python" }
-      }
-    },
-    {
-      "comment": "Enaml Raw Python",
-      "begin": "^(::\\s*python\\s*::\\s*)$",
-      "beginCaptures": {
-        "1": { "name": "entity.name.section" }
-      },
-      "patterns": [
-        { "include": "source.python" }
-      ],
-      "end": "^(::\\s*end\\s*::\\s*)$",
-      "endCaptures": {
-        "1": { "name": "entity.name.section" }
-      }
-    },
-    {
-      "comment": "Triple String Double",
-      "begin": "\"\"\"(.*?)",
-      "end": "\\1\"\"\"$",
-      "name": "string.quoted.triple",
-      "contentName": "string.quoted.triple"
-    },
-    {
-      "comment": "Triple String Single",
-      "begin": "'''(.*?)",
-      "end": "\\1'''$",
-      "name": "string.quoted.triple",
-      "contentName": "string.quoted.triple"
-    }
+    { "include": "source.python" }
   ],
   "uuid": "df282ee7-7441-487e-9a58-bfebbd01a9ff"
 }
