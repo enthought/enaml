@@ -163,6 +163,16 @@ class ExpressionScope(object):
         """
         del self.temp_locals[name]
 
+    def __contains__(self, name):
+        res = False
+        if isinstance(name, basestring):
+            try:
+                self.__getitem__(name)
+                res = True
+            except KeyError:
+                pass
+        return res
+
 
 #------------------------------------------------------------------------------
 # Abstract Expression

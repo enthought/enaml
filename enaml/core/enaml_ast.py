@@ -35,11 +35,10 @@ class Module(ASTNode):
         A list of ast nodes comprising the body of the module.
     
     """
-    __slots__ = ('doc', 'body',)
+    __slots__ = ('body',)
 
-    def __init__(self, doc, body, lineno):
+    def __init__(self, body, lineno):
         super(Module, self).__init__(lineno)
-        self.doc = doc
         self.body = body
 
 

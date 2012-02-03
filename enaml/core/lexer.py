@@ -2,52 +2,153 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import os
+import re
 import tokenize
+import warnings
 
 import ply.lex as lex
 
-from ..exceptions import EnamlSyntaxError
+
+# Get a save directory for the lex and parse tables
+_lex_dir = os.path.join(os.path.dirname(__file__), 'parse_tab')
+_lex_module = 'enaml.core.parse_tab.lextab'
 
 
-def _raise_error(klass, message, filename, lineno):
-    raise klass(message + ' (%s, line %s)' % (filename, lineno))
+#------------------------------------------------------------------------------
+# Deprecation Handling
+#------------------------------------------------------------------------------
+# old decl header
+DECL = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*:\s*$')
 
 
-def raise_syntax_error(message, filename, lineno):
-    _raise_error(EnamlSyntaxError, message, filename, lineno)
+def warn_old_decl_syntax(lineno):
+    msg = ("Declaring a component without the keyword 'viewdef' is deprecated "
+           "and will be removed in futures versions. The keyword has been "
+           "automatically added on line number %s")
+    warnings.warn(msg % lineno, DeprecationWarning)
 
 
-def raise_indentation_error(message, filename, lineno):
-    _raise_error(IndentationError, message, filename, lineno)
+def warn_old_tag_syntax(lineno):
+    msg = ("The ::python:: and ::end:: tags are deprecated and will be "
+           "removed in future versions. The tags are no longer required "
+           "and can simply be ommitted. Ignoring tag on line number %s")
+    warnings.warn(msg % lineno, DeprecationWarning)
 
 
+#------------------------------------------------------------------------------
+# Lexing Helpers
+#------------------------------------------------------------------------------
+class ParsingError(Exception):
+    """ A helper class to bubble up exceptions out of the parsers
+    control to be re-raised at the parsing entry point. It avoids
+    problems with raise SyntaxErrors from within Ply parsing rules.
+
+    """
+    def __init__(self, exc_class, *args, **kwargs):
+        self.exc_class = exc_class
+        self.args = args
+        self.kwargs = kwargs
+
+    def __call__(self):
+        return self.exc_class(*self.args, **self.kwargs)
+
+
+def _parsing_error(klass, message, token):
+    """ Create and raise a parsing error for the syntax_error and
+    indentation_error functions below.
+
+    Parameters
+    ----------
+    klass : Exception class
+        The exception type to raise.
+    
+    message : string
+        The message to pass to the exception.
+    
+    token : LexToken
+        The current lextoken for the error.
+    
+    """
+    filename = token.lexer.filename
+    lexdata = token.lexer.lexdata
+    lineno = token.lineno
+    text = lexdata.splitlines()[lineno - 1] 
+    info = (filename, lineno, 0, text)
+    raise ParsingError(klass, message, info)
+
+
+def syntax_error(message, token):
+    """ Raise a ParsingError which will be converted into an proper
+    SyntaxError during parsing.
+
+    Parameters
+    ----------
+    message : string
+        The message to pass to the IndentationError
+    
+    token : LexToken
+        The current lextoken for the error.
+
+    """
+    _parsing_error(SyntaxError, message, token)
+
+
+def indentation_error(message, token):
+    """ Raise a ParsingError which will be converted into an proper
+    IndentationError during parsing.
+
+    Parameters
+    ----------
+    message : string
+        The message to pass to the IndentationError
+    
+    token : LexToken
+        The current lextoken for the error.
+
+    """
+    _parsing_error(IndentationError, message, token)
+
+
+#------------------------------------------------------------------------------
+# Enaml Lexer
+#------------------------------------------------------------------------------
 class EnamlLexer(object):
 
-    #--------------------------------------------------------------------------
-    # Token Declarations
-    #--------------------------------------------------------------------------
     operators = (
+        (r'@', 'AT'),
         (r'&', 'AMPER'),
         (r'&=', 'AMPEREQUAL'),
         (r'\^', 'CIRCUMFLEX'),
+        (r'\^=', 'CIRCUMFLEXEQUAL'),
         (r':', 'COLON'),
         (r'\.', 'DOT'),
         (r'//', 'DOUBLESLASH'),
+        (r'//=', 'DOUBLESLASHEQUAL'),
         (r'\*\*', 'DOUBLESTAR'),
+        (r'\*\*=', 'DOUBLESTAREQUAL'),
         (r'==', 'EQEQUAL'),
         (r'=', 'EQUAL'),
         (r'>', 'GREATER'),
         (r'>=', 'GREATEREQUAL'),
         (r'<<', 'LEFTSHIFT'),
+        (r'<<=', 'LEFTSHIFTEQUAL'),
         (r'<', 'LESS'),
         (r'<=', 'LESSEQUAL'),
         (r'-', 'MINUS'),
+        (r'-=', 'MINUSEQUAL'),
         (r'!=', 'NOTEQUAL'),
         (r'%', 'PERCENT'),
+        (r'%=', 'PERCENTEQUAL'),
         (r'\+', 'PLUS'),
+        (r'\+=', 'PLUSEQUAL'),
         (r'>>', 'RIGHTSHIFT'),
+        (r'>>=', 'RIGHTSHIFTEQUAL'),
+        (r';', 'SEMI'),
         (r'/', 'SLASH'),
+        (r'/=', 'SLASHEQUAL',),
         (r'\*', 'STAR'),
+        (r'\*=', 'STAREQUAL'),
         (r'~', 'TILDE'),
         (r'\|', 'VBAR'),
         (r'\|=', 'VBAREQUAL'),
@@ -79,19 +180,25 @@ class EnamlLexer(object):
         'STRING_CONTINUE',
         'STRING_END',
 
-        # Enaml tokens
-        'PY_BLOCK',
-        'PY_BLOCK_START',
-        'PY_BLOCK_END',
-        'PY_BLOCK_CONTINUE'
     )
 
     reserved = {
         'and': 'AND',
         'as': 'AS',
+        'assert': 'ASSERT',
+        'break': 'BREAK',
+        'class': 'CLASS',
+        'continue': 'CONTINUE',
+        'def': 'DEF',
+        'del': 'DEL',
+        'elif': 'ELIF',
         'else': 'ELSE',
+        'exec': 'EXEC',
+        'except': 'EXCEPT',
+        'finally': 'FINALLY',
         'from': 'FROM',
         'for': 'FOR',
+        'global': 'GLOBAL',
         'if': 'IF',
         'import': 'IMPORT',
         'in': 'IN',
@@ -101,6 +208,13 @@ class EnamlLexer(object):
         'or': 'OR',
         'pass': 'PASS',
         'print': 'PRINT',
+        'raise': 'RAISE',
+        'return': 'RETURN',
+        'try': 'TRY',
+        'viewdef': 'VIEWDEF',
+        'while': 'WHILE',
+        'with': 'WITH',
+        'yield': 'YIELD',
     }
 
     tokens = (tokens + 
@@ -115,11 +229,10 @@ class EnamlLexer(object):
         ('SINGLEQ2', 'exclusive'),
         ('TRIPLEQ1', 'exclusive'),
         ('TRIPLEQ2', 'exclusive'),
-        ('RAWPYTHON', 'exclusive')
     )
 
     #--------------------------------------------------------------------------
-    # INITIAL State Rules
+    # Default Rules
     #--------------------------------------------------------------------------
     t_COMMA = r','
     t_NUMBER = tokenize.Number
@@ -251,7 +364,7 @@ class EnamlLexer(object):
     t_TRIPLEQ1_ignore = ''
 
     def t_TRIPLEQ1_error(self, t):
-        raise_syntax_error('invalid syntax', self.filename, t.lineno)
+        syntax_error('invalid syntax', t)
 
     #--------------------------------------------------------------------------
     # TRIPLEQ2 strings
@@ -287,7 +400,7 @@ class EnamlLexer(object):
     t_TRIPLEQ2_ignore = ''
 
     def t_TRIPLEQ2_error(self, t):
-        raise_syntax_error('invalid syntax', self.filename, t.lineno)
+        syntax_error('invalid syntax', t)
 
     #--------------------------------------------------------------------------
     # SINGLEQ1 strings
@@ -317,8 +430,7 @@ class EnamlLexer(object):
     t_SINGLEQ1_ignore = ''
     
     def t_SINGLEQ1_error(self, t):
-        raise_syntax_error('EOL while scanning single quoted string.', 
-                           self.filename, t.lineno)
+        syntax_error('EOL while scanning single quoted string.', t)
 
     #--------------------------------------------------------------------------
     # SINGLEQ2 strings
@@ -348,42 +460,20 @@ class EnamlLexer(object):
     t_SINGLEQ2_ignore = ''
     
     def t_SINGLEQ2_error(self, t):
-        raise_syntax_error('EOL while scanning single quoted string.', 
-                           self.filename, t.lineno)
+        syntax_error('EOL while scanning single quoted string.', t)
     
     #--------------------------------------------------------------------------
     # Raw Python
-    #--------------------------------------------------------------------------
+    #--------------------------------------------------------------------------   
+    # Deprecated Backwards Compatibility for :: python :: tags
     def t_start_raw_python(self, t):
         r'::[\t\ ]*python[\t\ ]*::[\t\ ]*'
-        t.lexer.push_state('RAWPYTHON')
-        t.type = 'PY_BLOCK_START'
-        return t
+        warn_old_tag_syntax(t.lineno)
 
-    def t_RAWPYTHON_end_raw_python(self, t):
+
+    def t_end_raw_python(self, t):
         r'::[\t\ ]*end[\t\ ]*::[\t\ ]*'
-        t.lexer.pop_state()
-        t.type = 'PY_BLOCK_END'
-        return t
-
-    def t_RAWPYTHON_simple(self, t):
-        r'[^\n]+'
-        # This rule will also match the :: end :: tag, but since it is 
-        # checked after that rule (since this rule is defined later in 
-        # this file) things work properly. tl;dr do not move this rule
-        # above t_RAWPYTHON_end_raw_python in this module.
-        t.type = 'PY_BLOCK_CONTINUE'
-        return t
-    
-    def t_RAWPYTHON_newline(self, t):
-        r'\n+'
-        t.lexer.lineno += len(t.value)
-        t.type = 'NEWLINE'
-        return t
-
-    def t_RAWPYTHON_error(self, t):
-        raise_syntax_error('Error in raw python block.', 
-                           self.filename, t.lineno)
+        warn_old_tag_syntax(t.lineno)
 
     #--------------------------------------------------------------------------
     # Miscellaneous Token Rules
@@ -395,13 +485,15 @@ class EnamlLexer(object):
         return t
 
     def t_error(self, t):
-        raise_syntax_error('invalid syntax', self.filename, t.lineno)
+        syntax_error('invalid syntax', t)
         
     #--------------------------------------------------------------------------
     # Normal Class Items
     #--------------------------------------------------------------------------
     def __init__(self, filename='Enaml'):
-        self.lexer = lex.lex(module=self)
+        self.lexer = lex.lex(
+            module=self, outputdir=_lex_dir, lextab=_lex_module, optimize=1,
+        )
         self.token_stream = None
         self.filename = filename
 
@@ -416,6 +508,16 @@ class EnamlLexer(object):
         self.lexer.filename = filename
 
     def input(self, txt):
+        # Support for deprecated component declaration without
+        # keyword. This automatically inserts the keyword before
+        # anything makes it to the parser.
+        new = []
+        for lineno, line in enumerate(txt.splitlines()):
+            if DECL.match(line):
+                warn_old_decl_syntax(lineno)
+                line = 'viewdef ' + line
+            new.append(line)
+        txt = '\n'.join(new)
         self.lexer.input(txt)
         self.next_token = self.make_token_stream().next
 
@@ -462,102 +564,11 @@ class EnamlLexer(object):
 
     def make_token_stream(self):
         token_stream = iter(self.lexer.token, None)
-        token_stream = self.create_py_blocks(token_stream)
         token_stream = self.create_strings(token_stream)
         token_stream = self.annotate_indentation_state(token_stream)
         token_stream = self.synthesize_indentation_tokens(token_stream)
         token_stream = self.add_endmarker(token_stream)
         return token_stream
-
-    def create_py_blocks(self, token_stream):
-        for tok in token_stream:
-            if not tok.type == 'PY_BLOCK_START':
-                yield tok
-                continue
-            
-            # yield the start token since it's needed by the parser
-            start_tok = tok
-            yield start_tok
-
-            # The next token must be a newline or its a syntax error
-            try:
-                nl_tok = token_stream.next()
-            except StopIteration:
-                nl_tok = None
-
-            if nl_tok is None or nl_tok.type != 'NEWLINE':
-                if nl_tok is None:
-                    # create a fake token with a line number
-                    # for the error handler.
-                    nl_tok = lex.LexToken()
-                    nl_tok.lineno = start_tok.lineno
-                msg = 'Newline required after a ":: python ::" tag'
-                raise_syntax_error(msg, self.filename, nl_tok.lineno)
-            
-            # yield the newline token since it's needed by the parser
-            yield nl_tok
-
-            # The newline token that was just yielded will contain
-            # all of the newlines up to the first python statement.
-            # We want line number report to be one less than that
-            # to account for the nl taken by the tag itself. This
-            # is just a dummy token that will never be yielded to 
-            # the parser.
-            tok = lex.LexToken()
-            tok.value = nl_tok.value[1:]
-
-            # Collect the Python code from the block
-            py_toks = [tok]
-            end_tok = None
-            for tok in token_stream:
-                if tok.type == 'PY_BLOCK_END':
-                    end_tok = tok
-                    break
-                elif tok.type == 'NEWLINE':
-                    py_toks.append(tok)
-                else:
-                    assert tok.type == 'PY_BLOCK_CONTINUE', tok.type
-                    py_toks.append(tok)
-            
-            if end_tok is None:
-                # Reach end of input without an :: end :: delimiter
-                msg = 'EOF while scanning raw python block'
-                raise_syntax_error(msg, self.filename, start_tok.lineno)
-              
-            # Create the python text to add to the py block token.
-            py_txt = ''.join(tok.value for tok in py_toks)
-                   
-            # create a python token
-            py_block = lex.LexToken()
-            py_block.lineno = start_tok.lineno + 1
-            py_block.lexpos = -1
-            py_block.lexer = self.lexer
-            py_block.value = py_txt
-            py_block.type = 'PY_BLOCK'
-
-            # Yield the py block to the parser
-            yield py_block
-
-            # Yield the end block to the parser
-            yield end_tok
-
-            # An end token must be followed by a newline
-            try:
-                nl_tok = token_stream.next()
-            except StopIteration:
-                nl_tok = None
-            
-            if nl_tok is None or nl_tok.type != 'NEWLINE':
-                if nl_tok is None:
-                    # create a fake token with a line number
-                    # for the error handler.
-                    nl_tok = lex.LexToken()
-                    nl_tok.lineno = end_tok.lineno
-                msg = 'Newline required after a ":: end ::" tag'
-                raise_syntax_error(msg, self.filename, nl_tok.lineno)
-            
-            # The parser requires the newline token
-            yield nl_tok
 
     def create_strings(self, token_stream):
         for tok in token_stream:
@@ -581,7 +592,7 @@ class EnamlLexer(object):
                     msg = msg % 'triple'
                 else:
                     msg = msg % 'single'
-                raise_syntax_error(msg, self.filename, start_tok.lineno)
+                syntax_error(msg, start_tok)
 
             # Parse the quoted string.
             #
@@ -711,8 +722,7 @@ class EnamlLexer(object):
             if token.must_indent:
                 # The current depth must be larger than the previous level
                 if not (depth > levels[-1]):
-                    msg = 'Expected an indented block.'
-                    raise_indentation_error(msg, self.filename, token.lineno)
+                    indentation_error('expected an indented block', token)
                 levels.append(depth)
                 yield self.indent(token.lineno)
 
@@ -723,28 +733,21 @@ class EnamlLexer(object):
                     pass
                 elif depth > levels[-1]:
                     # indentation increase but not in new block
-                    raise_indentation_error('Unexpected indent.', 
-                                            self.filename, token.lineno)
+                    indentation_error('unexpected indent', token)
                 else:
                     # Back up; but only if it matches a previous level
                     try:
                         i = levels.index(depth)
                     except ValueError:
-                        msg = ('Unindent does not match any outer level '
+                        msg = ('unindent does not match any outer level '
                                'of indentation.')
-                        raise_indentation_error(msg, self.filename, 
-                                                token.lineno)
+                        indentation_error(msg, token)
                     for _ in range(i + 1, len(levels)):
                         yield self.dedent(token.lineno)
                         levels.pop()
 
             yield token
 
-        # It the current token is WS (which is only emitted at the start
-        # of a line), the the previou
-        # Sythesize a final newline token in case the user's
-        # forgot to end with a newline.
-        #
         # If the current token is WS (which is only emitted at the start
         # of a line), then the token before that was a newline unless
         # we're on line number 1. If that's the case, then we don't 

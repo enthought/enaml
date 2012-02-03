@@ -12,6 +12,19 @@ from .byteplay import (
 )
 
 
+# Increment this number whenever the compiler changes the code which it
+# generates. This number is used by the import hooks to know which version
+# of a .enamlc file is valid for the Enaml compiler version in use. If 
+# this number is not incremented on change, it may result in .enamlc
+# files which fail on import.
+#
+# Version History
+# ---------------
+# 1 : Initial compiler version 2 February 2012
+#
+COMPILER_VERSION = 1
+
+
 #------------------------------------------------------------------------------
 # Compiler Helpers
 #------------------------------------------------------------------------------
@@ -69,7 +82,8 @@ class DeclarationCompiler(_NodeVisitor):
     """
     @classmethod
     def compile(cls, node, filename):
-        """ Compiles the given Declaration node into a code object.
+        """ Compiles the given Declaration node into a byteplay code 
+        object.
 
         Given this sample declaration in Enaml::
           
@@ -107,7 +121,7 @@ class DeclarationCompiler(_NodeVisitor):
             code_ops, [], ['identifiers', 'toolkit'], False, False, True, 
             node.name, filename, node.lineno, node.doc,
         )
-        return code.to_code()
+        return code
 
     def __init__(self, filename):
         self.filename = filename
@@ -341,6 +355,7 @@ class EnamlCompiler(_NodeVisitor):
         # Generate the startup code for the module
         for start in STARTUP:
             start_code = compile(start, filename, mode='exec')
+            # Skip the SetLineo and ReturnValue codes
             extend_ops(Code.from_code(start_code).code[1:-2])
 
         # Add in the code ops for the module
@@ -349,6 +364,7 @@ class EnamlCompiler(_NodeVisitor):
         # Generate the cleanup code for the module
         for end in CLEANUP:
             end_code = compile(end, filename, mode='exec')
+            # Skip the SetLineo and ReturnValue codes
             extend_ops(Code.from_code(end_code).code[1:-2])
         
         # Add in the final return value ops
@@ -359,14 +375,12 @@ class EnamlCompiler(_NodeVisitor):
 
         # Generate and return the module code object.
         mod_code = Code(
-            module_ops, [], [], False, False, False, '',  filename, 0,
-            compiler.module_doc,
+            module_ops, [], [], False, False, False, '',  filename, 0, '',
         )
         return mod_code.to_code()
 
     def __init__(self, filename):
         self.code_ops = []
-        self.module_doc = ''
         self.filename = filename
 
     def visit_Module(self, node):
@@ -374,9 +388,6 @@ class EnamlCompiler(_NodeVisitor):
         compiler.
 
         """
-        doc = node.doc
-        if doc:
-            self.module_doc = doc
         for item in node.body:
             self.visit(item)
     
@@ -391,7 +402,8 @@ class EnamlCompiler(_NodeVisitor):
         # code object.
         py_code = compile(node.py_ast, self.filename, mode='exec')
         bpc = Code.from_code(py_code)
-        self.code_ops.extend(bpc.code[:-2])
+        # Skip the SetLineo and ReturnValue codes
+        self.code_ops.extend(bpc.code[1:-2])
 
     def visit_Declaration(self, node):
         """ The declaration node visitor. This will add an instance
