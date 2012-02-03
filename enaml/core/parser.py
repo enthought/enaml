@@ -331,7 +331,7 @@ def p_enaml_module_item1(p):
 # Declaration
 #------------------------------------------------------------------------------
 def p_declaration(p):
-    ''' declaration : VIEWDEF NAME LPAR NAME RPAR COLON declaration_body '''
+    ''' declaration : ENAMLDEF NAME LPAR NAME RPAR COLON declaration_body '''
     lineno = p.lineno(1)
     name = p[2]
     doc, idn, items = p[7]

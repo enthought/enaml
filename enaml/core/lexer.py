@@ -23,9 +23,9 @@ DECL = re.compile('^[a-zA-Z_][a-zA-Z0-9_]*\s*\(\s*[a-zA-Z_][a-zA-Z0-9_]*\s*\)\s*
 
 
 def warn_old_decl_syntax(lineno):
-    msg = ("Declaring a component without the keyword 'viewdef' is deprecated "
-           "and will be removed in futures versions. The keyword has been "
-           "automatically added on line number %s")
+    msg = ("Declaring a component without the keyword 'enamldef' is "
+           "deprecated and will be removed in futures versions. The keyword "
+           "has been automatically added on line number %s")
     warnings.warn(msg % lineno, DeprecationWarning)
 
 
@@ -193,6 +193,7 @@ class EnamlLexer(object):
         'del': 'DEL',
         'elif': 'ELIF',
         'else': 'ELSE',
+        'enamldef': 'ENAMLDEF',
         'exec': 'EXEC',
         'except': 'EXCEPT',
         'finally': 'FINALLY',
@@ -211,7 +212,6 @@ class EnamlLexer(object):
         'raise': 'RAISE',
         'return': 'RETURN',
         'try': 'TRY',
-        'viewdef': 'VIEWDEF',
         'while': 'WHILE',
         'with': 'WITH',
         'yield': 'YIELD',
@@ -515,7 +515,7 @@ class EnamlLexer(object):
         for lineno, line in enumerate(txt.splitlines()):
             if DECL.match(line):
                 warn_old_decl_syntax(lineno)
-                line = 'viewdef ' + line
+                line = 'enamldef ' + line
             new.append(line)
         txt = '\n'.join(new)
         self.lexer.input(txt)
