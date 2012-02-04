@@ -2296,7 +2296,7 @@ def p_subscriptlist_list1(p):
 
 def p_subscript_list2(p):
     ''' subscriptlist_list : subscriptlist_list COMMA subscript '''
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[3]]
 
 
 def p_subscript1(p):
@@ -2473,7 +2473,7 @@ def p_dosm_colon_list2(p):
 
 def p_dosm_comma_list1(p):
     ''' dosm_comma_list : COMMA test '''
-    p[0] = [p[1]]
+    p[0] = [p[2]]
 
 
 def p_dosm_comma_list2(p):
@@ -2708,7 +2708,7 @@ def p_testlist_safe_list1(p):
 
 def p_testlist_safe_list2(p):
     ''' testlist_safe_list : testlist_safe_list COMMA old_test '''
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[3]]
 
 
 def p_old_test1(p):
