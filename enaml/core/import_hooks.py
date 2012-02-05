@@ -22,7 +22,8 @@ try:
     MAGIC_TAG = 'enaml-py%s%s-cv%s' % (
         sys.version_info.major, sys.version_info.minor, COMPILER_VERSION,
     )
-except AttributeError:
+except AttributeError: 
+    # Python 2.6 compatibility
     MAGIC_TAG = 'enaml-py%s%s-cv%s' % (
         sys.version_info[0], sys.version_info[1], COMPILER_VERSION,
     )
