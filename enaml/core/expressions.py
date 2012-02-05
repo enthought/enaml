@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
 from collections import namedtuple, defaultdict
+from contextlib import contextmanager
 from weakref import ref
 
 from traits.api import Disallow
@@ -14,11 +15,39 @@ from .signaling import Signal
 
 
 #------------------------------------------------------------------------------
-# Expression Scope
+# Expression Helpers
 #------------------------------------------------------------------------------
-class ExpressionScope(object):
+@contextmanager
+def swap_attribute(obj, attr, value):
+    """ Swap an attribute of an object with the given value for the 
+    duration of the context, restoring it on exit. The attribute must
+    already exist on the object prior to entering the context.
+
+    Parameters
+    ----------
+    obj : object
+        The object which owns the attribute.
+    
+    attr : string
+        The name of the attribute on the object.
+
+    value : object
+        The value to apply to the attribute for the duration of the
+        context.
+    
+    """
+    old = getattr(obj, attr)
+    setattr(obj, attr, value)
+    yield
+    setattr(obj, attr, old)
+
+
+#------------------------------------------------------------------------------
+# Execution Scope
+#------------------------------------------------------------------------------
+class ExecutionScope(object):
     """ A custom mapping object that implements the scope resolution 
-    order for Enaml expressions.
+    order for the evaluation of code objects in Enaml expressions.
 
     Notes
     -----
@@ -27,11 +56,11 @@ class ExpressionScope(object):
     order to avoid issues with reference cycles.
 
     """
-    __slots__ = ('obj', 'identifiers', 'f_globals', 'toolkit', 
-                 'override', 'binder', 'temp_locals')
+    __slots__ = ('_obj', '_identifiers', '_f_globals', '_toolkit', 
+                 '_overrides', '_attr_cb', '_assignments')
 
-    def __init__(self, obj, identifiers, f_globals, toolkit, override, binder):
-        """ Initialize an expression locals instance.
+    def __init__(self, obj, identifiers, f_globals, toolkit, overrides, cb):
+        """ Initialize an execution scope.
 
         Parameters
         ----------
@@ -50,23 +79,22 @@ class ExpressionScope(object):
         toolkit : Toolkit
             The toolkit to check after checking the globals.
 
-        override : dict
+        overrides : dict
             An dictionary of override values to check before identifiers.
 
-        binder : callable or None
-            An callable which is called when an implicit attribute is 
-            looked up on the object. It should binds any notifiers which
-            are necessary. The arguments passed are the object and the
-            attribute name.
+        cb : callable or None
+            A callable which is called when an implicit attribute is 
+            found and accessed on the object. The arguments passed are 
+            the object and the attribute name.
 
         """
-        self.obj = obj
-        self.identifiers = identifiers
-        self.f_globals = f_globals
-        self.toolkit = toolkit
-        self.override = override
-        self.binder = binder
-        self.temp_locals = {}
+        self._obj = obj
+        self._identifiers = identifiers
+        self._f_globals = f_globals
+        self._toolkit = toolkit
+        self._overrides = overrides
+        self._attr_cb = cb
+        self._assignments = {}
 
     def __getitem__(self, name):
         """ Lookup an item from the namespace.
@@ -74,7 +102,7 @@ class ExpressionScope(object):
         Returns the named item from the namespace according to the
         following precedence rules:
 
-            1) temp_locals
+            1) assignments
             2) override
             3) identifiers
             4) implicit attrs
@@ -98,79 +126,221 @@ class ExpressionScope(object):
             If the name is not found, a KeyError is raise.
 
         """
-        # The temp locals are assigned to via __setitem__ when a 
-        # STORE_NAME opcode is encountered. The will happen, for
-        # example, with the loop variables of a list comprehension.
-        # Thus, those must take highest precedence.
-        dct = self.temp_locals
+        # Check the assignments dict first since this is where all
+        # local variable assignments will be stored.
+        dct = self._assignments
         if name in dct:
             return dct[name]
 
         # The overrides have the highest precedence of all framework
         # supplied values.
-        dct = self.override
+        dct = self._overrides
         if name in dct:
             return dct[name]
         
         # Identifiers have the highest precedence of value able to
         # be supplied by a user of the framework.
-        dct = self.identifiers
+        dct = self._identifiers
         if name in dct:
             return dct[name]
 
         # After identifiers, the implicit attributes of the component
         # heierarchy have precedence.
-        parent = self.obj
+        parent = self._obj
         while parent is not None:
             try:
                 res = getattr(parent, name)
             except AttributeError:
                 parent = parent.parent
             else:
-                # Call the binder if given so notifiers can be hooked up.
-                binder = self.binder
-                if binder is not None:
-                    binder(parent, name)
+                # Call the attribute callback if given.
+                cb = self._attr_cb
+                if cb is not None:
+                    cb(parent, name)
                 return res
 
         # Global variables come after implicit attributes
-        dct = self.f_globals
+        dct = self._f_globals
         if name in dct:
             return dct[name]
         
         # End with the toolkit which will raise KeyError on failure.
         # Builtins will be checked by Python using the global dict.
-        return self.toolkit[name]
+        return self._toolkit[name]
 
     def __setitem__(self, name, val):
-        """ Stores the value into the temp locals dict. This operation
-        will occur whenever a STORE_NAME opcode is encountered such
-        as with the loop variables of a list comprehension, or on
-        Python 2.6 to store the list itself. See the docstring of
-        __delitem__ for more info.
+        """ Stores the value into the internal assignments dict. This 
 
         """
-        self.temp_locals[name] = val
+        self._assignments[name] = val
 
     def __delitem__(self, name):
-        """ Deletes the value from the temp locals dict. This operation
-        will occur on Python 2.6 during a list comprehension. In that
-        version of Python, the list in a list comp is stored in a mangled
-        local variable which is not a valid Python name. Presumably, this
-        is because the LIST_APPEND opcode on 2.6 consumes the TOS, while
-        on 2.7 it does not.
+        """ Deletes the value from the internal assignments dict.
 
         """
-        del self.temp_locals[name]
+        del self._assignments[name]
 
     def __contains__(self, name):
-        res = False
-        if isinstance(name, basestring):
+        """ Return True if the name is found in the scope, False 
+        otherwise.
+
+        """
+        # This method must be supplied in order for pdb to work properly
+        # from within code blocks. Any attribute callback is temporarily
+        # uninstalled so that it is not executed when simply checking for
+        # the existance of the item in the scope.
+        with swap_attribute(self, '_attr_cb', None):
+            if isinstance(name, basestring):
+                try:
+                    self.__getitem__(name)
+                except KeyError:
+                    res = False
+                else:
+                    res = True
+            else:
+                res = False
+        return res
+
+
+#------------------------------------------------------------------------------
+# Nonlocal Scope
+#------------------------------------------------------------------------------
+class NonlocalScope(object):
+    """ An object which implements implicit attribute scoping starting
+    at a given object in the tree. It is used in conjuction with a 
+    nonlocals() instance to allow for explicit referencing of values
+    which would otherwise be implicitly scoped.
+
+    """
+    __slots__ = ('_nls_obj', '_nls_attr_cb')
+
+    def __init__(self, obj, cb):
+        """ Initialize a nonlocal scope.
+
+        Parameters
+        ----------
+        obj : BaseComponent
+            The BaseComponent instance which forms the first level of
+            the scope.
+        
+        cb : callable or None
+            A callable which is called when an implicit attribute is 
+            found and accessed on the object. The arguments passed are 
+            the object and the attribute name.
+        
+        """
+        self._nls_obj = obj
+        self._nls_attr_cb = cb
+
+    def __repr__(self):
+        """ A pretty representation of the NonlocalScope.
+
+        """
+        templ = 'NonlocalScope[%s]'
+        return templ % self._nls_obj
+
+    def __call__(self, level=0):
+        """ Returns a new nonlocal scope object offset the given number
+        of levels in the heierarchy.
+
+        Parameters
+        ----------
+        level : int, optional
+            The number of levels up the tree to offset. The default is
+            zero and indicates no offset. The level must be >= 0.
+
+        """
+        if not isinstance(level, int) or level < 0:
+            msg = ('The nonlocal scope level must be an int >= 0. '
+                   'Got %r instead.')
+            raise ValueError(msg % level)
+
+        offset = 0
+        target = self._nls_obj
+        while target is not None and offset != level:
+            target = target.parent
+            offset += 1
+
+        if offset != level:
+            msg = 'Scope level %s is out of range'
+            raise ValueError(msg % level)
+
+        return NonlocalScope(target, self._nls_attr_cb)
+
+    def __getattr__(self, name):
+        """ A convenience method which allows accessing items in the
+        scope via getattr instead of getitem.
+
+        """
+        try:
+            return self.__getitem__(name)
+        except KeyError:
+            msg = "%s has no attribute '%s'" % (self, name)
+            raise AttributeError(msg)
+
+    def __setattr__(self, name, value):
+        """ A convenience method which allows setting items in the 
+        scope via setattr instead of setitem.
+
+        """
+        if name in self.__slots__:
+            super(NonlocalScope, self).__setattr__(name, value)
+        else:
             try:
-                self.__getitem__(name)
-                res = True
+                self.__setitem__(name, value)
             except KeyError:
-                pass
+                msg = "%s has no attribute '%s'" % (self, name)
+                raise AttributeError(msg)
+
+    def __getitem__(self, name):
+        """ Returns the named item beginning at the current scope object
+        and progressing up the tree until the named attribute is found.
+        A KeyError is raised if the attribute is not found.
+
+        """
+        parent = self._nls_obj
+        while parent is not None:
+            try:
+                res = getattr(parent, name)
+            except AttributeError:
+                parent = parent.parent
+            else:
+                cb = self._nls_attr_cb
+                if cb is not None:
+                    cb(parent, name)
+                return res
+        raise KeyError(name)
+    
+    def __setitem__(self, name, value):
+        """ Sets the value of the scope by beginning at the current scope
+        object and progressing up the tree until the named attribute is 
+        found. A KeyError is raise in the attribute is not found.
+
+        """
+        parent = self._nls_obj
+        while parent is not None:
+            if hasattr(parent, name):
+                setattr(parent, name, value)
+                return
+            else:
+                parent = parent.parent
+        raise KeyError(name)
+
+    def __contains__(self, name):
+        """ Return True if the name is found in the scope, False 
+        otherwise.
+
+        """
+        with swap_attribute(self, '_nls_attr_cb', None):
+            if isinstance(name, basestring):
+                try:
+                    self.__getitem__(name)
+                except KeyError:
+                    res = False
+                else:
+                    res = True
+            else:
+                res = False
         return res
 
 
@@ -281,12 +451,13 @@ class SimpleExpression(AbstractExpression):
         obj = self.obj_ref()
         if obj is None:
             return NotImplemented
-        identifiers = self.identifiers
+        
+        overrides = {'nonlocals': NonlocalScope(obj, None)}
         f_globals = self.f_globals
-        toolkit = self.toolkit
-        scope = ExpressionScope(
-            obj, identifiers, f_globals, toolkit, {}, None,
+        scope = ExecutionScope(
+            obj, self.identifiers, f_globals, self.toolkit, overrides, None,
         )
+
         return eval(self.code, f_globals, scope)
 
     def notify(self, old, new):
@@ -321,21 +492,26 @@ class NotificationExpression(AbstractExpression):
         return NotImplemented
 
     def notify(self, old, new):
-        """ Evaluates the underlying expression, and provides an 
-        'event' object in the evaluation scope which contains 
-        information about the trait change.
+        """ Evaluates the underlying expression, and provides an 'event'
+        object in the evaluation scope which contains information about 
+        the trait change.
 
         """
         obj = self.obj_ref()
         if obj is None:
             return
+
         identifiers = self.identifiers
         f_globals = self.f_globals
         toolkit = self.toolkit
-        override = {'event': self.event(obj, self.name, old, new)}
-        scope = ExpressionScope(
+        override = {
+            'event': self.event(obj, self.name, old, new),
+            'nonlocals': NonlocalScope(obj, None),
+        }
+        scope = ExecutionScope(
             obj, identifiers, f_globals, toolkit, override, None,
         )
+
         eval(self.code, f_globals, scope)
 
 
@@ -414,10 +590,12 @@ class UpdateExpression(AbstractExpression):
         identifiers = self.identifiers
         f_globals = self.f_globals
         toolkit = self.toolkit
-        override = {'_[expr]': self, '_[obj]': obj, '_[name]': self.name,
-                    '_[old]': old, '_[new]': new}
-        scope = ExpressionScope(
-            obj, identifiers, f_globals, toolkit, override, None,
+        overrides = {
+            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new, 
+            '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
+        }
+        scope = ExecutionScope(
+            obj, identifiers, f_globals, toolkit, overrides, None,
         )
 
         # Run through the inverters, giving each a chance to do the
@@ -577,15 +755,19 @@ class SubscriptionExpression(AbstractExpression):
         self.implicit_binder = binder = _ImplicitAttributeBinder(self)
         for monitor in self.monitors:
             monitor.reset()
+
         obj = self.obj_ref()
         if obj is None:
             return NotImplemented
+        
         identifiers = self.identifiers
         f_globals = self.f_globals
         toolkit = self.toolkit
-        scope = ExpressionScope(
-            obj, identifiers, f_globals, toolkit, {}, binder,
+        overrides = {'nonlocals': NonlocalScope(obj, binder)}
+        scope = ExecutionScope(
+            obj, identifiers, f_globals, toolkit, overrides, binder,
         )
+
         return eval(self.eval_code, f_globals, scope)
 
     def notify(self, old, new):
@@ -678,10 +860,12 @@ class DelegationExpression(SubscriptionExpression):
         identifiers = self.identifiers
         f_globals = self.f_globals
         toolkit = self.toolkit
-        override = {'_[expr]': self, '_[obj]': obj, '_[name]': self.name,
-                    '_[old]': old, '_[new]': new}
-        scope = ExpressionScope(
-            obj, identifiers, f_globals, toolkit, override, None,
+        overrides = {
+            '_[expr]': self, '_[obj]': obj, '_[old]': old, '_[new]': new, 
+            '_[name]': self.name, 'nonlocals': NonlocalScope(obj, None),
+        }
+        scope = ExecutionScope(
+            obj, identifiers, f_globals, toolkit, overrides, None,
         )
 
         # Run through the inverters, giving each a chance to do the
