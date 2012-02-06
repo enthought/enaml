@@ -628,8 +628,6 @@ class BaseSpacer(object):
     """
     __metaclass__ = ABCMeta
 
-    __slots__ = ()
-
     strength = None
     weight = None
 
@@ -665,8 +663,6 @@ class Spacer(BaseSpacer):
     which represent the amount of space to use in the constraint.
 
     """
-    __slots__ = ('amt', 'strength', 'weight')
-
     def __init__(self, amt=DEFAULT_SPACE, strength=None, weight=None):
         self.amt = max(0, amt)
         self.strength = strength
@@ -698,8 +694,6 @@ class FlexSpacer(Spacer):
     preference for being that minimum.
 
     """
-    __slots__ = ('amt', 'min_strength', 'min_weight', 'eq_strength', 'eq_weight')
-
     def __init__(self, amt=DEFAULT_SPACE, min_strength='medium', min_weight=1.5, eq_strength='medium', eq_weight=1.25):
         self.amt = max(0, amt)
         self.min_strength = min_strength
@@ -738,8 +732,6 @@ class EqSpacer(Spacer):
     """ An spacer which represents a fixed amount of space.
 
     """
-    __slots__ = ()
-
     def _constrain(self, first_anchor, second_anchor):
         """ A constraint of the form (anchor_1 + space == anchor_2)
 
@@ -751,8 +743,6 @@ class LeSpacer(Spacer):
     """ A spacer which represents a flexible space with a maximum value.
 
     """
-    __slots__ = ()
-
     def _constrain(self, first_anchor, second_anchor):
         """ A constraint of the form (anchor_1 + space >= anchor_2)
         That is, the visible space must be less than or equal to the
@@ -766,8 +756,6 @@ class GeSpacer(Spacer):
     """ A spacer which represents a flexible space with a minimum value.
 
     """
-    __slots__ = ()
-
     def _constrain(self, first_anchor, second_anchor):
         """ A constraint of the form (anchor_1 + space >= anchor_2)
         That is, the visible space must be greater than or equal to
@@ -784,8 +772,6 @@ class _space_(BaseSpacer):
     of space.
 
     """
-    __slots__ = ()
-
     def __eq__(self, other):
         if not isinstance(other, int):
             raise TypeError('space can only be created from ints')

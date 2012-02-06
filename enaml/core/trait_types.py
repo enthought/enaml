@@ -84,8 +84,6 @@ class EnamlEventDispatcher(object):
     reference to the underlying object.
 
     """
-    __slots__ = ('_trait', '_obj', '_name')
-
     def __init__(self, trait, obj, name):
         """ Initialize an event dispatcher.
 

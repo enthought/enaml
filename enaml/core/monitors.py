@@ -235,8 +235,6 @@ class _TraitNotificationHandler(object):
     a trait notifier.
 
     """
-    __slots__ = ('_parent_ref', '__weakref__')
-
     def __init__(self, parent, obj, attr):
         """ Initialize a TraitNotificationHandler.
 

@@ -11,8 +11,6 @@ class ASTNode(object):
         The line number in the source code that created this node.
     
     """
-    __slots__ = ('lineno',)
-
     def __init__(self, lineno):
         self.lineno = lineno
 
@@ -35,8 +33,6 @@ class Module(ASTNode):
         A list of ast nodes comprising the body of the module.
     
     """
-    __slots__ = ('body',)
-
     def __init__(self, body, lineno):
         super(Module, self).__init__(lineno)
         self.body = body
@@ -51,8 +47,6 @@ class Python(ASTNode):
         A Python ast node.
     
     """
-    __slots__ = ('py_ast',)
-
     def __init__(self, py_ast, lineno):
         super(Python, self).__init__(lineno)
         self.py_ast = py_ast
@@ -79,8 +73,6 @@ class Declaration(ASTNode):
         A list of AST nodes that comprise the body of the declaration.
     
     """
-    __slots__ = ('name', 'base', 'identifier', 'doc', 'body')
-
     def __init__(self, name, base, identifier, doc, body, lineno):
         super(Declaration, self).__init__(lineno)
         self.name = name
@@ -105,8 +97,6 @@ class Instantiation(ASTNode):
         A list of AST nodes which comprise the instantiation body.
     
     """
-    __slots__ = ('name', 'identifier', 'body')
-
     def __init__(self, name, identifier, body, lineno):
         super(Instantiation, self).__init__(lineno)
         self.name = name
@@ -135,8 +125,6 @@ class AttributeDeclaration(ASTNode):
         i.e. was declared with 'event' instead of 'attr'.
 
     """
-    __slots__ = ('name', 'type', 'default', 'is_event')
-
     def __init__(self, name, type, default, is_event, lineno):
         super(AttributeDeclaration, self).__init__(lineno)
         self.name = name
@@ -157,8 +145,6 @@ class AttributeBinding(ASTNode):
         The BoundExpression ast node which represents the binding.
     
     """
-    __slots__ = ('name', 'binding')
-
     def __init__(self, name, binding, lineno):
         super(AttributeBinding, self).__init__(lineno)
         self.name = name
@@ -177,8 +163,6 @@ class BoundExpression(ASTNode):
         A Python ast node that reprents the bound expression.
     
     """
-    __slots__ = ('op', 'expr')
-
     def __init__(self, op, expr, lineno):
         super(BoundExpression, self).__init__(lineno)
         self.op = op

@@ -22,8 +22,6 @@ class guard(object):
             foo()
 
     """
-    __slots__ = ('_counts',)
-
     def __init__(self):
         self._counts = {}
 

@@ -56,9 +56,6 @@ class ExecutionScope(object):
     order to avoid issues with reference cycles.
 
     """
-    __slots__ = ('_obj', '_identifiers', '_f_globals', '_toolkit', 
-                 '_overrides', '_attr_cb', '_assignments')
-
     def __init__(self, obj, identifiers, f_globals, toolkit, overrides, cb):
         """ Initialize an execution scope.
 
@@ -212,8 +209,6 @@ class NonlocalScope(object):
     which would otherwise be implicitly scoped.
 
     """
-    __slots__ = ('_nls_obj', '_nls_attr_cb')
-
     def __init__(self, obj, cb):
         """ Initialize a nonlocal scope.
 
@@ -283,7 +278,7 @@ class NonlocalScope(object):
         scope via setattr instead of setitem.
 
         """
-        if name in self.__slots__:
+        if name in ('_nls_obj', '_nls_attr_cb'):
             super(NonlocalScope, self).__setattr__(name, value)
         else:
             try:
@@ -350,15 +345,10 @@ class NonlocalScope(object):
 class AbstractExpression(object):
     """ The base abstract expression class which defines the base api
     for Expression handlers. These objects are typically created by
-    the Enaml operators. Subclasses should ensure that they properly
-    declare __slots__, since the potential for having large numbers
-    of these expressions is high and saving the memory is important.
+    the Enaml operators.
 
     """
     __metaclass__ = ABCMeta
-
-    __slots__ = ('obj_ref', 'name', 'code', 'identifiers', 'f_globals', 
-                 'toolkit', '__weakref__')
 
     #: A signal which is emitted when the expression has changed. It is
     #: emmitted with three arguments: expression, name, and value; where 
@@ -442,8 +432,6 @@ class SimpleExpression(AbstractExpression):
     the expression_changed signal. Is also does not support notification.
 
     """
-    __slots__ = ()
-
     def eval(self):
         """ Evaluates and returns the results of the expression.
 
@@ -479,8 +467,6 @@ class NotificationExpression(AbstractExpression):
     will contain information about the trait change.
 
     """
-    __slots__ = ()
-
     #: A namedtuple which is used to pass arguments to the expression.
     event = namedtuple('event', 'obj name old new')
 
@@ -524,8 +510,6 @@ class UpdateExpression(AbstractExpression):
     inverters.
 
     """
-    __slots__ = ('inverters',)
-
     def __init__(self, inverter_classes, *args):
         """ Initialize an UpdateExpression
 
@@ -623,8 +607,6 @@ class _ImplicitAttributeBinder(object):
     # attribute lookups, when successful, will always be on an instance
     # of BaseComponent and should never need to be hooked by an Enaml 
     # extension.
-    __slots__ = ('parent_ref', '__weakref__')
-
     def __init__(self, parent):
         """ Initialize an _ImplicitAttributeBinder
 
@@ -672,8 +654,6 @@ class SubscriptionExpression(AbstractExpression):
     support notification.
 
     """
-    __slots__ = ('eval_code', 'monitors', 'old_value', 'implicit_binder')
-
     def __init__(self, monitor_classes, *args):
         """ Initialize a SubscriptionExpression
 
@@ -787,8 +767,6 @@ class DelegationExpression(SubscriptionExpression):
     to any provide inverters.
 
     """
-    __slots__ = ('inverters',)
-
     def __init__(self, inverter_classes, *args):
         """ Initialize a DelegationExpression
 

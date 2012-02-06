@@ -9,10 +9,6 @@ class BoxModel(object):
     """ Provide ConstraintVariables describing a box.
 
     """
-
-    __slots__ = ('left', 'right', 'width', 'height',
-                 'top', 'bottom', 'v_center', 'h_center')
-
     def __init__(self, component):
         label = '{0}_{1:x}'.format(type(component).__name__, id(component))
         self.left = ConstraintVariable('left_{0}'.format(label))
@@ -24,16 +20,11 @@ class BoxModel(object):
         self.v_center = self.top + self.height / 2.0
         self.h_center = self.left + self.width / 2.0
 
+
 class MarginBoxModel(BoxModel):
     """ Provide ConstraintVariables describing a box with margins.
 
     """
-
-    __slots__ = ('margin_left', 'margin_right', 'margin_top', 'margin_bottom',
-        'contents_left', 'contents_right', 'contents_width', 'contents_height',
-        'contents_width', 'contents_top', 'contents_bottom',
-        'contents_v_center', 'contents_h_center')
-
     def __init__(self, component):
         super(MarginBoxModel, self).__init__(component)
         label = '{0}_{1:x}'.format(type(component).__name__, id(component))
@@ -48,3 +39,4 @@ class MarginBoxModel(BoxModel):
         self.contents_height = self.contents_bottom - self.contents_top
         self.contents_v_center = self.contents_top + self.contents_height / 2.0
         self.contents_h_center = self.contents_left + self.contents_width / 2.0
+
