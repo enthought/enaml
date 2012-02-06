@@ -175,7 +175,7 @@ class UserEvent(EnamlEvent):
 # Enaml Base Component
 #------------------------------------------------------------------------------
 class BaseComponent(HasStrictTraits):
-    """ The most base class of the Enaml component heierarchy.
+    """ The most base class of the Enaml component hierarchy.
 
     All declarative Enaml classes should inherit from this class. This 
     class is not meant to be instantiated directly.

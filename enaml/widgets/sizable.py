@@ -137,7 +137,7 @@ class AbstractTkSizable(object):
 class Sizable(HasStrictTraits):
     """ A mixin class which declares the sizable interface for an
     Enaml component. The Component class should be in inheritence 
-    heierarchy when the class is used as a mixin.
+    hierarchy when the class is used as a mixin.
 
     """
     def size_hint(self):

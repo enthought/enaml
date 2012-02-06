@@ -274,7 +274,7 @@ class AbstractNameInverter(AbstractInverter):
 class ImplicitAttrInverter(AbstractNameInverter):
     """ A concrete implementation of AbstractNameInverter which inverts
     a name access into a setattr operation on an implicit attribute
-    in the component heierarchy.
+    in the component hierarchy.
 
     """
     @staticmethod

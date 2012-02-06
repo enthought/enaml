@@ -20,7 +20,7 @@ class LayoutTaskHandler(HasStrictTraits):
 
     Only classes which actually implement some form of layout handling 
     should inherit this class. Otherwise, layout requests will not
-    properly propagate up the widget heierarchy.
+    properly propagate up the widget hierarchy.
 
     This class should be inherited before the other superclasses of
     the parent class, or the layout handlers will not be properly

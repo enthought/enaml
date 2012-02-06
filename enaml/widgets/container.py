@@ -68,7 +68,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #: A read-only property which returns True if this container owns
     #: its layout and is responsible for setting the geometry of its
     #: children, or False if that responsibility has been transferred
-    #: to another component in the heierarchy.
+    #: to another component in the hierarchy.
     owns_layout = Property(Bool, depends_on='_layout_owner')
 
     #: A list of user-specified linear constraints defined for this 
@@ -130,7 +130,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     def transfer_layout_ownership(self, owner):
         """ A method which can be called by other components in the
-        heierarchy to gain ownership responsibility for the layout 
+        hierarchy to gain ownership responsibility for the layout 
         of the children of this container. By default, the transfer
         is allowed and is the mechanism which allows constraints to
         cross widget boundaries. Subclasses should reimplement this 

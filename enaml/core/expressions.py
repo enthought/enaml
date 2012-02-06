@@ -145,7 +145,7 @@ class ExecutionScope(object):
             return dct[name]
 
         # After identifiers, the implicit attributes of the component
-        # heierarchy have precedence.
+        # hierarchy have precedence.
         parent = self._obj
         while parent is not None:
             try:
@@ -241,7 +241,7 @@ class NonlocalScope(object):
 
     def __call__(self, level=0):
         """ Returns a new nonlocal scope object offset the given number
-        of levels in the heierarchy.
+        of levels in the hierarchy.
 
         Parameters
         ----------
