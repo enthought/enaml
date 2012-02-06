@@ -441,12 +441,17 @@ class SimpleExpression(AbstractExpression):
             return NotImplemented
         
         overrides = {'nonlocals': NonlocalScope(obj, None)}
+        identifiers = self.identifiers
         f_globals = self.f_globals
+        toolkit = self.toolkit
         scope = ExecutionScope(
-            obj, self.identifiers, f_globals, self.toolkit, overrides, None,
+            obj, identifiers, f_globals, toolkit, overrides, None,
         )
 
-        return eval(self.code, f_globals, scope)
+        with toolkit:
+            res =  eval(self.code, f_globals, scope)
+        
+        return res
 
     def notify(self, old, new):
         """ A no-op notification method since SimpleExpression does not
@@ -498,7 +503,8 @@ class NotificationExpression(AbstractExpression):
             obj, identifiers, f_globals, toolkit, override, None,
         )
 
-        eval(self.code, f_globals, scope)
+        with toolkit:
+            eval(self.code, f_globals, scope)
 
 
 #------------------------------------------------------------------------------
@@ -585,14 +591,15 @@ class UpdateExpression(AbstractExpression):
         # Run through the inverters, giving each a chance to do the
         # inversion. The process ends with the first success. If 
         # none of the invertors are successful an error is raised.
-        for inverter in self.inverters:
-            if eval(inverter, f_globals, scope):
-                break
-        else:
-            msg = ("Unable to delegate expression to the '%s' attribute of "
-                   "the %s object. None of the provided inverters were "
-                   "successful in assigning the value.")
-            raise RuntimeError(msg)
+        with toolkit:
+            for inverter in self.inverters:
+                if eval(inverter, f_globals, scope):
+                    break
+            else:
+                msg = ("Unable to delegate expression to the '%s' attribute "
+                       "of the %s object. None of the provided inverters were "
+                       "successful in assigning the value.")
+                raise RuntimeError(msg)
 
 
 #------------------------------------------------------------------------------
@@ -748,7 +755,10 @@ class SubscriptionExpression(AbstractExpression):
             obj, identifiers, f_globals, toolkit, overrides, binder,
         )
 
-        return eval(self.eval_code, f_globals, scope)
+        with toolkit:
+            res = eval(self.eval_code, f_globals, scope)
+
+        return res
 
     def notify(self, old, new):
         """ A no-op notification method since SubscriptionExpression does
@@ -849,12 +859,13 @@ class DelegationExpression(SubscriptionExpression):
         # Run through the inverters, giving each a chance to do the
         # inversion. The process ends with the first success. If 
         # none of the invertors are successful an error is raised.
-        for inverter in self.inverters:
-            if eval(inverter, f_globals, scope):
-                break
-        else:
-            msg = ("Unable to delegate expression to the '%s' attribute of "
-                   "the %s object. None of the provided inverters were "
-                   "successful in assigning the value.")
-            raise RuntimeError(msg)
+        with toolkit:
+            for inverter in self.inverters:
+                if eval(inverter, f_globals, scope):
+                    break
+            else:
+                msg = ("Unable to delegate expression to the '%s' attribute "
+                       "of the %s object. None of the provided inverters were "
+                       "successful in assigning the value.")
+                raise RuntimeError(msg)
 
