@@ -300,6 +300,7 @@ class TraitHandlerMixin(object):
         key = (id(obj), attr)
         if key in handlers:
             return
+        
         if isinstance(obj, HasTraits):
             # Only hook up a notifier if the attribute access refers to
             # a proper trait. We check for Disallow trait types since 
@@ -365,8 +366,10 @@ class TraitGetattrMonitor(TraitHandlerMixin, AbstractCallMonitor):
         n_args = len(args)
         if func_obj is not getattr or n_args < 2 or n_args > 3 or kwargs:
             return
+        
         obj, attr = args[0], args[1]
         if not isinstance(attr, basestring):
             return
+        
         self.do_binding(obj, attr)
 
