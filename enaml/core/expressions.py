@@ -544,7 +544,7 @@ class UpdateExpression(AbstractExpression):
                    "the supplied code inverters.")
             raise ValueError(msg % (self.name, self.obj_ref()))
 
-        self.inverters = inverters
+        self.inverters = tuple(inverters)
     
     def eval(self):
         """ A no-op eval method since UpdateExpression does not support 
@@ -701,7 +701,7 @@ class SubscriptionExpression(AbstractExpression):
         
         bp_code.code = new_code
         self.eval_code = bp_code.to_code()
-        self.monitors = monitors
+        self.monitors = tuple(monitors)
         self.implicit_binder = _ImplicitAttributeBinder(self)
         self.old_value = NotImplemented
 
