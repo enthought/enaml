@@ -20,11 +20,44 @@ def imports():
 #------------------------------------------------------------------------------
 # Toolkit Factory Functions
 #------------------------------------------------------------------------------
-def default_toolkit():
-    """ Creates an returns the default toolkit object based on
-    the user's current ETS_TOOLKIT environment variables.
+#: The private storage for the optional default toolkit function which 
+#: overrides that which is computed from environment variables.
+_default_toolkit_func = None
+
+
+def set_default_toolkit_func(func):
+    """ Set the default toolkit function to the given callable.
+
+    Parameters
+    ----------
+    func : callable
+        A callable object which takes no arguments and returns an
+        instance of Toolkit.
+    
+    """
+    global _default_toolkit_func
+    _default_toolkit_func = func
+
+
+def reset_default_toolkit_func():
+    """ Reset the default toolkit func such that the default toolkit
+    is computed from environment variables.
 
     """
+    global _default_toolkit_func
+    _default_toolkit_func = None
+
+
+def default_toolkit():
+    """ Creates an returns the default toolkit object based on the user's
+    current ETS_TOOLKIT environment variables, or the default toolkit
+    function supplied via the set_default_toolkit_func function.
+
+    """
+    tk_func = _default_toolkit_func
+    if tk_func is not None:
+        return tk_func()
+
     toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower()
 
     if toolkit == 'qt' or toolkit == 'qt4':
