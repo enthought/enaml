@@ -7,7 +7,7 @@ from weakref import ref, WeakKeyDictionary
 
 
 class Signal(object):
-    """ A descriptor which provide notification functionality similar
+    """ A descriptor which provides notification functionality similar
     to Qt signals.
 
     A Signal is used by creating an instance of it in the body of a
