@@ -1,0 +1,41 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Object Model Example
+
+This example shows how to use the Standard Object model to display
+a list objects as a 2D table.
+
+"""
+import random
+
+from enaml.item_models.standard_models import ObjectModel
+
+from traits.api import HasTraits, Str
+
+
+class Person(HasTraits):
+    first_name = Str
+    last_name = Str
+
+
+first_names = ['John', 'Samuel', 'Elizabeth', 'Grace', 'Henry', 'Amy']
+last_names = ['Han', 'Rialto', 'Young', 'Specter', 'Risk', 'Donaldson']
+people = []
+for _ in range(1000):
+    fn = random.choice(first_names)
+    ln = random.choice(last_names)
+    people.append(Person(first_name=fn, last_name=ln))
+
+
+enamldef Main(MainWindow):
+    Container:
+        CheckBox:
+            id: cb
+            text = 'Transpose Data'
+            toggled :: tv.item_model.transpose = checked
+        TableView:
+            id: tv
+            item_model = ObjectModel((people, ['first_name', 'last_name']), transpose=cb.checked)
+
