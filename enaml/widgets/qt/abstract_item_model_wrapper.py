@@ -5,8 +5,8 @@
 import itertools
 import operator
 
-from .qt.QtGui import QColor
 from .qt.QtCore import Qt, QAbstractItemModel, QModelIndex
+from .styling import q_color_from_color, q_font_from_font
 
 from ...item_models.abstract_item_model import AbstractItemModel
 
@@ -73,18 +73,8 @@ def _build_setters(model):
     """
     return {
         int(Qt.DisplayRole): model.set_data,
-        int(Qt.DecorationRole): model.set_decoration,
         int(Qt.EditRole): model.set_data,
-        int(Qt.ToolTipRole): model.set_tool_tip,
-        int(Qt.StatusTipRole): model.set_status_tip,
-        int(Qt.WhatsThisRole): model.set_whats_this,
-        int(Qt.FontRole): model.set_font,
-        int(Qt.TextAlignmentRole): model.set_alignment,
-        int(Qt.BackgroundRole): model.set_background,
-        int(Qt.ForegroundRole): model.set_foreground,
         int(Qt.CheckStateRole): model.set_check_state,
-        int(Qt.SizeHintRole): model.set_size_hint,
-        int(Qt.UserRole): lambda *args, **kwargs: False,
     }
 
 
@@ -134,7 +124,6 @@ def _build_v_header_getters(model):
 def _not_yet_supported(val):
     # use this converter for roles that are not 
     # yet supported.
-
     return None
 
 
@@ -147,10 +136,16 @@ def _no_convert(val):
 def _brush_convert(brush):
     # We don't yet support a full brush, so for now just 
     # return the color. Which works fine.
-    if brush is not None:
-        return QColor(*brush.color)
+    if brush:
+        return q_color_from_color(brush.color)
 
-    
+
+# Some of these should be LRU cached    
+def _font_convert(font):
+    if font:
+        return q_font_from_font(font)
+
+
 _QROLE_CONVERTERS = {
     int(Qt.DisplayRole): _no_convert,
     int(Qt.DecorationRole): _not_yet_supported,
@@ -158,7 +153,7 @@ _QROLE_CONVERTERS = {
     int(Qt.ToolTipRole): _no_convert,
     int(Qt.StatusTipRole): _no_convert,
     int(Qt.WhatsThisRole): _no_convert,
-    int(Qt.FontRole): _not_yet_supported,
+    int(Qt.FontRole): _font_convert,
     int(Qt.TextAlignmentRole): _no_convert,
     int(Qt.BackgroundRole): _brush_convert,
     int(Qt.ForegroundRole): _brush_convert,
@@ -188,9 +183,9 @@ class AbstractItemModelWrapper(QAbstractItemModel):
         self._h_header_getters = _build_h_header_getters(item_model)
         self._v_header_getters = _build_v_header_getters(item_model)
 
-        otc = item_model.on_trait_change
         def listen(name):
-            otc(getattr(self, '_' + name), name)
+            signal = getattr(item_model, name)
+            signal.connect(getattr(self, '_' + name))
 
         listen('columns_about_to_be_inserted')
         listen('columns_about_to_be_moved')
@@ -329,7 +324,11 @@ class AbstractItemModelWrapper(QAbstractItemModel):
 
     def setData(self, index, value, role):
         enaml_index = self.from_q_index(index)
-        res = self._setters[role](enaml_index, value)
+        setter = self._setters.get(role)
+        if setter is not None:
+            res = setter(enaml_index, value)
+        else:
+            res = False
         return res
         
     def flags(self, index):
