@@ -78,11 +78,12 @@ class TestBaseSelectionModel(EnamlTestCase, SelectionTestHelper):
         """
         enaml_source = """
 from enaml.item_models.standard_models import TableModel
+import numpy as np
 
 nrows = 20
 ncols = 10
 
-table = [[(i, j) for j in range(ncols)] for i in range(nrows)]
+table = np.arange(nrows * ncols).reshape((nrows, ncols))
 the_item_model = TableModel(table)
 
 enamldef MainView(MainWindow):
@@ -208,11 +209,12 @@ class TestRowSelectionModel(EnamlTestCase, SelectionTestHelper):
         """
         enaml_source = """
 from enaml.item_models.standard_models import TableModel
+import numpy as np
 
 nrows = 20
 ncols = 10
 
-table = [[(i, j) for j in range(ncols)] for i in range(nrows)]
+table = np.arange(nrows * ncols).reshape((nrows, ncols))
 the_item_model = TableModel(table)
 
 
