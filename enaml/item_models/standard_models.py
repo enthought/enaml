@@ -2,8 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits, Callable, Any, Int
-
 from .abstract_item_model import (
     AbstractListModel, AbstractTableModel, ITEM_IS_SELECTABLE,
     ITEM_IS_ENABLED, ITEM_IS_EDITABLE,
@@ -11,148 +9,149 @@ from .abstract_item_model import (
 
 
 #------------------------------------------------------------------------------
-# ModelMixin
+# List Model
 #------------------------------------------------------------------------------
-class ModelMixin(HasTraits):
-    """ A mixin class that provides some basic functionality for
-    standard models. This class should be inherited *before*
-    any AbstractItemModel classes.
+class ListModel(AbstractListModel):
+    """ A concrete implementation of AbstractListModel which is intended
+    to be easy to use for data models which behave more-or-less like
+    one dimensional sequences.
+
+    The data object can be updated dynamically after instantiation by 
+    using the 'data_source' property.
 
     """
-    #: A user supplied object which will be querried using the 
-    #: provided getters and setters.
-    data_source = Any
+    base_flags = ITEM_IS_ENABLED | ITEM_IS_SELECTABLE
 
-    #: A user supplied callable that takes two arguments, the data
-    #: source and an integer index, and returns a string for 
-    #: display.
-    data_getter = Callable
-
-    #: A user supplied callable that takes three arguments, the
-    #: data source, the integer index, and a string value and
-    #: set the data on the model. If this callable is not 
-    #: supplied, then this model will not be editable. The
-    #: callable should return True on success, False otherwise.
-    #: If True is returned, then an appropriate notification 
-    #: message will be emitted to any attached views.
-    data_setter = Callable
-
-    #: An internal attribute used to store the value of the 
-    #: flags when the data setter changes
-    _flags = Int
-
-    def __init__(self, data_source, **kwargs):
+    def __init__(self, data, editable=False, display_data_converter=unicode,
+                 edit_data_converter=None, background_brush_func=None, 
+                 foreground_brush_func=None, font_func=None, 
+                 vertical_headers=None, horizontal_headers=None):
         """ Initialize a ListModel.
 
         Parameters
         ----------
-        data_source : Any
-            The data source object to use in this model
+        data : 1D sequence-like object
+            A sequence-like object that provides the data for the model.
+            At a minimum it must support __getitem__ and __len__, and
+            if editable, __setitem__.
         
-        **kwargs
-            Any other attribute defaults.
+        editable : bool, optional
+            A bool which indicates whether or not the model is editable.
+            If True, editing a cell will be done with an editor that is
+            appropriate for the type of data given in the model. The
+            default is False.
+            
+        display_data_converter : callable, optional
+            An optional callable which should take a single argument: the
+            value for the cell, and return a unicode value to use as the
+            display value in the cell. The default value is the builtin
+            unicode object.
+        
+        edit_data_converter : callable or None, optional
+            An optional callable which should take a single argument: the
+            unicode value typed by the user, and return a value to set
+            in the model. This converter is only used when the model is
+            declared as editable. If this converter is not supplied and
+            the model is editable, then the type of the converted value
+            will be determined automatically based on the input type. If
+            a converter is supplied, and it cannot convert the value, it
+            should raise a ValueError and the change will be ignored. The
+            default value is None.
+        
+        background_brush_func : callable or None, optional
+            If provided, it should be a callable which accepts two 
+            arguments: the data value and the row index, and returns
+            a brush for the background of the cell. The default is
+            None.
+        
+        foreground_brush_func : callable or None, optional
+            If provided, it should be a callable which accepts two 
+            arguments: the data value and the row index, and returns
+            a brush for the foreground of the cell. The default is
+            None.
+        
+        font_func : callable or None, optional
+            If provided, it should be a callable which accepts two 
+            arguments: the data value and the row index, and returns
+            a font for the cell. The default is None.
+        
+        vertical_headers : sequence-like object or None
+            If provided, is should be a sequence like object which
+            will be indexed with an integer index to retrieve a
+            unicode string for the given row header. 
+        
+        horizontal_headers : sequence-like object or None
+            If provided, is should be a sequence like object which
+            will be indexed with an integer index to retrieve a
+            unicode string for the given column header.
+
+        """
+        self._data_source = data
+        self._editable = editable
+        self._display_data_converter = display_data_converter
+        self._edit_data_converter = edit_data_converter
+        self._background_brush_func = background_brush_func
+        self._foreground_brush_func = foreground_brush_func
+        self._font_func = font_func
+        self._vertical_headers = vertical_headers
+        self._horizontal_headers = horizontal_headers
+
+    def _get_data_source(self):
+        """ The property getter for the 'data_source' property.
         
         """
-        # Set the data source quietly so we don't needlessly
-        # trigger any traits listener updates
-        self.trait_setq(data_source=data_source)
-        super(ModelMixin, self).__init__(**kwargs)
+        return self._data_source
     
-    #--------------------------------------------------------------------------
-    # Change and Default Value Handlers
-    #--------------------------------------------------------------------------
-    def _compute_flags(self):
-        """ Computes the value for the internal flags attribute. If
-        the user has not overridden the 'flags' method, this is the 
-        value that will be used. By default, items are enabled and 
-        selectable, and also editable if the user has supplied a
-        data_setter callable.
-
-        """
-        flags = ITEM_IS_SELECTABLE | ITEM_IS_ENABLED
-        if self.data_setter is not None:
-            flags |= ITEM_IS_EDITABLE
-        return flags
-
-    def __flags_default(self):
-        """ Returns the default value for the internal flags attribute.
-
-        """
-        return self._compute_flags()
-    
-    def _data_setter_changed(self):
-        """ Recomputes the flags when the data setter has changed. 
-
-        """
-        # Since the only flag that is changing is whether or not an item 
-        # is editable, we shouldn't need to send any messages to views as 
-        # this should be querried on an as-needed basis.
-        self._flags = self._compute_flags()
-
-    def _data_source_changed(self):
-        """ Notifies any attached views that our internal model has been
-        reset and they should update their display.
-
+    def _set_data_source(self, data):
+        """ The property setter for the 'data_source' property.    
+        
         """
         self.begin_reset_model()
+        self._data_source = data
         self.end_reset_model()
     
-    def _data_getter_changed(self):
-        """ Notifies any attached views that our internal model has been
-        reset and they should update their display.
+    data_source = property(_get_data_source, _set_data_source)
 
-        """
-        self.begin_reset_model()
-        self.end_reset_model()
-
-    #--------------------------------------------------------------------------
-    # AbstractItemModel Interface
-    #--------------------------------------------------------------------------
     def flags(self, index):
         """ Returns the flags for the items in the model.
 
         """
-        return self._flags
+        flags = self.base_flags
+        if self._editable:
+            flags |= ITEM_IS_EDITABLE
+        return flags
 
-
-#------------------------------------------------------------------------------
-# ListModel
-#------------------------------------------------------------------------------
-class ListModel(ModelMixin, AbstractListModel):
-    """ An AbstractListModel implementation that provides some
-    convenient defaults which make is easier to get up and running
-    for a 1D data model. 
-
-    The list model does not provide default facilities for customizing
-    the appearance of items or anything to related header data. For that,
-    the user should subclass ListModel and implement the appropriate
-    methods of the AbstractListModel interface.
-
-    """
-    #: The default data getter callable
-    data_getter = Callable(lambda src, idx: str(src[idx]))
-
-    #--------------------------------------------------------------------------
-    # AbstractItemModel interface
-    #--------------------------------------------------------------------------
     def data(self, index):
         """ Returns the data point from the data source converted to a 
-        string for display.
+        unicode for display.
 
         """
-        return self.data_getter(self.data_source, index.row)
+        return self._display_data_converter(self._data_source[index.row])
+    
+    def edit_data(self, index):
+        """ Returns the data value for editing. If an edit converter is
+        provided, then the unicode form of the data is returned, 
+        otherwise, the raw datapoint is returned.
+
+        """
+        if self._edit_data_converter is None:
+            return self._data_source[index.row]
+        return self.data(index)
     
     def set_data(self, index, value):
         """ Sets the data source with the converted value, emits the 
         proper changed notification and returns True. 
 
         """
-        setter = self.data_setter
-        if setter is not None:
-            if setter(self.data_source, index.row, value):
-                self.notify_data_changed(index, index)
-                return True
-        return False
+        converter = self._edit_data_converter
+        if converter is not None:
+            try:
+                value = converter(value)
+            except ValueError:
+                return False
+        self._data_source[index.row] = value
+        self.notify_data_changed(index, index)
+        return True
 
     def row_count(self, parent=None):
         """ Returns the number of rows in the data source.
@@ -160,51 +159,215 @@ class ListModel(ModelMixin, AbstractListModel):
         """
         if parent is not None:
             return 0
-        return len(self.data_source)
+        return len(self._data_source)
+
+    def background(self, index):
+        """ Returns the brush for the background of the given index,
+        or None.
+
+        """
+        brush_func = self._background_brush_func
+        if brush_func is not None:
+            row = index.row
+            return brush_func(self._data_source[row], row)
+    
+    def foreground(self, index):
+        """ Returns the brush for the foreground of the given index,
+        or None.
+
+        """
+        brush_func = self._foreground_brush_func
+        if brush_func is not None:
+            row = index.row
+            return brush_func(self._data_source[row], row)
+
+    def font(self, index):
+        """ Returns the font for the foreground of the given index,
+        or None.
+
+        """
+        font_func = self._font_func
+        if font_func is not None:
+            row = index.row
+            return font_func(self._data_source[row], row)
+
+    def vertical_header_data(self, section):
+        """ Returns the vertical header data for the given section.
+
+        """
+        headers = self._vertical_headers
+        if headers is not None:
+            res = headers[section]
+        else:
+            sup = super(ListModel, self)
+            res = sup.vertical_header_data(section)
+        return res
+    
+    def horizontal_header_data(self, section):
+        """ Returns the horiztonal header data for the given section.
+
+        """
+        headers = self._horizontal_headers
+        if headers is not None:
+            res = headers[section]
+        else:
+            sup = super(ListModel, self)
+            res = sup.horizontal_header_data(section)
+        return res
 
 
 #------------------------------------------------------------------------------
-# TableModel
+# Table Model
 #------------------------------------------------------------------------------
-class TableModel(ModelMixin, AbstractTableModel):
-    """ An AbstractTableModel implementation that provides some
-    convenient defaults which make is easier to get up and running
-    for a 2D data model. 
+class TableModel(AbstractTableModel):
+    """ A concrete implementation of AbstractTableModel which is intended
+    to be easy to use for data models which behave like two dimensional
+    arrays.
 
-    The table model does not provide default facilities for customizing
-    the appearance of items or anything related to header data. For that,
-    the user should subclass TableModel and implement the appropriate
-    methods of the AbstractTableModel interface.
+    The data object can be updated dynamically after instantiation by 
+    using the 'data_source' property.
 
     """
-    #: The default data getter callable
-    data_getter = Callable(lambda src, row, col: str(src[row][col]))
+    base_flags = ITEM_IS_ENABLED | ITEM_IS_SELECTABLE
 
-    #--------------------------------------------------------------------------
-    # AbstractItemModel Interface
-    #--------------------------------------------------------------------------
-    def data(self, index):
+    def __init__(self, data, editable=False, display_data_converter=unicode,
+                 edit_data_converter=None, background_brush_func=None, 
+                 foreground_brush_func=None, font_func=None,
+                 vertical_headers=None, horizontal_headers=None):
+        """ Initialize a TableModel.
+
+        Parameters
+        ----------
+        data : 2D array-like object
+            An array-like object that provides the data for the model.
+            At a minimum it must support __getitem__ which can be
+            indexed with a (row, col) tuple, and have a 'shape' attribute
+            which gives an (nrows, ncols) tuple. If the model is also
+            editable, it should support __setitem__
+
+        editable : bool, optional
+            A bool which indicates whether or not the model is editable.
+            If True, editing a cell will be done with an editor that is
+            appropriate for the type of data given in the model. The
+            default is False.
+            
+        display_converter : callable, optional
+            An optional callable which should take a single argument: the
+            value for the cell, and return a unicode value to use as the
+            display value in the cell. The default value is the builtin
+            unicode object.
+        
+        edit_converter : callable or None, optional
+            An optional callable which should take a single argument: the
+            unicode value typed by the user, and return a value to set
+            in the model. This converter is only used when the model is
+            declared as editable. If this converter is not supplied and
+            the model is editable, then the type of the converted value
+            will be determined automatically based on the input type. If
+            a converter is supplied, and it cannot convert the value, it
+            should raise a ValueError and the change will be ignored. The
+            default value is None.
+        
+        background_brush_func : callable or None, optional
+            If provided, it should be a callable which accepts three
+            arguments: the data value, the row index and column index, 
+            and returns a brush for the background of the cell. The 
+            default is None.
+        
+        foreground_brush_func : callable or None, optional
+            If provided, it should be a callable which accepts three
+            arguments: the data value, the row index and column index, 
+            and returns a brush for the foreground of the cell. The 
+            default is None.
+        
+        font_func : callable or None, optional
+            If provided, it should be a callable which accepts three
+            arguments: the data value, the row index and column index, 
+            and returns a font for the cell. The default is None.
+
+        vertical_headers : sequence-like object or None
+            If provided, is should be a sequence like object which
+            will be indexed with an integer index to retrieve a
+            unicode string for the given row header. 
+        
+        horizontal_headers : sequence-like object or None
+            If provided, is should be a sequence like object which
+            will be indexed with an integer index to retrieve a
+            unicode string for the given column header.
+
+        """
+        self._data_source = data
+        self._editable = editable
+        self._display_data_converter = display_data_converter
+        self._edit_data_converter = edit_data_converter
+        self._background_brush_func = background_brush_func
+        self._foreground_brush_func = foreground_brush_func
+        self._font_func = font_func
+        self._vertical_headers = vertical_headers
+        self._horizontal_headers = horizontal_headers
+    
+    def _get_data_source(self):
+        """ The property getter for the 'data_source' property.
+        
+        """
+        return self._data_source
+    
+    def _set_data_source(self, data):
+        """ The property setter for the 'data_source' property.    
+        
+        """
+        self.begin_reset_model()
+        self._data_source = data
+        self.end_reset_model()
+    
+    data_source = property(_get_data_source, _set_data_source)
+
+    def flags(self, index):
+        """ Returns the flags for the items in the model.
+
+        """
+        flags = self.base_flags
+        if self._editable:
+            flags |= ITEM_IS_EDITABLE
+        return flags
+
+    def data(self, index): 
         """ Returns the data point from the data source converted to a 
-        string for display.
+        unicode for display.
 
         """
         row = index.row
         col = index.column
-        return self.data_getter(self.data_source, row, col)
+        return self._display_data_converter(self._data_source[row, col])
+    
+    def edit_data(self, index):
+        """ Returns the data value for editing. If an edit converter is
+        provided, then the unicode form of the data is returned, 
+        otherwise, the raw datapoint is returned.
+
+        """
+        if self._edit_data_converter is None:
+            row = index.row
+            col = index.column
+            return self._data_source[row, col]
+        return self.data(index)
     
     def set_data(self, index, value):
         """ Sets the data source with the converted value, emits the 
         proper changed notification and returns True. 
 
         """
+        converter = self._edit_data_converter
+        if converter is not None:
+            try:
+                value = converter(value)
+            except ValueError:
+                return False
         row = index.row
         col = index.column
-        setter = self.data_setter
-        if setter is not None:
-            if setter(self.data_source, row, col, value):
-                self.notify_data_changed(index, index)
-                return True
-        return False
+        self._data_source[row, col] = value
+        self.notify_data_changed(index, index)
+        return True
         
     def row_count(self, parent=None):
         """ Returns the number of rows in the data source.
@@ -212,7 +375,7 @@ class TableModel(ModelMixin, AbstractTableModel):
         """
         if parent is not None:
             return 0
-        return len(self.data_source)
+        return self._data_source.shape[0]
     
     def column_count(self, parent=None):
         """ Returns the number of columns in the data source.
@@ -220,47 +383,339 @@ class TableModel(ModelMixin, AbstractTableModel):
         """
         if parent is not None:
             return 0
-        return len(self.data_source[0])
+        return self._data_source.shape[1]
+
+    def background(self, index):
+        """ Returns the brush for the background of the given index,
+        or None.
+
+        """
+        brush_func = self._background_brush_func
+        if brush_func is not None:
+            row = index.row
+            col = index.column
+            return brush_func(self._data_source[row, col], row, col)
+    
+    def foreground(self, index):
+        """ Returns the brush for the foreground of the given index,
+        or None.
+
+        """
+        brush_func = self._foreground_brush_func
+        if brush_func is not None:
+            row = index.row
+            col = index.column
+            return brush_func(self._data_source[row, col], row, col)
+
+    def font(self, index):
+        """ Returns the font for the foreground of the given index,
+        or None.
+
+        """
+        font_func = self._font_func
+        if font_func is not None:
+            row = index.row
+            col = index.column
+            return font_func(self._data_source[row, col], row, col)
+
+    def vertical_header_data(self, section):
+        """ Returns the vertical header data for the given section.
+
+        """
+        headers = self._vertical_headers
+        if headers is not None:
+            res = headers[section]
+        else:
+            sup = super(TableModel, self)
+            res = sup.vertical_header_data(section)
+        return res
+    
+    def horizontal_header_data(self, section):
+        """ Returns the horiztonal header data for the given section.
+
+        """
+        headers = self._horizontal_headers
+        if headers is not None:
+            res = headers[section]
+        else:
+            sup = super(TableModel, self)
+            res = sup.horizontal_header_data(section)
+        return res
+
+
+#------------------------------------------------------------------------------
+# Object Model
+#------------------------------------------------------------------------------
+class ObjectModel(AbstractTableModel):
+    """ A concrete implementation of AbstractTableModel which is intended
+    to be easy to use for data models which display list of objects 
+    where each object corresponds to a row in the table.
+
+    The data object can be updated dynamically after instantiation by 
+    using the 'data_source' property.
+
+    """
+    base_flags = ITEM_IS_ENABLED | ITEM_IS_SELECTABLE
+
+    @staticmethod
+    def format_header(header):
+        """ A simple formatter class which converts an attribute name
+        in a form more-or-less suitable for a column header.
+
+        """
+        return ' '.join(s.capitalize() for s in header.split('_'))
+
+    def __init__(self, data, transpose=False, editable=False, 
+                 display_data_converter=unicode, edit_data_converter=None, 
+                 background_brush_func=None, foreground_brush_func=None, 
+                 font_func=None, vertical_headers=None, 
+                 horizontal_headers=None):
+        """ Initialize an ObjectModel.
+
+        Parameters
+        ----------
+        data : a 2-tuple of (object, column_attributes)
+            A tuple whose first element is a sequence-like object that
+            provides the row objects for the model, and whose second
+            element is a sequence-like object that provides the string 
+            names of the attributes of the objects which provide the
+            data for the columns. At a minimum both elements must support
+            __getitem__ and __len__.
+
+        transpose : bool, optional
+            A boolean which indicates that the model should be transposed
+            such that the objects represent columns and the attributes
+            represent rows. The default is False.
+
+        editable : bool, optional
+            A bool which indicates whether or not the model is editable.
+            If True, editing a cell will be done with an editor that is
+            appropriate for the type of data given in the model. The
+            default is False.
+            
+        display_converter : callable, optional
+            An optional callable which should take a single argument: the
+            value for the cell, and return a unicode value to use as the
+            display value in the cell. The default value is the builtin
+            unicode object.
         
+        edit_converter : callable or None, optional
+            An optional callable which should take a single argument: the
+            unicode value typed by the user, and return a value to set
+            in the model. This converter is only used when the model is
+            declared as editable. If this converter is not supplied and
+            the model is editable, then the type of the converted value
+            will be determined automatically based on the input type. If
+            a converter is supplied, and it cannot convert the value, it
+            should raise a ValueError and the change will be ignored. The
+            default value is None.
+        
+        background_brush_func : callable or None, optional
+            If provided, it should be a callable which accepts three
+            arguments: the data value, the row index and column index, 
+            and returns a brush for the background of the cell. The 
+            default is None.
+        
+        foreground_brush_func : callable or None, optional
+            If provided, it should be a callable which accepts three
+            arguments: the data value, the row index and column index, 
+            and returns a brush for the foreground of the cell. The 
+            default is None.
+        
+        font_func : callable or None, optional
+            If provided, it should be a callable which accepts three
+            arguments: the data value, the row index and column index, 
+            and returns a font for the cell. The default is None.
 
-#------------------------------------------------------------------------------
-# ObjectModel (still work to do to sort this out)
-#------------------------------------------------------------------------------
-# class ObjectModel(TableModel):
+        vertical_headers : sequence-like object or None
+            If provided, is should be a sequence like object which
+            will be indexed with an integer index to retrieve a
+            unicode string for the given row header. 
+        
+        horizontal_headers : sequence-like object or None
+            If provided, is should be a sequence like object which
+            will be indexed with an integer index to retrieve a
+            unicode string for the given column header.
 
-#     #: The user supplied object that returns a string attribute
-#     #: to get from an object when indexed with an integer.
-#     fields = Any
+        """
+        self._data_source = data
+        self._transpose = transpose
+        self._editable = editable
+        self._display_data_converter = display_data_converter
+        self._edit_data_converter = edit_data_converter
+        self._background_brush_func = background_brush_func
+        self._foreground_brush_func = foreground_brush_func
+        self._font_func = font_func
+        self._vertical_headers = vertical_headers
+        self._horizontal_headers = horizontal_headers
     
-#     def data(self, index):
-#         """ Returns the data point from the data source converted to a 
-#         string for display.
-
-#         """
-#         row = index.row
-#         col = index.column
-#         field = self.fields[col]
-#         val = getattr(self.data_source[row], field)
-#         return self._to_component(val)
+    def _get_data_source(self):
+        """ The property getter for the 'data_source' property.
+        
+        """
+        return self._data_source
     
-#     def set_data(self, index, value):
-#         """ Sets the data source with the converted value, emits the 
-#         proper changed notification and returns True. 
+    def _set_data_source(self, data):
+        """ The property setter for the 'data_source' property.    
+        
+        """
+        self.begin_reset_model()
+        self._data_source = data
+        self.end_reset_model()
+    
+    data_source = property(_get_data_source, _set_data_source)
 
-#         """
-#         row = index.row
-#         col = index.column
-#         field = self.fields[col]
-#         val = self._from_component(value)
-#         setattr(self.data_source[row], field, val)
-#         self.notify_data_changed(index, index)
-#         return True
+    def flags(self, index):
+        """ Returns the flags for the items in the model.
 
-#     def column_count(self, parent=None):
-#         """ Returns the number of columns in the table.
+        """
+        flags = self.base_flags
+        if self._editable:
+            flags |= ITEM_IS_EDITABLE
+        return flags
 
-#         """
-#         if parent is not None:
-#             return 0
-#         return len(self.fields)
+    def data(self, index): 
+        """ Returns the data point from the data source converted to a 
+        unicode for display.
+
+        """
+        row = index.row
+        col = index.column
+        if self._transpose:
+            row, col = col, row
+        objs, attrs = self._data_source
+        value = getattr(objs[row], attrs[col])
+        return self._display_data_converter(value)
+    
+    def edit_data(self, index):
+        """ Returns the data value for editing. If an edit converter is
+        provided, then the unicode form of the data is returned, 
+        otherwise, the raw datapoint is returned.
+
+        """
+        if self._edit_data_converter is None:
+            row = index.row
+            col = index.column
+            if self._transpose:
+                row, col = col, row
+            objs, attrs = self._data_source
+            return getattr(objs[row], attrs[col])
+        return self.data(index)
+    
+    def set_data(self, index, value):
+        """ Sets the data source with the converted value, emits the 
+        proper changed notification and returns True. 
+
+        """
+        converter = self._edit_data_converter
+        if converter is not None:
+            try:
+                value = converter(value)
+            except ValueError:
+                return False
+        row = index.row
+        col = index.column
+        if self._transpose:
+            row, col = col, row
+        objs, attrs = self._data_source
+        setattr(objs[row], attrs[col], value)
+        self.notify_data_changed(index, index)
+        return True
+        
+    def row_count(self, parent=None):
+        """ Returns the number of rows in the data source.
+
+        """
+        if parent is not None:
+            return 0
+        idx = 0
+        if self._transpose:
+            idx = 1
+        return len(self._data_source[idx])
+    
+    def column_count(self, parent=None):
+        """ Returns the number of columns in the data source.
+
+        """
+        if parent is not None:
+            return 0
+        idx = 1
+        if self._transpose:
+            idx = 0
+        return len(self._data_source[idx])
+
+    def background(self, index):
+        """ Returns the brush for the background of the given index,
+        or None.
+
+        """
+        brush_func = self._background_brush_func
+        if brush_func is not None:
+            row = index.row
+            col = index.column
+            if self._transpose:
+                row, col = col, row
+            objs, attrs = self._data_source
+            value = getattr(objs[row], attrs[col])
+            return brush_func(value, row, col)
+    
+    def foreground(self, index):
+        """ Returns the brush for the foreground of the given index,
+        or None.
+
+        """
+        brush_func = self._foreground_brush_func
+        if brush_func is not None:
+            row = index.row
+            col = index.column
+            if self._transpose:
+                row, col = col, row
+            objs, attrs = self._data_source
+            value = getattr(objs[row], attrs[col])
+            return brush_func(value, row, col)
+
+    def font(self, index):
+        """ Returns the font for the foreground of the given index,
+        or None.
+
+        """
+        font_func = self._font_func
+        if font_func is not None:
+            row = index.row
+            col = index.column
+            if self._transpose:
+                row, col = col, row
+            objs, attrs = self._data_source
+            value = getattr(objs[row], attrs[col])
+            return font_func(value, row, col)
+
+    def vertical_header_data(self, section):
+        """ Returns the vertical header data for the given section.
+
+        """
+        headers = self._vertical_headers
+        if headers is not None:
+            res = headers[section]
+        else:
+            if self._transpose:
+                res = self.format_header(self._data_source[1][section])
+            else:
+                sup = super(ObjectModel, self)
+                res = sup.vertical_header_data(section)
+        return res
+    
+    def horizontal_header_data(self, section):
+        """ Returns the horiztonal header data for the given section.
+
+        """
+        headers = self._horizontal_headers
+        if headers is not None:
+            res = headers[section]
+        else:
+            if not self._transpose:
+                res = self.format_header(self._data_source[1][section])
+            else:
+                sup = super(ObjectModel, self)
+                res = sup.horizontal_header_data(section)
+        return res
 
