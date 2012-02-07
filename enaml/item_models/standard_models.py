@@ -565,6 +565,22 @@ class ObjectModel(AbstractTableModel):
     
     data_source = property(_get_data_source, _set_data_source)
 
+    def _get_transpose(self):
+        """ The property getter for the 'transpose' property.
+
+        """
+        return self._transpose
+    
+    def _set_transpose(self, value):
+        """ The property setter for the 'transposed' property.
+
+        """
+        self.begin_reset_model()
+        self._transpose = value
+        self.end_reset_model()
+    
+    transpose = property(_get_transpose, _set_transpose)
+    
     def flags(self, index):
         """ Returns the flags for the items in the model.
 
