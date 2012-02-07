@@ -2,11 +2,11 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits
+from abc import ABCMeta, abstractmethod
 
 from .model_index import ModelIndex
 
-from ..core.trait_types import EnamlEvent
+from ..core.signaling import Signal
 
 
 #------------------------------------------------------------------------------
@@ -39,67 +39,69 @@ ALIGN_CENTER = ALIGN_HCENTER | ALIGN_VCENTER
 #------------------------------------------------------------------------------
 # AbstractItemModel
 #------------------------------------------------------------------------------
-class AbstractItemModel(HasTraits):
+class AbstractItemModel(object):
     """ An abstract model for supplying information to heierarchical
     widgets.
 
     """
+    __metaclass__ = ABCMeta
+
     #: Fired by the begin_insert_columns method
-    columns_about_to_be_inserted = EnamlEvent
+    columns_about_to_be_inserted = Signal()
 
     #: Fired by the begin_move_columns method
-    columns_about_to_be_moved = EnamlEvent
+    columns_about_to_be_moved = Signal()
 
     #: Fired by the begin_remove_columns method
-    columns_about_to_be_removed = EnamlEvent
+    columns_about_to_be_removed = Signal()
 
     #: Fired by the end_insert_columns method
-    columns_inserted = EnamlEvent
+    columns_inserted = Signal()
 
     #: Fired by the end_move_columns method
-    columns_moved = EnamlEvent
+    columns_moved = Signal()
 
     #: Fired by the end_remove_rows method
-    columns_removed = EnamlEvent
+    columns_removed = Signal()
 
     #: Fired by the begin_insert_rows method
-    rows_about_to_be_inserted = EnamlEvent
+    rows_about_to_be_inserted = Signal()
 
     #: Fired by the begin_move_rows method
-    rows_about_to_be_moved = EnamlEvent
+    rows_about_to_be_moved = Signal()
 
     #: Fired by the begin_remove_columns method
-    rows_about_to_be_removed = EnamlEvent
+    rows_about_to_be_removed = Signal()
 
     #: Fired by the end_insert_rows method
-    rows_inserted = EnamlEvent
+    rows_inserted = Signal()
 
     #: Fired by the end_move_rows method
-    rows_moved = EnamlEvent
+    rows_moved = Signal()
 
     #: Fired by the end_remove_rows method
-    rows_removed = EnamlEvent
+    rows_removed = Signal()
 
     #: Fired by the begin_change_layout method
-    layout_about_to_be_changed = EnamlEvent
+    layout_about_to_be_changed = Signal()
 
     #: Fired by the end_change_layout method
-    layout_changed = EnamlEvent
+    layout_changed = Signal()
 
     #: Fired by the begin_reset_model method
-    model_about_to_be_reset = EnamlEvent
+    model_about_to_be_reset = Signal()
 
     #: Fired by the end_reset_model method
-    model_reset = EnamlEvent
+    model_reset = Signal()
 
     #: Fired by the notify_data_changed method
-    data_changed = EnamlEvent
+    data_changed = Signal()
     
     #: Fired by the notify_horizontal_header_data_changed method
-    horizontal_header_data_changed = EnamlEvent
+    horizontal_header_data_changed = Signal()
 
     #: Fired by the notify_vertical_header_data_changed method
-    vertical_header_data_changed = EnamlEvent
+    vertical_header_data_changed = Signal()
     
     #--------------------------------------------------------------------------
     # Model change notification trigger methods 
@@ -610,6 +612,7 @@ class AbstractItemModel(HasTraits):
     #--------------------------------------------------------------------------
     # Abstract Methods
     #--------------------------------------------------------------------------
+    @abstractmethod
     def column_count(self, parent=None):
         """ Count the number of columns in the children of an item.
 
@@ -624,9 +627,9 @@ class AbstractItemModel(HasTraits):
             The number of columns in the model.
 
         """
-        msg = 'This method must be implemented by a subclass'
-        raise NotImplementedError(msg)
+        raise NotImplementedError
 
+    @abstractmethod
     def row_count(self, parent=None):
         """ Count the number of rows in the children of an item.
 
@@ -641,9 +644,9 @@ class AbstractItemModel(HasTraits):
             The number of rows in the model.
 
         """
-        msg = 'This method must be implemented by a subclass'
-        raise NotImplementedError(msg)
+        raise NotImplementedError
 
+    @abstractmethod
     def index(self, row, column, parent=None):
         """ Obtain an index coresponding to an item in the model.
 
@@ -664,9 +667,9 @@ class AbstractItemModel(HasTraits):
             An index for the specified item.
 
         """
-        msg = 'This method must be implemented by a subclass'
-        raise NotImplementedError(msg)
+        raise NotImplementedError
 
+    @abstractmethod
     def parent(self, index):
         """ Obtain the parent of a model item.
 
@@ -681,12 +684,10 @@ class AbstractItemModel(HasTraits):
             An index for the parent item.
 
         """
-        msg = 'This method must be implemented by a subclass'
-        raise NotImplementedError(msg)
+        raise NotImplementedError
 
-    #--------------------------------------------------------------------------
-    # Data Method 
-    #--------------------------------------------------------------------------
+
+    @abstractmethod
     def data(self, index):
         """ Get the data for a model index as a string for display.
 
@@ -701,8 +702,7 @@ class AbstractItemModel(HasTraits):
             The data as a string for display.
 
         """
-        msg = 'This method must be implemented by a subclass'
-        raise NotImplementedError(msg)
+        raise NotImplementedError
 
     #--------------------------------------------------------------------------
     # Auxiliary Data Methods
@@ -907,7 +907,7 @@ class AbstractItemModel(HasTraits):
         return None
 
     #--------------------------------------------------------------------------
-    # Data Setter Method
+    # Data Setter Methods
     #--------------------------------------------------------------------------
     def set_data(self, index, value):
         """ Update a model item's data. The default implementation does
@@ -922,204 +922,8 @@ class AbstractItemModel(HasTraits):
         index : ModelIndex
             The model index for the item to update.
 
-        value : string
-            The user supplied value to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-    
-    #--------------------------------------------------------------------------
-    # Auxiliary Data Setter Methods
-    #--------------------------------------------------------------------------
-    def set_decoration(self, index, value):
-        """ Update a model item's icon. The default implementation does
-        nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
         value : object
             The user supplied value to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        # XXX handle icons
-        return False
-    
-    def set_tool_tip(self, index, value):
-        """ Update a model item's tool tip. The default implementation does
-        nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : string
-            The tool tip to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-
-    def set_status_tip(self, index, value):
-        """ Update a model item's status tip. The default implementation 
-        does nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : string
-            The status tip to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-
-    def set_whats_this(self, index, value):
-        """ Update a model item's what's this? The default implementation 
-        does nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : string
-            The what's this? to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-    
-    def set_font(self, index, value):
-        """ Update a model item's font. The default implementation 
-        does nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : Font
-            The font object to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-    
-    def set_alignment(self, index, value):
-        """ Update a model item's alignment. The default implementation 
-        does nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : int
-            The alignment to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-    
-    def set_background(self, index, value):
-        """ Update a model item's background brush. The default 
-        implementation does nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : Brush
-            The background brush to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-
-    def set_foreground(self, index, value):
-        """ Update a model item's foreground brush. The default 
-        implementation does nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : Brush
-            The background brush to set in the model.
 
         Returns
         -------
@@ -1142,32 +946,8 @@ class AbstractItemModel(HasTraits):
         index : ModelIndex
             The model index for the item to update.
 
-        value : string
+        value : object
             The check state to set in the model.
-
-        Returns
-        -------
-        success : bool
-            True if the data was successfully set, False otherwise.
-
-        """
-        return False
-    
-    def set_size_hint(self, index, value):
-        """ Update a model item's size hint. The default implementation 
-        does nothing and returns False.
-
-        Implementations that allow editing must set the 'editable' flag
-        to True, and call notify_data_changed(...) explicity in order
-        for the table to update.
-
-        Arguments
-        ---------
-        index : ModelIndex
-            The model index for the item to update.
-
-        value : (width, height)
-            The size hint to set in the model.
 
         Returns
         -------
@@ -1198,7 +978,7 @@ class AbstractItemModel(HasTraits):
             The requested header label
 
         """
-        return str(section + 1)
+        return unicode(section + 1)
     
     def vertical_header_data(self, section):
         """ Get the vertical label for a particular header section.
@@ -1218,7 +998,7 @@ class AbstractItemModel(HasTraits):
             The requested header label
 
         """
-        return str(section + 1)
+        return unicode(section + 1)
 
     #--------------------------------------------------------------------------
     # Header Data auxiliary methods
