@@ -19,7 +19,7 @@ import numpy as np
 row =  [True] + range(99999)
 
 # A simple list model to display a single row of data
-list_model = ListModel(row, editable=True, vertical_headers=row_headers)
+list_model = ListModel(row, editable=True)
 
 # A (1000, 100) array of data
 table = np.arange(1000*100).reshape((1000, 100))
