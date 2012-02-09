@@ -9,13 +9,13 @@ from setuptools import setup, find_packages
 
 
 setup(name='enaml',
-    version='0.1a',
+    version='0.1',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',
-    description='Reactive language for building dynamic user interfaces with in Python',
+    description='Declarative language for building dynamic user interfaces in Python',
     long_description=open('README.rst').read(),
-    requires=['traits', 'PySide', 'ply', 'wx', 'argparse'],
+    requires=['traits', 'PySide', 'ply', 'wx', 'casuarius'],
     install_requires=['distribute'],
     packages=find_packages(),
     package_data={'enaml.stdlib': ['*.enaml']},
@@ -26,3 +26,4 @@ setup(name='enaml',
     ),
     test_suite = "enaml.test_collector"
 )
+
