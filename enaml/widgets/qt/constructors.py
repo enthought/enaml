@@ -81,6 +81,19 @@ base_sel_model = constructor('base_selection_model')[1]
 row_sel_model = base_sel_model.clone(shell_loader('row_selection_model')[1])
 
 
+def tui_imp():
+    from ..traitsui_item import TraitsUIItem
+    return TraitsUIItem
+
+
+def qt_tui_imp():
+    from .qt_traitsui_item import QtTraitsUIItem
+    return QtTraitsUIItem
+
+
+tui_item = Constructor(tui_imp, qt_tui_imp)
+
+
 QT_CONSTRUCTORS = dict((
     constructor('main_window'),
     constructor('container'),
@@ -96,7 +109,7 @@ QT_CONSTRUCTORS = dict((
     constructor('radio_button'),
     constructor('slider'),
     constructor('spin_box'),
-    constructor('traitsui_item'),
+    ('TraitsUIItem', tui_item),
     constructor('enable_canvas'),
     constructor('text_editor'),
     constructor('list_view'),

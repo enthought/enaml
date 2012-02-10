@@ -33,6 +33,8 @@ class QtTraitsUIItem(QtControl, AbstractTkTraitsUIItem):
         handler = shell.handler
         self.ui = ui = model.edit_traits(parent=parent, view=view,
                                          handler=handler, kind='subpanel')
+        # TraitsUI doesn't properly set the parent on Qt
+        ui.control.setParent(parent)
         self.widget = ui.control
         
     #--------------------------------------------------------------------------

@@ -37,6 +37,19 @@ def constructor(base_path):
     return c_name, ctor
 
 
+def tui_imp():
+    from ..traitsui_item import TraitsUIItem
+    return TraitsUIItem
+
+
+def wx_tui_imp():
+    from .wx_traitsui_item import WXTraitsUIItem
+    return WXTraitsUIItem
+
+
+tui_item = Constructor(tui_imp, wx_tui_imp)
+
+
 WX_CONSTRUCTORS = dict((
     constructor('main_window'),
     constructor('dialog'),
@@ -52,7 +65,7 @@ WX_CONSTRUCTORS = dict((
     constructor('radio_button'),
     constructor('slider'),
     constructor('spin_box'),
-    constructor('traitsui_item'),
+    ('TraitsUIItem', tui_item),
     constructor('enable_canvas'),
     constructor('table_view'),
     constructor('date_edit'),
