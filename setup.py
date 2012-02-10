@@ -6,7 +6,7 @@ from setuptools import setup, find_packages
 kwds = {}
 
 try:
-    from distutils.core import setup, Extension
+    from distutils.core import Extension
     from Cython.Distutils import build_ext
 
     # only build the speedups Cython C extension when Cython is installed
