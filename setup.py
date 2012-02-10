@@ -19,7 +19,7 @@ except ImportError:
 
 setup(
     name='enaml',
-    version='0.1',
+    version='0.1.1',
     author='Enthought, Inc',
     author_email='info@enthought.com',
     url='https://github.com/enthought/enaml',
