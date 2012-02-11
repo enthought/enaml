@@ -40,10 +40,3 @@ class Label(Control):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkLabel)
 
-    def _text_changed(self):
-        """ A change handler for the 'text' attribute which fires off 
-        a size hint updated event.
-
-        """
-        self.size_hint_updated()
-
