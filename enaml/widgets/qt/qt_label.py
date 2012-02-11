@@ -12,6 +12,11 @@ class QtLabel(QtControl, AbstractTkLabel):
     """ A Qt implementation of Label.
 
     """
+    #: The internal cached size hint which is used to determine whether
+    #: of not a size hint updated event should be emitted when the text
+    #: in the label changes
+    _cached_size_hint = None
+
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
@@ -50,6 +55,18 @@ class QtLabel(QtControl, AbstractTkLabel):
 
         """
         self.widget.setText(label)
+
+        # Emit a size hint updated event if the size hint has actually
+        # changed. This is an optimization so that a constraints update
+        # only occurs when the size hint has actually changed. This 
+        # logic must be implemented here so that the label has been
+        # updated before the new size hint is computed. Placing this
+        # logic on the shell object would not guarantee that the label
+        # has been updated at the time the change handler is called.
+        cached = self._cached_size_hint
+        hint = self._cached_size_hint = self.size_hint()
+        if cached != hint:
+            self.shell_obj.size_hint_updated()
 
     def set_word_wrap(self, wrap):
         """ Sets the word wrapping on the underlying widget.
