@@ -67,6 +67,7 @@ WX_CONSTRUCTORS = dict((
     constructor('spin_box'),
     ('TraitsUIItem', tui_item),
     constructor('enable_canvas'),
+    constructor('text_editor'),
     constructor('table_view'),
     constructor('date_edit'),
     constructor('datetime_edit'),

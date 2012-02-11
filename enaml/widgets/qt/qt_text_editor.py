@@ -45,8 +45,14 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         super(QtTextEditor, self).bind()
         widget = self.widget
-        widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
-        widget.selectionChanged.connect(self.on_selection)
+        widget.textChanged.connect(self.on_text_updated)
+        # We bind to cursorPositionChanged rather than selectionChanged because
+        # on left mouse drag events selectionChanged uses a fuzzy algorithm to
+        # guess if the range of characters that has been selected has changed,
+        # and on OS X this fires too frequently.  This means we need to do a
+        # little analysis of why cursorPositionChanged so we don't
+        # selection_changed events when there is no selection but the cursor
+        # moved
         widget.cursorPositionChanged.connect(self.on_cursor)
 
     #--------------------------------------------------------------------------
@@ -95,8 +101,13 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
 
         """
         cursor = self.widget.textCursor()
-        cursor.setAnchor(start)
-        cursor.setPosition(end)
+        cursor.setPosition(start)
+        if end >= start:
+            cursor.movePosition(QtGui.QTextCursor.NextCharacter,
+                QtGui.QTextCursor.KeepAnchor, end-start)
+        else:
+            cursor.movePosition(QtGui.QTextCursor.PreviousCharacter,
+                QtGui.QTextCursor.KeepAnchor, start-end)
         self.widget.setTextCursor(cursor)
         self.update_shell_selection()
 
@@ -117,8 +128,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         selection. The cursor is placed at the beginning of selection.
 
         """
-        self.widget.deselect()
-        self.update_shell_selection()
+        pos = self.shell_obj.cursor_position
+        self.set_selection(pos, pos)
 
     def clear(self):
         """ Clear the line edit of all text.
@@ -134,7 +145,11 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the cursor. Otherwise, it deletes the selected text.
 
         """
-        self.widget.backspace()
+        cursor = self.widget.textCursor()
+        if cursor.selectionStart() == cursor.selectionEnd():
+            cursor.movePosition(QtGui.QTextCursor.PreviousCharacter,
+                QtGui.QTextCursor.KeepAnchor, 1)
+        cursor.removeSelectedText()
         self.update_shell_selection()
 
     def delete(self):
@@ -144,7 +159,11 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the cursor. Otherwise, it deletes the selected text.
 
         """
-        self.widget.del_()
+        cursor = self.widget.textCursor()
+        if cursor.selectionStart() == cursor.selectionEnd():
+            cursor.movePosition(QtGui.QTextCursor.NextCharacter,
+                QtGui.QTextCursor.KeepAnchor, 1)
+        cursor.removeSelectedText()
         self.update_shell_selection()
 
     def end(self, mark=False):
@@ -286,12 +305,6 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         shell.text_edited()
         shell.text_changed()
 
-    def on_selection(self):
-        """ The event handler for a selection (really a left up) event.
-
-        """
-        self.update_shell_selection()
-
     def on_cursor(self):
         """ The event handler for a cursor move.
 
@@ -305,14 +318,16 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """
         shell = self.shell_obj
         cursor = self.widget.textCursor()
-        selected_text = cursor.selectedText()
-        selected_text = selected_text.replace(u'\u2029', '\n') # replace unicode line break
-        shell._selected_text = selected_text
+        old_selection_length = abs(shell.cursor_position-shell.anchor_position)
         with guard(self, 'setting_cursor'):
             shell.cursor_position = cursor.position()
             shell.anchor_position = cursor.anchor()
             shell._cursor_column = cursor.positionInBlock()
             shell._cursor_line = cursor.blockNumber()
+            # don't fire selection changed when nothing selected before or after
+            new_selection_length = abs(shell.cursor_position-shell.anchor_position)
+            if not(0 == old_selection_length == new_selection_length):
+                shell.selection_changed()
 
     def get_text(self):
         """ Get the text currently in the widget.
@@ -328,6 +343,15 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
 
         """
         self.widget.setPlainText(text)
+    
+    def get_selected_text(self):
+        """ Get the text currently selected in the widget.
+
+        """
+        cursor = self.widget.textCursor()
+        selected_text = cursor.selectedText()
+        selected_text = selected_text.replace(u'\u2029', '\n') # replace unicode line break
+        return selected_text
     
     def set_read_only(self, read_only):
         """ Sets read only state of the widget.
