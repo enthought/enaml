@@ -7,7 +7,7 @@ from traits.api import List, Instance, Property, Tuple, Enum, cached_property
 from .component import Component, AbstractTkComponent
 from .sizable import Sizable, AbstractTkSizable
 from .stylable import Stylable, AbstractTkStylable
-from .layout.box_model import BoxModel
+from .layout.box_model_mixin import BoxModelMixin
 
 from ..core.trait_types import EnamlEvent
 from ..guard import guard
@@ -19,9 +19,9 @@ PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')
 #------------------------------------------------------------------------------
 # Abstract Toolkit Layout Component Interface
 #------------------------------------------------------------------------------
-class AbstractTkLayoutComponent(AbstractTkComponent, 
-                                AbstractTkSizable, 
-                                AbstractTkStylable):
+class AbstractTkLayoutComponent(AbstractTkSizable, 
+                                AbstractTkStylable,
+                                AbstractTkComponent):
     """ The abstract toolkit LayoutComponent interface.
 
     A toolkit layout component is responsible for handling changes on 
@@ -35,7 +35,7 @@ class AbstractTkLayoutComponent(AbstractTkComponent,
 #------------------------------------------------------------------------------
 # Enaml Layout Component
 #------------------------------------------------------------------------------
-class LayoutComponent(Component, Sizable, Stylable):
+class LayoutComponent(BoxModelMixin, Sizable, Stylable, Component):
     """ A Component subclass that adds a box model and support for 
     constraints specification. This class represents the most basic
     widget in Enaml that can partake in constraints-base layout.
@@ -85,46 +85,8 @@ class LayoutComponent(Component, Sizable, Stylable):
     #: hint has updated due to some change.
     size_hint_updated = EnamlEvent
 
-    #: A read-only symbolic object that represents the left boundary of 
-    #: the component
-    left = Property
-
-    #: A read-only symbolic object that represents the top boundary of 
-    #: the component
-    top = Property
-
-    #: A read-only symbolic object that represents the width of the 
-    #: component
-    width = Property
-
-    #: A read-only symbolic object that represents the height of the 
-    #: component
-    height = Property
-
-    #: A read-only symbolic object that represents the right boundary 
-    #: of the component
-    right = Property
-
-    #: A read-only symbolic object that represents the bottom boundary 
-    #: of the component
-    bottom = Property
-
-    #: A read-only symbolic object that represents the vertical center 
-    #: of the component
-    v_center = Property
-
-    #: A read-only symbolic object that represents the horizontal 
-    #: center of the component
-    h_center = Property
-
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkLayoutComponent)
-
-    #: A private attribute that holds the box model instance
-    #: for this component. 
-    _box_model = Instance(BoxModel)
-    def __box_model_default(self):
-        return BoxModel(self)
 
     #--------------------------------------------------------------------------
     # Property Getters and Setters
@@ -138,54 +100,6 @@ class LayoutComponent(Component, Sizable, Stylable):
         """
         flt = lambda child: isinstance(child, LayoutComponent)
         return filter(flt, self.children)
-
-    def _get_left(self):
-        """ Property getter for the 'left' property.
-
-        """
-        return self._box_model.left
-    
-    def _get_top(self):
-        """ Property getter for the 'top' property.
-
-        """
-        return self._box_model.top
-    
-    def _get_width(self):
-        """ Property getter for the 'width' property.
-
-        """
-        return self._box_model.width
-    
-    def _get_height(self):
-        """ Property getter for the 'height' property.
-
-        """
-        return self._box_model.height
-    
-    def _get_right(self):
-        """ Property getter for the 'right' property.
-
-        """
-        return self._box_model.right
-    
-    def _get_bottom(self):
-        """ Property getter for the 'bottom' property.
-
-        """
-        return self._box_model.bottom
-    
-    def _get_v_center(self):
-        """ Property getter for the 'v_center' property.
-
-        """
-        return self._box_model.v_center
-    
-    def _get_h_center(self):
-        """ Property getter for the 'h_center' property.
-
-        """
-        return self._box_model.h_center
 
     def _get_hug(self):
         """ Property getter for the 'hug' property.

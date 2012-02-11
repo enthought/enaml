@@ -4,20 +4,12 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Instance, Property, Str
+from traits.api import Bool, Instance, Str
 
 from .container import Container, AbstractTkContainer
-from .layout.box_model import MarginBoxModel
+from .layout.box_model_mixin import MarginBoxModelMixin
 
 from ..enums import HorizontalAlign
-
-
-def _get_from_box_model(self, name):
-    """ Property getter for all attributes that come from the 
-    MarginBoxModel.
-
-    """
-    return getattr(self._box_model, name)
 
 
 class AbstractTkGroupBox(AbstractTkContainer):
@@ -58,7 +50,7 @@ class AbstractTkGroupBox(AbstractTkContainer):
         return (0, 0, 0, 0)
 
 
-class GroupBox(Container):
+class GroupBox(MarginBoxModelMixin, Container):
     """ The GroupBox container, which introduces a group of widgets with 
     a title and usually has a border.
 
@@ -76,60 +68,6 @@ class GroupBox(Container):
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkGroupBox)
-
-    #: A read-only symbolic object that represents the internal left 
-    #: margin of the container.
-    margin_left = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal right 
-    #: margin of the container.
-    margin_right = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal top 
-    #: margin of the container.
-    margin_top = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal bottom 
-    #: margin of the container.
-    margin_bottom = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal left 
-    #: boundary of the content area of the container.
-    contents_left = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal right 
-    #: boundary of the content area of the container.
-    contents_right = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal top 
-    #: boundary of the content area of the container.
-    contents_top = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal bottom 
-    #: boundary of the content area of the container.
-    contents_bottom = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal width of
-    #: the content area of the container.
-    contents_width = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal height of
-    #: the content area of the container.
-    contents_height = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal center 
-    #: along the vertical direction the content area of the container.
-    contents_v_center = Property(fget=_get_from_box_model)
-
-    #: A read-only symbolic object that represents the internal center 
-    #: along the horizontal direction of the content area of the container.
-    contents_h_center = Property(fget=_get_from_box_model)
-
-    #: A private attribute that holds the box model instance for this 
-    #: component.
-    _box_model = Instance(MarginBoxModel)
-    def __box_model_default(self):
-        return MarginBoxModel(self)
 
     def container_constraints(self):
         """ A set of constraints that should always be applied to this 
