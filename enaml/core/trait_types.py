@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from weakref import WeakKeyDictionary, ref
+
 from traits.api import TraitType, TraitError
 from traits.traits import CTrait
 
@@ -253,4 +255,73 @@ class Bounded(TraitType):
             high = reduce(getattr, high.split('.'), obj)
 
         return (low, high)
+
+
+#------------------------------------------------------------------------------
+# Lazy Property
+#------------------------------------------------------------------------------
+class LazyProperty(TraitType):
+    """ A trait which behaves like a read-only cached property, but
+    which lazily defers binding the dependency notifiers until the
+    first time the value is retrieved. It is used to avoid situations
+    where a property dependency in prematurely evaluated during
+    component instantiation.
+
+    """
+    def __init__(self, trait=None, depends_on=''):
+        """ Initialize a LazyProperty.
+
+        Parameters
+        ----------
+        trait : TraitType, optional
+            An optional trait type for the values returned by the
+            property. List is required if using extending trait 
+            name syntax for e.g. list listeners.
+        
+        depends_on : string, optional
+            The traits notification string for the dependencies of
+            the filter.
+        
+        """
+        super(LazyProperty, self).__init__()
+        self.dependency = depends_on
+        self.handlers = WeakKeyDictionary()
+        if trait is not None:
+            self.default_value_type = trait.default_value_type
+
+    def get(self, obj, name):
+        """ Returns the (possibly cached) value of the filter. The 
+        notification handlers will be attached the first time the
+        value is accessed.
+
+        """
+        cache_name = '_%s_lazy_property_cache' % name
+        dct = obj.__dict__
+        if cache_name not in dct:
+            method_name = '_get_%s' % name
+            val = getattr(obj, method_name)()
+            dct[cache_name] = val
+            self.bind(obj, name)
+        else:
+            val = dct[cache_name]
+        return val
+    
+    def bind(self, obj, name):
+        """ Binds the dependency notification handlers for the object.
+
+        """
+        wr_obj = ref(obj)
+        def notify():
+            obj = wr_obj()
+            if obj is not None:
+                cache_name = '_%s_lazy_property_cache' % name
+                old = obj.__dict__.pop(cache_name, None)
+                obj.trait_property_changed(name, old)
+
+        handlers = self.handlers
+        dependency = self.dependency
+        if obj in handlers:
+            obj.on_trait_change(handlers[obj], dependency, remove=True)
+        handlers[obj] = notify
+        obj.on_trait_change(notify, dependency)
 
