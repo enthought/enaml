@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_layout_component import QtLayoutComponent
 
-from ..tab_group import AbstractTkTabGroup
+from ...components.tab_group import AbstractTkTabGroup
 
 
 #: A mapping from TabPosition enum values to qt tab positions.

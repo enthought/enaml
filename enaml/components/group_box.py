@@ -7,9 +7,9 @@ from abc import abstractmethod
 from traits.api import Bool, Instance, Str
 
 from .container import Container, AbstractTkContainer
-from .layout.box_model_mixin import MarginBoxModelMixin
 
 from ..enums import HorizontalAlign
+from ..layout.box_model_mixin import MarginBoxModelMixin
 
 
 class AbstractTkGroupBox(AbstractTkContainer):

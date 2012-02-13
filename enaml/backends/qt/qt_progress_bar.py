@@ -5,7 +5,7 @@
 from .qt_control import QtControl
 from .qt import QtGui
 
-from ..progress_bar import AbstractTkProgressBar
+from ...components.progress_bar import AbstractTkProgressBar
 
 
 class QtProgressBar(QtControl, AbstractTkProgressBar):

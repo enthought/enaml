@@ -6,7 +6,7 @@ import weakref
 
 import wx
 
-from ..component import AbstractTkComponent
+from ...components.component import AbstractTkComponent
 
 
 class WXComponent(AbstractTkComponent):

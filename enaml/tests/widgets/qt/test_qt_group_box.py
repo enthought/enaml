@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from unittest import expectedFailure
 
-from enaml.widgets.qt.qt import QtCore
+from enaml.backends.qt.qt import QtCore
 from .qt_test_assistant import QtTestAssistant
 from .. import group_box
 

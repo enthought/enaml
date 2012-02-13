@@ -9,7 +9,7 @@ import wx
 from .wx_component import WXComponent
 from .wx_menu import wxEnamlMenu
 
-from ..menu_bar import AbstractTkMenuBar
+from ...components.menu_bar import AbstractTkMenuBar
 
 
 class wxEnamlMenuBar(wx.MenuBar):

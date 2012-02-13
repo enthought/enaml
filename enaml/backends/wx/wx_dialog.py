@@ -6,7 +6,7 @@ import wx
 
 from .wx_window import WXWindow
 
-from ..dialog import AbstractTkDialog
+from ...components.dialog import AbstractTkDialog
 
 
 class WXDialogSizer(wx.PySizer):

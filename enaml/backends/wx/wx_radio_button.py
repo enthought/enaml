@@ -9,7 +9,7 @@ import wx.lib.newevent
 
 from .wx_toggle_control import WXToggleControl
 
-from ..radio_button import AbstractTkRadioButton
+from ...components.radio_button import AbstractTkRadioButton
 
 
 #: A radio button event emitted when the value is interactively turned on.

@@ -6,7 +6,7 @@ import wx
 
 from .wx_control import WXControl
 
-from ..combo_box import AbstractTkComboBox
+from ...components.combo_box import AbstractTkComboBox
 
 
 class WXComboBox(WXControl, AbstractTkComboBox):

@@ -2,10 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.widgets.qt.qt import QtGui, QtCore
+from enaml.backends.qt.qt import QtGui, QtCore
 
-from enaml.widgets.qt.qt_slider import (HOR_TICK_POS_MAP,
-                                        VERT_TICK_POS_MAP)
+from enaml.backends.qt.qt_slider import (HOR_TICK_POS_MAP,
+                                         VERT_TICK_POS_MAP)
 
 from .qt_test_assistant import QtTestAssistant
 from .. import slider

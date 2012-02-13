@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt_control import QtControl
 
-from ..bounded_datetime import AbstractTkBoundedDatetime
+from ...components.bounded_datetime import AbstractTkBoundedDatetime
 
 
 class QtBoundedDatetime(QtControl, AbstractTkBoundedDatetime):

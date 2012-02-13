@@ -6,7 +6,7 @@ from enable.api import Window as EnableWindow
 
 from .wx_control import WXControl
 
-from ..enable_canvas import AbstractTkEnableCanvas
+from ...components.enable_canvas import AbstractTkEnableCanvas
 
 
 class WXEnableCanvas(WXControl, AbstractTkEnableCanvas):

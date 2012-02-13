@@ -4,8 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt_slider import QtSlider
 
-from ..float_slider import AbstractTkFloatSlider
-
+from ...components.float_slider import AbstractTkFloatSlider
 
 
 class QtFloatSlider(QtSlider, AbstractTkFloatSlider):

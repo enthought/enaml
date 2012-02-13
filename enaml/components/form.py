@@ -6,8 +6,9 @@ from traits.api import Instance, Str
 
 from casuarius import ConstraintVariable
 
-from .layout.layout_helpers import align_v_center, hbox, vbox
 from .container import AbstractTkContainer, Container
+
+from ..layout.layout_helpers import align_v_center, hbox, vbox
 
 
 class AbstractTkForm(AbstractTkContainer):

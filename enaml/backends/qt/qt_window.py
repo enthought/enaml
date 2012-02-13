@@ -5,7 +5,7 @@
 from .qt_component import QtComponent
 from .qt_sizable import QtSizable
 
-from ..window import AbstractTkWindow
+from ...components.window import AbstractTkWindow
 
 
 class QtWindow(QtComponent, QtSizable, AbstractTkWindow):

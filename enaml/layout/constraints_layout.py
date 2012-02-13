@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from casuarius import Solver, medium
 
-from ...guard import guard
+from ..guard import guard
 
 
 class ConstraintsLayout(object):

@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from traits.api import TraitError
 
-from ..widgets.layout_component import LayoutComponent
+from ..components.layout_component import LayoutComponent
 
 
 class TestLayoutComponent(TestCase):

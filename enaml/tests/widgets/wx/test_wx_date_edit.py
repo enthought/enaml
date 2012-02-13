@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from enaml.widgets.wx.wx_date_edit import to_wx_date, from_wx_date
+from enaml.backends.wx.wx_date_edit import to_wx_date, from_wx_date
 
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
 from .. import date_edit

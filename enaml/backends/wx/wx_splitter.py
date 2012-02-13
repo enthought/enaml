@@ -7,7 +7,7 @@ from wx.lib.splitter import MultiSplitterWindow
 
 from .wx_container import WXContainer
 
-from ..splitter import AbstractTkSplitter
+from ...components.splitter import AbstractTkSplitter
 
 
 _ORIENTATION_MAP = {

@@ -8,7 +8,7 @@ from .qt import QtCore
 from .qt_layout_component import QtLayoutComponent
 from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 
-from ..container import AbstractTkContainer
+from ...components.container import AbstractTkContainer
 
 
 class _QResizingFrame(QResizingFrame):

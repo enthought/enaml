@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt_control import QtControl
 
-from ..traitsui_item import AbstractTkTraitsUIItem
+from ...components.traitsui_item import AbstractTkTraitsUIItem
 
 
 class QtTraitsUIItem(QtControl, AbstractTkTraitsUIItem):

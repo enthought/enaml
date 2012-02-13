@@ -6,7 +6,7 @@ import wx
 
 from .wx_toggle_control import WXToggleControl
 
-from ..check_box import AbstractTkCheckBox
+from ...components.check_box import AbstractTkCheckBox
 
 
 class WXCheckBox(WXToggleControl, AbstractTkCheckBox):

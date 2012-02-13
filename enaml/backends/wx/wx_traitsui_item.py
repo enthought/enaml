@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .wx_control import WXControl
 
-from ..traitsui_item import AbstractTkTraitsUIItem
+from ...components.traitsui_item import AbstractTkTraitsUIItem
 
 
 class WXTraitsUIItem(WXControl, AbstractTkTraitsUIItem):

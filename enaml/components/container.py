@@ -7,9 +7,10 @@ from traits.api import (
 )
 
 from .layout_component import LayoutComponent, AbstractTkLayoutComponent
-from .layout.constraints_layout import ConstraintsLayout
-from .layout.layout_helpers import DeferredConstraints
 from .layout_task_handler import LayoutTaskHandler
+
+from ..layout.constraints_layout import ConstraintsLayout
+from ..layout.layout_helpers import DeferredConstraints
 
 
 def _expand_constraints(component, constraints):
@@ -364,7 +365,7 @@ class Container(LayoutTaskHandler, LayoutComponent):
         probably want to override this (possibly to return an empty list).
 
         """
-        from .layout.layout_helpers import vbox
+        from ..layout.layout_helpers import vbox
         return [vbox(*self.layout_children)]
 
     def container_constraints(self):

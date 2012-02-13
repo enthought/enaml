@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .wx_container import WXContainer
 
-from ..form import AbstractTkForm
+from ...components.form import AbstractTkForm
 
 
 class WXForm(WXContainer, AbstractTkForm):

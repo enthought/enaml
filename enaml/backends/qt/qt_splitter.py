@@ -5,7 +5,7 @@
 from .qt import QtCore, QtGui
 from .qt_layout_component import QtLayoutComponent
 
-from ..splitter import AbstractTkSplitter
+from ...components.splitter import AbstractTkSplitter
 
 
 _ORIENTATION_MAP = {

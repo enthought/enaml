@@ -5,7 +5,7 @@
 from .styling import q_color_from_color, q_font_from_font
 from .qt import QtGui
 
-from ..stylable import AbstractTkStylable
+from ...components.stylable import AbstractTkStylable
 
 
 class QtStylable(AbstractTkStylable):

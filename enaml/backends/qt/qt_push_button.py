@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..push_button import AbstractTkPushButton
+from ...components.push_button import AbstractTkPushButton
 
 
 class QtPushButton(QtControl, AbstractTkPushButton):

@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_abstract_item_view import QtAbstractItemView
 
-from ..list_view import AbstractTkListView
+from ...components.list_view import AbstractTkListView
 
 
 class QtListView(QtAbstractItemView, AbstractTkListView):

@@ -6,7 +6,7 @@ from .qt import QtGui
 
 from .qt_toggle_control import QtToggleControl
 
-from ..check_box import AbstractTkCheckBox
+from ...components.check_box import AbstractTkCheckBox
 
 
 class QtCheckBox(QtToggleControl, AbstractTkCheckBox):

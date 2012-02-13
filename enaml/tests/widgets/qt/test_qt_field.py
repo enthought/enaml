@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from enaml.widgets.qt.qt import QtGui
+from enaml.backends.qt.qt import QtGui
 
 from .qt_test_assistant import QtTestAssistant
 

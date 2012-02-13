@@ -5,8 +5,7 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..combo_box import AbstractTkComboBox
-
+from ...components.combo_box import AbstractTkComboBox
 from ...guard import guard
 
 

@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .wx_control import WXControl
 
-from ..toggle_control import AbstractTkToggleControl
+from ...components.toggle_control import AbstractTkToggleControl
 
 
 class WXToggleControl(WXControl, AbstractTkToggleControl):

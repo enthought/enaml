@@ -8,7 +8,7 @@ from threading import Lock
 from .qt.QtCore import  Qt, QObject, QTimer, QThread, Slot, QMetaObject
 from .qt.QtGui import QApplication
 
-from ..abstract_application import AbstractTkApplication
+from ...components.abstract_application import AbstractTkApplication
 
 
 class DeferredCaller(QObject):

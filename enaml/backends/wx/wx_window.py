@@ -5,7 +5,7 @@
 from .wx_component import WXComponent
 from .wx_sizable import WXSizable
 
-from ..window import AbstractTkWindow
+from ...components.window import AbstractTkWindow
 
 
 class WXWindow(WXComponent, WXSizable, AbstractTkWindow):

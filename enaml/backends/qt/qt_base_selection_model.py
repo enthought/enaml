@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_component import QtComponent
 
-from ..base_selection_model import AbstractTkBaseSelectionModel
+from ...components.base_selection_model import AbstractTkBaseSelectionModel
 
 
 _SELECTION_MODE_MAP = {

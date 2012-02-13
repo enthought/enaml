@@ -6,7 +6,7 @@ import wx
 
 from .wx_window import WXWindow
 
-from ..main_window import AbstractTkMainWindow
+from ...components.main_window import AbstractTkMainWindow
 
 
 class  WXMainWindow(WXWindow, AbstractTkMainWindow):

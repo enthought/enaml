@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt_container import QtContainer
 
-from ..form import AbstractTkForm
+from ...components.form import AbstractTkForm
 
 
 class QtForm(QtContainer, AbstractTkForm):

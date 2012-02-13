@@ -6,7 +6,7 @@ import wx
 
 from .wx_slider import WXSlider
 
-from ..float_slider import AbstractTkFloatSlider
+from ...components.float_slider import AbstractTkFloatSlider
 
 
 class WXFloatSlider(WXSlider, AbstractTkFloatSlider):

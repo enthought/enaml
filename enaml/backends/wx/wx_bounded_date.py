@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .wx_control import WXControl
 
-from ..bounded_date import AbstractTkBoundedDate
+from ...components.bounded_date import AbstractTkBoundedDate
 
 
 class WXBoundedDate(WXControl, AbstractTkBoundedDate):

@@ -6,7 +6,7 @@ import wx
 
 from .wx_control import WXControl
 
-from ..label import AbstractTkLabel
+from ...components.label import AbstractTkLabel
 
 
 class WXLabel(WXControl, AbstractTkLabel):

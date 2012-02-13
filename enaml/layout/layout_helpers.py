@@ -6,7 +6,7 @@ from abc import ABCMeta, abstractmethod
 
 from casuarius import ConstraintVariable, LinearSymbolic, Strength, STRENGTH_MAP
 
-from ..component import Component
+from ..components.component import Component
 
 
 # XXX make default space computed better

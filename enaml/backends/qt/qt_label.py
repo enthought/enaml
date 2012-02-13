@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..label import AbstractTkLabel
+from ...components.label import AbstractTkLabel
 
 
 class QtLabel(QtControl, AbstractTkLabel):

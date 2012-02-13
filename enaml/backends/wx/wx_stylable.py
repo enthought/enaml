@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .styling import wx_color_from_color, wx_font_from_font
 
-from ..stylable import AbstractTkStylable
+from ...components.stylable import AbstractTkStylable
 
 
 class WXStylable(AbstractTkStylable):

@@ -6,7 +6,7 @@ from .qt_component import QtComponent
 from .qt_sizable import QtSizable
 from .qt_stylable import QtStylable
 
-from ..layout_component import AbstractTkLayoutComponent
+from ...components.layout_component import AbstractTkLayoutComponent
 
 
 class QtLayoutComponent(QtComponent, QtSizable, QtStylable,

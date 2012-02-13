@@ -34,7 +34,7 @@ def shell_loader(base_path):
         The loader function for the shell class.
 
     """
-    c_module_path = 'enaml.widgets.' + base_path
+    c_module_path = 'enaml.components.' + base_path
     c_name = ''.join(part.capitalize() for part in base_path.split('_'))
     shell_loader = importer(c_module_path, c_name)
     return c_name, shell_loader
@@ -58,7 +58,7 @@ def abstract_loader(c_name, base_path):
         The loader function for the abstract class.
 
     """
-    t_module_path = 'enaml.widgets.qt.' + 'qt_' + base_path
+    t_module_path = 'enaml.backends.qt.' + 'qt_' + base_path
     t_name = 'Qt' + c_name
     abstract_loader = importer(t_module_path, t_name)
     return abstract_loader
@@ -82,7 +82,7 @@ row_sel_model = base_sel_model.clone(shell_loader('row_selection_model')[1])
 
 
 def tui_imp():
-    from ..traitsui_item import TraitsUIItem
+    from ...components.traitsui_item import TraitsUIItem
     return TraitsUIItem
 
 
@@ -92,6 +92,19 @@ def qt_tui_imp():
 
 
 tui_item = Constructor(tui_imp, qt_tui_imp)
+
+
+def canvas_imp():
+    from ...components.canvas import Canvas
+    return Canvas
+
+
+def qt_canvas_imp():
+    from .qt_canvas import QtCanvas
+    return QtCanvas
+
+
+canvas_ctor = Constructor(canvas_imp, qt_canvas_imp)
 
 
 QT_CONSTRUCTORS = dict((
@@ -130,5 +143,6 @@ QT_CONSTRUCTORS = dict((
     constructor('menu_bar'),
     constructor('menu'),
     constructor('action'),
+    ('Canvas', canvas_ctor),
 ))
 

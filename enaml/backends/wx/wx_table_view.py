@@ -6,8 +6,8 @@ import wx
 import wx.grid
 
 from .wx_control import WXControl
-from ..table_view import AbstractTkTableView
 
+from ...components.table_view import AbstractTkTableView
 from ...item_models.abstract_item_model import AbstractItemModel, ITEM_IS_EDITABLE
 
 

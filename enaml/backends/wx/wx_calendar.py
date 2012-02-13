@@ -6,7 +6,7 @@ from wx.calendar import CalendarCtrl, EVT_CALENDAR, EVT_CALENDAR_SEL_CHANGED
 
 from .wx_bounded_date import WXBoundedDate
 
-from ..calendar import AbstractTkCalendar
+from ...components.calendar import AbstractTkCalendar
 
 
 class WXCalendar(WXBoundedDate, AbstractTkCalendar):

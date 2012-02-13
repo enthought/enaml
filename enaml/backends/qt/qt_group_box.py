@@ -6,7 +6,7 @@ from .qt import QtCore
 from .qt_container import QtContainer
 from .qt_resizing_widgets import QResizingGroupBox
 
-from ..group_box import AbstractTkGroupBox
+from ...components.group_box import AbstractTkGroupBox
 
 
 QT_ALIGNMENTS = dict(

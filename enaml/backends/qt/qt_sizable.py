@@ -5,7 +5,7 @@
 from .qt.QtCore import QRect
 from .qt.QtGui import QWidgetItem
 
-from ..sizable import AbstractTkSizable
+from ...components.sizable import AbstractTkSizable
 
 
 class QtSizable(AbstractTkSizable):

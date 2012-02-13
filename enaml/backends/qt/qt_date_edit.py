@@ -5,8 +5,7 @@
 from .qt import QtGui, QtCore
 from .qt_bounded_date import QtBoundedDate
 
-from ..date_edit import AbstractTkDateEdit
-
+from ...components.date_edit import AbstractTkDateEdit
 from ...guard import guard
 
 

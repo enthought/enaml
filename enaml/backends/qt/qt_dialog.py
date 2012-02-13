@@ -6,7 +6,7 @@ from .qt import QtGui, QtCore
 from .qt_window import QtWindow
 from .qt_resizing_widgets import QResizingDialog
 
-from ..dialog import AbstractTkDialog
+from ...components.dialog import AbstractTkDialog
 
 
 _MODAL_MAP = {

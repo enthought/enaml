@@ -7,10 +7,10 @@ from traits.api import List, Instance, Property, Tuple, Enum, cached_property
 from .component import Component, AbstractTkComponent
 from .sizable import Sizable, AbstractTkSizable
 from .stylable import Stylable, AbstractTkStylable
-from .layout.box_model_mixin import BoxModelMixin
 
 from ..core.trait_types import EnamlEvent
 from ..guard import guard
+from ..layout.box_model_mixin import BoxModelMixin
 
 
 PolicyEnum = Enum('ignore', 'weak', 'medium', 'strong', 'required')

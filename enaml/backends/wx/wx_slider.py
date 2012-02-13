@@ -6,7 +6,7 @@ import wx
 
 from .wx_control import WXControl
 
-from ..slider import AbstractTkSlider
+from ...components.slider import AbstractTkSlider
 
 
 #: A map from Enaml constants to wxSlider TickPosition values for a

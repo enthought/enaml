@@ -6,7 +6,7 @@ import weakref
 
 from .qt import QtGui
 
-from ..component import AbstractTkComponent
+from ...components.component import AbstractTkComponent
 
 
 class QtComponent(AbstractTkComponent):

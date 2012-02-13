@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_toggle_control import QtToggleControl
 
-from ..radio_button import AbstractTkRadioButton
+from ...components.radio_button import AbstractTkRadioButton
 
 
 class QtRadioButton(QtToggleControl, AbstractTkRadioButton):

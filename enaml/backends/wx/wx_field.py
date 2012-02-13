@@ -6,8 +6,7 @@ import wx
 
 from .wx_control import WXControl
 
-from ..field import AbstractTkField
-
+from ...components.field import AbstractTkField
 from ...guard import guard
 
 

@@ -8,7 +8,7 @@ import wx
 
 from .wx_bounded_date import WXBoundedDate
 
-from ..date_edit import AbstractTkDateEdit
+from ...components.date_edit import AbstractTkDateEdit
 
 
 def to_wx_date(py_date):

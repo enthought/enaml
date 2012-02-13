@@ -6,7 +6,7 @@ import wx
 
 from .wx_control import WXControl
 
-from ..push_button import AbstractTkPushButton
+from ...components.push_button import AbstractTkPushButton
 
 
 class WXPushButton(WXControl, AbstractTkPushButton):

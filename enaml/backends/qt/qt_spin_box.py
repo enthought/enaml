@@ -5,8 +5,7 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..spin_box import AbstractTkSpinBox
-
+from ...components.spin_box import AbstractTkSpinBox
 from ...converters import IntConverter
 
 

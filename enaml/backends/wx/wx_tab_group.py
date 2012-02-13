@@ -6,7 +6,7 @@ import wx
 
 from .wx_layout_component import WXLayoutComponent
 
-from ..tab_group import AbstractTkTabGroup
+from ...components.tab_group import AbstractTkTabGroup
 
 
 #: A mapping from TabPosition enum values to qt tab positions.

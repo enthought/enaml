@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from ..abstract_application import AbstractTkApplication
+from ...components.abstract_application import AbstractTkApplication
 
 
 class WXApplication(AbstractTkApplication):

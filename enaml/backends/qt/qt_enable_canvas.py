@@ -6,7 +6,7 @@ from enable.api import Window as EnableWindow
 
 from .qt_control import QtControl
 
-from ..enable_canvas import AbstractTkEnableCanvas
+from ...components.enable_canvas import AbstractTkEnableCanvas
 
 
 class QtEnableCanvas(QtControl, AbstractTkEnableCanvas):

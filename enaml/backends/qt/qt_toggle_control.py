@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt_control import QtControl
 
-from ..toggle_control import AbstractTkToggleControl
+from ...components.toggle_control import AbstractTkToggleControl
 
 
 class QtToggleControl(QtControl, AbstractTkToggleControl):

@@ -6,8 +6,7 @@ from .qt import QtGui, QtCore
 
 from .qt_bounded_datetime import QtBoundedDatetime
 
-from ..datetime_edit import AbstractTkDatetimeEdit
-
+from ...components.datetime_edit import AbstractTkDatetimeEdit
 from ...guard import guard
 
 

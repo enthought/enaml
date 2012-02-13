@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .wx_container import WXContainer
 
-from ..tab import AbstractTkTab
+from ...components.tab import AbstractTkTab
 
 
 class WXTab(WXContainer, AbstractTkTab):

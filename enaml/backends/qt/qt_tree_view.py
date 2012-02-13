@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_abstract_item_view import QtAbstractItemView
 
-from ..tree_view import AbstractTkTreeView
+from ...components.tree_view import AbstractTkTreeView
 
 
 class QtTreeView(QtAbstractItemView, AbstractTkTreeView):

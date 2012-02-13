@@ -6,7 +6,7 @@ import wx
 
 from .wx_container import WXContainer
 
-from ..scroll_area import AbstractTkScrollArea
+from ...components.scroll_area import AbstractTkScrollArea
 
 
 # As mentioned in the notes of the docstring for WXScrollArea, we

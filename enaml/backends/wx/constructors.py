@@ -23,10 +23,10 @@ def constructor(base_path):
     in the enaml source code.
 
     """
-    c_module_path = 'enaml.widgets.' + base_path
+    c_module_path = 'enaml.components.' + base_path
     c_name = ''.join(part.capitalize() for part in base_path.split('_'))
 
-    t_module_path = 'enaml.widgets.wx.' + 'wx_' + base_path
+    t_module_path = 'enaml.backends.wx.' + 'wx_' + base_path
     t_name = 'WX' + c_name
 
     component_loader = importer(c_module_path, c_name)
@@ -38,7 +38,7 @@ def constructor(base_path):
 
 
 def tui_imp():
-    from ..traitsui_item import TraitsUIItem
+    from ...components.traitsui_item import TraitsUIItem
     return TraitsUIItem
 
 

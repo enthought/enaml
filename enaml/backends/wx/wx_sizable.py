@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ..sizable import AbstractTkSizable
+from ...components.sizable import AbstractTkSizable
 
 
 class WXSizable(AbstractTkSizable):

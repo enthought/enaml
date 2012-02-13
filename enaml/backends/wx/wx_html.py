@@ -6,7 +6,7 @@ import wx.html
 
 from .wx_control import WXControl
 
-from ..html import AbstractTkHtml
+from ...components.html import AbstractTkHtml
 
 
 class WXHtml(WXControl, AbstractTkHtml):

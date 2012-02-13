@@ -5,7 +5,7 @@
 from .qt_control import QtControl
 from .abstract_item_model_wrapper import AbstractItemModelWrapper
 
-from ..abstract_item_view import AbstractTkItemView
+from ...components.abstract_item_view import AbstractTkItemView
 
 
 class QtAbstractItemView(QtControl, AbstractTkItemView):

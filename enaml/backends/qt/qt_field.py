@@ -5,8 +5,7 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..field import AbstractTkField
-
+from ...components.field import AbstractTkField
 from ...guard import guard
 
 

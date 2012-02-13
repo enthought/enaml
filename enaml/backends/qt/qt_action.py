@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_component import QtComponent
 
-from ..action import AbstractTkAction
+from ...components.action import AbstractTkAction
 
 
 class QtAction(QtComponent, AbstractTkAction):

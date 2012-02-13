@@ -5,7 +5,7 @@
 from .qt import QtGui, QtCore
 from .qt_control import QtControl
 
-from ..slider import AbstractTkSlider
+from ...components.slider import AbstractTkSlider
 
 
 #: A map from Enaml constants to QSlider TickPosition values.

@@ -6,7 +6,7 @@ import wx
 
 from .wx_container import WXContainer
 
-from ..group_box import AbstractTkGroupBox
+from ...components.group_box import AbstractTkGroupBox
 
 
 WX_ALIGNMENTS = dict(

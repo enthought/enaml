@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt_container import QtContainer
 
-from ..tab import AbstractTkTab
+from ...components.tab import AbstractTkTab
 
 
 class QtTab(QtContainer, AbstractTkTab):

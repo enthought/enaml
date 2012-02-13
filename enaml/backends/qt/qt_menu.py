@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_component import QtComponent
 
-from ..menu import AbstractTkMenu
+from ...components.menu import AbstractTkMenu
 
 
 class QtMenu(QtComponent, AbstractTkMenu):

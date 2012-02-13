@@ -7,8 +7,7 @@ import wx.lib.newevent
 
 from .wx_control import WXControl
 
-from ..spin_box import AbstractTkSpinBox
-
+from ...components.spin_box import AbstractTkSpinBox
 from ...converters import IntConverter
 
 

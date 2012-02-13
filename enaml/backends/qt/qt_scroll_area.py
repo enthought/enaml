@@ -5,7 +5,7 @@
 from .qt import QtCore, QtGui
 from .qt_layout_component import QtLayoutComponent
 
-from ..scroll_area import AbstractTkScrollArea
+from ...components.scroll_area import AbstractTkScrollArea
 
 
 SCROLLBAR_POLICY_MAP = dict(

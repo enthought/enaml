@@ -5,8 +5,7 @@
 from .qt import QtGui, QtCore
 from .qt_bounded_date import QtBoundedDate
 
-from ..calendar import AbstractTkCalendar
-
+from ...components.calendar import AbstractTkCalendar
 from ...guard import guard
 
 

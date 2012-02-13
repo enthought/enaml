@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from .wx_layout_component import WXLayoutComponent
 
-from ..control import AbstractTkControl
+from ...components.control import AbstractTkControl
 
 
 class WXControl(WXLayoutComponent, AbstractTkControl):

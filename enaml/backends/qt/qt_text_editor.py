@@ -5,8 +5,7 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..text_editor import AbstractTkTextEditor
-
+from ...components.text_editor import AbstractTkTextEditor
 from ...guard import guard
 
 

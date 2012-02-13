@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ..html import AbstractTkHtml
+from ...components.html import AbstractTkHtml
 
 
 class QtHtml(QtControl, AbstractTkHtml):

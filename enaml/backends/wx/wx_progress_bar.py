@@ -6,7 +6,7 @@ import wx
 
 from .wx_control import WXControl
 
-from ..progress_bar import AbstractTkProgressBar
+from ...components.progress_bar import AbstractTkProgressBar
 
 
 class WXProgressBar(WXControl, AbstractTkProgressBar):

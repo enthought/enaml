@@ -5,7 +5,7 @@
 from .qt_test_assistant import QtTestAssistant
 from .. import date_edit
 
-from enaml.widgets.qt.qt_date_edit import qdate_to_python
+from enaml.backends.qt.qt_date_edit import qdate_to_python
 
 class TestQtDateEdit(QtTestAssistant, date_edit.TestDateEdit):
     """ QtDateEdit tests. """

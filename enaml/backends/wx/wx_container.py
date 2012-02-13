@@ -8,7 +8,7 @@ import wx
 
 from .wx_layout_component import WXLayoutComponent
 
-from ..container import AbstractTkContainer
+from ...components.container import AbstractTkContainer
 
 
 class _WXPanel(wx.Panel):

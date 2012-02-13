@@ -5,7 +5,7 @@
 from .qt import QtGui
 from .qt_window import QtWindow
 
-from ..main_window import AbstractTkMainWindow
+from ...components.main_window import AbstractTkMainWindow
 
 
 class QtMainWindow(QtWindow, AbstractTkMainWindow):

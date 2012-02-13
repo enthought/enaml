@@ -9,7 +9,7 @@ import wx.lib.newevent
 
 from .wx_component import WXComponent
 
-from ..action import AbstractTkAction
+from ...components.action import AbstractTkAction
 
 
 #: A custom event emitted by the wxEnamlAction when it has been triggered

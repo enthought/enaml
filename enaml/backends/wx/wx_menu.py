@@ -9,7 +9,7 @@ import wx
 from .wx_action import wxEnamlAction
 from .wx_component import WXComponent
 
-from ..menu import AbstractTkMenu
+from ...components.menu import AbstractTkMenu
 
 
 # A note to future developers who consider trying to code the event 
