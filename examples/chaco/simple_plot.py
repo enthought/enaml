@@ -16,7 +16,7 @@ from traits.api import (
 )
 
 from enaml.core.toolkit import Toolkit
-from enaml.widgets.enable_canvas import EnableCanvas
+from enaml.components.enable_canvas import EnableCanvas
 
 
 class DeferredCall(object):
