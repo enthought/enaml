@@ -5,13 +5,13 @@
 from collections import deque
 
 from traits.api import (
-    Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef,
-    cached_property, Dict, TraitType, Disallow,
+    Bool, HasStrictTraits, Instance, List, Property, Str, WeakRef, Dict, 
+    TraitType, Disallow,
 )
 
 from .expressions import AbstractExpression
 from .toolkit import Toolkit
-from .trait_types import EnamlInstance, EnamlEvent
+from .trait_types import EnamlInstance, EnamlEvent, LazyProperty
 
 
 #------------------------------------------------------------------------------
@@ -192,12 +192,14 @@ class BaseComponent(HasStrictTraits):
     parent = WeakRef('BaseComponent')
 
     #: The list of children for this component. This is a read-only
-    #: cached property that is computed based on the static list of
+    #: lazy property that is computed based on the static list of
     #: _subcomponents and the items they return by calling their
     #: 'get_actual' method. This list should not be manipulated by
     #: user code.
-    children = Property(List(Instance('BaseComponent')), 
-                        depends_on='_subcomponents:_actual_updated')
+    children = LazyProperty(
+        List(Instance('BaseComponent')), 
+        depends_on='_subcomponents:_actual_updated',
+    )
 
     #: Whether the component has been initialized or not. This will be 
     #: set to True after all of the setup() steps defined here are 
@@ -275,16 +277,15 @@ class BaseComponent(HasStrictTraits):
         """
         return self
         
-    @cached_property
     def _get_children(self):
-        """ The cached property getter for the 'children' attribute.
+        """ The lazy property getter for the 'children' attribute.
 
         This property getter returns the flattened list of components
         returned by calling 'get_actual()' on each subcomponent.
 
         """
         return sum([c.get_actual() for c in self._subcomponents], [])
-
+    
     #--------------------------------------------------------------------------
     # Component Manipulation
     #--------------------------------------------------------------------------
