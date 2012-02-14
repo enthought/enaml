@@ -4,13 +4,13 @@
 #------------------------------------------------------------------------------
 import wx.calendar
 
-from enaml.tests.widgets.wx.wx_test_assistant import WXTestAssistant, skip_nonwindows
-from enaml.tests.widgets import calendar
+from .wx_test_assistant import WXTestAssistant, skip_nonwindows
+from ...components import calendar
 
 
 @skip_nonwindows
 class TestWXCalendar(WXTestAssistant, calendar.TestCalendar):
-    """ WXCalendar tests. 
+    """ WXCalendar tests.
 
     """
     def get_date(self, widget):
