@@ -6,13 +6,14 @@ from abc import ABCMeta, abstractmethod
 
 from casuarius import ConstraintVariable, LinearSymbolic, Strength, STRENGTH_MAP
 
-from ..components.component import Component
+from .constrainable import Constrainable as LayoutConstrainable
 
 
 # XXX make default space computed better
 DEFAULT_SPACE = 10
 
 
+# XXX clean this up
 class Constrainable(object):
     """ Abstract base class for objects that can be laid out by these helpers.
 
@@ -23,7 +24,37 @@ class Constrainable(object):
     """
     __metaclass__ = ABCMeta
 
-Constrainable.register(Component)
+Constrainable.register(LayoutConstrainable)
+
+
+def expand_constraints(component, constraints):
+    """ A function which expands any DeferredConstraints in the provided
+    list. This is a generator function which yields the flattened stream 
+    of constraints.
+
+    Paramters
+    ---------
+    component : LayoutComponent
+        The layout component with which the constraints are associated.
+        This will be passed to the .get_constraints_list() method of
+        any DeferredConstraint instance.
+    
+    constraints : list
+        The list of constraints, possibly containing instances of 
+        DeferredConstraints.
+    
+    Yields
+    ------
+    constraints
+        The stream of expanded constraints.
+
+    """
+    for cn in constraints:
+        if isinstance(cn, DeferredConstraints):
+            for item in cn.get_constraint_list(component):
+                yield item
+        else:
+            yield cn
 
 
 #------------------------------------------------------------------------------
