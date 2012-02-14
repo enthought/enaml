@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_layout_component import QtLayoutComponent
+from .qt_constraints_widget import QtConstraintsWidget
 
 from ...components.tab_group import AbstractTkTabGroup
 
@@ -17,7 +17,7 @@ _TAB_POSITION_MAP = {
 }
 
 
-class QtTabGroup(QtLayoutComponent, AbstractTkTabGroup):
+class QtTabGroup(QtConstraintsWidget, AbstractTkTabGroup):
     """ A Qt implementation of TabGroup.
 
     """

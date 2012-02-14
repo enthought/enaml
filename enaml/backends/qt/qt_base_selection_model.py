@@ -3,7 +3,7 @@
 # All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_component import QtComponent
+from .qt_base_widget_component import QtBaseWidgetComponent
 
 from ...components.base_selection_model import AbstractTkBaseSelectionModel
 
@@ -39,7 +39,7 @@ _SELECTION_COMMAND_MAP = {
 }
 
 
-class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
+class QtBaseSelectionModel(QtBaseWidgetComponent, AbstractTkBaseSelectionModel):
     """ Qt implementation of the BaseSelectionModel.
 
     """
@@ -201,35 +201,4 @@ class QtBaseSelectionModel(QtComponent, AbstractTkBaseSelectionModel):
         behavior = _SELECTION_BEHAVIOR_MAP[selection_behavior]
         item_widget = shell.parent.toolkit_widget
         item_widget.setSelectionBehavior(behavior)
-
-    #--------------------------------------------------------------------------
-    # Parent Class Overrides
-    #--------------------------------------------------------------------------
-    def disable_updates(self):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QItemSelection.
-
-        """
-        pass
-
-    def enable_updates(self):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QItemSelection.
-
-        """
-        pass
-
-    def set_enabled(self, enabled):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QItemSelection.
-
-        """
-        pass
-
-    def set_visible(self, visible):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QItemSelection.
-
-        """
-        pass
 

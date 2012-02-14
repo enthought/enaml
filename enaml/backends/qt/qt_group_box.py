@@ -7,6 +7,7 @@ from .qt_container import QtContainer
 from .qt_resizing_widgets import QResizingGroupBox
 
 from ...components.group_box import AbstractTkGroupBox
+from ...layout.geometry import Box
 
 
 QT_ALIGNMENTS = dict(
@@ -79,7 +80,7 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
 
         """
         m = self.widget.contentsMargins()
-        return (m.top(), m.left(), m.right(), m.bottom())
+        return Box(m.top(), m.right(), m.bottom(), m.left())
 
     #--------------------------------------------------------------------------
     # Widget Update methods 

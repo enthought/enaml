@@ -3,12 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_component import QtComponent
+from .qt_base_widget_component import QtBaseWidgetComponent
 
 from ...components.action import AbstractTkAction
 
 
-class QtAction(QtComponent, AbstractTkAction):
+class QtAction(QtBaseWidgetComponent, AbstractTkAction):
     """ A Qt4 implementation of Action.
 
     """
@@ -44,20 +44,6 @@ class QtAction(QtComponent, AbstractTkAction):
         widget.triggered.connect(self.on_triggered)
         widget.hovered.connect(self.on_hovered)
         widget.toggled.connect(self.on_toggled)
-
-    #--------------------------------------------------------------------------
-    # Teardown Methods 
-    #--------------------------------------------------------------------------
-    def destroy(self):
-        """ Overridden parent class method which properly disposes of 
-        the underlying QAction object.
-
-        """
-        # A QAction does not inherit QWidget and so doesn't have a 
-        # destroy() method. So, we just unparent the object and lose
-        # the reference.
-        self.widget.setParent(None)
-        self.widget = None
 
     #--------------------------------------------------------------------------
     # Change Handlers 
@@ -178,18 +164,4 @@ class QtAction(QtComponent, AbstractTkAction):
 
         """
         self.widget.setSeparator(separator)
-
-    def enable_updates(self):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QAction.
-
-        """
-        pass
-    
-    def disable_updates(self):
-        """ Overridden parent class method. This is a no-op since the 
-        operation does not apply to a QAction.
-
-        """
-        pass
 

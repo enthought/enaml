@@ -2,22 +2,17 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt_component import QtComponent
-from .qt_sizable import QtSizable
+from .qt_widget_component import QtWidgetComponent
 
 from ...components.window import AbstractTkWindow
 
 
-class QtWindow(QtComponent, QtSizable, AbstractTkWindow):
-    """ A Qt4 implementation of a Window. It serves as a base class for 
-    QtMainWindow and QtDialog. It is not meant to be used directly.
-
+class QtWindow(QtWidgetComponent, AbstractTkWindow):
+    """ A Qt4 implementation of Window.
+     
     """
-    #--------------------------------------------------------------------------
-    # Setup methods
-    #--------------------------------------------------------------------------
     def create(self, parent):
-        """ Create the underlying Qt widget.
+        """ Creates the underlying Qt widget.
 
         """
         msg = 'A QtWindow is a base class and cannot be used directly'
@@ -31,9 +26,6 @@ class QtWindow(QtComponent, QtSizable, AbstractTkWindow):
         self.set_title(self.shell_obj.title)
         self.update_central_widget()
 
-    #--------------------------------------------------------------------------
-    # Implementation
-    #--------------------------------------------------------------------------
     def maximize(self):
         """ Maximizes the window to fill the screen.
 
@@ -66,9 +58,6 @@ class QtWindow(QtComponent, QtSizable, AbstractTkWindow):
         """
         self.update_central_widget()
     
-    #--------------------------------------------------------------------------
-    # Widget Update Methods 
-    #--------------------------------------------------------------------------
     def update_central_widget(self):
         """ Updates the central widget from the value on the shell 
         object. This method must be implemented by subclasses.

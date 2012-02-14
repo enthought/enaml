@@ -3,12 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_component import QtComponent
+from .qt_widget_component import QtWidgetComponent
 
 from ...components.menu import AbstractTkMenu
 
 
-class QtMenu(QtComponent, AbstractTkMenu):
+class QtMenu(QtWidgetComponent, AbstractTkMenu):
     """ A Qt4 implementation of Menu.
 
     """

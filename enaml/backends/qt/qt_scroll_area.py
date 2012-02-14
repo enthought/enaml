@@ -3,7 +3,7 @@
 # All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtCore, QtGui
-from .qt_layout_component import QtLayoutComponent
+from .qt_constraints_widget import QtConstraintsWidget
 
 from ...components.scroll_area import AbstractTkScrollArea
 
@@ -15,7 +15,7 @@ SCROLLBAR_POLICY_MAP = dict(
 )
 
 
-class QtScrollArea(QtLayoutComponent, AbstractTkScrollArea):
+class QtScrollArea(QtConstraintsWidget, AbstractTkScrollArea):
     """ Qt implementation of a ScrollArea.
 
     """

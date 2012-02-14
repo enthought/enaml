@@ -3,12 +3,12 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtGui
-from .qt_component import QtComponent
+from .qt_widget_component import QtWidgetComponent
 
 from ...components.menu_bar import AbstractTkMenuBar
 
 
-class QtMenuBar(QtComponent, AbstractTkMenuBar):
+class QtMenuBar(QtWidgetComponent, AbstractTkMenuBar):
     """ A Qt4 implementation of a MenuBar.
 
     """
