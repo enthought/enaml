@@ -74,7 +74,7 @@ class SimplePlot(EnableCanvas):
         return plot
 
     #: Delegates.
-    bgcolor = DelegatesTo('component')
+    plot_bgcolor = DelegatesTo('component', 'bgcolor')
     default_origin = DelegatesTo('component')
     orientation = DelegatesTo('component')
     padding_top = DelegatesTo('component')
@@ -90,7 +90,6 @@ class SimplePlot(EnableCanvas):
     title_color = DelegatesTo('component')
     title_angle = DelegatesTo('component')
     legend_alignment = DelegatesTo('component')
-
 
     @classmethod
     def activate(cls):
@@ -217,6 +216,6 @@ class SimplePlot(EnableCanvas):
         self.component.legend = new
         self.component.request_redraw()
 
-    def _bgcolor_changed(self, new):
+    def _plot_bgcolor_changed(self, new):
         self.component.request_redraw()
 

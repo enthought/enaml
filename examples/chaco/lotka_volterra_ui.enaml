@@ -52,7 +52,7 @@ enamldef Main(MainWindow):
             ytitle = 'Population'
             padding_right = 10
             padding_top = 10
-            bgcolor << color_selector.value
+            plot_bgcolor << color_selector.value
         Form:
             id: form
             Label:
