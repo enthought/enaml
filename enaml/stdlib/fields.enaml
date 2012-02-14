@@ -16,7 +16,7 @@ enamldef ErrorField(Field):
     """ ErrorField changes background color when the error state is True.
     
     """
-    bg_color << 'error' if error else 'none'
+    bgcolor << 'error' if error else 'none'
 
 
 enamldef IntField(ErrorField):
