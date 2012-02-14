@@ -26,7 +26,7 @@ enamldef Stacked(Container):
     """
     attr index: int = 0
     event _vis_changed ::
-        for idx, child in enumerate(layout_children):
+        for idx, child in enumerate(constraints_children):
             if idx == index:
                 child.set_visible(True)
             else:

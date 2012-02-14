@@ -9,14 +9,13 @@ from traits.api import Bool, Instance, Str
 from .container import Container, AbstractTkContainer
 
 from ..enums import HorizontalAlign
-from ..layout.box_model_mixin import MarginBoxModelMixin
+from ..layout.geometry import Box
 
 
 class AbstractTkGroupBox(AbstractTkContainer):
-    """ The abstract GroupBox interface.
+    """ The abstract toolkit GroupBox interface.
 
     """
-
     @abstractmethod
     def shell_title_changed(self, title):
         """ Update the title of the group box with the new value from the
@@ -43,14 +42,13 @@ class AbstractTkGroupBox(AbstractTkContainer):
 
     @abstractmethod
     def get_contents_margins(self):
-        """ Return the (top, left, right, bottom) margin values for the 
-        widget.
+        """ Return the Box object of margin values for the widget.
 
         """
-        return (0, 0, 0, 0)
+        return Box(0, 0, 0, 0)
 
 
-class GroupBox(MarginBoxModelMixin, Container):
+class GroupBox(Container):
     """ The GroupBox container, which introduces a group of widgets with 
     a title and usually has a border.
 
@@ -69,22 +67,15 @@ class GroupBox(MarginBoxModelMixin, Container):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkGroupBox)
 
-    def container_constraints(self):
-        """ A set of constraints that should always be applied to this 
-        type of container.
-
-        This sets up the definitions of the margins between the outer 
-        boundaries of the container and its content rectangle.
+    def margin_constraints(self):
+        """ Overriden margin constraints method to pull the margin values
+        from the toolkit widget.
 
         """
-        top, left, right, bottom = self.abstract_obj.get_contents_margins()
-        # These are 'required' constraints because they define immutable 
-        # things.
-        constraints = [
-            (self.margin_top == top) | 'required',
-            (self.margin_left == left) | 'required',
-            (self.margin_right == right) | 'required',
-            (self.margin_bottom == bottom) | 'required',
+        box = self.abstract_obj.get_contents_margins()
+        cns = [
+            self.margin_top == box.top, self.margin_left == box.left,
+            self.margin_right == box.right, self.margin_bottom == box.bottom,
         ]
-        return constraints
+        return cns
 

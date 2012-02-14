@@ -23,7 +23,7 @@ class TestGroupBox(WXTestAssistant, group_box.TestGroupBox):
         super(TestGroupBox, self).setUp()
         window = self.component_by_name(self.view, 'win')
         abstract = window.abstract_obj
-        abstract.resize(200, 200)
+        abstract.resize((200, 200))
         self.process_wx_events(self.app)
 
     def get_title(self, component, widget):

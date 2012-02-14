@@ -6,11 +6,17 @@ from abc import abstractmethod
 
 from traits.api import (
     Property, Instance, Either, Enum, Tuple, Int, cached_property,
+    on_trait_change,
 )
 
+from .constraints_widget import (
+    ConstraintsWidget, AbstractTkConstraintsWidget,
+)
 from .container import Container
-from .layout_component import LayoutComponent, AbstractTkLayoutComponent
 from .layout_task_handler import LayoutTaskHandler
+from .widget_component import WidgetComponent
+
+from ..layout.geometry import Size
 
 
 #: Enum trait describing the scrollbar policies that can be assigned to 
@@ -18,7 +24,7 @@ from .layout_task_handler import LayoutTaskHandler
 ScrollbarPolicy = Enum('as_needed', 'always_on', 'always_off')
 
 
-class AbstractTkScrollArea(AbstractTkLayoutComponent):
+class AbstractTkScrollArea(AbstractTkConstraintsWidget):
     """ The abstract toolkit ScrollArea interface. A toolkit scroll area 
     is responsible for handling changes on a shell ScrollArea and proxying 
     those changes to and from its internal toolkit widget.
@@ -37,7 +43,7 @@ class AbstractTkScrollArea(AbstractTkLayoutComponent):
         raise NotImplementedError
 
 
-class ScrollArea(LayoutTaskHandler, LayoutComponent):
+class ScrollArea(LayoutTaskHandler, ConstraintsWidget):
     """ A LayoutComponent subclass that displays just a single child in
     a scrollable area.
 
@@ -45,7 +51,7 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
     #: A read-only property which returns the scrolling component
     #: for the area, or None if one is not defined.
     scrolled_component = Property(
-        Instance(LayoutComponent), depends_on='layout_children',
+        Instance(WidgetComponent), depends_on='children',
     )
 
     #: The horizontal scroll policy.
@@ -71,6 +77,9 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
     #: areas do not hug their height and are free to expand.
     hug_height = 'ignore'
 
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkScrollArea)
+    
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
@@ -79,14 +88,14 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
         """ The property getter for the 'scrolled_component' attribute.
 
         """
-        children = self.layout_children
+        children = self.children
         n = len(children)
         if n == 0:
             res = None
         elif n == 1:
             res = children[0]
         else:
-            msg = ('A ScrollArea can have at most 1 layout child. Got '
+            msg = ('A ScrollArea can have at most 1 widget child. Got '
                    '%s instead.')
             raise ValueError(msg % n)
         return res
@@ -94,19 +103,15 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     # Change Handlers
     #--------------------------------------------------------------------------
-    def _preferred_size_changed(self):
-        """ The change handler for the 'preferred_size' attribute. 
-        This simply requests a relayout.
+    @on_trait_change('scrolled_component, preferred_size')
+    def _on_scroll_area_deps_changed(self):
+        """ A change handler which requests a relayout when the scrolled
+        component or the preferred size changes, provided that the 
+        component is initialized.
 
         """
-        self.request_relayout()
-
-    def _on_layout_deps_changed(self):
-        """ A change handler for triggering a relayout when any of the
-        layout dependencies change. It simply requests a relayout.
-
-        """
-        self.request_relayout()
+        if self.initialized:
+            self.request_relayout()
 
     #--------------------------------------------------------------------------
     # Setup Methods
@@ -122,19 +127,6 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     # Overrides
     #--------------------------------------------------------------------------
-    def initialize_layout(self):
-        """ A reimplemented parent class method which hooks up change
-        handlers for child attributes which will cause a change in 
-        the layout.
-
-        """
-        self.on_trait_change(
-            self._on_layout_deps_changed, (
-                'scrolled_component:size_hint_updated, '
-                'scrolled_component:visible, '
-            )
-        )
-
     def size_hint(self):
         """ A reimplemented parent class method which uses the given 
         preferred size when computing the size hint, but falls back
@@ -151,7 +143,7 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
             width = width_hint
         if height is None:
             height = height_hint
-        return (width, height)
+        return Size(width, height)
 
     def do_relayout(self):
         """ A reimplemented LayoutTaskHandler handler method which will
@@ -160,14 +152,11 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
         """
         # This method is called whenever a relayout is requested.
         # We update the size of the scrolled components and fire 
-        # off a size hint updated event so that any parents can
-        # react to our potential new size.
+        # off a size hint updated event so that the parent can
+        # peform a relayout.
         self.update_min_scrolled_size()
         self.size_hint_updated()
 
-    #--------------------------------------------------------------------------
-    # Update Methods
-    #--------------------------------------------------------------------------
     def update_min_scrolled_size(self):
         """ Updates the minimum size of the scrolled component with its
         computed minimum size, or its size hint.
@@ -179,5 +168,5 @@ class ScrollArea(LayoutTaskHandler, LayoutComponent):
                 min_size = scrolled.compute_min_size()
             else:
                 min_size = scrolled.size_hint()
-            scrolled.set_min_size(*min_size)
+            scrolled.set_min_size(min_size)
 

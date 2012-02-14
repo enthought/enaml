@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_layout_component import WXLayoutComponent
+from .wx_constraints_widget import WXConstraintsWidget
 
 from ...components.tab_group import AbstractTkTabGroup
 
@@ -18,7 +18,7 @@ _TAB_POSITION_MAP = {
 }
 
 
-class WXTabGroup(WXLayoutComponent, AbstractTkTabGroup):
+class WXTabGroup(WXConstraintsWidget, AbstractTkTabGroup):
     """ A wx implementation of the Tabbed container.
 
     """

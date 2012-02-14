@@ -113,13 +113,13 @@ enamldef RadioGroup(Container):
     # Internal Logic
     #--------------------------------------------------------------------------
     constraints << [
-        hbox(*layout_children) if orientation == 'horizontal' else vbox(*layout_children)
+        hbox(*constraints_children) if orientation == 'horizontal' else vbox(*constraints_children)
     ]
 
     # Disable the appropriate children when the disabled indices change
     disabled_buttons ::
         disabled = set(disabled_buttons)
-        for idx, button in enumerate(layout_children):
+        for idx, button in enumerate(constraints_children):
             button.enabled = not (idx in disabled)
     
     # Synchronize the buttons when the selected index is changed

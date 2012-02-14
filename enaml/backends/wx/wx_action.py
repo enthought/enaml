@@ -7,7 +7,7 @@ import weakref
 import wx
 import wx.lib.newevent
 
-from .wx_component import WXComponent
+from .wx_base_widget_component import WXBaseWidgetComponent
 
 from ...components.action import AbstractTkAction
 
@@ -299,7 +299,7 @@ class wxEnamlAction(wx.EvtHandler):
         pass
         
 
-class WXAction(WXComponent, AbstractTkAction):
+class WXAction(WXBaseWidgetComponent, AbstractTkAction):
     """ A wx implementation of Action.
 
     """

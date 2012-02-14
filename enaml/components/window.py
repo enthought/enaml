@@ -5,14 +5,14 @@
 from abc import abstractmethod
 
 from traits.api import (
-    Str, Instance, Property, cached_property, Tuple, Range, 
+    Str, Instance, Property, cached_property, Tuple, Range,
 )
 
-from .component import Component, AbstractTkComponent
 from .container import Container
-from .layout_component import LayoutComponent
 from .layout_task_handler import LayoutTaskHandler
-from .sizable import Sizable, AbstractTkSizable
+from .widget_component import WidgetComponent, AbstractTkWidgetComponent
+
+from ..layout.geometry import Size
 
 
 # The set of strengths that are equal to, or stronger than, the resize
@@ -21,7 +21,7 @@ from .sizable import Sizable, AbstractTkSizable
 STRONGER_THAN_RESIZE = set(('medium', 'strong', 'required'))
 
 
-class AbstractTkWindow(AbstractTkComponent, AbstractTkSizable):
+class AbstractTkWindow(AbstractTkWidgetComponent):
     """ The abstract ToplevelWindow interface.
 
     """
@@ -63,7 +63,7 @@ class AbstractTkWindow(AbstractTkComponent, AbstractTkSizable):
         raise NotImplementedError
 
 
-class Window(LayoutTaskHandler, Component, Sizable):
+class Window(LayoutTaskHandler, WidgetComponent):
     """ A top-level Window component.
 
     A Window component is represents of a top-level visible component
@@ -79,7 +79,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
     #: A read-only property which holds the central widget. Declaring
     #: more than one central widget is an error.
     central_widget = Property(
-        Instance(LayoutComponent), depends_on='children',
+        Instance(WidgetComponent), depends_on='children',
     )
     
     #: The initial size to set the window on the first call show()
@@ -134,7 +134,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """ The property getter for the 'central_widget' attribute.
 
         """
-        flt = lambda child: isinstance(child, LayoutComponent)
+        flt = lambda child: isinstance(child, WidgetComponent) and child.__class__.__name__ != 'MenuBar'
         widgets = filter(flt, self.children)
         n = len(widgets)
         if n > 1:
@@ -145,7 +145,6 @@ class Window(LayoutTaskHandler, Component, Sizable):
             res = None
         else:
             res = widgets[0]
-
         return res
 
     #--------------------------------------------------------------------------
@@ -191,42 +190,16 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """
         self.update_maximum_size()
 
-    def _on_layout_deps_changed(self):
-        """ A change handler for triggering a relayout when any of the
-        layout dependencies change. It simply requests a relayout.
+    def _central_widget_changed(self):
+        """ A change handler for triggering a relayout when the central
+        widget changes, provided that the component is initialized.
 
         """
-        self.request_relayout()
+        if self.initialized:
+            self.request_relayout()
 
     #--------------------------------------------------------------------------
-    # Setup Methods 
-    #--------------------------------------------------------------------------
-    def _setup_init_layout(self):
-        """ A reimplemented parent class setup method that performs any
-        layout initialization necessary for the window. The layout is
-        initialized from the bottom up.
-
-        """
-        # This is identical to the code in LayoutComponent, but that
-        # class also comes with constraints baggage that we don't need.
-        # Hence, we just copy-paste this one small bit.
-        super(Window, self)._setup_init_layout()
-        self.initialize_layout()
-
-    def initialize_layout(self):
-        """ Hooks up change handlers for child attributes which will cause 
-        a change in the layout.
-
-        """
-        self.on_trait_change(
-            self._on_layout_deps_changed, (
-                'central_widget:visible, '
-                'central_widget:size_hint_updated, '
-            )
-        )
-
-    #--------------------------------------------------------------------------
-    # Overrides
+    # Layout Handling
     #--------------------------------------------------------------------------
     def do_relayout(self):
         """ A reimplemented LayoutTaskHandler handler method which will
@@ -234,7 +207,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
 
         """
         # This method is called whenever a relayout is requested. By
-        # default, this when the layout children change. In that case
+        # default, this is when the layout children change. In that case
         # we just need to update the min and max sizes. We are a top
         # level window, so no one really cares about our size hint. 
         self.update_minimum_size()
@@ -268,7 +241,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """
         if self.initialized:
             init_size = self._compute_initial_size()
-            self.resize(*init_size)
+            self.resize(init_size)
 
     def update_minimum_size(self):
         """ Updates the minimum size of the window based on its computed
@@ -279,7 +252,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """
         if self.initialized:
             min_size = self._compute_minimum_size()
-            self.set_min_size(*min_size)
+            self.set_min_size(min_size)
 
     def resize_to_minimum(self):
         """ Resizes the window to the computed minimum size, provided 
@@ -291,8 +264,8 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """
         if self.initialized:
             min_size = self._compute_minimum_size()
-            self.set_min_size(*min_size)
-            self.resize(*min_size)
+            self.set_min_size(min_size)
+            self.resize(min_size)
     
     def update_maximum_size(self):
         """ Updates the maximum size of the window based on its computed
@@ -303,7 +276,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """
         if self.initialized:
             max_size = self._compute_maximum_size()
-            self.set_max_size(*max_size)
+            self.set_max_size(max_size)
 
     def resize_to_maximum(self):
         """ Resizes the window to the computed maximum size, provided 
@@ -317,8 +290,8 @@ class Window(LayoutTaskHandler, Component, Sizable):
         """
         if self.initialized:
             max_size = self._compute_maximum_size()
-            self.set_max_size(*max_size)
-            self.resize(*max_size)
+            self.set_max_size(max_size)
+            self.resize(max_size)
     
     #--------------------------------------------------------------------------
     # Size Computation
@@ -331,7 +304,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
         # If the user has supplied an explicit initial size, use that.
         computed_width, computed_height = self.initial_size
         if computed_width != -1 and computed_height != -1:
-            return (computed_width, computed_height)
+            return Size(computed_width, computed_height)
         
         # Otherwise, try to compute a default from the central widget.
         widget = self.central_widget
@@ -352,7 +325,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
             if computed_height == -1:
                 computed_height = default_height
 
-        return (computed_width, computed_height)
+        return Size(computed_width, computed_height)
 
     def _compute_minimum_size(self):
         """ Computes and returns the minimum size of the window.
@@ -361,7 +334,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
         # If the user has supplied an explicit minimum size, use that.
         computed_width, computed_height = self.minimum_size
         if computed_width != -1 and computed_height != -1:
-            return (computed_width, computed_height)
+            return Size(computed_width, computed_height)
         
         # Otherwise, try to compute a default from the central widget.
         widget = self.central_widget
@@ -402,7 +375,7 @@ class Window(LayoutTaskHandler, Component, Sizable):
             if computed_height == -1:
                 computed_height = default_height
         
-        return (computed_width, computed_height)
+        return Size(computed_width, computed_height)
 
     def _compute_maximum_size(self):
         """ Computes and returns the maximum size of the window.
@@ -450,5 +423,5 @@ class Window(LayoutTaskHandler, Component, Sizable):
             if computed_height == -1:
                 computed_height = default_height
         
-        return (computed_width, computed_height)
+        return Size(computed_width, computed_height)
 

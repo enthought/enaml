@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Constant, Float, Property, Range, TraitError
+from traits.api import Instance, Constant, Float, Property, Range, TraitError
 
 from .slider import Slider, AbstractTkSlider, MAX_SLIDER_VALUE
 
@@ -46,6 +46,9 @@ class FloatSlider(Slider):
     #: Defines the number of steps that the slider will move when the
     #: user presses the page_up/page_down keys. Default is 10.
     page_step = Range(low='_one', high='precision', value=10)
+
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkFloatSlider)
 
     #--------------------------------------------------------------------------
     # Property methods

@@ -39,20 +39,16 @@ class Form(Container):
     # FIXME: Use an Enum.
     layout_strength = Str('strong')
 
-    def default_user_constraints(self):
-        """ Overridden parent class method which returns an empty list.
-        All constraints are supplied by 'container_constraints()'.
-
-        """
-        return []
-
-    def container_constraints(self):
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkForm)
+    
+    def component_constraints(self):
         """ Computes the current form constraints for the current
         children.
 
         """
         # FIXME: do something sensible when children are not visible.
-        children = self.layout_children
+        children = self.constraints_children
         labels = children[::2]
         widgets = children[1::2]
 
@@ -89,4 +85,11 @@ class Form(Container):
             constraints.append(align_v_center(label, widget) | layout_strength)
 
         return constraints
+
+    def default_user_constraints(self):
+        """ Overridden parent class method which returns an empty list.
+        All constraints are supplied by 'component_constraints()'.
+
+        """
+        return []
 

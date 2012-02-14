@@ -3,7 +3,7 @@
 # All rights reserved.
 #------------------------------------------------------------------------------
 from .qt import QtCore, QtGui
-from .qt_layout_component import QtLayoutComponent
+from .qt_constraints_widget import QtConstraintsWidget
 
 from ...components.splitter import AbstractTkSplitter
 
@@ -14,7 +14,7 @@ _ORIENTATION_MAP = {
 }
 
 
-class QtSplitter(QtLayoutComponent, AbstractTkSplitter):
+class QtSplitter(QtConstraintsWidget, AbstractTkSplitter):
     """ A Qt implementation of a Splitter.
 
     """
@@ -53,8 +53,8 @@ class QtSplitter(QtLayoutComponent, AbstractTkSplitter):
         """
         self.set_live_drag(live_drag)
 
-    def shell_layout_children_changed(self, children):
-        """ The change handler for the 'layout_children' attribute of 
+    def shell_splitter_children_changed(self, children):
+        """ The change handler for the 'splitter_children' attribute of 
         the shell object.
 
         """
@@ -91,7 +91,7 @@ class QtSplitter(QtLayoutComponent, AbstractTkSplitter):
             child = widget.widget(i)
             child.setParent(None)
         shell = self.shell_obj
-        for child in shell.layout_children:
+        for child in shell.splitter_children:
             widget.addWidget(child.toolkit_widget)
 
     def set_splitter_sizes(self, sizes):

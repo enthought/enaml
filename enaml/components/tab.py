@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Str, Any
+from traits.api import Str, Any, Instance
 
 from .container import Container, AbstractTkContainer
 
@@ -40,4 +40,7 @@ class Tab(Container):
     #: The icon displayed on this tab, if any.
     # XXX handle icons!
     icon = Any
+
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkTab)
 

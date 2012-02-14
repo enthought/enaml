@@ -6,12 +6,11 @@ from abc import abstractmethod
 
 from traits.api import Property, List, Instance, cached_property
 
-from .component import Component, AbstractTkComponent
-
 from .menu import Menu
+from .widget_component import WidgetComponent, AbstractTkWidgetComponent
 
 
-class AbstractTkMenuBar(AbstractTkComponent):
+class AbstractTkMenuBar(AbstractTkWidgetComponent):
     """ The abstract toolkit interface for a MenuBar.
 
     """
@@ -23,7 +22,7 @@ class AbstractTkMenuBar(AbstractTkComponent):
         raise NotImplementedError
 
 
-class MenuBar(Component):
+class MenuBar(WidgetComponent):
     """ A declarative Enaml Component which represents a menu bar in
     a main window.
 

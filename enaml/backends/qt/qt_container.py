@@ -4,8 +4,8 @@
 #------------------------------------------------------------------------------
 import weakref
 
-from .qt import QtCore
-from .qt_layout_component import QtLayoutComponent
+from .qt.QtCore import QSize
+from .qt_constraints_widget import QtConstraintsWidget
 from .qt_resizing_widgets import QResizingFrame, QResizingWidget
 
 from ...components.container import AbstractTkContainer
@@ -34,13 +34,13 @@ class _QResizingFrame(QResizingFrame):
             if shell is not None:
                 sh = shell.size_hint()
                 if sh != (-1, -1):
-                    res = QtCore.QSize(*sh)
+                    res = QSize(*sh)
         if res is None:
             res = super(_QResizingFrame, self).sizeHint()
         return res
 
 
-class QtContainer(QtLayoutComponent, AbstractTkContainer):
+class QtContainer(QtConstraintsWidget, AbstractTkContainer):
     """ A Qt4 implementation of Container.
 
     """

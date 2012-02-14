@@ -2,13 +2,65 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from ...components.sizable import AbstractTkSizable
+import wx
+
+from .wx_base_widget_component import WXBaseWidgetComponent
+from .styling import wx_color_from_color, wx_font_from_font
+
+from ...components.widget_component import AbstractTkWidgetComponent
+from ...layout.geometry import Rect, Size, Pos
 
 
-class WXSizable(AbstractTkSizable):
-    """ A Wx implementation of Sizable.
+class WXWidgetComponent(WXBaseWidgetComponent, AbstractTkWidgetComponent):
+    """ A Wx implementation of WidgetComponent.
 
     """
+    def create(self, parent):
+        """ Creates the underlying Wx widget. As necessary, subclasses
+        should reimplement this method to create different types of
+        widgets.
+
+        """
+        self.widget = wx.Panel(parent)
+
+    def initialize(self):
+        """ Initializes the attributes of the the Wx widget.
+
+        """
+        super(WXWidgetComponent, self).initialize()
+        shell = self.shell_obj
+        self.set_enabled(shell.enabled)
+        if shell.bgcolor:
+            self.set_bgcolor(shell.bgcolor)
+        if shell.fgcolor:
+            self.set_fgcolor(shell.fgcolor)
+        if shell.font:
+            self.set_font(shell.font)
+
+    def enable_updates(self):
+        """ Enable rendering updates for the underlying Wx widget.
+
+        """
+        widget = self.widget
+        if widget:
+            if widget.IsFrozen():
+                widget.Thaw()
+    
+    def disable_updates(self):
+        """ Disable rendering updates for the underlying Wx widget.
+
+        """
+        widget = self.widget
+        if widget:
+            if not widget.IsFrozen():
+                widget.Freeze()
+
+    def set_visible(self, visible):
+        """ Show or hide the widget.
+
+        """
+        self.widget.Show(visible)
+
     def size_hint(self):
         """ Returns a (width, height) tuple of integers which represent
         the suggested size of the widget for its current state, ignoring
@@ -16,7 +68,7 @@ class WXSizable(AbstractTkSizable):
         manager to determine how much space to allocate the widget.
 
         """
-        return self.widget.GetBestSizeTuple()
+        return Size(*self.widget.GetBestSizeTuple())
 
     def layout_geometry(self):
         """ Returns the (x, y, width, height) to of layout geometry
@@ -28,13 +80,13 @@ class WXSizable(AbstractTkSizable):
         """
         return self.geometry()
 
-    def set_layout_geometry(self, x, y, width, height):
+    def set_layout_geometry(self, rect):
         """ Sets the layout geometry of the internal widget to the 
         given x, y, width, and height values. The parameters passed
         are equivalent semantics to layout_geometry().
 
         """
-        self.set_geometry(x, y, width, height)
+        self.set_geometry(rect)
 
     def geometry(self):
         """ Returns an (x, y, width, height) tuple of geometry info
@@ -50,9 +102,9 @@ class WXSizable(AbstractTkSizable):
         # side with Qt on Windows, and these current geometry handlers 
         # "do the right thing" in most cases, plus or minus a pixel or
         # two difference.
-        return self.widget.GetRect().asTuple()
+        return Rect(*self.widget.GetRect().asTuple())
 
-    def set_geometry(self, x, y, width, height):
+    def set_geometry(self, rect):
         """ Sets the geometry of the internal widget to the given
         x, y, width, and height values, ignoring any windowing 
         decorations.
@@ -63,7 +115,7 @@ class WXSizable(AbstractTkSizable):
         # thing. This SetDimensions *seems* to do the correct thing
         # but I'm skeptical that it won't break down in certain 
         # cirumstances and do the wrong thing wrt to window decorations.
-        self.widget.SetDimensions(x, y, width, height)
+        self.widget.SetDimensions(*rect)
 
     def min_size(self):
         """ Returns the hard minimum (width, height) of the widget, 
@@ -77,9 +129,9 @@ class WXSizable(AbstractTkSizable):
         min_width, min_height = tuple(widget.GetMinSize())
         min_width = min_width - (widget_width - client_width)
         min_height = min_height - (widget_height - client_height)
-        return (min_width, min_height)
+        return Size(min_width, min_height)
 
-    def set_min_size(self, min_width, min_height):
+    def set_min_size(self, size):
         """ Set the hard minimum width and height of the widget, ignoring
         any windowing decorations. A widget will not be able to be resized 
         smaller than this value.
@@ -87,6 +139,7 @@ class WXSizable(AbstractTkSizable):
         """
         # Wx is lacking a SetMinClientSize function, so we fake it.
         widget = self.widget
+        min_width, min_height = size
         widget_width, widget_height = widget.GetSizeTuple()
         client_width, client_height = widget.GetClientSizeTuple()
         delta_width = widget_width - client_width
@@ -127,9 +180,9 @@ class WXSizable(AbstractTkSizable):
         max_width, max_height = tuple(widget.GetMaxSize())
         max_width = max_width - (widget_width - client_width)
         max_height = max_height - (widget_height - client_height)
-        return (max_width, max_height)
+        return Size(max_width, max_height)
 
-    def set_max_size(self, max_width, max_height):
+    def set_max_size(self, size):
         """ Set the hard maximum width and height of the widget, ignoring
         any windowing decorations. A widget will not be able to be resized 
         larger than this value.
@@ -139,6 +192,7 @@ class WXSizable(AbstractTkSizable):
         # it's uncertain what the maximum allowable size is on wx. For 
         # now, we just fake computation and use the Qt limits.
         widget = self.widget
+        max_width, max_height = size
         widget_width, widget_height = widget.GetSizeTuple()
         client_width, client_height = widget.GetClientSizeTuple()
         delta_width = widget_width - client_width
@@ -173,9 +227,9 @@ class WXSizable(AbstractTkSizable):
         windowing decorations, as a (width, height) tuple of integers.
 
         """
-        return self.widget.GetClientSizeTuple()
+        return Size(*self.widget.GetClientSizeTuple())
                 
-    def resize(self, width, height):
+    def resize(self, size):
         """ Resizes the internal toolkit widget according the given
         width and height integers, ignoring any windowing decorations.
 
@@ -183,6 +237,7 @@ class WXSizable(AbstractTkSizable):
         # SetClientSize completely breaks down on Windows, so we fake 
         # it and hope for the best.
         widget = self.widget
+        width, height = size
         widget_width, widget_height = widget.GetSizeTuple()
         client_width, client_height = widget.GetClientSizeTuple() 
         width = width + (widget_width - client_width)
@@ -196,13 +251,81 @@ class WXSizable(AbstractTkSizable):
         parent, or to the screen if the widget is toplevel.
 
         """
-        return self.widget.GetPositionTuple()
+        return Pos(*self.widget.GetPositionTuple())
             
-    def move(self, x, y):
+    def move(self, pos):
         """ Moves the internal toolkit widget according to the given
         x and y integers which are relative to the origin of the
         widget's parent and includes any windowing decorations.
 
         """
-        self.widget.Move((x, y))
+        self.widget.Move(pos)
+
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute on the shell
+        object.
+
+        """
+        self.set_enabled(enabled)
+
+    def shell_bgcolor_changed(self, color):
+        """ The change handler for the 'bgcolor' attribute on the shell
+        object. Sets the background color of the internal widget to the 
+        given color.
+        
+        """
+        self.set_bgcolor(color)
+    
+    def shell_fgcolor_changed(self, color):
+        """ The change handler for the 'fgcolor' attribute on the shell
+        object. Sets the foreground color of the internal widget to the 
+        given color.
+
+        """
+        self.set_fgcolor(color)
+
+    def shell_font_changed(self, font):
+        """ The change handler for the 'font' attribute on the shell 
+        object. Sets the font of the internal widget to the given font.
+
+        """
+        self.set_font(font)
+
+    def set_enabled(self, enabled):
+        """ Enable or disable the widget.
+
+        """
+        self.widget.Enable(enabled)
+
+    def set_bgcolor(self, color):
+        """ Sets the background color of the widget to an appropriate
+        wxColor given the provided Enaml Color object.
+
+        """
+        wx_color = wx_color_from_color(color)
+        self.widget.SetBackgroundColour(wx_color)
+
+    def set_fgcolor(self, color):
+        """ Sets the foreground color of the widget to an appropriate
+        wxColor given the provided Enaml Color object.
+
+        """
+        wx_color = wx_color_from_color(color)
+        self.widget.SetForegroundColour(wx_color)
+
+    def set_font(self, font):
+        """ Sets the font of the widget to an appropriate QFont given 
+        the provided Enaml Font object.
+
+        """
+        # There's no such thing as a NullFont on wx, so if the font is
+        # equivalent to the Enaml default font, and we haven't yet changed 
+        # the font for this instance, then we don't change it. Otherwise
+        # the fonts won't be equivalelnt to the default.
+        if not font and self._has_default_wx_font:
+            return
+
+        wx_font = wx_font_from_font(font)
+        self.widget.SetFont(wx_font)
+        self._has_default_wx_font = False
 

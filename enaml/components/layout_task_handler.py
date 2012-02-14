@@ -58,7 +58,6 @@ class LayoutTaskHandler(HasStrictTraits):
         """
         if not self.initialized:
             return
-
         # Protect against relayout recursion.
         if not guard.guarded(self, 'relayout'):
             with guard(self, 'relayout'):
@@ -79,7 +78,6 @@ class LayoutTaskHandler(HasStrictTraits):
         """
         if not self.initialized:
             return
-
         # Protect against refresh recursion.
         if not guard.guarded(self, 'refresh'):
             with guard(self, 'refresh'):

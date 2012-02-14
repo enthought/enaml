@@ -11,9 +11,15 @@ from .control import Control, AbstractTkControl
 
 
 class AbstractTkEnableCanvas(AbstractTkControl):
+    """ The abstract toolkit EnableCanvas interface.
 
+    """
     @abstractmethod
     def shell_component_changed(self, component):
+        """ The change handler for the 'component' attribute on the
+        shell object.
+
+        """
         raise NotImplementedError
 
 

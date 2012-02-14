@@ -4,16 +4,20 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Property, Int, Instance, List, cached_property
+from traits.api import (
+    Property, Int, Instance, List, cached_property, on_trait_change,
+)
 
-from .layout_component import LayoutComponent, AbstractTkLayoutComponent
+from .constraints_widget import (
+    ConstraintsWidget, AbstractTkConstraintsWidget,
+)
 from .layout_task_handler import LayoutTaskHandler
 from .tab import Tab
 
 from ..enums import TabPosition
 
 
-class AbstractTkTabGroup(AbstractTkLayoutComponent):
+class AbstractTkTabGroup(AbstractTkConstraintsWidget):
     """ The abstract toolkit TabGroup interface.
 
     """
@@ -42,7 +46,7 @@ class AbstractTkTabGroup(AbstractTkLayoutComponent):
         raise NotImplementedError
 
 
-class TabGroup(LayoutTaskHandler, LayoutComponent):
+class TabGroup(LayoutTaskHandler, ConstraintsWidget):
     """ A LayoutComponent that arranges its children as a group of tabs.
 
     The TabGroup provides a very simple way of laying out a number of 
@@ -53,7 +57,7 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
     """
     #: A read-only cached property that returns the tab children
     #: of this tab group.
-    tabs = Property(List(Instance(Tab)), depends_on='layout_children')
+    tabs = Property(List(Instance(Tab)), depends_on='children')
 
     #: A readonly property which returns the selected index. If there 
     #: are no tabs in the group, this will return -1.
@@ -81,22 +85,19 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
     #: current selection. A -1 indicates no selection.
     _selected_index = Int(-1)
 
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkTabGroup)
+    
     #--------------------------------------------------------------------------
-    # Property Getters and Setters
+    # Property Getters
     #--------------------------------------------------------------------------
     @cached_property
     def _get_tabs(self):
         """ The property getter for the 'tabs' attribute.
 
         """
-        res = []
-        for child in self.layout_children:
-            if not isinstance(child, Tab):
-                msg = ('The children of a TabGroup must be instances of Tab. '
-                       'Got %s instead.' % child)
-                raise TypeError(msg)
-            res.append(child)
-        return res
+        flt = lambda child: isinstance(child, Tab)
+        return filter(flt, self.children)
     
     def _get_selected_tab(self):
         """ The property getter for the 'selected_tab' attribute.
@@ -125,38 +126,22 @@ class TabGroup(LayoutTaskHandler, LayoutComponent):
     #--------------------------------------------------------------------------
     # Change Handlers
     #--------------------------------------------------------------------------
-    def _tab_position_changed(self):
-        """ A change handler for triggering a relayout when the position
-        of the tabs change.
+    @on_trait_change('tabs, tab_position')
+    def _on_tab_group_deps_changed(self):
+        """ A change handler for triggering a relayout when the tabs or
+        the position of the tabs change, provided that the component
+        is initialized.
 
         """
-        self.request_relayout()
-
-    def _on_layout_deps_changed(self):
-        """ A change handler for triggering a relayout when any of the
-        layout dependencies change. It simply requests a relayout.
-
-        """
-        self.request_relayout()
+        if self.initialized:
+            self.request_relayout()
 
     #--------------------------------------------------------------------------
     # Overrides
     #--------------------------------------------------------------------------
-    def initialize_layout(self):
-        """ A reimplemented parent class method which hooks up change
-        handlers for child attributes which will cause a change in 
-        the layout.
-
-        """
-        self.on_trait_change(
-            self._on_layout_deps_changed, (
-                'selected_tab.size_hint_updated'
-            )
-        )
-
     def do_relayout(self):
         """ A reimplemented LayoutTaskHandler handler method which will
-        perform necessary update activity when a relayout it requested.
+        perform necessary update activity when a relayout is requested.
 
         """
         self.size_hint_updated()

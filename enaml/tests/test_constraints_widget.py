@@ -6,7 +6,7 @@ from unittest import TestCase
 
 from traits.api import TraitError
 
-from ..components.layout_component import LayoutComponent
+from ..components.constraints_widget import ConstraintsWidget
 
 
 class TestLayoutComponent(TestCase):
@@ -20,7 +20,7 @@ class TestLayoutComponent(TestCase):
         good_values = ['ignore', 'weak', 'medium', 'strong', 'required']
         bad_values = ['Ignore', None, 'srong']
 
-        comp = LayoutComponent()
+        comp = ConstraintsWidget()
         self.assertEqual(comp.hug_width, 'strong')
         self.assertEqual(comp.hug_height, 'strong')
         self.assertEqual(comp.hug, ('strong', 'strong'))
@@ -51,7 +51,7 @@ class TestLayoutComponent(TestCase):
         good_values = ['ignore', 'weak', 'medium', 'strong', 'required']
         bad_values = ['Ignore', None, 'srong']
 
-        comp = LayoutComponent()
+        comp = ConstraintsWidget()
         self.assertEqual(comp.resist_clip_width, 'strong')
         self.assertEqual(comp.resist_clip_height, 'strong')
         self.assertEqual(comp.resist_clip, ('strong', 'strong'))

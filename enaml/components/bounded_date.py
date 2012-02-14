@@ -13,17 +13,31 @@ from ..core.trait_types import Bounded
 
 
 class AbstractTkBoundedDate(AbstractTkControl):
+    """ The abstract toolkit BoundedDate interface.
 
+    """
     @abstractmethod
     def shell_date_changed(self, date):
+        """ The change handler for the 'date' attribute on the shell
+        object.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def shell_min_date_changed(self, min_date):
+        """ The change handler for the 'min_date' attribute on the shell
+        object.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def shell_max_date_changed(self, max_date):
+        """ The change handler for the 'max_date' attribute on the shell
+        object.
+
+        """
         raise NotImplementedError
 
 

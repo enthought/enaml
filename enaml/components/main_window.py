@@ -51,6 +51,9 @@ class MainWindow(Window):
     #: of the menu bar.
     _menu_bar_height = Property(Int, depends_on='menu_bar')
 
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkMainWindow)
+    
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
@@ -128,12 +131,12 @@ class MainWindow(Window):
     # Change Handlers
     #--------------------------------------------------------------------------
     def _menu_bar_changed(self):
-        """ Updates the minimum and maximum sizes of main window if the
-        menu bar changes after the window has been initialized.
+        """ Requests a relayout of the window if the menu bar changes 
+        after the window has been initialized.
 
         """
-        self.request_relayout_task(self.update_minimum_size)
-        self.request_relayout_task(self.update_maximum_size)
+        if self.initialized:
+            self.request_relayout()
 
     #--------------------------------------------------------------------------
     # Parent Class Overrides

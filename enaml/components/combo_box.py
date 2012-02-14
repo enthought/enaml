@@ -12,13 +12,23 @@ from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkComboBox(AbstractTkControl):
+    """ The abstract toolkit ComboBox interface.
 
+    """
     @abstractmethod
     def shell_labels_changed(self, value):
+        """ The change handler for the 'labels' attribute on the shell
+        object.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def shell_index_changed(self, index):
+        """ The change handler for the 'index' attribute on the shell
+        object.
+
+        """
         raise NotImplementedError
 
 

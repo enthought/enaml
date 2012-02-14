@@ -38,8 +38,8 @@ class AbstractItemModelTable(wx.grid.PyGridTableBase):
         self._vert_header_data = item_model.vertical_header_data
         self._horiz_header_data = item_model.horizontal_header_data
 
-        self._item_model.on_trait_change(self._end_model_reset, 'model_reset')
-        self._item_model.on_trait_change(self._data_changed, 'data_changed')
+        self._item_model.model_reset.connect(self._end_model_reset)
+        self._item_model.data_changed.connect(self._data_changed)
 
     def _end_model_reset(self):
         grid = self.GetView()

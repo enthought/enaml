@@ -6,7 +6,7 @@ import weakref
 
 import wx
 
-from .wx_component import WXComponent
+from .wx_widget_component import WXWidgetComponent
 from .wx_menu import wxEnamlMenu
 
 from ...components.menu_bar import AbstractTkMenuBar
@@ -155,7 +155,7 @@ class wxEnamlMenuBar(wx.MenuBar):
             super(wxEnamlMenuBar, self).Destroy()
 
 
-class WXMenuBar(WXComponent, AbstractTkMenuBar):
+class WXMenuBar(WXWidgetComponent, AbstractTkMenuBar):
     """ A Wx implementation of a MenuBar.
 
     """
