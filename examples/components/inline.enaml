@@ -38,7 +38,7 @@ enamldef Main(MainWindow):
             text = 'A Label'
         Field:
             read_only = True
-            bg_color = 'salmon'
+            bgcolor = 'salmon'
             value = 'A magic example...'
         InlineItems:
             label = 'Foo'
