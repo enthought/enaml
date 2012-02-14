@@ -2,13 +2,12 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .wx_component import WXComponent
-from .wx_sizable import WXSizable
+from .wx_widget_component import WXWidgetComponent
 
 from ...components.window import AbstractTkWindow
 
 
-class WXWindow(WXComponent, WXSizable, AbstractTkWindow):
+class WXWindow(WXWidgetComponent, AbstractTkWindow):
     """ A wxPython implementation of a Window. It serves as a base class
     for WXMainWindow and WXDialog. It is not meant to be used directly.
 

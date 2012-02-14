@@ -6,7 +6,7 @@ import weakref
 
 import wx
 
-from .wx_layout_component import WXLayoutComponent
+from .wx_constraints_widget import WXConstraintsWidget
 
 from ...components.container import AbstractTkContainer
 
@@ -40,7 +40,7 @@ class _WXPanel(wx.Panel):
         return res
 
 
-class WXContainer(WXLayoutComponent, AbstractTkContainer):
+class WXContainer(WXConstraintsWidget, AbstractTkContainer):
     """ A Wx implementation of a Container.
 
     """

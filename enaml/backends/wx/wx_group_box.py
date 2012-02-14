@@ -7,6 +7,7 @@ import wx
 from .wx_container import WXContainer
 
 from ...components.group_box import AbstractTkGroupBox
+from ...layout.geometry import Box
 
 
 WX_ALIGNMENTS = dict(
@@ -192,7 +193,7 @@ class wxGroupBox(wx.Panel):
         if self._label.GetLabel():
             height = self._label.GetCharHeight()
             margins[0] = height
-        self._margins = tuple(margins)
+        self._margins = Box(*margins)
 
     
 class WXGroupBox(WXContainer, AbstractTkGroupBox):

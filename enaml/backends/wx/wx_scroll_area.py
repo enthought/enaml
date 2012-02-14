@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
-from .wx_container import WXContainer
+from .wx_constraints_widget import WXConstraintsWidget
 
 from ...components.scroll_area import AbstractTkScrollArea
 
@@ -79,11 +79,11 @@ class WXScrollAreaSizer(wx.PySizer):
         """
         component = self._child
         if component is not None:
-            component.resize(*self.GetSizeTuple())
+            component.resize(self.GetSizeTuple())
 
 
-class WXScrollArea(WXContainer, AbstractTkScrollArea):
-    """ Wx implementation of the ScrollArea Container.
+class WXScrollArea(WXConstraintsWidget, AbstractTkScrollArea):
+    """ A Wx implementation of ScrollArea.
 
     ..Note: The 'always_on' scrollbar policy is not supported on wx. Wx
         *does* allow the scollbars to be always shown, but said window 

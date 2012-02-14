@@ -7,7 +7,7 @@ import weakref
 import wx
 
 from .wx_action import wxEnamlAction
-from .wx_component import WXComponent
+from .wx_widget_component import WXWidgetComponent
 
 from ...components.menu import AbstractTkMenu
 
@@ -150,7 +150,7 @@ class wxEnamlMenu(wx.Menu):
             super(wxEnamlMenu, self).Destroy()
 
 
-class WXMenu(WXComponent, AbstractTkMenu):
+class WXMenu(WXWidgetComponent, AbstractTkMenu):
     """ A Wx implementation of Menu.
 
     """
@@ -239,7 +239,35 @@ class WXMenu(WXComponent, AbstractTkMenu):
 
         """
         self.widget.SetTitle(title)
-        
+    
+    def set_visible(self, visible):
+        """ An overridden parent class method. A wxMenu cannot change 
+        its visibility.
+
+        """
+        pass
+    
+    def set_bgcolor(self, bgcolor):
+        """ An overridden parent class method. A wxMenu cannot change 
+        its bgcolor.
+
+        """
+        pass
+    
+    def set_fgcolor(self, fgcolor):
+        """ An overridden parent class method. A wxMenu cannot change 
+        its fgcolor.
+
+        """
+        pass
+    
+    def set_font(self, font):
+        """ An overridden parent class method. A wxMenu cannot change 
+        its font.
+
+        """
+        pass
+
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
     #--------------------------------------------------------------------------

@@ -5,7 +5,7 @@
 import wx
 from wx.lib.splitter import MultiSplitterWindow
 
-from .wx_container import WXContainer
+from .wx_constraints_widget import WXConstraintsWidget
 
 from ...components.splitter import AbstractTkSplitter
 
@@ -41,8 +41,8 @@ class CustomSplitter(MultiSplitterWindow):
         return super(CustomSplitter, self)._OnMouse(event)
 
 
-class WXSplitter(WXContainer, AbstractTkSplitter):
-    """ Wx implementation of the Splitter Container.
+class WXSplitter(WXConstraintsWidget, AbstractTkSplitter):
+    """ A Wx implementation of Splitter.
 
     """
     #--------------------------------------------------------------------------
@@ -80,7 +80,7 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
         """
         self.set_live_drag(live_drag)
 
-    def shell_layout_children_changed(self, children):
+    def shell_splitter_children_changed(self, children):
         """ The change handler for the 'layout_children' attribute of 
         the shell object.
 
@@ -117,7 +117,7 @@ class WXSplitter(WXContainer, AbstractTkSplitter):
         for widget_child in widget._windows:
             widget.DetachWindow(widget_child)
 
-        for child in shell.layout_children:
+        for child in shell.splitter_children:
             child_widget = child.toolkit_widget
             child_widget.Reparent(widget)
             widget.AppendWindow(child_widget)
