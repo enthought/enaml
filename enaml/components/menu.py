@@ -9,12 +9,12 @@ from traits.api import (
 )
 
 from .action import Action
-from .component import Component, AbstractTkComponent
+from .widget_component import WidgetComponent, AbstractTkWidgetComponent
 
 from ..core.trait_types import EnamlEvent
 
 
-class AbstractTkMenu(AbstractTkComponent):
+class AbstractTkMenu(AbstractTkWidgetComponent):
     """ The abstract toolkit interface for a Menu object.
 
     """
@@ -50,10 +50,7 @@ class AbstractTkMenu(AbstractTkComponent):
         raise NotImplementedError
 
 
-MenuContents = List(Either(Instance('Menu'), Instance(Action)))
-
-
-class Menu(Component):
+class Menu(WidgetComponent):
     """ A declarative Enaml Component which represents a menu in a 
     menu bar.
 
@@ -69,8 +66,14 @@ class Menu(Component):
 
     #: A read-only cached property which holds the list of menu
     #: contents which are instances of Menu or Action.
-    contents = Property(MenuContents, depends_on='children')
+    contents = Property(
+        List(Either(Instance('Menu'), Instance(Action))), 
+        depends_on='children',
+    )
 
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkMenu)
+    
     @cached_property
     def _get_contents(self):
         """ The property getter for the 'contents' attribute.

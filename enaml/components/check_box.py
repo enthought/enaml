@@ -8,6 +8,9 @@ from .toggle_control import ToggleControl, AbstractTkToggleControl
 
 
 class AbstractTkCheckBox(AbstractTkToggleControl):
+    """ The abstract toolkit CheckBox interface.
+
+    """
     pass
 
 

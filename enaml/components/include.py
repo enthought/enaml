@@ -2,16 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import (
-    List, Instance, Bool, on_trait_change, Property, cached_property, Either,
-)
+from traits.api import List, Instance, Either, Bool, Property, cached_property
 
 from ..core.base_component import BaseComponent
-
-
-IncludeComponents = Either(
-    List(Instance(BaseComponent)), Instance(BaseComponent),
-)
 
 
 class Include(BaseComponent):
@@ -31,8 +24,11 @@ class Include(BaseComponent):
     #: which will accept a single component, or a list of components as
     #: input. If the input is a single component, it will be converted
     #: into a single element list.
-    components = Property(IncludeComponents, depends_on='_components')
-        
+    components = Property(
+        Either(List(Instance(BaseComponent)), Instance(BaseComponent)),
+        depends_on='_components',
+    )
+    
     #: A private attribute which stores the underlying list of created
     #: components. This list should not be manipulated by user code.
     _components = List(Instance(BaseComponent))
@@ -75,6 +71,20 @@ class Include(BaseComponent):
     #--------------------------------------------------------------------------
     # Setup Methods 
     #--------------------------------------------------------------------------
+    def _setup_init_layout(self):
+        """ A reimplemented parent class method which builds the initial
+        list of include components during the layout initialization pass.
+        The layout is performed bottom-up so that the tree is up-to-date
+        before any parents compute their layout.
+
+        """
+        super(Include, self)._setup_init_layout()
+        self._setup_components()
+        self.on_trait_change(
+            self._on_components_actual_updated, '_components:_actual_updated',
+        )
+        self._actual_updated()
+
     def _setup_components(self):
         """ An internal method used to setup the dynamic child components.
 
@@ -172,28 +182,7 @@ class Include(BaseComponent):
     #--------------------------------------------------------------------------
     # Change Handlers 
     #--------------------------------------------------------------------------
-    @on_trait_change('initialized')
-    def _handle_initialized(self, inited):
-        """ Reacts to this component being fully initialized by the
-        normal setup process. Once this Include is fully initialized, 
-        it is safe to create and setup the dynamic children. This method
-        runs that process when the 'initialized' flag is flipped from 
-        False to True and then fires the '_actual_updated' event.
-
-        """
-        if inited:
-            self._setup_components()
-            # Since the initial list of components may be assigned during
-            # a trait_setq context (by the Enaml expression binders) the
-            # items listeners don't get hooked up if we use the trait
-            # change method decorator. Instead, we manually bind the 
-            # notifier the first time this component is initialized.
-            self.on_trait_change(self._on_components_actual_updated, 
-                                 '_components:_actual_updated')
-            self._actual_updated()
-    
-    @on_trait_change('components')
-    def _handle_components_changed(self, obj, name, old, new):
+    def _components_changed(self, name, old, new):
         """ Reacts to changes in the dynamic components and sets up the 
         new children, making sure the old ones are destroyed and that 
         the '_actual_updated' event gets fired.

@@ -10,9 +10,15 @@ from .control import Control, AbstractTkControl
 
 
 class AbstractTkHtml(AbstractTkControl):
-    
+    """ The abstract toolkit Html interface.
+
+    """
     @abstractmethod
     def shell_source_changed(self, source):
+        """ The change handler for the 'source' attribute of the shell
+        object.
+
+        """
         raise NotImplementedError
 
 

@@ -10,6 +10,9 @@ from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkCalendar(AbstractTkBoundedDate):
+    """ The abstract toolkit Calendar interface.
+
+    """
     pass
 
 

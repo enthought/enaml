@@ -4,19 +4,22 @@
 #------------------------------------------------------------------------------
 from traits.api import Bool, Instance
 
-from .layout_component import LayoutComponent, AbstractTkLayoutComponent
+from .constraints_widget import (
+    ConstraintsWidget, AbstractTkConstraintsWidget,
+)
 
 from ..exceptions import ShellExceptionContext, ShellNotificationContext
 
 
-class AbstractTkControl(AbstractTkLayoutComponent):
+class AbstractTkControl(AbstractTkConstraintsWidget):
+    """ The abstract toolkit Control interface.
+
+    """
     pass
 
 
-class Control(LayoutComponent):
-    """ The base class of all leaf widgets in Enaml. Controls cannot
-    have subcomponents and attempt to add a subcomponent to a control 
-    will raise an exception.
+class Control(ConstraintsWidget):
+    """ The base class of all leaf widgets in Enaml.
 
     """
     #: A boolean which indicates whether an exception was raised through 

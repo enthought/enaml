@@ -12,9 +12,15 @@ from ..core.trait_types import EnamlEvent
 
 
 class AbstractTkDateEdit(AbstractTkBoundedDate):
+    """ The abstract toolkit DateEdit interface.
 
+    """
     @abstractmethod
     def shell_date_format_changed(self, date_format):
+        """ The change handler for the 'date_format' attribute on the
+        shell object.
+
+        """
         raise NotImplementedError
 
 

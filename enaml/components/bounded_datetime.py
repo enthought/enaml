@@ -18,17 +18,31 @@ Datetime = BaseInstance(py_datetime)
 
 
 class AbstractTkBoundedDatetime(AbstractTkControl):
+    """ The abstract toolkit BoundedDatetime.
 
+    """
     @abstractmethod
     def shell_datetime_changed(self, datetime):
+        """ The change handler for the 'datetime' attribute on the 
+        shell object.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def shell_min_datetime_changed(self, datetime):
+        """ The change handler for the 'min_datetime' attribute on the 
+        shell object.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def shell_max_datetime_changed(self, datetime):
+        """ The change handler for the 'max_datetime' attribute on the 
+        shell object.
+
+        """
         raise NotImplementedError
 
 

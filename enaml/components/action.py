@@ -4,15 +4,17 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Bool, Unicode
+from traits.api import Bool, Unicode, Instance
 
-from .component import Component, AbstractTkComponent
+from .base_widget_component import (
+    BaseWidgetComponent, AbstractTkBaseWidgetComponent,
+)
 
 from ..core.trait_types import EnamlEvent
 
 
-class AbstractTkAction(AbstractTkComponent):
-    """ The abstract toolkit interface for an Action.
+class AbstractTkAction(AbstractTkBaseWidgetComponent):
+    """ The abstract toolkit Action interface.
 
     """
     @abstractmethod
@@ -72,7 +74,7 @@ class AbstractTkAction(AbstractTkComponent):
         raise NotImplementedError
 
 
-class Action(Component):
+class Action(BaseWidgetComponent):
     """ A declarative Enaml component which represents an action 
     associated with a menu or toolbar.
 
@@ -113,4 +115,7 @@ class Action(Component):
     separator = Bool(False)
 
     # XXX need to handle icons and keyboard shortcuts
+
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkAction)
 

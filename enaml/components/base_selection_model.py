@@ -4,14 +4,18 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from .component import Component, AbstractTkComponent
+from traits.api import Instance
+
+from .base_widget_component import (
+    BaseWidgetComponent, AbstractTkBaseWidgetComponent,
+)
 
 from ..enums import SelectionMode, SelectionBehavior
 from ..core.trait_types import EnamlEvent
 
 
-class AbstractTkBaseSelectionModel(AbstractTkComponent):
-    """ The toolkit interface for the selection model.
+class AbstractTkBaseSelectionModel(AbstractTkBaseWidgetComponent):
+    """ The abstract toolkit BaseSelectionModel interface.
 
     """
     @abstractmethod
@@ -58,7 +62,7 @@ class AbstractTkBaseSelectionModel(AbstractTkComponent):
         raise NotImplementedError
 
 
-class BaseSelectionModel(Component):
+class BaseSelectionModel(BaseWidgetComponent):
     """ The base class for item selection models.
 
     """
@@ -77,6 +81,9 @@ class BaseSelectionModel(Component):
 
     #: What kinds of things can be selected.
     selection_behavior = SelectionBehavior
+
+    #: Overridden parent class trait
+    abstract_obj = Instance(AbstractTkBaseSelectionModel)
 
     def clear(self):
         """ Clear the selection and the current index.

@@ -15,12 +15,19 @@ from ..item_models.model_index import ModelIndex
 
 
 class AbstractTkItemView(AbstractTkControl):
-    
+    """ The abstract toolkit ItemView interface.
+
+    """
     @abstractmethod
     def shell_item_model_changed(self, model):
+        """ The change handler for the 'item_model' attribute on the
+        shell object.
+
+        """
         raise NotImplementedError
 
 
+# XXX rename this to ItemView
 class AbstractItemView(Control):
     """ An abstract base class view that contains common logic for the
     ListView, TableView, and TreeView classes.
