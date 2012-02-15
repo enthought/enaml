@@ -87,6 +87,9 @@ class Layer(object):
 
         GL.glEnd()
 
+    def delete(self):
+        GL.glDeleteTextures([self.id])
+
 
 def make_layer(filename, x, y, in_format=GL.GL_RGBA, out_format=GL.GL_RGBA, opacity=1.0):
     image = np.asarray(Image.open(filename))
@@ -98,6 +101,7 @@ def make_layer(filename, x, y, in_format=GL.GL_RGBA, out_format=GL.GL_RGBA, opac
 class GLWidget(QtOpenGL.QGLWidget):
     def __init__(self, parent=None):
         QtOpenGL.QGLWidget.__init__(self, parent)
+        self.destroyed.connect(self.cleanup)
 
     def initializeGL(self):
         GL.glDisable(GL.GL_DEPTH_TEST)
@@ -148,10 +152,15 @@ class GLWidget(QtOpenGL.QGLWidget):
         self.program.addShader(self.fragment_shader)
         self.program.link()
 
+    def cleanup(self):
+        GL.glDeleteTextures([layer.id for layer in self.layers])
+
+
 if __name__ == '__main__':
     app = QtGui.QApplication(sys.argv)
     main_window = QtGui.QMainWindow()
     gl_widget = GLWidget()
+    app.aboutToQuit.connect(gl_widget.cleanup)
     main_window.setCentralWidget(gl_widget)
     main_window.resize(1920, 1200)
     main_window.show()
