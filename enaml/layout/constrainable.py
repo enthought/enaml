@@ -4,9 +4,13 @@
 #------------------------------------------------------------------------------
 from traits.api import (
     HasStrictTraits, List, Property, Instance, Bool, on_trait_change,
+    Tuple, Either, Int
 )
 
 from .box_model import BoxModel, MarginBoxModel
+from .geometry import Box
+
+from ..enums import PolicyEnum
 
 
 def _get_from_box_model(self, name):
@@ -62,8 +66,7 @@ class Constrainable(HasStrictTraits):
     #: center of the component
     h_center = Property(fget=_get_from_box_model)
 
-    #: A private attribute that holds the box model instance
-    #: for this component. 
+    #: The private storage the box model instance for this component.
     _box_model = Instance(BoxModel)
     def __box_model_default(self):
         return BoxModel(self)
@@ -218,22 +221,59 @@ class MarginConstraints(Constrainable):
     #: along the horizontal direction of the content area of the container.
     contents_h_center = Property(fget=_get_from_box_model)
 
-    #: A private attribute that holds the box model instance for this
-    #: component. 
-    _box_model = Instance(BoxModel)
+    #: A box object which holds the margins for this component. The 
+    #: default margins are (0, 0, 0, 0).
+    margins = Either(
+        Instance(Box), Tuple(Int, Int, Int, Int), default=Box(0, 0, 0, 0),
+    )
+
+    #: The PolicyEnum for the strength with which to enforce the margins.
+    #: This can be a single policy value to apply to everything, or a 
+    #: 4-tuple of policies to apply to the individual margins
+    margin_strength = Either(
+        PolicyEnum, Tuple(PolicyEnum, PolicyEnum, PolicyEnum, PolicyEnum),
+        default = 'required'
+    )
+
+    #: The private storage the box model instance for this component. 
+    _box_model = Instance(BoxModel, ())
     def __box_model_default(self):
         return MarginBoxModel(self)
-
-    def margin_constraints(self):
-        """ Returns the list of symbolic constraints for the margins of 
-        the component. These are constraints that apply to the internal
-        layout calculations of an object. The default implementation
-        constrains all of the margins to == 0 required.
+    
+    #--------------------------------------------------------------------------
+    # Change Handlers
+    #--------------------------------------------------------------------------
+    @on_trait_change('margins', 'margin_strength')
+    def _margins_changed(self):
+        """ A change handler for the 'margins' attribute. It requests
+        a relayout if the component is initialized.
 
         """
-        cns = [
-            self.margin_top == 0, self.margin_right == 0,
-            self.margin_bottom == 0, self.margin_left == 0,
-        ]
+        if self.initialized:
+            self.request_relayout()
+    
+    #--------------------------------------------------------------------------
+    # Constraint Handling
+    #--------------------------------------------------------------------------
+    def margin_constraints(self):
+        """ Returns the list of symbolic constraints for the margins of 
+        the component. These constraints apply to the internal layout 
+        calculations of an object. The default implementation constrains 
+        the margins according the numeric values in the 'margins' attribute
+        and the strengths in 'margin_strength' attribute. It also places a 
+        required constraint >= 0 on every margin.
+
+        """
+        cns = []
+        margins = self.margins
+        tags = ('margin_top', 'margin_right', 'margin_bottom', 'margin_left')
+        strengths = self.margin_strength
+        if isinstance(strengths, basestring):
+            strengths = (strengths,) * 4
+        for tag, strength, margin in zip(tags, strengths, margins):
+            sym = getattr(self, tag)
+            cns.append(sym >= 0)
+            if strength != 'ignore':
+                cns.append((sym == margin) | strength)
         return cns
 
