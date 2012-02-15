@@ -1,0 +1,36 @@
+from updating_plot import LivePlotManager
+
+
+enamldef PublisherFrequency(FloatSlider):
+    attr publisher
+    attr period << 1.0 / value
+    minimum = 0.3
+    maximum = 30.0
+    value = 1.0 / publisher.time_period
+    period >> publisher.time_period
+
+
+enamldef PlotView(MainWindow):
+    id: main
+    attr component
+    attr publisher
+    attr data_source
+    initial_size = (640, 480)
+    Container:
+        GroupBox:
+            title = 'Data Controls'
+            Form:
+                Label:
+                    text = 'Publisher Frequency'
+                PublisherFrequency:
+                    publisher = main.publisher
+                Label:
+                    text = 'Data Window'
+                Slider:
+                    minimum = 1000
+                    maximum = 10000
+                    value = main.data_source.buffer_size
+                    value >> main.data_source.buffer_size
+        EnableCanvas:
+            component = main.component
+

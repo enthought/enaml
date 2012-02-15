@@ -92,8 +92,8 @@ class NumpyPublisher(Publisher, BufferOp, AbstractPublisher):
 
     def process_feed(self):
         with self.lock:
-            t_diff = time.time() - self.data_feed.first_time
-            print 'rps: %s' % (self.data_feed.call_count / t_diff)
+            #t_diff = time.time() - self.data_feed.first_time
+            #print 'rps: %s' % (self.data_feed.call_count / t_diff)
             data = self.acquire_feed_data()
             buffer = self.sample(data)
             self.index = 0
