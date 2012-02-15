@@ -39,7 +39,7 @@ enamldef InformDialog(Dialog):
         Label:
             id: label
             text = message
-            fg_color = 'red'
+            fgcolor = 'red'
             font = 'times 18 bold'
         PushButton:
             id: ok_button

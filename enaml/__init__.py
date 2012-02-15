@@ -75,10 +75,10 @@ def qt_toolkit():
     """
     from .core.operators import OPERATORS
     from .core.toolkit import Toolkit
-    from .widgets.constructors import CONSTRUCTORS
-    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    from .widgets.qt.constructors import QT_CONSTRUCTORS
-    from .widgets.qt.qt_application import QtApplication
+    from .components.constructors import CONSTRUCTORS
+    from .layout.layout_helpers import LAYOUT_HELPERS
+    from .backends.qt.constructors import QT_CONSTRUCTORS
+    from .backends.qt.qt_application import QtApplication
 
     toolkit = Toolkit(QT_CONSTRUCTORS)
     toolkit.update(CONSTRUCTORS)
@@ -95,10 +95,10 @@ def wx_toolkit():
     """
     from .core.operators import OPERATORS
     from .core.toolkit import Toolkit
-    from .widgets.constructors import CONSTRUCTORS
-    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    from .widgets.wx.constructors import WX_CONSTRUCTORS
-    from .widgets.wx.wx_application import WXApplication
+    from .components.constructors import CONSTRUCTORS
+    from .layout.layout_helpers import LAYOUT_HELPERS
+    from .backends.wx.constructors import WX_CONSTRUCTORS
+    from .backends.wx.wx_application import WXApplication
 
     toolkit = Toolkit(WX_CONSTRUCTORS)
     toolkit.update(CONSTRUCTORS)
