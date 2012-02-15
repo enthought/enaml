@@ -11,7 +11,7 @@ from .constraints_widget import (
 )
 from .layout_task_handler import LayoutTaskHandler
 
-from ..layout.constrainable import MarginConstraints
+from ..layout.constrainable import MarginConstraints, Constrainable
 from ..layout.constraints_layout import ConstraintsLayout
 from ..layout.layout_helpers import expand_constraints
 from ..layout.geometry import Size
@@ -25,8 +25,8 @@ class AbstractTkContainer(AbstractTkConstraintsWidget):
 
 
 class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
-    """ A Component subclass that provides for laying out its layout
-    child Components.
+    """ A Component subclass that provides functionality for laying out 
+    constrainable children according to their system of constraints.
 
     """
     #: A read-only cached property which returns the constraints layout
@@ -38,9 +38,9 @@ class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
 
     #: The list of children that can participate in constraints based
     #: layout. This list is composed of components in the list of 
-    #: children that are instances of ConstraintsWidget.
+    #: children that are instances of Constrainable.
     constraints_children = Property(
-        List(Instance(ConstraintsWidget)), depends_on='children',
+        List(Instance(Constrainable)), depends_on='children',
     )
 
     #: A read-only property which returns True if this container owns
@@ -71,7 +71,7 @@ class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
         instances of ConstraintsWidget.
 
         """
-        flt = lambda child: isinstance(child, ConstraintsWidget)
+        flt = lambda child: isinstance(child, Constrainable)
         return filter(flt, self.children)
     
     @cached_property
@@ -310,6 +310,9 @@ class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
                 cns_extend(expand(child, child.size_hint_constraints()))
                 cns_extend(expand(child, child.user_constraints()))
                 cns_extend(expand(child, child.component_constraints()))
+                if isinstance(child, MarginConstraints):
+                    cns_extend(expand(child, child.margin_constraints()))
+                    
         return cns
 
     def default_user_constraints(self):
