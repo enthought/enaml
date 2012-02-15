@@ -12,6 +12,18 @@ class AbstractDataSource(object):
     def dispatch(self, buffer):
         raise NotImplementedError
 
+    @abstractmethod
+    def subscribe(self, callback):
+        raise NotImplementedError
+
+    @abstractmethod
+    def unsubscribe(self, callback):
+        raise NotImplementedError
+
+    @abstractmethod
+    def bind(self, publisher=None):
+        raise NotImplementedError
+
 
 class DataSource(BufferOp, AbstractDataSource):
     data = Signal()

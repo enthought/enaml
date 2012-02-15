@@ -1,7 +1,7 @@
 import threading
 from abc import ABCMeta, abstractmethod
 import numpy as np
-from dtypes import DATETIME_FLOAT32_DTYPE
+from dtypes import TIMESTAMP_FLOAT32_DTYPE
 from enaml.core.signaling import Signal
 from buffer_op import BufferOp
 import time
@@ -54,7 +54,7 @@ class NumpyPublisher(Publisher, BufferOp, AbstractPublisher):
 
     data = Signal()
 
-    def __init__(self, data_feed, size=1000000, dtype=DATETIME_FLOAT32_DTYPE, sample_probability=1.0,
+    def __init__(self, data_feed, size=1000000, dtype=TIMESTAMP_FLOAT32_DTYPE, sample_probability=1.0,
                 sample_fn=None, pass_through=True, time_period=1 / 30.0, platform_event_loop=None):
         BufferOp.__init__(self, sample_probability=sample_probability, sample_fn=sample_fn, pass_through=pass_through)
         self.data_feed = data_feed
@@ -92,7 +92,6 @@ class NumpyPublisher(Publisher, BufferOp, AbstractPublisher):
 
     def process_feed(self):
         with self.lock:
-            #zch
             t_diff = time.time() - self.data_feed.first_time
             print 'rps: %s' % (self.data_feed.call_count / t_diff)
             data = self.acquire_feed_data()
@@ -116,7 +115,8 @@ class NumpyPublisher(Publisher, BufferOp, AbstractPublisher):
 
     def insert(self, value):
         with self.lock:
-            self._buffer[self.index] = value
+            self._buffer[self.index]['index'] = value[0]
+            self._buffer[self.index]['value'] = value[1]
             self.index += 1
             if self.index >= self.size:
                 raise BufferError
