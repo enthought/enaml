@@ -137,9 +137,6 @@ class ConstraintsWidget(WidgetComponent, Constrainable):
         resist_clip_width = self.resist_clip_width
         resist_clip_height = self.resist_clip_height
 
-        if width_hint == 0 and height_hint == 0:
-            import pdb; pdb.set_trace()
-            self.size_hint()
         if width_hint >= 0:
             if hug_width != 'ignore':
                 cn = (width == width_hint) | hug_width
