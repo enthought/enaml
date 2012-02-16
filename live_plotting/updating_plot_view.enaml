@@ -1,36 +1,68 @@
-from updating_plot import LivePlotManager
 
-
-enamldef PublisherFrequency(FloatSlider):
-    attr publisher
-    attr period << 1.0 / value
-    minimum = 0.3
-    maximum = 30.0
-    value = 1.0 / publisher.time_period
-    period >> publisher.time_period
-
+enamldef VariableTweaker(Container):
+    attr data_object
+    attr attr_name
+    attr slider_minimum
+    attr slider_maximum
+    constraints = [
+        vertical(top, 0, sldr, 0, bottom),
+        horizontal(left, 0, lbl, 0, sldr, 0, right),
+        align_top(lbl, sldr),
+        lbl.width == 50,
+    ]
+    Label:
+        id: lbl
+        text << ('%.1f' % sldr.value).ljust(7, '0')
+        hug_width = 'strong'
+        font = '10 mono'
+    FloatSlider:
+        id: sldr
+        minimum = slider_minimum
+        maximum = slider_maximum
+        value := getattr(data_object, attr_name)
 
 enamldef PlotView(MainWindow):
     id: main
+    attr feed
     attr component
     attr publisher
     attr data_source
+    attr closed_callback
+    #closed :: closed_callback()
     initial_size = (640, 480)
     Container:
         GroupBox:
             title = 'Data Controls'
             Form:
                 Label:
+                    text = 'Incoming data rate'
+                VariableTweaker:
+                    data_object = main.feed
+                    attr_name = 'frequency'
+                    slider_minimum = 500.0
+                    slider_maximum = 10000.0
+
+                Label:
+                    text = 'Saw tooth rate'
+                VariableTweaker:
+                    data_object = main.feed
+                    attr_name = 'saw_freq'
+                    slider_minimum = 0.1
+                    slider_maximum = 3.0
+                Label:
                     text = 'Publisher Frequency'
-                PublisherFrequency:
-                    publisher = main.publisher
+                VariableTweaker:
+                    data_object = main.publisher
+                    attr_name = 'frequency'
+                    slider_minimum = 2.0
+                    slider_maximum = 60.0
                 Label:
                     text = 'Data Window'
-                Slider:
-                    minimum = 1000
-                    maximum = 10000
-                    value = main.data_source.buffer_size
-                    value >> main.data_source.buffer_size
+                VariableTweaker:
+                    data_object = main.data_source
+                    attr_name = 'buffer_size'
+                    slider_minimum = 1000.0
+                    slider_maximum = 10000.0
         EnableCanvas:
             component = main.component
 

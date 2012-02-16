@@ -17,10 +17,10 @@ if __name__ == '__main__':
     # Data Source Generation
     #--------------------------------------------------------------------------
     # Create reactive data generator
-    reactive_data_generator = DummyDataGenerator(1 / 1500.0, 5)
+    reactive_data_generator = DummyDataGenerator(1000, saw_freq=1.5)
 
     # Create a data publisher
-    numpy_publisher = NumpyPublisher(reactive_data_generator, time_period=1/5.0)
+    numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=25)
 
     # Start accepting data from the reactive data generator
     numpy_publisher.bind()
@@ -41,6 +41,8 @@ if __name__ == '__main__':
         index_mapper=LinearMapper(range=DataRange1D(index)),
         value_mapper=LinearMapper(range=DataRange1D(value)),
     )
+    line_plot.value_mapper.range.low_setting = -10
+    line_plot.value_mapper.range.high_setting = 10
 
     ticker = ScalesTickGenerator(scale=CalendarScaleSystem())
     bottom_axis = PlotAxis(line_plot, orientation='bottom', tick_generator=ticker)
@@ -55,11 +57,11 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     # View Generation
     #--------------------------------------------------------------------------
-    # Import cand create the viewer for the plot
+    # Import and create the viewer for the plot
     with enaml.imports():
         from updating_plot_view import PlotView
     view = PlotView(
-        component=container, publisher=numpy_publisher, data_source=data_source,
+        component=container, publisher=numpy_publisher, data_source=data_source, feed=reactive_data_generator
     )
 
     # Create a subscription function that will update the plot on the

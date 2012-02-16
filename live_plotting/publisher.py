@@ -4,7 +4,6 @@ import numpy as np
 from dtypes import TIMESTAMP_FLOAT32_DTYPE
 from enaml.core.signaling import Signal
 from buffer_op import BufferOp
-import time
 
 
 class AbstractPublisher(object):
@@ -46,19 +45,19 @@ class Publisher(AbstractPublisher):
             buffer = self.process_feed()
             self.data(buffer)
             if self.go:
-                threading.Timer(self.time_period, inner).start()
-        threading.Timer(self.time_period, inner).start()
+                threading.Timer(1.0 / self.frequency, inner).start()
+        threading.Timer(1.0 / self.frequency, inner).start()
 
 
-class NumpyPublisher(Publisher, BufferOp, AbstractPublisher):
+class NumpyPublisher(Publisher, BufferOp):
 
     data = Signal()
 
     def __init__(self, data_feed, size=1000000, dtype=TIMESTAMP_FLOAT32_DTYPE, sample_probability=1.0,
-                sample_fn=None, pass_through=True, time_period=1 / 30.0, platform_event_loop=None):
+                sample_fn=None, pass_through=True, frequency=30, platform_event_loop=None):
         BufferOp.__init__(self, sample_probability=sample_probability, sample_fn=sample_fn, pass_through=pass_through)
         self.data_feed = data_feed
-        self.time_period = time_period
+        self.frequency = frequency
         self.go = True
         self.buffer = None
         self._buffer = np.empty(size, dtype=dtype)
@@ -69,8 +68,8 @@ class NumpyPublisher(Publisher, BufferOp, AbstractPublisher):
         # Should be a function which takes one argument - an object with the following defined attributes
         # 1) process_feed - a callable
         # 2) go - a boolean value
-        # 3) time_period - A numeric value representing time in seconds
-        # platform_event_loop should call obj.process_feed every obj.time_period seconds until
+        # 3) frequency - A numeric value representing frequency that this publisher will sample its feed in hertz
+        # platform_event_loop should call obj.process_feed every 1.0 / obj.frequency seconds until
         # obj.go is true.
         self.platform_event_loop = None
 
@@ -92,8 +91,7 @@ class NumpyPublisher(Publisher, BufferOp, AbstractPublisher):
 
     def process_feed(self):
         with self.lock:
-            #t_diff = time.time() - self.data_feed.first_time
-            #print 'rps: %s' % (self.data_feed.call_count / t_diff)
+            #print 'publisher.index', self.index
             data = self.acquire_feed_data()
             buffer = self.sample(data)
             self.index = 0
