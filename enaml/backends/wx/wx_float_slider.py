@@ -16,7 +16,6 @@ class WXFloatSlider(WXSlider, AbstractTkFloatSlider):
     #--------------------------------------------------------------------------
     # Setup Methods
     #--------------------------------------------------------------------------
-
     def initialize(self):
         """ Initializes the attributes of the toolkit widget.
 
@@ -26,7 +25,7 @@ class WXFloatSlider(WXSlider, AbstractTkFloatSlider):
         shell = self.shell_obj
         shell._down = False
         self.set_precision(shell.precision)
-        super(WXSlider, self).initialize()
+        super(WXFloatSlider, self).initialize()
 
     #--------------------------------------------------------------------------
     # Implementation
