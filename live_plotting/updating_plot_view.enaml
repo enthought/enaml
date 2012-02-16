@@ -27,7 +27,7 @@ enamldef PlotView(MainWindow):
     attr component
     attr publisher
     attr data_source
-    initial_size = (640, 480)
+    initial_size = (1024, 768)
     Container:
         GroupBox:
             title = 'Data Controls'
@@ -45,8 +45,8 @@ enamldef PlotView(MainWindow):
                 VariableTweaker:
                     data_object = main.feed
                     attr_name = 'saw_freq'
-                    slider_minimum = 0.1
-                    slider_maximum = 3.0
+                    slider_minimum = 0.01
+                    slider_maximum = 1.0
                 Label:
                     text = 'Publisher Frequency'
                 VariableTweaker:

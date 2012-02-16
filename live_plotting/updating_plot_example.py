@@ -16,16 +16,16 @@ if __name__ == '__main__':
     # Data Source Generation
     #--------------------------------------------------------------------------
     # Create reactive data generator
-    reactive_data_generator = DummyDataGenerator(1000, saw_freq=1.5)
+    reactive_data_generator = DummyDataGenerator(1000, saw_freq=0.3)
 
     # Create a data publisher
-    numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=25)
+    numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=30)
 
     # Start accepting data from the reactive data generator
     numpy_publisher.bind()
 
     # Create a data source
-    data_source = DataSource(publisher=numpy_publisher, buffer_size=10000)
+    data_source = DataSource(publisher=numpy_publisher, buffer_size=2250)
 
     # Hooks up data source to start accepting data from the publisher
     data_source.bind()
@@ -40,8 +40,8 @@ if __name__ == '__main__':
         index_mapper=LinearMapper(range=DataRange1D(index)),
         value_mapper=LinearMapper(range=DataRange1D(value)),
     )
-    line_plot.value_mapper.range.low_setting = -10
-    line_plot.value_mapper.range.high_setting = 10
+    line_plot.value_mapper.range.low_setting = 0
+    line_plot.value_mapper.range.high_setting = 1.2
 
     ticker = ScalesTickGenerator(scale=CalendarScaleSystem())
     bottom_axis = PlotAxis(line_plot, orientation='bottom', tick_generator=ticker)
