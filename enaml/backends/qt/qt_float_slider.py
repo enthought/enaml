@@ -24,7 +24,7 @@ class QtFloatSlider(QtSlider, AbstractTkFloatSlider):
         """ Connect the event handlers for the slider widget signals.
 
         """
-        super(QtSlider, self).bind()
+        super(QtFloatSlider, self).bind()
         widget = self.widget
         widget.valueChanged.connect(self._on_slider_changed)
         widget.sliderMoved.connect(self._on_slider_moved)
