@@ -61,6 +61,13 @@ enamldef PlotView(MainWindow):
                     attr_name = 'buffer_size'
                     slider_minimum = 1000.0
                     slider_maximum = 10000.0
+                Label:
+                    text = 'Sample rate'
+                VariableTweaker:
+                    data_object = main.data_source
+                    attr_name = 'sample_probability'
+                    slider_minimum = 0.0
+                    slider_maximum = 1.0
         EnableCanvas:
             component = main.component
 

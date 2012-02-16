@@ -54,16 +54,18 @@ class NumpyPublisher(Publisher, BufferOp):
     data = Signal()
 
     def __init__(self, data_feed, size=1000000, dtype=TIMESTAMP_FLOAT32_DTYPE, sample_probability=1.0,
-                sample_fn=None, pass_through=True, frequency=30, platform_event_loop=None):
+                sample_fn=None, pass_through=True, frequency=30, platform_event_loop=None,
+                mock_function=lambda timestamp, saw_freq: float(timestamp) % saw_freq
+                ):
         BufferOp.__init__(self, sample_probability=sample_probability, sample_fn=sample_fn, pass_through=pass_through)
         self.data_feed = data_feed
         self.frequency = frequency
         self.go = True
-        self.buffer = None
         self._buffer = np.empty(size, dtype=dtype)
         self.size = size
         self.dtype = dtype
         self.index = 0
+        self.mock_function = mock_function
         self.lock = threading.Lock()
         # Should be a function which takes one argument - an object with the following defined attributes
         # 1) process_feed - a callable
@@ -76,7 +78,7 @@ class NumpyPublisher(Publisher, BufferOp):
     # Abstract API
     def bind(self):
         self.go = True
-        self.data_feed.register_callback(self.insert)
+        self.data_feed.register_publisher(self.insert, self.mock_function)
         if self.platform_event_loop:
             self.platform_event_loop(self)
         else:
