@@ -32,7 +32,7 @@ if __name__ == '__main__':
     other_numpy_publisher.bind()
     # Create a data source
     data_source = DataSource(publisher=numpy_publisher, buffer_size=2250, pass_through=False)
-    other_data_source = DataSource(publisher=numpy_publisher, buffer_size=2250, pass_through=True)
+    other_data_source = DataSource(publisher=other_numpy_publisher, buffer_size=2250, pass_through=True)
 
     # Hooks up data source to start accepting data from the publisher
     data_source.bind()

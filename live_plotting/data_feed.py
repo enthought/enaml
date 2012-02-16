@@ -13,7 +13,7 @@ class DummyDataGenerator(LockedAttributes):
         self.callback = None
         self.go = True
         self.frequency = frequency
-        self.registered_publishers = []
+        self.callbacks = []
         self.saw_freq = saw_freq
         self.dtype = dtype
         self.call_count = 0
@@ -23,9 +23,8 @@ class DummyDataGenerator(LockedAttributes):
         def inner(data_generator):
             while(self.go):
                 time_stamp = time.clock()
-                for publisher in self.registered_publishers:
-                    notification_fn, value_fn = publisher[0], publisher[1]
-                    notification_fn((time_stamp, value_fn(time_stamp, self.saw_freq)))
+                for callback in self.callbacks:
+                    callback((time_stamp, self.saw_freq))
                 time.sleep(1.0 / data_generator.frequency)
         thread = threading.Thread(target=inner, args=(self,))
         thread.daemon = True
@@ -34,5 +33,5 @@ class DummyDataGenerator(LockedAttributes):
     def stop(self):
         self.go = False
 
-    def register_publisher(self, notification_fn, value_function):
-        self.registered_publishers.append((notification_fn, value_function))
+    def register_publisher(self, callback):
+        self.callbacks.append(callback)
