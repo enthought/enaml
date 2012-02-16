@@ -29,6 +29,13 @@ class  WXMainWindow(WXWindow, AbstractTkMainWindow):
         super(WXMainWindow, self).initialize()
         self.update_menu_bar()
 
+    def bind(self):
+        """ Bind the signal handlers for the wx.Frame.
+
+        """
+        super(WXMainWindow, self).bind()
+        self.widget.Bind(wx.EVT_CLOSE, self._on_close)
+    
     #--------------------------------------------------------------------------
     # Change Handlers
     #--------------------------------------------------------------------------
@@ -59,6 +66,17 @@ class  WXMainWindow(WXWindow, AbstractTkMainWindow):
                 res = 21
         return res
 
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def _on_close(self, event):
+        """ Emits the closed event on the shell object when the main 
+        window is closed.
+
+        """
+        event.Skip()
+        self.shell_obj.closed()
+    
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------

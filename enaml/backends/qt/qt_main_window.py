@@ -2,10 +2,22 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
+from .qt import QtGui, QtCore
 from .qt_window import QtWindow
 
 from ...components.main_window import AbstractTkMainWindow
+
+
+class _QMainWindow(QtGui.QMainWindow):
+    """ A QMainWindow subclass which converts a close event into a 
+    closed signal.
+
+    """
+    closed = QtCore.Signal()
+
+    def closeEvent(self, event):
+        super(_QMainWindow, self).closeEvent(event)
+        self.closed.emit()
 
 
 class QtMainWindow(QtWindow, AbstractTkMainWindow):
@@ -19,7 +31,7 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         """ Creates the underlying QMainWindow object.
 
         """
-        self.widget = QtGui.QMainWindow(parent)
+        self.widget = _QMainWindow(parent)
 
     def initialize(self):
         """ Initialize the QMainWindow object.
@@ -27,6 +39,13 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         """
         super(QtMainWindow, self).initialize()
         self.update_menu_bar()
+
+    def bind(self):
+        """ Bind the signal handlers for the QMainWindow.
+
+        """
+        super(QtMainWindow, self).bind()
+        self.widget.closed.connect(self._on_close)
 
     #--------------------------------------------------------------------------
     # Change Handlers
@@ -73,6 +92,16 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
                     res += 1
         return res
 
+    #--------------------------------------------------------------------------
+    # Signal Handlers
+    #--------------------------------------------------------------------------
+    def _on_close(self):
+        """ Emits the closed event on the shell object when the main 
+        window is closed.
+
+        """
+        self.shell_obj.closed()
+    
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------

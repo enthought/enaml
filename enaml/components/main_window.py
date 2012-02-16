@@ -9,6 +9,8 @@ from traits.api import Instance, Int, Property, cached_property
 from .menu_bar import MenuBar
 from .window import Window, AbstractTkWindow
 
+from ..core.trait_types import EnamlEvent
+
 
 class AbstractTkMainWindow(AbstractTkWindow):
     """ The abstract toolkit interface for a MainWindow.
@@ -46,7 +48,10 @@ class MainWindow(Window):
     #: declared, the value will be None. Declaring more than one MenuBar
     #: is an error.
     menu_bar = Property(Instance(MenuBar), depends_on='children')
-        
+    
+    #: An event which is fired when the window is closed.
+    closed = EnamlEvent
+            
     #: A private read-only cached property that returns the height
     #: of the menu bar.
     _menu_bar_height = Property(Int, depends_on='menu_bar')
