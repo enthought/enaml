@@ -27,8 +27,6 @@ enamldef PlotView(MainWindow):
     attr component
     attr publisher
     attr data_source
-    attr closed_callback
-    #closed :: closed_callback()
     initial_size = (640, 480)
     Container:
         GroupBox:

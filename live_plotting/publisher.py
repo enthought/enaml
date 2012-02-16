@@ -83,7 +83,6 @@ class NumpyPublisher(Publisher, BufferOp):
             self.event_loop()
 
     def unbind(self):
-        self.data_feed.unregister_callback(self.insert)
         self.go = False
 
     def event_loop(self):
