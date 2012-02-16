@@ -33,5 +33,5 @@ class DummyDataGenerator(LockedAttributes):
     def stop(self):
         self.go = False
 
-    def register_publisher(self, callback):
+    def register_callback(self, callback):
         self.callbacks.append(callback)

@@ -10,11 +10,22 @@ import enaml
 from data_feed import DummyDataGenerator
 from publisher import NumpyPublisher
 from data_source import DataSource
-from math import sin
+import numpy as np
 
 
-def foo(timestamp, sawtooth):
-    return sin(timestamp)
+def sin_transform(data_feed):
+    def inner(buffer):
+        scaled = buffer['index'] / float(data_feed.saw_freq)
+        buffer['value'] = np.sin(scaled)
+        return buffer
+    return inner
+
+
+def mod_transform(data_feed):
+    def inner(buffer):
+        buffer['value'] = np.fmod(buffer['index'], data_feed.saw_freq)
+        return buffer
+    return inner
 
 
 if __name__ == '__main__':
@@ -27,15 +38,15 @@ if __name__ == '__main__':
 
     # Create a data publisher
     numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=30)
-    other_numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=30, mock_function=foo)
+    other_numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=30)
 
     # Start accepting data from the reactive data generator
     numpy_publisher.bind()
     other_numpy_publisher.bind()
 
     # Create a data source
-    data_source = DataSource(publisher=numpy_publisher, buffer_size=2250, pass_through=False)
-    other_data_source = DataSource(publisher=other_numpy_publisher, buffer_size=2250, pass_through=True)
+    data_source = DataSource(publisher=numpy_publisher, buffer_size=2250, pass_through=True, buffer_conversion_function=sin_transform(reactive_data_generator))
+    other_data_source = DataSource(publisher=other_numpy_publisher, buffer_size=2250, pass_through=True, buffer_conversion_function=mod_transform(reactive_data_generator))
 
     # Hooks up data source to start accepting data from the publisher
     data_source.bind()
@@ -53,8 +64,8 @@ if __name__ == '__main__':
     x_mapper = LinearMapper(range=DataRange1D(index))
     y_mapper = LinearMapper(range=DataRange1D(value))
 
-    y_mapper.range.low_setting = -1.1
-    y_mapper.range.high_setting = 1.1
+    y_mapper.range.low_setting = -2.2
+    y_mapper.range.high_setting = 2.2
 
     line_plot = LinePlot(
         index=index, value=value,
@@ -88,8 +99,9 @@ if __name__ == '__main__':
         from updating_plot_view import PlotView
 
     view = PlotView(
-        component=container, publisher=numpy_publisher, 
-        data_source=data_source, feed=reactive_data_generator,
+        component=container, publishers=[numpy_publisher, other_numpy_publisher],
+        data_sources=[data_source, other_data_source],
+        feed=reactive_data_generator,
     )
 
     # Create a subscription function that will update the plot on the
@@ -116,3 +128,4 @@ if __name__ == '__main__':
 
     reactive_data_generator.stop()
     numpy_publisher.unbind()
+    other_numpy_publisher.unbind()

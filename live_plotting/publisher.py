@@ -75,7 +75,7 @@ class NumpyPublisher(Publisher, BufferOp):
     # Abstract API
     def bind(self):
         self.go = True
-        self.data_feed.register_publisher(self.insert, self.mock_function)
+        self.data_feed.register_callback(self.insert)
         if self.platform_event_loop:
             self.platform_event_loop(self)
         else:
