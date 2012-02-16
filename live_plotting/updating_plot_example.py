@@ -16,6 +16,7 @@ from math import sin
 def foo(timestamp, sawtooth):
     return sin(timestamp)
 
+
 if __name__ == '__main__':
     #--------------------------------------------------------------------------
     # Data Source Generation
@@ -27,12 +28,14 @@ if __name__ == '__main__':
     # Create a data publisher
     numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=30)
     other_numpy_publisher = NumpyPublisher(reactive_data_generator, frequency=30, mock_function=foo)
+
     # Start accepting data from the reactive data generator
     numpy_publisher.bind()
     other_numpy_publisher.bind()
+
     # Create a data source
     data_source = DataSource(publisher=numpy_publisher, buffer_size=2250, pass_through=False)
-    other_data_source = DataSource(publisher=numpy_publisher, buffer_size=2250, pass_through=True)
+    other_data_source = DataSource(publisher=other_numpy_publisher, buffer_size=2250, pass_through=True)
 
     # Hooks up data source to start accepting data from the publisher
     data_source.bind()
@@ -43,38 +46,38 @@ if __name__ == '__main__':
     #--------------------------------------------------------------------------
     index = ArrayDataSource([])
     value = ArrayDataSource([])
-    other = ArrayDataSource([])
+
+    other_index = ArrayDataSource([])
+    other_value = ArrayDataSource([])
 
     x_mapper = LinearMapper(range=DataRange1D(index))
     y_mapper = LinearMapper(range=DataRange1D(value))
-    other_y_mapper = LinearMapper(range=DataRange1D(other))
 
     y_mapper.range.low_setting = -1.1
     y_mapper.range.high_setting = 1.1
-    other_y_mapper.range.low_setting = -1.1
-    other_y_mapper.range.high_setting = 1.1
 
     line_plot = LinePlot(
         index=index, value=value,
         index_mapper=x_mapper,
         value_mapper=y_mapper,
+        color='darkblue',
     )
 
     other_line_plot = LinePlot(
-        index=index, value=other,
+        index=other_index, value=other_value,
         index_mapper=x_mapper,
-        value_mapper=other_y_mapper,
+        value_mapper=y_mapper,
+        color='darkred',
     )
 
     ticker = ScalesTickGenerator(scale=CalendarScaleSystem())
-    container = OverlayPlotContainer(bgcolor='white', padding=50, fill_padding=False)
+    container = OverlayPlotContainer(
+        bgcolor='white', padding=50, fill_padding=False, border_visible=True,
+    )
     container.add(line_plot)
     container.add(other_line_plot)
 
-    bottom_axis = PlotAxis(mapper=x_mapper, component=container, orientation='bottom', tick_generator=ticker)
     left_axis = PlotAxis(mapper=y_mapper, component=container, orientation='left')
-
-    container.overlays.append(bottom_axis)
     container.overlays.append(left_axis)
 
     #--------------------------------------------------------------------------
@@ -85,8 +88,9 @@ if __name__ == '__main__':
         from updating_plot_view import PlotView
 
     view = PlotView(
-        component=container, publisher=numpy_publisher, data_source=data_source,
-        feed=reactive_data_generator)
+        component=container, publisher=numpy_publisher, 
+        data_source=data_source, feed=reactive_data_generator,
+    )
 
     # Create a subscription function that will update the plot on the
     # main gui thread.
