@@ -2,10 +2,8 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-""" Image model to use for display and analysis in FAST scripting 
-application.
-
-Expose a Chaco plot object to pass to the image pane view.
+""" Use chaco to display an image in an EnableCanvas. This example 
+requires Scipy for the sample image data.
 
 """
 from chaco.api import ArrayPlotData, Plot, ImageData
@@ -34,3 +32,4 @@ enamldef Main(MainWindow):
     Container:
         EnableCanvas:
             component = model.plot
+
