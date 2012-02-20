@@ -58,7 +58,8 @@ def default_toolkit():
     if tk_func is not None:
         return tk_func()
 
-    toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower()
+    # Accepts forms such as 'qt4' and 'qt4.agg' to allow for kiva backends
+    toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower().split('.')[0]
 
     if toolkit == 'qt' or toolkit == 'qt4':
         return qt_toolkit()
