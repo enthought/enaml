@@ -184,6 +184,7 @@ if __name__ == '__main__':
     adapter = GridDataAdapter(model=model)
     data_table = StockDataTable(adapter)
 
-    view = MainView(model, adapter, plot_driver, stock_data_table=data_table)
+    view = MainView(model=model, adapter=adapter, plot=plot_driver,
+                    stock_data_table=data_table)
     view.show()
 
