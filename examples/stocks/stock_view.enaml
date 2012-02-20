@@ -3,29 +3,33 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 
-# XXX this example is not yet updated to the new grammar!
-
-defn MainView(model, adapter, plot, stock_data_table):
-    Window:
-        title << ("Enaml Stock Viewer - %s - %s - %s" % 
-                  (model.symbol, model.start_date, model.end_date))
+enamldef MainView(MainWindow):
+    attr model
+    attr adapter
+    attr plot
+    attr stock_data_table
+    title << ("Enaml Stock Viewer - %s - %s - %s" % (model.symbol, model.start_date, model.end_date))
+    #title = "Enaml Stock Viewer"
+    Container:
         constraints = [
             hbox(left_content, right_content)
         ]
-        Container -> left_content:
+        Container:
+            id: left_content
             constraints = [
                 vertical(top, frm, lbl, sldr, bottom),
                 horizontal(left, frm, right),
                 sldr.left == frm.midline,
                 lbl.h_center == sldr.h_center,
             ]
-            Form -> frm:
+            Form:
+                id: frm
                 Label:
                     text = 'Symbol'
                 ComboBox:
                     items << model.available_symbols
                     value := model.symbol
-                    selected >> print('New Quote Selected: %s' % value)
+                    selected :: print('New Quote Selected: %s' % value)
                 Label:
                     text = 'Days History'
                 ComboBox:
@@ -33,22 +37,27 @@ defn MainView(model, adapter, plot, stock_data_table):
                     value := model.days_of_history
                 Label:
                     text = "End Date"
-                DateEdit -> end_date_control:
-                    minimum_date = model.date_range[0]
-                    maximum_date = model.date_range[1]
+                DateEdit:
+                    id: end_date_control
+                    min_date = model.date_range[0]
+                    max_date = model.date_range[1]
                     date := model.end_date
-            Label -> lbl:
+            Label:
+                id: lbl
                 text = '# Data Points'
-            Slider -> sldr:
+            Slider:
+                id: sldr
                 orientation = 'vertical'
                 minimum = 10
                 maximum = 1000
                 value := model.num_points
                 tick_interval = 100
-        Tabbed -> right_content:
+        TabGroup:
+            id: right_content
             Tab:
                 title = 'Volume'
-                EnableCanvas -> canvas:
+                EnableCanvas:
+                    id: canvas
                     component = plot.get_plot_component()
             Tab:
                 title = 'Data'
