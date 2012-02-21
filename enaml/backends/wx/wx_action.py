@@ -64,6 +64,9 @@ class wxEnamlAction(wx.EvtHandler):
         # The help text for the action
         self._help_text = ''
 
+        # The icon for the action
+        self._icon = None
+
         # Find the parent on which we need to bind the event handler. 
         # If this action is contained in a MenuBar, this will be a
         # wx.Frame, otherwise it will be a wx.Menu used as a sole 
@@ -145,6 +148,7 @@ class wxEnamlAction(wx.EvtHandler):
             self.SetText(self._text)
             self.SetChecked(self._checked)
             self.SetHelp(self._help_text)
+            self.SetMenuBitmaps()
 
     def GetText(self, text):
         """ Returns the current text for the action.
@@ -182,6 +186,9 @@ class wxEnamlAction(wx.EvtHandler):
         menu_item = self._menu_item
         if menu_item is not None:
             menu_item.SetHelp(text)
+
+    def SetIcon(self, icon):
+        self._icon = icon
 
     def IsSeparator(self):
         """ Returns whether or not this action is a separator.
@@ -252,6 +259,27 @@ class wxEnamlAction(wx.EvtHandler):
         menu_item = self._menu_item
         if menu_item is not None:
             menu_item.Enable(enabled)
+            self.SetMenuBitmaps()
+    
+    def SetMenuBitmaps(self):
+        """ Set the menu item bitmaps correctly for the current state
+        
+        """
+        if self._icon is not None:
+            mode = 'normal' if self._enabled else 'disabled'
+            if self.IsCheckable():
+                checked_pixmap = self._icon.get_pixmap((16, 16), mode=mode, state='on')
+                checked_bitmap = checked_pixmap.wxbitmap
+                unchecked_pixmap = self._icon.get_pixmap((16, 16), mode=mode, state='off')
+                unchecked_bitmap = unchecked_pixmap.wxbitmap
+                self._menu_item.SetBitmaps(checked_bitmap, unchecked_bitmap)
+            else:
+                pixmap = self._icon.get_pixmap((16, 16), mode=mode)
+                bitmap = pixmap.wxbitmap
+                self._menu_item.SetBitmaps(bitmap)
+        else:
+            self._menu_item.SetBitmap(wx.NullBitmap)
+                
 
     def Destroy(self):
         """ A destructor method which removes the menu item from its
@@ -323,6 +351,7 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
         self.set_checked(shell.checked)
         self.set_status_tip(shell.status_tip)
         self.set_tool_tip(shell.tool_tip)
+        self.set_icon(shell.icon)
         self.set_description(shell.description)
         self.set_separator(shell.separator)
         
@@ -371,6 +400,13 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
 
         """
         self.set_tool_tip(tool_tip)
+    
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute on the 
+        shell object.
+
+        """
+        self.set_icon(icon)
     
     def shell_description_changed(self, description):
         """ The change handler for the 'description' attribute on the 
@@ -435,6 +471,12 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
 
         """
         #self.widget.setToolTip(tool_tip)
+    
+    def set_icon(self, icon):
+        """ Sets the icon for the action.
+
+        """
+        self.widget.SetIcon(icon)
     
     def set_description(self, description):
         """ Sets the description text for the action.

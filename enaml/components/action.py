@@ -11,6 +11,7 @@ from .base_widget_component import (
 )
 
 from ..core.trait_types import EnamlEvent
+from .abstract_icon import AbstractTkIcon
 
 
 class AbstractTkAction(AbstractTkBaseWidgetComponent):
@@ -36,6 +37,14 @@ class AbstractTkAction(AbstractTkBaseWidgetComponent):
     @abstractmethod
     def shell_tool_tip_changed(self, tool_tip):
         """ The change handler for the 'tool_tip' attribute on the 
+        shell object.
+
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute on the 
         shell object.
 
         """
@@ -89,6 +98,9 @@ class Action(BaseWidgetComponent):
     #: The tool tip text to use for this action. Typically displayed
     #: as small label when the user hovers over the action.
     tool_tip = Unicode
+
+    #: The an icon to display with this action such as, for example, in a toolbar
+    icon = Instance(AbstractTkIcon)
 
     #: The description text to use for this action, such as context
     #: sensitive help. This is typically more descriptive that the

@@ -9,6 +9,7 @@ from traits.api import Bool, Str, Instance, Property
 from .control import Control, AbstractTkControl
 
 from ..core.trait_types import EnamlEvent
+from ..icons.abstract_icon import AbstractIcon
 
 
 class AbstractTkPushButton(AbstractTkControl):
@@ -28,6 +29,9 @@ class PushButton(Control):
 
     #: The text to use as the button's label.
     text = Str
+
+    #: The an icon to display in the button.
+    icon = Instance(AbstractIcon)
     
     #: Fired when the button is pressed and released.
     clicked = EnamlEvent
