@@ -7,6 +7,7 @@
 This example shows how to use the MenuBar and popup menu facilities.
 
 """
+
 def get_recent_files(filenames):
     """ A simple function that returns a list of PrintActions that
     represent a list of recent files. This would normally be computed
@@ -38,6 +39,7 @@ enamldef ViewMenu(Menu):
     Action:
         separator = True
     PrintAction:
+        icon = Icon.from_file('question.png')
         text = 'Selection Columns...'
 
 
@@ -87,6 +89,7 @@ enamldef Main(MainWindow):
             text = 'Show View Menu'
             checked := show_view_menu
         PushButton:
+            icon = Icon.from_file('question.png')    
             text = 'Popup File Menu'
             clicked :: file_menu.popup()
         PushButton:

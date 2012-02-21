@@ -53,7 +53,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         self.shell_obj.size_hint_updated()
 
     def shell_icon_changed(self, text):
-        """ The change handler for the 'text' attribute.
+        """ The change handler for the 'icon' attribute.
 
         """
         self.set_icon(icon)

@@ -9,13 +9,17 @@ from traits.api import Bool, Str, Instance, Property
 from .control import Control, AbstractTkControl
 
 from ..core.trait_types import EnamlEvent
-from ..icons.abstract_icon import AbstractIcon
+from .abstract_icon import AbstractTkIcon
 
 
 class AbstractTkPushButton(AbstractTkControl):
 
     @abstractmethod
     def shell_text_changed(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_icon_changed(self, text):
         raise NotImplementedError
     
 
@@ -31,7 +35,7 @@ class PushButton(Control):
     text = Str
 
     #: The an icon to display in the button.
-    icon = Instance(AbstractIcon)
+    icon = Instance(AbstractTkIcon)
     
     #: Fired when the button is pressed and released.
     clicked = EnamlEvent
