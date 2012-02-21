@@ -85,6 +85,16 @@ class QtPixmap(AbstractTkPixmap):
     #########################################################################
     # Export to other formats
     #########################################################################   
+
+    def to_array(self):
+        """ Extract the data from the pixmap into a numpy array
+        
+        This returns a structured array with an appropriate dtype for the
+        format of the data.  Where possible this attempts to provide a view
+        into the underlying data.
+        
+        """
+        return super(QtPixamp, self).to_array()
             
     @property
     def qpixmap(self):
@@ -108,7 +118,7 @@ class QtPixmap(AbstractTkPixmap):
         loaded.
         
         """
-        qimage = QImage(path)
+        qimage = QtGui.QImage(path)
         return cls(qimage)
  
     @classmethod
