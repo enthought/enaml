@@ -149,6 +149,6 @@ QT_CONSTRUCTORS = dict((
     constructor('action'),
     ('Canvas', canvas_ctor),
     ('Icon', QtIcon),
-    ('Image', QtPixmap),
+    ('Pixmap', QtPixmap),
 ))
 
