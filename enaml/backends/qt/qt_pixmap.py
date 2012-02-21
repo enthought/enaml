@@ -79,7 +79,7 @@ class QtPixmap(AbstractTkPixmap):
             The size of the scaled image.
         
         """
-        return QtPixmap(self.qimage.scaled(size, QtCore.Qt.SmoothTransformation))
+        return QtPixmap(self.qimage.scaled(*size))
  
         
     #########################################################################

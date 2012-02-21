@@ -18,6 +18,15 @@ class AbstractTkAction(AbstractTkBaseWidgetComponent):
     """ The abstract toolkit Action interface.
 
     """
+
+    @abstractmethod
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute of the shell
+        object. Sets the widget enabled according to the given boolean.
+
+        """
+        raise NotImplementedError
+
     @abstractmethod
     def shell_text_changed(self, text):
         """ The change handler for the 'text' attribute on the shell
@@ -88,6 +97,9 @@ class Action(BaseWidgetComponent):
     associated with a menu or toolbar.
 
     """
+    #: Whether or not the widget is enabled.
+    enabled = Bool(True)
+
     #: The text label associate with the action.
     text = Unicode
 

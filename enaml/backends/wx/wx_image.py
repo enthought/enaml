@@ -58,6 +58,13 @@ class WXImage(WXControl, AbstractTkImage):
         """
         pass
 
+    def shell_scale_pixmap_changed(self, scale_pixmap):
+        """ The change handler for the 'scale_pixmap' attribute on the shell 
+        component.
+
+        """
+        pass
+
     def set_pixmap(self, pixmap):
         """ Sets the pixmap on the underlying control.
 

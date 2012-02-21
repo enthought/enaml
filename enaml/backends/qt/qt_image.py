@@ -32,6 +32,7 @@ class QtImage(QtControl, AbstractTkImage):
         """
         super(QtImage, self).initialize()
         self.set_pixmap(self.shell_obj.pixmap)
+        self.set_scale_pixmap(self.shell_obj.scale_pixmap)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -56,6 +57,13 @@ class QtImage(QtControl, AbstractTkImage):
 
         """
         pass
+    
+    def shell_scale_pixmap_changed(self, scale_pixmap):
+        """ The change handler for the 'scale_image' attribute on the shell 
+        component.
+
+        """
+        self.set_scale_pixmap(scale_pixmap)
 
     def set_pixmap(self, pixmap):
         """ Sets the pixmap on the underlying control.
@@ -76,3 +84,9 @@ class QtImage(QtControl, AbstractTkImage):
         if cached != hint:
             self.shell_obj.size_hint_updated()
     
+    def set_scale_pixmap(self, scale_pixmap):        
+        """ Sets whether or not the pixmap scales with the underlying control.
+
+        """
+        self.widget.setScaledContents(scale_pixmap)
+        self.shell_obj.size_hint_updated()

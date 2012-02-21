@@ -53,7 +53,7 @@ class WXIcon(AbstractTkIcon):
             self._scaled_pixmaps.setdefault((mode, state), {})[size] = scaled_pixmap
             return scaled_pixmap
         elif mode != 'normal' or state != 'on':
-            self.get_pixmap(size)
+            return self.get_pixmap(size)
         else:
             return WXPixmap()
     

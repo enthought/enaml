@@ -12,6 +12,8 @@ enamldef Main(MainWindow):
     title = 'Image'
     Container:
         Image:
+            id: image
             pixmap = Pixmap.from_file('question.png')
-            
-
+        CheckBox:
+            text = "Scale Image"
+            checked >> image.scale_pixmap

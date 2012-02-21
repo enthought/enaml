@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Any, Callable, Int, Instance
+from traits.api import Any, Callable, Int, Bool, Instance
 
 from .control import Control, AbstractTkControl
 from .abstract_pixmap import AbstractTkPixmap
@@ -32,6 +32,9 @@ class Image(Control):
     #: A Pixmap instance containing the image to display.
     pixmap = Instance(AbstractTkPixmap)
     
+    #: Whether or not to scale the image with the size of the component
+    scale_pixmap = Bool
+    
     #: The width of the image in pixels. If the pixmap has a different width,
     #: the pixmap will be scaled to fit this width. This is not necessarily the
     #: width of widget.
@@ -42,6 +45,9 @@ class Image(Control):
     #: height of widget.
     img_height = Int
 
+    hug_width = 'weak'
+    hug_height = 'weak'
+    
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkImage)
 

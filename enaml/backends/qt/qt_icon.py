@@ -78,9 +78,11 @@ class QtIcon(AbstractTkIcon):
             The state of the requested pixmap.
         
         """
-        qpixmap = self.qicon.pixmap(size, mode=mode_map.get(mode, QtGui.QIcon.Normal),
-            state=state_map.get(mode, QtGui.QIcon.On))
-        qimage = QImage.from_QPixmap(qpixmap)
+        width, height = size
+        qt_mode = mode_map.get(mode, QtGui.QIcon.Normal)
+        qt_state = state_map.get(state, QtGui.QIcon.On)
+        qpixmap = self.qicon.pixmap(width, height, qt_mode, qt_state)
+        qimage = qpixmap.toImage()
         pixmap = QtPixmap(qimage)
         return pixmap
     
@@ -106,10 +108,10 @@ class QtIcon(AbstractTkIcon):
         if not isinstance(pixmap, self.PixmapClass):
             raise ValueError('pixmap argument must be an instance of enaml.backends.qt.qt_pixmap.QtPixmap, ' +
                 str(pixmap) + ' provided.')
-        qimage = QtPixmap.from_image(pixmap)
-        qpixmap = qimage.qpixmap
-        self.qicon.addPixmap(qpixmap, mode=mode_map.get(mode, QtGui.QIcon.Normal),
-            state=state_map.get(mode, QtGui.QIcon.On))
+        qpixmap = pixmap.qpixmap
+        qt_mode = mode_map.get(mode, QtGui.QIcon.Normal)
+        qt_state = state_map.get(state, QtGui.QIcon.On)
+        self.qicon.addPixmap(qpixmap, qt_mode, qt_state)
 
     def available_sizes(self, mode='normal', state='on'):
         """ Return the available Pixmap instance sizes for the given mode and state
@@ -127,7 +129,7 @@ class QtIcon(AbstractTkIcon):
             The state of the requested pixmap.
         
         """
-        return self._qicon.availableSizes(mode=mode_map.get(mode, QtGui.QIcon.Normal),
+        return self.qicon.availableSizes(mode=mode_map.get(mode, QtGui.QIcon.Normal),
             state=state_map.get(mode, QtGui.QIcon.On))
 
         
