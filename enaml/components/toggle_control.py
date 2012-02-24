@@ -25,9 +25,9 @@ class AbstractTkToggleControl(AbstractTkControl):
 class ToggleControl(Control):
     """ An abstract toggle element. 
     
-    An element which toggles the value of a boolean field. This is an
-    abstract class which should not be used directly. Rather, it provides
-    common functionality of subclasses such as RadioButton and CheckBox.
+    An element which toggles the value of a boolean field. This is an abstract
+    class which should not be used directly. Rather, it provides common
+    functionality of subclasses such as RadioButton, CheckBox and ToggleButton.
 
     """
     #: Whether the element is currently checked.
