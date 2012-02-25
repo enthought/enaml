@@ -15,11 +15,15 @@ class QtToggleButton(QtToggleControl, AbstractTkToggleButton):
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------
+
     def create(self, parent):
         """ Creates the underlying QPushButton control with setCheckable(True).
 
         """
         self.widget = QtGui.QPushButton(parent)
+        # The QPushButton is not toggleable until it is 'setCheckable'. It must
+        # be toggleable before 'QtToggleControl.initialize' is called, so we do
+        # that here.
         self.widget.setCheckable(True)
         
     def bind(self):

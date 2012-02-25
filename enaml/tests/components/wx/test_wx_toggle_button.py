@@ -5,11 +5,14 @@
 import wx
 
 from .wx_test_assistant import WXTestAssistant, skip_nonwindows
+
 from .. import toggle_button
 
 @skip_nonwindows
 class TestWXToggleButton(WXTestAssistant, toggle_button.TestToggleButton):
-    """ WXCheckbox tests. """
+    """ WXToggleButton tests. 
+    
+    """
 
     def get_text(self, widget):
         """ Returns the text from the tookit widget.

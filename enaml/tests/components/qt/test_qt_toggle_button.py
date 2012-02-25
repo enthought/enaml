@@ -3,10 +3,13 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt_test_assistant import QtTestAssistant
+
 from .. import toggle_button
 
 class TestQtToggleButton(QtTestAssistant, toggle_button.TestToggleButton):
-    """ QtCheckbox tests. """
+    """ QtCheckbox tests. 
+    
+    """
 
     def get_text(self, widget):
         """ Returns the text from the tookit widget.
