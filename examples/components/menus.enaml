@@ -17,18 +17,15 @@ def get_recent_files(filenames):
     return [PrintAction(text=fn) for fn in filenames]
 
 
-def make_icon():
-    try:
-        import enaml
-        toolkit = enaml.default_toolkit()
-        my_icon = toolkit["Icon"]()
-        normal = toolkit["Pixmap"].from_file('question.png').scale((16, 16))
-        off = toolkit["Pixmap"].from_file('image_not_found.png')
-        my_icon.set_pixmap(off, mode='normal', state='off')
-        my_icon.set_pixmap(normal, mode='normal', state='on')
-    except Exception, exc:
-        print exc
-    return my_icon
+def setup_icon(icon, normal_pixmap, off_pixmap):
+    """ Add pixmaps to the provided icon object
+    
+    """
+    normal_pixmap = normal_pixmap.scale((16, 16))
+    off_pixmap = off_pixmap.scale((16, 16))
+    icon.set_pixmap(off_pixmap, mode='normal', state='off')
+    icon.set_pixmap(normal_pixmap, mode='normal', state='on')
+    return icon
 
 enamldef PrintAction(Action):
     """ A very simple action which prints out its text hierarchy
@@ -57,7 +54,8 @@ enamldef ViewMenu(Menu):
 
 enamldef Main(MainWindow):
     attr show_view_menu: bool = False
-    attr my_icon = make_icon()
+    attr my_icon = setup_icon(Icon(), Pixmap.from_file('question.png'),
+        Pixmap.from_file('image_not_found.png'))
     MenuBar:
         Menu:
             id: file_menu
