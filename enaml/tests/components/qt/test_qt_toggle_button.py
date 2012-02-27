@@ -7,7 +7,7 @@ from .qt_test_assistant import QtTestAssistant
 from .. import toggle_button
 
 class TestQtToggleButton(QtTestAssistant, toggle_button.TestToggleButton):
-    """ QtCheckbox tests. 
+    """ QtToggleButton tests. 
     
     """
 
