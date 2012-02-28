@@ -63,6 +63,7 @@ WX_CONSTRUCTORS = dict((
     constructor('label'),
     constructor('push_button'),
     constructor('radio_button'),
+    constructor('toggle_button'),
     constructor('slider'),
     constructor('spin_box'),
     ('TraitsUIItem', tui_item),
