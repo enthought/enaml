@@ -133,7 +133,7 @@ class QtSlider(QtControl, AbstractTkSlider):
         shell object.
 
         """
-        shell = self.shell
+        shell = self.shell_obj
         self.set_tick_frequency(tick_interval)
         # This extra calls are made since the range trait on 
         # shell object may clip the values to fit within the 
