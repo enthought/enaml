@@ -294,7 +294,7 @@ class _MethodConnection(_BaseConnection):
     __slots__ = ('_im_func', '_im_self_ref', '_im_class',)
 
     def __init__(self, parent, method):
-        """ Initialize a _DirectConnection
+        """ Initialize a _MethodConnection
 
         Parameters
         ----------
