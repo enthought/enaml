@@ -6,11 +6,11 @@ from .qt_test_assistant import QtTestAssistant
 
 from .. import toggle_button
 
+
 class TestQtToggleButton(QtTestAssistant, toggle_button.TestToggleButton):
     """ QtToggleButton tests. 
     
     """
-
     def get_text(self, widget):
         """ Returns the text from the tookit widget.
 
@@ -40,3 +40,4 @@ class TestQtToggleButton(QtTestAssistant, toggle_button.TestToggleButton):
 
         """
         self.widget.toggled.emit(True)
+

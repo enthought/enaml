@@ -13,7 +13,6 @@ class TestWXToggleButton(WXTestAssistant, toggle_button.TestToggleButton):
     """ WXToggleButton tests. 
     
     """
-
     def get_text(self, widget):
         """ Returns the text from the tookit widget.
 
@@ -44,3 +43,4 @@ class TestWXToggleButton(WXTestAssistant, toggle_button.TestToggleButton):
 
         """
         self.send_wx_event(widget, wx.EVT_TOGGLEBUTTON)
+
