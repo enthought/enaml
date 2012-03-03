@@ -111,7 +111,8 @@ class Action(BaseWidgetComponent):
     #: as small label when the user hovers over the action.
     tool_tip = Unicode
 
-    #: The an icon to display with this action such as, for example, in a toolbar
+    #: The an icon to display with this action when appropriate, such as
+    #: when the action is a member of a menu or a toolbar.
     icon = Instance(AbstractTkIcon)
 
     #: The description text to use for this action, such as context
@@ -137,8 +138,6 @@ class Action(BaseWidgetComponent):
 
     #: Whether or not the action should be considered a separator.
     separator = Bool(False)
-
-    # XXX need to handle icons and keyboard shortcuts
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkAction)
