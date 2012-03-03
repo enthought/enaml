@@ -8,7 +8,7 @@ from traits.api import Bool, Instance
 
 from .control import Control, AbstractTkControl
 
-from ..noncomponents.abstract_pixmap import AbstractTkImage
+from ..noncomponents.abstract_image import AbstractTkImage
 
 
 class AbstractTkImageView(AbstractTkControl):
@@ -17,10 +17,18 @@ class AbstractTkImageView(AbstractTkControl):
     """
     @abstractmethod
     def shell_image_changed(self):
+        """ The change handler for the 'image' attribute on the shell 
+        component.
+
+        """
         raise NotImplementedError
     
     @abstractmethod
     def shell_scale_to_fit_changed(self):
+        """ The change handler for the 'scale_to_fit' attribute on the 
+        shell component.
+
+        """
         raise NotImplementedError
 
 
