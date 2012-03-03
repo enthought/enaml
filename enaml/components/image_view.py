@@ -4,51 +4,42 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Any, Callable, Int, Bool, Instance
+from traits.api import Bool, Instance
 
 from .control import Control, AbstractTkControl
-from .abstract_pixmap import AbstractTkPixmap
+
+from ..noncomponents.abstract_pixmap import AbstractTkImage
 
 
-class AbstractTkImage(AbstractTkControl):
+class AbstractTkImageView(AbstractTkControl):
+    """ The abstract toolkit interface for an ImageView.
 
+    """
     @abstractmethod
-    def shell_pixmap_changed(self):
+    def shell_image_changed(self):
         raise NotImplementedError
     
     @abstractmethod
-    def shell_img_width_changed(self):
-        raise NotImplementedError
-
-    @abstractmethod
-    def shell_img_height_changed(self):
+    def shell_scale_to_fit_changed(self):
         raise NotImplementedError
 
 
-class Image(Control):
-    """ A widget for displaying images.
+class ImageView(Control):
+    """ A simple viewer for instances of AbstractTkImage.
 
     """
     #: A Pixmap instance containing the image to display.
-    pixmap = Instance(AbstractTkPixmap)
+    image = Instance(AbstractTkImage)
     
-    #: Whether or not to scale the image with the size of the component
-    scale_pixmap = Bool
+    #: Whether or not to scale the image with the size of the component.
+    scale_to_fit = Bool(False)
     
-    #: The width of the image in pixels. If the pixmap has a different width,
-    #: the pixmap will be scaled to fit this width. This is not necessarily the
-    #: width of widget.
-    img_width = Int
-    
-    #: The height of the image in pixels. If the pixmap has a different height,
-    #: the pixmap will be scaled to fit this height. This is not necessarily the
-    #: height of widget.
-    img_height = Int
-
+    #: An image view hugs its width weakly by default.
     hug_width = 'weak'
+
+    #: An image view hugs its height weakly by default.
     hug_height = 'weak'
     
     #: Overridden parent class trait
-    abstract_obj = Instance(AbstractTkImage)
+    abstract_obj = Instance(AbstractTkImageView)
 
-    
