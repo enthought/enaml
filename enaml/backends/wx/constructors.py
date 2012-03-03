@@ -49,8 +49,6 @@ def wx_tui_imp():
 
 tui_item = Constructor(tui_imp, wx_tui_imp)
 
-from .wx_icon import WXIcon
-from .wx_pixmap import WXPixmap
 
 WX_CONSTRUCTORS = dict((
     constructor('main_window'),
@@ -61,7 +59,7 @@ WX_CONSTRUCTORS = dict((
     constructor('combo_box'),
     constructor('field'),
     constructor('html'),
-    constructor('image'),
+    constructor('image_view'),
     constructor('label'),
     constructor('push_button'),
     constructor('radio_button'),
@@ -83,7 +81,5 @@ WX_CONSTRUCTORS = dict((
     constructor('menu_bar'),
     constructor('menu'),
     constructor('action'),
-    ('Icon', WXIcon),
-    ('Pixmap', WXPixmap),
 ))
 
