@@ -11,7 +11,7 @@ from .base_widget_component import (
 )
 
 from ..core.trait_types import EnamlEvent
-from .abstract_icon import AbstractTkIcon
+from ..noncomponents.abstract_icon import AbstractTkIcon
 
 
 class AbstractTkAction(AbstractTkBaseWidgetComponent):
