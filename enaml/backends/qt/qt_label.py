@@ -32,7 +32,7 @@ class QtLabel(QtControl, AbstractTkLabel):
         """
         super(QtLabel, self).initialize()
         shell = self.shell_obj
-        self.set_label(shell.text)
+        self.set_text(shell.text)
         self.set_word_wrap(shell.word_wrap)
         
     #--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ class QtLabel(QtControl, AbstractTkLabel):
         """ The change handler for the 'text' attribute.
 
         """
-        self.set_label(text)
+        self.set_text(text)
 
     def shell_word_wrap_changed(self, word_wrap):
         """ The change handler for the 'word_wrap' attribute.
@@ -50,11 +50,11 @@ class QtLabel(QtControl, AbstractTkLabel):
         """
         self.set_word_wrap(word_wrap)
 
-    def set_label(self, label):
+    def set_text(self, text):
         """ Sets the label on the underlying control.
 
         """
-        self.widget.setText(label)
+        self.widget.setText(text)
 
         # Emit a size hint updated event if the size hint has actually
         # changed. This is an optimization so that a constraints update
