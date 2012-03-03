@@ -6,11 +6,46 @@ import wx
 
 from .wx_control import WXControl
 
-from ...components.image import AbstractTkImage
+from ...components.image_view import AbstractTkImageView
 
 
-class WXImage(WXControl, AbstractTkImage):
-    """ A wxPython implementation of Image.
+class wxImageWidget(wx.Panel):
+
+    def __init__(self, parent):
+        super(wxImageWidget, self).__init__(parent)
+        self._bitmap = None
+        self._scaled_contents = False
+        self.Bind(wx.EVT_PAINT, self.OnPaint)
+
+    def GetBitmap(self, bitmap):
+        return self._bitmap
+
+    def SetBitmap(self, bitmap):
+        self._bitmap = bitmap
+        self.Refresh()
+
+    def GetScaledContents(self):
+        return self._scaled_contents
+    
+    def SetScaledContents(self, scaled):
+        self._scaled_contents = scaled
+
+    def GetBestSize(self):
+        bmp = self._bitmap
+        return wx.Size(bmp.GetWidth(), bmp.GetHeight())
+
+    def GetBestSizeTuple(self):
+        return self.GetBestSize().asTuple()
+
+    def OnPaint(self, event):
+        dc = wx.PaintDC(self)
+        bmp = self._bitmap
+        if bmp is not None:
+            dc.DrawBitmap(bmp, 0, 0)
+
+
+class WXImageView(WXControl, AbstractTkImageView):
+    """ A Wx implementation of ImageView.
 
     """
     #: The internal cached size hint which is used to determine whether
@@ -25,51 +60,42 @@ class WXImage(WXControl, AbstractTkImage):
         """ Creates the underlying wx.StaticBitmap control.
 
         """
-        self.widget = wx.StaticBitmap(parent)
+        self.widget = wxImageWidget(parent)
 
     def initialize(self):
         """ Initializes the attributes on the underlying control.
 
         """
-        super(WXImage, self).initialize()
-        self.set_pixmap(self.shell_obj.pixmap)
+        super(WXImageView, self).initialize()
+        shell = self.shell_obj
+        self.set_image(shell.image)
+        self.set_scale_to_fit(shell.scale_to_fit)
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell_pixmap_changed(self, pixmap):
-        """ The change handler for the 'pixmap' attribute on the shell 
+    def shell_image_changed(self, image):
+        """ The change handler for the 'image' attribute on the shell 
         component.
 
         """
-        self.set_label(pixmap)
-
-    def shell_img_width_changed(self, width):
-        """ The change handler for the 'img_width' attribute on the shell 
-        component.
-
-        """
-        pass
-
-    def shell_img_height_changed(self, height):
-        """ The change handler for the 'img_height' attribute on the shell 
-        component.
+        self.set_image(image)
+    
+    def shell_scale_to_fit_changed(self, scale_to_fit):
+        """ The change handler for the 'scale_to_fit' attribute on the 
+        shell component.
 
         """
-        pass
+        self.set_scale_to_fit(scale_to_fit)
 
-    def shell_scale_pixmap_changed(self, scale_pixmap):
-        """ The change handler for the 'scale_pixmap' attribute on the shell 
-        component.
-
-        """
-        pass
-
-    def set_pixmap(self, pixmap):
-        """ Sets the pixmap on the underlying control.
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_image(self, image):
+        """ Sets the image on the underlying control.
 
         """
-        wxbitmap = pixmap.wxbitmap
+        wxbitmap = image.as_wxBitmap()
         self.widget.SetBitmap(wxbitmap)
 
         # Emit a size hint updated event if the size hint has actually
@@ -79,6 +105,19 @@ class WXImage(WXControl, AbstractTkImage):
         # updated before the new size hint is computed. Placing this
         # logic on the shell object would not guarantee that the label
         # has been updated at the time the change handler is called.
+        cached = self._cached_size_hint
+        hint = self._cached_size_hint = self.size_hint()
+        if cached != hint:
+            self.shell_obj.size_hint_updated()
+    
+    def set_scale_to_fit(self, scale_to_fit):        
+        """ Sets whether or not the image scales with the underlying 
+        control.
+
+        """
+        self.widget.SetScaledContents(scale_to_fit)
+        # See the comment in set_image(...) about the size hint update
+        # notification. The same logic applies here.
         cached = self._cached_size_hint
         hint = self._cached_size_hint = self.size_hint()
         if cached != hint:
