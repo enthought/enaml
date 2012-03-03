@@ -29,7 +29,7 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         """
         super(QtToggleControl, self).initialize()
         shell = self.shell_obj
-        self.set_label(shell.text)
+        self.set_text(shell.text)
         self.set_checked(shell.checked)
 
     #--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         """ The change handler for the 'text' attribute.
 
         """
-        self.set_label(text)
+        self.set_text(text)
         # If the label of the control changes, its size hint has likely
         # updated and the layout system needs to be informed
         self.shell_obj.size_hint_updated()
@@ -59,8 +59,7 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         shell.toggled()
 
     def on_pressed(self):
-        """ The event handler for the pressed event. Not meant for
-        public consumption.
+        """ The event handler for the pressed event.
 
         """
         shell = self.shell_obj
@@ -68,8 +67,7 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
         shell.pressed()
 
     def on_released(self):
-        """ The event handler for the released event. Not meant for
-        public consumption.
+        """ The event handler for the released event.
 
         """
         shell = self.shell_obj
@@ -77,12 +75,11 @@ class QtToggleControl(QtControl, AbstractTkToggleControl):
             shell._down = False
             shell.released()
 
-    def set_label(self, label):
-        """ Sets the widget's label with the provided value. Not
-        meant for public consumption.
+    def set_text(self, text):
+        """ Sets the widget's text with the provided value.
 
         """
-        self.widget.setText(label)
+        self.widget.setText(text)
 
     def set_checked(self, checked):
         """ Sets the widget's checked state with the provided value.

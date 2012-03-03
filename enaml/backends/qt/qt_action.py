@@ -4,7 +4,6 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui
 from .qt_base_widget_component import QtBaseWidgetComponent
-from .qt_icon import QtIcon
 
 from ...components.action import AbstractTkAction
 
@@ -51,7 +50,6 @@ class QtAction(QtBaseWidgetComponent, AbstractTkAction):
     #--------------------------------------------------------------------------
     # Change Handlers 
     #--------------------------------------------------------------------------
-
     def shell_enabled_changed(self, enabled):
         """ The change handler for the 'enabled' attribute of the shell
         object. Sets the widget enabled according to the given boolean.
@@ -95,8 +93,8 @@ class QtAction(QtBaseWidgetComponent, AbstractTkAction):
         self.set_tool_tip(tool_tip)
 
     def shell_icon_changed(self, icon):
-        """ The change handler for the 'icon' attribute on the 
-        shell object.
+        """ The change handler for the 'icon' attribute on the shell 
+        object.
 
         """
         self.set_icon(icon)
@@ -178,12 +176,14 @@ class QtAction(QtBaseWidgetComponent, AbstractTkAction):
         self.widget.setToolTip(tool_tip)
     
     def set_icon(self, icon):
-        """ Sets the tool tip text for the action.
+        """ Sets the icon for the action.
 
         """
         if icon is None:
-            icon = QtIcon()
-        self.widget.setIcon(icon.qicon)
+            qicon = QtGui.QIcon()
+        else:
+            qicon = icon.as_QIcon()
+        self.widget.setIcon(qicon)
     
     def set_description(self, description):
         """ Sets the description text for the action.
