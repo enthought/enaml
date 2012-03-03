@@ -106,10 +106,6 @@ def qt_canvas_imp():
 
 canvas_ctor = Constructor(canvas_imp, qt_canvas_imp)
 
-# icon classes - import somewhere else?
-from .qt_icon import QtIcon
-from .qt_pixmap import QtPixmap
-
 
 QT_CONSTRUCTORS = dict((
     constructor('main_window'),
@@ -120,7 +116,7 @@ QT_CONSTRUCTORS = dict((
     constructor('combo_box'),
     constructor('field'),
     constructor('html'),
-    constructor('image'),
+    constructor('image_view'),
     constructor('label'),
     constructor('push_button'),
     constructor('radio_button'),
@@ -148,7 +144,5 @@ QT_CONSTRUCTORS = dict((
     constructor('menu'),
     constructor('action'),
     ('Canvas', canvas_ctor),
-    ('Icon', QtIcon),
-    ('Pixmap', QtPixmap),
 ))
 
