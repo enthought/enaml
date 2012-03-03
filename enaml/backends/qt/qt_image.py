@@ -5,16 +5,16 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ...components.image import AbstractTkImage
+from ...components.image_view import AbstractTkImageView
 
 
-class QtImage(QtControl, AbstractTkImage):
-    """ A Qt implementation of Image.
+class QtImageView(QtControl, AbstractTkImageView):
+    """ A Qt4 implementation of ImageView.
 
     """
     #: The internal cached size hint which is used to determine whether
-    #: of not a size hint updated event should be emitted when the text
-    #: in the label changes
+    #: of not a size hint updated event should be emitted when the image
+    #: in the QLabel changes.
     _cached_size_hint = None
 
     #--------------------------------------------------------------------------
@@ -30,46 +30,36 @@ class QtImage(QtControl, AbstractTkImage):
         """ Initializes the attributes on the underlying control.
 
         """
-        super(QtImage, self).initialize()
-        self.set_pixmap(self.shell_obj.pixmap)
-        self.set_scale_pixmap(self.shell_obj.scale_pixmap)
+        super(QtImageView, self).initialize()
+        shell = self.shell_obj
+        self.set_image(shell.image)
+        self.set_scale_to_fit(shell.scale_to_fit)
 
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell_pixmap_changed(self, pixmap):
-        """ The change handler for the 'pixmap' attribute on the shell 
+    def shell_image_changed(self, image):
+        """ The change handler for the 'image' attribute on the shell 
         component.
 
         """
-        self.set_label(pixmap)
-
-    def shell_img_width_changed(self, width):
-        """ The change handler for the 'img_width' attribute on the shell 
-        component.
-
-        """
-        pass
-
-    def shell_img_height_changed(self, height):
-        """ The change handler for the 'img_height' attribute on the shell 
-        component.
-
-        """
-        pass
+        self.set_image(image)
     
-    def shell_scale_pixmap_changed(self, scale_pixmap):
-        """ The change handler for the 'scale_image' attribute on the shell 
-        component.
+    def shell_scale_to_fit_changed(self, scale_to_fit):
+        """ The change handler for the 'scale_to_fit' attribute on the 
+        shell component.
 
         """
-        self.set_scale_pixmap(scale_pixmap)
+        self.set_scale_to_fit(scale_to_fit)
 
-    def set_pixmap(self, pixmap):
-        """ Sets the pixmap on the underlying control.
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_image(self, image):
+        """ Sets the image on the underlying control.
 
         """
-        qpixmap = pixmap.qpixmap
+        qpixmap = image.as_QPixmap()
         self.widget.setPixmap(qpixmap)
 
         # Emit a size hint updated event if the size hint has actually
@@ -84,9 +74,16 @@ class QtImage(QtControl, AbstractTkImage):
         if cached != hint:
             self.shell_obj.size_hint_updated()
     
-    def set_scale_pixmap(self, scale_pixmap):        
-        """ Sets whether or not the pixmap scales with the underlying control.
+    def set_scale_to_fit(self, scale_to_fit):        
+        """ Sets whether or not the image scales with the underlying 
+        control.
 
         """
-        self.widget.setScaledContents(scale_pixmap)
-        self.shell_obj.size_hint_updated()
+        self.widget.setScaledContents(scale_to_fit)
+        # See the comment in set_image(...) about the size hint update
+        # notification. The same logic applies here.
+        cached = self._cached_size_hint
+        hint = self._cached_size_hint = self.size_hint()
+        if cached != hint:
+            self.shell_obj.size_hint_updated()
+
