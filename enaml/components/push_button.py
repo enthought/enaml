@@ -9,19 +9,29 @@ from traits.api import Bool, Str, Instance, Property
 from .control import Control, AbstractTkControl
 
 from ..core.trait_types import EnamlEvent
-from .abstract_icon import AbstractTkIcon
+from ..noncomponents.abstract_icon import AbstractTkIcon
 
 
 class AbstractTkPushButton(AbstractTkControl):
+    """ The abstract toolkit interface for a PushButton.
 
+    """
     @abstractmethod
     def shell_text_changed(self):
+        """ The change handler for the 'text' attribute on the shell 
+        component.
+
+        """
         raise NotImplementedError
 
     @abstractmethod
     def shell_icon_changed(self, text):
+        """ The change handler for the 'icon' attribute on the shell
+        component.
+
+        """
         raise NotImplementedError
-    
+
 
 class PushButton(Control):
     """ A push button widget.
