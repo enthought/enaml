@@ -21,7 +21,7 @@ class QtImageView(QtControl, AbstractTkImageView):
     # Setup methods
     #--------------------------------------------------------------------------
     def create(self, parent):
-        """ Creates the underlying wx.StaticBitmap control.
+        """ Creates the underlying QLabel control.
 
         """
         self.widget = QtGui.QLabel(parent)
@@ -56,11 +56,10 @@ class QtImageView(QtControl, AbstractTkImageView):
     # Widget Update Methods
     #--------------------------------------------------------------------------
     def set_image(self, image):
-        """ Sets the image on the underlying control.
+        """ Sets the image on the underlying QLabel.
 
         """
-        qpixmap = image.as_QPixmap()
-        self.widget.setPixmap(qpixmap)
+        self.widget.setPixmap(image.as_QPixmap())
 
         # Emit a size hint updated event if the size hint has actually
         # changed. This is an optimization so that a constraints update
@@ -80,6 +79,7 @@ class QtImageView(QtControl, AbstractTkImageView):
 
         """
         self.widget.setScaledContents(scale_to_fit)
+        
         # See the comment in set_image(...) about the size hint update
         # notification. The same logic applies here.
         cached = self._cached_size_hint
