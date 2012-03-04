@@ -7,6 +7,8 @@
 This example shows how to use the MenuBar and popup menu facilities.
 
 """
+import os
+
 
 def get_recent_files(filenames):
     """ A simple function that returns a list of PrintActions that
@@ -17,15 +19,23 @@ def get_recent_files(filenames):
     return [PrintAction(text=fn) for fn in filenames]
 
 
-def setup_icon(icon, normal_pixmap, off_pixmap):
-    """ Add pixmaps to the provided icon object
+def setup_icon(icon, normal_image, off_image):
+    """ Add images to the provided icon object.
     
     """
-    normal_pixmap = normal_pixmap.scale((16, 16))
-    off_pixmap = off_pixmap.scale((16, 16))
-    icon.set_pixmap(off_pixmap, mode='normal', state='off')
-    icon.set_pixmap(normal_pixmap, mode='normal', state='on')
+    normal_image = normal_image.scale((16, 16))
+    off_image = off_image.scale((16, 16))
+    icon.add_image(off_image, mode='normal', state='off')
+    icon.add_image(normal_image, mode='normal', state='on')
     return icon
+
+
+def make_path(pth):
+    """ Make a valid path from the given path.
+
+    """
+    return os.path.join(os.path.dirname(__file__), pth)
+
 
 enamldef PrintAction(Action):
     """ A very simple action which prints out its text hierarchy
@@ -54,8 +64,11 @@ enamldef ViewMenu(Menu):
 
 enamldef Main(MainWindow):
     attr show_view_menu: bool = False
-    attr my_icon = setup_icon(Icon(), Pixmap.from_file('question.png'),
-        Pixmap.from_file('image_not_found.png'))
+    attr my_icon = setup_icon(
+        Icon(), 
+        Image.from_file(make_path('question.png')),
+        Image.from_file(make_path('image_not_found.png')),
+    )
     MenuBar:
         Menu:
             id: file_menu
@@ -107,7 +120,6 @@ enamldef Main(MainWindow):
                 text = 'Checkable'
                 checkable = True
                 icon = my_icon
-
     Container:
         Html:
             source = '<center><h1>Hello Enaml Menus!</h1></center>'
@@ -115,9 +127,9 @@ enamldef Main(MainWindow):
             text = 'Show View Menu'
             checked := show_view_menu
         PushButton:
-            icon = Icon.from_file('question.png')    
+            icon = Icon.from_file(make_path('question.png'))
             text = 'Popup File Menu'
-            clicked :: icon_menu.popup()
+            clicked :: file_menu.popup()
         PushButton:
             text = 'Change Recent Files'
             clicked :: 
