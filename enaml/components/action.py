@@ -11,12 +11,22 @@ from .base_widget_component import (
 )
 
 from ..core.trait_types import EnamlEvent
+from ..noncomponents.abstract_icon import AbstractTkIcon
 
 
 class AbstractTkAction(AbstractTkBaseWidgetComponent):
     """ The abstract toolkit Action interface.
 
     """
+
+    @abstractmethod
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute of the shell
+        object. Sets the widget enabled according to the given boolean.
+
+        """
+        raise NotImplementedError
+
     @abstractmethod
     def shell_text_changed(self, text):
         """ The change handler for the 'text' attribute on the shell
@@ -36,6 +46,14 @@ class AbstractTkAction(AbstractTkBaseWidgetComponent):
     @abstractmethod
     def shell_tool_tip_changed(self, tool_tip):
         """ The change handler for the 'tool_tip' attribute on the 
+        shell object.
+
+        """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute on the 
         shell object.
 
         """
@@ -79,6 +97,9 @@ class Action(BaseWidgetComponent):
     associated with a menu or toolbar.
 
     """
+    #: Whether or not the widget is enabled.
+    enabled = Bool(True)
+
     #: The text label associate with the action.
     text = Unicode
 
@@ -89,6 +110,10 @@ class Action(BaseWidgetComponent):
     #: The tool tip text to use for this action. Typically displayed
     #: as small label when the user hovers over the action.
     tool_tip = Unicode
+
+    #: The an icon to display with this action when appropriate, such as
+    #: when the action is a member of a menu or a toolbar.
+    icon = Instance(AbstractTkIcon)
 
     #: The description text to use for this action, such as context
     #: sensitive help. This is typically more descriptive that the
@@ -113,8 +138,6 @@ class Action(BaseWidgetComponent):
 
     #: Whether or not the action should be considered a separator.
     separator = Bool(False)
-
-    # XXX need to handle icons and keyboard shortcuts
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkAction)

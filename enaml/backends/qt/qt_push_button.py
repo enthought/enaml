@@ -26,7 +26,8 @@ class QtPushButton(QtControl, AbstractTkPushButton):
 
         """
         super(QtPushButton, self).initialize()
-        self.set_label(self.shell_obj.text)
+        self.set_text(self.shell_obj.text)
+        self.set_icon(self.shell_obj.icon)
 
     def bind(self):
         """ Connects the event handlers for the push button.
@@ -45,9 +46,18 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         """ The change handler for the 'text' attribute.
 
         """
-        self.set_label(text)
+        self.set_text(text)
         # If the text of the button changes, the size hint has likely
         # change and the layout system needs to be informed.
+        self.shell_obj.size_hint_updated()
+
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute.
+
+        """
+        self.set_icon(icon)
+        # If the icon of the button changes, the size hint has likely
+        # changed and the layout system needs to be informed.
         self.shell_obj.size_hint_updated()
 
     def on_clicked(self):
@@ -75,9 +85,19 @@ class QtPushButton(QtControl, AbstractTkPushButton):
             shell._down = False
             shell.released()
 
-    def set_label(self, label):
-        """ Sets the label on the button control.
+    def set_text(self, text):
+        """ Sets the text on the button control.
 
         """
-        self.widget.setText(label)
+        self.widget.setText(text)
+
+    def set_icon(self, icon):
+        """ Sets the icon on the button control.
+
+        """
+        if icon is None:
+            qicon = QtGui.QIcon()
+        else:
+            qicon = icon.as_QIcon()
+        self.widget.setIcon(qicon)
 

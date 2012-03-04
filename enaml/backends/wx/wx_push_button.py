@@ -27,7 +27,7 @@ class WXPushButton(WXControl, AbstractTkPushButton):
 
         """
         super(WXPushButton, self).initialize()
-        self.set_label(self.shell_obj.text)
+        self.set_text(self.shell_obj.text)
 
     def bind(self):
         """ Binds the event handlers for the push button.
@@ -46,11 +46,20 @@ class WXPushButton(WXControl, AbstractTkPushButton):
         """ The change handler for the 'text' attribute.
 
         """
-        self.set_label(text)
+        self.set_text(text)
         # If the text of the button changes, the size hint has likely
         # change and the layout system needs to be informed.
         self.shell_obj.size_hint_updated()
 
+    def shell_icon_changed(self, text):
+        """ The change handler for the 'icon' attribute.
+
+        This is currently not implemented because the standard wx.Button
+        does not support images.
+
+        """
+        pass
+        
     def on_clicked(self, event):
         """ The event handler for the button's clicked event.
 
@@ -83,9 +92,9 @@ class WXPushButton(WXControl, AbstractTkPushButton):
             shell.released()
         event.Skip()
 
-    def set_label(self, label):
-        """ Sets the label on the button control.
+    def set_text(self, text):
+        """ Sets the text on the button control.
 
         """
-        self.widget.SetLabel(label)
+        self.widget.SetLabel(text)
 

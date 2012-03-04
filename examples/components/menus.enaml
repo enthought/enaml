@@ -7,6 +7,9 @@
 This example shows how to use the MenuBar and popup menu facilities.
 
 """
+import os
+
+
 def get_recent_files(filenames):
     """ A simple function that returns a list of PrintActions that
     represent a list of recent files. This would normally be computed
@@ -14,6 +17,24 @@ def get_recent_files(filenames):
 
     """
     return [PrintAction(text=fn) for fn in filenames]
+
+
+def setup_icon(icon, normal_image, off_image):
+    """ Add images to the provided icon object.
+    
+    """
+    normal_image = normal_image.scale((16, 16))
+    off_image = off_image.scale((16, 16))
+    icon.add_image(off_image, mode='normal', state='off')
+    icon.add_image(normal_image, mode='normal', state='on')
+    return icon
+
+
+def make_path(pth):
+    """ Make a valid path from the given path.
+
+    """
+    return os.path.join(os.path.dirname(__file__), pth)
 
 
 enamldef PrintAction(Action):
@@ -43,6 +64,11 @@ enamldef ViewMenu(Menu):
 
 enamldef Main(MainWindow):
     attr show_view_menu: bool = False
+    attr my_icon = setup_icon(
+        Icon(), 
+        Image.from_file(make_path('question.png')),
+        Image.from_file(make_path('image_not_found.png')),
+    )
     MenuBar:
         Menu:
             id: file_menu
@@ -80,6 +106,20 @@ enamldef Main(MainWindow):
                 text = 'Minimize'
             PrintAction:
                 text = 'Zoom'
+        Menu:
+            id: icon_menu
+            title = 'Icons'
+            PrintAction:
+                text = 'Normal'
+                icon = my_icon
+            PrintAction:
+                text = 'Disabled'
+                enabled = False
+                icon = my_icon
+            PrintAction:
+                text = 'Checkable'
+                checkable = True
+                icon = my_icon
     Container:
         Html:
             source = '<center><h1>Hello Enaml Menus!</h1></center>'
@@ -87,6 +127,7 @@ enamldef Main(MainWindow):
             text = 'Show View Menu'
             checked := show_view_menu
         PushButton:
+            icon = Icon.from_file(make_path('question.png'))
             text = 'Popup File Menu'
             clicked :: file_menu.popup()
         PushButton:

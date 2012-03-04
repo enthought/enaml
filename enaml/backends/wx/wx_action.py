@@ -47,7 +47,7 @@ class wxEnamlAction(wx.EvtHandler):
         self._menu_item = None
 
         # The text of the action
-        self._text = str(id(self))
+        self._text = ''
 
         # Whether or not the action is a separator
         self._separator = False
@@ -63,6 +63,9 @@ class wxEnamlAction(wx.EvtHandler):
 
         # The help text for the action
         self._help_text = ''
+
+        # The icon for the action
+        self._icon = None
 
         # Find the parent on which we need to bind the event handler. 
         # If this action is contained in a MenuBar, this will be a
@@ -90,7 +93,6 @@ class wxEnamlAction(wx.EvtHandler):
                 self._checked = menu_item.IsChecked()
                 evt = wxEnamlActionToggled()
                 wx.PostEvent(self, evt)
-            
             # Next, we emit the standard triggered Event.
             evt = wxEnamlActionTriggered()
             wx.PostEvent(self, evt)
@@ -145,6 +147,7 @@ class wxEnamlAction(wx.EvtHandler):
             self.SetText(self._text)
             self.SetChecked(self._checked)
             self.SetHelp(self._help_text)
+            self.UpdateMenuBitmaps()
 
     def GetText(self, text):
         """ Returns the current text for the action.
@@ -182,6 +185,19 @@ class wxEnamlAction(wx.EvtHandler):
         menu_item = self._menu_item
         if menu_item is not None:
             menu_item.SetHelp(text)
+
+    def GetIcon(self):
+        """ Return the WXIcon instance in use for this action.
+
+        """
+        return self._icon
+
+    def SetIcon(self, icon):
+        """ Set the icon for this action. The icon should be an instance
+        of the Enaml WXIcon.
+
+        """
+        self._icon = icon
 
     def IsSeparator(self):
         """ Returns whether or not this action is a separator.
@@ -252,7 +268,32 @@ class wxEnamlAction(wx.EvtHandler):
         menu_item = self._menu_item
         if menu_item is not None:
             menu_item.Enable(enabled)
-
+            self.UpdateMenuBitmaps()
+    
+    def UpdateMenuBitmaps(self):
+        """ Update the menu item bitmaps correctly for the current state.
+        
+        """
+        icon = self._icon
+        menu_item = self._menu_item
+        if menu_item is None:
+            return
+        if icon is not None:
+            mode = 'normal' if self._enabled else 'disabled'
+            size = (16, 16)
+            if self.IsCheckable():
+                checked_img = icon.get_image(size, mode=mode, state='on')
+                checked_bmp = checked_img.as_wxBitmap()
+                unchecked_img = icon.get_image(size, mode=mode, state='off')
+                unchecked_bmp = unchecked_img.as_wxBitmap()
+                menu_item.SetBitmaps(checked_bmp, unchecked_bmp)
+            else:
+                img = icon.get_image(size, mode=mode)
+                bmp = img.as_wxBitmap()
+                menu_item.SetBitmaps(bmp, wx.NullBitmap)
+        else:
+            menu_item.SetBitmaps(wx.NullBitmap, wx.NullBitmap)
+    
     def Destroy(self):
         """ A destructor method which removes the menu item from its
         parent before destroying the item and itself.
@@ -318,11 +359,13 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
         """
         super(WXAction, self).initialize()
         shell = self.shell_obj
+        self.set_enabled(shell.enabled)
         self.set_text(shell.text)
         self.set_checkable(shell.checkable)
         self.set_checked(shell.checked)
         self.set_status_tip(shell.status_tip)
         self.set_tool_tip(shell.tool_tip)
+        self.set_icon(shell.icon)
         self.set_description(shell.description)
         self.set_separator(shell.separator)
         
@@ -337,6 +380,13 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
     #--------------------------------------------------------------------------
     # Change Handlers 
     #--------------------------------------------------------------------------
+    def shell_enabled_changed(self, enabled):
+        """ The change handler for the 'enabled' attribute of the shell
+        object. Sets the widget enabled according to the given boolean.
+
+        """
+        self.set_enabled(enabled)
+
     def shell_text_changed(self, text):
         """ The change handler for the 'text' attribute on the shell
         object.
@@ -372,6 +422,13 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
         """
         self.set_tool_tip(tool_tip)
     
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute on the shell 
+        object.
+
+        """
+        self.set_icon(icon)
+    
     def shell_description_changed(self, description):
         """ The change handler for the 'description' attribute on the 
         shell object.
@@ -406,6 +463,12 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
     #--------------------------------------------------------------------------
     # Widget Update Methods 
     #--------------------------------------------------------------------------
+    def set_enabled(self, enabled):
+        """ Sets the enabled state of the action.
+
+        """
+        self.widget.Enable(enabled)
+
     def set_text(self, text):
         """ Sets the text of the action.
 
@@ -434,13 +497,19 @@ class WXAction(WXBaseWidgetComponent, AbstractTkAction):
         """ Sets the tool tip text for the action.
 
         """
-        #self.widget.setToolTip(tool_tip)
+        # XXX not yet supported
+    
+    def set_icon(self, icon):
+        """ Sets the icon for the action.
+
+        """
+        self.widget.SetIcon(icon)
     
     def set_description(self, description):
         """ Sets the description text for the action.
 
         """
-        #self.widget.setWhatsThis(description)
+        # XXX not yet supported
 
     def set_separator(self, separator):
         """ Sets whether or not the QAction is a separator.

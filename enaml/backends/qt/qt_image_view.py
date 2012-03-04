@@ -5,16 +5,16 @@
 from .qt import QtGui
 from .qt_control import QtControl
 
-from ...components.label import AbstractTkLabel
+from ...components.image_view import AbstractTkImageView
 
 
-class QtLabel(QtControl, AbstractTkLabel):
-    """ A Qt implementation of Label.
+class QtImageView(QtControl, AbstractTkImageView):
+    """ A Qt4 implementation of ImageView.
 
     """
     #: The internal cached size hint which is used to determine whether
-    #: of not a size hint updated event should be emitted when the text
-    #: in the label changes
+    #: of not a size hint updated event should be emitted when the image
+    #: in the QLabel changes.
     _cached_size_hint = None
 
     #--------------------------------------------------------------------------
@@ -30,31 +30,36 @@ class QtLabel(QtControl, AbstractTkLabel):
         """ Initializes the attributes on the underlying control.
 
         """
-        super(QtLabel, self).initialize()
+        super(QtImageView, self).initialize()
         shell = self.shell_obj
-        self.set_text(shell.text)
-        self.set_word_wrap(shell.word_wrap)
-        
+        self.set_image(shell.image)
+        self.set_scale_to_fit(shell.scale_to_fit)
+
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-    def shell_text_changed(self, text):
-        """ The change handler for the 'text' attribute.
+    def shell_image_changed(self, image):
+        """ The change handler for the 'image' attribute on the shell 
+        component.
 
         """
-        self.set_text(text)
-
-    def shell_word_wrap_changed(self, word_wrap):
-        """ The change handler for the 'word_wrap' attribute.
-
-        """
-        self.set_word_wrap(word_wrap)
-
-    def set_text(self, text):
-        """ Sets the label on the underlying control.
+        self.set_image(image)
+    
+    def shell_scale_to_fit_changed(self, scale_to_fit):
+        """ The change handler for the 'scale_to_fit' attribute on the 
+        shell component.
 
         """
-        self.widget.setText(text)
+        self.set_scale_to_fit(scale_to_fit)
+
+    #--------------------------------------------------------------------------
+    # Widget Update Methods
+    #--------------------------------------------------------------------------
+    def set_image(self, image):
+        """ Sets the image on the underlying QLabel.
+
+        """
+        self.widget.setPixmap(image.as_QPixmap())
 
         # Emit a size hint updated event if the size hint has actually
         # changed. This is an optimization so that a constraints update
@@ -67,10 +72,18 @@ class QtLabel(QtControl, AbstractTkLabel):
         hint = self._cached_size_hint = self.size_hint()
         if cached != hint:
             self.shell_obj.size_hint_updated()
-
-    def set_word_wrap(self, wrap):
-        """ Sets the word wrapping on the underlying widget.
+    
+    def set_scale_to_fit(self, scale_to_fit):        
+        """ Sets whether or not the image scales with the underlying 
+        control.
 
         """
-        self.widget.setWordWrap(wrap)
+        self.widget.setScaledContents(scale_to_fit)
+        
+        # See the comment in set_image(...) about the size hint update
+        # notification. The same logic applies here.
+        cached = self._cached_size_hint
+        hint = self._cached_size_hint = self.size_hint()
+        if cached != hint:
+            self.shell_obj.size_hint_updated()
 
