@@ -102,6 +102,14 @@ class QtMenu(QtWidgetComponent, AbstractTkMenu):
         """
         self.widget.setTitle(title)
 
+    def set_visible(self, visible):
+        """ Overridden parent class method which sets the visibility
+        of the underlying action for the menu which provides the proper
+        semantic behavior.
+
+        """
+        self.widget.menuAction().setVisible(visible)
+
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
     #--------------------------------------------------------------------------
