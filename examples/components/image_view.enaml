@@ -16,7 +16,7 @@ def get_path():
 
 
 enamldef Main(MainWindow):
-    title = 'Image'
+    title = 'Image View'
     Container:
         ImageView:
             id: image
