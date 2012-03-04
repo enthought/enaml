@@ -2,9 +2,10 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtCore import QSize
-from .qt.QtGui import QIcon
 from .qt_image import QtImage
+
+from ..qt.QtCore import QSize
+from ..qt.QtGui import QIcon
 
 from ....noncomponents.abstract_icon import AbstractTkIcon
 
