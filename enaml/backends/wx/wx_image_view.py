@@ -29,43 +29,32 @@ class wxBitmapWidget(wx.Panel):
         """
         super(wxBitmapWidget, self).__init__(parent)
         self._bitmap = None
-        self._timer = None
         self._scaled_contents = False
+        self._resize_timer = None
+        self._resizing = False
         self.Bind(wx.EVT_PAINT, self.OnPaint)
 
     #--------------------------------------------------------------------------
     # Private API
     #--------------------------------------------------------------------------
-    def PaintBitmap(self, dc, quality):
-        """ Paints the underlying bitmap into the given dc with the given
-        quality.
-
-        Parameters
-        ----------
-        dc : wx.DC
-            The device context in which to draw the bitmap.
-        
-        quality : wx.IMAGE_QUALITY_NORMAL or wx.IMAGE_QUALITY_HIGH
-            The quality with which to scale the image should scaling
-            be required.
+    def OnPaint(self, event):
+        """ The paint event handler for the widget.
 
         """
         bmp = self._bitmap
+        dc = wx.PaintDC(self)
         if bmp is not None:
             if self._scaled_contents:
                 width, height = self.GetSize().asTuple()
                 if width != bmp.GetWidth() or height != bmp.GetHeight():
                     img = bmp.ConvertToImage()
+                    if self._resizing:
+                        quality = wx.IMAGE_QUALITY_NORMAL
+                    else:
+                        quality = wx.IMAGE_QUALITY_HIGH
                     img.Rescale(width, height, quality)
                     bmp = wx.BitmapFromImage(img)
             dc.DrawBitmap(bmp, 0, 0)
-
-    def OnPaint(self, event):
-        """ The paint event handler for the widget.
-
-        """
-        dc = wx.PaintDC(self)
-        self._PaintBitmap(dc, wx.IMAGE_QUALITY_NORMAL)
 
     def OnResize(self, event):
         """ The resize event handler for the widget.
@@ -75,10 +64,10 @@ class wxBitmapWidget(wx.Panel):
         scaled repaint when resizing is finished.
 
         """
-        if self._scaled_contents:
-            self._timer.Start(60, True)
+        self._resizing = True
+        self._resize_timer.Start(60, True)
 
-    def OnRepaintTimer(self, event):
+    def OnResizeEnd(self, event):
         """ The repaint timer event handler.
 
         This method is only bound and called when content scaling is
@@ -86,8 +75,8 @@ class wxBitmapWidget(wx.Panel):
         repaint.
 
         """
-        dc = wx.ClientDC(self)
-        self._PaintBitmap(dc, wx.IMAGE_QUALITY_HIGH)
+        self._resizing = False
+        self.Refresh()
 
     #--------------------------------------------------------------------------
     # Public API
@@ -142,15 +131,16 @@ class wxBitmapWidget(wx.Panel):
         if scaled:
             if not self._scaled_contents:
                 self._scaled_contents = True
-                self._timer = wx.Timer(self)
-                self.Bind(wx.EVT_TIMER, self.OnRepaintTimer)
+                self._resize_timer = wx.Timer(self)
+                self.Bind(wx.EVT_TIMER, self.OnResizeEnd)
                 self.Bind(wx.EVT_SIZE, self.OnResize)
         else:
             if self._scaled_contents:
                 self._scaled_contents = False
                 self._timer = None
-                self.Unbind(wx.EVT_TIMER, handler=self.OnRepaintTimer)
-                self.Unbind(wx.EVT_SIZE, hanlder=self.OnResize)
+                self.Unbind(wx.EVT_TIMER, handler=self.OnResizeEnd)
+                self.Unbind(wx.EVT_SIZE, handler=self.OnResize)
+        self.Refresh()
 
     def GetBestSize(self):
         """ Overridden method to return the size of the bitmap as the 
