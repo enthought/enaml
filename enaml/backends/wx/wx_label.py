@@ -32,7 +32,7 @@ class WXLabel(WXControl, AbstractTkLabel):
 
         """
         super(WXLabel, self).initialize()
-        self.set_label(self.shell_obj.text)
+        self.set_text(self.shell_obj.text)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -42,7 +42,7 @@ class WXLabel(WXControl, AbstractTkLabel):
         component.
 
         """
-        self.set_label(text)
+        self.set_text(text)
 
     def shell_word_wrap_changed(self, wrap):
         """ The change handler for the 'word_wrap' attribute on the 
@@ -52,11 +52,11 @@ class WXLabel(WXControl, AbstractTkLabel):
         """
         pass
 
-    def set_label(self, label):
-        """ Sets the label on the underlying control.
+    def set_text(self, text):
+        """ Sets the text on the underlying control.
 
         """
-        self.widget.SetLabel(label)
+        self.widget.SetLabel(text)
 
         # Emit a size hint updated event if the size hint has actually
         # changed. This is an optimization so that a constraints update

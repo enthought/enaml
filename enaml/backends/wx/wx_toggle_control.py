@@ -29,7 +29,7 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
         """
         super(WXToggleControl, self).initialize()
         shell = self.shell_obj
-        self.set_label(shell.text)
+        self.set_text(shell.text)
         self.set_checked(shell.checked)
 
     #--------------------------------------------------------------------------
@@ -45,7 +45,7 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
         """ The change handler for the 'text' attribute.
 
         """
-        self.set_label(text)
+        self.set_text(text)
         # If the label of the control changes, its size hint has likely
         # updated and the layout system needs to be informed
         self.shell_obj.size_hint_updated()
@@ -79,11 +79,11 @@ class WXToggleControl(WXControl, AbstractTkToggleControl):
             shell.released()
         event.Skip()
 
-    def set_label(self, label):
-        """ Sets the widget's label with the provided value.
+    def set_text(self, text):
+        """ Sets the widget's text with the provided value.
 
         """
-        self.widget.SetLabel(label)
+        self.widget.SetLabel(text)
 
     def set_checked(self, checked):
         """ Sets the widget's checked state with the provided value.
