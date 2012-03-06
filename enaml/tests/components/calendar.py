@@ -41,10 +41,11 @@ class TestCalendar(EnamlTestCase):
         source = """
 enamldef MainView(MainWindow):
     attr events
-    Calendar:
-        name = 'cal'
-        selected :: events.append(('selected', event.new))
-        activated :: events.append(('activated', event.new))
+    Container:
+        Calendar:
+            name = 'cal'
+            selected :: events.append(('selected', event.new))
+            activated :: events.append(('activated', event.new))
 """
 
         self.events = []
@@ -189,14 +190,14 @@ enamldef MainView(MainWindow):
 import datetime
 enamldef MainView(MainWindow):
     attr events
-    Calendar:
-        name = 'cal'
-        date = datetime.date(1980, 1, 1)
-        min_date = datetime.date(1990, 1, 1)
-        max_date = datetime.date(2000, 1, 1)
-        selected :: events.append(('selected', event.new))
-        activated :: events.append(('activated', event.new))
-
+    Container:
+        Calendar:
+            name = 'cal'
+            date = datetime.date(1980, 1, 1)
+            min_date = datetime.date(1990, 1, 1)
+            max_date = datetime.date(2000, 1, 1)
+            selected :: events.append(('selected', event.new))
+            activated :: events.append(('activated', event.new))
 """
         events = []
         with self.assertRaises(TraitError):
@@ -211,14 +212,15 @@ enamldef MainView(MainWindow):
         enaml = """
 import datetime
 enamldef MainView(MainWindow):
-    attr events
-    Calendar:
-        name = 'cal'
-        date = datetime.date(2010, 1, 1)
-        min_date = datetime.date(1990, 1, 1)
-        max_date = datetime.date(2000, 1, 1)
-        selected :: events.append(('selected', event.new))
-        activated :: events.append(('activated', event.new))
+     attr events
+     Container:
+        Calendar:
+            name = 'cal'
+            date = datetime.date(2010, 1, 1)
+            min_date = datetime.date(1990, 1, 1)
+            max_date = datetime.date(2000, 1, 1)
+            selected :: events.append(('selected', event.new))
+            activated :: events.append(('activated', event.new))
 """
         events = []
         with self.assertRaises(TraitError):

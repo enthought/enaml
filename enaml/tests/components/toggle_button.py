@@ -37,13 +37,14 @@ class TestToggleButton(EnamlTestCase):
         enaml_source = """
 enamldef MainView(MainWindow):
     attr events
-    ToggleButton:
-        name = 'togglebtn1'
-        text = 'toggle button label'
-        checked = True
-        toggled :: events.append('toggled')
-        pressed :: events.append('pressed')
-        released :: events.append('released')
+    Container:
+        ToggleButton:
+            name = 'togglebtn1'
+            text = 'toggle button label'
+            checked = True
+            toggled :: events.append('toggled')
+            pressed :: events.append('pressed')
+            released :: events.append('released')
 """.format(self.toggle_button_label)
 
         self.events = []
@@ -109,7 +110,7 @@ enamldef MainView(MainWindow):
         self.assertEqual(events, [])
 
     def test_press_release_sequence(self):
-        """ Verify the even firing when the press-release (nornal) 
+        """ Verify the even firing when the press-release (nornal)
         sequence is applied.
 
         """

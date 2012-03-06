@@ -31,12 +31,13 @@ class TestComboBox(EnamlTestCase):
         enaml = """
 enamldef MainView(MainWindow):
     attr events
-    ComboBox:
-        name = 'cmb'
-        items = [int, float, oct]
-        value = float
-        to_string = lambda x: str(x) + '!' if x is not None else ''
-        selected :: events.append(('selected', event.new))
+    Container:
+        ComboBox:
+            name = 'cmb'
+            items = [int, float, oct]
+            value = float
+            to_string = lambda x: str(x) + '!' if x is not None else ''
+            selected :: events.append(('selected', event.new))
 """
 
         self.events = []
@@ -90,7 +91,7 @@ enamldef MainView(MainWindow):
         self.assertEqual(self.events, [('selected', oct)])
 
     def test_append_item(self):
-        """ Add an item on the Enaml side; see if the toolkit widget 
+        """ Add an item on the Enaml side; see if the toolkit widget
         updates.
 
         """
@@ -99,7 +100,7 @@ enamldef MainView(MainWindow):
         self.test_items()
 
     def test_remove_item(self):
-        """ Remove an item on the Enaml side; see if the toolkit widget 
+        """ Remove an item on the Enaml side; see if the toolkit widget
         updates.
 
         """
@@ -117,7 +118,7 @@ enamldef MainView(MainWindow):
         self.assertEqual(component.index, -1)
 
     def test_value_when_items_change(self):
-        """ Assert that the selection moves correctly when the items 
+        """ Assert that the selection moves correctly when the items
         change.
 
         """
@@ -130,7 +131,7 @@ enamldef MainView(MainWindow):
         self.assertEqual(self.events, [])
 
     def test_index_when_items_change(self):
-        """ Assert that the index is -1 when the value is removed from 
+        """ Assert that the index is -1 when the value is removed from
         the items list.
 
         """
