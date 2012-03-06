@@ -35,6 +35,7 @@ restrictions as indicated below:
 
 * Byteplay
     The byteplay module was created by Noam Yorav-Raphael and is licensed 
-    under the LGPL. The standalone version can be obtained from 
-    http://code.google.com/p/byteplay/
+    under the terms indicated in ./licenses/byteplay.txt. The standalone 
+    version of the byteplay module can be obtained from:
+        http://code.google.com/p/byteplay/
 
