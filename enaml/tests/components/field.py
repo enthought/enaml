@@ -27,14 +27,15 @@ class TestField(EnamlTestCase):
         enaml_source = """
 enamldef MainView(MainWindow):
     attr events
-    Field:
-        name = 'field'
-        max_length = 8
-        cursor_position = 1
-        placeholder_text = 'hold'
-        value = 'abc'
-        text_edited :: events.append('text_edited')
-        return_pressed :: events.append('return_pressed')
+    Container:
+        Field:
+            name = 'field'
+            max_length = 8
+            cursor_position = 1
+            placeholder_text = 'hold'
+            value = 'abc'
+            text_edited :: events.append('text_edited')
+            return_pressed :: events.append('return_pressed')
 """
 
         self.events = []
@@ -141,11 +142,11 @@ enamldef MainView(MainWindow):
          field thought the ui.
 
          .. note:: Currently this test is an ``expected failure`` until
-            we can find a way to simulate the keystrokes. 
-            
+            we can find a way to simulate the keystrokes.
+
             Note: there may not ever be a way to test this automatically.
             The read_only flag should only apply to the user attempting
-            to type something in to the ui. The text should always be 
+            to type something in to the ui. The text should always be
             modifiable programmatically. - SCC
 
          """
@@ -252,10 +253,10 @@ enamldef MainView(MainWindow):
         """ Move the cursor to the end of the field.
 
         """
-        # For some reason, the Qt cursor is getting internally 
+        # For some reason, the Qt cursor is getting internally
         # reset to the end without emitting a signal. I gave up
-        # debugging it after 1.5 hours. For now, just trigger 
-        # an explicit change. It will probably never show up 
+        # debugging it after 1.5 hours. For now, just trigger
+        # an explicit change. It will probably never show up
         # as a problem in practice since as soon as you click
         # in the field, the cursor will change. - SCC
         self.component.home()

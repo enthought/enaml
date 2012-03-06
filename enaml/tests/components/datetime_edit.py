@@ -42,10 +42,11 @@ class TestDatetimeEdit(EnamlTestCase):
 from datetime import datetime as python_datetime
 enamldef MainView(MainWindow):
     attr events
-    DatetimeEdit:
-        name = 'test'
-        datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
-        datetime_changed :: events.append(('datetime_changed', event.new))
+    Container:
+        DatetimeEdit:
+            name = 'test'
+            datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
+            datetime_changed :: events.append(('datetime_changed', event.new))
 """
 
         self.default_datetime = python_datetime(2001, 4, 3, 8, 45, 32, 23000)
@@ -195,12 +196,13 @@ enamldef MainView(MainWindow):
 from datetime import datetime as python_datetime
 enamldef MainView(MainWindow):
     attr events
-    DatetimeEdit:
-        name = 'test'
-        datetime = python_datetime(1980, 1, 1, 23, 10, 34)
-        min_datetime = python_datetime(1990, 1, 1)
-        max_datetime = python_datetime(2000, 1, 1)
-        datetime_changed :: events.append(('datetime_changed', event.new))
+    Container:
+        DatetimeEdit:
+            name = 'test'
+            datetime = python_datetime(1980, 1, 1, 23, 10, 34)
+            min_datetime = python_datetime(1990, 1, 1)
+            max_datetime = python_datetime(2000, 1, 1)
+            datetime_changed :: events.append(('datetime_changed', event.new))
 """
         events = []
         with self.assertRaises(TraitError):
@@ -216,12 +218,13 @@ enamldef MainView(MainWindow):
 from datetime import datetime as python_datetime
 enamldef MainView(MainWindow):
     attr events
-    DatetimeEdit:
-        name = 'test'
-        datetime = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
-        min_datetime = python_datetime(1990, 1, 1)
-        max_datetime = python_datetime(2000, 1, 1)
-        datetime_changed :: events.append(('datetime_changed', event.new))
+    Container:
+        DatetimeEdit:
+            name = 'test'
+            datetime = python_datetime(2010, 1, 1, 9, 12, 34, 14234)
+            min_datetime = python_datetime(1990, 1, 1)
+            max_datetime = python_datetime(2000, 1, 1)
+            datetime_changed :: events.append(('datetime_changed', event.new))
 """
         events = []
         with self.assertRaises(TraitError):

@@ -25,9 +25,10 @@ class TestHtml(EnamlTestCase):
         """
         enaml_source = """
 enamldef MainView(MainWindow):
-    Html:
-        name = 'html'
-        source = '<b>{0}</b>'
+    Container:
+        Html:
+            name = 'html'
+            source = '<b>{0}</b>'
 """.format(self.text)
 
         self.view = self.parse_and_create(enaml_source)
