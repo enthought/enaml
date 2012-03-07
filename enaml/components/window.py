@@ -12,6 +12,7 @@ from .container import Container
 from .layout_task_handler import LayoutTaskHandler
 from .widget_component import WidgetComponent, AbstractTkWidgetComponent
 
+from ..guard import guard
 from ..layout.geometry import Size
 
 
@@ -173,6 +174,30 @@ class Window(LayoutTaskHandler, WidgetComponent):
         """
         raise NotImplementedError
     
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def set_visible(self, visible):
+        """ Set the visibility of the component according to the given
+        boolean. This is overridden from the parent class to properly
+        handle visibility for toplevel components.
+
+        """
+        # Make sure the 'visible' attribute is synced up as a result
+        # of the method call. This may fire a notification, in which
+        # case the change handler will call this method again. This
+        # guard prevents that unneeded recursion.
+        if guard.guarded(self, 'set_visible'):
+            return
+        else:
+            with guard(self, 'set_visible'):
+                self.visible = visible
+        
+        # Only set the visibility to True (which will show the window) 
+        # if the component is fully initialized.
+        if not visible or self.initialized:
+            self.abstract_obj.set_visible(visible)
+
     #--------------------------------------------------------------------------
     # Change Handlers
     #--------------------------------------------------------------------------
