@@ -125,7 +125,7 @@ enamldef RadioGroup(Container):
     # Synchronize the buttons when the selected index is changed
     selected_index ::
         idx = selected_index
-        buttons = layout_children
+        buttons = constraints_children
         if idx == -1:
             for button in buttons:
                 button.checked = False
