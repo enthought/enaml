@@ -58,7 +58,8 @@ def default_toolkit():
     if tk_func is not None:
         return tk_func()
 
-    toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower()
+    # Accepts forms such as 'qt4' and 'qt4.agg' to allow for kiva backends
+    toolkit = os.environ.get('ETS_TOOLKIT', 'qt').lower().split('.')[0]
 
     if toolkit == 'qt' or toolkit == 'qt4':
         return qt_toolkit()
@@ -75,12 +76,14 @@ def qt_toolkit():
     """
     from .core.operators import OPERATORS
     from .core.toolkit import Toolkit
-    from .widgets.constructors import CONSTRUCTORS
-    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    from .widgets.qt.constructors import QT_CONSTRUCTORS
-    from .widgets.qt.qt_application import QtApplication
+    from .components.constructors import CONSTRUCTORS
+    from .layout.layout_helpers import LAYOUT_HELPERS
+    from .backends.qt.constructors import QT_CONSTRUCTORS
+    from .backends.qt.qt_application import QtApplication
+    from .backends.qt.noncomponents.toolkit_items import TOOLKIT_ITEMS
 
     toolkit = Toolkit(QT_CONSTRUCTORS)
+    toolkit.update(TOOLKIT_ITEMS)
     toolkit.update(CONSTRUCTORS)
     toolkit.update(OPERATORS)
     toolkit.update(LAYOUT_HELPERS)
@@ -95,12 +98,14 @@ def wx_toolkit():
     """
     from .core.operators import OPERATORS
     from .core.toolkit import Toolkit
-    from .widgets.constructors import CONSTRUCTORS
-    from .widgets.layout.layout_helpers import LAYOUT_HELPERS
-    from .widgets.wx.constructors import WX_CONSTRUCTORS
-    from .widgets.wx.wx_application import WXApplication
+    from .components.constructors import CONSTRUCTORS
+    from .layout.layout_helpers import LAYOUT_HELPERS
+    from .backends.wx.constructors import WX_CONSTRUCTORS
+    from .backends.wx.wx_application import WXApplication
+    from .backends.wx.noncomponents.toolkit_items import TOOLKIT_ITEMS
 
     toolkit = Toolkit(WX_CONSTRUCTORS)
+    toolkit.update(TOOLKIT_ITEMS)
     toolkit.update(CONSTRUCTORS)
     toolkit.update(OPERATORS)
     toolkit.update(LAYOUT_HELPERS)

@@ -21,7 +21,7 @@ enamldef EmployeeForm(Form):
     Field:
         value := employee.phone
         converter = PhoneNumberConverter()
-        bg_color << 'error' if error else 'none'
+        bgcolor << 'error' if error else 'none'
     Label:
         text = 'Date of Birth:'
     DateEdit:
@@ -40,10 +40,9 @@ enamldef EmployeeForm(Form):
     CheckBox:
         id: pw_cb
         checked = False
-    Label:
-        text = 'Show Employer Details:'
-    CheckBox:
+    ToggleButton:
         checked := show_employer
+        text << ('Hide' if show_employer else 'Show') + ' Employer Details'
 
 
 enamldef EmployerForm(Form):

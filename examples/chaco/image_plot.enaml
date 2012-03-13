@@ -1,0 +1,35 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Use chaco to display an image in an EnableCanvas. This example 
+requires Scipy for the sample image data.
+
+"""
+from chaco.api import ArrayPlotData, Plot, ImageData
+from chaco import default_colormaps as dc
+from scipy.misc import lena
+from traits.api import HasTraits, Instance
+
+
+class ImageModel(HasTraits):
+
+    plot = Instance(Plot)
+
+    def __init__(self):
+        super(ImageModel, self).__init__()
+        self.data = lena()
+        image_source = ImageData(data=self.data, value_depth=1)
+        plot_data = ArrayPlotData()
+        plot_data.set_data('imagedata', image_source._data)
+        self.plot = Plot(plot_data, default_origin='top left', padding=30)
+        self.plot.img_plot('imagedata', colormap=dc.gray)
+
+
+enamldef Main(MainWindow):
+    attr model = ImageModel()
+    initial_size = tuple(reversed(model.data.shape))
+    Container:
+        EnableCanvas:
+            component = model.plot
+
