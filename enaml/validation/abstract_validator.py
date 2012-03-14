@@ -29,9 +29,9 @@ class AbstractValidator(object):
     #: expected.
     INTERMEDIATE = 1
 
-    #: A constant which represents a string that is valid for the
-    #: current context.
-    VALID = 2
+    #: A constant which represents a string that is acceptable inpute 
+    #: for the current context.
+    ACCEPTABLE = 2
 
     def __init__(self, locale=None):
         """ Initialize an AbstractValidator.
@@ -78,8 +78,8 @@ class AbstractValidator(object):
 
         This is an abstract method and must be implemented by subclasses.
         This method should analyze the user text and return one of three
-        class attribute constants: INVALID, INTERMEDIATE, or VALID. These 
-        constants have the following semantic meanings:
+        class attribute constants: INVALID, INTERMEDIATE, or ACCEPTABLE. 
+        These constants have the following semantic meanings:
             
             INVALID : The text is clearly invalid, and the addition of
                 more characters cannot make it valid. Example: the text
@@ -90,7 +90,7 @@ class AbstractValidator(object):
                 '123' is intermediate when a 4 digit number string is 
                 expected.
 
-            VALID : The text is a valid value. 
+            ACCEPTABLE : The text is an acceptable value. 
 
         Parameters
         ----------
@@ -101,7 +101,7 @@ class AbstractValidator(object):
         -------
         result : int
             One of the class attribute constants INVALID, INTERMEDIATE, 
-            or VALID.
+            or ACCEPTABLE.
         
         Notes
         -----
@@ -119,8 +119,8 @@ class AbstractValidator(object):
         This is an abstract method and must be implemented by subclasses.
         This method is used to convert from the user input text into a
         context-dependent value. This method will only be called if the
-        'validate' method returned a VALID result. When this method is
-        called is determined by the owner of the validator and is not
+        'validate' method returned an ACCEPTABLE result. When this method 
+        is called is determined by the owner of the validator and is not
         necessarily immediately after a call to 'validate'.
 
         If the input text cannot be properly converted, a ValueError
