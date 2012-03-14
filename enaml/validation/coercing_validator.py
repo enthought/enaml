@@ -93,9 +93,9 @@ class CoercingValidator(AbstractValidator):
         result : 2-tuple
             A 2-tuple of (<validation_result>, <value|None>). If the
             conversion and coercion are successful, then the first item 
-            will be the VALID constant and the second item will be the
-            converted and coerced value. Otherwise, the first item will 
-            be the INVALID constant and the second item will be None.
+            will be the ACCEPTABLE constant and the second item will be 
+            the converted and coerced value. Otherwise, the first item 
+            will be the INVALID constant and the second item will be None.
         
         """
         try:
@@ -108,7 +108,7 @@ class CoercingValidator(AbstractValidator):
         except Exception:
             return (self.INVALID, None)
         
-        return (self.VALID, value)
+        return (self.ACCEPTABLE, value)
     
     def validate(self, text):
         """ Validates the input text against the rules of the validator.
@@ -121,7 +121,7 @@ class CoercingValidator(AbstractValidator):
         Returns
         -------
         result : int
-            One of the class attribute constants INVALID or VALID.
+            One of the class attribute constants INVALID or ACCEPTABLE.
         
         Notes
         -----
@@ -130,7 +130,7 @@ class CoercingValidator(AbstractValidator):
             - The converted value fails to coerce.
             - The coerced value is not the proper type.
 
-        The string is VALID for all other conditions.
+        The string is ACCEPTABLE for all other conditions.
 
         """
         return self._validate(text)[0]
@@ -140,7 +140,7 @@ class CoercingValidator(AbstractValidator):
         raises a ValueError if the conversion fails.
 
         This method is called only if the 'validate' method returns the
-        VALID class attribute constant.
+        ACCEPTABLE class attribute constant.
 
         Parameters
         ----------
@@ -156,7 +156,7 @@ class CoercingValidator(AbstractValidator):
         try:
             return self._coerce(self._convert(text))
         except Exception as e:
-            msg = "Failed to convert '%s'. Original exception was %s."
+            msg = "Failed to convert %r. Original exception was %s."
             raise ValueError(msg % (text, e))
 
     def format(self, value):
@@ -180,7 +180,7 @@ class CoercingValidator(AbstractValidator):
         try:
             return unicode(self._format(value))
         except Exception as e:
-            msg = 'Failed to format %s. Original exception was %s.'
+            msg = 'Failed to format %r. Original exception was %s.'
             raise ValueError(msg % (value, e))
 
     def normalize(self, text):
