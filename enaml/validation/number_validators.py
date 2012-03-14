@@ -79,7 +79,7 @@ class NumberValidator(CoercingValidator):
             - The coerced value is less than the low value.
             - The coerced value is greater than the high value.
 
-        The string is VALID for all other situations.
+        The string is ACCEPTABLE for all other situations.
 
         """
         if not text:
@@ -95,14 +95,20 @@ class NumberValidator(CoercingValidator):
         low = self.low
         if low is not None:
             if value < low:
-                return self.INTERMEDIATE
+                if value < 0:
+                    return self.INVALID
+                else:
+                    return self.INTERMEDIATE
         
         high = self.high
         if high is not None:
             if value > high:
-                return self.INTERMEDIATE
+                if value > 0:
+                    return self.INVALID
+                else:
+                    return self.INTERMEDIATE
         
-        return self.VALID
+        return self.ACCEPTABLE
 
 
 class IntegralNumberValidator(NumberValidator):
