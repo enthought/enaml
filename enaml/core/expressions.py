@@ -596,10 +596,10 @@ class UpdateExpression(AbstractExpression):
                 if eval(inverter, f_globals, scope):
                     break
             else:
-                msg = ("Unable to delegate expression to the '%s' attribute "
+                msg = ("Unable to delegate expression to the %r attribute "
                        "of the %s object. None of the provided inverters were "
                        "successful in assigning the value.")
-                raise RuntimeError(msg)
+                raise RuntimeError(msg % (self.name, obj))
 
 
 #------------------------------------------------------------------------------
