@@ -2,7 +2,7 @@
 " Language:     Enaml
 " Maintainer:   Robert Kern <rkern@enthought.com>
 " URL:          http://github.com/enthought/enaml
-" Last Change:  2011 November 1
+" Last Change:  2012 February 16
 
 " For version 5.x: Clear all syntax items
 " For version 6.x: Quit when a syntax file was already loaded
@@ -22,10 +22,9 @@ endif
 
 " Enaml extensions
 syn keyword enamlStatement      defn
-syn match enamlSeparator        ":: \w\+ ::"
 " FIXME: This captures the predefined operators, not any extensions that may be
 " added.
-syn match enamlOperator         "\%(\w\|\s\)\(->\|<<\|>>\|=\|:=\)\%(\w\|\s\)"
+syn match enamlOperator         "\%(\w\|\s\)\(::\|<<\|>>\|=\|:=\)\%(\w\|\s\)"
 if exists("python_highlight_builtins") || exists("enaml_highlight_builtins")
     syn keyword enamlBuiltin    horizontal vertical hbox vbox align align_left align_right
     syn keyword enamlBuiltin    align_top align_bottom align_v_center align_h_center _space_
@@ -40,7 +39,6 @@ if version >= 508 || !exists("did_enaml_syntax_inits")
     command -nargs=+ HiLink hi def link <args>
   endif
   HiLink enamlStatement         Statement
-  HiLink enamlSeparator         Statement
   HiLink enamlOperator          Operator
   if exists("python_highlight_builtins") || exists("enaml_highlight_builtins")
       HiLink enamlBuiltin       Function
