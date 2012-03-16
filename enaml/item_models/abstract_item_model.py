@@ -1298,7 +1298,7 @@ class AbstractItemModel(object):
         return None
 
     def horizontal_header_size_hint(self, section):
-        """ Get the horizontal size hint for a particular header section.
+        """ Get the size hint for a particular horizontal header section.
 
         The default implementation returns None.
 
@@ -1309,26 +1309,26 @@ class AbstractItemModel(object):
 
         Returns
         -------
-        data : int
-            The requested size hint for the width of the header.
+        value : (width, height)
+            The size hint to use for the given column number.
 
         """
         return None
     
     def vertical_header_size_hint(self, section):
-        """ Get the vertical size hint for a particular header section.
+        """ Get the size hint for a particular vertical header section.
 
         The default implementation returns None.
 
         Arguments
         ---------
         section : int
-            The column number of the header.
+            The row number of the header.
 
         Returns
         -------
-        data : int
-            The requested size hint for the height of the header.
+        value : (width, height)
+            The size hint to use for the given row number.
 
         """
         return None
