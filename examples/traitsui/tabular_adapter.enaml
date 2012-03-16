@@ -17,15 +17,13 @@ This demo requires the traitsui package.
 """
 
 
-from enaml.stdlib.fields import IntField
-from enaml.item_models.tabular_adapter import TabularAdapterModel
-
-:: python ::
-
 import locale
 
 from traits.api import HasTraits, Instance, Int, List, Property, Str
 from traitsui.tabular_adapter import TabularAdapter
+
+from enaml.stdlib.fields import IntField
+from enaml.item_models.tabular_adapter import TabularAdapterModel
 
 
 class Employee(HasTraits):
@@ -77,8 +75,6 @@ def _get_selected_item(selection_model):
     if selection:
         item = selection_model.item_model.item(selection[0][0])
     return item
-
-:: end ::
 
 
 TabularSelectionModel(RowSelectionModel):
