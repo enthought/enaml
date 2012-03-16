@@ -2,6 +2,10 @@
 # Copyright (c) 2011, Enthought, Inc.
 # All rights reserved.
 #------------------------------------------------------------------------------
+""" Standard table model for using existing TabularAdapters from Traits
+UI with the TableView.
+
+"""
 
 from collections import Sequence
 
