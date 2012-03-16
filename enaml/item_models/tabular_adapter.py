@@ -8,12 +8,26 @@ UI with the TableView.
 """
 
 from collections import Sequence
+import warnings
+
+from traits.etsconfig.api import ETSConfig
 
 from ..styling.brush import Brush
 from ..styling.color import Color
 from .abstract_item_model import (ALIGN_HCENTER, ALIGN_JUSTIFY, ALIGN_LEFT,
     ALIGN_RIGHT, ALIGN_VCENTER, AbstractTableModel, ITEM_IS_DRAG_ENABLED,
     ITEM_IS_DROP_ENABLED, ITEM_IS_EDITABLE, ITEM_IS_ENABLED, ITEM_IS_SELECTABLE)
+
+if ETSConfig.toolkit == 'qt4':
+    from ..backends.qt.styling import font_from_q_font as convert_font_to_enaml
+elif ETSConfig.toolkit == 'wx':
+    from ..backends.wx.styling import font_from_wx_font as convert_font_to_enaml
+else:
+    def convert_font_to_enaml(font):
+        msg = ("Cannot convert Traits UI font object from unknown backend %r" %
+            ETSConfig.toolkit)
+        warnings.warn(msg)
+        return font
 
 
 class TabularAdapterModel(AbstractTableModel):
@@ -107,8 +121,11 @@ class TabularAdapterModel(AbstractTableModel):
         """ Get the font for a given model index.
 
         """
-        font = self.adapter.get_font(self.object, self.name, index.row,
+        tk_font = self.adapter.get_font(self.object, self.name, index.row,
             index.column)
+        if tk_font is None:
+            return None
+        font = convert_font_to_enaml(tk_font)
         return font
 
     def alignment(self, index):
