@@ -83,8 +83,10 @@ TabularSelectionModel(RowSelectionModel):
     attr item_model: object = None
     attr selected_items: list = []
     attr selected_item: object = None
-    selection_event >> self.trait_set(selected_items=_get_selected_items(self))
-    selection_event >> self.trait_set(selected_item=_get_selected_item(self))
+    selection_event ::
+        self.trait_set(selected_items=_get_selected_items(self))
+    selection_event ::
+        self.trait_set(selected_item=_get_selected_item(self))
 
 
 Main(MainWindow):
@@ -102,7 +104,7 @@ Main(MainWindow):
         TableView:
             id: tv
             item_model = TabularAdapterModel(company, 'employees',
-                adapter=EmployeeAdapter(), auto_update=True)
+                EmployeeAdapter(), auto_update=True)
             vertical_header_visible = False
             TabularSelectionModel:
                 item_model = parent.item_model
@@ -117,6 +119,6 @@ Main(MainWindow):
         PushButton:
             id: give_raise
             text = 'Give Raise'
-            clicked >> company.give_raise()
+            clicked :: company.give_raise()
             enabled << company.employee is not None
 

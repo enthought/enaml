@@ -5,9 +5,6 @@
 
 from collections import Sequence
 
-from traits.api import Any, Bool, Instance, Str
-from traitsui.tabular_adapter import TabularAdapter
-
 from ..styling.brush import Brush
 from ..styling.color import Color
 from .abstract_item_model import (ALIGN_HCENTER, ALIGN_JUSTIFY, ALIGN_LEFT,
@@ -20,28 +17,6 @@ class TabularAdapterModel(AbstractTableModel):
 
     """
 
-    #: The object that holds the list.
-    object = Any()
-
-    #: The name of the List trait that we are adapting.
-    name = Str()
-
-    #: The TabularAdapter.
-    adapter = Instance(TabularAdapter)
-
-    #: Whether the items are selectable or not.
-    selectable = Bool(True)
-
-    #: Whether cells are editable or not.
-    editable = Bool(False)
-
-    #: Whether the user can move items by dragging.
-    draggable = Bool(False)
-
-    #: Whether the cells should automatically update if they are viewing
-    #: individual traits on HasTraits objects.
-    auto_update = Bool(False)
-
     # Mapping for trait alignment values to Enaml alignment values.
     _alignment_map = {
         'left': ALIGN_LEFT,
@@ -50,12 +25,26 @@ class TabularAdapterModel(AbstractTableModel):
         'justify': ALIGN_JUSTIFY,
     }
 
-    def __init__(self, object, name, **kwargs):
+    def __init__(self, object, name, adapter, selectable=True, editable=False,
+        draggable=False, auto_update=False):
         """ Initialize a TabularAdapterModel.
 
         """
-        super(TabularAdapterModel, self).__init__(object=object, name=name,
-            **kwargs)
+        #: The object that holds the list.
+        self.object = object
+        #: The name of the List trait that we are adapting.
+        self.name = name
+        #: The TabularAdapter.
+        self.adapter = adapter
+        #: Whether the items are selectable or not.
+        self.selectable = selectable
+        #: Whether cells are editable or not.
+        self.editable = editable
+        #: Whether the user can move items by dragging.
+        self.draggable = draggable
+        #: Whether the cells should automatically update if they are viewing
+        #: individual traits on HasTraits objects.
+        self.auto_update = auto_update
         self._setup_listeners()
 
     #--------------------------------------------------------------------------
@@ -218,8 +207,8 @@ class TabularAdapterModel(AbstractTableModel):
         if self.auto_update:
             self.object.on_trait_change(self._refresh, self.name + '.-',
                 dispatch='ui')
-        self.on_trait_change(self._refresh, 'adapter.+update', dispatch='ui')
-        self.on_trait_change(self._reset_model, 'adapter.columns', dispatch='ui')
+        self.adapter.on_trait_change(self._refresh, '+update', dispatch='ui')
+        self.adapter.on_trait_change(self._reset_model, 'columns', dispatch='ui')
 
     def _remove_listeners(self):
         """ Remove all of the listeners.
@@ -230,8 +219,8 @@ class TabularAdapterModel(AbstractTableModel):
         if self.auto_update:
             self.object.on_trait_change(self._refresh, self.name + '.-',
                 remove=True)
-        self.on_trait_change(self._refresh, 'adapter.+update', remove=True)
-        self.on_trait_change(self._reset_model, 'adapter.columns', remove=True)
+        self.adapter.on_trait_change(self._refresh, '+update', remove=True)
+        self.adapter.on_trait_change(self._reset_model, 'columns', remove=True)
 
     def _refresh(self):
         """ Refresh the visible data.
