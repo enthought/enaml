@@ -4,6 +4,8 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui
 
+from ...styling.font import Font
+
 
 def q_color_from_color(color):
     """ Converts an enaml Color into a QtGui.QColor instance.
@@ -22,6 +24,8 @@ font_style_map = {
     'oblique': QtGui.QFont.StyleOblique,
 }
 
+font_style_reverse_map = dict(x[::-1] for x in font_style_map.items())
+
 
 font_family_hint_map = {
     'any': QtGui.QFont.AnyStyle,
@@ -38,6 +42,8 @@ font_family_hint_map = {
     'cursive': QtGui.QFont.Cursive,
     'system': QtGui.QFont.System,
 }
+
+font_family_hint_reverse_map = dict(x[::-1] for x in font_family_hint_map.items())
 
 
 def q_font_from_font(font):
@@ -62,3 +68,12 @@ def q_font_from_font(font):
     # XXX more to go, this is enough to test
     return q_font
 
+def font_from_q_font(q_font):
+    """ Converts a QtGui.QFont to an Enaml Font.
+
+    """
+    font = Font(q_font.family(), q_font.point_size(), weight=q_font.weight(),
+        style=font_style_reverse_map[q_font.style()],
+        underline=q_font.underline(), strikethrough=q_font.strikeOut(),
+        family_hint=font_family_hint_reverse_map[q_font.styleHint()])
+    return font

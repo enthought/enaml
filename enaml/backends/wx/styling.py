@@ -4,6 +4,8 @@
 #------------------------------------------------------------------------------
 import wx
 
+from ...styling.font import Font
+
 
 def wx_color_from_color(color):
     """ Converts an Enaml Color into a wxColor.
@@ -22,6 +24,8 @@ font_style_map = {
     'oblique': wx.FONTSTYLE_SLANT,
 }
 
+font_style_reverse_map = dict(x[::-1] for x in font_style_map.items())
+
 
 font_family_hint_map = {
     'any': wx.FONTFAMILY_DEFAULT,
@@ -37,6 +41,8 @@ font_family_hint_map = {
     'cursive': wx.FONTFAMILY_SCRIPT,
     'system': wx.FONTFAMILY_DEFAULT
 }
+
+font_family_hint_reverse_map = dict(x[::-1] for x in font_family_hint_map.items())
 
 
 # A cache of the default font which is created on demand
@@ -88,3 +94,21 @@ def wx_font_from_font(font):
 
     return wx_font
 
+def font_from_wx_font(wx_font):
+    """ Converts a wxFont into an Enaml Font.
+
+    """
+    family = wx_font.GetFaceName()
+    point_size = wx_font.GetPointSize()
+    wx_weight = wx_font.GetWeight()
+    if wx_weight == wx.FONTWEIGHT_LIGHT:
+        weight = 'light'
+    elif wx_weight == wx.FONTWEIGHT_BOLD:
+        weight = 'bold'
+    else:
+        weight = 'normal'
+    style = font_style_reverse_map[wx_font.GetStyle()]
+    underline = wx_font.GetUnderline()
+    family_hint = font_family_hint_reverse_map[wx_font.GetFamily()]
+    return Font(family, point_size, weight=weight, style=style,
+        underline=underline, family_hint=family_hint)
