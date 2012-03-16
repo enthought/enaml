@@ -12,6 +12,8 @@ button is disabled until the user selects an employee. The amount of the raise
 is editable in the field next to the button. When the user presses the button,
 the selected employee's salary will immediately increase by the given amount.
 
+This demo requires the traitsui package.
+
 """
 
 
