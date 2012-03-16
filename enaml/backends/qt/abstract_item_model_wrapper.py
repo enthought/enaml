@@ -5,7 +5,7 @@
 import itertools
 import operator
 
-from .qt.QtCore import Qt, QAbstractItemModel, QModelIndex
+from .qt.QtCore import Qt, QAbstractItemModel, QModelIndex, QSize
 from .styling import q_color_from_color, q_font_from_font
 
 from ...item_models.abstract_item_model import AbstractItemModel
@@ -140,6 +140,10 @@ def _brush_convert(brush):
         return q_color_from_color(brush.color)
 
 
+def _size_convert(size):
+    if size is not None:
+        return QSize(*size)
+
 # Some of these should be LRU cached    
 def _font_convert(font):
     if font:
@@ -158,7 +162,7 @@ _QROLE_CONVERTERS = {
     int(Qt.BackgroundRole): _brush_convert,
     int(Qt.ForegroundRole): _brush_convert,
     int(Qt.CheckStateRole): _not_yet_supported,
-    int(Qt.SizeHintRole): _no_convert,
+    int(Qt.SizeHintRole): _size_convert,
     int(Qt.UserRole): _not_yet_supported,
 }
 
