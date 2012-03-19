@@ -148,15 +148,12 @@ class AbstractValidator(object):
         This method is used to convert from a context dependent model
         value into a unicode string suitable for display. This method
         will be called whenever a model value changes and the display
-        should be updated.
-
-        If the value cannot be properly converted to a unicode string,
-        a ValueError should be raised.
+        should be updated. This method should always succeed.
 
         Parameters
         ----------
         value : object
-            The context-dependent input value
+            The context-dependent input value.
 
         Returns
         -------

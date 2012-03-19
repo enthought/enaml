@@ -163,9 +163,6 @@ class CoercingValidator(AbstractValidator):
         """ Convert the input value into a string which is appropriate
         for display.
 
-        If the value cannot be properly converted to a unicode string,
-        a ValueError is raised.
-
         Parameters
         ----------
         value : object
@@ -177,11 +174,7 @@ class CoercingValidator(AbstractValidator):
             A formatted unicode string for display.
 
         """
-        try:
-            return unicode(self._format(value))
-        except Exception as e:
-            msg = 'Failed to format %r. Original exception was %s.'
-            raise ValueError(msg % (value, e))
+        return unicode(self._format(value))
 
     def normalize(self, text):
         """ Attempts to normalize the given text by converting it to the 
