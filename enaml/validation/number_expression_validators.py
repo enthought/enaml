@@ -58,8 +58,8 @@ class NumberExpressionValidator(NumberValidator):
         a successful round-trip.
 
         """
-        return eval(text, *self._sandbox)
-
+        return eval(text, *self.sandbox)
+    
     
 class IntegralNumberExpressionValidator(NumberExpressionValidator):
     """ A NumberExpressionValidator for Integral number types using the
