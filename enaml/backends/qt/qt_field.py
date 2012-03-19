@@ -82,7 +82,7 @@ class QtField(QtControl, AbstractTkField):
         self.set_validator(shell.validator)
         self.set_read_only(shell.read_only)
         self.set_placeholder_text(shell.placeholder_text)
-        self.set_text(shell.get_formatted_text())
+        self.set_text(shell.validator.format(shell.value))
         self.set_cursor_position(shell.cursor_position)
         self.set_password_mode(shell.password_mode)
         self.set_max_length(shell.max_length)
