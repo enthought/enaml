@@ -24,7 +24,7 @@ class AbstractTkField(AbstractTkControl):
 
     The major deviation from other toolkit controls is that the shell
     object is responsible for updating the toolkit field by calling
-    the get_text/set_text methods, as opposed to have the toolkit
+    the get_text/set_text methods, as opposed to having the toolkit
     object rely on change notification from the shell. The reason this
     is done this way is so that the majority of the conversion and
     validation logic can be managed by the shell, instead of repeating
@@ -84,6 +84,13 @@ class AbstractTkField(AbstractTkControl):
             When the user attempts to input a string which validates as
             INVALID, this input should be silently rejected before the 
             new characters are even drawn to the screen.
+        
+        normalize
+            This method accepts the text in the field and returns a
+            new string, which may or may not be different. This method
+            allows the programmer a chance to fixup the user's input
+            into a potentially acceptable value. The rules for when
+            to call this method are described above.
 
     """
     @abstractmethod
@@ -346,7 +353,7 @@ class Field(Control):
     acceptable = Bool
     def _acceptable_default(self):
         v = self.validator
-        return v.validate(self.get_formatted_text()) == v.ACCEPTABLE
+        return v.validate(v.format(self.value)) == v.ACCEPTABLE
 
     #: A list of strings which indicates when the text the in the field
     #: should be converted to a Python object representation and stored 
@@ -364,7 +371,8 @@ class Field(Control):
     #: the text.
     text_edited = EnamlEvent
 
-    #: Fired when the return/enter key is pressed in the field.
+    #: Fired when the return/enter key is pressed in the field, provided 
+    #: that the text in the field validates as ACCEPTABLE.
     return_pressed = EnamlEvent
     
     #: Fired when the widget has lost input focus.
@@ -376,6 +384,18 @@ class Field(Control):
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkField)
+
+    def get_text(self):
+        """ Get the current text as a unicode string.
+
+        """
+        return self.abstract_obj.get_text()
+
+    def set_text(self, text):
+        """ Set the current text without an event notification.
+
+        """
+        return self.abstract_obj.set_text(text)
 
     def set_selection(self, start, end):
         """ Sets the selection to the bounds of start and end.
@@ -538,7 +558,7 @@ class Field(Control):
             is not valid or the conversion from text to value fails. 
 
         """
-        text = self.abstract_obj.get_text()
+        text = self.get_text()
         v = self.validator
         self.acceptable = acceptable = (v.validate(text) == v.ACCEPTABLE)
 
@@ -549,72 +569,43 @@ class Field(Control):
             except ValueError as e:
                 self.exception = e
                 self.error = True
+                return
             else:
-                res = True
-                self.exception = None
-                self.error = False
                 # Setting the value attribute may fire off a model 
                 # subscription which has the potential to raise other
-                # exceptions. We want to log the error to facilitate
-                # visual feedback, but we still want the error to 
-                # bubble up to the user code for handling.
+                # exceptions. XXX we may want to log this exception
+                # at some point in the future.
                 try:
                     with guard(self, 'submitting'):
                         self.value = value
                 except Exception as e:
                     self.exception = e
                     self.error = True
-                    raise
-        
+                    return
+                else:
+                    res = True
+                    self.exception = None
+                    self.error = False
+
         if format:
-            text = self.get_formatted_text()
-            self.abstract_obj.set_text(text)
-            self._update_validity()
+            text = v.format(self.value)
+            self.set_text(text)
+            self.acceptable = (v.validate(text) == v.ACCEPTABLE)
         
-        return res
-
-    def get_formatted_text(self):
-        """ A method which can be called by to retrieve the formatted 
-        display text for the current value. If the formatting fails, 
-        the unicode representation of the value will be returned.
-
-        Returns
-        -------
-        result : unicode
-            The formatted text for display, or the unicode representation
-            of the value if the formatting fails.
-
-        """
-        # XXX not sure what we want to do here in terms of setting error
-        # state if the format is unsuccessful. For now, we just prepend
-        # '!Format ' to the beginning of the unicode representation in 
-        # case of error.
-        try:
-            res = self.validator.format(self.value)
-        except ValueError:
-            res = u'!Format ' + unicode(self.value)
         return res
 
     @on_trait_change('value, validator')
     def _update_text_from_value(self):
         """ A change handler which updates the displayed text whenever
-        the 'value' or the 'validator' changes.
+        the 'value' or the 'validator' attributes change.
 
         """
         if not guard.guarded(self, 'submitting'):
             self.modified = False
-            text = self.get_formatted_text()
-            self.abstract_obj.set_text(text)
-            self._update_validity()
-    
-    def _update_validity(self):
-        """ A private internal method which sets the 'acceptable' 
-        attribute appropriately for the current text in the field.
-
-        """
-        v = self.validator
-        text = self.abstract_obj.get_text()
-        self.acceptable = (v.validate(text) == v.ACCEPTABLE)
+            v = self.validator
+            text = v.format(self.value)
+            self.set_text(text)
+            self.acceptable = (v.validate(text) == v.ACCEPTABLE)
     
     #--------------------------------------------------------------------------
     # Field Update Methods
@@ -631,7 +622,8 @@ class Field(Control):
         if 'always' in self.submit_mode:
             self.submit(format=False)
         else:
-            self._update_validity()
+            v = self.validator
+            self.acceptable = (v.validate(self.get_text()) == v.ACCEPTABLE)
         self.text_edited()
     
     def _field_return_pressed(self):
