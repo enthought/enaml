@@ -59,8 +59,32 @@ class NumberExpressionValidator(NumberValidator):
 
         """
         return eval(text, *self.sandbox)
-    
-    
+        
+    def _coerce(self, value):
+        """ Overriden default coerce method which attempts to use the
+        number type to coerce the value if it is not already of the
+        proper type.
+
+        """
+        if not isinstance(value, self.number_type):
+            try:
+                value = self.number_type(value)
+            except (TypeError, ValueError):
+                pass
+        return value
+
+    def validate(self, text):
+        """ Overridden default validator which converts any INVALID
+        result into INTERMEDIATE. This allows arbitrary expresssions
+        to be entered into the field.
+
+        """
+        v = super(NumberExpressionValidator, self).validate(text)
+        if v == self.INVALID:
+            v = self.INTERMEDIATE
+        return v
+
+
 class IntegralNumberExpressionValidator(NumberExpressionValidator):
     """ A NumberExpressionValidator for Integral number types using the
     abstract base class numbers.Integral for type checking.
