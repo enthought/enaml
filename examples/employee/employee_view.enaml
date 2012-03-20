@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from phone_converter import PhoneNumberConverter
+from phone_validator import PhoneNumberValidator
 
 
 enamldef EmployeeForm(Form):
@@ -20,8 +20,8 @@ enamldef EmployeeForm(Form):
         text = "Home phone:"
     Field:
         value := employee.phone
-        converter = PhoneNumberConverter()
-        bgcolor << 'error' if error else 'none'
+        validator = PhoneNumberValidator()
+        bgcolor << 'unacceptable' if not acceptable else 'none'
     Label:
         text = 'Date of Birth:'
     DateEdit:

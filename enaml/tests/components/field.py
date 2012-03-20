@@ -2,9 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from unittest import expectedFailure
+from traits.api import push_exception_handler, pop_exception_handler
 
-from enaml.converters import IntConverter
+from enaml.validation import IntValidator
 
 from .enaml_test_case import EnamlTestCase, required_method
 
@@ -57,39 +57,42 @@ enamldef MainView(MainWindow):
 
         """
         self.assertEqual(self.component.value, self.get_value(self.widget))
-        self.assertEnamlInSync(self.component, 'value', 'abc')
+        self.assertEnamlInSync(self.component, 'value', u'abc')
 
     def test_edit_text(self):
         """ Simulate typing into a field.
 
         """
         self.set_cursor_position(self.widget, 1)
-        self.edit_text(self.widget, '!?')
-        self.assertEnamlInSync(self.component, 'value', 'a!?bc')
+        self.edit_text(self.widget, u'!?')
+        self.component.submit()
+        self.assertEnamlInSync(self.component, 'value', u'a!?bc')
 
     def test_send_twice(self):
         """ Type text, then type more text.
 
         """
         self.set_cursor_position(self.widget, 1)
-        self.edit_text(self.widget, '!?')
-        self.edit_text(self.widget, 'zz')
-        self.assertEnamlInSync(self.component, 'value', 'a!?zzbc')
+        self.edit_text(self.widget, u'!?')
+        self.edit_text(self.widget, u'zz')
+        self.component.submit()
+        self.assertEnamlInSync(self.component, 'value', u'a!?zzbc')
 
     def test_position_cursor(self):
         """ Position the cursor before typing.
 
         """
         self.set_cursor_position(self.widget, 0)
-        self.edit_text(self.widget, 'xyz')
-        self.assertEqual(self.get_value(self.widget), 'xyzabc')
+        self.edit_text(self.widget, u'xyz')
+        self.component.submit()
+        self.assertEqual(self.get_value(self.widget), u'xyzabc')
 
     def test_enaml_text_changed(self):
         """ Check that the widget reflects changes to the Enaml component.
 
         """
-        self.component.value = 'test'
-        self.assertEnamlInSync(self.component, 'value', 'test')
+        self.component.value = u'test'
+        self.assertEqual(self.get_value(self.widget), u'test')
 
     def test_password_mode_silent(self):
         """ Test the password_mode status.
@@ -122,74 +125,63 @@ enamldef MainView(MainWindow):
 
         """
         max_len = self.component.max_length
-        self.edit_text(self.widget, 'a' * (max_len + 1))
+        self.edit_text(self.widget, u'a' * (max_len + 1))
+        self.component.submit()
         self.assertEqual(len(self.component.value), max_len)
 
     def test_component_set_selection(self):
         """ Check the Enaml component's text selection feature.
 
         """
-        self.component.value = 'text'
+        self.component.value = u'text'
         self.component.set_selection(1, 3)
-        self.assertEqual(self.component.selected_text, 'ex')
+        self.assertEqual(self.component.selected_text, u'ex')
 
-    @expectedFailure
-    def test_widget_read_only(self):
-         """ Check that the toolkit widget enforces its read-only flag.
-
-         The testcase uses the self.edit_text to simulate editing the
-         field thought the ui.
-
-         .. note:: Currently this test is an ``expected failure`` until
-            we can find a way to simulate the keystrokes. 
-            
-            Note: there may not ever be a way to test this automatically.
-            The read_only flag should only apply to the user attempting
-            to type something in to the ui. The text should always be 
-            modifiable programmatically. - SCC
-
-         """
-         initial = 'abc'
-         self.component.read_only = True
-         self.edit_text(self.widget, 'foo')
-         self.assertEqual(self.get_value(self.widget), initial)
-
-    def test_convert_to_component(self):
-        """ Test the field's 'converter' attribute.
+    def test_format(self):
+        """ Test the validators formatting.
 
         """
         self.component.value = 64
-        self.component.converter = IntConverter()
-        to_component = self.component.converter.to_component
-        self.assertEqual(to_component(self.get_value(self.widget)), '64')
+        self.component.validator = IntValidator()
+        self.assertEqual(self.get_value(self.widget), u'64')
 
-    def test_convert_from_component(self):
-        """ Test the field's 'from_string' attribute.
+    def test_convert(self):
+        """ Test the validators conversion.
 
         """
-        self.component.converter = IntConverter()
+        self.component.value = 0
+        self.component.validator = IntValidator()
         self.component.clear()
-        self.edit_text(self.widget, '123')
+        self.edit_text(self.widget, u'123')
+        self.component.submit()
         self.assertEqual(self.component.value, 123)
 
-    def test_conversion_to_and_from_widget(self):
-        """ Test a field converting both directions.
+    def test_validator_change(self):
+        """ Check that changing a validator works properly.
 
         """
-        self.component.converter = IntConverter()
-        self.component.value = 25
-        widget_value = self.get_value(self.widget)
-        convert = self.component.converter
-        self.assertEqual(convert.to_component(convert.from_component(widget_value)), '25')
+        output = [False]
+        def handler(obj, name, old, new):
+            output[0] = True
+        push_exception_handler(handler)
+        self.component.validator = IntValidator()
+        pop_exception_handler()
+        self.assertTrue(output[0])
 
-    def test_conversion_error(self):
-        """ Check that an error is set on a failed conversion.
+    def test_acceptable(self):
+        """ Check that validation properly sets the 'acceptable' attribute.
 
         """
-        self.assertFalse(self.component.error)
-        self.component.converter = IntConverter()
-        self.edit_text(self.widget, '100.0')
-        self.assertTrue(self.component.error)
+        self.assertTrue(self.component.acceptable)
+        self.component.value = 0
+        self.component.validator = IntValidator(low=10, high=150)
+        self.assertFalse(self.component.acceptable)
+        self.component.clear()
+        self.edit_text(self.widget, '100')
+        self.assertTrue(self.component.acceptable)
+        self.component.clear()
+        self.edit_text(self.widget, '5')
+        self.assertFalse(self.component.acceptable)
 
     def test_change_text(self):
         """ Change text programmatically, as opposed to editing it.
@@ -213,7 +205,7 @@ enamldef MainView(MainWindow):
 
         """
         self.component.select_all()
-        self.assertEnamlInSync(self.component, 'selected_text', 'abc')
+        self.assertEnamlInSync(self.component, 'selected_text', u'abc')
 
     def test_deselect(self):
         """ De-select text in a field.
@@ -221,14 +213,14 @@ enamldef MainView(MainWindow):
         """
         self.component.select_all()
         self.component.deselect()
-        self.assertEnamlInSync(self.component, 'selected_text', '')
+        self.assertEnamlInSync(self.component, 'selected_text', u'')
 
     def test_clear(self):
         """ Clear all text from the field.
 
         """
         self.component.clear()
-        self.assertEnamlInSync(self.component, 'value', '')
+        self.assertEqual(self.get_value(self.widget), u'')
 
     def test_backspace(self):
         """ Test the field's "backspace" method.
@@ -236,7 +228,7 @@ enamldef MainView(MainWindow):
         """
         self.set_cursor_position(self.widget, 2)
         self.component.backspace()
-        self.assertEnamlInSync(self.component, 'value', 'ac')
+        self.assertEqual(self.get_value(self.widget), u'ac')
         self.assertEnamlInSync(self.component, 'cursor_position', 1)
 
     def test_delete(self):
@@ -245,7 +237,7 @@ enamldef MainView(MainWindow):
         """
         self.set_cursor_position(self.widget, 2)
         self.component.delete()
-        self.assertEnamlInSync(self.component, 'value', 'ab')
+        self.assertEqual(self.get_value(self.widget), u'ab')
         self.assertEnamlInSync(self.component, 'cursor_position', 2)
 
     def test_end(self, mark=False):
@@ -275,7 +267,7 @@ enamldef MainView(MainWindow):
         """
         self.component.set_selection(1, 3)
         self.component.cut()
-        self.assertEnamlInSync(self.component, 'value', 'a')
+        self.assertEqual(self.get_value(self.widget), u'a')
 
     def test_copy_paste(self):
         """ Copy text, then paste it at the beginning of the field.
@@ -285,7 +277,7 @@ enamldef MainView(MainWindow):
         self.component.copy()
         self.set_cursor_position(self.widget, 0)
         self.component.paste()
-        self.assertEnamlInSync(self.component, 'value', 'babc')
+        self.assertEqual(self.get_value(self.widget), u'babc')
 
     def test_cut_paste(self):
         """ Cut text, then paste it at the beginning of the field.
@@ -295,7 +287,7 @@ enamldef MainView(MainWindow):
         self.component.cut()
         self.set_cursor_position(self.widget, 0)
         self.component.paste()
-        self.assertEnamlInSync(self.component, 'value', 'bac')
+        self.assertEqual(self.get_value(self.widget), u'bac')
 
     def test_insert(self):
         """ Insert text into the field.
@@ -303,7 +295,7 @@ enamldef MainView(MainWindow):
         """
         self.set_cursor_position(self.widget, 2)
         self.component.insert('foo')
-        self.assertEnamlInSync(self.component, 'value', 'abfooc')
+        self.assertEqual(self.get_value(self.widget), u'abfooc')
 
     def test_undo_delete(self):
         """ Undo a deletion.
@@ -311,9 +303,9 @@ enamldef MainView(MainWindow):
         """
         self.set_cursor_position(self.widget, 1)
         self.component.delete()
-        self.assertEnamlInSync(self.component, 'value', 'ac')
+        self.assertEqual(self.get_value(self.widget), u'ac')
         self.component.undo()
-        self.assertEnamlInSync(self.component, 'value', 'abc')
+        self.assertEqual(self.get_value(self.widget), u'abc')
 
     def test_undo_insert(self):
         """ Undo text insertion.
@@ -321,9 +313,9 @@ enamldef MainView(MainWindow):
         """
         self.set_cursor_position(self.widget, 1)
         self.component.insert('bar')
-        self.assertEnamlInSync(self.component, 'value', 'abarbc')
+        self.assertEqual(self.get_value(self.widget), u'abarbc')
         self.component.undo()
-        self.assertEnamlInSync(self.component, 'value', 'abc')
+        self.assertEqual(self.get_value(self.widget), u'abc')
 
     def test_redo_delete(self):
         """ Redo, after undoing a deletion.
@@ -331,7 +323,7 @@ enamldef MainView(MainWindow):
         """
         self.test_undo_delete()
         self.component.redo()
-        self.assertEnamlInSync(self.component, 'value', 'ac')
+        self.assertEqual(self.get_value(self.widget), u'ac')
 
     def test_redo_insertion(self):
         """ Redo, after undoing an insertion.
@@ -339,7 +331,7 @@ enamldef MainView(MainWindow):
         """
         self.test_undo_insert()
         self.component.redo()
-        self.assertEnamlInSync(self.component, 'value', 'abarbc')
+        self.assertEqual(self.get_value(self.widget), u'abarbc')
 
     #--------------------------------------------------------------------------
     # Abstract methods

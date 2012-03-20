@@ -43,7 +43,6 @@ class TestSpinBox(EnamlTestCase):
         """
 
         enaml_source = """
-from enaml.converters import IntConverter
 enamldef MainView(MainWindow):
     attr events
     SpinBox:
@@ -66,7 +65,6 @@ enamldef MainView(MainWindow):
         """
         component = self.component
         widget = self.widget
-
         self.assertEqual(self.get_value(widget), component.value)
         self.assertEqual(self.get_low(widget), component.low)
         self.assertEqual(self.get_high(widget), component.high)
@@ -82,7 +80,6 @@ enamldef MainView(MainWindow):
         component.low = new_low
         component_low = component.low
         widget_low = self.get_low(self.widget)
-
         self.assertEqual(component_low, new_low)
         self.assertEqual(widget_low, component_low)
 
@@ -95,7 +92,6 @@ enamldef MainView(MainWindow):
         component.high = new_high
         component_high = component.high
         widget_high = self.get_high(self.widget)
-
         self.assertEqual(component_high, new_high)
         self.assertEqual(widget_high, component_high)
 
@@ -107,10 +103,8 @@ enamldef MainView(MainWindow):
         widget = self.widget
         old_widget_value = self.get_value(widget)
         widget_step = self.get_step(widget)
-
         self.spin_up_event(widget)
         new_widget_value = self.get_value(widget)
-
         self.assertEqual(new_widget_value, old_widget_value + widget_step)
         self.assertEqual(component.value, new_widget_value)
 
@@ -122,10 +116,8 @@ enamldef MainView(MainWindow):
         widget = self.widget
         old_widget_value = self.get_value(widget)
         widget_step = self.get_step(widget)
-
         self.spin_down_event(widget)
         new_widget_value = self.get_value(widget)
-
         self.assertEqual(new_widget_value, old_widget_value - widget_step)
         self.assertEqual(component.value, new_widget_value)
 

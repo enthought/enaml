@@ -31,7 +31,7 @@ class TestQtField(QtTestAssistant, field.TestField):
 
         """
         widget.insert(text)
-
+        
     def change_text(self, widget, text):
         """ Change text programmatically, rather than "edit" it.
 
