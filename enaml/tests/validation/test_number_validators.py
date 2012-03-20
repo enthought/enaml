@@ -17,15 +17,15 @@ class TestNumberValidators(unittest.TestCase):
     def test_number_validator(self):
         v = NumberValidator()
         self.assertEqual(v.validate(u'k'), v.INVALID)
-        self.assertEqual(v.validate(u'12'), v.VALID)
-        self.assertEqual(v.validate(u'-12'), v.VALID)
-        self.assertEqual(v.validate(u'1e7'), v.VALID)
+        self.assertEqual(v.validate(u'12'), v.ACCEPTABLE)
+        self.assertEqual(v.validate(u'-12'), v.ACCEPTABLE)
+        self.assertEqual(v.validate(u'1e7'), v.ACCEPTABLE)
 
     def test_number_out_of_range(self):
-        v = NumberValidator(low=-10, high=89)
-        self.assertEqual(v.validate(u'12'), v.VALID)
-        self.assertEqual(v.validate(u'-12'), v.INTERMEDIATE)
-        self.assertEqual(v.validate(u'1e7'), v.INTERMEDIATE)
+        v = NumberValidator(low=10, high=89)
+        self.assertEqual(v.validate(u'12'), v.ACCEPTABLE)
+        self.assertEqual(v.validate(u'-12'), v.INVALID)
+        self.assertEqual(v.validate(u'9'), v.INTERMEDIATE)
         self.assertEqual(v.validate(u'60k'), v.INVALID)
     
     def test_integral_number_validator(self):

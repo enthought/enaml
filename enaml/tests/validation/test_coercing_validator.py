@@ -12,7 +12,7 @@ class TestCoercingValidator(unittest.TestCase):
     def test_all_valid(self):
         v = CoercingValidator()
         for item in (u'foo', u'12', u'foo12', u'#$@$@#$%!@#'):
-            self.assertEqual(v.validate(item), v.VALID)
+            self.assertEqual(v.validate(item), v.ACCEPTABLE)
     
     def test_thru_convert(self):
         v = CoercingValidator()
