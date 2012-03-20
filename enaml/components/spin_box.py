@@ -8,11 +8,13 @@ from traits.api import Int, Bool, Range, Instance
 
 from .control import Control, AbstractTkControl
 
-from ..converters import Converter, IntConverter
+from ..validation import AbstractValidator, IntValidator
 
 
 class AbstractTkSpinBox(AbstractTkControl):
+    """ The abstract toolkit interface for a spin box.
 
+    """
     @abstractmethod
     def shell_low_changed(self, low):
         raise NotImplementedError
@@ -30,7 +32,7 @@ class AbstractTkSpinBox(AbstractTkControl):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_converter_changed(self, converter):
+    def shell_validator_changed(self, validator):
         raise NotImplementedError
 
     @abstractmethod
@@ -43,7 +45,7 @@ class AbstractTkSpinBox(AbstractTkControl):
 
 
 class SpinBox(Control):
-    """ A spin box widget.
+    """ A spin box widget which manipulates integer values.
 
     """
     #: The minimum value for the spin box. Defaults to 0.
@@ -59,15 +61,15 @@ class SpinBox(Control):
     #: low <= value <= high.
     value = Range('low', 'high')
 
-    #: A converter object to convert to and from a spin box integer
-    #: and a string for display. The to_component method will be called 
-    #: with an integer and should return a string for display. The 
-    #: from_component method will be passed a string and should return 
+    #: A validator object to convert to and from a spin box integer
+    #: and a unicode string for display. The format method will be 
+    #: called with an integer and should return a string for display. 
+    #: The convert method will be passed a string and should return 
     #: an int or raise a ValueError if the string cannot be converted. 
     #: If the conversion is succesful but the returned int does not fall
     #: within the allowed range of the spin box, then the spin box will
-    #: not be updated. The default converter is a simple IntConverter
-    converter = Instance(Converter, factory=IntConverter)
+    #: not be updated. The default validator is a simple IntValidator.
+    validator = Instance(AbstractValidator, factory=IntValidator)
 
     #: Whether or not the spin box will wrap around at its extremes. 
     #: Defaults to False.
