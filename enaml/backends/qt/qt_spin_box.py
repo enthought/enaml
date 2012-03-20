@@ -191,7 +191,7 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
         self.widget.setSingleStep(step)
 
     def set_validator(self, validator):
-        """ Sets the coverter for the widget.
+        """ Sets the validator for the widget.
 
         """
         self.widget.setValidator(validator)
