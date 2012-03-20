@@ -2,8 +2,9 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt.QtGui import QLineEdit, QValidator
+from .qt.QtGui import QLineEdit
 from .qt_control import QtControl
+from .qt_enaml_validator import QtEnamlValidator
 
 from ...components.field import AbstractTkField
 from ...guard import guard
@@ -14,49 +15,6 @@ _PASSWORD_MODES = {
     'password': QLineEdit.Password,
     'silent': QLineEdit.NoEcho,
 }
-
-
-class QtFieldValidator(QValidator):
-    """ A QValidator implementation which proxies the work to the 
-    Enaml validator installed on the shell component.
-
-    """
-    def __init__(self, validator):
-        """ Initialize a QtFieldValidator
-
-        Parameters
-        ----------
-        validator : AbstractValidator
-            An instance of the Enaml AbstractValidator.
-
-        """
-        super(QtFieldValidator, self).__init__()
-        self.validator = validator
-
-    def validate(self, text, pos):
-        """ Validates the given text using the 'validate' method of 
-        Enaml validator.
-
-        """
-        v = self.validator
-        rv = v.validate(text)
-        if rv == v.ACCEPTABLE:
-            res = QValidator.Acceptable
-        elif rv == v.INTERMEDIATE:
-            res = QValidator.Intermediate
-        elif rv == v.INVALID:
-            res = QValidator.Invalid
-        else:
-            # This should never happen
-            raise ValueError('Invalid validation result')
-        return res
-    
-    def fixup(self, text):
-        """ Attempts to fixup the given text using the 'normalize' method
-        of the Enaml validator.
-
-        """
-        return self.validator.normalize(text)
 
 
 class QtField(QtControl, AbstractTkField):
@@ -345,7 +303,7 @@ class QtField(QtControl, AbstractTkField):
         instance and applies it to the underlying control.
 
         """
-        qvalidator = QtFieldValidator(validator)
+        qvalidator = QtEnamlValidator(validator)
         self.widget.setValidator(qvalidator)
     
     def set_max_length(self, max_length):
