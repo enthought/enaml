@@ -164,7 +164,9 @@ enamldef MainView(MainWindow):
         def handler(obj, name, old, new):
             output[0] = True
         push_exception_handler(handler)
+        old = self.component.validator
         self.component.validator = IntValidator()
+        self.component.validator = old
         pop_exception_handler()
         self.assertTrue(output[0])
 
