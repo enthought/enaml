@@ -4,9 +4,69 @@
 #------------------------------------------------------------------------------
 import datetime
 import locale
+import sys
 import time
 
 from .abstract_locale import AbstractLocale
+
+
+# nl_langinfo is not available on Windows and as a result locale is 
+# mostly useless. So we have to fake a bunch of stuff for that platform
+# and just hard-code it to the english equivalents. 
+_win_defaults = {
+    'am': 'AM',
+    'pm': 'PM',
+    'months': {
+        1: 'January',
+        2: 'February',
+        3: 'March',
+        4: 'April',
+        5: 'May',
+        6: 'June',
+        7: 'July',
+        8: 'August',
+        9: 'September',
+        10: 'October',
+        11: 'November',
+        12: 'December',
+    },
+    'ab_months': {
+        1: 'Jan',
+        2: 'Feb',
+        3: 'Mar',
+        4: 'Apr',
+        5: 'May',
+        6: 'Jun',
+        7: 'Jul',
+        8: 'Aug',
+        9: 'Sep',
+        10: 'Oct',
+        11: 'Nov',
+        12: 'Dec',
+    },
+    'days': {
+        1: 'Sunday',
+        2: 'Monday',
+        3: 'Tuesday',
+        4: 'Wednesday',
+        5: 'Thursday',
+        6: 'Friday',
+        7: 'Saturday',
+    },
+    'ab_days': {
+        1: 'Sun',
+        2: 'Mon',
+        3: 'Tue',
+        4: 'Wed',
+        5: 'Thu',
+        6: 'Fri',
+        7: 'Sat',
+    },
+    'time': '%I:%M:%S %p',
+    'ab_time': '%H:%M:%S',
+    'date': '%m/%d/%Y',
+    'datetime': '%a %b %e %X %Y',
+}
 
 
 def _convert_base(value, base):
@@ -87,14 +147,22 @@ class SystemLocale(AbstractLocale):
         """ The string for "AM" time in the locale.
 
         """
-        return unicode(locale.nl_langinfo(locale.AM_STR))
+        if sys.platform == 'win32':
+            r = _win_defaults['am']
+        else:
+            r = locale.nl_langinfo(locale.AM_STR)
+        return unicode(r)
     
     @property
     def pm_string(self):
         """ The string for "PM" time in the locale.
 
         """
-        return unicode(locale.nl_langinfo(locale.PM_STR))
+        if sys.platform == 'win32':
+            r = _win_defaults['pm']
+        else:
+            r = locale.nl_langinfo(locale.PM_STR)
+        return unicode(r)
 
     @property
     def decimal_point(self):
@@ -170,10 +238,18 @@ class SystemLocale(AbstractLocale):
         """
         if month_int < 1 or month_int > 12:
             return ''
-        prefix = 'AB' if abbreviated else ''
-        attr = prefix + ('MON_%i' % month_int)
-        flag = getattr(locale, attr)
-        return unicode(locale.nl_langinfo(flag))
+        if sys.platform == 'win32':
+            if abbreviated:
+                key = 'ab_months'
+            else:
+                key = 'months'
+            r = _win_defaults[key][month_int]
+        else:
+            prefix = 'AB' if abbreviated else ''
+            attr = prefix + ('MON_%i' % month_int)
+            flag = getattr(locale, attr)
+            r = locale.nl_langinfo(flag)
+        return unicode(r)
 
     def day_name(self, day_int, abbreviated=False):
         """ The day name for the given day integer.
@@ -196,10 +272,18 @@ class SystemLocale(AbstractLocale):
         """
         if day_int < 1 or day_int > 7:
             return ''
-        prefix = 'AB' if abbreviated else ''
-        attr = prefix + ('DAY_%i' % day_int)
-        flag = getattr(locale, attr)
-        return unicode(locale.nl_langinfo(flag))
+        if sys.platform == 'win32':
+            if abbreviated:
+                key = 'ab_days'
+            else:
+                key = 'days'
+            r = _win_defaults[key][day_int]
+        else:
+            prefix = 'AB' if abbreviated else ''
+            attr = prefix + ('DAY_%i' % day_int)
+            flag = getattr(locale, attr)
+            r = locale.nl_langinfo(flag)
+        return unicode(r)
         
     def time_format(self, abbreviated=False):
         """ The format string for a time value.
@@ -216,8 +300,16 @@ class SystemLocale(AbstractLocale):
             The time format string.
 
         """
-        flag = locale.T_FMT if abbreviated else locale.T_FMT_AMPM
-        return unicode(locale.nl_langinfo(flag))
+        if sys.platform == 'win32':
+            if abbreviated:
+                key = 'ab_time'
+            else:
+                key = 'time'
+            r = _win_defaults[key]
+        else:
+            flag = locale.T_FMT if abbreviated else locale.T_FMT_AMPM
+            r = locale.nl_langinfo(flag)
+        return unicode(r)
 
     def date_format(self, abbreviated=False):
         """ The format string for a date value.
@@ -240,8 +332,12 @@ class SystemLocale(AbstractLocale):
         argument is ignored in this implementation.
 
         """
-        # Python doesn't support %e in strptime, but %d is equivalent
-        return unicode(locale.nl_langinfo(locale.D_FMT).replace('%e', '%d'))
+        if sys.platform == 'win32':
+            r = _win_defaults['date']
+        else:
+            # Python doesn't support %e in strptime, but %d is equivalent
+            r = locale.nl_langinfo(locale.D_FMT).replace('%e', '%d')
+        return unicode(r)
 
     def datetime_format(self, abbreviated=False):
         """ The format string for a datetime value.
@@ -264,8 +360,12 @@ class SystemLocale(AbstractLocale):
         argument is ignored in this implementation.
 
         """
-        # Python doesn't support %e in strptime, but %d is equivalent
-        return unicode(locale.nl_langinfo(locale.D_T_FMT).replace('%e', '%d'))
+        if sys.platform == 'win32':
+            r = _win_defaults['datetime']
+        else:
+            # Python doesn't support %e in strptime, but %d is equivalent
+            r = locale.nl_langinfo(locale.D_T_FMT).replace('%e', '%d')
+        return unicode(r)
         
     #--------------------------------------------------------------------------
     # Conversions
