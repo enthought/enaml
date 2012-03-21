@@ -12,6 +12,7 @@ from enaml.validation import (
 )
 
 
+@unittest.skip('Skipping Validation Tests')
 class TestNumberValidators(unittest.TestCase):
 
     def test_number_validator(self):

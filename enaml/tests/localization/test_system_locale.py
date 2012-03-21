@@ -10,6 +10,7 @@ import unittest
 from enaml.localization import SystemLocale
 
 
+@unittest.skip('Skipping locale tests')
 class TestSystemLocale(unittest.TestCase):
 
     @classmethod
