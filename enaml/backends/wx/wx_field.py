@@ -221,7 +221,9 @@ class wxLineEdit(wx.TextCtrl):
         new_widget.ChangeValue(self.GetValue())
         new_widget.SetInsertionPoint(self.GetInsertionPoint())
         new_widget.SetSelection(*self.GetSelection())
-        validator = self.GetValidator()
+        # We have to clone the validator or WX will segfault when we
+        # set it on the new widget.
+        validator = self.GetValidator().Clone()
         if validator is not None:
             new_widget.SetValidator(validator)
         return new_widget
@@ -620,7 +622,7 @@ class WXField(WXControl, AbstractTkField):
         # here that we should be needing to, but the only way around
         # this that I see is to implement our own control from scratch.
         with guard(self, 'updating_selection'):
-            self.shell_obj._selected_text = self.widget.GetStringSelection()
+            self.shell_obj.selected_text = self.widget.GetStringSelection()
             self.shell_obj.cursor_position = self.widget.GetInsertionPoint()
 
     def _update_widget_style(self, style):
