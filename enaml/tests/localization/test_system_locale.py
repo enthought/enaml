@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import datetime
 import locale
+import sys
 import unittest
 
 from enaml.localization import SystemLocale
@@ -13,7 +14,10 @@ class TestSystemLocale(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        locale.setlocale(locale.LC_ALL, ('en_US', 'UTF-8'))
+        if sys.platform == 'win32':
+            locale.setlocale(locale.LC_ALL, 'usa')
+        else:
+            locale.setlocale(locale.LC_ALL, ('en_US', 'UTF-8'))
     
     @classmethod
     def tearDownClass(cls):
