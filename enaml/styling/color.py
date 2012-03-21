@@ -265,6 +265,7 @@ Color.color_map = {
 
     # Custom Enaml colors
     'error': Color(249, 167, 167),
+    'unacceptable': Color(249, 249, 167),
     'none': Color(-1, -1, -1, -1),
 
 }

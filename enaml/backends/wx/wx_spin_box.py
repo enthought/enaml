@@ -8,7 +8,6 @@ import wx.lib.newevent
 from .wx_control import WXControl
 
 from ...components.spin_box import AbstractTkSpinBox
-from ...converters import IntConverter
 
 
 #: The changed event for the custom spin ctrl.
@@ -35,13 +34,19 @@ class CustomSpinCtrl(wx.SpinCtrl):
     and wx.SpinButton into a single control.
 
     """
+    #: The text in the control is invalid
+    INVALID = 0
+
     #: The text in the control may be acceptable
     INTERMEDIATE = 1
     
     #: The text in the control is a valid value
     ACCEPTABLE = 2
 
-    def __init__(self, parent, low=0, high=100, step=1, converter=None, wrap=False):
+    #: The internal storage for the validator
+    _validator = None
+
+    def __init__(self, parent, low=0, high=100, step=1, wrap=False):
         """ CustomSpinCtrl constructor.
 
         Arguments
@@ -57,11 +62,6 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         step : int, optional
             The step amount to use for the spin ctrl. Defaults to 1.
-
-        converter : Instance(Converter), optional
-            A converter to use to convert to and from string display
-            values and the internal integer value of the control.
-            Defaults to IntConverter().
 
         wrap : bool, optional
             A flag indicating whether the spin ctrl should wrap
@@ -79,8 +79,7 @@ class CustomSpinCtrl(wx.SpinCtrl):
         self._low = low
         self._high = high
         self._step = step
-        self._converter = converter or IntConverter()
-        self._value_string = self._converter.to_component(low)
+        self._value_string = unicode(low)
         self._wrap = wrap
 
         # Stores whether spin-up or spin-down was pressed.
@@ -277,17 +276,17 @@ class CustomSpinCtrl(wx.SpinCtrl):
         """
         self._step = step
 
-    def GetConverter(self):
-        """ Returns the converter in use for the control.
+    def GetValidator(self):
+        """ Returns the validator in use for the control.
 
         """
         return self._converter
     
-    def SetConverter(self, converter):
-        """ Sets the converter in use for the control.
+    def SetValidator(self, validator):
+        """ Sets the validator in use for the control.
 
         """
-        self._converter = converter
+        self._validator = validator
         self.InterpretText()
 
     def GetWrap(self):
@@ -319,7 +318,7 @@ class CustomSpinCtrl(wx.SpinCtrl):
         if self._low <= value <= self._high:
             different = (self._internal_value != value)
             self._internal_value = value
-
+        
         # Always set the value string, just to be overly 
         # safe that we don't fall out of sync.
         self._value_string = self.TextFromValue(self._internal_value)
@@ -340,10 +339,9 @@ class CustomSpinCtrl(wx.SpinCtrl):
         valid = self.Validate(text)
         if valid == self.ACCEPTABLE:
             value = self.ValueFromText(text)
-            self.SetValue(value)
         else:
-            # If the text does not validate, use the current value.
-            self.SetValue(self._internal_value)
+            value = self._internal_value
+        self.SetValue(value)
 
     def TextFromValue(self, value):
         """ Converts the given integer to a string for display using
@@ -354,9 +352,9 @@ class CustomSpinCtrl(wx.SpinCtrl):
 
         """
         try:
-            text = self._converter.to_component(value)
+            text = self._validator.format(value)
         except ValueError:
-            text = str(value)
+            text = unicode(value)
         return text
 
     def ValueFromText(self, text):
@@ -364,29 +362,24 @@ class CustomSpinCtrl(wx.SpinCtrl):
         control using the user supplied converter.
 
         """
-        # This will only be called if the validate method has returned 
-        # ACCEPTABLE, so we can assume that calling the converter again 
-        # will not raise an error. Further, we don't worry too much about 
-        # calling the converter twice since it should be a relatively 
-        # cheap operation to convert a string to some int. If it's not, 
-        # then a given converter can implement its own internal caching 
-        # to speed things up.
-        return self._converter.from_component(text)
+        return self._validator.convert(text)
 
     def Validate(self, text):
         """ Validates whether or not the given text can be converted
         to a valid integer.
 
         """
-        try:
-            val = self._converter.from_component(text)
-        except ValueError:
+        v = self._validator
+        rv = v.validate(text)
+        if rv == v.ACCEPTABLE:
+            res = self.ACCEPTABLE
+        elif rv == v.INTERMEDIATE:
             res = self.INTERMEDIATE
+        elif rv == v.INVALID:
+            res = self.INVALID
         else:
-            if self._low <= val <= self._high:
-                res = self.ACCEPTABLE
-            else:
-                res = self.INTERMEDIATE
+            # This should never happen
+            raise ValueError('Invalid validation result')
         return res
 
 
@@ -412,10 +405,10 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         # to paint reliably.
         super(WXSpinBox, self).initialize()
         shell = self.shell_obj
+        self.set_validator(shell.validator)
         self.set_spin_low(shell.low)
         self.set_spin_high(shell.high)
         self.set_spin_step(shell.step)
-        self.set_spin_converter(shell.converter)
         self.set_spin_wrap(shell.wrap)
         self.set_spin_value(shell.value)
 
@@ -453,11 +446,11 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         """
         self.set_spin_step(step)
 
-    def shell_converter_changed(self, converter):
-        """ The change handler for the 'converter' attribute.
+    def shell_validator_changed(self, validator):
+        """ The change handler for the 'validator' attribute.
 
         """
-        self.set_spin_converter(converter)
+        self.set_validator(validator)
 
     def shell_wrap_changed(self, wrap):
         """ The change handler for the 'wrap' attribute.
@@ -479,8 +472,8 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         """ The event handler for the widget's spin event.
 
         """
-        self.shell_obj.value = self.widget.GetValue()
         event.Skip()
+        self.shell_obj.value = self.widget.GetValue()
 
     #--------------------------------------------------------------------------
     # Widget Update Methods 
@@ -509,12 +502,11 @@ class WXSpinBox(WXControl, AbstractTkSpinBox):
         """
         self.widget.SetStep(step)
 
-    def set_spin_converter(self, converter):
-        """ Updates the 'to_string' and 'from_string' functions of the
-        spin box. Not meant for public consumption.
+    def set_validator(self, validator):
+        """ Sets the validator for the widget.
 
         """
-        self.widget.SetConverter(converter)
+        self.widget.SetValidator(validator)
 
     def set_spin_wrap(self, wrap):
         """ Updates the wrap value of the spin box.

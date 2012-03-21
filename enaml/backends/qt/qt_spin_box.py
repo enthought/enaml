@@ -2,79 +2,69 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
+from .qt.QtGui import QSpinBox, QValidator
 from .qt_control import QtControl
 
 from ...components.spin_box import AbstractTkSpinBox
-from ...converters import IntConverter
 
 
-class EnamlQSpinBox(QtGui.QSpinBox):
-    """ A QSpinBox with hooks for user-supplied string conversion.
+class EnamlQSpinBox(QSpinBox):
+    """ A QSpinBox sublcass with hooks for user supplied validation.
 
     """
-    #: The internal storage for the Enaml converter object. 
-    #: The default converter is an IntConverter.
-    _converter = IntConverter()
+    #: The internal storage for the Enaml validator object. 
+    _validator = None
 
-    def converter(self):
-        """ Returns the converter assigned to this spin box.
+    def validator(self):
+        """ Returns the Enaml validator assigned to this spin box.
 
         """
-        return self._converter
+        return self._validator
     
-    def setConverter(self, converter):
-        """ Set the converter for this spin box.
+    def setValidator(self, validator):
+        """ Set the validator for this spin box.
 
         """
-        self._converter = converter
+        self._validator = validator
         self.interpretText()
 
     def textFromValue(self, value):
         """ Converts the given integer to a string for display using the 
-        user supplied converter object. 
+        user supplied validator object. 
 
         If the conversion fails due to the converter raising a ValueError
-        then simple str(...) conversion is used.
+        then simple unicode(...) conversion is used.
 
         """
         try:
-            text = self._converter.to_component(value)
+            text = self._validator.format(value)
         except ValueError:
-            text = str(value)
+            text = unicode(value)
         return text
 
     def valueFromText(self, text):
         """ Converts the user typed string into an integer for the
-        control using the user supplied converter.
+        control using the user supplied validator.
 
         """
-        # Qt will only call this method if the validate method has 
-        # returned Acceptable, so we can safetly assume that calling 
-        # the converter again will not raise an error. Further, we don't 
-        # worry too much about calling the converter twice since it 
-        # should be a relatively cheap operation to convert a string to 
-        # some int. If it's not, then a given converter can implement its
-        # own internal caching to speed things up.
-        return self._converter.from_component(text)
+        return self._validator.convert(text)
 
     def validate(self, text, pos):
         """ Validates whether or not the given text can be converted
         to an integer.
 
         """
-        # Note that we avoid returning an Invalid QValidator value
-        # since that prevents the control from accepting that keystroke
-        # and makes the ui a bit cumbersome to use.
-        try:
-            val = self._converter.from_component(text)
-        except ValueError:
-            res = QtGui.QValidator.Intermediate
+        v = self._validator
+        rv = v.validate(text)
+        if rv == v.ACCEPTABLE:
+            res = QValidator.Acceptable
+        elif rv == v.INTERMEDIATE:
+            res = QValidator.Intermediate
+        elif rv == v.INVALID:
+            res = QValidator.Invalid
         else:
-            if self.minimum() <= val <= self.maximum():
-                res = QtGui.QValidator.Acceptable
-            else:
-                res = QtGui.QValidator.Intermediate
+            # This should never happen
+            raise ValueError('Invalid validation result')
         return res
 
 
@@ -97,12 +87,12 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
         """
         super(QtSpinBox, self).initialize()
         shell = self.shell_obj
+        self.set_validator(shell.validator)
         self.set_spin_low(shell.low)
         self.set_spin_high(shell.high)
         self.set_spin_step(shell.step)
-        self.set_spin_converter(shell.converter)
-        self.set_spin_wrap(shell.wrap)
         self.set_spin_value(shell.value)
+        self.set_spin_wrap(shell.wrap)
         self.set_spin_tracking(shell.tracking)
 
     def bind(self):
@@ -143,12 +133,12 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
         """
         self.set_spin_step(step)
 
-    def shell_converter_changed(self, converter):
-        """ The change handler for the 'converter' attribute of the shell
+    def shell_validator_changed(self, validator):
+        """ The change handler for the 'validator' attribute of the shell
         object.
 
         """
-        self.set_spin_converter(converter)
+        self.set_validator(validator)
 
     def shell_wrap_changed(self, wrap):
         """ The change handler for the 'wrap' attribute of the shell 
@@ -200,11 +190,11 @@ class QtSpinBox(QtControl, AbstractTkSpinBox):
         """
         self.widget.setSingleStep(step)
 
-    def set_spin_converter(self, converter):
-        """ Sets the coverter for the widget.
+    def set_validator(self, validator):
+        """ Sets the validator for the widget.
 
         """
-        self.widget.setConverter(converter)
+        self.widget.setValidator(validator)
 
     def set_spin_wrap(self, wrap):
         """ Sets the wrap mode of the widget.

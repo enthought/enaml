@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from unicodedata import category as ucategory
+
 import wx
 
 from .wx_control import WXControl
@@ -10,29 +12,157 @@ from ...components.field import AbstractTkField
 from ...guard import guard
 
 
-class CustomTextCtrl(wx.TextCtrl):
-    """ A wx.TextCtrl subclass that supports placeholder text.
+class WXFieldValidator(wx.PyValidator):
+    """ A wx.PyValidator implementation which proxies the work to the 
+    Enaml validator installed on the shell component.
 
-    This text control will display grayed out provided placeholder text
-    when the control is empty and loses focus. As soon as the control
-    gains focus, the placeholder text is removed.
+    """
+    def __init__(self, validator):
+        """ Initialize a WXFieldValidator
+
+        Parameters
+        ----------
+        validator : AbstractValidator
+            An instance of the Enaml AbstractValidator.
+
+        """
+        super(WXFieldValidator, self).__init__()
+        self.validator = validator
+        self.Bind(wx.EVT_CHAR, self.OnChar)
+        self.Bind(wx.EVT_TEXT_ENTER, self.OnTextEnter)
+        self.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
+
+    def Clone(self):
+        """ A required wx.PyValidator method which returns a clone of
+        this object by calling the constructor with the internal
+        Enaml validator instance.
+
+        """
+        return self.__class__(self.validator)
+
+    def OnChar(self, event):
+        """ An event handler which intercepts the char events before the
+        control is updated and runs the new string through the validator.
+
+        """
+        # We only need to validate the string if the key pressed can
+        # actually have an effect on the displayable text. The following
+        # clause simply filters any control keys which generate char
+        # events, such as the arrow keys.
+        uchar = unichr(event.GetUnicodeKey())
+        if ucategory(uchar).startswith('C'):
+            event.Skip()
+            return
+
+        # We only skip the char event if the new text validates as 
+        # INTERMEDIATE or ACCEPTABLE. Otherwise, we kill the event
+        # so that the control is not visibly updated.
+        v = self.validator
+        window = self.GetWindow()
+        current = window.GetValue()
+        idx = window.GetInsertionPoint()
+        new = current[:idx] + uchar + current[idx:]
+        if v.validate(new) != v.INVALID:
+            event.Skip()
+
+    def OnTextEnter(self, event):
+        """ An event handler which intercepts the enter pressed event
+        and only skips it if the text is valid or can be made valid.
+
+        """
+        v = self.validator
+        window = self.GetWindow()
+        current = window.GetValue()
+        if v.validate(current) == v.ACCEPTABLE:
+            event.Skip()
+        else:
+            new = v.normalize(current)
+            if v.validate(new) == v.ACCEPTABLE:
+                window.ChangeValue(new)
+                event.Skip()
+    
+    def OnKillFocus(self, event):
+        """ An event handler which intercepts the lost focus event
+        and will attempt to make the text valid before forwarding 
+        the event.
+
+        """
+        v = self.validator
+        window = self.GetWindow()
+        current = window.GetValue()
+        if v.validate(current) != v.ACCEPTABLE:
+            new = v.normalize(current)
+            if v.validate(new) == v.ACCEPTABLE:
+                window.ChangeValue(new)
+        event.Skip()
+
+
+class wxLineEdit(wx.TextCtrl):
+    """ A wx.TextCtrl subclass which is similar to a QLineEdit in terms
+    of features and validation behavior.
 
     """
     def __init__(self, *args, **kwargs):
-        super(CustomTextCtrl, self).__init__(*args, **kwargs)
+        super(wxLineEdit, self).__init__(*args, **kwargs)
         self._placeholder_text = ''
         self._placeholder_active = False
         self._user_fgcolor = None
         self.Bind(wx.EVT_KILL_FOCUS, self.OnKillFocus)
         self.Bind(wx.EVT_SET_FOCUS, self.OnSetFocus)
 
+    #--------------------------------------------------------------------------
+    # Private API
+    #--------------------------------------------------------------------------
+    def _UpdatePlaceholderDisplay(self):
+        """ Updates the display with the placeholder text if no text
+        is currently set for the control.
+        
+        """ 
+        if not self.GetValue() and self._placeholder_text:
+            self.ChangeValue(self._placeholder_text)
+            color = wx.Color(95, 95, 95)
+            super(wxLineEdit, self).SetForegroundColour(color)
+            self._placeholder_active = True
+
+    def _RemovePlaceholderDisplay(self):
+        """ Removes the placeholder text if it is currently active.
+
+        """
+        if self._placeholder_active:
+            self.ChangeValue('')
+            color = self._user_fgcolor or wx.Color(0, 0, 0)
+            super(wxLineEdit, self).SetForegroundColour(color)
+            self._placeholder_active = False
+
+    #--------------------------------------------------------------------------
+    # Event Handlers
+    #--------------------------------------------------------------------------
+    def OnKillFocus(self, event):
+        """ Refreshes the placeholder display when the control loses
+        focus.
+
+        """
+        self._UpdatePlaceholderDisplay()
+        event.Skip()
+
+    def OnSetFocus(self, event):
+        """ Removes the placeholder display when the control receives
+        focus.
+
+        """
+        self._RemovePlaceholderDisplay()
+        event.Skip()
+    
+    #--------------------------------------------------------------------------
+    # Public API
+    #--------------------------------------------------------------------------
     def SetPlaceHolderText(self, placeholder_text):
         """ Sets the placeholder text to the given value. Pass an empty
         string to turn off the placeholder text functionality.
 
         """
         self._placeholder_text = placeholder_text
-        self.OnKillFocus(None)
+        self._UpdatePlaceholderDisplay()
 
     def GetPlaceHolderText(self):
         """ Returns the placeholder text for this control.
@@ -40,27 +170,14 @@ class CustomTextCtrl(wx.TextCtrl):
         """
         return self._placeholder_text
 
-    def OnKillFocus(self, event):
-        """ Handles the kill focus event on the control and refreshes
-        the placeholder text if necessary.
+    def ChangeValue(self, text):
+        """ Overridden method which moves the insertion point to the end
+        of the field when changing the text value. This causes the field
+        to behave like Qt.
 
         """
-        if not self.GetValue() and self._placeholder_text:
-            self.ChangeValue(self._placeholder_text)
-            color = wx.Color(95, 95, 95)
-            super(CustomTextCtrl, self).SetForegroundColour(color)
-            self._placeholder_active = True
-
-    def OnSetFocus(self, event):
-        """ Handles the on focus event on the control and removes the
-        placeholder test if necessary.
-
-        """
-        if self._placeholder_active:
-            self.ChangeValue('')
-            color = self._user_fgcolor or wx.Color(0, 0, 0)
-            super(CustomTextCtrl, self).SetForegroundColour(color)
-            self._placeholder_active = False
+        super(wxLineEdit, self).ChangeValue(text)
+        self.SetInsertionPoint(len(text))
 
     def GetValue(self):
         """ Returns string value in the control, or an empty string if
@@ -69,21 +186,21 @@ class CustomTextCtrl(wx.TextCtrl):
         """
         if self._placeholder_active:
             return ''
-        return super(CustomTextCtrl, self).GetValue()
+        return super(wxLineEdit, self).GetValue()
 
     def SetForegroundColour(self, wxColor, force=False):
         """ Sets the foreground color of the field. If the placeholder
-        text is being show, `force` must be True in order to override
+        text is being shown, `force` must be True in order to override
         the placeholder text color.
 
         """
         self._user_fgcolor = wxColor
         if self._placeholder_active and not force:
             return
-        super(CustomTextCtrl, self).SetForegroundColour(wxColor)
+        super(wxLineEdit, self).SetForegroundColour(wxColor)
 
     def Clone(self, parent, style=None):
-        """ Clone the CustomTextCtrl widget.
+        """ Clone the wxLineEdit widget.
 
         Arguments
         ---------
@@ -97,13 +214,16 @@ class CustomTextCtrl(wx.TextCtrl):
         """
         if style is None:
             style = self.GetWindowStyle()
-        new_widget = CustomTextCtrl(parent=parent, style=style)
+        new_widget = self.__class__(parent=parent, style=style)
         new_widget._placeholder_text = self._placeholder_text
         new_widget._placeholder_active = self._placeholder_active
         new_widget.SetForegroundColour(self._user_fgcolor)
         new_widget.ChangeValue(self.GetValue())
         new_widget.SetInsertionPoint(self.GetInsertionPoint())
         new_widget.SetSelection(*self.GetSelection())
+        validator = self.GetValidator()
+        if validator is not None:
+            new_widget.SetValidator(validator)
         return new_widget
 
 
@@ -118,7 +238,7 @@ class WXField(WXControl, AbstractTkField):
     # Setup Methods
     #--------------------------------------------------------------------------
     def create(self, parent):
-        """ Creates the underlying wx.CustomTextCtrl.
+        """ Creates the underlying wxLineEdit.
 
         """
         # We have to do a bit of initialization in the create method
@@ -140,24 +260,19 @@ class WXField(WXControl, AbstractTkField):
         else:
             style |= wx.TE_PASSWORD
 
-        self.widget = CustomTextCtrl(parent=parent, style=style)
+        self.widget = wxLineEdit(parent=parent, style=style)
 
     def initialize(self):
-        """ Initializes the attributes of the wx.CustomTextCtrl.
+        """ Initializes the attributes of the wxLineEdit.
 
         """
         super(WXField, self).initialize()
         shell = self.shell_obj
-        self._set_placeholder_text(shell.placeholder_text)
-
-        text = shell.field_text
-        if text:
-            self._set_text(text)
-
-        shell._modified = False
-        
-        self._set_cursor_position(shell.cursor_position)
-        self._set_max_length(shell.max_length)
+        self.set_validator(shell.validator)
+        self.set_text(shell.validator.format(shell.value))
+        self.set_placeholder_text(shell.placeholder_text)
+        self.set_cursor_position(shell.cursor_position)
+        self.set_max_length(shell.max_length)
 
     def bind(self):
         """ Binds the event handlers for the wx.TextCtrl.
@@ -165,33 +280,34 @@ class WXField(WXControl, AbstractTkField):
         """
         super(WXField, self).bind()
         widget = self.widget
-        widget.Bind(wx.EVT_TEXT, self._on_text_edited)
-        widget.Bind(wx.EVT_TEXT_ENTER, self._on_return_pressed)
-        widget.Bind(wx.EVT_LEFT_UP, self._on_selection_changed)
+        widget.Bind(wx.EVT_TEXT, self.on_text_edited)
+        widget.Bind(wx.EVT_TEXT_ENTER, self.on_return_pressed)
+        widget.Bind(wx.EVT_KILL_FOCUS, self.on_lost_focus)
+        widget.Bind(wx.EVT_LEFT_UP, self.on_selection_changed)
 
     #--------------------------------------------------------------------------
     # Shell Object Change Handlers
     #--------------------------------------------------------------------------
+    def shell_validator_changed(self, validator):
+        """ The change handler for the 'validator' attribute on the 
+        shell object.
+        
+        """
+        self.set_validator(validator)
+
     def shell_max_length_changed(self, max_length):
         """ The change handler for the 'max_length' attribute on the
         shell.
 
         """
-        self._set_max_length(max_length)
+        self.set_max_length(max_length)
 
     def shell_read_only_changed(self, read_only):
         """ The change handler for the 'read_only' attribute on the
         shell.
 
         """
-        self._set_read_only(read_only)
-
-    def shell_placeholder_text_changed(self, placeholder_text):
-        """ The change handler for the 'placeholder_text' attribute on
-        the shell.
-
-        """
-        self._set_placeholder_text(placeholder_text)
+        self.set_read_only(read_only)
 
     def shell_cursor_position_changed(self, cursor_position):
         """ The change handler for the 'cursor_position' attribute on
@@ -199,24 +315,21 @@ class WXField(WXControl, AbstractTkField):
 
         """
         if not guard.guarded(self, 'updating_selection'):
-            self._set_cursor_position(cursor_position)
+            self.set_cursor_position(cursor_position)
 
-    def shell_field_text_changed(self, text):
-        """ The change handler for the 'field_text' attribute on the shell
-        object.
+    def shell_placeholder_text_changed(self, placeholder_text):
+        """ The change handler for the 'placeholder_text' attribute on
+        the shell.
 
         """
-        if text is not None:
-            if not guard.guarded(self, 'updating_text'):
-                self._set_text(text)
-                self.shell_obj._modified = False
+        self.set_placeholder_text(placeholder_text)
 
     def shell_password_mode_changed(self, mode):
         """ The change handler for the 'password_mode' attribute on the
         shell object.
 
         """
-        self._set_password_mode(mode)
+        self.set_password_mode(mode)
     
     #--------------------------------------------------------------------------
     # Manipulation Methods 
@@ -383,33 +496,117 @@ class WXField(WXControl, AbstractTkField):
     #--------------------------------------------------------------------------
     # Event handlers
     #--------------------------------------------------------------------------
-    def _on_text_edited(self, event):
+    def on_text_edited(self, event):
         """ The event handler for when the user edits the text through 
         the ui.
 
         """
         event.Skip()
-        with guard(self, 'updating_text'):
-            shell = self.shell_obj
-            text = self.widget.GetValue()
-            shell.field_text = text
-            shell._modified = True
-            shell.text_edited(text)
+        self.shell_obj._field_text_edited()
 
-    def _on_return_pressed(self, event):
+    def on_return_pressed(self, event):
         """ The event handler for the return pressed event.
 
         """
         event.Skip()
-        self.shell_obj.return_pressed()
+        self.shell_obj._field_return_pressed()
 
-    def _on_selection_changed(self, event):
+    def on_lost_focus(self, event):
+        """ The signal handler for the lost focus event.
+
+        """
+        event.Skip()
+        self.shell_obj._field_lost_focus()
+
+    def on_selection_changed(self, event):
         """ The event handler for a selection event.
 
         """
         event.Skip()
         self._update_shell_selection_and_cursor()
 
+    #--------------------------------------------------------------------------
+    # Updated Methods
+    #--------------------------------------------------------------------------
+    def get_text(self):
+        """ Returns the current unicode text in the control.
+
+        """
+        return self.widget.GetValue()
+    
+    def set_text(self, text):
+        """ Updates the text control with the given unicode text.
+
+        """
+        self.widget.ChangeValue(text)
+
+    def set_validator(self, validator):
+        """ Wraps the given Enaml validator in a custom wx.PyValidator 
+        instance and applies it to the underlying control.
+
+        """
+        wxvalidator = WXFieldValidator(validator)
+        self.widget.SetValidator(wxvalidator)
+    
+    def set_max_length(self, max_length):
+        """ Set the max length of the control to max_length. If the max 
+        length is <= 0 or > 32767 then the control will be set to hold 
+        32kb of text.
+
+        """
+        if (max_length <= 0) or (max_length > 32767):
+            max_length = 32767
+        self.widget.SetMaxLength(max_length)
+
+    def set_read_only(self, read_only):
+        """ Sets the read only state of the widget. 
+
+        """
+        # Since the read-only state can only be set at creation time,
+        # we need to create a new widget and swap it out. This is a
+        # terrible hack that is forced upon us by wx limitations.
+        style = self.widget.GetWindowStyle()
+        if read_only:
+            style |= wx.TE_READONLY
+        else:
+            style &= ~wx.TE_READONLY
+        style |= wx.TE_PROCESS_ENTER
+        self._update_widget_style(style)
+
+    def set_placeholder_text(self, placeholder_text):
+        """ Sets the placeholder text in the widget.
+
+        """
+        self.widget.SetPlaceHolderText(placeholder_text)
+
+    def set_cursor_position(self, cursor_position):
+        """ Sets the cursor position of the widget.
+
+        """
+        self.widget.SetInsertionPoint(cursor_position)
+
+    def set_password_mode(self, password_mode):
+        """ Sets the password mode of the wiget. Currently WXField only
+        supports `password` and normal`.
+
+        """
+        # Since the read-only state can only be set at creation time,
+        # we need to create a new widget and swap it out. This is a
+        # terrible hack that is forced upon us by wx limitations.
+        widget = self.widget
+        style = widget.GetWindowStyle()
+        if password_mode == 'normal':
+            style &= ~wx.TE_PASSWORD
+        elif password_mode == 'password':
+            style |= wx.TE_PASSWORD
+        else:
+            style |= wx.TE_PASSWORD
+        style |= wx.TE_PROCESS_ENTER
+        self._update_widget_style(style)
+
+    #--------------------------------------------------------------------------
+    # Helper Methods
+    #--------------------------------------------------------------------------
     def _update_shell_selection_and_cursor(self):
         """ Update the selection and cursor position for the shell
         object.
@@ -425,74 +622,6 @@ class WXField(WXControl, AbstractTkField):
         with guard(self, 'updating_selection'):
             self.shell_obj._selected_text = self.widget.GetStringSelection()
             self.shell_obj.cursor_position = self.widget.GetInsertionPoint()
-
-    #--------------------------------------------------------------------------
-    # Updated Methods
-    #--------------------------------------------------------------------------
-    def _set_text(self, text):
-        """ Updates the text control with the coverted shell value or
-        sets the error state on the shell if the conversion fails.
-
-        """
-        # Use ChangeValue to prevent wx from emitting an EVT_TEXT due
-        # to this programmatic change. wx should really have a second
-        # event type to distinguish the change from user input vs
-        # programmatic input.
-        self.widget.ChangeValue(text)
-
-    def _set_max_length(self, max_length):
-        """ Set the max length of the control to max_length. If the max 
-        length is <= 0 or > 32767 then the control will be set to hold 
-        32kb of text.
-
-        """
-        if (max_length <= 0) or (max_length > 32767):
-            max_length = 32767
-        self.widget.SetMaxLength(max_length)
-
-    def _set_read_only(self, read_only):
-        """ Sets the read only state of the widget. 
-
-        """
-        # Since the read-only state can only be set at creation time,
-        # we need to create a new widget and swap it out.
-        style = self.widget.GetWindowStyle()
-        if read_only:
-            style |= wx.TE_READONLY
-        else:
-            style &= ~wx.TE_READONLY
-        style |= wx.TE_PROCESS_ENTER
-        self._update_widget_style(style)
-
-    def _set_placeholder_text(self, placeholder_text):
-        """ Sets the placeholder text in the widget.
-
-        """
-        self.widget.SetPlaceHolderText(placeholder_text)
-
-    def _set_cursor_position(self, cursor_position):
-        """ Sets the cursor position of the widget.
-
-        """
-        self.widget.SetInsertionPoint(cursor_position)
-
-    def _set_password_mode(self, password_mode):
-        """ Sets the password mode of the wiget. Currently WXField only
-        supports `password` and normal`.
-
-        """
-        # Since the read-only state can only be set at creation time,
-        # we need to create a new widget and swap it out.
-        widget = self.widget
-        style = widget.GetWindowStyle()
-        if password_mode == 'normal':
-            style &= ~wx.TE_PASSWORD
-        elif password_mode == 'password':
-            style |= wx.TE_PASSWORD
-        else:
-            style |= wx.TE_PASSWORD
-        style |= wx.TE_PROCESS_ENTER
-        self._update_widget_style(style)
 
     def _update_widget_style(self, style):
         """ Create a new CustomTextWidget widget with the given style

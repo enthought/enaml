@@ -7,8 +7,8 @@
 This is a library of Enaml components deriving from the built-in Field.
 
 """
-from enaml.converters import (
-    IntConverter, FloatConverter, LongConverter, ComplexConverter,
+from enaml.validation import (
+    IntValidator, FloatValidator, LongValidator, ComplexValidator,
 )
 
 
@@ -16,26 +16,27 @@ enamldef ErrorField(Field):
     """ ErrorField changes background color when the error state is True.
     
     """
-    bgcolor << 'error' if error else 'none'
+    bgcolor << 'error' if error else 'unacceptable' if not acceptable else 'none'
 
 
 enamldef IntField(ErrorField):
-    """ IntField - an ErrorField with built-in string-to-Int converter.
-    
-    """
-    converter = IntConverter()
+    value = 0
+    validator = IntValidator()
 
 
 enamldef LongField(ErrorField):
-    converter = LongConverter()
+    value = 0L
+    validator = LongValidator()
 
 
 enamldef FloatField(ErrorField):
-    converter = FloatConverter()
+    value = 0.0
+    validator = FloatValidator()
 
 
 enamldef ComplexField(ErrorField):
-    converter = ComplexConverter()
+    value = 0.0
+    validator = ComplexValidator()
 
 
 enamldef PasswordField(Field):
