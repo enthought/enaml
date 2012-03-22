@@ -22,9 +22,7 @@ class QtGroupBox(QtContainer, AbstractTkGroupBox):
 
     """
     #: Don't use a widget item to compute the layout rect for a group
-    #: box, it results in not enough space around neighbors.
-    # XXX investigate this further, it may have to do with constraints
-    # specification on the group box and how neighbors are anchored.
+    #: box, it results in not enough space around/above neighbors.
     use_widget_item_for_layout = False
     
     #--------------------------------------------------------------------------
