@@ -14,7 +14,7 @@ from .layout_task_handler import LayoutTaskHandler
 from ..layout.constrainable import PaddingConstraints, Constrainable
 from ..layout.constraints_layout import ConstraintsLayout
 from ..layout.layout_helpers import expand_constraints
-from ..layout.geometry import Size
+from ..layout.geometry import Size, Box
     
 
 class AbstractTkContainer(AbstractTkConstraintsWidget):
@@ -49,6 +49,9 @@ class Container(LayoutTaskHandler, PaddingConstraints, ConstraintsWidget):
     #: to another component in the hierarchy.
     owns_layout = Property(Bool, depends_on='_layout_owner')
 
+    #: A container has a default padding of 10 on all sides.
+    padding = Box(10, 10, 10, 10)
+    
     #: A private trait which stores a weak reference to the owner of 
     #: the layout for this container, or None if this container owns 
     #: its layout.
