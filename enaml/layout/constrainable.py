@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from traits.api import (
     HasStrictTraits, List, Property, Instance, Bool, on_trait_change,
-    Tuple, Either, Int
+    Tuple, Either
 )
 
 from .box_model import BoxModel, PaddingBoxModel
