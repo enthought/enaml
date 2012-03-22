@@ -11,7 +11,7 @@ from .constraints_widget import (
 )
 from .layout_task_handler import LayoutTaskHandler
 
-from ..layout.constrainable import MarginConstraints, Constrainable
+from ..layout.constrainable import PaddingConstraints, Constrainable
 from ..layout.constraints_layout import ConstraintsLayout
 from ..layout.layout_helpers import expand_constraints
 from ..layout.geometry import Size
@@ -24,7 +24,7 @@ class AbstractTkContainer(AbstractTkConstraintsWidget):
     pass
 
 
-class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
+class Container(LayoutTaskHandler, PaddingConstraints, ConstraintsWidget):
     """ A Component subclass that provides functionality for laying out 
     constrainable children according to their system of constraints.
 
@@ -280,7 +280,7 @@ class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
         # which manages a layout because the actual size is the input
         # to the solver.
         cns_extend(expand(self, self.hard_constraints()))
-        cns_extend(expand(self, self.margin_constraints()))
+        cns_extend(expand(self, self.padding_constraints()))
         cns_extend(expand(self, self.user_constraints()))
         cns_extend(expand(self, self.component_constraints()))
 
@@ -295,7 +295,7 @@ class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
                 # deal with its children directly.
                 if child.transfer_layout_ownership(self):
                     cns_extend(expand(child, child.hard_constraints()))
-                    cns_extend(expand(child, child.margin_constraints()))
+                    cns_extend(expand(child, child.padding_constraints()))
                     cns_extend(expand(child, child.user_constraints()))
                     cns_extend(expand(child, child.component_constraints()))
                     stack_extend(child.constraints_children)
@@ -310,8 +310,8 @@ class Container(LayoutTaskHandler, MarginConstraints, ConstraintsWidget):
                 cns_extend(expand(child, child.size_hint_constraints()))
                 cns_extend(expand(child, child.user_constraints()))
                 cns_extend(expand(child, child.component_constraints()))
-                if isinstance(child, MarginConstraints):
-                    cns_extend(expand(child, child.margin_constraints()))
+                if isinstance(child, PaddingConstraints):
+                    cns_extend(expand(child, child.padding_constraints()))
                     
         return cns
 
