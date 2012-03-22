@@ -10,6 +10,7 @@ from traits.api import (
 from .box_model import BoxModel, PaddingBoxModel
 from .geometry import Box
 
+from ..core.trait_types import CoercingInstance
 from ..enums import PolicyEnum
 
 
@@ -222,10 +223,8 @@ class PaddingConstraints(Constrainable):
     contents_h_center = Property(fget=_get_from_box_model)
 
     #: A box object which holds the padding for this component. The 
-    #: default padding is (0, 0, 0, 0).
-    padding = Either(
-        Instance(Box), Tuple(Int, Int, Int, Int), default=Box(0, 0, 0, 0),
-    )
+    #: default padding is Box(0, 0, 0, 0).
+    padding = CoercingInstance(Box, default=Box(0, 0, 0, 0))
 
     #: The PolicyEnum for the strength with which to enforce the padding.
     #: This can be a single policy value to apply to everything, or a 
