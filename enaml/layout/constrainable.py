@@ -7,7 +7,7 @@ from traits.api import (
     Tuple, Either, Int
 )
 
-from .box_model import BoxModel, MarginBoxModel
+from .box_model import BoxModel, PaddingBoxModel
 from .geometry import Box
 
 from ..enums import PolicyEnum
@@ -169,25 +169,25 @@ class Constrainable(HasStrictTraits):
         return []
 
 
-class MarginConstraints(Constrainable):
-    """ A Constrainable subclass which adds margins to the box model.
+class PaddingConstraints(Constrainable):
+    """ A Constrainable subclass which adds padding to the box model.
 
     """
     #: A read-only symbolic object that represents the internal left 
-    #: margin of the container.
-    margin_left = Property(fget=_get_from_box_model)
+    #: padding of the container.
+    padding_left = Property(fget=_get_from_box_model)
 
     #: A read-only symbolic object that represents the internal right 
-    #: margin of the container.
-    margin_right = Property(fget=_get_from_box_model)
+    #: padding of the container.
+    padding_right = Property(fget=_get_from_box_model)
 
     #: A read-only symbolic object that represents the internal top 
-    #: margin of the container.
-    margin_top = Property(fget=_get_from_box_model)
+    #: padding of the container.
+    padding_top = Property(fget=_get_from_box_model)
 
     #: A read-only symbolic object that represents the internal bottom 
-    #: margin of the container.
-    margin_bottom = Property(fget=_get_from_box_model)
+    #: padding of the container.
+    padding_bottom = Property(fget=_get_from_box_model)
 
     #: A read-only symbolic object that represents the internal left 
     #: boundary of the content area of the container.
@@ -221,32 +221,33 @@ class MarginConstraints(Constrainable):
     #: along the horizontal direction of the content area of the container.
     contents_h_center = Property(fget=_get_from_box_model)
 
-    #: A box object which holds the margins for this component. The 
-    #: default margins are (0, 0, 0, 0).
-    margins = Either(
+    #: A box object which holds the padding for this component. The 
+    #: default padding is (0, 0, 0, 0).
+    padding = Either(
         Instance(Box), Tuple(Int, Int, Int, Int), default=Box(0, 0, 0, 0),
     )
 
-    #: The PolicyEnum for the strength with which to enforce the margins.
+    #: The PolicyEnum for the strength with which to enforce the padding.
     #: This can be a single policy value to apply to everything, or a 
-    #: 4-tuple of policies to apply to the individual margins
-    margin_strength = Either(
+    #: 4-tuple of policies to apply to the individual padding.           
+    padding_strength = Either(
         PolicyEnum, Tuple(PolicyEnum, PolicyEnum, PolicyEnum, PolicyEnum),
         default = 'required'
     )
 
     #: The private storage the box model instance for this component. 
-    _box_model = Instance(BoxModel, ())
+    _box_model = Instance(PaddingBoxModel, ())
     def __box_model_default(self):
-        return MarginBoxModel(self)
+        return PaddingBoxModel(self)
     
     #--------------------------------------------------------------------------
     # Change Handlers
     #--------------------------------------------------------------------------
-    @on_trait_change('margins', 'margin_strength')
-    def _margins_changed(self):
-        """ A change handler for the 'margins' attribute. It requests
-        a relayout if the component is initialized.
+    @on_trait_change('padding', 'padding_strength')
+    def _on_padding_deps_changed(self):
+        """ A change handler which requests a relayout if the padding or
+        padding strengths change, provided that the component is fully
+        initialized.
 
         """
         if self.initialized:
@@ -255,25 +256,26 @@ class MarginConstraints(Constrainable):
     #--------------------------------------------------------------------------
     # Constraint Handling
     #--------------------------------------------------------------------------
-    def margin_constraints(self):
-        """ Returns the list of symbolic constraints for the margins of 
+    def padding_constraints(self):
+        """ Returns the list of symbolic constraints for the padding of 
         the component. These constraints apply to the internal layout 
         calculations of an object. The default implementation constrains 
-        the margins according the numeric values in the 'margins' attribute
-        and the strengths in 'margin_strength' attribute. It also places a 
-        required constraint >= 0 on every margin.
+        the padding according the values in the 'padding' attribute and
+        the strengths in 'padding_strength' attribute. It also places a 
+        required constraint >= 0 on every padding element.
 
         """
         cns = []
-        margins = self.margins
-        tags = ('margin_top', 'margin_right', 'margin_bottom', 'margin_left')
-        strengths = self.margin_strength
+        padding = self.padding
+        tags = ('top', 'right', 'bottom', 'left')
+        strengths = self.padding_strength
         if isinstance(strengths, basestring):
             strengths = (strengths,) * 4
-        for tag, strength, margin in zip(tags, strengths, margins):
+        for tag, strength, padding in zip(tags, strengths, padding):
+            tag = 'padding_' + tag
             sym = getattr(self, tag)
             cns.append(sym >= 0)
             if strength != 'ignore':
-                cns.append((sym == margin) | strength)
+                cns.append((sym == padding) | strength)
         return cns
 
