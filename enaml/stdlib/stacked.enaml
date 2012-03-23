@@ -25,6 +25,9 @@ enamldef Stacked(Container):
     
     """
     attr index: int = 0
+    constraints << [
+        vbox(*[child.when(child.visible) for child in constraints_children])
+    ]
     event _vis_changed ::
         for idx, child in enumerate(constraints_children):
             if idx == index:
