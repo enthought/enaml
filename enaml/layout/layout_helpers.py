@@ -77,9 +77,11 @@ def expand_constraints(component, constraints):
     for cn in constraints:
         if isinstance(cn, DeferredConstraints):
             for item in cn.get_constraints(component):
-                yield item
+                if item is not None:
+                    yield item
         else:
-            yield cn
+            if cn is not None:
+                yield cn
 
 
 def filter_items(items):
@@ -124,6 +126,14 @@ class DeferredConstraints(object):
             raise TypeError(msg % type(other))
         return self
 
+    def when(self, switch):
+        """ A simple method that can be used to switch off the generated
+        constraints depending on a boolean value.
+
+        """
+        if switch:
+            return self
+    
     def get_constraints(self, component):
         """ Returns a list of weighted LinearConstraints.
 
@@ -812,6 +822,14 @@ class Spacer(object):
         self.strength = strength
         self.weight = weight
 
+    def when(self, switch):
+        """ A simple method that can be used to switch off the generated
+        space depending on a boolean value.
+
+        """
+        if switch:
+            return self
+    
     def constrain(self, first_anchor, second_anchor):
         """ Returns the list of generated constraints appropriately
         weighted by the default strength and weight, if provided.
@@ -905,13 +923,14 @@ class FlexSpacer(Spacer):
         ]
 
 
-class spacer(Spacer):
-    """ A special singleton symbolic spacer that, alone, represents a 
-    flexible space with a minimum value of the default space, but can be 
-    combined with the ==, <=, and >= operators to create different types 
-    of space.
+class LayoutSpacer(Spacer):
+    """ A Spacer instance which supplies convenience symbolic and normal
+    methods to facilitate specifying spacers in layouts.
 
     """
+    def __call__(self, *args, **kwargs):
+        return self.__class__(*args, **kwargs)
+    
     def __eq__(self, other):
         if not isinstance(other, int):
             raise TypeError('space can only be created from ints')
@@ -933,10 +952,12 @@ class spacer(Spacer):
         """
         spacer = GeSpacer(self.amt, self.strength, self.weight)
         return spacer._constrain(first_anchor, second_anchor)
+        
+    def flex(self, **kwargs):
+        """ Returns a flex spacer for the current amount.
 
-
-# Create a singleton instace of the spacer.
-spacer = spacer(DefaultSpacing.ABUTMENT)
+        """
+        return FlexSpacer(self.amt, **kwargs)
 
 
 #------------------------------------------------------------------------------
@@ -1050,7 +1071,7 @@ LAYOUT_HELPERS = {
     'align_v_center': align_v_center,
     'align_h_center': align_h_center,
     'align': align,
-    '_space_': spacer, # Backwards compatibility
-    'spacer': spacer,
+    '_space_': LayoutSpacer(DefaultSpacing.ABUTMENT), # Backwards compatibility
+    'spacer': LayoutSpacer(DefaultSpacing.ABUTMENT),
 }
 
