@@ -78,7 +78,7 @@ class Form(Container):
         vbox_args = [hbox(label, widget) for label, widget in labels_widgets]
         if odd_child is not None:
             vbox_args.append(odd_child)
-        constraints.append(vbox(*vbox_args) | layout_strength)
+        constraints.append(vbox(*vbox_args))
 
         for label, widget in labels_widgets:
             # FIXME: baselines would be much better.
