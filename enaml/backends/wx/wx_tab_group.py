@@ -162,7 +162,7 @@ class WXTabGroup(WXConstraintsWidget, AbstractTkTabGroup):
 
         # This bit of logic is required or all the tabs draw on
         # top of themselves initially.
-        selected = self.shell_obj.selected_tab
+        selected = shell.selected_tab
         if selected is not None:
             for idx, tab in enumerate(shell.tabs):
                 if tab is not selected:
