@@ -9,8 +9,9 @@ from traits.api import HasTraits, Range
 from casuarius import ConstraintVariable, LinearSymbolic, Strength, STRENGTH_MAP
 
 from .constrainable import Constrainable, PaddingConstraints
-from ..core.trait_types import CoercingInstance
 from .geometry import Box
+
+from ..core.trait_types import CoercingInstance
 
 
 #------------------------------------------------------------------------------
