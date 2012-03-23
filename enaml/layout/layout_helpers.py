@@ -11,6 +11,7 @@ from casuarius import ConstraintVariable, LinearSymbolic, Strength, STRENGTH_MAP
 from .constrainable import Constrainable, PaddingConstraints
 from .geometry import Box
 
+from ..aux.decorators import deprecated
 from ..core.trait_types import CoercingInstance
 
 
@@ -1009,6 +1010,7 @@ def align(anchor, *items, **metadata):
     return AlignmentHelper(*items, **metadata)
 
 
+@deprecated
 def align_left(*items, **metadata):
     """ Align the left anchors of the given components. Inter-component
     spacing is allowed.
@@ -1017,6 +1019,7 @@ def align_left(*items, **metadata):
     return align('left', *items, **metadata)
 
 
+@deprecated
 def align_right(*items, **metadata):
     """ Align the right anchors of the given components. Inter-component
     spacing is allowed.
@@ -1025,6 +1028,7 @@ def align_right(*items, **metadata):
     return align('right', *items, **metadata)
 
 
+@deprecated
 def align_top(*items, **metadata):
     """ Align the top anchors of the given components. Inter-component
     spacing is allowed.
@@ -1033,6 +1037,7 @@ def align_top(*items, **metadata):
     return align('top', *items, **metadata)
 
 
+@deprecated
 def align_bottom(*items, **metadata):
     """ Align the bottom anchors of the given components. Inter-component
     spacing is allowed.
@@ -1041,6 +1046,7 @@ def align_bottom(*items, **metadata):
     return align('bottom', *items, **metadata)
 
 
+@deprecated
 def align_v_center(*items, **metadata):
     """ Align the v_center anchors of the given components. Inter-component
     spacing is allowed.
@@ -1049,6 +1055,7 @@ def align_v_center(*items, **metadata):
     return align('v_center', *items, **metadata)
 
 
+@deprecated
 def align_h_center(*items, **metadata):
     """ Align the h_center anchors of the given components. Inter-component
     spacing is allowed.
