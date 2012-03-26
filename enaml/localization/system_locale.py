@@ -510,42 +510,9 @@ class SystemLocale(AbstractLocale):
             The parsed complex.
 
         """
-        # Make sure there is no ws between the constituents
-        s = complex_str.strip()
-        if len(s.split()) != 1:
-            msg = "Malformed string for complex: '%s'"
-            raise ValueError(msg % complex_str)
-
-        # Replace characters in a the string such that a split on ws 
-        # will result in a properly compartmentalized constituents
-        s = s.replace('-', ' -').replace('+', ' ')
-        parts = [p.strip().lower() for p in filter(None, s.split())]
-        
-        fail = False
-        n = len(parts)
-        if n == 1:
-            part = parts[0]
-            if part.endswith('j'):
-                real = 0.0
-                imag = self.to_float(part[:-1])
-            else:
-                real = self.to_float(part)
-                imag = 0.0
-        elif n == 2:
-            realp, imagp = parts
-            if realp.endswith('j') or not imagp.endswith('j'):
-                fail = True
-            else:
-                real = self.to_float(realp)
-                imag = self.to_float(imagp[:-1])
-        else:
-            fail = True
-        
-        if fail:
-            msg = "Malformed string for complex: '%s'"
-            raise ValueError(msg % complex_str)
-        
-        return complex(real, imag)
+        text = complex_str.replace(self.thousands_separator, u'')
+        text = text.replace(self.decimal_point, u'.')
+        return complex(text)
 
     def to_currency(self, currency_str, symbol=True, group=False, intl=False):
         """ Parse the given currency string into a float.
