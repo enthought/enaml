@@ -17,6 +17,19 @@ from .trait_types import EnamlInstance, EnamlEvent, LazyProperty
 #------------------------------------------------------------------------------
 # Expression Trait
 #------------------------------------------------------------------------------
+class ExpressionInitializationError(Exception):
+    """ An exception used to indicate an error during initialization
+    of an expression.
+
+    """
+    # XXX - We can't inherit from AttributeError because the local 
+    # scope object used by expressions captures an AttributeError
+    # and converts it into in a KeyError in order to implement
+    # dynamic attribute scoping. We actually want this exception
+    # to propagate.
+    pass
+
+
 class ExpressionTrait(TraitType):
     """ A custom trait type which is used to help implement expression 
     binding. Instances of this trait are added to an object, but swap
@@ -70,7 +83,18 @@ class ExpressionTrait(TraitType):
         res = NotImplemented
         expr = obj._expressions[name][0]
         if expr is not None:
-            res = expr.eval()
+            try:
+                res = expr.eval()
+            except Exception as e:
+                # Reraise a propagating initialization error.
+                if isinstance(e, ExpressionInitializationError):
+                    raise
+                msg = ('Error initializing expression (%r line %s). '
+                       'Orignal exception was: %s.')
+                filename = expr.code.co_filename
+                lineno = expr.code.co_firstlineno
+                args = (filename, lineno, e)
+                raise ExpressionInitializationError(msg % args)
         return res
 
     def get(self, obj, name):
