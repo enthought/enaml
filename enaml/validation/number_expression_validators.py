@@ -109,28 +109,28 @@ class ComplexNumberExpressionValidator(NumberExpressionValidator):
     number_type = Complex
 
 
-class IntExpressionValidator(NumberExpressionValidator):
+class IntExpressionValidator(IntegralNumberExpressionValidator):
     """ A NumberExpressionValidator for 'int' number types.
 
     """
     number_type = int
 
 
-class LongExpressionValidator(NumberExpressionValidator):
+class LongExpressionValidator(IntegralNumberExpressionValidator):
     """ A NumberExpressionValidator for 'long' number types.
 
     """
     number_type = long
 
 
-class FloatExpressionValidator(NumberExpressionValidator):
+class FloatExpressionValidator(RealNumberExpressionValidator):
     """ A NumberExpressionValidator for 'float' number types.
 
     """
     number_type = float
 
 
-class ComplexExpressionValidator(NumberExpressionValidator):
+class ComplexExpressionValidator(ComplexNumberExpressionValidator):
     """ A NumberExpressionValidator for 'complex' number types.
 
     """
