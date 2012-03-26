@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import ast
 import itertools
+import types
 
 from .byteplay import (
     Code, LOAD_FAST, CALL_FUNCTION, LOAD_GLOBAL, STORE_FAST, LOAD_CONST,
@@ -20,9 +21,13 @@ from .byteplay import (
 #
 # Version History
 # ---------------
-# 1 : Initial compiler version 2 February 2012
-#
-COMPILER_VERSION = 1
+# 1 : Initial compiler version - 2 February 2012
+# 2 : Update line number handling - 26 March 2012
+#     When compiling code objects with mode='eval', Python ignores the 
+#     line number specified by the ast. The workaround is to compile the 
+#     code object, then make a new copy of it with the proper firstlineno 
+#     set via the types.CodeType constructor.
+COMPILER_VERSION = 2
 
 
 #------------------------------------------------------------------------------
@@ -44,6 +49,18 @@ def _var_name_generator():
     count = itertools.count()
     while True:
         yield '_var_' + str(count.next())
+
+
+def update_firstlineno(code, firstlineno):
+    """ Returns a new code object with an updated first line number.
+
+    """
+    return types.CodeType(
+        code.co_argcount, code.co_nlocals, code.co_stacksize, code.co_flags,
+        code.co_code, code.co_consts, code.co_names, code.co_varnames,
+        code.co_filename, code.co_name, firstlineno, code.co_lnotab, 
+        code.co_freevars, code.co_cellvars,
+    )
 
 
 #------------------------------------------------------------------------------
@@ -252,7 +269,12 @@ class DeclarationCompiler(_NodeVisitor):
         if isinstance(py_ast, ast.Module):
             expr_code = compile(py_ast, fn, mode='exec')
         else:
+            # When compiling in 'eval' mode, the line number in the ast
+            # gets ignored. We need to make new code object from this
+            # on with the proper starting line number so that 
+            # exceptions are properly reported.
             expr_code = compile(py_ast, fn, mode='eval')
+            expr_code = update_firstlineno(expr_code, py_ast.lineno)
         self.extend_ops([
             (LOAD_FAST, 'eval_'),
             (LOAD_CONST, op_code),
