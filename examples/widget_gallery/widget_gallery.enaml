@@ -2,7 +2,6 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from gallery_data import FS_MODEL, SIN_PLOT, HTML_DATA
 
 
 enamldef Buttons(Container):
@@ -111,18 +110,26 @@ enamldef Notebook(TabGroup):
                     pass
                 Splitter:
                     TreeView:
-                        item_model = FS_MODEL
+                        item_model = fs_model
                     TableView:
-                        item_model = FS_MODEL
+                        item_model = fs_model
             ListView:
-                item_model = FS_MODEL
+                item_model = fs_model
     Tab:
         title = 'Two'
+        Label:
+            text = 'Tab Two'
     Tab:
         title = 'Three'
+        Label:
+            text = 'Tab Three'
 
         
-enamldef Main(MainWindow):
+enamldef WidgetGallery(MainWindow):
+    attr fs_model
+    attr sin_plot
+    attr html_data
+    attr img_path
     title = 'Widget Gallery'
     Container:
         constraints = [
@@ -139,17 +146,17 @@ enamldef Main(MainWindow):
             id: nbk
         Html:
             id: rtxt
-            source = HTML_DATA
-            constraints = [right == flds.right ]
+            source = html_data
+            constraints = [right == flds.right]
         ImageView:
             id: img
             scale_to_fit = True
             constraints = [width == 200, height==200]
-            image = Image.from_file('lena.png')
+            image = Image.from_file(img_path)
         EnableCanvas:
             id: cnvs
             constraints = [width == 250]
-            component = SIN_PLOT
+            component = sin_plot
         TextEditor:
             id: txtedit
             wrap_lines = False
