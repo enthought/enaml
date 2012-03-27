@@ -1,0 +1,151 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from enaml.stdlib.fields import IntField, FloatField
+
+
+enamldef Loader(Container):
+    constraints = [
+        vbox(hbox(lbl, fld, pb), slbl),
+        align_v_center(lbl, fld, pb),
+    ]
+    Label:
+        id: lbl
+        text = 'Filename'
+    Field:
+        id: fld
+        read_only = True
+        value << model.filename
+    PushButton:
+        id: pb
+        text = 'Load'
+        constraints = [height == fld.height, width == 50]
+        clicked ::
+            from PySide import QtGui
+            d = QtGui.QFileDialog()
+            fn= d.getOpenFileName()[0]
+            if fn:
+                model.filename = fn
+    Label:
+        id: slbl
+        text << 'Width = %d    Height = %d' % (model.width, model.height)
+    
+
+enamldef CannyParams(GroupBox):
+    attr form = _form
+    title = 'Canny Parameters'
+    flat = True      
+    Form:
+        id: _form
+        Label:
+            text = 'Sigma'
+        FloatField:
+            value := model.canny_sigma
+        Label:
+            text = 'Low Thresh'
+        FloatField:
+            value := model.canny_low_threshold
+        Label:
+            text = 'High Thresh'
+        FloatField:
+            value := model.canny_high_threshold
+
+
+enamldef HoughParams(GroupBox):
+    attr form = _form
+    title = 'Hough Parameters'
+    flat = True      
+    Form:
+        id: _form
+        Label:
+            text = 'Threshold'
+        IntField:
+            value := model.hough_threshold
+        Label:
+            text = 'Min Line Length'
+        IntField:
+            value := model.hough_line_length
+        Label:
+            text = 'Max Line Gap'
+        IntField:
+            value := model.hough_line_gap
+
+
+enamldef SliderField(Container):
+    attr value
+    constraints = [
+        vertical(top, 0, fld, 0, bottom),
+        horizontal(left, 5, sldr, fld, 0, right),
+        align_v_center(sldr, fld),
+    ]
+    FloatSlider:
+        id: sldr
+        value := parent.value
+    Field:
+        id: fld
+        constraints = [width == 50]
+        read_only = True
+        value << '%.2f' % parent.value
+
+
+enamldef DisplayParams(GroupBox):
+    attr form = _form
+    title = 'Display Parameters'
+    flat = True      
+    Form:
+        id: _form
+        Label:
+            text = 'Original Alpha'
+        SliderField:
+            value := model.original_alpha
+        Label:
+            text = 'Canny Alpha'
+        SliderField:
+            value := model.canny_alpha
+        Label:
+            text = 'Hough Alpha'
+        SliderField:
+            value := model.hough_segments_alpha
+        Label:
+            text = 'Canny Color'
+        Field:
+            value := model.canny_color
+            bgcolor << value
+            fgcolor = '#dddddd'
+        Label:
+            text = 'Hough Color'
+        Field:
+            value := model.hough_segments_color
+            bgcolor << value
+            fgcolor = '#dddddd'
+        Label:
+            text = 'Background'
+        Field:
+            value := model.background_color
+            bgcolor << value
+            fgcolor = '#dddddd'
+
+
+enamldef Main(MainWindow):
+    attr model
+    title = 'Image Processing Demo'
+    Container:
+        constraints = [
+            hbox(vbox(load, canny, hough, display, _space_), canvas),
+            canny.form.midline == hough.form.midline,
+            canny.form.midline == display.form.midline,
+        ]
+        Loader:
+            id: load
+        CannyParams:
+            id: canny
+        HoughParams:
+            id: hough
+        DisplayParams:
+            id: display
+        EnableCanvas:
+            id: canvas
+            constraints = [width >= 600, height >= 400]
+            component << model.main_plot
+
