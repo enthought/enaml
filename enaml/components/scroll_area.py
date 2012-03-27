@@ -42,6 +42,14 @@ class AbstractTkScrollArea(AbstractTkConstraintsWidget):
     def shell_scrolled_component_changed(self, component):
         raise NotImplementedError
 
+    @abstractmethod
+    def horizontal_scrollbar_thickness(self):
+        raise NotImplementedError
+
+    @abstractmethod
+    def vertical_scrollbar_thickness(self):
+        raise NotImplementedError
+
 
 class ScrollArea(LayoutTaskHandler, ConstraintsWidget):
     """ A LayoutComponent subclass that displays just a single child in
@@ -130,7 +138,8 @@ class ScrollArea(LayoutTaskHandler, ConstraintsWidget):
     def size_hint(self):
         """ A reimplemented parent class method which uses the given 
         preferred size when computing the size hint, but falls back
-        to the default implementation if a preferred is not given.
+        to the scrolled component's size hint if a preferred size is 
+        not given.
 
         """
         # TODO - We probably want to honor the hug and clip properties
@@ -138,12 +147,23 @@ class ScrollArea(LayoutTaskHandler, ConstraintsWidget):
         # will allow any Container in which we may be embedded to 
         # compute an appropriate size hint from ours.
         width, height = self.preferred_size
-        width_hint, height_hint = super(ScrollArea, self).size_hint()
+        width_hint, height_hint = self.scrolled_component.size_hint()
+        
         if width is None:
-            width = width_hint
+            r_width = width_hint
+            if height is not None and height <= height_hint:
+                r_width += self.abstract_obj.vertical_scrollbar_thickness()
+        else:
+            r_width = width
+        
         if height is None:
-            height = height_hint
-        return Size(width, height)
+            r_height = height_hint
+            if width is not None and width <= width_hint:
+                r_height += self.abstract_obj.horizontal_scrollbar_thickness()
+        else:
+            r_height = height
+        
+        return Size(r_width, r_height)
 
     def do_relayout(self):
         """ A reimplemented LayoutTaskHandler handler method which will

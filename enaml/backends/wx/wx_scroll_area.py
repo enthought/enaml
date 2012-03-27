@@ -139,6 +139,18 @@ class WXScrollArea(WXConstraintsWidget, AbstractTkScrollArea):
         """
         self.update_scrolled_component()
     
+    def vertical_scrollbar_thickness(self):
+        """ Returns the pixel thickness of the scrollbar.
+
+        """
+        return wx.SystemSettings.GetMetric(wx.SYS_VSCROLL_X)
+    
+    def horizontal_scrollbar_thickness(self):
+        """ Returns the pixel thickness of the scrollbar.
+
+        """
+        return wx.SystemSettings.GetMetric(wx.SYS_HSCROLL_Y)
+
     def size_hint(self):
         """ Returns a (width, height) tuple of integers for the size hint
         of the scroll area. Overridden from the parent class to return
