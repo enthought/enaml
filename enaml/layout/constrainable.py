@@ -116,14 +116,6 @@ class Constrainable(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Constraint Handling
     #--------------------------------------------------------------------------
-    def when(self, switch):
-        """ A simple method that can be used to turn off a component
-        in a layout helper based on the boolean value of the switch.
-
-        """
-        if switch:
-            return self
-
     def hard_constraints(self):
         """ Returns the list of required symbolic constraints for the 
         component. These are constraints that apply to both the internal
