@@ -86,11 +86,62 @@ def expand_constraints(component, constraints):
                 yield cn
 
 
-def filter_items(items):
-    """ Filter the list of items for None values.
+def is_spacer(item):
+    """ Returns True if the given item can be considered a spacer, False
+    other otherwise.
 
     """
-    return [item for item in items if item is not None]
+    return isinstance(item, (Spacer, int))
+
+
+def is_really_visible(item):
+    """ Returns True if the given item is actually visible on the screen.
+
+    This is determined by checking all the ancestors of the component
+    for visibility and only return True if they are all visible.
+
+    """
+    if not item.visible:
+        return False
+    for ancestor in item.traverse_ancestors():
+        if not getattr(ancestor, 'visible', True):
+            return False
+    return True
+
+
+def clear_invisible(items):
+    """ Take a list of Components and other layout items and remove 
+    logically invisible Components.
+
+    This takes into account redundant spacer objects that may surround 
+    invisible objects. Spacer objects that appear before an invisible 
+    Component will be removed.
+
+    Lists that consist solely of spacers will result in an empty list.
+
+    Parameters
+    ----------
+    items : list
+        The list of layout items to filter.
+    
+    Returns
+    -------
+    results : list
+        A new list with logically invisible items removed.
+
+    """
+    vis = []
+    push = vis.append
+    pop = vis.pop
+    for item in items:
+        if isinstance(item, Constrainable) and not is_really_visible(item):
+            if len(vis) > 0 and is_spacer(vis[-1]):
+                pop()
+        else:
+            push(item)
+    if all(is_spacer(item) for item in vis):
+        vis = []
+    return vis
 
 
 #------------------------------------------------------------------------------
@@ -104,6 +155,10 @@ class DeferredConstraints(object):
     __metaclass__ = ABCMeta
 
     def __init__(self, *args, **kwds):
+        """ Initialize a DeferredConstraints instance.
+
+        """
+        self.clear_invisible = kwds.get('clear_invisible', True)
         # __or__() will set these default strength and weight. If
         # provided, they will be combined with the constraints created
         # by this instance.
@@ -267,7 +322,9 @@ class AbutmentHelper(DeferredConstraints):
         to the given items, after filtering them for None values.
 
         """
-        items = filter_items(self.items)
+        items = [item for item in self.items if item is not None]
+        if self.clear_invisible:
+            items = clear_invisible(items)
         cns = []
         factories = AbutmentConstraintFactory.from_items(
             items, self.orientation, self.spacing,
@@ -319,7 +376,9 @@ class AlignmentHelper(DeferredConstraints):
         to the given items, after filtering them for None values.
 
         """
-        items = filter_items(self.items)
+        items = [item for item in self.items if item is not None]
+        if self.clear_invisible:
+            items = clear_invisible(items)
         cns = []
         factories = AlignmentConstraintFactory.from_items(
             items, self.anchor, self.spacing,
@@ -403,7 +462,10 @@ class LinearBoxHelper(DeferredConstraints):
         to the given items, after filtering them for None values.
 
         """
-        items = filter_items(self.items)
+        items = [item for item in self.items if item is not None]
+        if self.clear_invisible:
+            items = clear_invisible(items)
+
         if len(items) == 0:
             return []
         
@@ -447,19 +509,21 @@ class LinearBoxHelper(DeferredConstraints):
 
         # Add a pre and post padding spacer if the user hasn't specified 
         # their own spacer as the first/last element of the box items.
-        spacer_types = (Spacer, int)
-        if not isinstance(items[0], spacer_types):
+        if not is_spacer(items[0]):
             pre_along_args = [first_boundary, first_spacer]
         else:
             pre_along_args = [first_boundary]
-        if not isinstance(items[-1], spacer_types):
+        if not is_spacer(items[-1]):
             post_along_args = [last_spacer, last_boundary]
         else:
             post_along_args = [last_boundary]
 
         # Accummulate the constraints in the direction of the layout
         along_args = pre_along_args + items + post_along_args
-        kwds = dict(orientation=self.orientation, spacing=self.spacing)
+        kwds = dict(
+            orientation=self.orientation, spacing=self.spacing,
+            clear_invisible=self.clear_invisible,
+        )
         helpers = [AbutmentHelper(*along_args, **kwds)]
         kwds['orientation'] = self.ortho_orientation
         for item in items:
