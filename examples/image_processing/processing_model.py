@@ -207,15 +207,6 @@ class ProcessorModel(HasTraits):
 
     @on_trait_change('hough_segments')
     def _update_hough_segments_plot(self):
-        print len(self.image.hough_segments), "segments"
         self.segments_overlay.segments = self.image.hough_segments
         self.canny_plot.request_redraw()
-
-
-if __name__ == "__main__":
-    import enaml
-    with enaml.imports():
-        from processing_view import Main
-    window = Main(model=ProcessorModel())
-    window.show()
 

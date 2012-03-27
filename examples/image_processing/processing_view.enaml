@@ -22,9 +22,12 @@ enamldef Loader(Container):
         text = 'Load'
         constraints = [height == fld.height, width == 50]
         clicked ::
-            from PySide import QtGui
+            # XXX this makes the example qt-only at the moment.
+            from enaml.backends.qt.qt import QtGui
+            import os
             d = QtGui.QFileDialog()
-            fn= d.getOpenFileName()[0]
+            d.setDirectory(os.path.dirname(__file__))
+            fn = d.getOpenFileName()[0]
             if fn:
                 model.filename = fn
     Label:
