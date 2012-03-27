@@ -939,10 +939,12 @@ class LeSpacer(Spacer):
     def _constrain(self, first_anchor, second_anchor):
         """ A constraint of the form (anchor_1 + space >= anchor_2)
         That is, the visible space must be less than or equal to the
-        given amount.
+        given amount. An additional constraint is applied which 
+        constrains (anchor_1 <= anchor_2) to prevent negative space.
 
         """
-        return [(first_anchor + self.amt) >= second_anchor]
+        return [(first_anchor + self.amt) >= second_anchor,
+                first_anchor <= second_anchor]
 
 
 class GeSpacer(Spacer):
