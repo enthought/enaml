@@ -23,22 +23,16 @@ class ImageProcessor(HasTraits):
     original_image = Array
 
     canny_sigma = Range(value=1, low=0.0)
-
     canny_low_threshold = Range(value=0.1, low=0.0)
-
     canny_high_threshold = Range(value=0.2, low=0.0)
-
     canny_image = Property(
         Array, depends_on=['original_image', 'canny_sigma', 
                            'canny_low_threshold', 'canny_high_threshold'],
     )
 
     hough_threshold = Int(10)
-
     hough_line_length = Int(50)
-    
     hough_line_gap = Int(10)
-    
     hough_segments = Property(
         List, depends_on=['canny_image', 'hough_threshold', 
                           'hough_line_length', 'hough_line_gap'],
