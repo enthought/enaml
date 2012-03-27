@@ -63,6 +63,18 @@ class QtScrollArea(QtConstraintsWidget, AbstractTkScrollArea):
         """
         self.update_scrolled_component()
 
+    def vertical_scrollbar_thickness(self):
+        """ Returns the pixel thickness of the scrollbar.
+
+        """
+        return self._scrollbar_thickness(QtCore.Qt.Vertical)
+    
+    def horizontal_scrollbar_thickness(self):
+        """ Returns the pixel thickness of the scrollbar.
+
+        """
+        return self._scrollbar_thickness(QtCore.Qt.Vertical)
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
@@ -87,4 +99,16 @@ class QtScrollArea(QtConstraintsWidget, AbstractTkScrollArea):
             self.widget.setWidget(None)
         else:
             self.widget.setWidget(component.toolkit_widget)
+
+    #--------------------------------------------------------------------------
+    # Auxiliary Methods
+    #--------------------------------------------------------------------------
+    def _scrollbar_thickness(self, orientation):
+        """ Returns the thickness of a scrollbar for the given orientation.
+
+        """
+        style = self.widget.style()
+        options = QtGui.QStyleOptionSlider()
+        options.orientation = orientation
+        return style.pixelMetric(style.PM_ScrollBarExtent, options)
 
