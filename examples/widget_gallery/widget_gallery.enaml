@@ -1,0 +1,164 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+
+
+enamldef Buttons(Container):
+    constraints = [
+        vbox(hbox(pb, rb1, rb2), hbox(tb, cb1, cb2), cmbx),
+        align_v_center(pb, rb1, rb2),
+        align_v_center(tb, cb1, cb2),
+        pb.width == tb.width,
+    ]
+    PushButton:
+        id: pb
+        text = 'Push Button'
+    ToggleButton:
+        id: tb
+        text = 'Toggle Button'
+        checked = True
+    RadioButton:
+        id: rb1
+        text = 'Radio One'
+        checked = True
+    RadioButton:
+        id: rb2
+        text = 'Radio Two'
+    CheckBox:
+        id: cb1
+        text = 'Check One'
+        checked = True
+    CheckBox:
+        id: cb2
+        text = 'Check Two'
+    ComboBox:
+        id: cmbx
+        items = ['thing', 'one', 'and', 'thing', 'two']
+
+
+enamldef Fields(Container):
+    margins = (0, 0, 0, 0)
+    Calendar:
+        pass
+    DateEdit:
+        pass
+    DatetimeEdit:
+        pass
+    SpinBox:
+        value = 42
+    ProgressBar:
+        value = 75
+
+
+enamldef Groups(GroupBox):
+    title = 'A Group Box'
+    Form:
+        Label:
+            text = 'Very'
+        Field:
+            placeholder_text = 'CSS Color Name...'
+            bgcolor << value
+        Label:
+            text = 'Simple'
+        Field:
+            value = 'lightskyblue'
+            bgcolor << value
+        Label:
+            text = 'Form Layout'
+        Field:
+            value = 'indianred'
+            bgcolor << value
+        Label:
+            text = 'Int Slider'
+        Container:
+            constraints = [
+                vertical(top, 0, fld1, 0, bottom),
+                horizontal(left, 5, sld1, fld1, 0, right),
+                align_v_center(sld1, fld1),
+            ]
+            Slider:
+                id: sld1
+            Field:
+                id: fld1
+                hug_width = 'strong'
+                read_only = True
+                value << str(sld1.value)
+        Label:
+            text = 'Float Slider'
+        Container:
+            constraints = [
+                vertical(top, 0, fld2, 0, bottom),
+                horizontal(left, 5, sld2, fld2, 0, right),
+                align_v_center(sld2, fld2),
+            ]
+            FloatSlider:
+                id: sld2
+            Field:
+                id: fld2
+                hug_width = 'strong'
+                read_only = True
+                value << '%.3f' % sld2.value
+
+
+enamldef Notebook(TabGroup):
+    Tab:
+        title = 'One'
+        Splitter:
+            Container:
+                Groups:
+                    pass
+                Splitter:
+                    TreeView:
+                        item_model = fs_model
+                    TableView:
+                        item_model = fs_model
+            ListView:
+                item_model = fs_model
+    Tab:
+        title = 'Two'
+        Label:
+            text = 'Tab Two'
+    Tab:
+        title = 'Three'
+        Label:
+            text = 'Tab Three'
+
+        
+enamldef WidgetGallery(MainWindow):
+    attr fs_model
+    attr sin_plot
+    attr html_data
+    attr img_path
+    title = 'Widget Gallery'
+    Container:
+        constraints = [
+            hbox(
+                vbox(btns, flds, rtxt),
+                vbox(nbk, hbox(img, cnvs, txtedit)),
+            ),
+        ]
+        Buttons:
+            id: btns
+        Fields:
+            id: flds
+        Notebook:
+            id: nbk
+        Html:
+            id: rtxt
+            source = html_data
+            constraints = [right == flds.right]
+        ImageView:
+            id: img
+            scale_to_fit = True
+            constraints = [width == 200, height==200]
+            image = Image.from_file(img_path)
+        EnableCanvas:
+            id: cnvs
+            constraints = [width == 250]
+            component = sin_plot
+        TextEditor:
+            id: txtedit
+            wrap_lines = False
+            initialized :: set_text(open(__file__).read())
+        
