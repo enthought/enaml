@@ -68,6 +68,20 @@ def is_spacer(item):
     return isinstance(item, (BaseSpacer, int))
 
 
+def is_really_visible(item):
+    """ Determine if the item is really visible by walking up its
+    parents, if any.
+
+    """
+    if not item.visible:
+        return False
+    while hasattr(item, 'parent'):
+        item = item.parent
+        if not getattr(item, 'visible', True):
+            return False
+    return True
+
+
 def clear_invisible(items):
     """ Take a list of Components and other layout items and remove invisible
     Components.
@@ -82,7 +96,7 @@ def clear_invisible(items):
     """
     visible = []
     for item in items:
-        if isinstance(item, Constrainable) and not item.visible:
+        if isinstance(item, Constrainable) and not is_really_visible(item):
             if len(visible) > 0 and is_spacer(visible[-1]):
                 visible.pop()
         else:
