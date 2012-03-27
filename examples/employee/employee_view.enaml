@@ -71,9 +71,9 @@ enamldef EmployeeView(MainWindow):
     title << "Employee Record for: %s, %s" % (employee.last_name, 
                                               employee.first_name)
     Container:
-        constraints = [
+        constraints << [
             vbox(top_box, bottom_box),
-            align('midline', top_form, bottom_form),
+            align('midline', top_form, bottom_form).when(bottom_box.visible),
         ]
         GroupBox:
             id: top_box

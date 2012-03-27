@@ -3,6 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from abc import ABCMeta, abstractmethod
+import copy
 
 from casuarius import ConstraintVariable, LinearSymbolic, Strength, STRENGTH_MAP
 
@@ -106,6 +107,17 @@ class DeferredConstraints(object):
         self.default_strength = None
         self.default_weight = None
 
+        # Whether the constraints are active or not.
+        self.is_active = True
+
+    def when(self, is_active):
+        """ Return a copy with the given `is_active` value.
+
+        """
+        other = copy.copy(self)
+        other.is_active = is_active
+        return other
+
     @abstractmethod
     def _get_constraint_list(self, container):
         """ Return a list of LinearConstraints.
@@ -144,6 +156,8 @@ class DeferredConstraints(object):
         constraint_list : list of LinearConstraints
 
         """
+        if not self.is_active:
+            return []
         cn_list = self._get_constraint_list(container)
         if self.default_strength is not None:
             cn_list = [cn | self.default_strength for cn in cn_list]
