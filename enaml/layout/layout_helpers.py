@@ -424,9 +424,9 @@ class LinearBoxHelper(DeferredConstraints):
                     default is the value of DefaultSpacing.ABUTMENT.
                 
                 margin
-                    A 4-tuple of ints, or Box of ints >= 0 which indicate
-                    how many pixels of margin to add around the bounds of
-                    the box. The default is the value of 
+                    A int, tuple of ints, or Box of ints >= 0 which 
+                    indicate how many pixels of margin to add around 
+                    the bounds of the box. The default is the value of 
                     DefaultSpacing.BOX_MARGIN.
                 
         """
