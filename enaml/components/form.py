@@ -8,7 +8,7 @@ from casuarius import ConstraintVariable
 
 from .container import AbstractTkContainer, Container
 
-from ..layout.layout_helpers import align_v_center, hbox, vbox
+from ..layout.layout_helpers import align, hbox, vbox
 
 
 class AbstractTkForm(AbstractTkContainer):
@@ -82,7 +82,7 @@ class Form(Container):
 
         for label, widget in labels_widgets:
             # FIXME: baselines would be much better.
-            constraints.append(align_v_center(label, widget) | layout_strength)
+            constraints.append(align('v_center', label, widget) | layout_strength)
 
         return constraints
 

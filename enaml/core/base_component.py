@@ -726,6 +726,29 @@ class BaseComponent(HasStrictTraits):
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
     #--------------------------------------------------------------------------
+    def when(self, switch):
+        """ A method which returns itself or None based on the truth of
+        the argument.
+
+        This can be useful to easily turn off the effects of a component
+        if various situations such as constraints-based layout.
+
+        Parameters
+        ----------
+        switch : bool
+            A boolean which indicates whether the instance or None 
+            should be returned.
+        
+        Returns
+        -------
+        result : self or None
+            If 'switch' is boolean True, self is returned. Otherwise,
+            None is returned.
+
+        """
+        if switch:
+            return self
+    
     def traverse(self, depth_first=False):
         """ Yields all of the nodes in the tree, from this node downward.
 

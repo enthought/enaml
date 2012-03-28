@@ -128,7 +128,27 @@ class BaseBox(tuple):
     """
     __slots__ = ()
 
-    def __new__(cls, top, right, bottom, left):
+    @staticmethod
+    def coerce_type(item):
+        return item
+
+    def __new__(cls, top=None, right=None, bottom=None, left=None):
+        if isinstance(top, (tuple, BaseBox)):
+            return cls(*top)
+        c = cls.coerce_type
+        top = c(top)
+        if right is None:
+            right = top
+        else:
+            right = c(right)
+        if bottom is None:
+            bottom = top
+        else:
+            bottom = c(bottom)
+        if left is None:
+            left = right
+        else:
+            left = c(left)
         return super(BaseBox, cls).__new__(cls, (top, right, bottom, left))
     
     def __repr__(self):
@@ -171,10 +191,9 @@ class Box(BaseBox):
     """
     __slots__ = ()
 
-    def __new__(cls, top, right, bottom, left):
-        i = int
-        sup = super(Box, cls)
-        return sup.__new__(cls, i(top), i(right), i(bottom), i(left))
+    @staticmethod
+    def coerce_type(item):
+        return 0 if item is None else int(item)
     
     @property
     def rect(self):
@@ -206,10 +225,9 @@ class BoxF(BaseBox):
     """
     __slots__ = ()
 
-    def __new__(cls, top, right, bottom, left):
-        f = float
-        sup = super(Box, cls)
-        return sup.__new__(cls, f(top), f(right), f(bottom), f(left))
+    @staticmethod
+    def coerce_type(item):
+        return 0.0 if item is None else float(item)
     
     @property
     def rect(self):

@@ -460,9 +460,7 @@ class WidgetComponent(BaseWidgetComponent):
         # XXX this is still a bit gorpy and needs some work.
         if self.initialized:
             self.request_relayout_task(self.abstract_obj.set_visible, visible)
-        elif not visible:
-            self.abstract_obj.set_visible(visible)
-        elif self.parent is not None:
+        elif not visible or self.parent is not None:
             self.abstract_obj.set_visible(visible)
 
     def disable_updates(self):
