@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------
 from weakref import WeakKeyDictionary, ref
 
-from traits.api import TraitType, TraitError
+from traits.api import TraitType, TraitError, BaseInstance
 from traits.traits import CTrait
 
 
@@ -324,4 +324,23 @@ class LazyProperty(TraitType):
             obj.on_trait_change(handlers[obj], dependency, remove=True)
         handlers[obj] = notify
         obj.on_trait_change(notify, dependency)
+
+
+#------------------------------------------------------------------------------
+# Coercing Instance
+#------------------------------------------------------------------------------
+class CoercingInstance(BaseInstance):
+    """ A BaseInstance subclass which attempts to coerce a value by 
+    calling the class constructor and passing the new value into the
+    original validate method.
+
+    """
+    def validate(self, obj, name, value):
+        if isinstance(self.klass, basestring):
+            self.resolve_klass(obj, name, value)
+        try:
+            value = self.klass(value)
+        except:
+            pass
+        return super(CoercingInstance, self).validate(obj, name, value)
 

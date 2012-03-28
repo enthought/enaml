@@ -67,15 +67,25 @@ class GroupBox(Container):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkGroupBox)
 
-    def margin_constraints(self):
-        """ Overriden margin constraints method to pull the margin values
-        from the toolkit widget.
+    def padding_constraints(self):
+        """ Overriden padding constraints method to add the contents 
+        margins of the underlying group box to the specified user 
+        padding.
 
         """
-        box = self.abstract_obj.get_contents_margins()
-        cns = [
-            self.margin_top == box.top, self.margin_left == box.left,
-            self.margin_right == box.right, self.margin_bottom == box.bottom,
-        ]
+        cns = []
+        margin_box = self.abstract_obj.get_contents_margins()
+        user_padding = self.padding
+        padding = map(sum, zip(margin_box, user_padding))
+        tags = ('top', 'right', 'bottom', 'left')
+        strengths = self.padding_strength
+        if isinstance(strengths, basestring):
+            strengths = (strengths,) * 4
+        for tag, strength, padding in zip(tags, strengths, padding):
+            tag = 'padding_' + tag
+            sym = getattr(self, tag)
+            cns.append(sym >= 0)
+            if strength != 'ignore':
+                cns.append((sym == padding) | strength)
         return cns
 

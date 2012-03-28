@@ -6,7 +6,7 @@ from casuarius import ConstraintVariable
 
 
 class BoxModel(object):
-    """ Provides ConstraintVariables describing a box with margins.
+    """ Provides ConstraintVariables describing a box.
 
     Primitive Variables:
         - left
@@ -32,27 +32,27 @@ class BoxModel(object):
         self.h_center = self.left + self.width / 2.0        
 
 
-class MarginBoxModel(BoxModel):
-    """ Provides ConstraintVariables describing a box with margins.
+class PaddingBoxModel(BoxModel):
+    """ Provides ConstraintVariables describing a box with padding.
 
     Primitive Variables:
-        - margin_[left|right|top|bottom]
+        - padding_[left|right|top|bottom]
     
     Derived Variables:
         - contents_[left|top|right|bottom|width|height|v_center|h_center]
     
     """
     def __init__(self, component):
-        super(MarginBoxModel, self).__init__(component)
+        super(PaddingBoxModel, self).__init__(component)
         label = '{0}_{1:x}'.format(type(component).__name__, id(component))
         for primitive in ('left', 'right', 'top', 'bottom'):
-           attr = 'margin_{0}'.format(primitive)
+           attr = 'padding_{0}'.format(primitive)
            var = ConstraintVariable('{0}_{1}'.format(attr, label))
            setattr(self, attr, var)
-        self.contents_left = self.left + self.margin_left
-        self.contents_top = self.top + self.margin_top
-        self.contents_right = self.right - self.margin_right
-        self.contents_bottom = self.bottom - self.margin_bottom
+        self.contents_left = self.left + self.padding_left
+        self.contents_top = self.top + self.padding_top
+        self.contents_right = self.right - self.padding_right
+        self.contents_bottom = self.bottom - self.padding_bottom
         self.contents_width = self.contents_right - self.contents_left
         self.contents_height = self.contents_bottom - self.contents_top
         self.contents_v_center = self.contents_top + self.contents_height / 2.0
