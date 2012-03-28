@@ -136,6 +136,13 @@ class EnamlEvent(EnamlInstance):
         """
         return EnamlEventDispatcher(self, obj, name)
 
+    def set(self, obj, name, value):
+        """ The trait setter method. Fires off a EnamlEventDispatcher
+        as if the event were called with the payload.
+
+        """
+        EnamlEventDispatcher(self, obj, name)(value)
+
     def full_info(self, obj, name, value):
         """ Overridden parent class method to compute an appropriate info
         string for use in error messages.
