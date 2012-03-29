@@ -84,11 +84,15 @@ XXX Example here
 However, this can get tedious, and so there are some helpers that are
 available to simply specifying layout.  These are:
 
-    ``_space_``
+    ``spacer``
         A singleton spacer that represents a flexible space in a layout
         with a minimum value of the default space.  Additional restrictions
         on the space can be specified using ``==``, ``<=`` and ``>=`` with
         an integer value.
+
+    ``spacer.flex()``
+        A flexible spacer that has a hard minimum but also a weaker preference
+        to be no larger than that minimum.
 
     ``horizontal(*items)``
 
@@ -98,19 +102,8 @@ available to simply specifying layout.  These are:
         or vertical layout where the sides of each object in sequence abut
         against each other.
 
-    ``align_left(*items)``
-
-    ``align_right(*items)``
-
-    ``align_top(*items)``
-
-    ``align_bottom(*items)``
-
-    ``align_v_center(*items)``
-
-    ``align_h_center(*items)``
-        These functions take a list of widgets and align the appropriate
-        parts of their box models.
+    ``align(variable, *items)``
+        Align the given string variable name on each of the specified items.
 
 By using appropriate combinations of these objects you can specify complex layouts
 quickly and clearly.
