@@ -9,7 +9,7 @@ Run sine_plot_example.py to view this demo.
 """
 from numpy import pi
 
-from range import Range
+from range import FloatRange, get_sliders
 
 
 enamldef Main(MainWindow):
@@ -18,8 +18,8 @@ enamldef Main(MainWindow):
     Container:
         constraints = [
             hbox(plot, vbox(form, _space_)),
-            align('left', phase_range.slider, amp_range.slider, w_range.slider),
-            align('right', phase_range.slider, amp_range.slider, w_range.slider),
+            align('left', *get_sliders(self)),
+            align('right', *get_sliders(self)),
             plot.width >= 500,
             plot.height >= 500,
         ]
@@ -39,21 +39,21 @@ enamldef Main(MainWindow):
             id: form
             Label:
                 text = "Phase:"
-            Range:
+            FloatRange:
                 id: phase_range
                 minimum = 0.0
                 maximum = 2*pi
                 value := model.phase
             Label:
                 text = "Amplitude:"
-            Range:
+            FloatRange:
                 id: amp_range
                 minimum = 0.0
                 maximum = 3.0
                 value := model.amplitude
             Label:
                 text = "Frequency:"
-            Range:
+            FloatRange:
                 id: w_range
                 minimum = 0.0
                 maximum = 2*pi
