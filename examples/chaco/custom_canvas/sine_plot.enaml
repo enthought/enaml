@@ -40,21 +40,18 @@ enamldef Main(MainWindow):
             Label:
                 text = "Phase:"
             FloatRange:
-                id: phase_range
                 minimum = 0.0
                 maximum = 2*pi
                 value := model.phase
             Label:
                 text = "Amplitude:"
             FloatRange:
-                id: amp_range
                 minimum = 0.0
                 maximum = 3.0
                 value := model.amplitude
             Label:
                 text = "Frequency:"
             FloatRange:
-                id: w_range
                 minimum = 0.0
                 maximum = 2*pi
                 value := model.w

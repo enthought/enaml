@@ -60,42 +60,36 @@ enamldef Main(MainWindow):
             Label:
                 text = "Initial Prey:"
             FloatRange:
-                id: prey0_range
                 minimum = 0.0
                 maximum = 10.0
                 value := model.prey0
             Label:
                 text = "Initial Predators:"
             FloatRange:
-                id: predator0_range
                 minimum = 0.0
                 maximum = 10.0
                 value := model.predator0
             Label:
                 text = "Prey Growth:"
             FloatRange:
-                id: prey_growth_range
                 minimum = 0.0
                 maximum = 2.0
                 value := model.prey_growth
             Label:
                 text = "Predation Rate:"
             FloatRange:
-                id: predation_rate_range
                 minimum = 0.0
                 maximum = 2.0
                 value := model.predation_rate
             Label:
                 text = "Predator Death:"
             FloatRange:
-                id: predator_death_range
                 minimum = 0.0
                 maximum = 2.0
                 value := model.predator_death
             Label:
                 text = "Predator Growth:"
             FloatRange:
-                id: predator_growth_range
                 minimum = 0.0
                 maximum = 2.0
                 value := model.predator_growth
