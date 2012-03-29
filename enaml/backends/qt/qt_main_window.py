@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 from .qt import QtGui, QtCore
 from .qt_window import QtWindow
+from .qt_dock_pane import DOCK_AREA_MAP
 
 from ...components.main_window import AbstractTkMainWindow
 
@@ -32,6 +33,7 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
 
         """
         self.widget = _QMainWindow(parent)
+        #self.widget.setDockNestingEnabled(True)
 
     def initialize(self):
         """ Initialize the QMainWindow object.
@@ -39,6 +41,7 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         """
         super(QtMainWindow, self).initialize()
         self.update_menu_bar()
+        self.update_dock_areas()
 
     def bind(self):
         """ Bind the signal handlers for the QMainWindow.
@@ -133,6 +136,17 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         else:
             child_widget = central_widget.toolkit_widget
         self.widget.setCentralWidget(child_widget)
+    
+    def update_dock_areas(self):
+        widget = self.widget
+        shell = self.shell_obj
+        for area in ('top', 'right', 'bottom', 'left'):
+            qt_area = DOCK_AREA_MAP[area]
+            panes = getattr(shell, area + '_dock_panes')
+            for pane in panes:
+                if not pane.initialized:
+                    pane.setup(self.widget)
+                widget.addDockWidget(qt_area, pane.toolkit_widget)
 
     def set_visible(self, visible):
         """ Overridden from the parent class to raise the window to

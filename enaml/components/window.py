@@ -135,7 +135,8 @@ class Window(LayoutTaskHandler, WidgetComponent):
         """ The property getter for the 'central_widget' attribute.
 
         """
-        flt = lambda child: isinstance(child, WidgetComponent) and child.__class__.__name__ != 'MenuBar'
+        # XXX this is a hack!
+        flt = lambda child: isinstance(child, WidgetComponent) and child.__class__.__name__ not in ('DockArea', 'MenuBar')
         widgets = filter(flt, self.children)
         n = len(widgets)
         if n > 1:
@@ -276,9 +277,12 @@ class Window(LayoutTaskHandler, WidgetComponent):
 
         """
         if self.initialized:
-            min_size = self._compute_minimum_size()
-            self.set_min_size(min_size)
 
+            #min_size = self._compute_minimum_size()
+            #self.set_min_size(min_size)
+            min_size = self.central_widget.compute_min_size()
+            self.central_widget.set_min_size(min_size)
+            
     def resize_to_minimum(self):
         """ Resizes the window to the computed minimum size, provided 
         that the window has been initialized.

@@ -145,5 +145,6 @@ QT_CONSTRUCTORS = dict((
     constructor('menu'),
     constructor('action'),
     ('Canvas', canvas_ctor),
+    constructor('dock_pane'),
 ))
 

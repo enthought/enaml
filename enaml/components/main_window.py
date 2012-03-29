@@ -4,8 +4,9 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Int, Property, cached_property
+from traits.api import Instance, Int, Property, cached_property, List
 
+from .dock_pane import DockPane
 from .menu_bar import MenuBar
 from .window import Window, AbstractTkWindow
 
@@ -23,7 +24,7 @@ class AbstractTkMainWindow(AbstractTkWindow):
 
         """
         raise NotImplementedError
-    
+
     @abstractmethod
     def menu_bar_height(self):
         """ Returns the height of the menu bar in pixels. If the menu
@@ -49,6 +50,18 @@ class MainWindow(Window):
     #: is an error.
     menu_bar = Property(Instance(MenuBar), depends_on='children')
     
+    #: The dock panes for the top dock area of the window.
+    top_dock_panes = List(Instance(DockPane))
+
+    #: The dock panes for the right dock area of the window.
+    right_dock_panes = List(Instance(DockPane))
+
+    #: The dock panes for the bottom dock area of the window.
+    bottom_dock_panes = List(Instance(DockPane))
+
+    #: The dock panes for the left dock area of the window.
+    left_dock_panes = List(Instance(DockPane))
+
     #: An event which is fired when the window is closed.
     closed = EnamlEvent
             
