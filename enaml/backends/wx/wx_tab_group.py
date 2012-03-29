@@ -155,19 +155,13 @@ class WXTabGroup(WXConstraintsWidget, AbstractTkTabGroup):
         # be destroyed, which is not the behavior we want.
         widget = self.widget
         shell = self.shell_obj
+        
         while widget.GetPageCount():
             widget.RemovePage(0)
+        
+        selected = shell.selected_tab
         for idx, tab in enumerate(shell.tabs):
             widget.AddPage(tab.toolkit_widget, tab.title)
-
-        # This bit of logic is required or all the tabs draw on
-        # top of themselves initially.
-        selected = shell.selected_tab
-        if selected is not None:
-            for idx, tab in enumerate(shell.tabs):
-                if tab is not selected:
-                    tab.set_visible(False)
-                else:
-                    tab.set_visible(True)
-                    widget.SetSelection(idx)
+            if tab is selected:
+                widget.SetSelection(idx)
 
