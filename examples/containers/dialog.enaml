@@ -33,7 +33,7 @@ enamldef InformDialog(Dialog):
         constraints = [
             vbox(
                 label,
-                hbox(_space_, ok_button),
+                hbox(spacer, ok_button),
             ),
         ]
         Label:
@@ -55,7 +55,7 @@ enamldef ConfirmDialog(Dialog):
         constraints = [
             vbox(
                 label,
-                hbox(_space_, ok_button, cancel_button),
+                hbox(spacer, ok_button, cancel_button),
             ),
         ]
         Label:

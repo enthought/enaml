@@ -8,7 +8,7 @@ from enaml.stdlib.fields import IntField, FloatField
 enamldef Loader(Container):
     constraints = [
         vbox(hbox(lbl, fld, pb), slbl),
-        align_v_center(lbl, fld, pb),
+        align('v_center', lbl, fld, pb),
     ]
     Label:
         id: lbl
@@ -80,7 +80,7 @@ enamldef SliderField(Container):
     constraints = [
         vertical(top, 0, fld, 0, bottom),
         horizontal(left, 5, sldr, fld, 0, right),
-        align_v_center(sldr, fld),
+        align('v_center', sldr, fld),
     ]
     FloatSlider:
         id: sldr
@@ -135,7 +135,7 @@ enamldef Main(MainWindow):
     title = 'Image Processing Demo'
     Container:
         constraints = [
-            hbox(vbox(load, canny, hough, display, _space_), canvas),
+            hbox(vbox(load, canny, hough, display, spacer), canvas),
             canny.form.midline == hough.form.midline,
             canny.form.midline == display.form.midline,
         ]
