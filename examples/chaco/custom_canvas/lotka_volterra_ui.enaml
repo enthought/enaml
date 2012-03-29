@@ -29,7 +29,7 @@ enamldef Main(MainWindow):
     title = "Lotka-Volterra Model"
     Container:
         constraints = [
-            hbox(plot, vbox(form, _space_)),
+            hbox(plot, vbox(form, spacer)),
             align('left', prey0_range.slider, predator0_range.slider,
                 prey_growth_range.slider, predation_rate_range.slider,
                 predator_death_range.slider, predator_growth_range.slider),

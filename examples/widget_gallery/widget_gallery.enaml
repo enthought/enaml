@@ -7,8 +7,8 @@
 enamldef Buttons(Container):
     constraints = [
         vbox(hbox(pb, rb1, rb2), hbox(tb, cb1, cb2), cmbx),
-        align_v_center(pb, rb1, rb2),
-        align_v_center(tb, cb1, cb2),
+        align('v_center', pb, rb1, rb2),
+        align('v_center', tb, cb1, cb2),
         pb.width == tb.width,
     ]
     PushButton:
@@ -75,7 +75,7 @@ enamldef Groups(GroupBox):
             constraints = [
                 vertical(top, 0, fld1, 0, bottom),
                 horizontal(left, 5, sld1, fld1, 0, right),
-                align_v_center(sld1, fld1),
+                align('v_center', sld1, fld1),
             ]
             Slider:
                 id: sld1
@@ -90,7 +90,7 @@ enamldef Groups(GroupBox):
             constraints = [
                 vertical(top, 0, fld2, 0, bottom),
                 horizontal(left, 5, sld2, fld2, 0, right),
-                align_v_center(sld2, fld2),
+                align('v_center', sld2, fld2),
             ]
             FloatSlider:
                 id: sld2

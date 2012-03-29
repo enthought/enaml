@@ -60,9 +60,9 @@ enamldef ModelView(MainWindow):
     Container:
         constraints = [
             vbox(progress,
-                hbox(_space_, label, _space_), 
-                hbox(_space_, work_button, _space_),
-                _space_),
+                hbox(spacer, label, spacer), 
+                hbox(spacer, work_button, spacer),
+                spacer),
             align('h_center', progress, label, work_button),
             width >= 200,
         ]

@@ -8,9 +8,7 @@
      1 font-lock-keyword-face)
     ;; highlight these as builtins
     (,(regexp-opt '("horizontal" "vertical" "hbox" "vbox"
-		    "align" "align_left" "align_right"
-		    "align_top" "align_bottom" "align_v_center"
-		    "align_h_center" "_space_") 'words)
+		    "align" "spacer") 'words)
      1 font-lock-builtin-face)
     ;; highlight these as types
     (,(regexp-opt '("attr" "event") 'words)
