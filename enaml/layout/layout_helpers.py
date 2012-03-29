@@ -11,7 +11,7 @@ from casuarius import ConstraintVariable, LinearSymbolic, Strength, STRENGTH_MAP
 from .constrainable import Constrainable, PaddingConstraints
 from .geometry import Box
 
-from ..aux.decorators import deprecated
+from ..auxiliary.decorators import deprecated
 from ..core.trait_types import CoercingInstance
 
 
