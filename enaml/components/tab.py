@@ -44,3 +44,12 @@ class Tab(Container):
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkTab)
 
+    def set_visible(self, foo):
+        """ Overridden visibility method which turns off the ability
+        to change the visibility of a tab. A Tab's visibility is 
+        controlled implicitly by the TabGroup and the currently
+        selected tab.
+
+        """
+        pass
+    

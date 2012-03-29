@@ -111,17 +111,10 @@ class QtTabGroup(QtConstraintsWidget, AbstractTkTabGroup):
         widget = self.widget
         shell = self.shell_obj
         widget.clear()
-        for tab in shell.tabs:
-            widget.addTab(tab.toolkit_widget, tab.title)
-           
-        # This bit of logic is required or the tab flicker the 
-        # first time they are selected.
+
         selected = shell.selected_tab
-        if selected is not None:
-            for idx, tab in enumerate(shell.tabs):
-                if tab is not selected:
-                    tab.set_visible(False)
-                else:
-                    tab.set_visible(True)
-                    widget.setCurrentIndex(idx)
+        for idx, tab in enumerate(shell.tabs):
+            widget.addTab(tab.toolkit_widget, tab.title)
+            if tab is selected:
+                widget.setCurrentIndex(idx)
 
