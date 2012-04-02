@@ -499,13 +499,13 @@ class LinearBoxHelper(DeferredConstraints):
         if self.orientation == 'vertical':
             first_spacer = EqSpacer(margins.top)
             last_spacer = EqSpacer(margins.bottom)
-            first_ortho_spacer = FlexSpacer(margins.left, min_strength='required')
-            last_ortho_spacer = FlexSpacer(margins.right, min_strength='required')
+            first_ortho_spacer = FlexSpacer(margins.left)
+            last_ortho_spacer = FlexSpacer(margins.right)
         else:
             first_spacer = EqSpacer(margins.left)
             last_spacer = EqSpacer(margins.right)
-            first_ortho_spacer = FlexSpacer(margins.top, min_strength='required')
-            last_ortho_spacer = FlexSpacer(margins.bottom, min_strength='required')
+            first_ortho_spacer = FlexSpacer(margins.top)
+            last_ortho_spacer = FlexSpacer(margins.bottom)
 
         # Add a pre and post padding spacer if the user hasn't specified 
         # their own spacer as the first/last element of the box items.
@@ -965,7 +965,7 @@ class FlexSpacer(Spacer):
     a weaker preference for being that minimum.
 
     """
-    def __init__(self, amt, min_strength='medium', min_weight=1.5, eq_strength='medium', eq_weight=1.25):
+    def __init__(self, amt, min_strength='required', min_weight=1.0, eq_strength='medium', eq_weight=1.25):
         self.amt = max(0, amt)
         self.min_strength = min_strength
         self.min_weight = min_weight
