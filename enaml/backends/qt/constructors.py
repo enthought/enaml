@@ -108,6 +108,7 @@ canvas_ctor = Constructor(canvas_imp, qt_canvas_imp)
 
 
 QT_CONSTRUCTORS = dict((
+    constructor('window'),
     constructor('main_window'),
     constructor('container'),
     constructor('dialog'),
