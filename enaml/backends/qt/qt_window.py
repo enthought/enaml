@@ -93,8 +93,9 @@ class QtWindow(QtWidgetComponent, AbstractTkWindow):
 
         """
         super(QtWindow, self).initialize()
-        self.set_title(self.shell_obj.title)
-        self.update_central_widget()
+        shell = self.shell_obj
+        self.set_title(shell.title)
+        self.set_central_widget(shell.central_widget)
 
     #--------------------------------------------------------------------------
     # Abstract Toolkit Implementation
@@ -132,14 +133,13 @@ class QtWindow(QtWidgetComponent, AbstractTkWindow):
         the shell object.
 
         """
-        self.update_central_widget()
+        self.set_central_widget(central_widget)
     
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def update_central_widget(self):
-        """ Updates the central widget in the dialog with the value from
-        the shell object.
+    def set_central_widget(self, central_widget):
+        """ Sets the central widget in the window with the given value.
 
         """
         # It's possible for the central widget component to be None.
@@ -147,7 +147,6 @@ class QtWindow(QtWidgetComponent, AbstractTkWindow):
         # by an Include component, in which case it will not exist 
         # during initialization. However, we must have a central widget
         # for the Window, and so we just fill it with a dummy widget.
-        central_widget = self.shell_obj.central_widget
         if central_widget is None:
             child_widget = QWidget()
         else:
