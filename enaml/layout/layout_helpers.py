@@ -965,7 +965,7 @@ class FlexSpacer(Spacer):
     a weaker preference for being that minimum.
 
     """
-    def __init__(self, amt, min_strength='medium', min_weight=1.5, eq_strength='medium', eq_weight=1.25):
+    def __init__(self, amt, min_strength='required', min_weight=1.0, eq_strength='medium', eq_weight=1.25):
         self.amt = max(0, amt)
         self.min_strength = min_strength
         self.min_weight = min_weight
