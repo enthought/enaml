@@ -152,6 +152,187 @@ class EnamlEvent(EnamlInstance):
 
 
 #------------------------------------------------------------------------------
+# Expression Trait
+#------------------------------------------------------------------------------
+class ExpressionInitializationError(Exception):
+    """ An exception used to indicate an error during initialization
+    of an expression.
+
+    """
+    # XXX - We can't inherit from AttributeError because the local 
+    # scope object used by expressions captures an AttributeError
+    # and converts it into in a KeyError in order to implement
+    # dynamic attribute scoping. We actually want this exception
+    # to propagate.
+    pass
+
+
+class ExpressionTrait(TraitType):
+    """ A custom trait type which is used to help implement expression 
+    binding. Instances of this trait are added to an object, but swap
+    themselves out and replace the old trait the first time they are
+    accessed. This allows bound expressions to be initialized in the
+    proper order without requiring an explicit initialization graph.
+
+    """
+    def __init__(self, old_trait):
+        """ Initialize an expression trait.
+
+        Parameters
+        ----------
+        old_trait : ctrait
+            The trait object that the expression trait is temporarily
+            replacing. When a 'get' or 'set' is triggered on this 
+            trait, the old trait will be restored and then the default
+            value of the expression will be applied.
+        
+        """
+        super(ExpressionTrait, self).__init__()
+        self.old_trait = old_trait
+    
+    def swapout(self, obj, name):
+        """ Restore the old trait onto the object. This method takes
+        care to make sure that listeners are copied over properly.
+
+        """
+        # The default behavior of add_trait does *almost* the right
+        # thing when it copies over notifiers when replacing the
+        # existing trait. What it fails to do is update the owner
+        # attribute of TraitChangeNotifyWrappers which are managing
+        # a bound method notifier. This means that if said notifier
+        # ever dies, it removes itself from the incorrect owner list
+        # and it will be (erroneously) called on the next dispatch
+        # cycle. The logic here makes sure that the owner attribute
+        # of such a notifier is properly updated with its new owner.
+        obj.add_trait(name, self.old_trait)
+        notifiers = obj.trait(name)._notifiers(0)
+        if notifiers is not None:
+            for notifier in notifiers:
+                if hasattr(notifier, 'owner'):
+                    notifier.owner = notifiers
+
+    def compute_default(self, obj, name):
+        """ Returns the default value as computed by the most recently
+        bound expression. If a value cannot be provided, NotImplemented
+        is returned.
+
+        """
+        res = NotImplemented
+        expr = obj._expressions[name][0]
+        if expr is not None:
+            try:
+                res = expr.eval()
+            except Exception as e:
+                # Reraise a propagating initialization error.
+                if isinstance(e, ExpressionInitializationError):
+                    raise
+                msg = ('Error initializing expression (%r line %s). '
+                       'Orignal exception was: %s.')
+                filename = expr.code.co_filename
+                lineno = expr.code.co_firstlineno
+                args = (filename, lineno, e)
+                raise ExpressionInitializationError(msg % args)
+        return res
+
+    def get(self, obj, name):
+        """ Handle computing the initial value for the expression trait. 
+        This method first restores the old trait, then evaluates the 
+        expression and sets the value on the trait. It then performs
+        a getattr to return the new value of the trait. If the object
+        is not yet fully initialized, the value is set quietly.
+
+        """
+        self.swapout(obj, name)
+        val = self.compute_default(obj, name)
+        if val is not NotImplemented:
+            if not obj.initialized:
+                obj.trait_setq(**{name: val})
+            else:    
+                setattr(obj, name, val)
+        return getattr(obj, name, val)
+
+    def set(self, obj, name, val):
+        """ Handle the setting of an initial value for the expression
+        trait. This method first restores the old trait, then sets
+        the value on that trait. In this case, the expression object
+        is not needed. If the object is not yet fully initialized, the 
+        value is set quietly.
+
+        """
+        self.swapout(obj, name)
+        if not obj.initialized:
+            obj.trait_setq(**{name: val})
+        else:
+            setattr(obj, name, val)
+
+
+#------------------------------------------------------------------------------
+# User Attribute and Event
+#------------------------------------------------------------------------------
+class UninitializedAttributeError(Exception):
+    """ A custom Exception used by UserAttribute to signal the access 
+    of an uninitialized attribute.
+
+    """
+    # XXX - We can't inherit from AttributeError because the local 
+    # scope object used by expressions captures an AttributeError
+    # and converts it into in a KeyError in order to implement
+    # dynamic attribute scoping. We actually want this exception
+    # to propagate.
+    pass
+
+
+class UserAttribute(EnamlInstance):
+    """ An EnamlInstance subclass that is used to implement optional 
+    attribute typing when adding a new user attribute to an Enaml 
+    component.
+
+    """
+    def get(self, obj, name):
+        """ The trait getter method. Returns the value from the object's
+        dict, or raises an uninitialized error if the value doesn't exist.
+
+        """
+        dct = obj.__dict__
+        if name not in dct:
+            self.uninitialized_error(obj, name)
+        return dct[name]
+
+    def set(self, obj, name, value):
+        """ The trait setter method. Sets the value in the object's 
+        dict if it is valid, and emits a change notification if the
+        value has changed. The first time the value is set the change
+        notification will carry None as the old value.
+
+        """
+        value = self.validate(obj, name, value)
+        dct = obj.__dict__
+        if name not in dct:
+            old = None
+        else:
+            old = dct[name]
+        dct[name] = value
+        if old != value:
+            obj.trait_property_changed(name, old, value)
+
+    def uninitialized_error(self, obj, name):
+        """ A method which raises an UninitializedAttributeError for
+        the given object and attribute name
+
+        """
+        msg = "Cannot access the uninitialized '%s' attribute of the %s object"
+        raise UninitializedAttributeError(msg % (name, obj))
+
+
+class UserEvent(EnamlEvent):
+    """ A simple EnamlEvent subclass used to distinguish between events
+    declared by the framework, and events declared by the user.
+
+    """
+    pass
+
+
+#------------------------------------------------------------------------------
 # Bounded
 #------------------------------------------------------------------------------
 class Bounded(TraitType):
@@ -343,6 +524,11 @@ class CoercingInstance(BaseInstance):
 
     """
     def validate(self, obj, name, value):
+        """ Attempts to coerce the given value to an appropriate type
+        by calling the underlying class constructor. The coerced value
+        is then sent to the superclass' validate method.
+
+        """
         if isinstance(self.klass, basestring):
             self.resolve_klass(obj, name, value)
         try:
@@ -350,4 +536,35 @@ class CoercingInstance(BaseInstance):
         except:
             pass
         return super(CoercingInstance, self).validate(obj, name, value)
+
+
+#------------------------------------------------------------------------------
+# Enaml Widget Instance
+#------------------------------------------------------------------------------
+class EnamlWidgetInstance(BaseInstance):
+    """ A BaseInstance subclass which will call the 'setup' method on
+    the value being assigned, passing in the appropriate toolkit widget
+    object. The 'destroy' method on the old instance will be called 
+    unless the 'destroy_old' flag is set to False. These operations are
+    done *before* the value is actually set and therefore before any 
+    change notifications are fired.
+
+    """
+    def __init__(self, *args, **kwargs):
+        self.destroy_old = kwargs.pop('destroy_old', True)
+        super(EnamlWidgetInstance, self).__init__(*args, **kwargs)
+
+    def validate(self, obj, name, value):
+        """ Validates the value using the superclass method. Upon
+        success, it then destroys the old value (if requested) and 
+        sets up the new value. The value is expected to be at least
+        an instance WidgetComponent.
+
+        """
+        value = super(EnamlWidgetInstance, self).validate(obj, name, value)
+        old = getattr(obj, name, None)
+        if old is not None and self.destroy_old:
+            old.destroy()
+        value.setup(obj.toolkit_widget)
+        return value
 
