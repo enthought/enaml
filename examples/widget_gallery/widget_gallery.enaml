@@ -38,7 +38,7 @@ enamldef Buttons(Container):
 
 
 enamldef Fields(Container):
-    margins = (0, 0, 0, 0)
+    padding = (0, 0, 0, 0)
     Calendar:
         pass
     DateEdit:
