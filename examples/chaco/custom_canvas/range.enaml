@@ -34,9 +34,9 @@ enamldef FloatRange(Container):
     attr slider: FloatSlider = slider_
     attr field: FloatField = field_
     attr field_width: int = 50
+    padding = 0.0
     constraints = [
-        horizontal(left, 0, min_label, slider, max_label, field, 0, right),
-        vertical(top, 0, slider, 0, bottom),
+        hbox(min_label, slider, max_label, field),
         align('v_center', min_label, slider, max_label, field),
         (field.width == field_width) | 'strong',
     ]
@@ -68,9 +68,9 @@ enamldef IntRange(Container):
     attr slider: Slider = slider_
     attr field: IntField = field_
     attr field_width: int = 50
+    padding = 0.0
     constraints = [
-        horizontal(left, 0, min_label, slider, max_label, field, 0, right),
-        vertical(top, 0, slider, 0, bottom),
+        hbox(min_label, slider, max_label, field),
         align('v_center', min_label, slider, max_label, field),
         (field.width == field_width) | 'strong',
     ]
