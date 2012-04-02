@@ -75,7 +75,7 @@ enamldef EmployeeView(MainWindow):
             vertical(top, top_box, bottom_box.when(bottom_box.visible), bottom),
             horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
             horizontal(left, spacer.flex(), bottom_box, spacer.flex(), right),
-            align('midline', top_form, bottom_form)
+            align('midline', top_form, bottom_form, clear_invisible=False)
         ]
         GroupBox:
             id: top_box
