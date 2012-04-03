@@ -547,11 +547,13 @@ class EnamlWidgetInstance(BaseInstance):
     object. The 'destroy' method on the old instance will be called 
     unless the 'destroy_old' flag is set to False. These operations are
     done *before* the value is actually set and therefore before any 
-    change notifications are fired.
+    change notifications are fired. The parent reference will also 
+    be established, provided the 'set_parent' flag is True.
 
     """
     def __init__(self, *args, **kwargs):
         self.destroy_old = kwargs.pop('destroy_old', True)
+        self.set_parent = kwargs.pop('set_parent', True)
         super(EnamlWidgetInstance, self).__init__(*args, **kwargs)
 
     def validate(self, obj, name, value):
@@ -565,6 +567,8 @@ class EnamlWidgetInstance(BaseInstance):
         old = getattr(obj, name, None)
         if old is not None and self.destroy_old:
             old.destroy()
+        if self.set_parent:
+            value.parent = obj
         value.setup(obj.toolkit_widget)
         return value
 
