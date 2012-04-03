@@ -18,6 +18,9 @@ class BaseRect(tuple):
     def __new__(cls, x, y, width, height):
         return super(BaseRect, cls).__new__(cls, (x, y, width, height))
 
+    def __getnewargs__(self):
+        return tuple(self)
+
     def __repr__(self):
         template = '%s(x=%s, y=%s, width=%s, height=%s)'
         values = (self.__class__.__name__,) + self
@@ -151,6 +154,9 @@ class BaseBox(tuple):
             left = c(left)
         return super(BaseBox, cls).__new__(cls, (top, right, bottom, left))
     
+    def __getnewargs__(self):
+        return tuple(self)
+
     def __repr__(self):
         template = '%s(top=%s, right=%s, bottom=%s, left=%s)'
         values = (self.__class__.__name__,) + self
@@ -266,6 +272,9 @@ class BasePos(tuple):
     def __new__(cls, x, y):
         return super(BasePos, cls).__new__(cls, (x, y))
     
+    def __getnewargs__(self):
+        return tuple(self)
+
     def __repr__(self):
         template = '%s(x=%s, y=%s)'
         values = (self.__class__.__name__,) + self
@@ -321,6 +330,9 @@ class BaseSize(tuple):
     def __new__(cls, width, height):
         return super(BaseSize, cls).__new__(cls, (width, height))
     
+    def __getnewargs__(self):
+        return tuple(self)
+
     def __repr__(self):
         template = '%s(width=%s, height=%s)'
         values = (self.__class__.__name__,) + self
