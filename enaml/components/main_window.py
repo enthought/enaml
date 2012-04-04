@@ -4,13 +4,15 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Int, Property, cached_property, List
+from traits.api import Instance
 
-from .dock_pane import DockPane
+from .container import Container
 from .menu_bar import MenuBar
 from .window import Window, AbstractTkWindow
 
-from ..core.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent, EnamlWidgetInstance
+from ..layout.geometry import Size
+from ..noncomponents.abstract_dock_manager import AbstractTkDockManager
 
 
 class AbstractTkMainWindow(AbstractTkWindow):
@@ -19,17 +21,8 @@ class AbstractTkMainWindow(AbstractTkWindow):
     """
     @abstractmethod
     def shell_menu_bar_changed(self, menu_bar):
-        """ Update the menu bar of the window with the new value from
-        the shell object.
-
-        """
-        raise NotImplementedError
-
-    @abstractmethod
-    def menu_bar_height(self):
-        """ Returns the height of the menu bar in pixels. If the menu
-        bar does not have an effect on the height of the main window,
-        this method returns Zero.
+        """ Update the window's menu bar with the provide Enaml MenuBar
+        instance.
 
         """
         raise NotImplementedError
@@ -42,147 +35,196 @@ class MainWindow(Window):
     decorations and other window related functionality. A window may 
     optionally contain a menubar, any number of toolbars, a status bar,
     and dock panes. A window can have at most one central widget child
-    which will be expanded to fit the size of the window.
+    which will be expanded to fit the available space of the window.
+    
+    Sizing information relates to the size of the central widget rather
+    than the overall size of the window. That is, specifying a minimum
+    size for a MainWindow is akin to specifying a minimum size for the
+    central widget. The space consumed by dock panes and menus is in
+    addition to this space.
 
     """
-    #: A read-only property which holds the MenuBar. If a MenuBar is not 
-    #: declared, the value will be None. Declaring more than one MenuBar
-    #: is an error.
-    menu_bar = Property(Instance(MenuBar), depends_on='children')
+    #: The menu bar for the window. This widget is automatically setup
+    #: and destroyed when assigned to this attribute. Instances should
+    #: therefore not be reused, but created on-the-fly as needed.
+    menu_bar = EnamlWidgetInstance(MenuBar)
     
-    #: The dock panes for the top dock area of the window.
-    top_dock_panes = List(Instance(DockPane))
-
-    #: The dock panes for the right dock area of the window.
-    right_dock_panes = List(Instance(DockPane))
-
-    #: The dock panes for the bottom dock area of the window.
-    bottom_dock_panes = List(Instance(DockPane))
-
-    #: The dock panes for the left dock area of the window.
-    left_dock_panes = List(Instance(DockPane))
+    #: The dock manager used for this main window.
+    dock_manager = Instance(AbstractTkDockManager)
 
     #: An event which is fired when the window is closed.
     closed = EnamlEvent
-            
-    #: A private read-only cached property that returns the height
-    #: of the menu bar.
-    _menu_bar_height = Property(Int, depends_on='menu_bar')
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkMainWindow)
-    
-    #--------------------------------------------------------------------------
-    # Property Getters
-    #--------------------------------------------------------------------------
-    @cached_property
-    def _get_menu_bar(self):
-        """ The property getter for the 'menu_bar' attribute.
-
-        """
-        flt = lambda child: isinstance(child, MenuBar)
-        menu_bars = filter(flt, self.children)
-        n = len(menu_bars)
-        if n == 0:
-            res = None
-        elif n == 1:
-            res = menu_bars[-1]
-        else:
-            msg = ('A MainWindow can have at most 1 MenuBar. '
-                   'Got %s instead.')
-            raise ValueError(msg % n)
-        return res
-
-    @cached_property
-    def _get__menu_bar_height(self):
-        """ The property getter for the '_menu_bar_height' attribute.
-
-        """
-        if self.menu_bar is not None:
-            res = self.abstract_obj.menu_bar_height()
-        else:
-            res = 0
-        return res
 
     #--------------------------------------------------------------------------
-    # Abstract Implementation Methods
+    # Setup Methods
     #--------------------------------------------------------------------------
-    def show(self, parent=None):
-        """ Make the window visible on the screen.
-
-        If the window is not already fully initialized, then the 'setup'
-        method will be called prior to making the window visible.
-
-        Parameters
-        ----------
-        parent : native toolkit widget, optional
-            Provide this argument if the window should have another
-            widget as its logical parent. This may help with stacking
-            order and/or visibility hierarchy depending on the toolkit
-            backend.
+    def _setup_finalize(self):
+        """ A setup method which assigns the dock manager a reference 
+        to this MainWindow instance.
 
         """
-        app = self.toolkit.app
-        app.initialize()
-        if not self.initialized:
-            self.setup(parent)
-            self.resize_to_initial()
-            self.update_minimum_size()
-            self.update_maximum_size()
-        # Some Gui's don't like to process all events from a single 
-        # call to process events (Qt), and pumping the loop is not
-        # reliable. Instead, we just schedule the call to set_visible 
-        # to occur after we start the event loop and with a priority 
-        # that is less than any relayouts the may be triggered by 
-        # pending events. This means that the layout queue should 
-        # finish processing, and then the window will be shown.
-        app.schedule(self.set_visible, (True,), priority=75)
-        app.start_event_loop()
-        
-    def hide(self):
-        """ Hide the window, but do not destroy the underlying widgets.
-
-        """
-        self.set_visible(False)
+        super(MainWindow, self)._setup_finalize()
+        self._set_dock_manager_window()
 
     #--------------------------------------------------------------------------
     # Change Handlers
     #--------------------------------------------------------------------------
-    def _menu_bar_changed(self):
-        """ Requests a relayout of the window if the menu bar changes 
-        after the window has been initialized.
+    def _dock_manager_changed(self):
+        """ The change handler for the 'dock_manager' attribute which 
+        updates the dock manager with the current MainWindow reference.
+
+        """
+        self._set_dock_manager_window()
+    
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
+    def resize_to_initial(self):
+        """ Overridden parent class method which resizes the window to 
+        the initial size according to the semantics required of a main
+        window.
+
+        If the value of the 'initial_size' attribute is (-1, -1), then
+        the initiali size of the window is determined by using the size
+        hint of the central widget. Otherwise, the given 'initial_size'
+        is used. 
+
+        Note: If any dock panels or toolbars are in use, then this 
+           computed initial size will likely be smaller than the 
+           allowable minimum size, and therefore the minimum size
+           will end up being the initial size. This is usually 
+           the desired behavior. If the off chance that it isn't
+           then manually specifying an initial size *and* a minimum
+           size is sufficient to override the default behavior.
+        
+        """
+        if self.initialized:
+            init_size = self.initial_size
+            if init_size == (-1, -1):
+                widget = self.central_widget
+                if widget is not None:
+                    init_size = widget.size_hint()
+                    self.resize(Size(*init_size))
+            else:
+                self.resize(Size(*init_size))
+
+    def update_minimum_size(self):
+        """ Overridden parent class method which updates the minimum size
+        according the semantics required for a main window.
+
+        If the value of the 'minimum_size' attribute is (-1, -1), then
+        the minimum size of the window is indirectly using the minimum
+        size of the central widget. That is, the minimum size of the 
+        main window will be large enough to accomodate the minimum size
+        of the central widget plus whatever dock panels, menu bars, and
+        tool bars are in use. If the 'minimum_size' attribute is set to
+        something other than (-1, -1), then that value will be used as
+        the minimum size for the *entire* window, without regard to any
+        dock panels etc. that are in use. The default behavior is 
+        usually what is desired in most applications.
+
+        Note: The minimum size computation for a MainWindow does not
+            make use of the 'minimum_size_default' attribute.
 
         """
         if self.initialized:
-            self.request_relayout()
+            min_size = self.minimum_size
+            if min_size == (-1, -1):
+                self._update_central_widget_min_size()
+            else:
+                self.set_min_size(Size(*min_size))
 
-    #--------------------------------------------------------------------------
-    # Parent Class Overrides
-    #--------------------------------------------------------------------------
-    def _compute_initial_size(self):
-        """ Overridden parent class method to add the sizes of any of
-        the non-central-widget children to the computed initial size.
-
-        """
-        width, height = super(MainWindow, self)._compute_initial_size()
-        height += self._menu_bar_height
-        return (width, height)
-
-    def _compute_minimum_size(self):
-        """ Overridden parent class method to add the sizes of any of
-        the non-central-widget children to the computed minimum size.
+    def resize_to_minimum(self):
+        """ Overridden parent class method which resizes the window to
+        the minimum size, respecting the semantics of a main window.
 
         """
-        width, height = super(MainWindow, self)._compute_minimum_size()
-        height += self._menu_bar_height
-        return (width, height)
+        if self.initialized:
+            min_size = self.minimum_size
+            if min_size == (-1, -1):
+                min_size = self._update_central_widget_min_size()
+                if min_size != (-1, -1):
+                    self.resize(min_size)
+            else:
+                min_size = Size(*min_size)
+                self.set_min_size(min_size)
+                self.resize(min_size)
+
+    def update_maximum_size(self):
+        """ Overridden parent class method which updates the maximum size
+        according the semantics required for a main window.
+
+        If the value of the 'maximum_size' attribute is (-1, -1), then
+        the maximum size of the window is limits allowed by most GUI 
+        toolkits. That is, the maximum size of the central widget is 
+        ignored, and it will be expanded to fit the available space in
+        the window. This is distinctly different from the maximum size
+        computation in a Window, where the maximum size of the central
+        widget is respected. Respecting this max size in a MainWindow 
+        is not supported since it would lead to unituitive interactions
+        between the sizing of the central widget and any dock panels 
+        that are in use.
+
+        Note: The maximum size computation for a MainWindow does not
+            make use of the 'minimum_size_default' attribute.
+
+        """
+        if self.initialized:
+            max_size = self.maximum_size
+            if max_size == (-1, -1):
+                v = 2**24 - 1
+                max_size = (v, v)
+            self.set_max_size(Size(*max_size))
+
+    def resize_to_maximum(self):
+        """ Overridden parent class method which resizes the window to
+        the maximum size, respecting the semantics of a main window.
+
+        """
+        if self.initialized:
+            max_size = self.maximum_size
+            if max_size == (-1, -1):
+                v = 2**24 - 1
+                max_size = (v, v)
+            max_size = Size(*max_size)
+            self.set_max_size(max_size)
+            self.resize(max_size)
     
-    def _compute_maximum_size(self):
-        """ Overridden parent class method to add the sizes of any of
-        the non-central-widget children to the computed maximum size.
+    #--------------------------------------------------------------------------
+    # Helper Methods
+    #--------------------------------------------------------------------------
+    def _set_dock_manager_window(self):
+        """ Supplies the current dock manager with a reference to this
+        MainWindow instance.
 
         """
-        width, height = super(MainWindow, self)._compute_maximum_size()
-        height += self._menu_bar_height
-        return (width, height)
+        mgr = self.dock_manager
+        if mgr is not None:
+            mgr.main_window = self
+
+    def _update_central_widget_min_size(self):
+        """ Computes, applies, and returns the minimum size for the 
+        central widget.
+
+        Returns
+        -------
+        result : Size
+            The computed minimum Size instance for the central widget.
+            If the central widget is None, the return value will be 
+            Size(-1, -1).
+
+        """
+        widget = self.central_widget
+        if widget is not None:
+            if isinstance(widget, Container):
+                min_size = Size(*widget.compute_min_size())
+            else:
+                min_size = Size(*widget.size_hint())
+            widget.set_min_size(min_size)
+        else:
+            min_size = Size(-1, -1)
+        return min_size
 
