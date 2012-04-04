@@ -51,6 +51,7 @@ tui_item = Constructor(tui_imp, wx_tui_imp)
 
 
 WX_CONSTRUCTORS = dict((
+    constructor('window'),
     constructor('main_window'),
     constructor('dialog'),
     constructor('container'),
