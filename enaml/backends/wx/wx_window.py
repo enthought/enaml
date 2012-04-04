@@ -2,6 +2,8 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+import wx
+
 from .wx_widget_component import WXWidgetComponent
 
 from ...components.window import AbstractTkWindow
@@ -19,16 +21,16 @@ class WXWindow(WXWidgetComponent, AbstractTkWindow):
         """ Create the underlying Wx widget.
 
         """
-        msg = 'A WXWindow is a base class and cannot be used directly'
-        raise NotImplementedError(msg)
+        self.widget = wx.Frame(parent)
 
     def initialize(self):
         """ Intializes the attributes on the wx.Frame.
 
         """
         super(WXWindow, self).initialize()
-        self.set_title(self.shell_obj.title)
-        self.update_central_widget()
+        shell = self.shell_obj
+        self.set_title(shell.title)
+        self.set_central_widget(shell.central_widget)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -45,35 +47,40 @@ class WXWindow(WXWidgetComponent, AbstractTkWindow):
         """
         self.widget.Iconize(True)
             
-    def normalize(self):
+    def restore(self):
         """ Restores the window after it has been minimized or maximized.
 
         """
         self.widget.Maximize(False)
 
+    #--------------------------------------------------------------------------
+    # Shell Object Change Handlers
+    #--------------------------------------------------------------------------
     def shell_title_changed(self, title):
         """ The change handler for the 'title' attribute on the shell
         object.
 
         """
         self.set_title(title)
-    
+
     def shell_central_widget_changed(self, central_widget):
         """ The change handler for the 'central_widget' attribute on 
         the shell object.
 
         """
-        self.update_central_widget()
+        self.set_central_widget(central_widget)
        
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def update_central_widget(self):
-        """ Updates the central widget from the value on the shell 
-        object. This method must be implemented by subclasses.
+    def set_central_widget(self, central_widget):
+        """ Sets the central widget in the window with the given value.
 
         """
-        raise NotImplementedError
+        # We shouldn't need to do anything here since the new widget
+        # will already have been parented properly by the Include and
+        # a relayout will have been requested.
+        pass
 
     def set_title(self, title):
         """ Sets the title of the frame.
