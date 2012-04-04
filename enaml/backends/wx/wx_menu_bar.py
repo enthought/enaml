@@ -164,6 +164,11 @@ class WXMenuBar(WXWidgetComponent, AbstractTkMenuBar):
 
         """
         self.widget = wxEnamlMenuBar(parent)
+        # This makes sure we avoid IsAttached assertion errors on 
+        # Windows during initalization. The menu bar must be attached
+        # before calling various methods on it, which happens during
+        # initialization.
+        parent.SetMenuBar(self.widget)
 
     def initialize(self):
         """ Initializes the wxMenuBar.
