@@ -9,6 +9,7 @@ from ..qt.QtCore import Qt
 from ....noncomponents.abstract_dock_manager import AbstractTkDockManager
 
 
+#: A mapping from Enaml dock area values to Qt dock area enum values.
 DOCK_AREA_MAP = {
     'left': Qt.LeftDockWidgetArea,
     'right': Qt.RightDockWidgetArea,
@@ -73,7 +74,7 @@ class QtDockManager(AbstractTkDockManager):
                 if qwindow is not None:
                     if not pane.initialized:
                         pane.setup(qwindow)
-                    qarea = DOCK_AREA_MAP[pane.area]
+                    qarea = DOCK_AREA_MAP[pane.dock_area]
                     qwindow.addDockWidget(qarea, pane.toolkit_widget)
 
     def remove_pane(self, pane):
