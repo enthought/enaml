@@ -13,7 +13,7 @@ class WXDialogSizer(wx.PySizer):
     """ A custom wx Sizer for use in the WXDialog. This sizers expands
     its child to fit the allowable space, regardless of the settings on
     the child settings. This is similar to how central widgets behave 
-    in a WXMainWindow. 
+    in a WXWindow. 
 
     There can only be one widget in this sizer at a time and it should
     be added via the .Add(...) method. Old items will be removed 
@@ -101,9 +101,8 @@ class WXDialog(WXWindow, AbstractTkDialog):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def update_central_widget(self):
-        """ Updates the central widget in the dialog with the value from
-        the shell object.
+    def set_central_widget(self, central_widget):
+        """ Sets the central widget in the window with the given value.
 
         """
         # It's possible for the central widget component to be None.
@@ -118,6 +117,9 @@ class WXDialog(WXWindow, AbstractTkDialog):
             child_widget = central_widget.toolkit_widget
         self.widget.GetSizer().Add(child_widget)
 
+    #--------------------------------------------------------------------------
+    # Overrides
+    #--------------------------------------------------------------------------
     def set_visible(self, visible):
         """ Overridden from the parent class to properly launch and close 
         the dialog.
@@ -144,7 +146,6 @@ class WXDialog(WXWindow, AbstractTkDialog):
         # Explicitly Destroy the dialog or the wxApp won't properly exit.
         if self.widget:
             self.widget.Destroy()
-        
         shell = self.shell_obj
         shell._result = result
         shell._active = False
