@@ -20,12 +20,17 @@ class WXDialogSizer(wx.PySizer):
     automatically (but not destroyed).
 
     """
+    def __init__(self, *args, **kwargs):
+        super(WXDialogSizer, self).__init__(*args, **kwargs)
+        self._widget = None
+
     def Add(self, widget):
         """ Adds the given widget to the sizer, removing the old widget
         if present. The old widget is not destroyed.
 
         """
         self.Clear(deleteWindows=False)
+        self._widget = widget
         return super(WXDialogSizer, self).Add(widget)
 
     def CalcMin(self):
@@ -41,11 +46,9 @@ class WXDialogSizer(wx.PySizer):
         area.
 
         """
-        children = self.GetChildren()
-        if len(children) > 0:
-            widget = children[0].GetWindow()
-            if widget:
-                widget.SetSize(self.GetSize())
+        widget = self._widget
+        if widget:
+            widget.SetSize(self.GetSize())
 
 
 class WXDialog(WXWindow, AbstractTkDialog):
