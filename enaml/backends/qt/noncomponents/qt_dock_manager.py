@@ -4,9 +4,18 @@
 #------------------------------------------------------------------------------
 from weakref import ref
 
-from ..qt_dock_pane import DOCK_AREA_MAP
+from ..qt.QtCore import Qt
 
 from ....noncomponents.abstract_dock_manager import AbstractTkDockManager
+
+
+DOCK_AREA_MAP = {
+    'left': Qt.LeftDockWidgetArea,
+    'right': Qt.RightDockWidgetArea,
+    'top': Qt.TopDockWidgetArea,
+    'bottom': Qt.BottomDockWidgetArea,
+    'all': Qt.AllDockWidgetAreas,
+}
 
 
 class QtDockManager(AbstractTkDockManager):
