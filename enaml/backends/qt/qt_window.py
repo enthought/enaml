@@ -75,7 +75,7 @@ class QtWindowLayout(QLayout):
 
 
 class QtWindow(QtWidgetComponent, AbstractTkWindow):
-    """ A Qt4 implementation of Window.
+    """ A Qt4 implementation of a Window.
      
     """
     #--------------------------------------------------------------------------
