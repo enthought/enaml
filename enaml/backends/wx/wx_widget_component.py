@@ -148,9 +148,11 @@ class WXWidgetComponent(WXBaseWidgetComponent, AbstractTkWidgetComponent):
         min_height = min_height + delta_height
 
         # Wx won't automatically reset the max size if the min size
-        # is larger. Ugh...
+        # is larger, ugh. Additionally, we don't want to update the
+        # max size if it's < 0 since that indicates the max size is
+        # not bounded. 
         max_width, max_height = self.max_size()
-        if max_width != -1 and max_height != -1:
+        if max_width >= 0 and max_height >= 0:
             max_width = max(min_width, max_width + delta_width)
             max_height = max(min_height, max_height + delta_height)
             self.widget.SetMaxSize((max_width, max_height))
