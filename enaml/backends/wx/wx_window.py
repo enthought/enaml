@@ -10,8 +10,7 @@ from ...components.window import AbstractTkWindow
 
 
 class WXWindow(WXWidgetComponent, AbstractTkWindow):
-    """ A wxPython implementation of a Window. It serves as a base class
-    for WXMainWindow and WXDialog. It is not meant to be used directly.
+    """ A wxPython implementation of a Window.
 
     """
     #--------------------------------------------------------------------------
