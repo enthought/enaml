@@ -277,14 +277,17 @@ class WXMenu(WXWidgetComponent, AbstractTkMenu):
         is not supported by wx. All popup menus block on wx.
 
         """
-        top_component = self.shell_obj.toplevel_component()
-        try:
-            toplevel_window = top_component.toolkit_widget
-        except AttributeError:
+        widget = self.widget
+        frame = widget
+        while True:
+            if frame is None or isinstance(frame, wx.Frame):
+                break
+            frame = frame.GetParent()
+        if frame is None:
             windows = wx.GetTopLevelWindows()
             if len(windows) == 0:
                 msg = 'Cannot find a suitable toplevel window for popup menu'
                 raise ValueError(msg)
-            toplevel_window = windows[0]
-        toplevel_window.PopupMenu(self.widget)
+            frame = windows[0]
+        frame.PopupMenu(self.widget)
 
