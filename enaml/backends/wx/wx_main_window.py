@@ -74,7 +74,7 @@ class WXMainWindowSizer(wx.PySizer):
         frame.SetMinSize((n_width, n_height))
 
 
-class  WXMainWindow(WXWindow, AbstractTkMainWindow):
+class WXMainWindow(WXWindow, AbstractTkMainWindow):
     """ A Wx implementation of a MainWindow.
 
     """
