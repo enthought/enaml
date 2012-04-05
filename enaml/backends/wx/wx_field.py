@@ -510,7 +510,8 @@ class WXField(WXControl, AbstractTkField):
         """ The event handler for the return pressed event.
 
         """
-        event.Skip()
+        # Don't skip the event here or it will result in an annoying
+        # Windows system beep.
         self.shell_obj._field_return_pressed()
 
     def on_lost_focus(self, event):
