@@ -4,6 +4,7 @@
 #------------------------------------------------------------------------------
 import wx
 
+from .wx_widget_component import EVT_MIN_SIZE
 from .wx_window import WXWindow
 
 from ...components.main_window import AbstractTkMainWindow
@@ -22,7 +23,17 @@ class WXMainWindowSizer(wx.PySizer):
     def __init__(self, *args, **kwargs):
         super(WXMainWindowSizer, self).__init__(*args, **kwargs)
         self._widget = None
-        self._cached_min = None
+        self._min_size = None
+
+    def OnWidgetMinSize(self, event):
+        """ An event handler which is called when the min size is set 
+        on the central widget. It updates the internal cached min size
+        and updates the frame sizing.
+
+        """
+        self._min_size = self._widget.GetMinSize()
+        self.UpdateFrameSizing()
+        event.Skip()
 
     def Add(self, widget):
         """ Adds the given widget to the sizer, removing the old widget
@@ -30,24 +41,21 @@ class WXMainWindowSizer(wx.PySizer):
 
         """
         self.Clear(deleteWindows=False)
+        old_widget = self._widget
+        if old_widget is not None:
+            old_widget.Unbind(EVT_MIN_SIZE, handler=self.OnWidgetMinSize)
+        widget.Bind(EVT_MIN_SIZE, self.OnWidgetMinSize)
         self._widget = widget
-        return super(WXMainWindowSizer, self).Add(widget)
+        self._min_size = widget.GetMinSize()
+        res = super(WXMainWindowSizer, self).Add(widget)
+        self.UpdateFrameSizing()
+        return res
 
     def CalcMin(self):
-        """ Returns the minimum size for the children this sizer is 
-        managing. Since the size of the Dialog is managed externally,
-        this always returns (-1, -1).
+        """ Returns the computed minimum size for the for the frame.
 
         """
-        widget = self._widget
-        if widget:
-            res = widget.GetMinSize()
-        else:
-            res = (-1, -1)
-        if res != self._cached_min:
-            self._cached_min = res
-            self.SetMinFrameSize(res)
-        return res
+        return self._min_size
     
     def RecalcSizes(self):
         """ Resizes the child to fit the available space of the window.
@@ -57,24 +65,28 @@ class WXMainWindowSizer(wx.PySizer):
         if widget:
             widget.SetSize(self.GetSize())
                 
-    def SetMinFrameSize(self, size):
-        """ Sets the minimum size allowed of the frame. This is called
-        as necessary when the sizing of the frame's contents changes.
-        The given size should not include any allowance for frame 
-        decorations as that is accounted for automatically.
+    def UpdateFrameSizing(self):
+        """ Sets the minimum size allowed of the frame and resizes it 
+        if necessary. This is called whenever the minimum size of the
+        central widget changes.
 
         """
         frame = self.GetContainingWindow()
-        f_width, f_height = frame.GetSizeTuple()
-        c_width, c_height = frame.GetClientSizeTuple()
-        d_width = f_width - c_width
-        d_height = f_height - c_height
-        n_width = size[0] + d_width
-        n_height = size[1] + d_height
-        frame.SetMinSize((n_width, n_height))
+        min_width, min_height = self._min_size
+        frame_width, frame_height = frame.GetSizeTuple()
+        client_width, client_height = frame.GetClientSizeTuple()
+        delta_width = frame_width - client_width
+        delta_height = frame_height - client_height
+        new_min_width = min_width + delta_width
+        new_min_height = min_height + delta_height
+        frame.SetMinSize((new_min_width, new_min_height))
+        if new_min_width > frame_width or new_min_height > frame_height:
+            resize_width = max(new_min_width, frame_width)
+            resize_height = max(new_min_height, frame_height)
+            frame.SetSize((resize_width, resize_height))
 
 
-class  WXMainWindow(WXWindow, AbstractTkMainWindow):
+class WXMainWindow(WXWindow, AbstractTkMainWindow):
     """ A Wx implementation of a MainWindow.
 
     """
