@@ -48,6 +48,37 @@ class WXImage(AbstractTkImage):
     # Abstract API Implementation
     #--------------------------------------------------------------------------
     @classmethod
+    def from_data(cls, data, size):
+        """ Construct an image from a bytearray of RGBA bytes.
+
+        Parameters
+        ----------
+        data : bytearray
+            A bytearray of the image data in RGBA32 format.
+
+        size : (width, height)
+            The width, height size tuple of the image.
+
+        Returns
+        -------
+        results : AbstractTkImage
+            An appropriate image instance.
+
+        """
+        w, h = size
+
+        # Split the array into color and alpha to satisfy WX
+        rgb_array = bytearray(w*h*3)
+        alpha_array = bytearray(w*h)
+        
+        rgb_array[0::3] = data[0::4]
+        rgb_array[1::3] = data[1::4]
+        rgb_array[2::3] = data[2::4]
+        alpha_array[:] = data[3::4]
+
+        return cls(wx.ImageFromDataWithAlpha(w, h, rgb_array, alpha_array))
+
+    @classmethod
     def from_file(cls, path, format=''):
         """ Read in the image data from a file.
 

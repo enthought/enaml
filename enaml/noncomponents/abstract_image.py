@@ -13,6 +13,26 @@ class AbstractTkImage(object):
     
     """
     __metaclass__ = ABCMeta
+
+    @abstractclassmethod
+    def from_data(cls, data, size):
+        """ Construct an image from a bytearray of RGBA bytes.
+
+        Parameters
+        ----------
+        data : bytearray
+            A bytearray of the image data in RGBA32 format.
+
+        size : (width, height)
+            The width, height size tuple of the image.
+
+        Returns
+        -------
+        results : AbstractTkImage
+            An appropriate image instance.
+
+        """
+        raise NotImplementedError
     
     @abstractclassmethod
     def from_file(cls, path, format=''):
