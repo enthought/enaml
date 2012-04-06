@@ -12,6 +12,7 @@ from traits.api import Disallow
 from .byteplay import Code
 from .monitors import AbstractMonitor
 from .signaling import Signal
+from .trait_types import UninitializedAttributeError
 
 
 #------------------------------------------------------------------------------
@@ -314,11 +315,20 @@ class NonlocalScope(object):
         """
         parent = self._nls_obj
         while parent is not None:
-            if hasattr(parent, name):
-                setattr(parent, name, value)
-                return
-            else:
+            # It's not sufficient to try to do setattr(...) here and 
+            # catch the AttributeError, because HasStrictTraits raises
+            # a TraitError in these cases and it becomes impossible
+            # to distinguish that error from a trait typing error 
+            # without checking the message of the exception.
+            try:
+                getattr(parent, name)
+            except UninitializedAttributeError:
+                pass
+            except AttributeError:
                 parent = parent.parent
+                continue
+            setattr(parent, name, value)
+            return
         raise KeyError(name)
 
     def __contains__(self, name):

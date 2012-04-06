@@ -41,7 +41,7 @@ class AbstractTkWindow(AbstractTkWidgetComponent):
         raise NotImplementedError
     
     @abstractmethod
-    def normalize(self):
+    def restore(self):
         """ Restores the window after it has been minimized or maximized.
 
         """
@@ -68,10 +68,9 @@ class Window(LayoutTaskHandler, WidgetComponent):
     """ A top-level Window component.
 
     A Window component is represents of a top-level visible component
-    with a frame decoration. It has exactly one central widget which
-    is expanded to fit the size of the window. This class serves as
-    the base class for MainWindow and Dialog. It is and abstract class
-    and not meant to be used directly.
+    with a frame decoration. It may have at most one child widget which
+    is expanded to fit the size of the window. It does not support
+    features like MenuBars or DockPanes, for that, use a MainWindow.
 
     """
     #: The title displayed on the window frame.
@@ -135,11 +134,11 @@ class Window(LayoutTaskHandler, WidgetComponent):
         """ The property getter for the 'central_widget' attribute.
 
         """
-        flt = lambda child: isinstance(child, WidgetComponent) and child.__class__.__name__ != 'MenuBar'
+        flt = lambda child: isinstance(child, WidgetComponent)
         widgets = filter(flt, self.children)
         n = len(widgets)
         if n > 1:
-            msg = ('A MainWindow can have at most 1 central widget. '
+            msg = ('A Window can have at most 1 central widget. '
                    'Got %s instead.')
             raise ValueError(msg % n)
         elif n == 0:
@@ -147,32 +146,6 @@ class Window(LayoutTaskHandler, WidgetComponent):
         else:
             res = widgets[0]
         return res
-
-    #--------------------------------------------------------------------------
-    # Abstract Methods
-    #--------------------------------------------------------------------------
-    def show(self, parent=None):
-        """ Make the window visible on the screen.
-
-        If the window is not already fully initialized, then the 'setup'
-        method will be called prior to making the window visible.
-
-        Parameters
-        ----------
-        parent : native toolkit widget, optional
-            Provide this argument if the window should have another
-            widget as its logical parent. This may help with stacking
-            order and/or visibility hierarchy depending on the toolkit
-            backend.
-
-        """
-        raise NotImplementedError
-        
-    def hide(self):
-        """ Hide the window, but do not destroy the underlying widgets.
-
-        """
-        raise NotImplementedError
     
     #--------------------------------------------------------------------------
     # Overrides
@@ -241,6 +214,39 @@ class Window(LayoutTaskHandler, WidgetComponent):
     #--------------------------------------------------------------------------
     # Auxiliary Methods
     #--------------------------------------------------------------------------
+    def show(self, parent=None):
+        """ Make the window visible on the screen.
+
+        If the window is not already fully initialized, then the 'setup'
+        method will be called prior to making the window visible.
+
+        Parameters
+        ----------
+        parent : native toolkit widget, optional
+            Provide this argument if the window should have another
+            widget as its logical parent. This may help with stacking
+            order and/or visibility hierarchy depending on the toolkit
+            backend.
+
+        """
+        # Some Gui's don't like to process all events from a single 
+        # call to process events (Qt), and pumping the loop is not
+        # reliable. Instead, we just schedule the call to set_visible 
+        # to occur after we start the event loop and with a priority 
+        # that is less than any relayouts the may be triggered by 
+        # pending events. This means that the layout queue should 
+        # finish processing, and then the window will be shown.
+        self._prep_window()
+        app = self.toolkit.app
+        app.schedule(self.set_visible, (True,), priority=75)
+        app.start_event_loop()
+        
+    def hide(self):
+        """ Hide the window, but do not destroy the underlying widgets.
+
+        """
+        self.set_visible(False)
+
     def maximize(self):
         """ Maximizes the window to fill the screen.
 
@@ -253,11 +259,11 @@ class Window(LayoutTaskHandler, WidgetComponent):
         """
         self.abstract_obj.minimize()
             
-    def normalize(self):
+    def restore(self):
         """ Restores the window after it has been minimized or maximized.
 
         """
-        self.abstract_obj.normalize()
+        self.abstract_obj.restore()
 
     def resize_to_initial(self):
         """ Resizes the window to the computed initial size, provided 
@@ -319,8 +325,21 @@ class Window(LayoutTaskHandler, WidgetComponent):
             self.resize(max_size)
     
     #--------------------------------------------------------------------------
-    # Size Computation
+    # Helper Methods
     #--------------------------------------------------------------------------
+    def _prep_window(self, parent=None):
+        """ A helper method which will prepare the Window for showing
+        by intializing the tookit application and setting up the widget.
+        The 'parent' argument is the same as would be passed to 'show'.
+
+        """
+        self.toolkit.app.initialize()
+        if not self.initialized:
+            self.setup(parent)
+            self.resize_to_initial()
+            self.update_minimum_size()
+            self.update_maximum_size()
+    
     def _compute_initial_size(self):
         """ Computes and returns the initial size of the window without
         regard for minimum or maximum sizes.

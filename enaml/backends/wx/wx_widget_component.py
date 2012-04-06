@@ -3,12 +3,19 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 import wx
+import wx.lib.newevent
 
 from .wx_base_widget_component import WXBaseWidgetComponent
 from .styling import wx_color_from_color, wx_font_from_font
 
 from ...components.widget_component import AbstractTkWidgetComponent
 from ...layout.geometry import Rect, Size, Pos
+
+
+#: An event that is emitted when the minimum size is set on a widget. 
+#: This is required by the WXMainWindowSizer to know when to resize
+#: the frame if the central widget's min size has changed.
+wxMinSizeChanged, EVT_MIN_SIZE = wx.lib.newevent.NewEvent()
 
 
 class WXWidgetComponent(WXBaseWidgetComponent, AbstractTkWidgetComponent):
@@ -148,11 +155,14 @@ class WXWidgetComponent(WXBaseWidgetComponent, AbstractTkWidgetComponent):
         min_height = min_height + delta_height
 
         # Wx won't automatically reset the max size if the min size
-        # is larger. Ugh....
+        # is larger, ugh. Additionally, we don't want to update the
+        # max size if it's < 0 since that indicates the max size is
+        # not bounded. 
         max_width, max_height = self.max_size()
-        max_width = max(min_width, max_width + delta_width)
-        max_height = max(min_height, max_height + delta_height)
-        self.widget.SetMaxSize((max_width, max_height))
+        if max_width >= 0 and max_height >= 0:
+            max_width = max(min_width, max_width + delta_width)
+            max_height = max(min_height, max_height + delta_height)
+            self.widget.SetMaxSize((max_width, max_height))
 
         widget.SetMinSize((min_width, min_height))
 
@@ -166,6 +176,12 @@ class WXWidgetComponent(WXBaseWidgetComponent, AbstractTkWidgetComponent):
         new_size = (new_width, new_height)
         if new_size != (widget_width, widget_height):
             widget.SetSize(new_size)
+
+        # We create and emit a min size event so that if this widget
+        # is the central widget in a MainWindow, the sizer for that
+        # window can properly update the minimum size of the frame.
+        evt = wxMinSizeChanged()
+        wx.PostEvent(widget, evt)
 
     def max_size(self):
         """ Returns the hard maximum (width, height) of the widget, 

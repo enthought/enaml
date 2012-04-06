@@ -34,11 +34,9 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         self.widget = _QMainWindow(parent)
 
     def initialize(self):
-        """ Initialize the QMainWindow object.
-
-        """
         super(QtMainWindow, self).initialize()
-        self.update_menu_bar()
+        shell = self.shell_obj
+        self.set_menu_bar(shell.menu_bar)
 
     def bind(self):
         """ Bind the signal handlers for the QMainWindow.
@@ -51,46 +49,11 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
     # Change Handlers
     #--------------------------------------------------------------------------
     def shell_menu_bar_changed(self, menu_bar):
-        """ Update the menu bar of the window with the new value from
-        the shell object.
+        """ The change handler for the 'menu_bar' attribute on the shell
+        object.
 
         """
-        self.update_menu_bar()
-
-    #--------------------------------------------------------------------------
-    # Abstract Implementation
-    #--------------------------------------------------------------------------
-    def menu_bar_height(self):
-        """ Returns the height of the menu bar in pixels. If the menu
-        bar does not have an effect on the height of the main window,
-        this method returns Zero.
-
-        """
-        # XXX The size hint is off by 1 pixel on Windows. What about
-        # other platforms? Calling menuBar.height() here doesn't work
-        # because the value is completely wrong unless the menu bar
-        # is visible on the screen.
-
-        # Get the menu bar from layout since that will not automatically
-        # create one if it doesn't exist, unlike QMainWindow.menuBar()
-        menu_bar = self.widget.layout().menuBar()
-        if menu_bar is None:
-            res = 0
-        else:
-            # FIXME - QMacStyle doesn't exist on non osx builds
-            try:
-                ismac = isinstance(menu_bar.style(), QtGui.QMacStyle)
-            except AttributeError:
-                ismac = False
-            if ismac:
-                res = 0
-            elif menu_bar.isVisible():
-                res = menu_bar.height()
-            else:
-                res = menu_bar.sizeHint().height()
-                if res > 0:
-                    res += 1
-        return res
+        self.set_menu_bar(menu_bar)
 
     #--------------------------------------------------------------------------
     # Signal Handlers
@@ -105,20 +68,19 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
-    def update_menu_bar(self):
-        """ Updates the menu bar in the main window with the value
-        from the shell object.
+    def set_menu_bar(self, menu_bar):
+        """ Updates the menu bar in the main window with the given Enaml
+        MenuBar instance.
 
         """
-        menu_bar = self.shell_obj.menu_bar
         if menu_bar is not None:
             self.widget.setMenuBar(menu_bar.toolkit_widget)
         else:
             self.widget.setMenuBar(None)
 
-    def update_central_widget(self):
-        """ Updates the central widget in the main window with the 
-        value from the shell object.
+    def set_central_widget(self, central_widget):
+        """ Re-implemented parent class method to set the central widget
+        on the underlying QMainWindow.
 
         """
         # It's possible for the central widget component to be None.
@@ -127,7 +89,6 @@ class QtMainWindow(QtWindow, AbstractTkMainWindow):
         # during initialization. However, we must have a central widget
         # for the MainWindow, and in that case we just fill it with a
         # dummy widget.
-        central_widget = self.shell_obj.central_widget
         if central_widget is None:
             child_widget = QtGui.QWidget()
         else:
