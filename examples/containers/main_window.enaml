@@ -1,0 +1,64 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" Main Window Example
+
+This example shows how to use a MainWindow to display a central widget
+along with dock panes and a menu bar.
+
+At the moment, this example will only run with the Qt backend.
+
+"""
+from traits.api import HasTraits, Unicode
+
+
+class TextModel(HasTraits):
+    text = Unicode
+
+
+enamldef MainMenu(MenuBar):
+    Menu:
+        title = 'File'
+        Action:
+            text = 'New'
+        Action:
+            text = 'Open'
+        Action:
+            text = 'Close'
+    Menu:
+        title = 'Edit'
+        Action:
+            text = 'Cut'
+        Action:
+            text = 'Copy'
+        Action:
+            text = 'Paste'
+
+
+enamldef HtmlContents(Container):
+    attr text_model
+    Html:
+        source << text_model.text
+
+
+enamldef EditorPane(DockPane):
+    attr text_model
+    title << 'Html Editor - %s Dock Area - %s' % (dock_area.capitalize(), 'Undocked' if floating else 'Docked')
+    TextEditor:
+        id: editor
+        text_edited :: text_model.text = get_text()
+        initialized :: set_text(text_model.text)
+
+
+enamldef Main(MainWindow):
+    attr model = TextModel(text='<h1><center>Edit Me with HTML!</center></h1>')
+    title = 'Main Window Example'
+    initial_size = (800, 600)
+    menu_bar = MainMenu()
+    dock_manager = DockManager(
+        EditorPane(text_model=model, dock_area='left')
+    )
+    HtmlContents:
+        text_model = model
+

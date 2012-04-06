@@ -98,7 +98,7 @@ class wxEnamlMenuBar(wx.MenuBar):
             title = 'Menu_' + self.GetMenuCount()
         
         super(wxEnamlMenuBar, self).Insert(idx, menu, title)
-        
+
         # After adding the menu, we need to check whether we should
         # disable the menu based on its enabled state. This api is
         # a bit weird since wx forces us to set the enabledness of
@@ -164,6 +164,11 @@ class WXMenuBar(WXWidgetComponent, AbstractTkMenuBar):
 
         """
         self.widget = wxEnamlMenuBar(parent)
+        # This makes sure we avoid IsAttached assertion errors on 
+        # Windows during initalization. The menu bar must be attached
+        # before calling various methods on it, which happens during
+        # initialization.
+        parent.SetMenuBar(self.widget)
 
     def initialize(self):
         """ Initializes the wxMenuBar.
@@ -197,4 +202,16 @@ class WXMenuBar(WXWidgetComponent, AbstractTkMenuBar):
         widget.RemoveAll()
         for menu in self.shell_obj.menus:
             widget.Append(menu.toolkit_widget, menu.title)
+        
+        # XXX - This is a hack to workaround an issue where the menu bar
+        # does not properly repaint itself on Windows after inserting
+        # new menus. Forcing an Update or a parent Frame refresh does
+        # not solve the problem. So far, this is the only thing I have
+        # found which works and causes the menu bar to redraw itself.
+        frame = widget.GetParent()
+        if frame:
+            frame.Freeze()
+            frame.SetMenuBar(None)
+            frame.SetMenuBar(widget)
+            frame.Thaw()
 

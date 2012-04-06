@@ -12,6 +12,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
     """ A Qt implementation of PushButton.
 
     """
+    
     #--------------------------------------------------------------------------
     # Setup methods
     #--------------------------------------------------------------------------

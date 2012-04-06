@@ -62,77 +62,78 @@ enamldef ViewMenu(Menu):
         text = 'Selection Columns...'
 
 
-enamldef Main(MainWindow):
+enamldef MainMenu(MenuBar):
     attr show_view_menu: bool = False
-    attr my_icon = setup_icon(
+    attr recent_files: list = ['spam.txt', 'ham.pdf', 'eggs.doc']
+    attr my_icon: Icon = setup_icon(
         Icon(), 
         Image.from_file(make_path('question.png')),
         Image.from_file(make_path('image_not_found.png')),
     )
-    MenuBar:
+    event popup_file_menu :: file_menu.popup()
+    Menu:
+        id: file_menu
+        title = 'File'
+        PrintAction:
+            text = 'New File'
+        PrintAction:
+            text = 'Open File...'
+        PrintAction:
+            text = 'Open Folder...'
         Menu:
-            id: file_menu
-            title = 'File'
+            title = 'Open Recent'
+            Include:
+                components << get_recent_files(recent_files)
+            Action:
+                separator = True
             PrintAction:
-                text = 'New File'
-            PrintAction:
-                text = 'Open File...'
-            PrintAction:
-                text = 'Open Folder...'
-            Menu:
-                title = 'Open Recent'
-                Include:
-                    id: icld
-                    components = get_recent_files(['spam.txt', 'ham.pdf', 'eggs.doc'])
-                Action:
-                    separator = True
-                PrintAction:
-                    text = 'Clear Items'
-            PrintAction:
-                text = 'Close'
-        Menu:
-            title = 'Edit'
-            PrintAction:
-                text = 'Cut'
-            PrintAction:
-                text = 'Copy'
-            PrintAction:
-                text = 'Paste'
-        Include:
-            components << ViewMenu() if show_view_menu else []
-        Menu:
-            title = 'Window'
-            PrintAction:
-                text = 'Minimize'
-            PrintAction:
-                text = 'Zoom'
-        Menu:
-            id: icon_menu
-            title = 'Icons'
-            PrintAction:
-                text = 'Normal'
-                icon = my_icon
-            PrintAction:
-                text = 'Disabled'
-                enabled = False
-                icon = my_icon
-            PrintAction:
-                text = 'Checkable'
-                checkable = True
-                icon = my_icon
+                text = 'Clear Items'
+        PrintAction:
+            text = 'Close'
+    Menu:
+        title = 'Edit'
+        PrintAction:
+            text = 'Cut'
+        PrintAction:
+            text = 'Copy'
+        PrintAction:
+            text = 'Paste'
+    Include:
+        components << ViewMenu() if show_view_menu else []
+    Menu:
+        title = 'Window'
+        PrintAction:
+            text = 'Minimize'
+        PrintAction:
+            text = 'Zoom'
+    Menu:
+        title = 'Icons'
+        PrintAction:
+            text = 'Normal'
+            icon = my_icon
+        PrintAction:
+            text = 'Disabled'
+            enabled = False
+            icon = my_icon
+        PrintAction:
+            text = 'Checkable'
+            checkable = True
+            icon = my_icon
+
+
+enamldef Main(MainWindow):
+    menu_bar = MainMenu()
     Container:
         Html:
             source = '<center><h1>Hello Enaml Menus!</h1></center>'
         CheckBox:
             text = 'Show View Menu'
-            checked := show_view_menu
+            checked >> menu_bar.show_view_menu
         PushButton:
             icon = Icon.from_file(make_path('question.png'))
             text = 'Popup File Menu'
-            clicked :: file_menu.popup()
+            clicked :: menu_bar.popup_file_menu()
         PushButton:
             text = 'Change Recent Files'
-            clicked :: 
-                actions = get_recent_files(['one.txt', 'two.pdf', 'three.doc'])
-                icld.components = actions
+            clicked :: menu_bar.recent_files = ['one.txt', 'two.pdf', 'three.doc']
 

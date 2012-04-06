@@ -32,7 +32,7 @@ class AbstractTkDialog(AbstractTkWindow):
 
 
 class Dialog(Window):
-    """ A basic dialog widget whose contents are user defined.
+    """ A Window subclass which adds modal style behavior.
 
     The basic dialog has no buttons, but provides methods for the
     accept and reject behavior for the dialog.
@@ -89,7 +89,8 @@ class Dialog(Window):
     # Abstract Method Implementations
     #--------------------------------------------------------------------------
     def show(self, parent=None):
-        """ Make the dialog visible on the screen.
+        """ Make the dialog visible on the screen. Overridden from the
+        parent class to properly handle Dialog semantics.
 
         If the dialog is not already fully initialized, then the 'setup'
         method will be called prior to making the dialog visible.
@@ -103,32 +104,19 @@ class Dialog(Window):
             backend.
 
         """
-        app = self.toolkit.app
-        app.initialize()
-        if not self.initialized:
-            self.setup(parent)
-            self.resize_to_initial()
-            self.update_minimum_size()
-            self.update_maximum_size()
         # Note that we don't start the event loop after making a Dialog
         # visible. Dialogs are shown modally and typically start their 
         # own event loop. Thus, set_visble(True) will block and starting
         # an event loop after it returns may cause a dead lock.
         #
         # XXX pumping the event loop here is a bit of hack. The trick
-        # we used on main window doesn't work here because the set
-        # visible call actually starts the event loop, we can probably
-        # do better.
+        # we used on Window doesn't work here because the set visible 
+        # call actually starts the event loop.
+        self._prep_window()
+        app = self.toolkit.app
         for _ in range(10):
             app.process_events()
         self.set_visible(True)
-        
-    def hide(self):
-        """ Close the dialog. Typically, code should call either 'accept'
-        or 'reject' to close the dialog instead of 'hide'.
-
-        """
-        self.set_visible(False)
 
     #--------------------------------------------------------------------------
     # Auxiliary Methods
