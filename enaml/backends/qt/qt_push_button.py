@@ -115,6 +115,7 @@ class QtPushButton(QtControl, AbstractTkPushButton):
         """ Sets the icon size on the button control.
 
         """
-        if icon_size is not None and icon_size > (0,0):
+        if icon_size is not None and (icon_size.width > 0 
+                                      and icon_size.height > 0):
             self.widget.setIconSize(QtCore.QSize(*icon_size))
 

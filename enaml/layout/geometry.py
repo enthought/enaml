@@ -375,10 +375,6 @@ class Size(BaseSize):
     def coerce_type(item):
         return 0 if item is None else int(item)
 
-    def __new__(cls, width, height):
-        i = int
-        return super(Size, cls).__new__(cls, i(width), i(height))
-
 
 class SizeF(BaseSize):
     """ A BaseSize implementation for floating point values.
@@ -389,8 +385,4 @@ class SizeF(BaseSize):
     @staticmethod
     def coerce_type(item):
         return 0.0 if item is None else float(item)
-
-    def __new__(cls, width, height):
-        f = float
-        return super(SizeF, cls).__new__(cls, f(width), f(height))
 

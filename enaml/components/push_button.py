@@ -9,7 +9,7 @@ from traits.api import Bool, Str, Instance, Property
 from .control import Control, AbstractTkControl
 
 from ..core.trait_types import CoercingInstance, EnamlEvent
-from ..layout.geometry import BaseSize
+from ..layout.geometry import Size
 from ..noncomponents.abstract_icon import AbstractTkIcon
 
 
@@ -57,7 +57,7 @@ class PushButton(Control):
     icon = Instance(AbstractTkIcon)
 
     # The size of the icon
-    icon_size = CoercingInstance(BaseSize)
+    icon_size = CoercingInstance(Size)
     
     #: Fired when the button is pressed and released.
     clicked = EnamlEvent
