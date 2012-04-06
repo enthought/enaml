@@ -8,7 +8,8 @@ from traits.api import Bool, Str, Instance, Property
 
 from .control import Control, AbstractTkControl
 
-from ..core.trait_types import EnamlEvent
+from ..core.trait_types import CoercingInstance, EnamlEvent
+from ..layout.geometry import BaseSize
 from ..noncomponents.abstract_icon import AbstractTkIcon
 
 
@@ -25,8 +26,16 @@ class AbstractTkPushButton(AbstractTkControl):
         raise NotImplementedError
 
     @abstractmethod
-    def shell_icon_changed(self, text):
+    def shell_icon_changed(self, icon):
         """ The change handler for the 'icon' attribute on the shell
+        component.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_icon_size_changed(self, icon_size):
+        """ The change handler for the 'icon_size' attribute on the shell
         component.
 
         """
@@ -46,6 +55,9 @@ class PushButton(Control):
 
     #: The an icon to display in the button.
     icon = Instance(AbstractTkIcon)
+
+    # The size of the icon
+    icon_size = CoercingInstance(BaseSize)
     
     #: Fired when the button is pressed and released.
     clicked = EnamlEvent

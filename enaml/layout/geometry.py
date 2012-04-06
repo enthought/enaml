@@ -327,9 +327,21 @@ class BaseSize(tuple):
     """
     __slots__ = ()
 
-    def __new__(cls, width, height):
+    @staticmethod
+    def coerce_type(item):
+        return item
+
+    def __new__(cls, width=None, height=None):
+        if isinstance(width, (tuple, BaseSize)):
+            return cls(*width)
+        c = cls.coerce_type
+        width = c(width)
+        if height is None:
+            height = width
+        else:
+            height = c(height)
         return super(BaseSize, cls).__new__(cls, (width, height))
-    
+
     def __getnewargs__(self):
         return tuple(self)
 
@@ -358,6 +370,10 @@ class Size(BaseSize):
 
     """
     __slots__ = ()
+    
+    @staticmethod
+    def coerce_type(item):
+        return 0 if item is None else int(item)
 
     def __new__(cls, width, height):
         i = int
@@ -369,6 +385,10 @@ class SizeF(BaseSize):
 
     """
     __slots__ = ()
+
+    @staticmethod
+    def coerce_type(item):
+        return 0.0 if item is None else float(item)
 
     def __new__(cls, width, height):
         f = float
