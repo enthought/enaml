@@ -10,6 +10,14 @@ an image.
 """
 import os
 
+WIDTH = 64
+HEIGHT = 64
+
+def get_data():
+    buf = bytearray(WIDTH * HEIGHT * 4)
+    buf[0::4] = '\xff' * (WIDTH * HEIGHT)
+    buf[3::4] = '\xff' * (WIDTH * HEIGHT)
+    return buf
 
 def get_path():
     return os.path.join(os.path.dirname(__file__), 'question.png')
@@ -19,9 +27,14 @@ enamldef Main(MainWindow):
     title = 'Image View'
     Container:
         ImageView:
-            id: image
+            id: image0
             image = Image.from_file(get_path())
+        ImageView:
+            id: image1
+            image = Image.from_data(get_data(), (WIDTH, HEIGHT))
         CheckBox:
-            text = "Scale Image"
-            checked >> image.scale_to_fit
+            text = "Scale Images"
+            checked ::
+                image0.scale_to_fit = not image0.scale_to_fit
+                image1.scale_to_fit = not image1.scale_to_fit
 

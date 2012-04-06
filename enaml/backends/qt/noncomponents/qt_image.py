@@ -31,6 +31,38 @@ class QtImage(AbstractTkImage):
     # Abstract API Implementation
     #--------------------------------------------------------------------------
     @classmethod
+    def from_data(cls, data, size):
+        """ Construct an image from a bytearray of RGBA bytes.
+
+        Parameters
+        ----------
+        data : bytearray
+            A bytearray of the image data in RGBA32 format.
+
+        size : (width, height)
+            The width, height size tuple of the image.
+
+        Returns
+        -------
+        results : AbstractTkImage
+            An appropriate image instance.
+
+        """
+        # Shuffle the bytearray to match Qt's wonky ARGB format
+        qt_array = bytearray(len(data))
+        if sys.byteorder == 'little':
+            r, g, b, a = (2, 1, 0, 3)
+        else:
+            r, g, b, a = (1, 2, 3, 0)
+        qt_array[r::4] = data[0::4]
+        qt_array[g::4] = data[1::4]
+        qt_array[b::4] = data[2::4]
+        qt_array[a::4] = data[3::4]
+
+        w, h = size
+        return cls(QImage(qt_array, w, h, QImage.Format_ARGB32))
+
+    @classmethod
     def from_file(cls, path, format=''):
         """ Read in the image data from a file.
 
