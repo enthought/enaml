@@ -51,8 +51,17 @@ class WXPushButton(WXControl, AbstractTkPushButton):
         # change and the layout system needs to be informed.
         self.shell_obj.size_hint_updated()
 
-    def shell_icon_changed(self, text):
+    def shell_icon_changed(self, icon):
         """ The change handler for the 'icon' attribute.
+
+        This is currently not implemented because the standard wx.Button
+        does not support images.
+
+        """
+        pass
+
+    def shell_icon_size_changed(self, icon_size):
+        """ The change handler for the 'icon_size' attribute.
 
         This is currently not implemented because the standard wx.Button
         does not support images.
