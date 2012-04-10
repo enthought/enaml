@@ -38,7 +38,7 @@ enamldef MainView(MainWindow):
     name = 'win'
     Container:
         constraints = [horizontal(left, gb, right), vertical(top, gb, bottom),
-                       vertical(label1, label2), align_left(label1, label2)]
+                       vertical(label1, label2), align('left', label1, label2)]
         GroupBox:
             id: gb
             name = 'gb'

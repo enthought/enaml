@@ -17,7 +17,7 @@ enamldef Main(MainWindow):
     title = 'Sine Plot'
     Container:
         constraints = [
-            hbox(plot, vbox(form, _space_)),
+            hbox(plot, vbox(form, spacer)),
             align('left', *get_sliders(self)),
             align('right', *get_sliders(self)),
             plot.width >= 500,

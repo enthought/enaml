@@ -17,7 +17,7 @@ enamldef Main(MainWindow):
             vbox(
                 top_box,
                 bottom_box,
-                hbox(_space_, title_check, flat_check),
+                hbox(spacer, title_check, flat_check),
             ),
             align('midline', top_form, bottom_form),
         ]
