@@ -60,7 +60,12 @@ class QtImage(AbstractTkImage):
         qt_array[a::4] = data[3::4]
 
         w, h = size
-        return cls(QImage(str(qt_array), w, h, QImage.Format_ARGB32))
+        img_data = str(qt_array)
+        qimg = QImage(img_data, w, h, QImage.Format_ARGB32)
+        # Add a strong reference to the data so it doesn't get pulled out from
+        # under the QImage object.
+        qimg._data_keepalive_ptr = img_data
+        return cls(qimg)
 
     @classmethod
     def from_file(cls, path, format=''):
