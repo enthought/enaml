@@ -38,7 +38,7 @@ class QtEnamlValidator(QValidator):
         else:
             # This should never happen
             raise ValueError('Invalid validation result')
-        return res
+        return (res, text, pos)
     
     def fixup(self, text):
         """ Attempts to fixup the given text using the 'normalize' method

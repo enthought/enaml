@@ -2,6 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from .qt.QtCore import Signal
 from .qt.QtGui import QLineEdit
 from .qt_control import QtControl
 from .qt_enaml_validator import QtEnamlValidator
@@ -17,6 +18,18 @@ _PASSWORD_MODES = {
 }
 
 
+class QtEnamlLineEdit(QLineEdit):
+    """ A QLineEdit subclass which converts a lost focus event into 
+    a lost focus signal.
+
+    """
+    lostFocus = Signal()
+
+    def focusOutEvent(self, event):
+        self.lostFocus.emit()
+        return super(QtEnamlLineEdit, self).focusOutEvent(event)
+
+
 class QtField(QtControl, AbstractTkField):
     """ A Qt implementation of a Field which uses a QLineEdit to provide
     a single line of editable text.
@@ -29,7 +42,7 @@ class QtField(QtControl, AbstractTkField):
         """ Creates the underlying QLineEdit.
 
         """
-        self.widget = QLineEdit(parent=parent)
+        self.widget = QtEnamlLineEdit(parent)
 
     def initialize(self):
         """ Initializes the attributes of the Qt widget.
