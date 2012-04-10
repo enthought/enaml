@@ -13,7 +13,7 @@ class QtImage(AbstractTkImage):
     """ A Qt4 implementation of AbstractTkImage.
     
     """
-    def __init__(self, qimage=None):
+    def __init__(self, qimage=None, data=None):
         """ Initialize a QtImage.
 
         Parameters
@@ -22,10 +22,18 @@ class QtImage(AbstractTkImage):
             A QImage instance which holds the data. If None is passed, 
             then an empty QImage will be created.
 
+        data : a bytearray instance or None, optional
+            A bytearray instance which holds the image data. This is needed
+            because the QImage instance does not hold a strong reference to
+            its image buffer when constructed from a buffer (as opposed to a
+            file, say). If None is passed, then the QImage is assumed to have
+            been constructed from a file.
+
         """
         if qimage is None:
             qimage = QImage()
         self._qimage = qimage
+        self._data = data
     
     #--------------------------------------------------------------------------
     # Abstract API Implementation
@@ -60,7 +68,9 @@ class QtImage(AbstractTkImage):
         qt_array[a::4] = data[3::4]
 
         w, h = size
-        return cls(QImage(str(qt_array), w, h, QImage.Format_ARGB32))
+        img_data = str(qt_array)
+        return cls(qimage=QImage(img_data, w, h, QImage.Format_ARGB32),
+                   data=img_data)
 
     @classmethod
     def from_file(cls, path, format=''):
