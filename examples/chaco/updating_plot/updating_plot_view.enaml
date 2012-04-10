@@ -14,7 +14,7 @@ enamldef VariableTweaker(Container):
     constraints = [
         vertical(top, 0, sldr, 0, bottom),
         horizontal(left, 0, lbl, 0, sldr, 0, right),
-        align_top(lbl, sldr),
+        align('top', lbl, sldr),
         lbl.width == 50,
     ]
     Label:

@@ -1,7 +1,7 @@
 defn MainWindow:
     Window:
         title = "Slider example"
-        constraints = [vertical(top, _space_, slider, _space_, bottom),
+        constraints = [vertical(top, spacer, slider, spacer, bottom),
                         horizontal(left, slider, right),
                         slider.width >= 100]
         Slider -> slider:

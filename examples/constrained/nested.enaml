@@ -53,8 +53,8 @@ enamldef Main(MainWindow):
                 vbox(
                     html_frame, 
                     hbox(
-                        add_button, remove_button, _space_, 
-                        change_mode_button, _space_, share_button,
+                        add_button, remove_button, spacer, 
+                        change_mode_button, spacer, share_button,
                     ),
                 ),
                 align('h_center', html_frame, change_mode_button) | 'weak',
