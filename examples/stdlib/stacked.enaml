@@ -18,7 +18,7 @@ enamldef Main(MainWindow):
     title = "Stacked Container"
     Container:  
         constraints = [
-            vbox(hbox(selector, _space_), stack)
+            vbox(hbox(selector, spacer), stack)
         ]
         ComboBox:
             id: selector
