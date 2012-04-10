@@ -65,7 +65,7 @@ class EnamlQSpinBox(QSpinBox):
         else:
             # This should never happen
             raise ValueError('Invalid validation result')
-        return res
+        return (res, text, pos)
 
 
 class QtSpinBox(QtControl, AbstractTkSpinBox):
