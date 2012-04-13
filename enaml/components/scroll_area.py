@@ -50,6 +50,9 @@ class AbstractTkScrollArea(AbstractTkConstraintsWidget):
     def vertical_scrollbar_thickness(self):
         raise NotImplementedError
 
+    @abstractmethod
+    def scroll_to_position(self, position, margin):
+        raise NotImplementedError
 
 class ScrollArea(LayoutTaskHandler, ConstraintsWidget):
     """ A LayoutComponent subclass that displays just a single child in
@@ -87,7 +90,22 @@ class ScrollArea(LayoutTaskHandler, ConstraintsWidget):
 
     #: Overridden parent class trait
     abstract_obj = Instance(AbstractTkScrollArea)
-    
+
+    def scroll_to_position(self, position, margin):
+        """ Scrolls the area such that position is visible with a
+        minimum of margin_size points surrounding position.
+
+        Parameters
+        ----------
+        position : (x, y)
+            The x,y tuple of the position to be made visible.
+
+        margin : (x-margin, y-margin)
+            The x,y size tuple of the margins to keep around position.
+        
+        """
+        self.abstract_obj.scroll_to_position(position, margin)
+
     #--------------------------------------------------------------------------
     # Property Getters
     #--------------------------------------------------------------------------
