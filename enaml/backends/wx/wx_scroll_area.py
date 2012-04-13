@@ -151,6 +151,22 @@ class WXScrollArea(WXConstraintsWidget, AbstractTkScrollArea):
         """
         return wx.SystemSettings.GetMetric(wx.SYS_HSCROLL_Y)
 
+    def scroll_to_position(self, position, margin):
+        """ Scrolls the area such that position is visible with a
+        minimum of margin points surrounding position.
+
+        """
+        widget = self.widget
+
+        pos_x, pos_y = position
+        margin_x, margin_y = margin
+        scroll_unit_x, scroll_unit_y = widget.GetScrollPixelsPerUnit()
+        scroll_unit_x = 1.0 if scroll_unit_x == 0.0 else scroll_unit_x
+        scroll_unit_y = 1.0 if scroll_unit_y == 0.0 else scroll_unit_y
+
+        widget.Scroll(max(0.0, (pos_x - margin_x) / float(scroll_unit_x)),
+                      max(0.0, (pos_y - margin_y) / float(scroll_unit_y)))
+
     def size_hint(self):
         """ Returns a (width, height) tuple of integers for the size hint
         of the scroll area. Overridden from the parent class to return

@@ -75,6 +75,18 @@ class QtScrollArea(QtConstraintsWidget, AbstractTkScrollArea):
         """
         return self._scrollbar_thickness(QtCore.Qt.Vertical)
 
+    def scroll_to_position(self, position, margin):
+        """ Scrolls the area such that position is visible with a
+        minimum of margin points surrounding position.
+
+        """
+        widget = self.widget
+
+        pos_x, pos_y = position
+        margin_x, margin_y = margin
+
+        widget.ensureVisible(pos_x, pos_y, margin_x, margin_y)
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
