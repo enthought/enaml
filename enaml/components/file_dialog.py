@@ -2,7 +2,7 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import Enum, Int, Unicode
+from traits.api import Enum, Int, List, Unicode
 
 from .dialog import Dialog
 
@@ -11,8 +11,8 @@ class FileDialog(Dialog):
     """ A dialog widget that allows the user to open/save files.
 
     """
-    #: The type of file dialog: open or save
-    type = Enum("open", "save")
+    #: The type of file dialog: open, multi-open, or save
+    type = Enum("open", "open files", "save")
 
     # The default directory.
     default_directory = Unicode
@@ -33,6 +33,9 @@ class FileDialog(Dialog):
 
     # The path (directory and filename) of the chosen file.
     path = Unicode
+
+    # The paths (directory and filename) if multiple files were selected
+    paths = List(Unicode)
 
     # The wildcard used to restrict the set of files.
     wildcard = Unicode

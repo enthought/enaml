@@ -55,6 +55,9 @@ class QtFileDialog(QtDialog):
         if shell.type == 'open':
             widget.setAcceptMode(QtGui.QFileDialog.AcceptOpen)
             widget.setFileMode(QtGui.QFileDialog.ExistingFile)
+        elif shell.type == 'open files':
+            widget.setAcceptMode(QtGui.QFileDialog.AcceptOpen)
+            widget.setFileMode(QtGui.QFileDialog.ExistingFiles)
         else:
             widget.setAcceptMode(QtGui.QFileDialog.AcceptSave)
             widget.setFileMode(QtGui.QFileDialog.AnyFile)
@@ -76,8 +79,10 @@ class QtFileDialog(QtDialog):
 
         if files:
             shell.path = unicode(files[0])
+            shell.paths = [unicode(file) for file in files]
         else:
-            shell.path = ''
+            shell.path = u''
+            shell.paths = [u'']
 
         # Extract the directory and filename.
         shell.directory, shell.filename = split(shell.path)
