@@ -32,3 +32,25 @@ class WXToggleButton(WXToggleControl, AbstractTkToggleButton):
         widget.Bind(wx.EVT_LEFT_DOWN, self.on_pressed)
         widget.Bind(wx.EVT_LEAVE_WINDOW, self.on_released)
 
+    #--------------------------------------------------------------------------
+    # Implementation
+    #--------------------------------------------------------------------------
+
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute.
+
+        This is currently not implemented because the standard wx.ToggleButton
+        does not support images.
+
+        """
+        pass
+
+    def shell_icon_size_changed(self, icon_size):
+        """ The change handler for the 'icon_size' attribute.
+
+        This is currently not implemented because the standard wx.ToggleButton
+        does not support images.
+
+        """
+        pass
+
