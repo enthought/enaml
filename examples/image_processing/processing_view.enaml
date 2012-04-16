@@ -2,7 +2,15 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+from os.path import dirname
 from enaml.stdlib.fields import IntField, FloatField
+
+enamldef OpenDialog(FileDialog):
+    attr model
+    title = "Load image"
+    type = "open"
+    directory = dirname(__file__)
+    accepted :: model.filename = self.path
 
 
 enamldef Loader(Container):
@@ -21,15 +29,7 @@ enamldef Loader(Container):
         id: pb
         text = 'Load'
         constraints = [height == fld.height, width == 50]
-        clicked ::
-            # XXX this makes the example qt-only at the moment.
-            from enaml.backends.qt.qt import QtGui
-            import os
-            d = QtGui.QFileDialog()
-            d.setDirectory(os.path.dirname(__file__))
-            fn = d.getOpenFileName()[0]
-            if fn:
-                model.filename = fn
+        clicked :: OpenDialog(model=model).show()
     Label:
         id: slbl
         text << 'Width = %d    Height = %d' % (model.width, model.height)
