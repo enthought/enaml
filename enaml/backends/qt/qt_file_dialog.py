@@ -91,6 +91,12 @@ class QtFileDialog(QtDialog):
         shell.wildcard_index = widget.nameFilters().index(
             widget.selectedNameFilter())
 
+        # Fire off the appropriate event
+        if qt_result == QtGui.QDialog.Accepted:
+            shell.accepted()
+        else:
+            shell.rejected()
+
         super(QtFileDialog, self)._on_close(qt_result)
 
 

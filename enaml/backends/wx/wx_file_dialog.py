@@ -5,7 +5,7 @@
 from os.path import split
 import wx
 
-from .wx_dialog import WXDialog
+from .wx_dialog import WXDialog, WXDialogSizer
 
 from ...components.file_dialog import FileDialog
 
@@ -46,6 +46,7 @@ class WXFileDialog(WXDialog):
                     defaultFile=default_filename, style=style,
                     wildcard=shell.wildcard.rstrip('|'))
         widget.SetFilterIndex(shell.wildcard_index)
+        widget.SetSizer(WXDialogSizer())
 
         self.widget = widget
 
@@ -57,7 +58,7 @@ class WXFileDialog(WXDialog):
         """
         widget = self.widget
         shell = self.shell_obj
-        
+
         # Get the path of the chosen directory.
         shell.path = unicode(widget.GetPath())
         
@@ -72,6 +73,12 @@ class WXFileDialog(WXDialog):
 
         # Get the index of the selected filter.
         shell.wildcard_index = widget.GetFilterIndex()
+
+        # Fire off the appropriate event
+        if result == 'accepted':
+            shell.accepted()
+        else:
+            shell.rejected()
 
         # Let the dialog close as normal.
         super(WXFileDialog, self)._close_dialog(result)

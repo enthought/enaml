@@ -5,6 +5,7 @@
 from traits.api import Enum, Int, List, Unicode
 
 from .dialog import Dialog
+from ..core.trait_types import EnamlEvent
 
 
 class FileDialog(Dialog):
@@ -13,6 +14,12 @@ class FileDialog(Dialog):
     """
     #: The type of file dialog: open, multi-open, or save
     type = Enum("open", "open files", "save")
+
+    #: Fired when the dialog is closed if the OK button was pressed.
+    accepted = EnamlEvent
+
+    #: Fired when the dialog is closed if the user canceled out of the dialog.
+    rejected = EnamlEvent
 
     # The default directory.
     default_directory = Unicode
