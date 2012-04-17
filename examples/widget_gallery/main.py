@@ -176,10 +176,10 @@ def make_html_table():
 
 def main():
     with enaml.imports():
-        from widget_gallery import Main
+        from widget_gallery import WidgetGallery
 
     img_path = os.path.join(os.path.dirname(__file__), 'lena.png')
-    view = Main(
+    view = WidgetGallery(
         fs_model=FSModel(), sin_plot=make_sin_plot(),
         html_data=make_html_table(), img_path=img_path,
     )

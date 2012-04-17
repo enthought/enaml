@@ -125,7 +125,7 @@ enamldef Notebook(TabGroup):
             text = 'Tab Three'
 
         
-enamldef Main(MainWindow):
+enamldef WidgetGallery(MainWindow):
     attr fs_model
     attr sin_plot
     attr html_data
