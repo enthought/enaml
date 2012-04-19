@@ -74,12 +74,6 @@ class WXFileDialog(WXDialog):
         # Get the index of the selected filter.
         shell.wildcard_index = widget.GetFilterIndex()
 
-        # Fire off the appropriate event
-        if result == 'accepted':
-            shell.accepted()
-        else:
-            shell.rejected()
-
         # Let the dialog close as normal.
         super(WXFileDialog, self)._close_dialog(result)
 

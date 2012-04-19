@@ -5,13 +5,6 @@
 from os.path import dirname
 from enaml.stdlib.fields import IntField, FloatField
 
-enamldef OpenDialog(FileDialog):
-    attr model
-    title = "Load image"
-    type = "open"
-    directory = dirname(__file__)
-    accepted :: model.filename = self.path
-
 
 enamldef Loader(Container):
     constraints = [
@@ -29,7 +22,11 @@ enamldef Loader(Container):
         id: pb
         text = 'Load'
         constraints = [height == fld.height, width == 50]
-        clicked :: OpenDialog(model=model).show()
+        clicked ::
+            dlg = FileDialog(title="Load Image", type="open", directory=dirname(__file__))
+            dlg.show()
+            if dlg.result == 'accepted':
+                model.filename = dlg.path
     Label:
         id: slbl
         text << 'Width = %d    Height = %d' % (model.width, model.height)
