@@ -2,7 +2,7 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from os.path import dirname
+import os
 from enaml.stdlib.fields import IntField, FloatField
 
 
@@ -23,7 +23,10 @@ enamldef Loader(Container):
         text = 'Load'
         constraints = [height == fld.height, width == 50]
         clicked ::
-            dlg = FileDialog(title="Load Image", type="open", directory=dirname(__file__))
+            dlg = FileDialog(
+                title='Load Image', filters=['Images (*.png *.jpg)'],
+                directory=os.path.dirname(__file__),
+            )
             dlg.show()
             if dlg.result == 'accepted':
                 model.filename = dlg.path
