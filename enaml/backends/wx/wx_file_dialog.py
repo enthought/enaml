@@ -19,7 +19,7 @@ STYLE_MODE_MAP = {
 }
 
 
-FILTER_RE = re.compile(r'\(.*?\*.*?\)')
+FILTER_RE = re.compile(r'\((.*?\*.*?)\)')
 
 
 class WXFileDialog(WXDialog, AbstractTkFileDialog):
@@ -33,7 +33,7 @@ class WXFileDialog(WXDialog, AbstractTkFileDialog):
         """ Creates the underlying wx.FileDialog control.
 
         """
-        self.widget = wx.FileDialog(parent, style=wx.FD_OPEN)
+        self.widget = wx.FileDialog(parent)
 
     def initialize(self):
         """ Initializes the attributes of the underlying QFileDialog.
@@ -136,18 +136,15 @@ class WXFileDialog(WXDialog, AbstractTkFileDialog):
 
         """
         # This converts Qt's filter format, which is used by the shell
-        # object, into wx's wildcard format. Note that wildcard handling
-        # on OSX is terribly broken. Yet another reason we only support
-        # Wx on Windows.
-        adjusted = []
+        # object, into wx's wildcard format.
+        parts = []
         for filt in filters:
-            if FILTER_RE.search(filt):
-                for part in FILTER_RE.findall(filt):
-                    filt = filt.replace(part, u';'.join(part.split()))
-            else:
-                filt = u';'.join(filt.split())
-            adjusted.append(filt)
-        wildcard = u'|'.join(adjusted)
+            parts.append(filt)
+            match = FILTER_RE.search(filt)
+            if match:
+                filt = match.group(1)
+            parts.append(u';'.join(filt.split()))
+        wildcard = u'|'.join(parts)
         self.widget.SetWildcard(wildcard)
     
     def set_selected_filter(self, selected_filter):
