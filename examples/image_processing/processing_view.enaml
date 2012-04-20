@@ -24,7 +24,7 @@ enamldef Loader(Container):
         constraints = [height == fld.height, width == 50]
         clicked ::
             dlg = FileDialog(
-                title='Load Image', filters=['Images (*.png *.jpg)'],
+                title='Load Image', filters=['Images (*.png *.jpg *.JPG)'],
                 directory=os.path.dirname(__file__),
             )
             dlg.show()
