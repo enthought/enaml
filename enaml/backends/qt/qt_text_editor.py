@@ -2,11 +2,22 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from .qt import QtGui
+from .qt import QtGui, QtCore
 from .qt_control import QtControl
 
 from ...components.text_editor import AbstractTkTextEditor
 from ...guard import guard
+
+class QtEnamlPlainTextEdit(QtGui.QPlainTextEdit):
+    """ A QLineEdit subclass which converts a lost focus event into
+    a lost focus signal.
+
+    """
+    lostFocus = QtCore.Signal()
+
+    def focusOutEvent(self, event):
+        self.lostFocus.emit()
+        return super(QtEnamlPlainTextEdit, self).focusOutEvent(event)
 
 
 class QtTextEditor(QtControl, AbstractTkTextEditor):
@@ -23,7 +34,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         """ Creates the underlying QTextEditor.
 
         """
-        self.widget = QtGui.QPlainTextEdit(parent)
+        self.widget = QtEnamlPlainTextEdit(parent)
 
     def initialize(self):
         """ Initializes the attributes of the Qt widget.
@@ -47,6 +58,7 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         widget.textChanged.connect(self.on_text_updated) # XXX or should we bind to textEdited?
         widget.selectionChanged.connect(self.on_selection)
         widget.cursorPositionChanged.connect(self.on_cursor)
+        widget.lostFocus.connect(self.on_lost_focus)
 
     #--------------------------------------------------------------------------
     # Implementation
@@ -301,6 +313,12 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
 
         """
         self.update_shell_selection()
+
+    def on_lost_focus(self):
+        """ The event handler for focus lost event.
+
+        """
+        self.shell_obj.lost_focus()
 
     def update_shell_selection(self):
         """ Updates the selection and cursor position of the parent to 

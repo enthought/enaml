@@ -178,6 +178,9 @@ class TextEditor(Control):
     #: payload. To retrieve the current text, call `get_text()`.
     text_edited = EnamlEvent
 
+    #: Fired when the widget has lost input focus.
+    lost_focus = EnamlEvent
+
     #: How strongly a component hugs it's contents' width. TextEditors 
     #: ignore the width hug by default, so they expand freely in width.
     hug_width = 'ignore'
