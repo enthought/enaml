@@ -9,6 +9,12 @@ from .wx_window import WXWindow
 from ...components.dialog import AbstractTkDialog
 
 
+DIALOG_RETCODE_MAP = {
+    wx.ID_OK: 'accepted',
+    wx.ID_CANCEL: 'rejected'
+}
+
+
 class WXDialogSizer(wx.PySizer):
     """ A custom wx Sizer for use in the WXDialog. This sizers expands
     its child to fit the allowable space, regardless of the settings on
@@ -68,13 +74,6 @@ class WXDialog(WXWindow, AbstractTkDialog):
         self.widget = wx.Dialog(parent, style=style)
         self.widget.SetSizer(WXDialogSizer())
 
-    def initialize(self):
-        """ Intializes the attributes on the wx.Dialog.
-
-        """
-        super(WXDialog, self).initialize()
-        self.widget.Bind(wx.EVT_CLOSE, self._on_close)
-
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
@@ -82,24 +81,13 @@ class WXDialog(WXWindow, AbstractTkDialog):
         """ Close the dialog and set the result to 'accepted'.
 
         """
-        self._close_dialog('accepted')
+        self.widget.EndModal(wx.ID_OK)
 
     def reject(self):
         """ Close the dialog and set the result to 'rejected'.
 
         """
-        self._close_dialog('rejected')
-
-    #--------------------------------------------------------------------------
-    # Event Handlers
-    #--------------------------------------------------------------------------
-    def _on_close(self, event):
-        """ Destroy the dialog to handle the EVT_CLOSE event. This will 
-        happen if the user clicks on the 'X'. This is equivalent to
-        calling 'reject()'.
-
-        """
-        self.reject()
+        self.widget.EndModal(wx.ID_CANCEL)
 
     #--------------------------------------------------------------------------
     # Widget Update Methods
@@ -135,22 +123,27 @@ class WXDialog(WXWindow, AbstractTkDialog):
             shell.opened()
             # wx cannot distinguish between app modal and 
             # window modal, so we only get one kind.
-            widget.ShowModal()
+            retcode = widget.ShowModal()
         else:
-            self.reject()
+            retcode = wx.ID_CANCEL
+        self._handle_retcode(retcode)
     
     #--------------------------------------------------------------------------
     # Auxiliary Methods 
     #--------------------------------------------------------------------------
-    def _close_dialog(self, result):
-        """ Destroy the dialog, fire events, and set status attributes.
+    def _handle_retcode(self, retcode):
+        """ Destroys the dialog, fires events, and set status attributes.
 
         """
-        # Explicitly Destroy the dialog or the wxApp won't properly exit.
-        if self.widget:
-            self.widget.Destroy()
         shell = self.shell_obj
+        result = DIALOG_RETCODE_MAP[retcode]
         shell._result = result
         shell._active = False
         shell.closed(result)
+        # Explicitly Destroy the dialog or the wxApp won't properly exit.
+        # We can't simply destroy the shell object since the user may
+        # still need something from it.
+        widget = self.widget
+        if widget:
+            widget.Destroy()        
 
