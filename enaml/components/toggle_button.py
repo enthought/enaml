@@ -7,6 +7,7 @@ from abc import abstractmethod
 from traits.api import Instance
 
 from .toggle_control import ToggleControl, AbstractTkToggleControl
+
 from ..core.trait_types import CoercingInstance
 from ..layout.geometry import Size
 from ..noncomponents.abstract_icon import AbstractTkIcon
@@ -26,8 +27,8 @@ class AbstractTkToggleButton(AbstractTkToggleControl):
 
     @abstractmethod
     def shell_icon_size_changed(self, icon_size):
-        """ The change handler for the 'icon_size' attribute on the shell
-        component.
+        """ The change handler for the 'icon_size' attribute on the 
+        shell component.
 
         """
         raise NotImplementedError
@@ -50,7 +51,6 @@ class ToggleButton(ToggleControl):
     ToggleControl
 
     """
-
     #: The an icon to display in the button.
     icon = Instance(AbstractTkIcon)
 

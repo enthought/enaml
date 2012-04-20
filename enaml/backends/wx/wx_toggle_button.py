@@ -35,12 +35,11 @@ class WXToggleButton(WXToggleControl, AbstractTkToggleButton):
     #--------------------------------------------------------------------------
     # Implementation
     #--------------------------------------------------------------------------
-
     def shell_icon_changed(self, icon):
         """ The change handler for the 'icon' attribute.
 
-        This is currently not implemented because the standard wx.ToggleButton
-        does not support images.
+        This is currently not implemented because the standard 
+        wx.ToggleButton does not support images.
 
         """
         pass
@@ -48,8 +47,8 @@ class WXToggleButton(WXToggleControl, AbstractTkToggleButton):
     def shell_icon_size_changed(self, icon_size):
         """ The change handler for the 'icon_size' attribute.
 
-        This is currently not implemented because the standard wx.ToggleButton
-        does not support images.
+        This is currently not implemented because the standard 
+        wx.ToggleButton does not support images.
 
         """
         pass

@@ -67,6 +67,7 @@ class QtToggleButton(QtToggleControl, AbstractTkToggleButton):
 
     def set_icon(self, icon):
         """ Sets the icon on the button control.
+
         """
         if icon is None:
             qicon = QtGui.QIcon()
@@ -76,8 +77,10 @@ class QtToggleButton(QtToggleControl, AbstractTkToggleButton):
 
     def set_icon_size(self, icon_size):
         """ Sets the icon size on the button control.
+
         """
-        if icon_size is not None and (icon_size.width > 0
-                                  and icon_size.height > 0):
+        if (icon_size is not None and 
+            icon_size.width > 0 and 
+            icon_size.height > 0):
             self.widget.setIconSize(QtCore.QSize(*icon_size))
 

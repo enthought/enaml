@@ -8,6 +8,7 @@ from .qt_control import QtControl
 from ...components.text_editor import AbstractTkTextEditor
 from ...guard import guard
 
+
 class QtEnamlPlainTextEdit(QtGui.QPlainTextEdit):
     """ A QLineEdit subclass which converts a lost focus event into
     a lost focus signal.
@@ -21,10 +22,7 @@ class QtEnamlPlainTextEdit(QtGui.QPlainTextEdit):
 
 
 class QtTextEditor(QtControl, AbstractTkTextEditor):
-    """ A Qt implementation of a Field.
-
-    QtTextEditor uses a QPlainTextEdit to provide a simple text editor
-    widget.
+    """ A Qt4 implementation of a TextEditor.
 
     """
     #--------------------------------------------------------------------------
