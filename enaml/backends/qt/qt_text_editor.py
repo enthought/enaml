@@ -116,7 +116,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         selection. The cursor is placed at the beginning of selection.
 
         """
-        self.widget.deselect()
+        cursor = self.widget.textCursor()
+        cursor.clearSelection()
         self.update_shell_selection()
 
     def clear(self):
@@ -133,7 +134,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the cursor. Otherwise, it deletes the selected text.
 
         """
-        self.widget.backspace()
+        cursor = self.widget.textCursor()
+        cursor.deletePreviousChar()
         self.update_shell_selection()
 
     def delete(self):
@@ -143,7 +145,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
         the cursor. Otherwise, it deletes the selected text.
 
         """
-        self.widget.del_()
+        cursor = self.widget.textCursor()
+        cursor.deleteChar()
         self.update_shell_selection()
 
     def end(self, mark=False):
@@ -162,7 +165,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
             end = len(widget.text())
             widget.setSelection(start, end)
         else:
-            widget.end(mark)
+            cursor = widget.textCursor()
+            cursor.movePosition(cursor.End)
         self.update_shell_selection()
 
     def home(self, mark=False):
@@ -181,7 +185,8 @@ class QtTextEditor(QtControl, AbstractTkTextEditor):
             end = widget.cursorPosition()
             widget.setSelection(start, end)
         else:
-            widget.home(mark)
+            cursor = widget.textCursor()
+            cursor.movePosition(cursor.Start)
         self.update_shell_selection()
 
     def cut(self):
