@@ -14,6 +14,7 @@ from .widget_component import WidgetComponent, AbstractTkWidgetComponent
 
 from ..guard import guard
 from ..layout.geometry import Size
+from ..noncomponents.abstract_icon import AbstractTkIcon
 
 
 # The set of strengths that are equal to, or stronger than, the resize
@@ -56,6 +57,14 @@ class AbstractTkWindow(AbstractTkWidgetComponent):
         raise NotImplementedError
 
     @abstractmethod
+    def shell_icon_changed(self, icon):
+        """ Update the icon of the window with the new value from the
+        shell object.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
     def shell_central_widget_changed(self, central_widget):
         """ Update the central widget in the window with the new value
         from the shell object.
@@ -75,6 +84,9 @@ class Window(LayoutTaskHandler, WidgetComponent):
     """
     #: The title displayed on the window frame.
     title = Str
+
+    # The icon displayed on the frame next to the title.
+    icon = Instance(AbstractTkIcon)
 
     #: A read-only property which holds the central widget. Declaring
     #: more than one central widget is an error.
