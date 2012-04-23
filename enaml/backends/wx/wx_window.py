@@ -29,6 +29,7 @@ class WXWindow(WXWidgetComponent, AbstractTkWindow):
         super(WXWindow, self).initialize()
         shell = self.shell_obj
         self.set_title(shell.title)
+        self.set_icon(shell.icon)
         self.set_central_widget(shell.central_widget)
 
     #--------------------------------------------------------------------------
@@ -62,6 +63,13 @@ class WXWindow(WXWidgetComponent, AbstractTkWindow):
         """
         self.set_title(title)
 
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute on the shell
+        object.
+
+        """
+        self.set_icon(icon)
+
     def shell_central_widget_changed(self, central_widget):
         """ The change handler for the 'central_widget' attribute on 
         the shell object.
@@ -80,6 +88,17 @@ class WXWindow(WXWidgetComponent, AbstractTkWindow):
         # will already have been parented properly by the Include and
         # a relayout will have been requested.
         pass
+
+    def set_icon(self, icon):
+        """ Sets the icon of the window.
+
+        """
+        wxicon = self.widget.GetIcon()
+        if icon is not None:
+            img = icon.get_image((32, 32), mode='normal')
+            bmp = img.as_wxBitmap()
+            wxicon.CopyFromBitmap(bmp)
+        self.widget.SetIcon(wxicon)
 
     def set_title(self, title):
         """ Sets the title of the frame.
