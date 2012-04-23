@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import QSize
-from .qt.QtGui import QWidget, QLayout
+from .qt.QtGui import QWidget, QLayout, QIcon
 from .qt_widget_component import QtWidgetComponent
 
 from ...components.window import AbstractTkWindow
@@ -95,6 +95,7 @@ class QtWindow(QtWidgetComponent, AbstractTkWindow):
         super(QtWindow, self).initialize()
         shell = self.shell_obj
         self.set_title(shell.title)
+        self.set_icon(shell.icon)
         self.set_central_widget(shell.central_widget)
 
     #--------------------------------------------------------------------------
@@ -127,7 +128,14 @@ class QtWindow(QtWidgetComponent, AbstractTkWindow):
 
         """
         self.set_title(title)
-    
+
+    def shell_icon_changed(self, icon):
+        """ The change handler for the 'icon' attribute on the shell
+        object.
+
+        """
+        self.set_icon(icon)
+
     def shell_central_widget_changed(self, central_widget):
         """ The change handler for the 'central_widget' attribute on 
         the shell object.
@@ -152,6 +160,16 @@ class QtWindow(QtWidgetComponent, AbstractTkWindow):
         else:
             child_widget = central_widget.toolkit_widget
         self.widget.layout().addWidget(child_widget)
+
+    def set_icon(self, icon):
+        """ Sets the icon of the underlying widget.
+
+        """
+        if icon is None:
+            qicon = QIcon()
+        else:
+            qicon = icon.as_QIcon()
+        self.widget.setWindowIcon(qicon)
 
     def set_title(self, title):
         """ Sets the title of the underlying widget.
