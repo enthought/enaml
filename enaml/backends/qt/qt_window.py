@@ -3,7 +3,7 @@
 #  All rights reserved.
 #------------------------------------------------------------------------------
 from .qt.QtCore import QSize
-from .qt.QtGui import QWidget, QLayout
+from .qt.QtGui import QWidget, QLayout, QIcon
 from .qt_widget_component import QtWidgetComponent
 
 from ...components.window import AbstractTkWindow
@@ -166,7 +166,7 @@ class QtWindow(QtWidgetComponent, AbstractTkWindow):
 
         """
         if icon is None:
-            qicon = QtGui.QIcon()
+            qicon = QIcon()
         else:
             qicon = icon.as_QIcon()
         self.widget.setWindowIcon(qicon)

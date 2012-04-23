@@ -85,7 +85,7 @@ class Window(LayoutTaskHandler, WidgetComponent):
     #: The title displayed on the window frame.
     title = Str
 
-    # The icon displayed on the frame next to the title.
+    #: The icon displayed on the frame next to the title.
     icon = Instance(AbstractTkIcon)
 
     #: A read-only property which holds the central widget. Declaring

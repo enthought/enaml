@@ -91,10 +91,11 @@ class WXWindow(WXWidgetComponent, AbstractTkWindow):
 
     def set_icon(self, icon):
         """ Sets the icon of the window.
+
         """
         wxicon = self.widget.GetIcon()
         if icon is not None:
-            img = icon.get_image((32,32), mode='normal')
+            img = icon.get_image((32, 32), mode='normal')
             bmp = img.as_wxBitmap()
             wxicon.CopyFromBitmap(bmp)
         self.widget.SetIcon(wxicon)
