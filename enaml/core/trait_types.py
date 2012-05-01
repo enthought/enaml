@@ -227,10 +227,12 @@ class ExpressionTrait(TraitType):
                 if isinstance(e, ExpressionInitializationError):
                     raise
                 msg = ('Error initializing expression (%r line %s). '
-                       'Orignal exception was: %s.')
+                       'Orignal exception was:\n%s')
+                import traceback
+                tb = traceback.format_exc()
                 filename = expr.code.co_filename
                 lineno = expr.code.co_firstlineno
-                args = (filename, lineno, e)
+                args = (filename, lineno, tb)
                 raise ExpressionInitializationError(msg % args)
         return res
 
