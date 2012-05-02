@@ -6,6 +6,7 @@
 
 """
 import optparse
+import os
 import sys
 import types
 
@@ -52,6 +53,9 @@ def main():
     module.__file__ = enaml_file
     ns = module.__dict__
 
+    # Put the directory of the Enaml file first in the path so relative imports
+    # can work.
+    sys.path.insert(0, os.path.abspath(os.path.dirname(enaml_file)))
     with imports():
         exec code in ns
 
