@@ -114,7 +114,7 @@ class FSModel(AbstractItemModel):
             res = str(node.stat.st_size / 1024) + ' kb'
         else:
             dt = datetime.fromtimestamp(node.stat.st_mtime)
-            res = dt.strftime('%D %H:%M:%S')
+            res = dt.strftime('%c')
         return res
     
     def horizontal_header_data(self, section):
