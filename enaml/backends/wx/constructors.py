@@ -54,6 +54,7 @@ WX_CONSTRUCTORS = dict((
     constructor('window'),
     constructor('main_window'),
     constructor('dialog'),
+    constructor('directory_dialog'),
     constructor('container'),
     constructor('calendar'),
     constructor('check_box'),
