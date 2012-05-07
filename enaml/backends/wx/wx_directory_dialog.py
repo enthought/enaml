@@ -26,7 +26,7 @@ class WXDirectoryDialog(WXDialog, AbstractTkDirectoryDialog):
         self.widget = wx.DirDialog(parent)
 
     def initialize(self):
-        """ Initializes the attributes of the underlying QFileDialog.
+        """ Initializes the attributes of the underlying wx.DirDialog.
 
         """
         super(WXDirectoryDialog, self).initialize()
@@ -57,7 +57,7 @@ class WXDirectoryDialog(WXDialog, AbstractTkDirectoryDialog):
 
     def set_central_widget(self, widget):
         """ Overridden parent class method which makes central widget
-        operations a no-op, since a file dialog has no children.
+        operations a no-op, since a directory dialog has no children.
 
         """
         pass
