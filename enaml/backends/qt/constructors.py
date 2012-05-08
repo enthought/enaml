@@ -112,6 +112,7 @@ QT_CONSTRUCTORS = dict((
     constructor('main_window'),
     constructor('container'),
     constructor('dialog'),
+    constructor('directory_dialog'),
     constructor('calendar'),
     constructor('check_box'),
     constructor('combo_box'),
