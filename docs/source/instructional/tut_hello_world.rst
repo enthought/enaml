@@ -20,59 +20,65 @@ Here is our minimalist .enaml file describing a message-displaying GUI
 Use the special helper function ``enaml-run`` to run it from the command line
 with ::
 
-    $ enaml-run hello_world_minimal.enaml
+    $ enaml-run hello_world_view.enaml
 
 The resulting GUI looks like this (in Mac OS):
 
-.. image:: images/hello_world_minimal.png
+.. image:: images/hello_world.png
 
 Let's take a closer look at the |Enaml| file.
 
-Enaml Declarations
+Enaml Definitions
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-An |Enaml| view is made up of a series of component *declarations* that look a
-lot like Python classes. In the first line of code, we are declaring a new
+An |Enaml| view is made up of a series of component *definitions* that look a
+lot like Python classes. In the first line of code, we are defining a new
 component, ``Main``, which derives from ``MainWindow``, a component in the
 |Enaml| standard library.
 
 ::
 
- Main(MainWindow):
+    enamldef Main(MainWindow):
 
-With the this line of code, we have declared the start of a *declaration
+With the this line of code, we have defined the start of a *definition
 block*.
  
 In general, we could call this almost anything we want, as long as it is a
 Python-valid name. In this case, however, by giving it the special name "Main"
 we get to run it from the command line with the special ``enaml-run``
-tool. ``enaml-run`` looks for a component named "Main" and runs it as a
-standalone application.
+tool. ``enaml-run`` looks for a component named "Main" or a function named
+"main" and runs it as a standalone application.
 
 
-Declaration Structure
+Definition Structure
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Inside a declaration block, the view is defined in a hierarchical tree of view
+Inside a definition block, the view is defined in a hierarchical tree of view
 components. `As in Python
 <http://docs.python.org/reference/lexical_analysis.html#indentation>`_ ,
 indentation is used to specify code block structure. That is, statements
 beginning at a certain indentation level refer to the header line at the next
-lower indentation level. So in our simple example, the ``Label:`` belongs to
-``Main``.
+lower indentation level. So in our simple example, the ``Container:`` belongs to
+``Main`` and the ``Label:`` belongs to ``Container``::
 
-Our view is made up of a ``Window`` containing a ``Label``, whose ``text``
-attribute we set equal to ``message``, which is passed in by the calling
-function.  (We'll discuss this in more detail in the :ref:`next tutorial
-<john-doe>` .)
+    enamldef Main(MainWindow):
+        attr message = "Hello, world!"
+        Container:
+            Label:
+                text = message
+
+
+Our view is made up of a ``MainWindow`` containing a ``Container`` which in
+turn contains a ``Label``, whose ``text`` attribute we set equal to ``message``
+attribute of ``Main``, which can be passed in by the
+calling function, but which has a default of ``Hello, world!``.  (We'll discuss
+this in more detail in the :ref:`next tutorial <john-doe>` .)
 
 Using the |Enaml| view in Python
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Now we'll take a look at how to use the view in Python code. First, we import
-|Enaml|:
-
-::
+|Enaml|::
 
  import enaml
 
@@ -82,17 +88,16 @@ the |Enaml| view.
 ::
 
  with enaml.imports():
-     from hello_world import MyMessageToTheWorld
+     from hello_world_view import Main
 
-Then, we instantiate the view, passing the message to be displayed:
-::
+Then, we instantiate the view, passing the message to be displayed::
 
- view = MyMessageToTheWorld("Hello, world!")
+ view = Main("Hello, world, from Python!")
 
-The ``show()`` method on ``view`` displays the window:
-::
+The ``show()`` method on ``view`` displays the window and starts the application
+mainloop::
 
  view.show()
 
 
-.. image:: images/hello_world.png
+.. image:: images/hello_world_python.png
