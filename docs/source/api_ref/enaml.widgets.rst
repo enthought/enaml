@@ -232,3 +232,15 @@ Menu widgets
     enaml.components.menu_bar.MenuBar
     enaml.components.menu.Menu
 
+Standard library
+^^^^^^^^^^^^^^^^
+
+A number of additional widget types are available in the standard widget
+library.  These are not top-level classes implemented in Python, but are instead
+|Enaml| widgets implemented using ``enamldef`` declarations.
+
+.. toctree::
+   :maxdepth: 2
+
+    Standard Widget Library <std_library_ref>
+
