@@ -9,37 +9,11 @@ some new attributes including the ``id`` tag and two new |Enaml| operators: the
 subscription operator ``<<`` and the notification operator ``::`` along with
 some component-specific attributes.
 
-Let's start with a code snippet from :download:`progress_bar.enaml
+Let's start with the code from :download:`progress_bar.enaml
 <../../../examples/components/progress_bar.enaml>`:
 
-::
-
-    enamldef Main(MainWindow):
-        attr model: ProgressModel = ProgressModel()
-        title = 'Progress Bar'
-        Container:
-            constraints = [
-                vbox(progress,
-                    hbox(spacer, label, spacer), 
-                    hbox(spacer, work_button, spacer),
-                    spacer),
-                align('h_center', progress, label, work_button),
-            ]
-            ProgressBar:
-                id: progress
-                value := model.units_done
-                maximum := model.work_units
-            Label:
-                id: label
-                text << '{0}% ({1}/{2})'.format(progress.percentage, progress.value, progress.maximum)
-            PushButton:
-                id: work_button
-                text << "Do Some Work" if progress.percentage < 100 else "Reset"
-                clicked :: 
-                    if progress.percentage < 100:
-                        model.do_work()
-                    else:
-                        model.reset()
+.. literalinclude:: ../../../examples/components/progress_bar.enaml
+    :language: python
 
 
 We're setting up a view which builds on a top-level ``MainWindow``. The view
@@ -50,12 +24,43 @@ has a ``Container`` which itself contains three widgets: a ``ProgressBar``, a
 descriptions of widgets and components from the :ref:`built-ins <built-ins-ref>`
 and :ref:`standard library <std-library-ref>`.)
 
+The result when you run it looks like:
+
+.. image:: images/progress_bar.png
+
 In this example, we see some things we have not seen before:
+    * Python code included in an |Enaml| file.
     * the ProgressBar, Label and PushButton have ``id`` tags.
     * the text attributes of the Label and PushButton both use the subscription
       operator ``<<``
     * the PushButton's ``clicked`` event uses the notification operator ``::``
     * the Container object has a ``constraints`` attribute
+
+Python Code in |Enaml| Files
+-------------------------------------------------------------------------------
+
+The |Enaml| language is a strict superset of Python, so in addition to the
+``enamldef`` definitions we have seen, you can define regular Python functions,
+classes and even module-level global variables.  Any valid Python code can be
+used in this context, in particular, you can also ``import`` any other Python
+or Enaml modules that you might like.
+
+The advantage of doing this is that your Python code is available when you run
+the |Enaml| file using the ``enaml-run`` command.  You can also access any
+Python objects defined inside an .enaml file, as long as that .enaml file is
+imported using the ``enaml.import()`` context manager.
+
+For example, you use a different ``ProgressModel`` instance than the default,
+you could do the following from within a .py file::
+
+    import enaml
+    
+    with enaml.import():
+        import progress_bar
+    
+    model = progress_bar.ProgressModel(work_units=100)
+    view = progress_bar.Main(model=model)
+    view.show()
 
 ``id`` Tags
 -------------------------------------------------------------------------------
@@ -177,7 +182,7 @@ by setting a value on the ``constraints`` attribute of the Container.
         align('h_center', progress, label, work_button),
     ]
 
-This layout is hopfully fairly clear:: the children of the container should be
+This layout is hopfully fairly clear: the children of the container should be
 layed out vertically in a box, with the progress bar above the label which is
 in turn above the work_button.  At the bottom is a spacer, which provides an
 expanding amount of space, meaning that the other items in the vbox will not
@@ -229,62 +234,13 @@ label::
         progress.width >= 2*label.width,
     ]
 
-::
+Most widgets in |Enaml| inherit the standard box model.  They have constraint
+variables ``width``, ``height``, ``top``, ``bottom``, ``left``, ``right``,
+``h_center`` and ``v_center`` that can be used in constraints.  In addition,
+Container widgets have constraint variables representing the padding and
+contents region: ``padding_top``, ``padding_bottom``, ``padding_left``, and
+``padding_right``, as well as ``contents_width``, ``contents_height``,
+``contents_top``, ``contents_bottom``, ``contents_left``, ``contents_right``,
+``contents_h_center`` and ``contents_v_center``.
 
- :: python ::
 
- import random
- from traits.api import HasTraits, Int
-
- class Model(HasTraits):
-     """ Model a process that does some work on command.
-     """
-     # The total units of work to do.
-     work_units = Int(1000)
-
-     # The number of units done.
-     units_done = Int(0)
-
-     def do_work(self):
-         """ Do a random amount of work.
-         """
-         nunits = random.randint(10, 100)
-         nunits = min(nunits, self.work_units - self.units_done)
-         self.units_done += nunits
-
-     def reset(self):
-         """ Reset the work done back to 0.
-         """
-         self.units_done = 0
- :: end ::
-
-Note that logically, this section of Python code should go *before* the veiw
-declaration, but |Enaml| files are executed "all at once", and the order of
-declaration does not matter [#]_. Within the Python code tags, of course, the normal
-rules of Python parsing and execution apply.
-
-With a separate piece of Python code, we set up the main() function for
-running from the command line:
-
-::
-
-    :: python ::
-
-    # A 'main' function is special cased as an entry point by the enaml-run script
-    def main():
-        model = Model()
-        window = ModelView(model)
-        window.show()
-
-    :: end ::
-
-Execute from the command line with
-
-::
-
- $ enaml-run progress_bar.enaml 
-
-.. image:: images/progress_bar_simple.png
-
-.. [#] Technically, the right-hand side of an |Enaml| operator acts as a
-   closure which has access to all of the identifiers declared in the block.

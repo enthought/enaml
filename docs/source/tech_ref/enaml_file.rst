@@ -1,6 +1,9 @@
 Writing .enaml Files
 ====================
 
+.. warning:: This documentation is not current and does not reflect the way
+    Enaml currently works.
+
 Enaml files contain a domain-specific language for specifying a user-interface
 and dynamically binding and computing values based on user interaction.
 

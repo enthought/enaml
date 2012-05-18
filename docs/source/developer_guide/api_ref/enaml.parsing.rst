@@ -1,23 +1,18 @@
 parsing Package
 ===============
 
-:mod:`analyzer` Module
-----------------------
-
-.. automodule:: enaml.parsing.analyzer
-
 :mod:`enaml_ast` Module
 -----------------------
 
 .. inheritance-diagram:: enaml.parsing.enaml_ast
     :parts: 1
 
-.. automodule:: enaml.parsing.enaml_ast
+.. automodule:: enaml.core.enaml_ast
 
 :mod:`lexer` Module
 -------------------
 
-.. currentmodule:: enaml.parsing.lexer
+.. currentmodule:: enaml.core.lexer
 
 .. autoclass:: EnamlLexer
     :no-members:
@@ -29,9 +24,9 @@ parsing Package
 :mod:`parser` Module
 --------------------
 
-.. automodule:: enaml.parsing.parser
+.. automodule:: enaml.core.parser
 
 :mod:`enaml_compiler` Module
 ----------------------------
 
-.. automodule:: enaml.parsing.enaml_compiler
+.. automodule:: enaml.core.enaml_compiler

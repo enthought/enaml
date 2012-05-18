@@ -3,6 +3,9 @@
 |Enaml| Grammar Reference
 ===============================================================================
 
+.. warning:: This documentation is not current and does not reflect the way
+    Enaml currently works.
+
 Four operator have special meaning in |Enaml| syntax: :ref:`assignment
 <def-assignment-opr>`, :ref:`delegation <delegation-opr>`, :ref:`subscription
 <subscription-opr>`, and :ref:`notification <notification-opr>`. Each of these

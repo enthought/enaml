@@ -23,20 +23,20 @@ thin layer over backend widgets and produce the traits View objects.
 :mod:`expressions` Module
 -------------------------
 
-.. inheritance-diagram:: enaml.expressions.ExpressionScope
+.. inheritance-diagram:: enaml.core.expressions.ExpressionScope
     :parts: 1
 
-.. inheritance-diagram:: enaml.expressions.TraitAttributeNotifier
+.. inheritance-diagram:: enaml.core.expressions.TraitAttributeNotifier
     :parts: 1
 
-.. inheritance-diagram:: enaml.expressions.AbstractExpression
-                         enaml.expressions.SimpleExpression
-			 enaml.expressions.SubscriptionExpression
-			 enaml.expressions.NotifyingExpression
-			 enaml.expressions.DelegatingExpression
+.. inheritance-diagram:: enaml.core.expressions.AbstractExpression
+                         enaml.core.expressions.SimpleExpression
+			 enaml.core.expressions.SubscriptionExpression
+			 enaml.core.expressions.NotifyingExpression
+			 enaml.core.expressions.DelegatingExpression
     :parts: 1
 
-.. automodule:: enaml.expressions
+.. automodule:: enaml.core.expressions
     :special-members:
     :no-undoc-members:
 
@@ -51,9 +51,9 @@ thin layer over backend widgets and produce the traits View objects.
 :mod:`toolkit` Module
 ---------------------
 
-.. automodule:: enaml.toolkit
+.. automodule:: enaml.core.toolkit
 
 :mod:`import_hooks` Module
 --------------------------
 
-.. automodule:: enaml.import_hooks
+.. automodule:: enaml.core.import_hooks
