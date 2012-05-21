@@ -10,7 +10,8 @@ Enaml API Reference
 .. toctree::
    :maxdepth: 2
 
-    Core <enaml>
+    Base <enaml>
+    Core <enaml.core>
     Parsing <enaml.parsing>
     Styling <enaml.styling>
     Widgets <enaml.widgets>
