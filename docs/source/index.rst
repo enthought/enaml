@@ -21,6 +21,7 @@ and PyQt4. However, it is not tied to a single widget toolkit.
     Getting Started Guide & Tutorials <instructional/index.rst>
     Technical Reference <tech_ref/index.rst>
     Architecture Reference <architecture/index.rst>
+    API Reference <api_ref/index.rst>
     Developer's Guide <developer_guide/index.rst>
 
 

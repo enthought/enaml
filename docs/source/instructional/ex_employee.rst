@@ -11,9 +11,9 @@ Employee Example
 .. literalinclude:: ../../../examples/employee/employee.py
     :language: python
 
-:download:`phone_converter.py <../../../examples/employee/phone_converter.py>`
+:download:`phone_converter.py <../../../examples/employee/phone_validator.py>`
 
-.. literalinclude:: ../../../examples/employee/phone_converter.py
+.. literalinclude:: ../../../examples/employee/phone_validator.py
     :language: python
 
 ::

@@ -8,4 +8,3 @@ Developer's Guide
 
    developers_corner
    Testing <enaml.tests>
-   API Reference <api_ref/index.rst>

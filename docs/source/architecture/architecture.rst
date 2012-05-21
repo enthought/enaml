@@ -1,6 +1,9 @@
 Design and Architecture
 =======================
 
+.. warning:: This documentation is not current and does not reflect the way
+    Enaml currently works.
+
 Enaml is designed with a flexible, open architecture.  It is designed to be
 able to adapt to different UI toolkit backends beyond the currently supported
 Qt and Wx backends, as well as allowing other key parts of the infrastructure

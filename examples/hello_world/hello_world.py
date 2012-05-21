@@ -5,8 +5,8 @@
 import enaml
 
 with enaml.imports():
-    from hello_world_view import MyMessageToTheWorld
+    from hello_world_view import Main
 
-view = MyMessageToTheWorld(message="Hello, world!")
+view = Main(message="Hello, world, from Python!")
 view.show()
 

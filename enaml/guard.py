@@ -2,6 +2,27 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
+"""
+This module provides a singleton instance of a simple guard class that can be
+used to protect access to arbitrary code.
+
+Example
+-------
+
+::
+
+    from enaml.guard import guard
+
+    def foo():
+        if not guard.guarded(bar):
+            bar()
+    
+    def bar():
+        with guard(bar):
+            foo()
+
+"""
+
 from contextlib import contextmanager
 
 

@@ -70,6 +70,25 @@ enamldef NumberField(ErrorField):
     number fields. It adds the user attributes 'low', 'high', and
     'precision', which when changed will cause a new 'validator_class'
     to be instantiatied and used as the validator for the field.
+    
+    Input Attributes
+    ----------------
+    
+    validator_class : NumberValidator
+        The validator class that must be used.
+    
+    low : None or number, optional
+        The lowest acceptable value for the number. If None, there
+        is no lower limit to the value. The default is None.
+    
+    high : None or number, optional
+        The highest acceptable value for the number. If None, there
+        is no upper limit to the value. The default is None.
+    
+    precision : int, optional
+        An optional integer to control the precision of floating
+        point number formatting. The default is -1 and indicates
+        that implementation default precision should be used.
 
     """
     attr validator_class : NumberValidatorType

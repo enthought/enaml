@@ -41,41 +41,42 @@ checking. Note that this import points to a component declaration in a
 .enaml file.*
 
 
-Component Declaration Block
+``PersonForm`` Definitions Block
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Next, there is a new kind of code block, a **component declaration**. We define
+Next, there is a new kind of code block, a **component definition**. We define
 a component, in this case an entry form, using a component hierarchy
-declaration. With this block of code, we define a reusable component derived
+definition. With this block of code, we define a reusable component derived
 from other components.
 
 ::
 
- PersonForm(Form):
-     person = None
-     Label:
-         text = 'First Name'
-     Field:
-         value := person.first_name
-     Label:
-         text = 'Last Name'
-     Field:
-         value := person.last_name
-     Label:
-         text = 'Age'
-     IntField:
-         value := person.age 
+    enamldef PersonForm(Form):
+        attr person
+        Label:
+            text = 'First Name'
+        Field:
+            value := person.first_name
+        Label:
+            text = 'Last Name'
+        Field:
+            value := person.last_name
+        Label:
+            text = 'Age'
+        IntField:
+            value := person.age 
 
-A component declaration block header line begins with the name of the component
-followed by the base component or widget it inherits from, if any. The header
-line ends with a colon.
+A component definition block header line begins with ``enamldef`` followed by
+the name of the component followed by the base component or widget it inherits
+from, if any. The header line ends with a colon.
 ::
 
- PersonForm(Form):
+    enamldef PersonForm(Form):
 
 Indented under the header line are statements declaring either attributes or
-children. ``person = None`` initializes a ``person`` attribute of
-``PersonForm``. 
+children. ``attr person`` declares a ``person`` attribute of ``PersonForm``. 
+Because no value is specified, this attribute must be supplied by code which
+uses the ``PersonForm`` definition.
 
 Built-in Components
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -116,20 +117,20 @@ example below, where a non-integer value was entered in the age field:
 
 .. image:: images/john_doe_error.png
 
-``defn`` Block
+``PersonView`` Definitions Block
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Now, with a ``defn`` block, we can make a view available using our previously
-declared ``PersonForm``. If we wanted to, we could add ``PersonForm`` many
-times over in this view, but for now we'll keep it simple. Note that we will
-pass a ``person`` object to the view.
+Now, with another ``enamldef`` block, we can make a view available using our
+previously declared ``PersonForm``. If we wanted to, we could add ``PersonForm``
+many times over in this view or any other view, but for now we'll keep it
+simple. Note that we will pass a ``person`` object to the view.
 
 ::
 
- defn PersonView(person):
-     Window:
-         PersonForm:
-             person = person
+    enamldef PersonView(MainWindow):
+        attr person
+        PersonForm:
+            person = parent.person
 
 Now, on to the Python code.
 
@@ -175,21 +176,21 @@ Person object and pass it to ``PersonView``.
 
 ::
 
- if __name__ == '__main__':
-     import enaml
-     with enaml.imports():
-         from person_view import PersonView
-    
-     john = Person(first_name='John', last_name='Doe', age=42)
-    
-     view = PersonView(john)
-     view.show()
+    if __name__ == '__main__':
+        import enaml
+        with enaml.imports():
+            from person_view import PersonView
+        
+        john = Person(first_name='John', last_name='Doe', age=42)
+        
+        view = PersonView(john)
+        view.show()
 
 Running it from the command line, we see
 ::
 
- $ python person.py
-  is 42 years old.
+    $ python person.py
+    is 42 years old.
 
 .. image:: images/john_doe.png
 
@@ -198,6 +199,6 @@ fields are empty when Person() prints to the command line. That's not the case
 when we make a change in the GUI and see
 ::
 
- John Doe Jr. is 22 years old.
+    John Doe Jr. is 22 years old.
 
 .. image:: images/john_doe_jr.png
