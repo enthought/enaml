@@ -25,8 +25,6 @@ Enaml library.
 
 .. automodule:: enaml.guard
 
-.. automethod:: enaml.guard.guarded
-
 :mod:`runner` Module
 -------------------------
 
