@@ -40,6 +40,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -66,7 +69,7 @@
 <ul>
 <li><a class="reference internal" href="#">&#8220;Hello World&#8221; tutorial - Part II</a><ul>
 <li><a class="reference internal" href="#comment-blocks">Comment Blocks</a></li>
-<li><a class="reference internal" href="#defn-blocks"><tt class="docutils literal"><span class="pre">defn</span></tt> Blocks</a></li>
+<li><a class="reference internal" href="#enaml-attributes">Enaml attributes</a></li>
 <li><a class="reference internal" href="#using-the-enaml-view-in-python">Using the Enaml view in Python</a></li>
 </ul>
 </li>
@@ -100,24 +103,30 @@
             
   <div class="section" id="hello-world-tutorial-part-ii">
 <span id="hello-world"></span><h1>&#8220;Hello World&#8221; tutorial - Part II<a class="headerlink" href="#hello-world-tutorial-part-ii" title="Permalink to this headline">¶</a></h1>
-<p>This is a basic tutorial to explain the basic features of an Enaml user
-interface. It sets up a minimal GUI to display a simple message.</p>
-<p>Enaml supports implementing a <a class="reference external" href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">model-view-controller architecture</a> . An
+<p>This tutorial expands on the &#8220;Hello world!&#8221; tutorial and introduces a few new
+concepts:</p>
+<ul class="simple">
+<li>Comment Blocks</li>
+<li>Enaml Containers</li>
+<li>Use of Enaml code from within Python</li>
+</ul>
+<p>Enaml supports implementing a <a class="reference external" href="http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller">model-view-controller architecture</a> , in
+which it is desirable to separate the data or object model from the view. An
 &#8216;.enaml&#8217; file describes the <em>view</em>, and the <em>model</em> is treated by Python code,
 usually in the form of <a class="reference external" href="http://code.enthought.com/projects/traits/">Traits objects</a> . The Enaml module handles
 most/all of the <em>controller</em> aspects of the GUI.</p>
-<p>Let&#8217;s get started with a basic &#8220;hello world&#8221; example:</p>
-<p>Here is our minimalist .enaml file describing a message-displaying GUI
-(<a class="reference download internal" href="../_downloads/hello_world.enaml"><tt class="xref download docutils literal"><span class="pre">download</span> <span class="pre">here</span></tt></a>):</p>
+<p>Let&#8217;s describe a slightly more advanced view in the file
+(<a class="reference download internal" href="../_downloads/hello_world_view.enaml"><tt class="xref download docutils literal"><span class="pre">hello_world_view.enaml</span></tt></a>):</p>
 <div class="highlight-python"><pre>#------------------------------------------------------------------------------
-#  Copyright (c) 2012, Enthought, Inc.
-#  All rights reserved.
+#  This is an Enaml comment block.
+#  It looks like a Python comment block.
 #------------------------------------------------------------------------------
 
-Main(MainWindow):
+MyMessageToTheWorld(MainWindow):
+    attr my_message
     Container:
         Label:
-            text = "Hello, world!"
+            text = my_message
             
 </pre>
 </div>
@@ -129,28 +138,38 @@ Main(MainWindow):
 <span class="kn">import</span> <span class="nn">enaml</span>
 
 <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
-    <span class="kn">from</span> <span class="nn">hello_world</span> <span class="kn">import</span> <span class="n">MyMessageToTheWorld</span>
+    <span class="kn">from</span> <span class="nn">hello_world_view</span> <span class="kn">import</span> <span class="n">MyMessageToTheWorld</span>
 
-<span class="n">view</span> <span class="o">=</span> <span class="n">MyMessageToTheWorld</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s">&quot;Hello, world!&quot;</span><span class="p">)</span>
+<span class="n">view</span> <span class="o">=</span> <span class="n">MyMessageToTheWorld</span><span class="p">(</span><span class="n">my_message</span><span class="o">=</span><span class="s">&quot;Hello, world!&quot;</span><span class="p">)</span>
 <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>The resulting GUI looks like this (in Mac OS):</p>
 <img alt="../_images/hello_world.png" src="../_images/hello_world.png" />
 <p>Let&#8217;s take a closer look at the Enaml file.</p>
+<p>The declaration block differs from the previous one in a number of ways.</p>
+<blockquote>
+<div><ul class="simple">
+<li>It starts with a comment block.</li>
+<li>It is not called &#8220;Main&#8221; since we will call it from a Python program</li>
+<li>It has an <tt class="docutils literal"><span class="pre">attr</span></tt>, a locally defined attribute</li>
+<li>The label is put inside a <tt class="docutils literal"><span class="pre">Container</span></tt>, whose primary purpose here is to
+improve the spacing around the label.</li>
+</ul>
+</div></blockquote>
 <div class="section" id="comment-blocks">
 <h2>Comment Blocks<a class="headerlink" href="#comment-blocks" title="Permalink to this headline">¶</a></h2>
 <p>The .enaml file begins with some comment lines. As in Python code, <tt class="docutils literal"><span class="pre">#</span></tt> begins
 a comment line and is ignored during lexing and parsing.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#-----------------------------------------------------------------------------</span>
-<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
-<span class="c">#  All rights reserved.</span>
+<span class="c">#  This is an Enaml comment block.</span>
+<span class="c">#  It looks like a Python comment block.</span>
 <span class="c">#-----------------------------------------------------------------------------</span>
 </pre></div>
 </div>
 </div>
-<div class="section" id="defn-blocks">
-<span id="defn-block-tut"></span><h2><tt class="docutils literal"><span class="pre">defn</span></tt> Blocks<a class="headerlink" href="#defn-blocks" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="enaml-attributes">
+<span id="attr-tut"></span><h2>Enaml attributes<a class="headerlink" href="#enaml-attributes" title="Permalink to this headline">¶</a></h2>
 <p>Next, we use a <tt class="docutils literal"><span class="pre">defn</span></tt> block to construct a view that is available for
 external Python functions to import. The syntax is similar to that of <a class="reference external" href="http://docs.python.org/reference/compound_stmts.html">Python
 compound statements</a>
@@ -209,6 +228,9 @@ the Enaml view.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -228,7 +250,7 @@ the Enaml view.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on Jan 27, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

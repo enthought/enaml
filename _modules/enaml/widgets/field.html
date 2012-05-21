@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.field &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.field &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.field</a></li>
@@ -81,11 +84,12 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
 
-<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Any</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Any</span>
 
 <span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">Control</span><span class="p">,</span> <span class="n">AbstractTkControl</span>
 
 <span class="kn">from</span> <span class="nn">..converters</span> <span class="kn">import</span> <span class="n">Converter</span><span class="p">,</span> <span class="n">StringConverter</span>
+<span class="kn">from</span> <span class="nn">..util.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
 
 
 <span class="k">class</span> <span class="nc">AbstractTkField</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
@@ -209,6 +213,12 @@
     <span class="c">#: is an empty string.</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">Any</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">)</span>
 
+    <span class="c">#: A read-only property that returns the internal text of the field.</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_text&#39;</span><span class="p">)</span>
+
+    <span class="c">#: Private internal storage for the &#39;text&#39; attribute.</span>
+    <span class="n">_text</span> <span class="o">=</span> <span class="n">Str</span>
+
     <span class="c">#: A property which manages the conversion to and from :attr:`value`</span>
     <span class="c">#: and the string for display and editing. Toolkit implementations</span>
     <span class="c">#: should use this attribute for getting/setting the value.</span>
@@ -221,10 +231,10 @@
     <span class="c">#: Fired when the text is changed by the user explicitly through</span>
     <span class="c">#: the ui but not programmatically. The args object will contain</span>
     <span class="c">#: the text.</span>
-    <span class="n">text_edited</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">text_edited</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired when the return/enter key is pressed in the line edit.</span>
-    <span class="n">return_pressed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">return_pressed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
     
     <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width.</span>
     <span class="c">#: Fields ignore the width hug by default, so they expand freely in width.</span>
@@ -386,6 +396,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_text</span>
 
+    <span class="k">def</span> <span class="nf">_get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;text&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span>
+
     <span class="k">def</span> <span class="nf">_get_field_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The property getter for :attr:`field_text`. It uses an </span>
 <span class="sd">        appropriate exception guard to manage the error state if</span>
@@ -394,8 +410,20 @@
 <span class="sd">        implementations should not perform an update.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_exceptions</span><span class="p">():</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">converter</span><span class="o">.</span><span class="n">to_component</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="c"># Disable the context temporarily since it captures all</span>
+        <span class="c"># exceptions, including Trait errors that we may want to </span>
+        <span class="c"># bubble up during initialization.</span>
+        <span class="c">#with self.capture_exceptions():</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">converter</span><span class="o">.</span><span class="n">to_component</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="n">res</span>
         
     <span class="k">def</span> <span class="nf">_set_field_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The property setter for :attr:`field_text`. It uses an</span>
@@ -403,8 +431,20 @@
 <span class="sd">        the conversion from string to value fails.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">capture_notification_exceptions</span><span class="p">():</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="c"># Disable the context temporarily since it captures all</span>
+        <span class="c"># exceptions, including Trait errors that we may want to </span>
+        <span class="c"># bubble up during initialization.</span>
+        <span class="c">#with self.capture_notification_exceptions():</span>
+        <span class="k">try</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">converter</span><span class="o">.</span><span class="n">from_component</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">e</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">False</span>
 </pre></div></div>
 
           </div>
@@ -419,9 +459,12 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.field</a></li>
@@ -431,7 +474,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

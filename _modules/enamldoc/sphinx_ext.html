@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enamldoc.sphinx_ext &mdash; enaml 0.1alpha documentation</title>
+    <title>enamldoc.sphinx_ext &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enamldoc.sphinx_ext</a></li>
@@ -105,19 +108,23 @@
 <span class="kn">from</span> <span class="nn">enaml.import_hooks</span> <span class="kn">import</span> <span class="n">EnamlImporter</span>
 <span class="n">EnamlImporter</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
 
-<span class="kn">from</span> <span class="nn">enaml.parsing.enaml_compiler</span> <span class="kn">import</span> <span class="n">EnamlDeclaration</span><span class="p">,</span> <span class="n">EnamlDefn</span>
+<span class="kn">from</span> <span class="nn">enaml.parsing.enaml_compiler</span> <span class="kn">import</span> <span class="n">EnamlDeclaration</span>
+
 
 <div class="viewcode-block" id="EnamlComponentDocumenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlComponentDocumenter">[docs]</a><span class="k">class</span> <span class="nc">EnamlComponentDocumenter</span><span class="p">(</span><span class="n">ModuleLevelDocumenter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Enaml component documenter class</span>
 
 <span class="sd">    The main purpose of this class is to be distinct from Python components and</span>
 <span class="sd">    change the domain in the Documenter instance to &#39;enaml&#39;</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
 <div class="viewcode-block" id="EnamlComponentDocumenter.__init__"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlComponentDocumenter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directive</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s">u&#39;&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Need to override the parent __init__ so that we can set self.domain,</span>
-<span class="sd">        which is an instance variable.</span>
+        <span class="sd">&quot;&quot;&quot; Need to override the parent __init__ so that we can set</span>
+<span class="sd">        self.domain, which is an instance variable.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="nb">super</span><span class="p">(</span><span class="n">EnamlComponentDocumenter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">directive</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="s">&#39;enaml&#39;</span>
 </div>
@@ -130,16 +137,20 @@
 
 <span class="sd">        Note - after a fix to correct the .__module__ and .__file__ attributes,</span>
 <span class="sd">        this method will not be necessary and will need to be deleted.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
+
         <span class="c">#import pdb; pdb.set_trace()</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_attr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="p">,</span> <span class="s">&#39;__module__&#39;</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span> <span class="o">==</span> \
             <span class="s">&#39;enaml.parsing.enaml_compiler&#39;</span>
 </div>
 <div class="viewcode-block" id="EnamlComponentDocumenter.format_signature"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlComponentDocumenter.format_signature">[docs]</a>    <span class="k">def</span> <span class="nf">format_signature</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Thin method for debugging signature formatting.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">import</span> <span class="nn">pdb</span><span class="p">;</span> <span class="n">pdb</span><span class="o">.</span><span class="n">set_trace</span><span class="p">()</span>
+        
         <span class="nb">super</span><span class="p">(</span><span class="n">EnamlComponentDocumenter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">format_signature</span><span class="p">()</span>
+
 </div></div>
 <div class="viewcode-block" id="EnamlDocstringSignatureMixin"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDocstringSignatureMixin">[docs]</a><span class="k">class</span> <span class="nc">EnamlDocstringSignatureMixin</span><span class="p">(</span><span class="n">DocstringSignatureMixin</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Mixin for FunctionDocumenter and MethodDocumenter to provide the</span>
@@ -148,105 +159,113 @@
 <span class="sd">    identical to the autodoc.DocstringSignatureMixin it subclasses and included</span>
 <span class="sd">    here as an indicator of a possible future avenue for working with docstring</span>
 <span class="sd">    signatures in enaml -- possibly to replace refactordoc.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">pass</span>
 
 </div>
 <div class="viewcode-block" id="EnamlDeclarationDocumenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDeclarationDocumenter">[docs]</a><span class="k">class</span> <span class="nc">EnamlDeclarationDocumenter</span><span class="p">(</span><span class="n">EnamlDocstringSignatureMixin</span><span class="p">,</span>
                                  <span class="n">EnamlComponentDocumenter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Specialized Documenter subclass for Enaml declarations.</span>
+    <span class="sd">&quot;&quot;&quot; Specialized Documenter subclass for Enaml declarations.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="n">objtype</span> <span class="o">=</span> <span class="s">&#39;enaml_decl&#39;</span>
     <span class="n">member_order</span> <span class="o">=</span> <span class="mi">35</span>
 
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="EnamlDeclarationDocumenter.can_document_member"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDeclarationDocumenter.can_document_member">[docs]</a>    <span class="k">def</span> <span class="nf">can_document_member</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">membername</span><span class="p">,</span> <span class="n">isattr</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">can_document_member</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">membername</span><span class="p">,</span> <span class="n">isattr</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">EnamlDeclaration</span><span class="p">)</span>
-</div>
+
 <div class="viewcode-block" id="EnamlDeclarationDocumenter.format_args"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDeclarationDocumenter.format_args">[docs]</a>    <span class="k">def</span> <span class="nf">format_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Derivation is shown where normally arguments are shown in a function</span>
-<span class="sd">        prototype.</span>
+        <span class="sd">&quot;&quot;&quot; Derivation is shown where normally arguments are shown in a</span>
+<span class="sd">        function prototype.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="s">&#39;({0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span>
-    </div>
-<div class="viewcode-block" id="EnamlDeclarationDocumenter.document_members"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDeclarationDocumenter.document_members">[docs]</a>    <span class="k">def</span> <span class="nf">document_members</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_members</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        
+        <span class="c">## import pdb; pdb.set_trace()</span>
+        <span class="k">return</span> <span class="s">&#39; (derives from {0})&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">__base__</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">document_members</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_members</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
         <span class="k">pass</span>
 
-</div></div>
-<div class="viewcode-block" id="EnamlDefnDocumenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDefnDocumenter">[docs]</a><span class="k">class</span> <span class="nc">EnamlDefnDocumenter</span><span class="p">(</span><span class="n">EnamlDocstringSignatureMixin</span><span class="p">,</span>
-                          <span class="n">EnamlComponentDocumenter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Specialized Documenter subclass for Enaml defns.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">objtype</span> <span class="o">=</span> <span class="s">&#39;enaml_defn&#39;</span>
-    <span class="n">member_order</span> <span class="o">=</span> <span class="mi">32</span>
 
-    <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="EnamlDefnDocumenter.can_document_member"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDefnDocumenter.can_document_member">[docs]</a>    <span class="k">def</span> <span class="nf">can_document_member</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">member</span><span class="p">,</span> <span class="n">membername</span><span class="p">,</span> <span class="n">isattr</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="k">return</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">member</span><span class="p">,</span> <span class="n">EnamlDefn</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="EnamlDefnDocumenter.format_args"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDefnDocumenter.format_args">[docs]</a>    <span class="k">def</span> <span class="nf">format_args</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c">## if inspect.isbuiltin(self.object) or \</span>
-        <span class="c">##        inspect.ismethoddescriptor(self.object):</span>
-        <span class="c">##     # cannot introspect arguments of a C function or method</span>
-        <span class="c">##     return None</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">argspec</span> <span class="o">=</span> <span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">__func__</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-            <span class="c"># if a class should be documented as function (yay duck</span>
-            <span class="c"># typing) we try to use the constructor signature as function</span>
-            <span class="c"># signature without the first argument.</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">argspec</span> <span class="o">=</span> <span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">__new__</span><span class="p">)</span>
-            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
-                <span class="n">argspec</span> <span class="o">=</span> <span class="n">getargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">__init__</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">argspec</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
-                    <span class="k">del</span> <span class="n">argspec</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">formatargspec</span><span class="p">(</span><span class="o">*</span><span class="n">argspec</span><span class="p">)</span>
-        <span class="c"># escape backslashes for reST</span>
-        <span class="n">args</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\\</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="se">\\\\</span><span class="s">&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">args</span>
-</div>
-<div class="viewcode-block" id="EnamlDefnDocumenter.document_members"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlDefnDocumenter.document_members">[docs]</a>    <span class="k">def</span> <span class="nf">document_members</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">all_members</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        We may want to use this in the future to include submembers of a defn.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+<span class="c">## class EnamlDefnDocumenter(EnamlDocstringSignatureMixin,</span>
+<span class="c">##                           EnamlComponentDocumenter):</span>
+<span class="c">##     &quot;&quot;&quot; Specialized Documenter subclass for Enaml defns.</span>
 
-</div></div>
+<span class="c">##     &quot;&quot;&quot;</span>
+
+<span class="c">##     objtype = &#39;enaml_defn&#39;</span>
+<span class="c">##     member_order = 32</span>
+
+<span class="c">##     @classmethod</span>
+<span class="c">##     def can_document_member(cls, member, membername, isattr, parent):</span>
+<span class="c">##         return isinstance(member, EnamlDefn)</span>
+
+<span class="c">##     def format_args(self):</span>
+<span class="c">##         ## if inspect.isbuiltin(self.object) or \</span>
+<span class="c">##         ##        inspect.ismethoddescriptor(self.object):</span>
+<span class="c">##         ##     # cannot introspect arguments of a C function or method</span>
+<span class="c">##         ##     return None</span>
+<span class="c">##         try:</span>
+<span class="c">##             argspec = getargspec(self.object.__func__)</span>
+<span class="c">##         except TypeError:</span>
+<span class="c">##             # if a class should be documented as function (yay duck</span>
+<span class="c">##             # typing) we try to use the constructor signature as function</span>
+<span class="c">##             # signature without the first argument.</span>
+<span class="c">##             try:</span>
+<span class="c">##                 argspec = getargspec(self.object.__new__)</span>
+<span class="c">##             except TypeError:</span>
+<span class="c">##                 argspec = getargspec(self.object.__init__)</span>
+<span class="c">##                 if argspec[0]:</span>
+<span class="c">##                     del argspec[0][0]</span>
+<span class="c">##         args = inspect.formatargspec(*argspec)</span>
+<span class="c">##         # escape backslashes for reST</span>
+<span class="c">##         args = args.replace(&#39;\\&#39;, &#39;\\\\&#39;)</span>
+<span class="c">##         return args</span>
+
+<span class="c">##     def document_members(self, all_members=False):</span>
+<span class="c">##         &quot;&quot;&quot; We may want to use this in the future to include submembers of a</span>
+<span class="c">##         defn.</span>
+
+<span class="c">##         &quot;&quot;&quot;</span>
+<span class="c">##         pass</span>
+
+</div>
 <div class="viewcode-block" id="EnamlModuleDocumenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlModuleDocumenter">[docs]</a><span class="k">class</span> <span class="nc">EnamlModuleDocumenter</span><span class="p">(</span><span class="n">ModuleDocumenter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Subclass of the module documenter for enaml autodocumenting.</span>
+    <span class="sd">&quot;&quot;&quot; Subclass of the module documenter for enaml autodocumenting.</span>
 
 <span class="sd">    The main purpose of the subclass is to set the domain so that member</span>
 <span class="sd">    directives are formed properly.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">objtype</span> <span class="o">=</span> <span class="s">&#39;enaml_module&#39;</span>
 
 <div class="viewcode-block" id="EnamlModuleDocumenter.__init__"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlModuleDocumenter.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directive</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="s">u&#39;&#39;</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Need to override the parent __init__ so that we can set self.domain,</span>
-<span class="sd">        which is an instance variable.</span>
+        <span class="sd">&quot;&quot;&quot; Need to override the parent __init__ so that we can set</span>
+<span class="sd">        self.domain, which is an instance variable.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">EnamlModuleDocumenter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">directive</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">indent</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="s">&#39;enaml&#39;</span>
 </div>
 <div class="viewcode-block" id="EnamlModuleDocumenter.get_object_members"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.EnamlModuleDocumenter.get_object_members">[docs]</a>    <span class="k">def</span> <span class="nf">get_object_members</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">want_all</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Shim method for debugging&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot; Shim method for debugging &quot;&quot;&quot;</span>
         <span class="c">## print &quot;EnamlModuleDocumenter: self.options.members:\n {0}&quot;.format(</span>
         <span class="c">##     self.options.members)</span>
         <span class="c">## import pdb; pdb.set_trace()</span>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">EnamlModuleDocumenter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_object_members</span><span class="p">(</span><span class="n">want_all</span><span class="p">)</span>
-    
+
 </div></div>
 <div class="viewcode-block" id="add_documenter"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.add_documenter">[docs]</a><span class="k">def</span> <span class="nf">add_documenter</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Register a new Documenter.</span>
 
 <span class="sd">    This autodoc function is overridden here solely for the sake of the proper</span>
 <span class="sd">    error message.</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">Documenter</span><span class="p">):</span>
         <span class="k">raise</span> <span class="n">ExtensionError</span><span class="p">(</span><span class="s">&#39;enamldoc documenter </span><span class="si">%r</span><span class="s"> must be a subclass &#39;</span>
@@ -267,18 +286,18 @@
 
     <span class="n">app</span><span class="o">.</span><span class="n">add_autodocumenter</span><span class="p">(</span><span class="n">EnamlModuleDocumenter</span><span class="p">)</span>
     <span class="n">app</span><span class="o">.</span><span class="n">add_autodocumenter</span><span class="p">(</span><span class="n">EnamlDeclarationDocumenter</span><span class="p">)</span>
-    <span class="n">app</span><span class="o">.</span><span class="n">add_autodocumenter</span><span class="p">(</span><span class="n">EnamlDefnDocumenter</span><span class="p">)</span>
+    <span class="c">## app.add_autodocumenter(EnamlDefnDocumenter)</span>
 
     <span class="c"># import the Enaml domain into the sphinx app</span>
     <span class="n">app</span><span class="o">.</span><span class="n">domains</span><span class="p">[</span><span class="s">&#39;enaml&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">EnamlDomain</span>
 
-    
+
     <span class="c">## app.add_event(&#39;enamldoc-import-component&#39;)</span>
     <span class="c">## app.add_event(&#39;enamldoc-process-component&#39;)</span>
 
 </div>
 <div class="viewcode-block" id="testcls"><a class="viewcode-back" href="../../developer_guide/developers_corner.html#enamldoc.sphinx_ext.testcls">[docs]</a><span class="k">class</span> <span class="nc">testcls</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;test doc string&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot; test doc string &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__getattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">x</span>
@@ -299,9 +318,12 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enamldoc.sphinx_ext</a></li>
@@ -311,7 +333,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

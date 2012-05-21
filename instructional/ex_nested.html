@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Nested Containers Example &mdash; enaml 0.1alpha documentation</title>
+    <title>Nested Containers Example &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
     <link rel="next" title="Multiple Scrolling Areas Example" href="ex_multi_scroll_area.html" />
     <link rel="prev" title="Find Replace Example (Variable-width Buttons Aligned)" href="ex_find_replace.html" /> 
@@ -40,6 +40,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -48,7 +51,7 @@
         <li class="right" >
           <a href="ex_find_replace.html" title="Find Replace Example (Variable-width Buttons Aligned)"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -99,18 +102,18 @@
 
 We have three Containers under the window, two sharing space on top and one
 taking up the entire horizontal space on the bottom. The two on top simply
-consist of a Label and a Field. The Container on the left is constrained to be
-slightly larger than the other by a constant multiplier.
+consist of a Label and a Field. The Container on the left is constrained to 
+be slightly larger than the other by a constant multiplier.
 
 The Container on the bottom contains the more complicated example from
 constrained.enaml to demonstrate that a complicated layout works inside
 a nested Container, too.
 
-FIXME: Occasionally, this example fails with a solver error stating that the
-objective function is unbounded.
+FIXME: Occasionally, this example fails with a solver error stating that 
+the objective function is unbounded.
 
 """
-LabeledField(Container):
+enamldef LabeledField(Container):
     attr label_text: str = 'Label'
     constraints = [
         hbox(label, field),
@@ -124,7 +127,7 @@ LabeledField(Container):
         resist_clip_width = 'weak'
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Nested Containers"
     Container:
         constraints = [
@@ -146,8 +149,8 @@ Main(MainWindow):
                 vbox(
                     html_frame, 
                     hbox(
-                        add_button, remove_button, _space_, 
-                        change_mode_button, _space_, share_button,
+                        add_button, remove_button, spacer, 
+                        change_mode_button, spacer, share_button,
                     ),
                 ),
                 align('h_center', html_frame, change_mode_button) | 'weak',
@@ -189,6 +192,9 @@ Main(MainWindow):
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -197,7 +203,7 @@ Main(MainWindow):
         <li class="right" >
           <a href="ex_find_replace.html" title="Find Replace Example (Variable-width Buttons Aligned)"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -208,7 +214,7 @@ Main(MainWindow):
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

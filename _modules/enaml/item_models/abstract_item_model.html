@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.item_models.abstract_item_model &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.item_models.abstract_item_model &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.item_models.abstract_item_model</a></li>
@@ -79,9 +82,11 @@
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Event</span><span class="p">,</span> <span class="n">HasTraits</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span>
 
 <span class="kn">from</span> <span class="nn">.model_index</span> <span class="kn">import</span> <span class="n">ModelIndex</span>
+
+<span class="kn">from</span> <span class="nn">..util.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -114,72 +119,72 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># AbstractItemModel</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="AbstractItemModel"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractItemModel</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractItemModel</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An abstract model for supplying information to heierarchical</span>
 <span class="sd">    widgets.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#: Fired by the begin_insert_columns method</span>
-    <span class="n">columns_about_to_be_inserted</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">columns_about_to_be_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the begin_move_columns method</span>
-    <span class="n">columns_about_to_be_moved</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">columns_about_to_be_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the begin_remove_columns method</span>
-    <span class="n">columns_about_to_be_removed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">columns_about_to_be_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_insert_columns method</span>
-    <span class="n">columns_inserted</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">columns_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_move_columns method</span>
-    <span class="n">columns_moved</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">columns_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_remove_rows method</span>
-    <span class="n">columns_removed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">columns_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the begin_insert_rows method</span>
-    <span class="n">rows_about_to_be_inserted</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">rows_about_to_be_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the begin_move_rows method</span>
-    <span class="n">rows_about_to_be_moved</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">rows_about_to_be_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the begin_remove_columns method</span>
-    <span class="n">rows_about_to_be_removed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">rows_about_to_be_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_insert_rows method</span>
-    <span class="n">rows_inserted</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">rows_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_move_rows method</span>
-    <span class="n">rows_moved</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">rows_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_remove_rows method</span>
-    <span class="n">rows_removed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">rows_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the begin_change_layout method</span>
-    <span class="n">layout_about_to_be_changed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">layout_about_to_be_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_change_layout method</span>
-    <span class="n">layout_changed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">layout_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the begin_reset_model method</span>
-    <span class="n">model_about_to_be_reset</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">model_about_to_be_reset</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the end_reset_model method</span>
-    <span class="n">model_reset</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">model_reset</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the notify_data_changed method</span>
-    <span class="n">data_changed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">data_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
     
     <span class="c">#: Fired by the notify_horizontal_header_data_changed method</span>
-    <span class="n">horizontal_header_data_changed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">horizontal_header_data_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired by the notify_vertical_header_data_changed method</span>
-    <span class="n">vertical_header_data_changed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">vertical_header_data_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
     
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Model change notification trigger methods </span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="AbstractItemModel.begin_insert_columns"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_columns">[docs]</a>    <span class="k">def</span> <span class="nf">begin_insert_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_insert_columns"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_columns">[docs]</a>    <span class="k">def</span> <span class="nf">begin_insert_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begins inserting a column.</span>
 
 <span class="sd">        This method must be called before inserting data into</span>
@@ -198,9 +203,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">columns_about_to_be_inserted</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns_about_to_be_inserted</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.begin_move_columns"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_columns">[docs]</a>    <span class="k">def</span> <span class="nf">begin_move_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_move_columns"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_columns">[docs]</a>    <span class="k">def</span> <span class="nf">begin_move_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begins to move a column.</span>
 
 <span class="sd">        Arguments</span>
@@ -222,9 +227,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">columns_about_to_be_moved</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns_about_to_be_moved</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.begin_remove_columns"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_columns">[docs]</a>    <span class="k">def</span> <span class="nf">begin_remove_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_remove_columns"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_columns">[docs]</a>    <span class="k">def</span> <span class="nf">begin_remove_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begins to remove columns.</span>
 
 <span class="sd">        This method must be called before removing data from the</span>
@@ -243,9 +248,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">columns_about_to_be_removed</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns_about_to_be_removed</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_insert_columns"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_columns">[docs]</a>    <span class="k">def</span> <span class="nf">end_insert_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_insert_columns"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_columns">[docs]</a>    <span class="k">def</span> <span class="nf">end_insert_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish inserting columns.</span>
 
 <span class="sd">        This method must be called after inserting data into</span>
@@ -264,9 +269,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">columns_inserted</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns_inserted</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_move_columns"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_move_columns">[docs]</a>    <span class="k">def</span> <span class="nf">end_move_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_move_columns"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_move_columns">[docs]</a>    <span class="k">def</span> <span class="nf">end_move_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish moving columns.</span>
 
 <span class="sd">        This method must be called after moving data in a model.</span>
@@ -290,9 +295,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">columns_moved</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns_moved</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_remove_columns"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_columns">[docs]</a>    <span class="k">def</span> <span class="nf">end_remove_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_remove_columns"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_columns">[docs]</a>    <span class="k">def</span> <span class="nf">end_remove_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish removing columns.</span>
 
 <span class="sd">        This method must be called after removing data from a model.</span>
@@ -310,9 +315,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">columns_removed</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columns_removed</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.begin_insert_rows"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">begin_insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_insert_rows"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">begin_insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begins a row insertion.</span>
 
 <span class="sd">        This method must be called before inserting data into</span>
@@ -331,9 +336,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rows_about_to_be_inserted</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_about_to_be_inserted</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.begin_move_rows"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_rows">[docs]</a>    <span class="k">def</span> <span class="nf">begin_move_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_move_rows"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_move_rows">[docs]</a>    <span class="k">def</span> <span class="nf">begin_move_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span>
                         <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begins to move a row.</span>
 
@@ -356,9 +361,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rows_about_to_be_moved</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_about_to_be_moved</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.begin_remove_rows"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_rows">[docs]</a>    <span class="k">def</span> <span class="nf">begin_remove_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_remove_rows"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_remove_rows">[docs]</a>    <span class="k">def</span> <span class="nf">begin_remove_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begins to remove rows.</span>
 
 <span class="sd">        This method must be called before removing data from the</span>
@@ -377,9 +382,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rows_about_to_be_removed</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_about_to_be_removed</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_insert_rows"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">end_insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_insert_rows"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_insert_rows">[docs]</a>    <span class="k">def</span> <span class="nf">end_insert_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish inserting rows.</span>
 
 <span class="sd">        This method must be called after inserting data into</span>
@@ -398,9 +403,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rows_inserted</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_inserted</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_move_rows"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_move_rows">[docs]</a>    <span class="k">def</span> <span class="nf">end_move_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_move_rows"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_move_rows">[docs]</a>    <span class="k">def</span> <span class="nf">end_move_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish moving rows</span>
 
 <span class="sd">        This method must be called after moving data in a model.</span>
@@ -424,9 +429,9 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">src_parent</span><span class="p">,</span> <span class="n">src_first</span><span class="p">,</span> <span class="n">src_last</span><span class="p">,</span> <span class="n">dst_parent</span><span class="p">,</span> <span class="n">dst_child</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rows_moved</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_moved</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_remove_rows"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_rows">[docs]</a>    <span class="k">def</span> <span class="nf">end_remove_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_remove_rows"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_remove_rows">[docs]</a>    <span class="k">def</span> <span class="nf">end_remove_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish removing rows.</span>
 
 <span class="sd">        This method must be called after moving data in a model.</span>
@@ -444,25 +449,25 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">evt_arg</span> <span class="o">=</span> <span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">rows_removed</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rows_removed</span><span class="p">(</span><span class="n">evt_arg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.begin_change_layout"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_change_layout">[docs]</a>    <span class="k">def</span> <span class="nf">begin_change_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_change_layout"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_change_layout">[docs]</a>    <span class="k">def</span> <span class="nf">begin_change_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begin a change to the layout of the model -- e.g., sort it.</span>
 
 <span class="sd">        This method must be called before rearranging data in a model.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout_about_to_be_changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_about_to_be_changed</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_change_layout"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_change_layout">[docs]</a>    <span class="k">def</span> <span class="nf">end_change_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_change_layout"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_change_layout">[docs]</a>    <span class="k">def</span> <span class="nf">end_change_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish a change to the layout of the model.</span>
 
 <span class="sd">        This method must be called after rearranging data in a model.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">layout_changed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_changed</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.begin_reset_model"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_reset_model">[docs]</a>    <span class="k">def</span> <span class="nf">begin_reset_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.begin_reset_model"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.begin_reset_model">[docs]</a>    <span class="k">def</span> <span class="nf">begin_reset_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Begin to reset a model.</span>
 
 <span class="sd">        Model indices must be recomputed, and any associated views will </span>
@@ -471,17 +476,17 @@
 <span class="sd">        This method must be called before a model is reset.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_about_to_be_reset</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_about_to_be_reset</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.end_reset_model"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_reset_model">[docs]</a>    <span class="k">def</span> <span class="nf">end_reset_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.end_reset_model"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.end_reset_model">[docs]</a>    <span class="k">def</span> <span class="nf">end_reset_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Finish resetting a model.</span>
 
 <span class="sd">        This method must be called after a model is reset.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model_reset</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_reset</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.notify_data_changed"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.notify_data_changed">[docs]</a>    <span class="k">def</span> <span class="nf">notify_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.notify_data_changed"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.notify_data_changed">[docs]</a>    <span class="k">def</span> <span class="nf">notify_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create a notification event for the model data has changed.</span>
 
 <span class="sd">        Arguments</span>
@@ -493,9 +498,9 @@
 <span class="sd">            The bottom-right boundary of the changed items.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_changed</span> <span class="o">=</span> <span class="p">(</span><span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_changed</span><span class="p">((</span><span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_right</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.notify_horizontal_header_data_changed"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.notify_horizontal_header_data_changed">[docs]</a>    <span class="k">def</span> <span class="nf">notify_horizontal_header_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.notify_horizontal_header_data_changed"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.notify_horizontal_header_data_changed">[docs]</a>    <span class="k">def</span> <span class="nf">notify_horizontal_header_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create a notification that model horizontal header data </span>
 <span class="sd">        has changed.</span>
 
@@ -508,9 +513,9 @@
 <span class="sd">            The last horizontal/column header that has been modified.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_header_data_changed</span> <span class="o">=</span> <span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">horizontal_header_data_changed</span><span class="p">((</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.notify_vertical_header_data_changed"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.notify_vertical_header_data_changed">[docs]</a>    <span class="k">def</span> <span class="nf">notify_vertical_header_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.notify_vertical_header_data_changed"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.notify_vertical_header_data_changed">[docs]</a>    <span class="k">def</span> <span class="nf">notify_vertical_header_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create a notification that model vertical header data </span>
 <span class="sd">        has changed.</span>
 
@@ -523,12 +528,12 @@
 <span class="sd">            The last vertical/row header that has been modified.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_header_data_changed</span> <span class="o">=</span> <span class="p">(</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vertical_header_data_changed</span><span class="p">((</span><span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">))</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Misc methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.sibling"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.sibling">[docs]</a>    <span class="k">def</span> <span class="nf">sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.sibling"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.sibling">[docs]</a>    <span class="k">def</span> <span class="nf">sibling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Obtain an item with the same parent as `index`.</span>
 
 <span class="sd">        Arguments</span>
@@ -550,7 +555,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">index</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.buddy"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.buddy">[docs]</a>    <span class="k">def</span> <span class="nf">buddy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.buddy"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.buddy">[docs]</a>    <span class="k">def</span> <span class="nf">buddy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Refers the caller to an item in the model to edit.</span>
 
 <span class="sd">        Each item is its own buddy by default, but this is not required.</span>
@@ -569,7 +574,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">index</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.can_fetch_more"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.can_fetch_more">[docs]</a>    <span class="k">def</span> <span class="nf">can_fetch_more</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.can_fetch_more"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.can_fetch_more">[docs]</a>    <span class="k">def</span> <span class="nf">can_fetch_more</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns `True` if items of `parent` can provide more data.</span>
 
 <span class="sd">        Arguments</span>
@@ -585,7 +590,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">False</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.fetch_more"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.fetch_more">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_more</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.fetch_more"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.fetch_more">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_more</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Obtain data from model items, if more is available.</span>
 
 <span class="sd">        This method is useful when incrementally adding data to a model.</span>
@@ -603,7 +608,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.has_index"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.has_index">[docs]</a>    <span class="k">def</span> <span class="nf">has_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.has_index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.has_index">[docs]</a>    <span class="k">def</span> <span class="nf">has_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Determine whether this model can provide a valid index with</span>
 <span class="sd">        certain specifications.</span>
 
@@ -628,7 +633,7 @@
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="n">row</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="ow">and</span> <span class="n">column</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_count</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.has_children"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.has_children">[docs]</a>    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.has_children"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.has_children">[docs]</a>    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Determines if an index has any child items.</span>
 
 <span class="sd">        Arguments</span>
@@ -644,7 +649,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_count</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.create_index"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.create_index">[docs]</a>    <span class="k">def</span> <span class="nf">create_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.create_index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.create_index">[docs]</a>    <span class="k">def</span> <span class="nf">create_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Create a new index into this model.</span>
 
 <span class="sd">        Arguments</span>
@@ -666,7 +671,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ModelIndex</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">context</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.flags"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.flags"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Obtain the flags that specify user interaction with items.</span>
 
 <span class="sd">        Arguments</span>
@@ -685,7 +690,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Abstract Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.column_count"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.column_count">[docs]</a>    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.column_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.column_count">[docs]</a>    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Count the number of columns in the children of an item.</span>
 
 <span class="sd">        Arguments</span>
@@ -702,7 +707,7 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.row_count"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.row_count">[docs]</a>    <span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.row_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.row_count">[docs]</a>    <span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Count the number of rows in the children of an item.</span>
 
 <span class="sd">        Arguments</span>
@@ -719,7 +724,7 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.index"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Obtain an index coresponding to an item in the model.</span>
 
 <span class="sd">        Arguments</span>
@@ -742,7 +747,7 @@
         <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.parent"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.parent"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Obtain the parent of a model item.</span>
 
 <span class="sd">        Arguments</span>
@@ -762,7 +767,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Data Method </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.data"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the data for a model index as a string for display.</span>
 
 <span class="sd">        Arguments</span>
@@ -782,7 +787,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Auxiliary Data Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.decoration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.decoration">[docs]</a>    <span class="k">def</span> <span class="nf">decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.decoration"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.decoration">[docs]</a>    <span class="k">def</span> <span class="nf">decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Return an icon for the index</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -801,7 +806,7 @@
         <span class="c"># XXX Handle Icons !!!</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.edit_data"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.edit_data">[docs]</a>    <span class="k">def</span> <span class="nf">edit_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.edit_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.edit_data">[docs]</a>    <span class="k">def</span> <span class="nf">edit_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the data for a model index as a string for editing.</span>
 
 <span class="sd">        The default implementation returns &#39;data(index)&#39;.</span>
@@ -819,7 +824,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.tool_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.tool_tip"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the tool tip string for a given model index.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -837,7 +842,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.status_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.status_tip"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the status tip string for a given model index.</span>
 
 <span class="sd">         The default implementation returns None.</span>
@@ -855,7 +860,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.whats_this"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.whats_this">[docs]</a>    <span class="k">def</span> <span class="nf">whats_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.whats_this"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.whats_this">[docs]</a>    <span class="k">def</span> <span class="nf">whats_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the what&#39;s this? string for a given model index.</span>
 
 <span class="sd">         The default implementation returns None.</span>
@@ -873,7 +878,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.font"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.font">[docs]</a>    <span class="k">def</span> <span class="nf">font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.font"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.font">[docs]</a>    <span class="k">def</span> <span class="nf">font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the font for a given model index.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -891,7 +896,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.alignment"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.alignment">[docs]</a>    <span class="k">def</span> <span class="nf">alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.alignment"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.alignment">[docs]</a>    <span class="k">def</span> <span class="nf">alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the alignment of the text for a given model index.</span>
 
 <span class="sd">        The default implementation returns ALIGN_VCENTER | ALIGN_RIGHT</span>
@@ -909,7 +914,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ALIGN_VCENTER</span> <span class="o">|</span> <span class="n">ALIGN_RIGHT</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.background"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.background">[docs]</a>    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.background"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.background">[docs]</a>    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The background brush to use for the given index.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -927,7 +932,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.foreground"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.foreground">[docs]</a>    <span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.foreground"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.foreground">[docs]</a>    <span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The foreground brush to use for the given index.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -945,7 +950,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.check_state"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.check_state">[docs]</a>    <span class="k">def</span> <span class="nf">check_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.check_state"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.check_state">[docs]</a>    <span class="k">def</span> <span class="nf">check_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the check state for the given index.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -963,7 +968,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.size_hint"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the (width, height) size hint for the given index.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -984,7 +989,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Data Setter Method</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.set_data"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.set_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update a model item&#39;s data. The default implementation does</span>
 <span class="sd">        nothing and returns False.</span>
 
@@ -1204,7 +1209,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">False</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.set_check_state"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_check_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_check_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.set_check_state"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_check_state">[docs]</a>    <span class="k">def</span> <span class="nf">set_check_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update a model item&#39;s check state. The default implementation </span>
 <span class="sd">        does nothing and returns False.</span>
 
@@ -1255,7 +1260,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Header Data Methods </span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_data"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal label for a particular header section.</span>
 
 <span class="sd">        The default implementation returns the column number of the given </span>
@@ -1275,7 +1280,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">section</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_data"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical label for a particular header section.</span>
 
 <span class="sd">        The default implementation returns the row number of the given </span>
@@ -1298,7 +1303,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Header Data auxiliary methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_decoration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_decoration"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal icon for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1317,7 +1322,7 @@
         <span class="c"># XXX implement icons</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_decoration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_decoration"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical icon for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1336,7 +1341,7 @@
         <span class="c"># XXX implement icons</span>
         <span class="k">return</span> <span class="bp">None</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_tool_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_tool_tip"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal tool tip for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1354,7 +1359,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_tool_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_tool_tip"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical tool tip for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1372,7 +1377,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>   
     </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_status_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_status_tip"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal status tip for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1390,7 +1395,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_status_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_status_tip"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical status tip for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1408,7 +1413,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span> 
         </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_whats_this"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_whats_this">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_whats_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_whats_this"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_whats_this">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_whats_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal whats this for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1426,7 +1431,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_whats_this"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_whats_this">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_whats_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_whats_this"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_whats_this">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_whats_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical whats this for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1444,7 +1449,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span> 
     </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_font"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_font">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_font"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_font">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal font for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1462,7 +1467,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_font"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_font">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_font"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_font">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical font for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1480,7 +1485,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span> 
 </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_alignment"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_alignment"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal whats this for a particular header section.</span>
 
 <span class="sd">        The default implementation returns ALIGN_CENTER.</span>
@@ -1498,7 +1503,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ALIGN_CENTER</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_alignment"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_alignment"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical whats this for a particular header section.</span>
 
 <span class="sd">        The default implementation returns ALIGN_CENTER</span>
@@ -1516,7 +1521,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">ALIGN_CENTER</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_background"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_background">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_background"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_background">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal background brush for a particular </span>
 <span class="sd">        header section.</span>
 
@@ -1535,7 +1540,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_background"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_background">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_background"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_background">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical background brush for a particular</span>
 <span class="sd">        header section.</span>
 
@@ -1554,7 +1559,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span> 
 </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_foreground"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_foreground">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_foreground"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_foreground">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal foreground brush for a particular </span>
 <span class="sd">        header section.</span>
 
@@ -1573,7 +1578,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_foreground"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_foreground">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_foreground"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_foreground">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical foreground brush for a particular</span>
 <span class="sd">        header section.</span>
 
@@ -1592,7 +1597,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
 </div>
-<div class="viewcode-block" id="AbstractItemModel.horizontal_header_size_hint"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.horizontal_header_size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the horizontal size hint for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1610,7 +1615,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
-<div class="viewcode-block" id="AbstractItemModel.vertical_header_size_hint"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel.vertical_header_size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical size hint for a particular header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
@@ -1726,9 +1731,12 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.item_models.abstract_item_model</a></li>
@@ -1738,7 +1746,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

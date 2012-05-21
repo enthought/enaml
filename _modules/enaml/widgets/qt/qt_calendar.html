@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.qt.qt_calendar &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.qt.qt_calendar &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.qt.qt_calendar</a></li>
@@ -117,7 +120,7 @@
         <span class="n">widget</span><span class="o">.</span><span class="n">selectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_date_selected</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Implementation</span>
+    <span class="c"># Event Handlers</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="QtCalendar.on_date_activated"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.qt.qt_calendar.QtCalendar.on_date_activated">[docs]</a>    <span class="k">def</span> <span class="nf">on_date_activated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qdate</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the calendar&#39;s activation event.</span>
@@ -126,7 +129,7 @@
         <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
         <span class="n">date</span> <span class="o">=</span> <span class="n">qdate_to_python</span><span class="p">(</span><span class="n">qdate</span><span class="p">)</span>
         <span class="n">shell</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">date</span>
-        <span class="n">shell</span><span class="o">.</span><span class="n">activated</span> <span class="o">=</span> <span class="n">date</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">activated</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="QtCalendar.on_date_selected"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.qt.qt_calendar.QtCalendar.on_date_selected">[docs]</a>    <span class="k">def</span> <span class="nf">on_date_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the calendar&#39;s selection event.</span>
@@ -134,8 +137,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;updating&#39;</span><span class="p">):</span>
             <span class="n">date</span> <span class="o">=</span> <span class="n">qdate_to_python</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">selectedDate</span><span class="p">())</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">selected</span> <span class="o">=</span> <span class="n">date</span>
-</div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">selected</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="QtCalendar.set_date"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.calendar.Calendar.html#enaml.widgets.qt.qt_calendar.QtCalendar.set_date">[docs]</a>    <span class="k">def</span> <span class="nf">set_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets and validates the component date on the widget.</span>
 
@@ -181,9 +187,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.qt.qt_calendar</a></li>
@@ -193,7 +202,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

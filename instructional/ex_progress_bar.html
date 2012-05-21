@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Progress Bar Example &mdash; enaml 0.1alpha documentation</title>
+    <title>Progress Bar Example &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
     <link rel="next" title="Progress Bar Timer Example" href="ex_progress_bar_timer.html" />
     <link rel="prev" title="Kitchen Sink Example" href="kitchen_sink.html" /> 
@@ -40,6 +40,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -48,7 +51,7 @@
         <li class="right" >
           <a href="kitchen_sink.html" title="Kitchen Sink Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -104,8 +107,6 @@ would have a background thread or timer updating the work progress bar
 as work is accomplished.
 
 """
-:: python ::
-
 import random
 
 from traits.api import HasTraits, Int
@@ -135,18 +136,16 @@ class ProgressModel(HasTraits):
         """
         self.units_done = 0
 
-:: end ::
 
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr model: ProgressModel = ProgressModel()
     title = 'Progress Bar'
     Container:
         constraints = [
             vbox(progress,
-                hbox(_space_, label, _space_), 
-                hbox(_space_, work_button, _space_),
-                _space_),
+                hbox(spacer, label, spacer), 
+                hbox(spacer, work_button, spacer),
+                spacer),
             align('h_center', progress, label, work_button),
         ]
         ProgressBar:
@@ -159,7 +158,11 @@ Main(MainWindow):
         PushButton:
             id: work_button
             text &lt;&lt; "Do Some Work" if progress.percentage &lt; 100 else "Reset"
-            clicked &gt;&gt; model.do_work() if progress.percentage &lt; 100 else model.reset()
+            clicked :: 
+                if progress.percentage &lt; 100:
+                    model.do_work()
+                else:
+                    model.reset()
 
 </pre>
 </div>
@@ -181,6 +184,9 @@ Main(MainWindow):
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -189,7 +195,7 @@ Main(MainWindow):
         <li class="right" >
           <a href="kitchen_sink.html" title="Kitchen Sink Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -200,7 +206,7 @@ Main(MainWindow):
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

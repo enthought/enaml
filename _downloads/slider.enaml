@@ -11,7 +11,7 @@ a range of integer values into values on a log scale.
 import math
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'Slider Example'
     Form:
         Label:

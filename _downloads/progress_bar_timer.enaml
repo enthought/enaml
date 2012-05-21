@@ -8,8 +8,6 @@ In this example, we demonstrate connecting a ProgressBar up to a model
 that is modified by a Timer.
 
 """
-:: python ::
-
 import random
 
 from traits.api import Any, Bool, HasTraits, Int
@@ -55,18 +53,16 @@ class ProgressModel(HasTraits):
         """
         self.units_done = 0
 
-:: end ::
 
-
-ModelView(MainWindow):
+enamldef ModelView(MainWindow):
     attr model: ProgressModel
     title = 'Progress Bar'
     Container:
         constraints = [
             vbox(progress,
-                hbox(_space_, label, _space_), 
-                hbox(_space_, work_button, _space_),
-                _space_),
+                hbox(spacer, label, spacer), 
+                hbox(spacer, work_button, spacer),
+                spacer),
             align('h_center', progress, label, work_button),
             width >= 200,
         ]
@@ -80,16 +76,16 @@ ModelView(MainWindow):
         PushButton:
             id: work_button
             text << "Start" if progress.value == 0 else "Reset"
-            clicked >> model.start_work() if progress.value == 0 else model.reset()
+            clicked :: 
+                if progress.value == 0:
+                    model.start_work()
+                else:
+                    model.reset()
 
-
-:: python ::
 
 def main():
     model = ProgressModel()
     window = ModelView(model=model)
     model.timer_func = window.toolkit.app.timer
     window.show()
-
-:: end ::
 

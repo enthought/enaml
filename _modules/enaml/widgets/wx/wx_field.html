@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.wx.wx_field &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.wx.wx_field &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.wx.wx_field</a></li>
@@ -229,7 +232,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_set_placeholder_text</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">placeholder_text</span><span class="p">)</span>
 
         <span class="n">text</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">field_text</span>
-        <span class="k">if</span> <span class="n">text</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_set_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
         <span class="n">shell</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="bp">False</span>
@@ -471,15 +474,15 @@
             <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
             <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
             <span class="n">shell</span><span class="o">.</span><span class="n">field_text</span> <span class="o">=</span> <span class="n">text</span>
-            <span class="n">shell</span><span class="o">.</span><span class="n">text_edited</span> <span class="o">=</span> <span class="n">text</span>
             <span class="n">shell</span><span class="o">.</span><span class="n">_modified</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">text_edited</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">_on_return_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for the return pressed event.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">return_pressed</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">return_pressed</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_on_selection_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The event handler for a selection event.</span>
@@ -583,11 +586,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">new_widget</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
         <span class="n">new_widget</span><span class="o">.</span><span class="n">Show</span><span class="p">()</span>
-        <span class="c"># The size hint *shouldn&#39;t* have changed, but it may have, and</span>
-        <span class="c"># we need to have a relayout anyway to put the new widget in the</span>
-        <span class="c"># proper position. This seems to be performant enough at the </span>
-        <span class="c"># moment, so we can just leave it as is.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="c"># We need to have a relayout anyway to put the new widget in the</span>
+        <span class="c"># proper position.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">request_relayout</span><span class="p">()</span>
 </pre></div></div>
 
           </div>
@@ -602,9 +603,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.wx.wx_field</a></li>
@@ -614,7 +618,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

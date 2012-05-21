@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.parsing.parser &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.parsing.parser &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.parsing.parser</a></li>
@@ -203,16 +206,11 @@
 
 </div>
 <div class="viewcode-block" id="p_enaml_module_item2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_module_item2">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_module_item2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_module_item : defn &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_module_item3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_module_item3">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_module_item3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; enaml_module_item : declaration &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 </div>
-<div class="viewcode-block" id="p_enaml_module_item4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_module_item4">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_module_item4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="p_enaml_module_item3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_module_item3">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_module_item3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; enaml_module_item : raw_python &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
@@ -222,11 +220,17 @@
 <span class="c">#------------------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="p_enaml_raw_python"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_raw_python">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_raw_python</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; raw_python : PY_BLOCK_START NEWLINE PY_BLOCK PY_BLOCK_END NEWLINE &#39;&#39;&#39;</span>
-    <span class="c"># XXX update me to handle Python code without the tags</span>
+    <span class="c"># XXX update me to handle Python code without the start/end tags</span>
+    <span class="c"># Adding leading newlines before parsing so that any syntax errors</span>
+    <span class="c"># during compilation are reported with proper line numbers</span>
     <span class="n">py_txt</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-    <span class="n">py_ast</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">py_txt</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
-    <span class="n">py_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Python</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">py_code</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">compile_txt</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">*</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">py_txt</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">py_ast</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">compile_txt</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
+        <span class="n">py_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">py_ast</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">SyntaxError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax&#39;</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Python</span><span class="p">(</span><span class="n">py_txt</span><span class="p">,</span> <span class="n">py_ast</span><span class="p">,</span> <span class="n">py_code</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -236,8 +240,8 @@
     <span class="sd">&#39;&#39;&#39; enaml_import : import_stmt &#39;&#39;&#39;</span>
     <span class="n">imprt</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
     <span class="n">mod</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Module</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="p">[</span><span class="n">imprt</span><span class="p">])</span>
-    <span class="n">mod_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Import</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">mod_code</span><span class="p">,</span> <span class="n">imprt</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+    <span class="n">mod_code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;exec&#39;</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Import</span><span class="p">(</span><span class="s">&#39;&lt;untracked&gt;&#39;</span><span class="p">,</span> <span class="n">mod</span><span class="p">,</span> <span class="n">mod_code</span><span class="p">,</span> <span class="n">imprt</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -245,12 +249,15 @@
 <span class="c">#------------------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="p_declaration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration">[docs]</a><span class="k">def</span> <span class="nf">p_declaration</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; declaration : NAME LPAR test RPAR COLON declaration_body &#39;&#39;&#39;</span>
+    <span class="n">start_pos</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">end_pos</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
     <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">py_txt</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lexdata</span><span class="p">[</span><span class="n">start_pos</span><span class="p">:</span><span class="n">end_pos</span><span class="p">]</span>
     <span class="n">doc</span><span class="p">,</span> <span class="n">idn</span><span class="p">,</span> <span class="n">items</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
     <span class="n">base</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
     <span class="n">set_locations</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
-    <span class="n">base_node</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Python</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
+    <span class="n">base_node</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Python</span><span class="p">(</span><span class="n">py_txt</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Declaration</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">base_node</span><span class="p">,</span> <span class="n">idn</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
 
 </div>
@@ -262,20 +269,30 @@
 
 </div>
 <div class="viewcode-block" id="p_declaration_body2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body2">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; declaration_body : NEWLINE INDENT identifier DEDENT &#39;&#39;&#39;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="p">[])</span>
+
+</div>
+<div class="viewcode-block" id="p_declaration_body3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body3">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; declaration_body : NEWLINE INDENT identifier declaration_body_items DEDENT &#39;&#39;&#39;</span>
     <span class="c"># Filter out any pass statements</span>
     <span class="n">items</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">items</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="p_declaration_body3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body3">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="p_declaration_body4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body4">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; declaration_body : NEWLINE INDENT STRING NEWLINE declaration_body_items DEDENT &#39;&#39;&#39;</span>
     <span class="c"># Filter out any pass statements</span>
     <span class="n">items</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="bp">None</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="p_declaration_body4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body4">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="p_declaration_body5"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body5">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body5</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; declaration_body : NEWLINE INDENT STRING NEWLINE identifier DEDENT &#39;&#39;&#39;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="p">[])</span>
+
+</div>
+<div class="viewcode-block" id="p_declaration_body6"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body6">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body6</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; declaration_body : NEWLINE INDENT STRING NEWLINE identifier declaration_body_items DEDENT &#39;&#39;&#39;</span>
     <span class="c"># Filter out any pass statements</span>
     <span class="n">items</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">6</span><span class="p">])</span>
@@ -293,23 +310,97 @@
 
 </div>
 <div class="viewcode-block" id="p_declaration_body_item1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body_item1">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body_item1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; declaration_body_item : attribute_binding &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; declaration_body_item : attribute_declaration &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 </div>
 <div class="viewcode-block" id="p_declaration_body_item2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body_item2">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body_item2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; declaration_body_item : instantiation &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; declaration_body_item : attribute_binding &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 </div>
 <div class="viewcode-block" id="p_declaration_body_item3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body_item3">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body_item3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; declaration_body_item : enaml_call &#39;&#39;&#39;</span>
+    <span class="sd">&#39;&#39;&#39; declaration_body_item : instantiation &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 </div>
 <div class="viewcode-block" id="p_declaration_body_item4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_declaration_body_item4">[docs]</a><span class="k">def</span> <span class="nf">p_declaration_body_item4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; declaration_body_item : PASS NEWLINE &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Attribute Declaration</span>
+<span class="c">#------------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="build_attr_declaration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.build_attr_declaration">[docs]</a><span class="k">def</span> <span class="nf">build_attr_declaration</span><span class="p">(</span><span class="n">kw</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Builds an ast node for an attr or event declaration.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kw : string</span>
+<span class="sd">        The keyword used in the declaration. A syntax error is raised if</span>
+<span class="sd">        this is not &#39;attr&#39; or &#39;event&#39;.</span>
+<span class="sd">    </span>
+<span class="sd">    name : string</span>
+<span class="sd">        The name of the attribute or event being declared.</span>
+<span class="sd">    </span>
+<span class="sd">    type_name : string or None</span>
+<span class="sd">        The name of the type being declared, or None if not using a type.</span>
+<span class="sd">    </span>
+<span class="sd">    default : AttributeBinding or None</span>
+<span class="sd">        The default attribute binding or None if not supply the default.</span>
+
+<span class="sd">    lineno : int</span>
+<span class="sd">        The line number of the declaration.</span>
+<span class="sd">    </span>
+<span class="sd">    p : Yacc Production</span>
+<span class="sd">        The Ply object passed to the parser rule. This is used to </span>
+<span class="sd">        extract the filename for syntax error reporting.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : AttributeDeclaration</span>
+<span class="sd">        The Enaml AttributeDeclaration ast node.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">kw</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s">&#39;attr&#39;</span><span class="p">,</span> <span class="s">&#39;event&#39;</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Expected keyword &#39;attr&#39; or &#39;event&#39;, got &#39;</span><span class="si">%s</span><span class="s">&#39; instead.&quot;</span> <span class="o">%</span> <span class="n">kw</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kw</span> <span class="o">==</span> <span class="s">&#39;attr&#39;</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">AttributeDeclaration</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="bp">False</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">AttributeDeclaration</span><span class="p">(</span>
+            <span class="n">name</span><span class="p">,</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="bp">True</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+
+</div>
+<div class="viewcode-block" id="p_attribute_declaration1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_attribute_declaration1">[docs]</a><span class="k">def</span> <span class="nf">p_attribute_declaration1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; attribute_declaration : NAME NAME NEWLINE &#39;&#39;&#39;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_attr_declaration</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="p_attribute_declaration2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_attribute_declaration2">[docs]</a><span class="k">def</span> <span class="nf">p_attribute_declaration2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; attribute_declaration : NAME NAME COLON NAME NEWLINE &#39;&#39;&#39;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_attr_declaration</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="p_attribute_declaration3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_attribute_declaration3">[docs]</a><span class="k">def</span> <span class="nf">p_attribute_declaration3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; attribute_declaration : NAME NAME binding &#39;&#39;&#39;</span>
+    <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">binding</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">AttributeBinding</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">lineno</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_attr_declaration</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="n">binding</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="p_attribute_declaration4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_attribute_declaration4">[docs]</a><span class="k">def</span> <span class="nf">p_attribute_declaration4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; attribute_declaration : NAME NAME COLON NAME binding &#39;&#39;&#39;</span>
+    <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">binding</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">AttributeBinding</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">lineno</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">build_attr_declaration</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">binding</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -341,6 +432,11 @@
 
 </div>
 <div class="viewcode-block" id="p_instantiation_body2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_instantiation_body2">[docs]</a><span class="k">def</span> <span class="nf">p_instantiation_body2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; instantiation_body : NEWLINE INDENT identifier DEDENT &#39;&#39;&#39;</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="p">[])</span>
+
+</div>
+<div class="viewcode-block" id="p_instantiation_body3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_instantiation_body3">[docs]</a><span class="k">def</span> <span class="nf">p_instantiation_body3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; instantiation_body : NEWLINE INDENT identifier instantiation_body_items DEDENT &#39;&#39;&#39;</span>
     <span class="c"># Filter out any pass statements</span>
     <span class="n">items</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">4</span><span class="p">])</span>
@@ -363,241 +459,13 @@
 
 </div>
 <div class="viewcode-block" id="p_instantiation_body_item2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_instantiation_body_item2">[docs]</a><span class="k">def</span> <span class="nf">p_instantiation_body_item2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; instantiation_body_item : enaml_call &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-</div>
-<div class="viewcode-block" id="p_instantiation_body_item3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_instantiation_body_item3">[docs]</a><span class="k">def</span> <span class="nf">p_instantiation_body_item3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; instantiation_body_item : attribute_binding &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
 </div>
-<div class="viewcode-block" id="p_instantiation_body_item4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_instantiation_body_item4">[docs]</a><span class="k">def</span> <span class="nf">p_instantiation_body_item4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
+<div class="viewcode-block" id="p_instantiation_body_item3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_instantiation_body_item3">[docs]</a><span class="k">def</span> <span class="nf">p_instantiation_body_item3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; instantiation_body_item : PASS NEWLINE &#39;&#39;&#39;</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
-
-
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># Defn</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="p_defn"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn">[docs]</a><span class="k">def</span> <span class="nf">p_defn</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn : DEFN NAME defn_parameters COLON defn_body &#39;&#39;&#39;</span>
-    <span class="n">doc</span><span class="p">,</span> <span class="n">items</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Defn</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">doc</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-
-
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># Defn Parameters</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="p_defn_parameters1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters1">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters : LPAR RPAR &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Parameters</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameters2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters2">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters : LPAR defn_parameters_list RPAR &#39;&#39;&#39;</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">defaults</span> <span class="o">=</span> <span class="p">[]</span>
-    <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span><span class="p">:</span>
-            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;duplicate parameter name `</span><span class="si">%s</span><span class="s">` in defn&#39;</span> <span class="o">%</span> <span class="n">name</span>
-            <span class="n">raise_enaml_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
-        <span class="n">names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">node</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">defaults</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">defaults</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Non keyword parameter `</span><span class="si">%s</span><span class="s">` after keyword parameter&#39;</span>
-                <span class="n">raise_enaml_syntax_error</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">name</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Parameters</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameters_list1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters_list1">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters_list1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters_list : defn_parameter &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameters_list2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters_list2">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters_list2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters_list : defn_parameter COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameters_list3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters_list3">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters_list3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters_list : defn_parameters_list_list defn_parameter &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameters_list4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters_list4">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters_list4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters_list : defn_parameters_list_list defn_parameter COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameters_list_list1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters_list_list1">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters_list_list1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters_list_list : defn_parameter COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameters_list_list2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameters_list_list2">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameters_list_list2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameters_list_list : defn_parameters_list_list defn_parameter COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameter1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameter1">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameter1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameter : defn_name_parameter &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_parameter2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_parameter2">[docs]</a><span class="k">def</span> <span class="nf">p_defn_parameter2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_parameter : defn_keyword_parameter &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_name_parameter"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_name_parameter">[docs]</a><span class="k">def</span> <span class="nf">p_defn_name_parameter</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_name_parameter : NAME &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">None</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_keyword_parameter"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_keyword_parameter">[docs]</a><span class="k">def</span> <span class="nf">p_defn_keyword_parameter</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_keyword_parameter : NAME EQUAL test &#39;&#39;&#39;</span>
-    <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">expr</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-    <span class="n">set_locations</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
-    <span class="n">expr_node</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Python</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">expr_node</span><span class="p">)</span>
-
-
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># Defn Body</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="p_defn_body1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_body1">[docs]</a><span class="k">def</span> <span class="nf">p_defn_body1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_body : NEWLINE INDENT defn_body_items DEDENT &#39;&#39;&#39;</span>
-    <span class="c"># Filter out any pass statements</span>
-    <span class="n">items</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">items</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_body2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_body2">[docs]</a><span class="k">def</span> <span class="nf">p_defn_body2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_body : NEWLINE INDENT STRING NEWLINE defn_body_items DEDENT &#39;&#39;&#39;</span>
-    <span class="c"># Filter out any pass statements</span>
-    <span class="n">items</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">5</span><span class="p">])</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">items</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_body_items1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_body_items1">[docs]</a><span class="k">def</span> <span class="nf">p_defn_body_items1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_body_items : defn_body_item &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_body_items2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_body_items2">[docs]</a><span class="k">def</span> <span class="nf">p_defn_body_items2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_body_items : defn_body_items defn_body_item &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_body_item1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_body_item1">[docs]</a><span class="k">def</span> <span class="nf">p_defn_body_item1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_body_item : enaml_call &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-</div>
-<div class="viewcode-block" id="p_defn_body_item2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_body_item2">[docs]</a><span class="k">def</span> <span class="nf">p_defn_body_item2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_body_item : instantiation &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    
-</div>
-<div class="viewcode-block" id="p_defn_body_item3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_defn_body_item3">[docs]</a><span class="k">def</span> <span class="nf">p_defn_body_item3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; defn_body_item : PASS NEWLINE &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
-
-
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># Enaml Call</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="p_enaml_call"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_call">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_call</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_call : NAME enaml_arguments NEWLINE &#39;&#39;&#39;</span>
-    <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Call</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">lineno</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments1">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments : LPAR RPAR &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments2">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments : LPAR enaml_arguments_list RPAR &#39;&#39;&#39;</span>
-    <span class="n">arguments</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="n">seen_kwarg</span> <span class="o">=</span> <span class="bp">False</span>
-    <span class="n">kw_names</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
-    <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">argument</span> <span class="ow">in</span> <span class="n">arguments</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">argument</span><span class="p">,</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Argument</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">seen_kwarg</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;non-keyword argument after keyword argument&#39;</span>
-                <span class="n">raise_enaml_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
-            <span class="c"># Now that we have a lineno available, compile the code</span>
-            <span class="c"># object for the argument and update the lineno.</span>
-            <span class="n">expr</span> <span class="o">=</span> <span class="n">argument</span><span class="o">.</span><span class="n">py_ast</span>
-            <span class="n">set_locations</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
-            <span class="n">argument</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
-            <span class="n">argument</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">lineno</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">seen_kwarg</span> <span class="o">=</span> <span class="bp">True</span>
-            <span class="n">name</span> <span class="o">=</span> <span class="n">argument</span><span class="o">.</span><span class="n">name</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">kw_names</span><span class="p">:</span>
-                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;keyword argument `</span><span class="si">%s</span><span class="s">` repeated&#39;</span> <span class="o">%</span> <span class="n">name</span>
-                <span class="n">raise_enaml_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
-            <span class="n">kw_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">arguments</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments_list1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments_list1">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments_list1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments_list : enaml_argument &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments_list2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments_list2">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments_list2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments_list : enaml_argument COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments_list3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments_list3">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments_list3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments_list : enaml_arguments_list_list enaml_argument &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments_list4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments_list4">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments_list4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments_list : enaml_arguments_list_list enaml_argument COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments_list_list1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments_list_list1">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments_list_list1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments_list_list : enaml_argument COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_arguments_list_list2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_arguments_list_list2">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_arguments_list_list2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_arguments_list_list : enaml_arguments_list_list enaml_argument COMMA &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_argument1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_argument1">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_argument1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_argument : test &#39;&#39;&#39;</span>
-    <span class="c"># The lineno and compilation will be handled by p_enaml_arguments2</span>
-    <span class="c"># once a lineno becomes available</span>
-    <span class="n">expr</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Argument</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="bp">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-
-</div>
-<div class="viewcode-block" id="p_enaml_argument2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_enaml_argument2">[docs]</a><span class="k">def</span> <span class="nf">p_enaml_argument2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39; enaml_argument : NAME EQUAL test &#39;&#39;&#39;</span>
-    <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">expr</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
-    <span class="n">set_locations</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
-    <span class="n">expr_node</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Argument</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">KeywordArgument</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">expr_node</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -611,12 +479,14 @@
 <div class="viewcode-block" id="p_binding"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_binding">[docs]</a><span class="k">def</span> <span class="nf">p_binding</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; binding : enaml_operator test NEWLINE &#39;&#39;&#39;</span>
     <span class="c"># XXX extend me to support code blocks</span>
-    <span class="n">lineno</span><span class="p">,</span> <span class="n">op</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">start_pos</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">op</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">end_pos</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">py_text</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">lexdata</span><span class="p">[</span><span class="n">start_pos</span><span class="p">:</span><span class="n">end_pos</span><span class="p">]</span>
     <span class="n">operator</span> <span class="o">=</span> <span class="n">translate_operator</span><span class="p">(</span><span class="n">op</span><span class="p">)</span>
     <span class="n">expr</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Expression</span><span class="p">(</span><span class="n">body</span><span class="o">=</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
     <span class="n">set_locations</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="s">&#39;Enaml&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
-    <span class="n">expr_node</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Python</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
+    <span class="n">code</span> <span class="o">=</span> <span class="nb">compile</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;eval&#39;</span><span class="p">)</span>
+    <span class="n">expr_node</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">Python</span><span class="p">(</span><span class="n">py_text</span><span class="p">,</span> <span class="n">expr</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">enaml_ast</span><span class="o">.</span><span class="n">BoundExpression</span><span class="p">(</span><span class="n">operator</span><span class="p">,</span> <span class="n">expr_node</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
 
 </div>
@@ -633,8 +503,9 @@
 <span class="sd">                       | MINUSGREATER</span>
 <span class="sd">                       | VBARGREATER</span>
 <span class="sd">                       | LESSVBAR &#39;&#39;&#39;</span>
+    <span class="n">start_pos</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lexpos</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
     <span class="n">lineno</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">lineno</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">lineno</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">start_pos</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
 
 <span class="c">#==============================================================================</span>
@@ -644,20 +515,20 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Python Parsing Helper Objects</span>
 <span class="c">#------------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="CommaSeparatedList"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.CommaSeparatedList">[docs]</a><span class="k">class</span> <span class="nc">CommaSeparatedList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">CommaSeparatedList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">values</span> <span class="o">=</span> <span class="n">values</span> <span class="ow">or</span> <span class="p">[]</span>
 
-</div>
-<div class="viewcode-block" id="GeneratorInfo"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.GeneratorInfo">[docs]</a><span class="k">class</span> <span class="nc">GeneratorInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<span class="k">class</span> <span class="nc">GeneratorInfo</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elt</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">generators</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">elt</span> <span class="o">=</span> <span class="n">elt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generators</span> <span class="o">=</span> <span class="n">generators</span> <span class="ow">or</span> <span class="p">[]</span>
 
-</div>
-<div class="viewcode-block" id="Arguments"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.Arguments">[docs]</a><span class="k">class</span> <span class="nc">Arguments</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<span class="k">class</span> <span class="nc">Arguments</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">keywords</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">starargs</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="n">args</span> <span class="ow">or</span> <span class="p">[]</span>
@@ -668,7 +539,7 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Import Grammar</span>
-<span class="c">#------------------------------------------------------------------------------</span></div>
+<span class="c">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="p_import_stmt1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_import_stmt1">[docs]</a><span class="k">def</span> <span class="nf">p_import_stmt1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; import_stmt : import_name NEWLINE &#39;&#39;&#39;</span>
     <span class="n">imprt</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1572,44 +1443,49 @@
 <span class="c"># scope. By default, we assign Name a Load() context since we aren&#39;t </span>
 <span class="c"># in the business of assigning to variables with this expression</span>
 <span class="c"># parser.</span></div>
+<span class="k">def</span> <span class="nf">_store_exprs_context</span><span class="p">(</span><span class="n">exprs</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">exprs</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
+            <span class="n">expr</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">):</span>
+            <span class="n">expr</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">expr</span><span class="o">.</span><span class="n">elts</span><span class="p">:</span>
+                <span class="n">name</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">()</span>
+
+
 <div class="viewcode-block" id="p_exprlist1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_exprlist1">[docs]</a><span class="k">def</span> <span class="nf">p_exprlist1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; exprlist : expr &#39;&#39;&#39;</span>
+    <span class="c"># expr will match a tuple or a name, so we need to handle </span>
+    <span class="c"># the store context for both.</span>
     <span class="n">expr</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
-        <span class="n">expr</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">()</span>
+    <span class="n">_store_exprs_context</span><span class="p">([</span><span class="n">expr</span><span class="p">])</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">expr</span>
 
 </div>
 <div class="viewcode-block" id="p_exprlist2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_exprlist2">[docs]</a><span class="k">def</span> <span class="nf">p_exprlist2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; exprlist : expr COMMA &#39;&#39;&#39;</span>
     <span class="n">exprs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
-    <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">exprs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
-            <span class="n">expr</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">()</span>
+    <span class="n">_store_exprs_context</span><span class="p">(</span><span class="n">exprs</span><span class="p">)</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">exprs</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">())</span>
 
 </div>
 <div class="viewcode-block" id="p_exprlist3"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_exprlist3">[docs]</a><span class="k">def</span> <span class="nf">p_exprlist3</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; exprlist : expr exprlist_list &#39;&#39;&#39;</span>
     <span class="n">exprs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">exprs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
-            <span class="n">expr</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">()</span>
+    <span class="n">_store_exprs_context</span><span class="p">(</span><span class="n">exprs</span><span class="p">)</span>
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">exprs</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">())</span>
 
 </div>
 <div class="viewcode-block" id="p_exprlist4"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_exprlist4">[docs]</a><span class="k">def</span> <span class="nf">p_exprlist4</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; exprlist : expr exprlist_list COMMA &#39;&#39;&#39;</span>
     <span class="n">exprs</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">+</span> <span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
-    <span class="k">for</span> <span class="n">expr</span> <span class="ow">in</span> <span class="n">exprs</span><span class="p">:</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">expr</span><span class="p">,</span> <span class="n">ast</span><span class="o">.</span><span class="n">Name</span><span class="p">):</span>
-            <span class="n">expr</span><span class="o">.</span><span class="n">ctx</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">()</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">())</span>
+    <span class="n">_store_exprs_context</span><span class="p">(</span><span class="n">exprs</span><span class="p">)</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span><span class="n">elts</span><span class="o">=</span><span class="n">exprs</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="n">ast</span><span class="o">.</span><span class="n">Store</span><span class="p">())</span>
 
 </div>
 <div class="viewcode-block" id="p_exprlist_list1"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_exprlist_list1">[docs]</a><span class="k">def</span> <span class="nf">p_exprlist_list1</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; exprlist_list : COMMA expr &#39;&#39;&#39;</span>
-    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
 
 </div>
 <div class="viewcode-block" id="p_exprlist_list2"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_exprlist_list2">[docs]</a><span class="k">def</span> <span class="nf">p_exprlist_list2</span><span class="p">(</span><span class="n">p</span><span class="p">):</span>
@@ -2199,19 +2075,18 @@
     <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="n">p</span><span class="p">[</span><span class="mi">3</span><span class="p">]]</span>
 
  </div>
-<div class="viewcode-block" id="p_error"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.p_error">[docs]</a><span class="k">def</span> <span class="nf">p_error</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
-    <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">p_error</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
-</div>
+
 <span class="n">_parser</span> <span class="o">=</span> <span class="n">yacc</span><span class="o">.</span><span class="n">yacc</span><span class="p">(</span><span class="n">debug</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">tabmodule</span><span class="o">=</span><span class="s">&#39;enaml_parsetab&#39;</span><span class="p">,</span> 
                     <span class="n">outputdir</span><span class="o">=</span><span class="n">_enaml_dir</span><span class="p">,</span> <span class="n">errorlog</span><span class="o">=</span><span class="n">yacc</span><span class="o">.</span><span class="n">NullLogger</span><span class="p">())</span>
 
 
-<div class="viewcode-block" id="parse"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.parser.parse">[docs]</a><span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">tml</span><span class="p">):</span>
-    <span class="c"># Need to create a new lexer each time, or line numbers get screwy.</span>
-    <span class="n">_lexer</span> <span class="o">=</span> <span class="n">EnamlLexer</span><span class="p">()</span>
-    <span class="k">return</span> <span class="n">_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">tml</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="n">_lexer</span><span class="p">)</span>
-</pre></div></div>
+<span class="k">def</span> <span class="nf">parse</span><span class="p">(</span><span class="n">enaml_source</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;Enaml&#39;</span><span class="p">):</span>
+    <span class="n">_lexer</span> <span class="o">=</span> <span class="n">EnamlLexer</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">enaml_source</span><span class="p">,</span> <span class="n">lexer</span><span class="o">=</span><span class="n">_lexer</span><span class="p">)</span>
+</pre></div>
 
           </div>
         </div>
@@ -2225,9 +2100,12 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.parsing.parser</a></li>
@@ -2237,7 +2115,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

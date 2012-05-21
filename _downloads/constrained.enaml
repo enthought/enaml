@@ -21,15 +21,15 @@ Pressing the Share PushButton will add a new constraint that forces the width
 of that PushButton to increase to 200.
 
 """
-Main(MainWindow):
+enamldef Main(MainWindow):
     Container:
         constraints = [
             # Arrange the Html Frame above the horizontal row of butttons
             vbox(
                 html_frame, 
                 hbox(
-                    add_button, remove_button, _space_, 
-                    change_mode_button, _space_, share_button,
+                    add_button, remove_button, spacer, 
+                    change_mode_button, spacer, share_button,
                 ),
             ),
 
@@ -59,7 +59,7 @@ Main(MainWindow):
             text = 'Change Mode'
             # Click this button to update the button text and have
             # it expand to fit its contents
-            clicked >> setattr(change_mode_button, 'text', text * 2)
+            clicked :: self.text = text * 2
         PushButton:
             id: share_button
             text = 'Share...'
@@ -67,5 +67,5 @@ Main(MainWindow):
             # we don't need to access constraints through 'parent' here
             # since it is in our attribute scope. But we are just doing
             # it to show that it is possible.
-            clicked >> parent.constraints.append(width == 200)
+            clicked :: parent.constraints.append(width == 200)
 

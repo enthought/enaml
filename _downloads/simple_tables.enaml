@@ -12,74 +12,36 @@ from enaml.item_models.standard_models import ListModel, TableModel
 from enaml.styling.brush import Brush
 from enaml.styling.color import Color
 
+import numpy as np
 
-:: python ::
 
 # A single row of data with 100k elements
-row = range(1000000)
-
-# A (1000, 100) table of data
-table = [[i + (100 * j) for i in xrange(100)] for j in xrange(1000)]
-
-# A setter function to update a cell in the row of data.
-def row_setter(src, idx, val):
-    try:
-        src[idx] = int(val)
-    except ValueError:
-        return False
-    return True
-
-# A setter function to update a cell in the table of data
-def table_setter(src, row, col, val):
-    try:
-        src[row][col] = int(val)
-    except ValueError:
-        return False
-    return True
-
+row =  [True] + range(99999)
 
 # A simple list model to display a single row of data
-list_model = ListModel(row, data_setter=row_setter)
+list_model = ListModel(row, editable=True)
 
+# A (1000, 100) array of data
+table = np.arange(1000*100).reshape((1000, 100))
 
-# A simple TableModel subclass that alternates the row colors of
-# the table as well as selectively colors certain cells based on 
-# the data value for that cell.
-class ColoredTable(TableModel):
+# A simple coloring function for the bg color of the table
+red_brush = Brush(Color.from_string('indianred'))
+shade_brush = Brush(Color(237, 237, 237)) 
+def table_background(val, row, col):
+    if row % 2 == 0:
+        return shade_brush
+    if val % 17 == 0:
+        return red_brush
 
-    red_brush = Brush(Color.from_string('indianred'))
-    shade_brush = Brush(Color(237, 237, 237))
-
-    def background(self, index):
-        brush = None
-        row = index.row
-        col = index.column
-
-        if row % 2 == 0:
-            brush = self.shade_brush
-            
-        data = self.data_source[row][col]
-        if data % 17 == 0:
-            brush = self.red_brush
-
-        return brush
-
-table_model = ColoredTable(table, data_setter=table_setter)
-
-def printer(event):
-    print 'Removed:', event.new[0]
-    print 'Added:  ', event.new[1]
-    print
-
-:: end ::
+# A simple table model to view the 2D array of data.
+table_model = TableModel(
+    table, editable=True, background_brush_func=table_background,
+)
 
 
 # ListModel and TableModel are both subclasses of AbstractItemModel
 # which means they can both be passed to TableView and work just fine.
-# And once ListView and TreeView are implemented, will work just fine
-# there as well.
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'Simple Tables'
     Container:
         constraints = [
@@ -92,9 +54,12 @@ Main(MainWindow):
             BaseSelectionModel:
                 selection_mode = 'multi'
         TableView:
-            id: tv2
-            item_model = table_model
-            BaseSelectionModel:
-                selection_mode = 'extended'
-                selection_event >> printer(args)
+           id: tv2
+           item_model = table_model
+           BaseSelectionModel:
+               selection_mode = 'extended'
+               selection_event :: 
+                   print 'Removed:', event.new[0]
+                   print 'Added:', event.new[1]
+                   print
 

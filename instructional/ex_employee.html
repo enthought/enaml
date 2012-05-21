@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Employee Example &mdash; enaml 0.1alpha documentation</title>
+    <title>Employee Example &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
     <link rel="next" title="Kitchen Sink Example" href="kitchen_sink.html" />
     <link rel="prev" title="Person Example" href="ex_person.html" /> 
@@ -40,6 +40,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -48,7 +51,7 @@
         <li class="right" >
           <a href="ex_person.html" title="Person Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -95,10 +98,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from phone_converter import PhoneNumberConverter
+from phone_validator import PhoneNumberValidator
 
 
-EmployeeForm(Form):
+enamldef EmployeeForm(Form):
     attr employee
     attr show_employer: bool = False
     Label:
@@ -113,8 +116,8 @@ EmployeeForm(Form):
         text = "Home phone:"
     Field:
         value := employee.phone
-        converter = PhoneNumberConverter()
-        bg_color &lt;&lt; 'error' if error else 'none'
+        validator = PhoneNumberValidator()
+        bgcolor &lt;&lt; 'unacceptable' if not acceptable else 'none'
     Label:
         text = 'Date of Birth:'
     DateEdit:
@@ -127,19 +130,18 @@ EmployeeForm(Form):
         text = 'Password'
     Field:
         password_mode &lt;&lt; 'password' if not pw_cb.checked else 'normal'
-        value &gt;&gt; print('Password:', value)
+        value :: print 'Password:', value
     Label:
         text = 'Show Password:'
     CheckBox:
         id: pw_cb
         checked = False
-    Label:
-        text = 'Show Employer Details:'
-    CheckBox:
+    ToggleButton:
         checked := show_employer
+        text &lt;&lt; ('Hide' if show_employer else 'Show') + ' Employer Details'
 
 
-EmployerForm(Form):
+enamldef EmployerForm(Form):
     attr employer
     Label:
         text = "Company:"
@@ -158,16 +160,18 @@ EmployerForm(Form):
         checked = True
 
 
-EmployeeView(MainWindow):
+enamldef EmployeeView(MainWindow):
     id: main
     attr employee
 
     title &lt;&lt; "Employee Record for: %s, %s" % (employee.last_name, 
                                               employee.first_name)
     Container:
-        constraints = [
-            vbox(top_box, bottom_box),
-            align('midline', top_form, bottom_form),
+        constraints &lt;&lt; [
+            vertical(top, top_box, bottom_box.when(bottom_box.visible), bottom),
+            horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
+            horizontal(left, spacer.flex(), bottom_box, spacer.flex(), right),
+            align('midline', top_form, bottom_form, clear_invisible=False)
         ]
         GroupBox:
             id: top_box
@@ -273,18 +277,18 @@ EmployeeView(MainWindow):
     <span class="n">view</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<p><a class="reference download internal" href="../_downloads/phone_converter.py"><tt class="xref download docutils literal"><span class="pre">phone_converter.py</span></tt></a></p>
+<p><a class="reference download internal" href="../_downloads/phone_validator.py"><tt class="xref download docutils literal"><span class="pre">phone_converter.py</span></tt></a></p>
 <div class="highlight-python"><div class="highlight"><pre><span class="c">#------------------------------------------------------------------------------</span>
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">import</span> <span class="nn">re</span>
 
-<span class="kn">from</span> <span class="nn">enaml.converters</span> <span class="kn">import</span> <span class="n">Converter</span>
+<span class="kn">from</span> <span class="nn">enaml.validation</span> <span class="kn">import</span> <span class="n">AbstractValidator</span>
 
 
-<span class="k">class</span> <span class="nc">PhoneNumberConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A really dumb phone number converter.</span>
+<span class="k">class</span> <span class="nc">PhoneNumberValidator</span><span class="p">(</span><span class="n">AbstractValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A really dumb phone number validator.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">all_digits</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;[0-9]{10}$&#39;</span><span class="p">)</span>
@@ -293,26 +297,32 @@ EmployeeView(MainWindow):
 
     <span class="n">proper</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;\(([0-9]{3})\)\ ([0-9]{3})\-([0-9]{4})$&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">value</span>
-        <span class="k">return</span> <span class="s">&#39;(</span><span class="si">%s</span><span class="s">) </span><span class="si">%s</span><span class="s">-</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proper</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
-            <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dashes</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">proper</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">dashes</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
             <span class="n">area</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
             <span class="n">prefix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
             <span class="n">suffix</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
-            <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">area</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">suffix</span><span class="p">))</span>
-        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_digits</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">,</span> <span class="n">parts</span><span class="p">)</span>
+        <span class="n">match</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_digits</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-            <span class="n">area</span> <span class="o">=</span> <span class="n">value</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
-            <span class="n">prefix</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
-            <span class="n">suffix</span> <span class="o">=</span> <span class="n">value</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
-            <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">area</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">prefix</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">suffix</span><span class="p">))</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Unable to convert to valid phone number&#39;</span><span class="p">)</span>
+            <span class="n">area</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span>
+            <span class="n">suffix</span> <span class="o">=</span> <span class="n">text</span><span class="p">[</span><span class="mi">6</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span>
+            <span class="n">parts</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)))</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">,</span> <span class="n">parts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">INTERMEDIATE</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">text</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    
+    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">return</span> <span class="s">&#39;(</span><span class="si">%s</span><span class="s">) </span><span class="si">%s</span><span class="s">-</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">area</span><span class="p">,</span> <span class="n">prefix</span><span class="p">,</span> <span class="n">suffix</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-python"><pre>$ python employee.py</pre>
@@ -333,6 +343,9 @@ EmployeeView(MainWindow):
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -341,7 +354,7 @@ EmployeeView(MainWindow):
         <li class="right" >
           <a href="ex_person.html" title="Person Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -352,7 +365,7 @@ EmployeeView(MainWindow):
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

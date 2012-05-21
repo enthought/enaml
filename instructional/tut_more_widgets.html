@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>More on Enaml Widgets &mdash; enaml 0.1alpha documentation</title>
+    <title>More on Enaml Widgets &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,10 +27,10 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Tutorials" href="tutorials_home.html" />
     <link rel="next" title="More on Enaml Widgets" href="tut_even_more_widgets.html" />
-    <link rel="prev" title="enaml-run and Python code tags in Enaml files" href="tut_python_code.html" /> 
+    <link rel="prev" title="John Doe tutorial" href="tut_person.html" /> 
   </head>
   <body>
     <div class="related">
@@ -40,15 +40,18 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="tut_even_more_widgets.html" title="More on Enaml Widgets"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
+          <a href="tut_person.html" title="John Doe tutorial"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" accesskey="U">Enaml Tutorials</a> &raquo;</li>
   
@@ -65,9 +68,11 @@
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">More on Enaml Widgets</a><ul>
+<li><a class="reference internal" href="#python-code-in-enaml-files">Python Code in Enaml Files</a></li>
 <li><a class="reference internal" href="#id-tags"><tt class="docutils literal"><span class="pre">id</span></tt> Tags</a></li>
-<li><a class="reference internal" href="#subscription-operator">Subscription Operator &lt;&lt;</a></li>
-<li><a class="reference internal" href="#notification-operator">Notification Operator &gt;&gt;</a></li>
+<li><a class="reference internal" href="#subscription-operator">Subscription Operator <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt></a></li>
+<li><a class="reference internal" href="#notification-operators-and">Notification Operators <tt class="docutils literal"><span class="pre">::</span></tt> and <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt></a></li>
+<li><a class="reference internal" href="#constraints">Constraints</a></li>
 </ul>
 </li>
 </ul>
@@ -103,12 +108,63 @@
 <p>In this tutorial, we take a closer look at some of the widgets available for
 building GUI&#8217;s in Enaml by building a &#8220;working&#8221; progress bar. We&#8217;ll introduce
 some new attributes including the <tt class="docutils literal"><span class="pre">id</span></tt> tag and two new Enaml operators: the
-subscription operator <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt> and the notification operator <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> along with
+subscription operator <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt> and the notification operator <tt class="docutils literal"><span class="pre">::</span></tt> along with
 some component-specific attributes.</p>
-<p>Let&#8217;s start with a code snip from <a class="reference download internal" href="../_downloads/progress_bar.enaml"><tt class="xref download docutils literal"><span class="pre">progress_bar.enaml</span></tt></a>:</p>
-<div class="highlight-python"><pre>defn ModelView(model):
-    Window:
-        title = 'Progress Bar'
+<p>Let&#8217;s start with the code from <a class="reference download internal" href="../_downloads/progress_bar.enaml"><tt class="xref download docutils literal"><span class="pre">progress_bar.enaml</span></tt></a>:</p>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" ProgressBar component
+
+In this example, we demonstrate connecting a ProgressBar up to a model.
+This example is entirely synchronous for simplicity. The model will do 
+a chunk of work when the user presses a button. A more typical use case 
+would have a background thread or timer updating the work progress bar 
+as work is accomplished.
+
+"""
+import random
+
+from traits.api import HasTraits, Int
+
+
+class ProgressModel(HasTraits):
+    """ Model a process that does some work on command.
+
+    """
+    # The total units of work to do.
+    work_units = Int(1000)
+
+    # The number of units done.
+    units_done = Int(0)
+
+    def do_work(self):
+        """ Do a random amount of work.
+
+        """
+        nunits = random.randint(10, 100)
+        nunits = min(nunits, self.work_units - self.units_done)
+        self.units_done += nunits
+
+    def reset(self):
+        """ Reset the work done back to 0.
+        
+        """
+        self.units_done = 0
+
+
+enamldef Main(MainWindow):
+    attr model: ProgressModel = ProgressModel()
+    title = 'Progress Bar'
+    Container:
+        constraints = [
+            vbox(progress,
+                hbox(spacer, label, spacer), 
+                hbox(spacer, work_button, spacer),
+                spacer),
+            align('h_center', progress, label, work_button),
+        ]
         ProgressBar:
             id: progress
             value := model.units_done
@@ -119,13 +175,58 @@ some component-specific attributes.</p>
         PushButton:
             id: work_button
             text &lt;&lt; "Do Some Work" if progress.percentage &lt; 100 else "Reset"
-            clicked &gt;&gt; model.do_work() if progress.percentage &lt; 100 else model.reset()</pre>
+            clicked :: 
+                if progress.percentage &lt; 100:
+                    model.do_work()
+                else:
+                    model.reset()
+
+</pre>
 </div>
-<p>We&#8217;re setting up a view, and we will pass it a model. The view consists of a
-window with three widgets: a ProgressBar, a Label, and a PushButton. (In the
-<a class="reference internal" href="../tech_ref/index.html#tech-ref"><em>Enaml Technical Reference</em></a> you can find a list and descriptions of widgets and components
-from the <a class="reference internal" href="../tech_ref/built_ins_ref.html#built-ins-ref"><em>built-ins</em></a> and <a class="reference internal" href="../tech_ref/std_library_ref.html#std-library-ref"><em>standard library</em></a>.) Starting with the ProgressBar we see something new: an
-<tt class="docutils literal"><span class="pre">id</span></tt> tag.</p>
+<p>We&#8217;re setting up a view which builds on a top-level <tt class="docutils literal"><span class="pre">MainWindow</span></tt>. The view
+has an attribute <tt class="docutils literal"><span class="pre">model</span></tt> which must be an instance of <tt class="docutils literal"><span class="pre">ProgressModel</span></tt>,
+and by default it is initialized to an instance of the class.  The window
+has a <tt class="docutils literal"><span class="pre">Container</span></tt> which itself contains three widgets: a <tt class="docutils literal"><span class="pre">ProgressBar</span></tt>, a
+<tt class="docutils literal"><span class="pre">Label</span></tt>, and a <tt class="docutils literal"><span class="pre">PushButton</span></tt>. (In the <a class="reference internal" href="../tech_ref/index.html#tech-ref"><em>Enaml Technical Reference</em></a> you can find a list and
+descriptions of widgets and components from the <em class="xref std std-ref">built-ins</em>
+and <a class="reference internal" href="../api_ref/std_library_ref.html#std-library-ref"><em>standard library</em></a>.)</p>
+<p>The result when you run it looks like:</p>
+<img alt="../_images/progress_bar.png" src="../_images/progress_bar.png" />
+<dl class="docutils">
+<dt>In this example, we see some things we have not seen before:</dt>
+<dd><ul class="first last simple">
+<li>Python code included in an Enaml file.</li>
+<li>the ProgressBar, Label and PushButton have <tt class="docutils literal"><span class="pre">id</span></tt> tags.</li>
+<li>the text attributes of the Label and PushButton both use the subscription
+operator <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt></li>
+<li>the PushButton&#8217;s <tt class="docutils literal"><span class="pre">clicked</span></tt> event uses the notification operator <tt class="docutils literal"><span class="pre">::</span></tt></li>
+<li>the Container object has a <tt class="docutils literal"><span class="pre">constraints</span></tt> attribute</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="python-code-in-enaml-files">
+<h2>Python Code in Enaml Files<a class="headerlink" href="#python-code-in-enaml-files" title="Permalink to this headline">¶</a></h2>
+<p>The Enaml language is a strict superset of Python, so in addition to the
+<tt class="docutils literal"><span class="pre">enamldef</span></tt> definitions we have seen, you can define regular Python functions,
+classes and even module-level global variables.  Any valid Python code can be
+used in this context, in particular, you can also <tt class="docutils literal"><span class="pre">import</span></tt> any other Python
+or Enaml modules that you might like.</p>
+<p>The advantage of doing this is that your Python code is available when you run
+the Enaml file using the <tt class="docutils literal"><span class="pre">enaml-run</span></tt> command.  You can also access any
+Python objects defined inside an .enaml file, as long as that .enaml file is
+imported using the <tt class="docutils literal"><span class="pre">enaml.import()</span></tt> context manager.</p>
+<p>For example, you use a different <tt class="docutils literal"><span class="pre">ProgressModel</span></tt> instance than the default,
+you could do the following from within a .py file:</p>
+<div class="highlight-python"><pre>import enaml
+
+with enaml.import():
+    import progress_bar
+
+model = progress_bar.ProgressModel(work_units=100)
+view = progress_bar.Main(model=model)
+view.show()</pre>
+</div>
+</div>
 <div class="section" id="id-tags">
 <h2><tt class="docutils literal"><span class="pre">id</span></tt> Tags<a class="headerlink" href="#id-tags" title="Permalink to this headline">¶</a></h2>
 <p>Enaml uses a special attribute called an <tt class="docutils literal"><span class="pre">id</span></tt> tag to let you refer to a
@@ -135,10 +236,9 @@ marks are necessary. Because of the line <tt class="docutils literal"><span clas
 of similar <em>scope</em>. (We will have a more detailed discussion of scope later.)
 <tt class="docutils literal"><span class="pre">progress</span></tt> has two other attributes whose values we delegate with the <tt class="docutils literal"><span class="pre">:=</span></tt>
 operator.</p>
-<p>With the Label widget, we introduce a new operator.</p>
 </div>
 <div class="section" id="subscription-operator">
-<h2>Subscription Operator &lt;&lt;<a class="headerlink" href="#subscription-operator" title="Permalink to this headline">¶</a></h2>
+<h2>Subscription Operator <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt><a class="headerlink" href="#subscription-operator" title="Permalink to this headline">¶</a></h2>
 <p>The <strong>subscription operator</strong> <tt class="docutils literal"><span class="pre">&lt;&lt;</span></tt> is an Enaml-specific operator that makes
 the object on the left-hand side depend on the value of the Python-valid
 expression on the right-hand side of the operator. If there are variables in
@@ -151,81 +251,135 @@ object on the left-hand side will be recomputed.</p>
 <p>The <tt class="docutils literal"><span class="pre">text</span></tt> attribute of the <tt class="docutils literal"><span class="pre">Label</span></tt> object in our example is <em>subscribed</em>
 to a formatted string, with dependencies on <tt class="docutils literal"><span class="pre">progress.percentage</span></tt>,
 <tt class="docutils literal"><span class="pre">progress.value</span></tt>, and <tt class="docutils literal"><span class="pre">progress.maximum</span></tt>.</p>
+<p>Enaml&#8217;s dependency analysis is quite sophisticated, and will connect
+dependencies across multiple attribute lookups, and even into list
+comprehensions, if-else expressions and other complex Python constructs.</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="n">text</span> <span class="o">&lt;&lt;</span> <span class="s">&quot;Do Some Work&quot;</span> <span class="k">if</span> <span class="n">progress</span><span class="o">.</span><span class="n">percentage</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="s">&quot;Reset&quot;</span>
 </pre></div>
 </div>
 <p>The <tt class="docutils literal"><span class="pre">work_button</span></tt> widget also has a subscribed text attribute; in this case it
-is a Python <tt class="docutils literal"><span class="pre">if</span></tt> statement dependent on the value of
-<tt class="docutils literal"><span class="pre">progress.percentage</span></tt>.</p>
-<p><tt class="docutils literal"><span class="pre">work_button</span></tt> also has another new operator, the last of the four special
-Enaml operators.</p>
+is a Python <tt class="docutils literal"><span class="pre">if</span></tt> statement dependent on the value of <tt class="docutils literal"><span class="pre">progress.percentage</span></tt>.</p>
 </div>
-<div class="section" id="notification-operator">
-<h2>Notification Operator &gt;&gt;<a class="headerlink" href="#notification-operator" title="Permalink to this headline">¶</a></h2>
-<p>The <strong>notification operator</strong> <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> is the last Enaml-specific operator. It
-causes the expression on the right-hand side to be evaluated whenever the
-object on the left-hand side fires an event.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="n">clicked</span> <span class="o">&gt;&gt;</span> <span class="n">model</span><span class="o">.</span><span class="n">do_work</span><span class="p">()</span> <span class="k">if</span> <span class="n">progress</span><span class="o">.</span><span class="n">percentage</span> <span class="o">&lt;</span> <span class="mi">100</span> <span class="k">else</span> <span class="n">model</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<div class="section" id="notification-operators-and">
+<h2>Notification Operators <tt class="docutils literal"><span class="pre">::</span></tt> and <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt><a class="headerlink" href="#notification-operators-and" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>notification operator</strong> <tt class="docutils literal"><span class="pre">::</span></tt> is different from the other Enaml
+operators in that it is followed by a block of Python code, rather than a Python
+expression.  Whenever the attribute or event on the left-hand side of the
+notification operator changes, the block of code will be executed.</p>
+<div class="highlight-python"><pre>clicked ::
+    if progress.percentage &lt; 100:
+        model.do_work()
+    else:
+        model.reset()</pre>
+</div>
+<p>In our example, changes to the <tt class="docutils literal"><span class="pre">clicked</span></tt> attribute of <tt class="docutils literal"><span class="pre">work_button</span></tt> will
+cause the methods <tt class="docutils literal"><span class="pre">model.do_work()</span></tt> or <tt class="docutils literal"><span class="pre">model_reset()</span></tt> to be called
+depending on the value of <tt class="docutils literal"><span class="pre">progress.percentage</span></tt> at the time that the change
+happens.</p>
+<p>It is worth mentioning at this point that there is one remaining Enaml
+operator, <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> which pushes a value onto another when it changes.  The
+right-hand side of this operator must be a simple attribute expression which
+will get set with the new value of the left-hand side.</p>
+<p>For example, if our model had an object with a <tt class="docutils literal"><span class="pre">percentage</span></tt> trait, we could
+have the <tt class="docutils literal"><span class="pre">ProgressBar</span></tt> use the <tt class="docutils literal"><span class="pre">&gt;&gt;</span></tt> operator to update it.</p>
+<div class="highlight-python"><pre>ProgressBar:
+    id: progress
+    progress &gt;&gt; model.progress</pre>
+</div>
+<p>This is a short-hand for the equivalent:</p>
+<div class="highlight-python"><pre>ProgressBar:
+    id: progress
+    progress ::
+        model.progress = progress</pre>
+</div>
+<p>Similarly, the delegation operator <tt class="docutils literal"><span class="pre">:=</span></tt> as used like this:</p>
+<div class="highlight-python"><pre>ProgressBar:
+    id: progress
+    value := model.units_done</pre>
+</div>
+<p>is equivalent to:</p>
+<div class="highlight-python"><pre>ProgressBar:
+    id: progress
+    value &lt;&lt; model.units_done
+    value &gt;&gt; model.units_done</pre>
+</div>
+</div>
+<div class="section" id="constraints">
+<h2>Constraints<a class="headerlink" href="#constraints" title="Permalink to this headline">¶</a></h2>
+<p>One of the primary motivations for the development of the Enaml toolkit was to
+allow greater control over the appearance and layout of user interfaces built
+on top of Traits.  Until this point we have been relying on the default layouts
+provided by container widgets like <tt class="docutils literal"><span class="pre">Container</span></tt> and <tt class="docutils literal"><span class="pre">Form</span></tt>, but we have the
+option to override these so we can specify layout more precisely.</p>
+<p>By default the <tt class="docutils literal"><span class="pre">Container</span></tt> widget lays out its child widgets in a vertical
+stack, with each widget stretched horizontally to the width of the container.
+In the progress bar example, we have defined a replacement set of constraints
+by setting a value on the <tt class="docutils literal"><span class="pre">constraints</span></tt> attribute of the Container.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">vbox</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span>
+        <span class="n">hbox</span><span class="p">(</span><span class="n">spacer</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">spacer</span><span class="p">),</span>
+        <span class="n">hbox</span><span class="p">(</span><span class="n">spacer</span><span class="p">,</span> <span class="n">work_button</span><span class="p">,</span> <span class="n">spacer</span><span class="p">),</span>
+        <span class="n">spacer</span><span class="p">),</span>
+    <span class="n">align</span><span class="p">(</span><span class="s">&#39;h_center&#39;</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">work_button</span><span class="p">),</span>
+<span class="p">]</span>
 </pre></div>
 </div>
-<p>In our example, the <tt class="docutils literal"><span class="pre">clicked</span></tt> attribute of <tt class="docutils literal"><span class="pre">work_button</span></tt> <em>notifies</em>
-<tt class="docutils literal"><span class="pre">model.do_work()</span></tt> or <tt class="docutils literal"><span class="pre">model_reset()</span></tt> depending on the value of the Python
-<tt class="docutils literal"><span class="pre">if</span></tt> statement on the right-hand side.</p>
-<p>Now let&#8217;s set up the model using Python code inside Python code tags.</p>
-<div class="highlight-python"><pre>:: python ::
-
-import random
-from traits.api import HasTraits, Int
-
-class Model(HasTraits):
-    """ Model a process that does some work on command.
-    """
-    # The total units of work to do.
-    work_units = Int(1000)
-
-    # The number of units done.
-    units_done = Int(0)
-
-    def do_work(self):
-        """ Do a random amount of work.
-        """
-        nunits = random.randint(10, 100)
-        nunits = min(nunits, self.work_units - self.units_done)
-        self.units_done += nunits
-
-    def reset(self):
-        """ Reset the work done back to 0.
-        """
-        self.units_done = 0
-:: end ::</pre>
+<p>This layout is hopfully fairly clear: the children of the container should be
+layed out vertically in a box, with the progress bar above the label which is
+in turn above the work_button.  At the bottom is a spacer, which provides an
+expanding amount of space, meaning that the other items in the vbox will not
+expand.  Similarly, the label and work_button are layed out inside horizontal
+boxes with spacers on either side, so they will not expand horizontally beyond
+their natural width.</p>
+<p>Finally we constrain the three widgets so that they are aligned on their
+horizontal centers, meaning that the vertical stack of widgets will align to
+the center of the container.</p>
+<p>The objects <tt class="docutils literal"><span class="pre">vbox</span></tt>, <tt class="docutils literal"><span class="pre">hbox</span></tt>, <tt class="docutils literal"><span class="pre">align</span></tt> and <tt class="docutils literal"><span class="pre">spacer</span></tt> are conveniences that
+simplify layout.  They all evaluate down to a series of linear inequalities
+which are solved by the <a class="reference external" href="https://github.enthought.com/casuarius">casuarius</a>
+linear constraint solver.</p>
+<p>We can add additional constraints via inequalities directly, if we want.  For
+example, if we would like to make sure that the progress bar is at least 500
+pixels wide, we could add that an inequality to the constraints:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">vbox</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span>
+        <span class="n">hbox</span><span class="p">(</span><span class="n">spacer</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">spacer</span><span class="p">),</span>
+        <span class="n">hbox</span><span class="p">(</span><span class="n">spacer</span><span class="p">,</span> <span class="n">work_button</span><span class="p">,</span> <span class="n">spacer</span><span class="p">),</span>
+        <span class="n">spacer</span><span class="p">),</span>
+    <span class="n">align</span><span class="p">(</span><span class="s">&#39;h_center&#39;</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">work_button</span><span class="p">),</span>
+    <span class="n">progress</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
 </div>
-<p>Note that logically, this section of Python code should go <em>before</em> the veiw
-declaration, but Enaml files are executed &#8220;all at once&#8221;, and the order of
-declaration does not matter <a class="footnote-reference" href="#id2" id="id1">[1]</a>. Within the Python code tags, of course, the normal
-rules of Python parsing and execution apply.</p>
-<p>With a separate piece of Python code, we set up the main() function for
-running from the command line:</p>
-<div class="highlight-python"><pre>:: python ::
-
-# A 'main' function is special cased as an entry point by the enaml-run script
-def main():
-    model = Model()
-    window = ModelView(model)
-    window.show()
-
-:: end ::</pre>
+<p>For constraints like this which involve only one component, it is sometimes
+clearer to add them to the constraints attribute of the widget itself:</p>
+<div class="highlight-python"><pre>ProgressBar:
+    id: progress
+    constraints = [width &gt;= 500,]
+    value := model.units_done
+    maximum := model.work_units</pre>
 </div>
-<p>Execute from the command line with</p>
-<div class="highlight-python"><pre>$ enaml-run progress_bar.enaml</pre>
+<p>Linear equalities and inequalities are also permitted in the set of constraints,
+so we could insist that the progress bar be at least twice the width of the
+label:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">constraints</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">vbox</span><span class="p">(</span><span class="n">progress</span><span class="p">,</span>
+        <span class="n">hbox</span><span class="p">(</span><span class="n">spacer</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">spacer</span><span class="p">),</span>
+        <span class="n">hbox</span><span class="p">(</span><span class="n">spacer</span><span class="p">,</span> <span class="n">work_button</span><span class="p">,</span> <span class="n">spacer</span><span class="p">),</span>
+        <span class="n">spacer</span><span class="p">),</span>
+    <span class="n">align</span><span class="p">(</span><span class="s">&#39;h_center&#39;</span><span class="p">,</span> <span class="n">progress</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">work_button</span><span class="p">),</span>
+    <span class="n">progress</span><span class="o">.</span><span class="n">width</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="o">*</span><span class="n">label</span><span class="o">.</span><span class="n">width</span><span class="p">,</span>
+<span class="p">]</span>
+</pre></div>
 </div>
-<img alt="../_images/progress_bar_simple.png" src="../_images/progress_bar_simple.png" />
-<table class="docutils footnote" frame="void" id="id2" rules="none">
-<colgroup><col class="label" /><col /></colgroup>
-<tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Technically, the right-hand side of an Enaml operator acts as a
-closure which has access to all of the identifiers declared in the block.</td></tr>
-</tbody>
-</table>
+<p>Most widgets in Enaml inherit the standard box model.  They have constraint
+variables <tt class="docutils literal"><span class="pre">width</span></tt>, <tt class="docutils literal"><span class="pre">height</span></tt>, <tt class="docutils literal"><span class="pre">top</span></tt>, <tt class="docutils literal"><span class="pre">bottom</span></tt>, <tt class="docutils literal"><span class="pre">left</span></tt>, <tt class="docutils literal"><span class="pre">right</span></tt>,
+<tt class="docutils literal"><span class="pre">h_center</span></tt> and <tt class="docutils literal"><span class="pre">v_center</span></tt> that can be used in constraints.  In addition,
+Container widgets have constraint variables representing the padding and
+contents region: <tt class="docutils literal"><span class="pre">padding_top</span></tt>, <tt class="docutils literal"><span class="pre">padding_bottom</span></tt>, <tt class="docutils literal"><span class="pre">padding_left</span></tt>, and
+<tt class="docutils literal"><span class="pre">padding_right</span></tt>, as well as <tt class="docutils literal"><span class="pre">contents_width</span></tt>, <tt class="docutils literal"><span class="pre">contents_height</span></tt>,
+<tt class="docutils literal"><span class="pre">contents_top</span></tt>, <tt class="docutils literal"><span class="pre">contents_bottom</span></tt>, <tt class="docutils literal"><span class="pre">contents_left</span></tt>, <tt class="docutils literal"><span class="pre">contents_right</span></tt>,
+<tt class="docutils literal"><span class="pre">contents_h_center</span></tt> and <tt class="docutils literal"><span class="pre">contents_v_center</span></tt>.</p>
 </div>
 </div>
 
@@ -242,15 +396,18 @@ closure which has access to all of the identifiers declared in the block.</td></
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
           <a href="tut_even_more_widgets.html" title="More on Enaml Widgets"
              >next</a> |</li>
         <li class="right" >
-          <a href="tut_python_code.html" title="enaml-run and Python code tags in Enaml files"
+          <a href="tut_person.html" title="John Doe tutorial"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="tutorials_home.html" >Enaml Tutorials</a> &raquo;</li>
   
@@ -261,7 +418,7 @@ closure which has access to all of the identifiers declared in the block.</td></
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

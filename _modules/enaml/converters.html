@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.converters &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.converters &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.converters</a></li>
@@ -127,13 +130,13 @@
 <span class="sd">    value modification.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="NullConverter.to_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.NullConverter.to_component">[docs]</a>    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">value</span>
-</div>
-<div class="viewcode-block" id="NullConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.NullConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">value</span>
 
-</div></div>
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">value</span>
+
+</div>
 <div class="viewcode-block" id="BaseStringConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.BaseStringConverter">[docs]</a><span class="k">class</span> <span class="nc">BaseStringConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A simple abstract Converter that converts a userspace value </span>
 <span class="sd">    to a string.</span>
@@ -144,10 +147,10 @@
 <span class="sd">    are suitable for use in Enaml Field components.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="BaseStringConverter.to_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.BaseStringConverter.to_component">[docs]</a>    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="StringConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.StringConverter">[docs]</a><span class="k">class</span> <span class="nc">StringConverter</span><span class="p">(</span><span class="n">BaseStringConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A simple Converter that converts a userspace value to a string </span>
 <span class="sd">    and back.</span>
@@ -157,64 +160,64 @@
 <span class="sd">        method is needed.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="StringConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.StringConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="IntConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.IntConverter">[docs]</a><span class="k">class</span> <span class="nc">IntConverter</span><span class="p">(</span><span class="n">BaseStringConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert an integer value to a string and back.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="IntConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.IntConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="LongConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.LongConverter">[docs]</a><span class="k">class</span> <span class="nc">LongConverter</span><span class="p">(</span><span class="n">BaseStringConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert an long integer value to a string and back.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="LongConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.LongConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">long</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="FloatConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.FloatConverter">[docs]</a><span class="k">class</span> <span class="nc">FloatConverter</span><span class="p">(</span><span class="n">BaseStringConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert a float value to a string and back.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="FloatConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.FloatConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="ComplexConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.ComplexConverter">[docs]</a><span class="k">class</span> <span class="nc">ComplexConverter</span><span class="p">(</span><span class="n">BaseStringConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert a complex value to a string and back.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="ComplexConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.ComplexConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="HexConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.HexConverter">[docs]</a><span class="k">class</span> <span class="nc">HexConverter</span><span class="p">(</span><span class="n">BaseStringConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert between a string and a base-16 integer.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="HexConverter.to_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.HexConverter.to_component">[docs]</a>    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">hex</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="HexConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.HexConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="OctalConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.OctalConverter">[docs]</a><span class="k">class</span> <span class="nc">OctalConverter</span><span class="p">(</span><span class="n">BaseStringConverter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert from a widget to a base-8 integer.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="OctalConverter.to_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.OctalConverter.to_component">[docs]</a>    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">to_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">oct</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="OctalConverter.from_component"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.OctalConverter.from_component">[docs]</a>    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">from_component</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 
-</div></div>
+</div>
 <div class="viewcode-block" id="DateConverter"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.converters.DateConverter">[docs]</a><span class="k">class</span> <span class="nc">DateConverter</span><span class="p">(</span><span class="n">Converter</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Convert between dates and strings.</span>
 
@@ -279,9 +282,12 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.converters</a></li>
@@ -291,7 +297,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

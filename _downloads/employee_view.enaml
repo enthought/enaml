@@ -2,10 +2,10 @@
 #  Copyright (c) 2011, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from phone_converter import PhoneNumberConverter
+from phone_validator import PhoneNumberValidator
 
 
-EmployeeForm(Form):
+enamldef EmployeeForm(Form):
     attr employee
     attr show_employer: bool = False
     Label:
@@ -20,8 +20,8 @@ EmployeeForm(Form):
         text = "Home phone:"
     Field:
         value := employee.phone
-        converter = PhoneNumberConverter()
-        bg_color << 'error' if error else 'none'
+        validator = PhoneNumberValidator()
+        bgcolor << 'unacceptable' if not acceptable else 'none'
     Label:
         text = 'Date of Birth:'
     DateEdit:
@@ -34,19 +34,18 @@ EmployeeForm(Form):
         text = 'Password'
     Field:
         password_mode << 'password' if not pw_cb.checked else 'normal'
-        value >> print('Password:', value)
+        value :: print 'Password:', value
     Label:
         text = 'Show Password:'
     CheckBox:
         id: pw_cb
         checked = False
-    Label:
-        text = 'Show Employer Details:'
-    CheckBox:
+    ToggleButton:
         checked := show_employer
+        text << ('Hide' if show_employer else 'Show') + ' Employer Details'
 
 
-EmployerForm(Form):
+enamldef EmployerForm(Form):
     attr employer
     Label:
         text = "Company:"
@@ -65,16 +64,18 @@ EmployerForm(Form):
         checked = True
 
 
-EmployeeView(MainWindow):
+enamldef EmployeeView(MainWindow):
     id: main
     attr employee
 
     title << "Employee Record for: %s, %s" % (employee.last_name, 
                                               employee.first_name)
     Container:
-        constraints = [
-            vbox(top_box, bottom_box),
-            align('midline', top_form, bottom_form),
+        constraints << [
+            vertical(top, top_box, bottom_box.when(bottom_box.visible), bottom),
+            horizontal(left, spacer.flex(), top_box, spacer.flex(), right),
+            horizontal(left, spacer.flex(), bottom_box, spacer.flex(), right),
+            align('midline', top_form, bottom_form, clear_invisible=False)
         ]
         GroupBox:
             id: top_box

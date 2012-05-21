@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.wx.wx_label &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.wx.wx_label &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.wx.wx_label</a></li>
@@ -110,21 +113,28 @@
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="WXLabel.shell_text_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute.</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute on the shell </span>
+<span class="sd">        component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
-        <span class="c"># If the text in the label changes, then the size hint of</span>
-        <span class="c"># label will have changed, and the layout system needs to</span>
-        <span class="c"># be informed.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">size_hint_updated</span> <span class="o">=</span> <span class="bp">True</span>
-        </div>
+</div>
+<div class="viewcode-block" id="WXLabel.shell_word_wrap_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.shell_word_wrap_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_word_wrap_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wrap</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;word_wrap&#39; attribute on the </span>
+<span class="sd">        shell component. Wx does not support word wrap, so this is </span>
+<span class="sd">        a no-op.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
 <div class="viewcode-block" id="WXLabel.set_label"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.label.Label.html#enaml.widgets.wx.wx_label.WXLabel.set_label">[docs]</a>    <span class="k">def</span> <span class="nf">set_label</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">label</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the label on the underlying control.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetLabel</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
-</pre></div></div></div>
+
+    </div></div>
+</pre></div>
 
           </div>
         </div>
@@ -138,9 +148,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.wx.wx_label</a></li>
@@ -150,7 +163,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

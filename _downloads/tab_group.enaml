@@ -11,18 +11,14 @@ representation.
 Note: Dynamically changing the tab position on wx is not supported.
 
 """
-:: python ::
-
 # A litte bit of Python code to make it easy to cycle tab positions.
 import itertools
 
 tab_pos = itertools.cycle(['top', 'bottom', 'left', 'right'])
 tab_pos.next()
 
-:: end ::
 
-
-TabForm(Form):
+enamldef TabForm(Form):
     attr button_text: str = 'Click Me!'
     event button_clicked
     Label:
@@ -39,30 +35,30 @@ TabForm(Form):
         pass
     PushButton:
         text = button_text
-        clicked >> button_clicked()
+        clicked :: button_clicked()
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'TabGroup'
     Container:
         TabGroup:
             id: tbd
             hug_height = 'strong'
-            selected_tab >> print('Selected Tab:', selected_tab.title)
+            selected_tab :: print 'Selected Tab:', selected_tab.title
             Tab:
                 id: spam_tab
                 title = 'Spam'
                 TabForm:
                     button_text = 'Select Ham'
-                    button_clicked >> set_selected_index(1)
+                    button_clicked :: set_selected_index(1)
             Tab:
                 title = 'Ham'
                 TabForm:
                     button_text = 'Select Spam'
-                    button_clicked >> set_selected_tab(spam_tab)
+                    button_clicked :: set_selected_tab(spam_tab)
             Tab:
                 title = 'Toggle'
                 TabForm:
                     button_text = 'Cycle Tab Position'
-                    button_clicked >> setattr(tbd, 'tab_position', tab_pos.next())
+                    button_clicked :: tbd.tab_position = tab_pos.next()
 

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Writing .enaml Files &mdash; enaml 0.1alpha documentation</title>
+    <title>Writing .enaml Files &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Technical Reference" href="index.html" />
     <link rel="next" title="Enaml Grammar Reference" href="grammar_ref.html" />
     <link rel="prev" title="Enaml Technical Reference" href="index.html" /> 
@@ -40,6 +40,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -48,7 +51,7 @@
         <li class="right" >
           <a href="index.html" title="Enaml Technical Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Technical Reference</a> &raquo;</li>
   
     <li><a href="#">Writing .enaml Files</a></li>
@@ -99,6 +102,11 @@
             
   <div class="section" id="writing-enaml-files">
 <h1>Writing .enaml Files<a class="headerlink" href="#writing-enaml-files" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This documentation is not current and does not reflect the way
+Enaml currently works.</p>
+</div>
 <p>Enaml files contain a domain-specific language for specifying a user-interface
 and dynamically binding and computing values based on user interaction.</p>
 <p>A simple example of an Enaml file might look something like this:</p>
@@ -205,11 +213,14 @@ the same line.</p>
 available to simply specifying layout.  These are:</p>
 <blockquote>
 <div><dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">_space_</span></tt></dt>
+<dt><tt class="docutils literal"><span class="pre">spacer</span></tt></dt>
 <dd>A singleton spacer that represents a flexible space in a layout
 with a minimum value of the default space.  Additional restrictions
 on the space can be specified using <tt class="docutils literal"><span class="pre">==</span></tt>, <tt class="docutils literal"><span class="pre">&lt;=</span></tt> and <tt class="docutils literal"><span class="pre">&gt;=</span></tt> with
 an integer value.</dd>
+<dt><tt class="docutils literal"><span class="pre">spacer.flex()</span></tt></dt>
+<dd>A flexible spacer that has a hard minimum but also a weaker preference
+to be no larger than that minimum.</dd>
 </dl>
 <p><tt class="docutils literal"><span class="pre">horizontal(*items)</span></tt></p>
 <dl class="docutils">
@@ -218,16 +229,8 @@ an integer value.</dd>
 create a series of constraints that specify a sequential horizontal
 or vertical layout where the sides of each object in sequence abut
 against each other.</dd>
-</dl>
-<p><tt class="docutils literal"><span class="pre">align_left(*items)</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">align_right(*items)</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">align_top(*items)</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">align_bottom(*items)</span></tt></p>
-<p><tt class="docutils literal"><span class="pre">align_v_center(*items)</span></tt></p>
-<dl class="docutils">
-<dt><tt class="docutils literal"><span class="pre">align_h_center(*items)</span></tt></dt>
-<dd>These functions take a list of widgets and align the appropriate
-parts of their box models.</dd>
+<dt><tt class="docutils literal"><span class="pre">align(variable,</span> <span class="pre">*items)</span></tt></dt>
+<dd>Align the given string variable name on each of the specified items.</dd>
 </dl>
 </div></blockquote>
 <p>By using appropriate combinations of these objects you can specify complex layouts
@@ -286,6 +289,9 @@ natural.</li>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -294,7 +300,7 @@ natural.</li>
         <li class="right" >
           <a href="index.html" title="Enaml Technical Reference"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Technical Reference</a> &raquo;</li>
   
     <li><a href="#">Writing .enaml Files</a></li>
@@ -304,7 +310,7 @@ natural.</li>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

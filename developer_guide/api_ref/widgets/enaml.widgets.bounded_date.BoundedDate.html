@@ -40,6 +40,9 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -117,7 +120,7 @@ values. This class is not meant to be used directly.</p>
 <dd><p>The minimum date available in the date edit. If not defined then
 the default value is September 14, 1752. Extra checks take place
 to make sure that the user does not programmatically set
-<a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.min_date" title="enaml.widgets.bounded_date.BoundedDate.min_date"><tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt></a> &gt; <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.max_date" title="enaml.widgets.bounded_date.BoundedDate.max_date"><tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt></a>.</p>
+<tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt> &gt; <tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -126,16 +129,16 @@ to make sure that the user does not programmatically set
 <dd><p>The maximum date available in the date edit. If not defined then
 the default value is December 31, 7999. Extra checks take place
 to make sure that the user does not programmatically set
-<a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.min_date" title="enaml.widgets.bounded_date.BoundedDate.min_date"><tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt></a> &gt; <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.max_date" title="enaml.widgets.bounded_date.BoundedDate.max_date"><tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt></a>.</p>
+<tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt> &gt; <tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt>.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="enaml.widgets.bounded_date.BoundedDate.date">
 <tt class="descname">date</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.bounded_date.BoundedDate.date" title="Permalink to this definition">¶</a></dt>
 <dd><p>The currently selected date. Default is the current date. The
-value is bounded between <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.min_date" title="enaml.widgets.bounded_date.BoundedDate.min_date"><tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt></a> and <a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.max_date" title="enaml.widgets.bounded_date.BoundedDate.max_date"><tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt></a>.
+value is bounded between <tt class="xref py py-attr docutils literal"><span class="pre">min_date</span></tt> and <tt class="xref py py-attr docutils literal"><span class="pre">max_date</span></tt>.
 Changing the boundary attributes might result in an update of
-<a class="reference internal" href="#enaml.widgets.bounded_date.BoundedDate.date" title="enaml.widgets.bounded_date.BoundedDate.date"><tt class="xref py py-attr docutils literal"><span class="pre">date</span></tt></a> to fit in the new range. Attempts to assign a value
+<tt class="xref py py-attr docutils literal"><span class="pre">date</span></tt> to fit in the new range. Attempts to assign a value
 outside of these bounds will result in a TraitError.</p>
 </dd></dl>
 
@@ -145,12 +148,6 @@ outside of these bounds will result in a TraitError.</p>
 <dd><p>Overridden parent class trait</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.bounded_date.BoundedDate.__implements__">
-<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.bounded_date.BoundedDate.__implements__" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
-</dd></dl>
-
 </dd></dl>
 
 <div class="section" id="backends">
@@ -158,11 +155,11 @@ outside of these bounds will result in a TraitError.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-19782e41d6159e8d16a64e62b4ee507a192fa9b1.png" alt="Inheritance diagram of enaml.widgets.qt.qt_bounded_date.QtBoundedDate" usemap="#inheritanced3c6cf43d4" class="inheritance"/>
+<img src="../../../_images/inheritance-763c08a324e84739fd24e5a17dfc6495023a91e3.png" alt="Inheritance diagram of enaml.widgets.qt.qt_bounded_date.QtBoundedDate" usemap="#inheritanced3c6cf43d4" class="inheritance"/>
 <map id="inheritanced3c6cf43d4" name="inheritanced3c6cf43d4">
 <area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="540,43,603,65"/>
-<area shape="rect" id="node20" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="673,63,764,85"/>
-<area shape="rect" id="node11" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="200,43,283,65"/>
+<area shape="rect" id="node17" href="#enaml.widgets.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="673,63,764,85"/>
+<area shape="rect" id="node10" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="200,43,283,65"/>
 </map>
 </p>
 <dl class="class">
@@ -177,11 +174,11 @@ for subclasses of BoundedDate.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-e7aeb38f3ca9bb36c058552d8168ecd663f0c065.png" alt="Inheritance diagram of enaml.widgets.wx.wx_bounded_date.WXBoundedDate" usemap="#inheritanceeda64851e2" class="inheritance"/>
+<img src="../../../_images/inheritance-4a3cd62405d0f7bc00d61e3e622175f64eebad32.png" alt="Inheritance diagram of enaml.widgets.wx.wx_bounded_date.WXBoundedDate" usemap="#inheritanceeda64851e2" class="inheritance"/>
 <map id="inheritanceeda64851e2" name="inheritanceeda64851e2">
-<area shape="rect" id="node11" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="537,43,602,65"/>
-<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="197,4,282,25"/>
-<area shape="rect" id="node10" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate" title="WXBoundedDate" alt="" coords="670,62,764,84"/>
+<area shape="rect" id="node7" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="197,4,282,25"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="537,43,602,65"/>
+<area shape="rect" id="node16" href="#enaml.widgets.wx.wx_bounded_date.WXBoundedDate" title="WXBoundedDate" alt="" coords="670,62,764,84"/>
 </map>
 </p>
 <dl class="class">
@@ -209,6 +206,9 @@ for subclasses of BoundedDate.</p>
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -230,7 +230,7 @@ for subclasses of BoundedDate.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on Jan 27, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

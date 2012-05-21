@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.tests.widgets.slider &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.tests.widgets.slider &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.widgets.slider</a></li>
@@ -79,13 +82,14 @@
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">expectedFailure</span>
 <span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">TraitError</span>
 
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
 <span class="k">class</span> <span class="nc">TestEvents</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Events required by the testcase. </span>
+    <span class="sd">&quot;&quot;&quot; Events required by the testcase.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c">#: The left button is pressed</span>
@@ -153,17 +157,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">enaml_source</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;</span>
-<span class="s">defn MainView(events):</span>
-<span class="s">    Window:</span>
-<span class="s">        Slider:</span>
-<span class="s">            name = &#39;slider&#39;</span>
-<span class="s">            moved &gt;&gt; events.append((&#39;moved&#39;, args.new))</span>
-<span class="s">            pressed &gt;&gt; events.append(&#39;pressed&#39;)</span>
-<span class="s">            released &gt;&gt; events.append(&#39;released&#39;)</span>
+<span class="s">MainView(MainWindow):</span>
+<span class="s">    attr events</span>
+<span class="s">    Slider:</span>
+<span class="s">        name = &#39;slider&#39;</span>
+<span class="s">        moved &gt;&gt; events.append((&#39;moved&#39;, args.new))</span>
+<span class="s">        pressed &gt;&gt; events.append(&#39;pressed&#39;)</span>
+<span class="s">        released &gt;&gt; events.append(&#39;released&#39;)</span>
 <span class="s">&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">events</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_and_create</span><span class="p">(</span><span class="n">enaml_source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parse_and_create</span><span class="p">(</span><span class="n">enaml_source</span><span class="p">,</span> <span class="n">events</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;slider&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
@@ -219,7 +223,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
 <div class="viewcode-block" id="TestSlider.test_change_maximum_invalid"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.test_change_maximum_invalid">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_maximum_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Test attempting to set an invalid value to the maximum range </span>
+        <span class="sd">&quot;&quot;&quot; Test attempting to set an invalid value to the maximum range</span>
 <span class="sd">        of the slider.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -232,7 +236,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
 <div class="viewcode-block" id="TestSlider.test_change_minimum_invalid"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.test_change_minimum_invalid">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_minimum_invalid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Test attempting to set an invalid value to the minimum range </span>
+        <span class="sd">&quot;&quot;&quot; Test attempting to set an invalid value to the minimum range</span>
 <span class="sd">        of the slider.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -375,7 +379,10 @@
         <span class="n">component</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">50</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">send_event</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">,</span> <span class="n">TestEvents</span><span class="o">.</span><span class="n">PRESSED</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">([</span><span class="s">&#39;pressed&#39;</span><span class="p">],</span> <span class="n">events</span><span class="p">)</span>
-</div>
+
+    <span class="c"># This fails on windows under wx because the underlying size of the</span>
+    <span class="c"># of the widget is not reliable. So the precomputed mouse</span>
+    <span class="c"># position for the mouse event which is sent can be wrong.</span></div>
 <div class="viewcode-block" id="TestSlider.test_releasing_the_thumb"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.test_releasing_the_thumb">[docs]</a>    <span class="k">def</span> <span class="nf">test_releasing_the_thumb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test firing events when the thumb is released.</span>
 
@@ -423,7 +430,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
 <div class="viewcode-block" id="TestSlider.test_move_down_by_one_step"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.test_move_down_by_one_step">[docs]</a>    <span class="k">def</span> <span class="nf">test_move_down_by_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one </span>
+        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one</span>
 <span class="sd">        step down.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -435,7 +442,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
 <div class="viewcode-block" id="TestSlider.test_move_up_by_one_step"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.test_move_up_by_one_step">[docs]</a>    <span class="k">def</span> <span class="nf">test_move_up_by_one_step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one </span>
+        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one</span>
 <span class="sd">        step up.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -447,7 +454,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
 <div class="viewcode-block" id="TestSlider.test_move_down_by_one_page"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.test_move_down_by_one_page">[docs]</a>    <span class="k">def</span> <span class="nf">test_move_down_by_one_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one </span>
+        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one</span>
 <span class="sd">        page down.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -459,7 +466,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">events</span><span class="p">,</span> <span class="p">[])</span>
 </div>
 <div class="viewcode-block" id="TestSlider.test_move_up_by_one_page"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.test_move_up_by_one_page">[docs]</a>    <span class="k">def</span> <span class="nf">test_move_up_by_one_page</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one </span>
+        <span class="sd">&quot;&quot;&quot; Test firing events and value when the thumb is moved by one</span>
 <span class="sd">        page up.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -474,70 +481,70 @@
     <span class="c"># Abstract methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_value"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_minimum"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_minimum">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s minimum value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_maximum"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_maximum">[docs]</a>    <span class="k">def</span> <span class="nf">get_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s maximum value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_tick_interval"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_tick_interval">[docs]</a>    <span class="k">def</span> <span class="nf">get_tick_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_tick_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s tick_interval value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_tick_position"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_tick_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_tick_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_tick_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s tick position style.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_orientation"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">get_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s orientation.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_single_step"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_single_step">[docs]</a>    <span class="k">def</span> <span class="nf">get_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s single step value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_page_step"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_page_step">[docs]</a>    <span class="k">def</span> <span class="nf">get_page_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_page_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s page step value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.get_tracking"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.get_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">get_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s tracking status.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</div>
+
     <span class="nd">@required_method</span>
-<div class="viewcode-block" id="TestSlider.send_event"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.widgets.slider.TestSlider.html#enaml.tests.widgets.slider.TestSlider.send_event">[docs]</a>    <span class="k">def</span> <span class="nf">send_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">send_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Send an event to the Slider programmatically.</span>
 
 <span class="sd">        Arguments</span>
@@ -550,7 +557,7 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">pass</span>
-</pre></div></div></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -564,9 +571,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.widgets.slider</a></li>
@@ -576,7 +586,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

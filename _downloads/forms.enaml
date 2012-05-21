@@ -9,16 +9,16 @@ Note:
    cross most Container boundaries.
 
 """
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Form Layout"
     Container:
         constraints = [
             vbox(
-                hbox(top_label, _space_>=0),
+                hbox(top_label, spacer>=0),
                 top_form,
-                hbox(bottom_label, _space_>=0),
+                hbox(bottom_label, spacer>=0),
                 bottom_form,
-                _space_,
+                spacer,
             ),
             top_form.midline == bottom_form.midline,
         ]

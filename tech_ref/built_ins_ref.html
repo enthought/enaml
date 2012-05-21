@@ -40,6 +40,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -89,12 +92,76 @@
             
   <div class="section" id="enaml-built-in-widgets">
 <span id="built-ins-ref"></span><h1>Enaml Built-in Widgets<a class="headerlink" href="#enaml-built-in-widgets" title="Permalink to this headline">¶</a></h1>
-<p>The following components are built into Enaml and available without import.</p>
-<span class="target" id="module-enaml.widgets.combo_box"></span><dl class="class">
-<dt id="enaml.widgets.combo_box.ComboBox">
-<em class="property">class </em><tt class="descclassname">enaml.widgets.combo_box.</tt><tt class="descname">ComboBox</tt><a class="reference internal" href="../_modules/enaml/widgets/combo_box.html#ComboBox"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a></p>
-<p>A drop-down list from which one item can be selected at a time.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This section may be best formated as cross-references that point to
+the API documentation for each of the widgets, preferably with a
+gallery-style image of the widget. Maybe like the TraitsUI pages?</p>
+</div>
+<p>The following widgets are available from the default toolkit. (Enaml looks
+for the ETS_TOOLKIT environment variable, and if it is not set, it uses Qt.)</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.action.</tt><tt class="descname">Action</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.component.Component'&gt;</em><big>)</big></dt>
+<dd><p>A declarative Enaml component which represents an action 
+associated with a menu or toolbar.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.container.</tt><tt class="descname">Container</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.layout_task_handler.LayoutTaskHandler'&gt;</em><big>)</big></dt>
+<dd><p>A Component subclass that provides for laying out its layout
+child Components.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.date_edit.</tt><tt class="descname">DateEdit</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.bounded_date.BoundedDate'&gt;</em><big>)</big></dt>
+<dd><p>A widget to edit a Python datetime.date object.</p>
+<p>A DateEdit displays a Python datetime.date using an appropriate
+toolkit specific control. This is a geometrically smaller control 
+than what is provided by Calendar.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.datetime_edit.</tt><tt class="descname">DatetimeEdit</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.bounded_datetime.BoundedDatetime'&gt;</em><big>)</big></dt>
+<dd><p>A datetime widget that displays a Python datetime.datetime object 
+using an appropriate toolkit specific control.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.dialog.</tt><tt class="descname">Dialog</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.window.Window'&gt;</em><big>)</big></dt>
+<dd><p>A basic dialog widget whose contents are user defined.</p>
+<p>The basic dialog has no buttons, but provides methods for the
+accept and reject behavior for the dialog.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.calendar.</tt><tt class="descname">Calendar</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.bounded_date.BoundedDate'&gt;</em><big>)</big></dt>
+<dd><p>A calendar widget.</p>
+<p>A Calendar displays a Python datetime.date using an appropriate
+toolkit specific control.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.check_box.</tt><tt class="descname">CheckBox</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.toggle_control.ToggleControl'&gt;</em><big>)</big></dt>
+<dd><p>A check box widget.</p>
+<p>Use a check box when it&#8217;s necessary to toggle a boolean value
+independent of any other widgets in the group. For allowing the
+toggling of only one value in a group of values, use a group
+of radio buttons.</p>
+<p class="rubric">See Also</p>
+<p>ToggleControl</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.combo_box.</tt><tt class="descname">ComboBox</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A drop-down list from which one item can be selected at a time.</p>
 <p>Use a combo box to select a single item from a collection of items.
 To select multiple items from a collection of items use a ListBox.</p>
 <p>The combo box works by first using the to_string callable to convert
@@ -115,82 +182,194 @@ a valid value through the ui control, not when the value
 is changed programmatically.</li>
 </ul>
 </div>
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.items">
-<tt class="descname">items</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.items" title="Permalink to this definition">¶</a></dt>
-<dd><p>The objects that compose the collection.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.value">
-<tt class="descname">value</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.value" title="Permalink to this definition">¶</a></dt>
-<dd><p>The currently selected item from the collection. If this value
-is set to a value that is not in <a class="reference internal" href="#enaml.widgets.combo_box.ComboBox.items" title="enaml.widgets.combo_box.ComboBox.items"><tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt></a> then the computed
-<a class="reference internal" href="#enaml.widgets.combo_box.ComboBox.index" title="enaml.widgets.combo_box.ComboBox.index"><tt class="xref py py-attr docutils literal"><span class="pre">index</span></tt></a> will be -1.</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.enable_canvas.</tt><tt class="descname">EnableCanvas</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>An Enable canvas widget that will draw any Enable Component
+object.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.index">
-<tt class="descname">index</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.index" title="Permalink to this definition">¶</a></dt>
-<dd><p>The integer index of the current selection in items. If the index
-is out of range of <a class="reference internal" href="#enaml.widgets.combo_box.ComboBox.items" title="enaml.widgets.combo_box.ComboBox.items"><tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt></a> then the index it is set to -1,
-and the current <a class="reference internal" href="#enaml.widgets.combo_box.ComboBox.value" title="enaml.widgets.combo_box.ComboBox.value"><tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></a> is left unchanged.</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.field.</tt><tt class="descname">Field</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A single-line editable text widget.</p>
+<p>Among many other attributes, a Field accepts a converter object
+which allows any arbitrary python object to be displayed and edited
+by the Field.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.to_string">
-<tt class="descname">to_string</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.to_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>A callable which will convert the objects in the items list to
-strings for display. Defaults to str.</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.float_slider.</tt><tt class="descname">FloatSlider</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.slider.Slider'&gt;</em><big>)</big></dt>
+<dd><p>A simple slider widget that can be used to select from a 
+range of floating point values.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.labels">
-<tt class="descname">labels</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.labels" title="Permalink to this definition">¶</a></dt>
-<dd><p>A readonly property that holds the component items as a list of
-strings that are produced by the <a class="reference internal" href="#enaml.widgets.combo_box.ComboBox.to_string" title="enaml.widgets.combo_box.ComboBox.to_string"><tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt></a> attribute.</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.form.</tt><tt class="descname">Form</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.container.Container'&gt;</em><big>)</big></dt>
+<dd><p>A Container subclass that arranges its layout children as a two 
+column form.</p>
+<p>The left column is typically Labels (but this is not a requirement).
+The right are the actual widgets for data entry. The children should
+be in alternating label/widget order. If there are an odd number
+of children, the last child will span both columns.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.selected_text">
-<tt class="descname">selected_text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.selected_text" title="Permalink to this definition">¶</a></dt>
-<dd><p>A readonly property that will return the result of calling
-<a class="reference internal" href="#enaml.widgets.combo_box.ComboBox.to_string" title="enaml.widgets.combo_box.ComboBox.to_string"><tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt></a> on <a class="reference internal" href="#enaml.widgets.combo_box.ComboBox.value" title="enaml.widgets.combo_box.ComboBox.value"><tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></a></p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.group_box.</tt><tt class="descname">GroupBox</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.container.Container'&gt;</em><big>)</big></dt>
+<dd><p>The GroupBox container, which introduces a group of widgets with 
+a title and usually has a border.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.selected">
-<tt class="descname">selected</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.selected" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fired when a new selection is made by the user through the ui,
-but not when changed programatically. The args object will contain
-the selected value.</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.html.</tt><tt class="descname">Html</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>An extremely simple widget for displaying HTML.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.hug_width">
-<tt class="descname">hug_width</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.hug_width" title="Permalink to this definition">¶</a></dt>
-<dd><p>How strongly a component hugs it&#8217;s contents&#8217; width. ComboBoxes hug
-width weakly, by default.</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.image.</tt><tt class="descname">Image</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A widget for displaying images.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.abstract_obj">
-<tt class="descname">abstract_obj</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.abstract_obj" title="Permalink to this definition">¶</a></dt>
-<dd><p>Overridden parent class trait</p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.label.</tt><tt class="descname">Label</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A simple read-only text display.</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.__implements__">
-<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.__implements__" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.list_view.</tt><tt class="descname">ListView</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.abstract_item_view.AbstractItemView'&gt;</em><big>)</big></dt>
+<dd><p>A view for list data.</p>
 </dd></dl>
 
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.main_window.</tt><tt class="descname">MainWindow</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.window.Window'&gt;</em><big>)</big></dt>
+<dd><p>A top-level main window widget.</p>
+<p>MainWindow widgets are top-level widgets which provide various frame 
+decorations and other window related functionality. A window may 
+optionally contain a menubar, any number of toolbars, a status bar,
+and dock panes. A window can have at most one central widget child
+which will be expanded to fit the size of the window.</p>
 </dd></dl>
 
-<dl class="class">
-<dt id="enaml.widgets.combo_box.enaml.widgets.combo_box.ComboBox">
-<em class="property">class </em><tt class="descclassname">enaml.widgets.combo_box.</tt><tt class="descname">ComboBox</tt><a class="headerlink" href="#enaml.widgets.combo_box.enaml.widgets.combo_box.ComboBox" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.menu_bar.</tt><tt class="descname">MenuBar</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.component.Component'&gt;</em><big>)</big></dt>
+<dd><p>A declarative Enaml Component which represents a menu bar in
+a main window.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.menu.</tt><tt class="descname">Menu</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.component.Component'&gt;</em><big>)</big></dt>
+<dd><p>A declarative Enaml Component which represents a menu in a 
+menu bar.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.progress_bar.</tt><tt class="descname">ProgressBar</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A progress bar.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.push_button.</tt><tt class="descname">PushButton</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A push button widget.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.radio_button.</tt><tt class="descname">RadioButton</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.toggle_control.ToggleControl'&gt;</em><big>)</big></dt>
+<dd><p>A radio button widget derived from IToggleElement</p>
+<p>Use a radio button to toggle the value of a boolean field. For a 
+group of radio buttons with the same widget parent, only one radio 
+button may be selected at a time. This makes groups of radio buttons 
+useful for selecting amongst a discrete set of values. For multiple 
+groups of independent radio buttons, place them in their own Container.</p>
+<p class="rubric">See Also</p>
+<p>ToggleControl</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.scroll_area.</tt><tt class="descname">ScrollArea</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.layout_task_handler.LayoutTaskHandler'&gt;</em><big>)</big></dt>
+<dd><p>A LayoutComponent subclass that displays just a single child in
+a scrollable area.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.slider.</tt><tt class="descname">Slider</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A simple slider widget that can be used to select from a 
+range of values.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.spin_box.</tt><tt class="descname">SpinBox</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A spin box widget.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.splitter.</tt><tt class="descname">Splitter</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.layout_task_handler.LayoutTaskHandler'&gt;</em><big>)</big></dt>
+<dd><p>A LayoutComponent subclass that displays its children in separate
+resizable compartements that are connected with a resizing bar.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.text_editor.</tt><tt class="descname">TextEditor</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A text editor widget capable of editing plain text with styles.</p>
+<p>This is not a general text edit widget with general capabilties for 
+sophistcated formatting or image display.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.table_view.</tt><tt class="descname">TableView</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.abstract_item_view.AbstractItemView'&gt;</em><big>)</big></dt>
+<dd><p>A view for tabular data.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.tab_group.</tt><tt class="descname">TabGroup</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.layout_task_handler.LayoutTaskHandler'&gt;</em><big>)</big></dt>
+<dd><p>A LayoutComponent that arranges its children as a group of tabs.</p>
+<p>The TabGroup provides a very simple way of laying out a number of 
+children as tabs, suitable for configuration dialogs and the like. 
+It is not suitable for rich tab interfaces where the group of tabs
+is the central focus of the application. For that, use a Notebook.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.tab.</tt><tt class="descname">Tab</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.container.Container'&gt;</em><big>)</big></dt>
+<dd><p>A Container subclass that represents a tab in a Tabbed container.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.traitsui_item.</tt><tt class="descname">TraitsUIItem</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.control.Control'&gt;</em><big>)</big></dt>
+<dd><p>A control which embeds a traits ui view.</p>
+<p>The TraitsUIItem allows a traits ui window to be embedded into an
+Enaml application. The ui that is embedded will be the same as that 
+which is created by calling model.edit_traits(...).</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt>
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.widgets.tree_view.</tt><tt class="descname">TreeView</tt><big>(</big><em>derives from &lt;class 'enaml.widgets.abstract_item_view.AbstractItemView'&gt;</em><big>)</big></dt>
+<dd><p>A view for tree data.</p>
+</dd></dl>
 
 </div>
 
@@ -206,6 +385,9 @@ width weakly, by default.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
@@ -225,7 +407,7 @@ width weakly, by default.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on Jan 27, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

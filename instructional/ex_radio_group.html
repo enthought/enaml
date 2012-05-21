@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Radio Button Group Example &mdash; enaml 0.1alpha documentation</title>
+    <title>Radio Button Group Example &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
     <link rel="next" title="Stacked Forms Example" href="ex_stacked.html" />
     <link rel="prev" title="Multiple Scrolling Areas Example" href="ex_multi_scroll_area.html" /> 
@@ -40,6 +40,9 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -48,7 +51,7 @@
         <li class="right" >
           <a href="ex_multi_scroll_area.html" title="Multiple Scrolling Areas Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -112,7 +115,7 @@ printed to the shell.
 from enaml.stdlib.radio_group import RadioGroup
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr how_many: int = 10
     Container:
         SpinBox:
@@ -124,14 +127,14 @@ Main(MainWindow):
         RadioGroup:
             id: rgroup
             orientation &lt;&lt; switch.value
-            selected_index &gt;&gt; print('selected index:', selected_index)
+            selected_index :: print 'selected index:', selected_index
             items &lt;&lt; range(how_many)
         PushButton:
             text = 'Disable 3, 4, 5'
-            clicked &gt;&gt; setattr(rgroup, 'disabled_buttons', [3, 4, 5])
+            clicked :: rgroup.disabled_buttons = [3, 4, 5]
         PushButton:
             text = 'Disable 1, 7, 9'
-            clicked &gt;&gt; setattr(rgroup, 'disabled_buttons', [1, 7, 9])
+            clicked :: rgroup.disabled_buttons = [1, 7, 9]
 
 </pre>
 </div>
@@ -153,6 +156,9 @@ Main(MainWindow):
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -161,7 +167,7 @@ Main(MainWindow):
         <li class="right" >
           <a href="ex_multi_scroll_area.html" title="Multiple Scrolling Areas Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -172,7 +178,7 @@ Main(MainWindow):
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

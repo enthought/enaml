@@ -11,8 +11,6 @@ would have a background thread or timer updating the work progress bar
 as work is accomplished.
 
 """
-:: python ::
-
 import random
 
 from traits.api import HasTraits, Int
@@ -42,18 +40,16 @@ class ProgressModel(HasTraits):
         """
         self.units_done = 0
 
-:: end ::
 
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr model: ProgressModel = ProgressModel()
     title = 'Progress Bar'
     Container:
         constraints = [
             vbox(progress,
-                hbox(_space_, label, _space_), 
-                hbox(_space_, work_button, _space_),
-                _space_),
+                hbox(spacer, label, spacer), 
+                hbox(spacer, work_button, spacer),
+                spacer),
             align('h_center', progress, label, work_button),
         ]
         ProgressBar:
@@ -66,5 +62,9 @@ Main(MainWindow):
         PushButton:
             id: work_button
             text << "Do Some Work" if progress.percentage < 100 else "Reset"
-            clicked >> model.do_work() if progress.percentage < 100 else model.reset()
+            clicked :: 
+                if progress.percentage < 100:
+                    model.do_work()
+                else:
+                    model.reset()
 

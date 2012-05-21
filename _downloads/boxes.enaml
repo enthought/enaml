@@ -7,16 +7,16 @@
 FIXME: this is a dumb example.
 
 """
-Main(MainWindow):
+enamldef Main(MainWindow):
     Container:
         id: main_window
         constraints = [
             vbox(
                 ALabel,
                 BLabel,
-                hbox(CLabel, _space_, DLabel, _space_, ELabel),
-                hbox(_space_, FLabel, GLabel),
-                hbox(button1, _space_, button2, _space_, button3)),
+                hbox(CLabel, spacer, DLabel, spacer, ELabel),
+                hbox(spacer, FLabel, GLabel),
+                hbox(button1, spacer, button2, spacer, button3)),
             align('h_center', main_window, DLabel, button2),
         ]
         Label:

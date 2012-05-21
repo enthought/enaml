@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.tests.widgets.enaml_test_case &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.tests.widgets.enaml_test_case &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.widgets.enaml_test_case</a></li>
@@ -109,7 +112,7 @@
 <span class="sd">    the testing of enaml components</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#: default toolkit to use for the enaml source parsing</span>
+    <span class="c"># default toolkit to use for the enaml source parsing</span>
     <span class="n">toolkit</span> <span class="o">=</span> <span class="n">default_toolkit</span><span class="p">()</span>
 
 <div class="viewcode-block" id="EnamlTestCase.component_by_name"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.widgets.enaml_test_case.EnamlTestCase.component_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
@@ -118,10 +121,10 @@
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
-<span class="sd">        component :</span>
-<span class="sd">            The enaml based BaseComponent object</span>
+<span class="sd">        component : BaseComponent</span>
+<span class="sd">            The enaml based BaseComponent object.</span>
 
-<span class="sd">        name :</span>
+<span class="sd">        name : str</span>
 <span class="sd">            The name of the enaml component to find in the tree.</span>
 
 <span class="sd">        Returns</span>
@@ -131,17 +134,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">component</span><span class="o">.</span><span class="n">find_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EnamlTestCase.parse_and_create"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.widgets.enaml_test_case.EnamlTestCase.parse_and_create">[docs]</a>    <span class="k">def</span> <span class="nf">parse_and_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Parses and compiles the source. The source should have defn </span>
-<span class="sd">        defined with the name &#39;MainView&#39; that returns a single component. </span>
+<div class="viewcode-block" id="EnamlTestCase.parse_and_create"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.widgets.enaml_test_case.EnamlTestCase.parse_and_create">[docs]</a>    <span class="k">def</span> <span class="nf">parse_and_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parses and compiles the source. The source should have a</span>
+<span class="sd">        component defined with the name &#39;MainView&#39;. </span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
-<span class="sd">        enaml_source : str</span>
+<span class="sd">        source : str</span>
 <span class="sd">            The enaml source file</span>
 
-<span class="sd">        *args :</span>
-<span class="sd">            The arguments to pass to the defn.</span>
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            The default attribute values to pass to the component.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">enaml_ast</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
@@ -151,10 +154,11 @@
         <span class="n">toolkit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span>
 
         <span class="k">with</span> <span class="n">toolkit</span><span class="p">:</span>
-            <span class="n">defn</span> <span class="o">=</span> <span class="n">enaml_module</span><span class="p">[</span><span class="s">&#39;MainView&#39;</span><span class="p">]</span>
-            <span class="n">cmpnt</span><span class="p">,</span> <span class="o">=</span> <span class="n">defn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">view</span> <span class="o">=</span> <span class="n">enaml_module</span><span class="p">[</span><span class="s">&#39;MainView&#39;</span><span class="p">]</span>
+            <span class="n">cmpnt</span> <span class="o">=</span> <span class="n">view</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">toolkit</span><span class="o">.</span><span class="n">create_app</span><span class="p">()</span>
+        <span class="n">toolkit</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">toolkit</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">app_object</span><span class="p">()</span>
         <span class="n">cmpnt</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">cmpnt</span>
 </div>
@@ -215,9 +219,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.tests.widgets.enaml_test_case</a></li>
@@ -227,7 +234,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

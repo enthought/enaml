@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.toolkit &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.toolkit &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.toolkit</a></li>
@@ -81,93 +84,27 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">import</span> <span class="nn">os</span>
 
-<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasStrictTraits</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Str</span><span class="p">,</span> <span class="n">WeakRef</span>
-
-
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="c"># Constructor</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="Constructor"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Constructor">[docs]</a><span class="k">class</span> <span class="nc">Constructor</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The constructor class to use to populate the toolkit.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#: A callable object which returns the shell class to use</span>
-    <span class="c">#: for the widget.</span>
-    <span class="n">shell_loader</span> <span class="o">=</span> <span class="n">Callable</span>
-
-    <span class="c">#: A callable object which returns the abstract implementation class</span>
-    <span class="c">#: to use for the widget.</span>
-    <span class="n">abstract_loader</span> <span class="o">=</span> <span class="n">Callable</span>
-
-    <span class="c">#: The key with which this constructor was added to the toolkit.</span>
-    <span class="c">#: It is set by the toolkit and used as the type name of the</span>
-    <span class="c">#: instantiated component.</span>
-    <span class="n">style_type</span> <span class="o">=</span> <span class="n">Str</span>
-
-    <span class="c">#: A reference (stored weakly) to the toolkit in which this</span>
-    <span class="c">#: constructor is contained. It is used to set the toolkit</span>
-    <span class="c">#: attribute on the components as they are created.</span>
-    <span class="n">toolkit</span> <span class="o">=</span> <span class="n">WeakRef</span><span class="p">(</span><span class="s">&#39;Toolkit&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell_loader</span><span class="p">,</span> <span class="n">abstract_loader</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initialize a constructor instance.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        shell_loader : Callable</span>
-<span class="sd">            A callable object which returns the shell class to use</span>
-<span class="sd">            for the widget.</span>
-
-<span class="sd">        abstract_loader : Callable</span>
-<span class="sd">            A callable object which returns the abstract implementation</span>
-<span class="sd">            class to use for the widget.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Constructor</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_loader</span> <span class="o">=</span> <span class="n">shell_loader</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_loader</span> <span class="o">=</span> <span class="n">abstract_loader</span>
-
-    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Calls the loaders and assembles the component.</span>
-
-<span class="sd">        Subclasses should override this method to implement custom</span>
-<span class="sd">        construction behavior if the default is not sufficient.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">shell_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_loader</span><span class="p">()</span>
-        <span class="n">abstract_cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_loader</span><span class="p">()</span>
-        <span class="n">component</span> <span class="o">=</span> <span class="n">shell_cls</span><span class="p">(</span><span class="n">style_type</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">style_type</span><span class="p">,</span>
-                              <span class="n">toolkit</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="p">,</span>
-                              <span class="n">abstract_obj</span><span class="o">=</span><span class="n">abstract_cls</span><span class="p">())</span>
-        <span class="k">return</span> <span class="n">component</span>
-
-<div class="viewcode-block" id="Constructor.clone"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Constructor.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shell_loader</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">abstract_loader</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Creates a clone of this constructor, optionally changing</span>
-<span class="sd">        out one or both of the loaders.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">shell_loader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">shell_loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_loader</span>
-        <span class="k">if</span> <span class="n">abstract_loader</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">abstract_loader</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_loader</span>
-        <span class="k">return</span> <span class="n">Constructor</span><span class="p">(</span><span class="n">shell_loader</span><span class="p">,</span> <span class="n">abstract_loader</span><span class="p">)</span>
-
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># Toolkit</span>
-<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<span class="c">#------------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="Toolkit"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Toolkit">[docs]</a><span class="k">class</span> <span class="nc">Toolkit</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The Enaml toolkit object class which facilitates easy gui</span>
-<span class="sd">    toolkit independent backend development and use. The Toolkit</span>
-<span class="sd">    is a dict subclass which is injected between the module and</span>
-<span class="sd">    builtin scopes when executing an Enaml function or expression.</span>
+    <span class="sd">&quot;&quot;&quot; The Enaml Toolkit class which facilitates toolkit independent</span>
+<span class="sd">    development. </span>
 
-<span class="sd">    XXX - more documentation</span>
+<span class="sd">    The Toolkit is a dict subclass which is injected between the global </span>
+<span class="sd">    and builtin scopes of an executing an Enaml function or expression.</span>
+<span class="sd">    The contents of the dictionary may consist of any useful objects</span>
+<span class="sd">    that should be automatically in scope for executing Enaml code. </span>
+<span class="sd">    Typical content of a toolkit will include component constructors, </span>
+<span class="sd">    layout helpers, operators, and useful toolkit abstractions.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__stack__</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="n">__default__</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">__default_toolkit__</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="n">__toolkit_app__</span> <span class="o">=</span> <span class="bp">None</span>
 
     <span class="nd">@classmethod</span>
 <div class="viewcode-block" id="Toolkit.active_toolkit"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Toolkit.active_toolkit">[docs]</a>    <span class="k">def</span> <span class="nf">active_toolkit</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
@@ -188,64 +125,10 @@
 <span class="sd">        if necessary.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">tk</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__default__</span>
+        <span class="n">tk</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__default_toolkit__</span>
         <span class="k">if</span> <span class="n">tk</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">tk</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__default__</span> <span class="o">=</span> <span class="n">default_toolkit</span><span class="p">()</span>
+            <span class="n">tk</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__default_toolkit__</span> <span class="o">=</span> <span class="n">default_toolkit</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">tk</span>
-</div>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Initialize a toolkit object using the same constructor</span>
-<span class="sd">        signature as dict(). This overridden constructor ensures that</span>
-<span class="sd">        the style types are properly assigned to the constructors.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Toolkit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-
-    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden dict.__setitem__ to apply style types to the</span>
-<span class="sd">        constructors.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Constructor</span><span class="p">):</span>
-            <span class="c"># Clone the constructor so we don&#39;t risk the same constructor</span>
-            <span class="c"># being used by more than one toolkit and then having the</span>
-            <span class="c"># toolkit refs become out of sync.</span>
-            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">.</span><span class="n">clone</span><span class="p">()</span>
-            <span class="n">value</span><span class="o">.</span><span class="n">style_type</span> <span class="o">=</span> <span class="n">key</span>
-            <span class="n">value</span><span class="o">.</span><span class="n">toolkit</span> <span class="o">=</span> <span class="bp">self</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Toolkit</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Toolkit.update"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Toolkit.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden from dict.update to apply style types to the</span>
-<span class="sd">        constructors.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">other</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-           <span class="k">pass</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s">&#39;iteritems&#39;</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="k">elif</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s">&#39;keys&#39;</span><span class="p">):</span>
-            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">other</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">other</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">other</span><span class="p">:</span>
-                <span class="bp">self</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">v</span>
-        <span class="k">if</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="Toolkit.setdefault"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Toolkit.setdefault">[docs]</a>    <span class="k">def</span> <span class="nf">setdefault</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden from dict.setdefault to apply style types to the</span>
-<span class="sd">        constructors.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">default</span>
-        <span class="k">return</span> <span class="n">default</span>
 </div>
 <div class="viewcode-block" id="Toolkit.__enter__"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Toolkit.__enter__">[docs]</a>    <span class="k">def</span> <span class="nf">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A context manager method that pushes this toolkit onto</span>
@@ -254,105 +137,29 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__stack__</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Toolkit.__exit__"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Toolkit.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="Toolkit.__exit__"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.toolkit.Toolkit.__exit__">[docs]</a>    <span class="k">def</span> <span class="nf">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; A context manager method that pops this toolkit from the</span>
 <span class="sd">        active toolkit stack.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__stack__</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
 </div>
-    <span class="k">def</span> <span class="nf">_get_style_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the default style sheet instance for this toolkit.</span>
+    <span class="k">def</span> <span class="nf">_get_toolkit_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the abstract toolkit app for this toolkit or</span>
+<span class="sd">        raises an ValueError if one is not defined.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__style_sheet__&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__toolkit_app__</span>
 
-    <span class="k">def</span> <span class="nf">_set_style_sheet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the default style sheet instance for this toolkit.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__style_sheet__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-
-    <span class="n">style_sheet</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_style_sheet</span><span class="p">,</span> <span class="n">_set_style_sheet</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_create_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the app creation function for this toolkit.</span>
+    <span class="k">def</span> <span class="nf">_set_toolkit_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the abstract toolkit app for this toolkit and makes</span>
+<span class="sd">        it available in the toolkit&#39;s namespace under the &#39;toolkit_app&#39;</span>
+<span class="sd">        name.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__create_app__&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__toolkit_app__</span> <span class="o">=</span> <span class="n">val</span>
 
-    <span class="k">def</span> <span class="nf">_set_create_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the app creation function for this toolkit.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__create_app__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-
-    <span class="n">create_app</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_create_app</span><span class="p">,</span> <span class="n">_set_create_app</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_start_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the start app function for this toolkit.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__start_app__&#39;</span><span class="p">]</span>
-
-    <span class="k">def</span> <span class="nf">_set_start_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the start app function for this toolkit.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__start_app__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-
-    <span class="n">start_app</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_start_app</span><span class="p">,</span> <span class="n">_set_start_app</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_app</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the application object for this toolkit.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;__app__&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_set_app</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Sets the application object for this toolkit.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__app__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-
-    <span class="n">app</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_app</span><span class="p">,</span> <span class="n">_set_app</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_invoke_later</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the function for invoking a function later in the event</span>
-<span class="sd">        loop.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;__invoke_later__&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_set_invoke_later</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__invoke_later__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-
-    <span class="n">invoke_later</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_invoke_later</span><span class="p">,</span> <span class="n">_set_invoke_later</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_invoke_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the function for invoking a function some ms later in</span>
-<span class="sd">        the event loop.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;__invoke_timer__&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_set_invoke_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__invoke_timer__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-
-    <span class="n">invoke_timer</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_invoke_timer</span><span class="p">,</span> <span class="n">_set_invoke_timer</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">_get_control_exception_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns the function for handling exceptions on a control object</span>
-<span class="sd">        that would otherwise be swallowed.</span>
-<span class="sd">        </span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__control_exception_handler__&#39;</span><span class="p">]</span>
-    
-    <span class="k">def</span> <span class="nf">_set_control_exception_handler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
-        <span class="bp">self</span><span class="p">[</span><span class="s">&#39;__control_exception_handler__&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span>
-        
-    <span class="n">control_exception_handler</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_control_exception_handler</span><span class="p">,</span> 
-                                         <span class="n">_set_control_exception_handler</span><span class="p">)</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_toolkit_app</span><span class="p">,</span> <span class="n">_set_toolkit_app</span><span class="p">)</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -379,25 +186,16 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">.operators</span> <span class="kn">import</span> <span class="n">OPERATORS</span>
-    <span class="kn">from</span> <span class="nn">.widgets.qt.constructors</span> <span class="kn">import</span> <span class="n">QT_CONSTRUCTORS</span>
-    <span class="kn">from</span> <span class="nn">.util.guisupport</span> <span class="kn">import</span> <span class="n">get_app_qt4</span><span class="p">,</span> <span class="n">start_event_loop_qt4</span>
-    <span class="kn">from</span> <span class="nn">.widgets.qt.styling</span> <span class="kn">import</span> <span class="n">QT_STYLE_SHEET</span>
-    <span class="kn">from</span> <span class="nn">.widgets.qt.utils</span> <span class="kn">import</span> <span class="n">invoke_later</span><span class="p">,</span> <span class="n">invoke_timer</span>
+    <span class="kn">from</span> <span class="nn">.widgets.constructors</span> <span class="kn">import</span> <span class="n">CONSTRUCTORS</span>
     <span class="kn">from</span> <span class="nn">.widgets.layout.layout_helpers</span> <span class="kn">import</span> <span class="n">LAYOUT_HELPERS</span>
-
-    <span class="n">utils</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="kn">from</span> <span class="nn">.widgets.qt.constructors</span> <span class="kn">import</span> <span class="n">QT_CONSTRUCTORS</span>
+    <span class="kn">from</span> <span class="nn">.widgets.qt.qt_application</span> <span class="kn">import</span> <span class="n">QtApplication</span>
 
     <span class="n">toolkit</span> <span class="o">=</span> <span class="n">Toolkit</span><span class="p">(</span><span class="n">QT_CONSTRUCTORS</span><span class="p">)</span>
-
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">create_app</span> <span class="o">=</span> <span class="n">get_app_qt4</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">start_app</span> <span class="o">=</span> <span class="n">start_event_loop_qt4</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">style_sheet</span> <span class="o">=</span> <span class="n">QT_STYLE_SHEET</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_later</span> <span class="o">=</span> <span class="n">invoke_later</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_timer</span> <span class="o">=</span> <span class="n">invoke_timer</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">control_exception_handler</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">utils</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">CONSTRUCTORS</span><span class="p">)</span>
     <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OPERATORS</span><span class="p">)</span>
     <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">LAYOUT_HELPERS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">QtApplication</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">toolkit</span>
 
@@ -407,25 +205,16 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">.operators</span> <span class="kn">import</span> <span class="n">OPERATORS</span>
-    <span class="kn">from</span> <span class="nn">.widgets.wx.constructors</span> <span class="kn">import</span> <span class="n">WX_CONSTRUCTORS</span>
-    <span class="kn">from</span> <span class="nn">.util.guisupport</span> <span class="kn">import</span> <span class="n">get_app_wx</span><span class="p">,</span> <span class="n">start_event_loop_wx</span>
-    <span class="kn">from</span> <span class="nn">.widgets.wx.styling</span> <span class="kn">import</span> <span class="n">WX_STYLE_SHEET</span>
-    <span class="kn">from</span> <span class="nn">.widgets.wx.utils</span> <span class="kn">import</span> <span class="n">invoke_later</span><span class="p">,</span> <span class="n">invoke_timer</span>
+    <span class="kn">from</span> <span class="nn">.widgets.constructors</span> <span class="kn">import</span> <span class="n">CONSTRUCTORS</span>
     <span class="kn">from</span> <span class="nn">.widgets.layout.layout_helpers</span> <span class="kn">import</span> <span class="n">LAYOUT_HELPERS</span>
-
-    <span class="n">utils</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="kn">from</span> <span class="nn">.widgets.wx.constructors</span> <span class="kn">import</span> <span class="n">WX_CONSTRUCTORS</span>
+    <span class="kn">from</span> <span class="nn">.widgets.wx.wx_application</span> <span class="kn">import</span> <span class="n">WXApplication</span>
 
     <span class="n">toolkit</span> <span class="o">=</span> <span class="n">Toolkit</span><span class="p">(</span><span class="n">WX_CONSTRUCTORS</span><span class="p">)</span>
-
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">create_app</span> <span class="o">=</span> <span class="n">get_app_wx</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">start_app</span> <span class="o">=</span> <span class="n">start_event_loop_wx</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">style_sheet</span> <span class="o">=</span> <span class="n">WX_STYLE_SHEET</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_later</span> <span class="o">=</span> <span class="n">invoke_later</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">invoke_timer</span> <span class="o">=</span> <span class="n">invoke_timer</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">control_exception_handler</span> <span class="o">=</span> <span class="bp">None</span>
-    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">utils</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">CONSTRUCTORS</span><span class="p">)</span>
     <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OPERATORS</span><span class="p">)</span>
     <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">LAYOUT_HELPERS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">WXApplication</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">toolkit</span>
 </pre></div></div>
@@ -442,9 +231,12 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.toolkit</a></li>
@@ -454,7 +246,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

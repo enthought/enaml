@@ -39,6 +39,9 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -62,9 +65,7 @@
 <h3>Page Contents</h3>
 <ul>
 <li><a class="reference internal" href="#">util Package</a><ul>
-<li><a class="reference internal" href="#module-enaml.util.enum"><tt class="docutils literal"><span class="pre">enum</span></tt> Module</a></li>
 <li><a class="reference internal" href="#module-enaml.util.trait_types"><tt class="docutils literal"><span class="pre">trait_types</span></tt> Module</a></li>
-<li><a class="reference internal" href="#module-enaml.util.guisupport"><tt class="docutils literal"><span class="pre">guisupport</span></tt> Module</a></li>
 </ul>
 </li>
 </ul>
@@ -97,32 +98,18 @@
             
   <div class="section" id="util-package">
 <h1>util Package<a class="headerlink" href="#util-package" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="module-enaml.util.enum">
-<span id="enum-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">enum</span></tt> Module<a class="headerlink" href="#module-enaml.util.enum" title="Permalink to this headline">¶</a></h2>
-<dl class="class">
-<dt id="enaml.util.enum.EnumMeta">
-<em class="property">class </em><tt class="descclassname">enaml.util.enum.</tt><tt class="descname">EnumMeta</tt><a class="reference internal" href="../../_modules/enaml/util/enum.html#EnumMeta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.enum.EnumMeta" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">type</span></tt></p>
-<p>The metaclass for Enum which supplies the class name and 
-attribute name to Constant instances and places them in a dict 
-at __values__. A tuple of names for the constants are placed at 
-__names__ in sorted order. The constants themselves are placed
-in a set at __values_set__.</p>
-</dd></dl>
-
-</div>
 <div class="section" id="module-enaml.util.trait_types">
 <span id="trait-types-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">trait_types</span></tt> Module<a class="headerlink" href="#module-enaml.util.trait_types" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="enaml.util.trait_types.EnamlInstance">
-<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">EnamlInstance</tt><big>(</big><em>base_type=&lt;type 'object'&gt;</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlInstance" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">EnamlInstance</tt><big>(</big><em>base_type=&lt;type 'object'&gt;</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#EnamlInstance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.EnamlInstance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">traits.trait_handlers.TraitType</span></tt></p>
 <p>A custom TraitType which serves as a simple isinstance(...)
 validator. This class serves as the base class for other custom
 trait types such as EnamlEvent and UserAttribute.</p>
 <dl class="staticmethod">
 <dt id="enaml.util.trait_types.EnamlInstance.is_valid_type">
-<em class="property">static </em><tt class="descname">is_valid_type</tt><big>(</big><em>obj</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlInstance.is_valid_type" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><tt class="descname">is_valid_type</tt><big>(</big><em>obj</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#EnamlInstance.is_valid_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.EnamlInstance.is_valid_type" title="Permalink to this definition">¶</a></dt>
 <dd><p>A static method which returns whether or not the given object
 can be used as the type in an isinstance(..., type) expression.</p>
 <p class="rubric">Paramters</p>
@@ -143,26 +130,8 @@ or defines an &#8216;__instancecheck__&#8217; method.</dd>
 </dd></dl>
 
 <dl class="method">
-<dt id="enaml.util.trait_types.EnamlInstance.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>base_type=&lt;type 'object'&gt;</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlInstance.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize a UserAttribute instance.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>base_type</strong> (<em>type-like object, optional</em>) &#8211; An object that behaves like a type for the purposes of a
-call to isinstance. The staticmethod &#8216;is_valid_attr_type&#8217;
-defined on this class can be used to test a type before
-creating an instance of this class. It is assumed that the
-given type passes that test. The default is object.</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
 <dt id="enaml.util.trait_types.EnamlInstance.validate">
-<tt class="descname">validate</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlInstance.validate" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">validate</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#EnamlInstance.validate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.EnamlInstance.validate" title="Permalink to this definition">¶</a></dt>
 <dd><p>The validation handler for an EnamlInstace. It performs a 
 simple isinstance(...) check using the attribute type provided 
 to the constructor.</p>
@@ -172,65 +141,32 @@ to the constructor.</p>
 
 <dl class="class">
 <dt id="enaml.util.trait_types.EnamlEventDispatcher">
-<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">EnamlEventDispatcher</tt><big>(</big><em>trait</em>, <em>obj</em>, <em>name</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlEventDispatcher" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">EnamlEventDispatcher</tt><big>(</big><em>trait</em>, <em>obj</em>, <em>name</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#EnamlEventDispatcher"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.EnamlEventDispatcher" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
 <p>A thin object which is used to dispatch a notification for an
 EnamlEvent. Instances of this class are callable with at most one
 argument, which will be the payload of the event. Instances of this
 dispatcher should not be held onto, since they maintain a strong 
 reference to the underlying object.</p>
-<dl class="method">
-<dt id="enaml.util.trait_types.EnamlEventDispatcher.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>trait</em>, <em>obj</em>, <em>name</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlEventDispatcher.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize an event dispatcher.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>trait</strong> (<em>Instance(TraitType)</em>) &#8211; The trait type instance on which validate will be called
-with the event payload.</li>
-<li><strong>obj</strong> (<em>Instance(HasTraits)</em>) &#8211; The HasTraits object on which the event is being emitted.</li>
-<li><strong>name</strong> (<a class="reference external" href="http://docs.python.org/library/string.html#string" title="(in Python v2.7)"><em>string</em></a>) &#8211; The name of the event being emitted.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
-<dl class="method">
-<dt id="enaml.util.trait_types.EnamlEventDispatcher.__call__">
-<tt class="descname">__call__</tt><big>(</big><em>payload=None</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlEventDispatcher.__call__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Dispatches the event with the given payload.</p>
-<p class="rubric">Paramters</p>
-<dl class="docutils">
-<dt>payload <span class="classifier-delimiter">:</span> <span class="classifier">object, optional</span></dt>
-<dd>The payload argument of the event. This object will be 
-validated against the type declared for the event.
-The default payload is None.</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="class">
 <dt id="enaml.util.trait_types.EnamlEvent">
-<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">EnamlEvent</tt><big>(</big><em>base_type=&lt;type 'object'&gt;</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlEvent" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><tt class="descclassname">enaml.util.trait_types.</tt><tt class="descname">EnamlEvent</tt><big>(</big><em>base_type=&lt;type 'object'&gt;</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#EnamlEvent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.EnamlEvent" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#enaml.util.trait_types.EnamlInstance" title="enaml.util.trait_types.EnamlInstance"><tt class="xref py py-class docutils literal"><span class="pre">enaml.util.trait_types.EnamlInstance</span></tt></a></p>
 <p>A custom EnamlInstance that is used to implement the event
 type in Enaml. An EnamlEvent is read-only, and returns a dispatcher
 which can be called to emit the event.</p>
 <dl class="method">
 <dt id="enaml.util.trait_types.EnamlEvent.get">
-<tt class="descname">get</tt><big>(</big><em>obj</em>, <em>name</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlEvent.get" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">get</tt><big>(</big><em>obj</em>, <em>name</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#EnamlEvent.get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.EnamlEvent.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>The trait getter method. Returns an EnamlEventDispatcher
 instance which can be called to emit the event.</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="enaml.util.trait_types.EnamlEvent.full_info">
-<tt class="descname">full_info</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="headerlink" href="#enaml.util.trait_types.EnamlEvent.full_info" title="Permalink to this definition">¶</a></dt>
+<tt class="descname">full_info</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#EnamlEvent.full_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.EnamlEvent.full_info" title="Permalink to this definition">¶</a></dt>
 <dd><p>Overridden parent class method to compute an appropriate info
 string for use in error messages.</p>
 </dd></dl>
@@ -244,24 +180,6 @@ string for use in error messages.</p>
 <p>Generic Bounded Trait class.</p>
 <p>The class defines a generic Trait where the value is validated
 on assigment to fall between low and high (static or dynamic) bounds.</p>
-<dl class="method">
-<dt id="enaml.util.trait_types.Bounded.__init__">
-<tt class="descname">__init__</tt><big>(</big><em>value=None</em>, <em>low=None</em>, <em>high=None</em>, <em>**metadata</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#Bounded.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.Bounded.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
-<li><strong>value</strong> &#8211; The default value. It can be a python object or a Trait.</li>
-<li><strong>low</strong> &#8211; The lower bound of the Trait.</li>
-<li><strong>high</strong> &#8211; The upper bound of the Trait.</li>
-</ul>
-</td>
-</tr>
-</tbody>
-</table>
-</dd></dl>
-
 <dl class="method">
 <dt id="enaml.util.trait_types.Bounded.validate_with_trait">
 <tt class="descname">validate_with_trait</tt><big>(</big><em>obj</em>, <em>name</em>, <em>value</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/trait_types.html#Bounded.validate_with_trait"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.trait_types.Bounded.validate_with_trait" title="Permalink to this definition">¶</a></dt>
@@ -291,109 +209,6 @@ TraitErrors.</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-enaml.util.guisupport">
-<span id="guisupport-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">guisupport</span></tt> Module<a class="headerlink" href="#module-enaml.util.guisupport" title="Permalink to this headline">¶</a></h2>
-<p>Support for creating GUI apps and starting event loops.</p>
-<p>IPython&#8217;s GUI integration allows interative plotting and GUI usage in IPython
-session. IPython has two different types of GUI integration:</p>
-<ol class="arabic simple">
-<li>The terminal based IPython supports GUI event loops through Python&#8217;s
-PyOS_InputHook. PyOS_InputHook is a hook that Python calls periodically
-whenever raw_input is waiting for a user to type code. We implement GUI
-support in the terminal by setting PyOS_InputHook to a function that
-iterates the event loop for a short while. It is important to note that
-in this situation, the real GUI event loop is NOT run in the normal
-manner, so you can&#8217;t use the normal means to detect that it is running.</li>
-<li>In the two process IPython kernel/frontend, the GUI event loop is run in
-the kernel. In this case, the event loop is run in the normal manner by
-calling the function or method of the GUI toolkit that starts the event
-loop.</li>
-</ol>
-<p>In addition to starting the GUI event loops in one of these two ways, IPython
-will <em>always</em> create an appropriate GUI application object when GUi
-integration is enabled.</p>
-<p>If you want your GUI apps to run in IPython you need to do two things:</p>
-<ol class="arabic simple">
-<li>Test to see if there is already an existing main application object. If
-there is, you should use it. If there is not an existing application object
-you should create one.</li>
-<li>Test to see if the GUI event loop is running. If it is, you should not
-start it. If the event loop is not running you may start it.</li>
-</ol>
-<p>This module contains functions for each toolkit that perform these things
-in a consistent manner. Because of how PyOS_InputHook runs the event loop
-you cannot detect if the event loop is running using the traditional calls
-(such as <tt class="docutils literal"><span class="pre">wx.GetApp.IsMainLoopRunning()</span></tt> in wxPython). If PyOS_InputHook is
-set These methods will return a false negative. That is, they will say the
-event loop is not running, when is actually is. To work around this limitation
-we proposed the following informal protocol:</p>
-<ul class="simple">
-<li>Whenever someone starts the event loop, they <em>must</em> set the <tt class="docutils literal"><span class="pre">_in_event_loop</span></tt>
-attribute of the main application object to <tt class="docutils literal"><span class="pre">True</span></tt>. This should be done
-regardless of how the event loop is actually run.</li>
-<li>Whenever someone stops the event loop, they <em>must</em> set the <tt class="docutils literal"><span class="pre">_in_event_loop</span></tt>
-attribute of the main application object to <tt class="docutils literal"><span class="pre">False</span></tt>.</li>
-<li>If you want to see if the event loop is running, you <em>must</em> use <tt class="docutils literal"><span class="pre">hasattr</span></tt>
-to see if <tt class="docutils literal"><span class="pre">_in_event_loop</span></tt> attribute has been set. If it is set, you
-<em>must</em> use its value. If it has not been set, you can query the toolkit
-in the normal manner.</li>
-<li>If you want GUI support and no one else has created an application or
-started the event loop you <em>must</em> do this. We don&#8217;t want projects to
-attempt to defer these things to someone else if they themselves need it.</li>
-</ul>
-<p>The functions below implement this logic for each GUI toolkit. If you need
-to create custom application subclasses, you will likely have to modify this
-code for your own purposes. This code can be copied into your own project
-so you don&#8217;t have to depend on IPython.</p>
-<dl class="function">
-<dt id="enaml.util.guisupport.get_app_qt4">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">get_app_qt4</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/guisupport.html#get_app_qt4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.get_app_qt4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new qt4 app or return an existing one.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.util.guisupport.get_app_wx">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">get_app_wx</tt><big>(</big><em>*args</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/guisupport.html#get_app_wx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.get_app_wx" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create a new wx app or return an exiting one.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.util.guisupport.is_event_loop_running_qt4">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">is_event_loop_running_qt4</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/guisupport.html#is_event_loop_running_qt4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.is_event_loop_running_qt4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Is the qt4 event loop running.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.util.guisupport.is_event_loop_running_wx">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">is_event_loop_running_wx</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/guisupport.html#is_event_loop_running_wx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.is_event_loop_running_wx" title="Permalink to this definition">¶</a></dt>
-<dd><p>Is the wx event loop running.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.util.guisupport.process_events_qt4">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">process_events_qt4</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.util.guisupport.process_events_qt4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process the pending events in the event queue.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.util.guisupport.process_events_wx">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">process_events_wx</tt><big>(</big><big>)</big><a class="headerlink" href="#enaml.util.guisupport.process_events_wx" title="Permalink to this definition">¶</a></dt>
-<dd><p>Process the pending events in the event queue.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.util.guisupport.start_event_loop_qt4">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">start_event_loop_qt4</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/guisupport.html#start_event_loop_qt4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.start_event_loop_qt4" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start the qt4 event loop in a consistent manner.</p>
-</dd></dl>
-
-<dl class="function">
-<dt id="enaml.util.guisupport.start_event_loop_wx">
-<tt class="descclassname">enaml.util.guisupport.</tt><tt class="descname">start_event_loop_wx</tt><big>(</big><em>app=None</em><big>)</big><a class="reference internal" href="../../_modules/enaml/util/guisupport.html#start_event_loop_wx"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.util.guisupport.start_event_loop_wx" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start the wx event loop in a consistent manner.</p>
-</dd></dl>
-
-</div>
 </div>
 
 
@@ -408,6 +223,9 @@ so you don&#8217;t have to depend on IPython.</p>
         <li class="right" style="margin-right: 10px">
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
@@ -426,7 +244,7 @@ so you don&#8217;t have to depend on IPython.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on Jan 27, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

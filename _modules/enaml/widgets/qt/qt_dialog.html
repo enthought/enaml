@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.qt.qt_dialog &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.qt.qt_dialog &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.qt.qt_dialog</a></li>
@@ -92,6 +95,71 @@
 <span class="p">}</span>
 
 
+<span class="k">class</span> <span class="nc">QtDialogLayout</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QLayout</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A QLayout subclass which can have at most one layout item. This</span>
+<span class="sd">    layout item is expanded to fit the allowable space, regardless of its</span>
+<span class="sd">    size policy settings. This is similar to how central widgets behave </span>
+<span class="sd">    in a QMainWindow.</span>
+
+<span class="sd">    The class is designed for use by QtDialog, other uses are at the </span>
+<span class="sd">    user&#39;s own risk.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtDialogLayout</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="o">=</span> <span class="bp">None</span>
+    
+    <span class="k">def</span> <span class="nf">addItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which sets the layout item</span>
+<span class="sd">        in the layout. Any old item will be overridden.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which returns 0 if no layout</span>
+<span class="sd">        item is supplied, or 1 if there is a current layout item.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">itemAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which returns the layout item </span>
+<span class="sd">        for the given index or None if one does not exist.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span>
+
+    <span class="k">def</span> <span class="nf">takeAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which removes and returns the</span>
+<span class="sd">        item at the given index or None if one does not exist.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">return</span> <span class="n">res</span>
+    
+    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented method to return a proper size hint for the</span>
+<span class="sd">        layout, and hence the Dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">setGeometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented method which sets the geometry of the managed</span>
+<span class="sd">        widget to fill the given rect.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtDialogLayout</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="QtDialog"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog">[docs]</a><span class="k">class</span> <span class="nc">QtDialog</span><span class="p">(</span><span class="n">QtWindow</span><span class="p">,</span> <span class="n">AbstractTkDialog</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Qt implementation of a Dialog.</span>
 
@@ -106,17 +174,18 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QResizingDialog</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtDialogLayout</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="QtDialog.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Intializes the attributes on the QDialog.</span>
+<div class="viewcode-block" id="QtDialog.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the signal handlers for the dialog.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">QtDialog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_close</span><span class="p">)</span>
 
-    <span class="c">#---------------------------------------------------------------------------</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
-    <span class="c">#---------------------------------------------------------------------------</span></div>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="QtDialog.accept"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Accept and close the dialog, sending the &#39;finished&#39; signal.</span>
 
@@ -143,25 +212,46 @@
             <span class="n">result</span> <span class="o">=</span> <span class="s">&#39;accepted&#39;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">result</span> <span class="o">=</span> <span class="s">&#39;rejected&#39;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">trait_set</span><span class="p">(</span><span class="n">_result</span><span class="o">=</span><span class="n">result</span><span class="p">,</span> <span class="n">_active</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">closed</span><span class="o">=</span><span class="n">result</span><span class="p">)</span>
+        
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">closed</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtDialog.update_central_widget"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.update_central_widget">[docs]</a>    <span class="k">def</span> <span class="nf">update_central_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the central widget in the dialog with the value from</span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># It&#39;s possible for the central widget component to be None.</span>
+        <span class="c"># This must be allowed since the central widget may be generated</span>
+        <span class="c"># by an Include component, in which case it will not exist </span>
+        <span class="c"># during initialization. However, we must have a central widget</span>
+        <span class="c"># for the Dialog, and so we just fill it with a dummy widget.</span>
+        <span class="n">central_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">central_widget</span>
+        <span class="k">if</span> <span class="n">central_widget</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">child_widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">child_widget</span> <span class="o">=</span> <span class="n">central_widget</span><span class="o">.</span><span class="n">toolkit_widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">child_widget</span><span class="p">)</span>
+</div>
 <div class="viewcode-block" id="QtDialog.set_visible"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.qt.qt_dialog.QtDialog.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden from the parent class to properly launch and close </span>
 <span class="sd">        the dialog.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initializing</span><span class="p">:</span>
-            <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
-            <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
-            <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
-                <span class="n">shell</span><span class="o">.</span><span class="n">trait_set</span><span class="p">(</span><span class="n">_active</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">opened</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-                <span class="n">widget</span><span class="o">.</span><span class="n">setWindowModality</span><span class="p">(</span><span class="n">_MODAL_MAP</span><span class="p">[</span><span class="n">shell</span><span class="o">.</span><span class="n">modality</span><span class="p">])</span>
-                <span class="n">widget</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">opened</span><span class="p">()</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setWindowModality</span><span class="p">(</span><span class="n">_MODAL_MAP</span><span class="p">[</span><span class="n">shell</span><span class="o">.</span><span class="n">modality</span><span class="p">])</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
 </pre></div></div></div>
 
           </div>
@@ -176,9 +266,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.qt.qt_dialog</a></li>
@@ -188,7 +281,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

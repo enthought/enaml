@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.enums &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.enums &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../index.html" />
     <link rel="up" title="Module code" href="../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.enums</a></li>
@@ -81,7 +84,6 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Enum</span>
 
-<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">enum</span>
 
 <span class="c">#: A dialog&#39;s result (depending on how it was closed)</span>
 <span class="c">#:</span>
@@ -204,185 +206,59 @@
 <span class="c">#: ================ ======================================================</span>
 <span class="n">PolicyEnum</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">((</span><span class="s">&#39;ignore&#39;</span><span class="p">,</span> <span class="s">&#39;weak&#39;</span><span class="p">,</span> <span class="s">&#39;strong&#39;</span><span class="p">,</span> <span class="s">&#39;required&#39;</span><span class="p">))</span>
 
+<span class="c">#: The selection mode for item views.</span>
+<span class="c">#:</span>
+<span class="c">#: ================ ======================================================</span>
+<span class="c">#: value            description</span>
+<span class="c">#: ================ ======================================================</span>
+<span class="c">#: ``extended``     Same as contiguous except that the Cmd key can be</span>
+<span class="c">#:                  used to start multiple non-contiguous selection</span>
+<span class="c">#:                  regions.</span>
+<span class="c">#: ``single``       A single item may be selection.</span>
+<span class="c">#: ``contiguous``   A contiguous range of items may be selected using the</span>
+<span class="c">#:                  Shift key.</span>
+<span class="c">#: ``multi``        Clicking on an item toggles its selection.</span>
+<span class="c">#: ``none``         No selection allowed.</span>
+<span class="c">#: ================ ======================================================</span>
+<span class="n">SelectionMode</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">((</span><span class="s">&#39;extended&#39;</span><span class="p">,</span> <span class="s">&#39;contiguous&#39;</span><span class="p">,</span> <span class="s">&#39;single&#39;</span><span class="p">,</span> <span class="s">&#39;multi&#39;</span><span class="p">,</span> <span class="s">&#39;none&#39;</span><span class="p">))</span>
 
-<div class="viewcode-block" id="Buttons"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.Buttons">[docs]</a><span class="k">class</span> <span class="nc">Buttons</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Predefined text labels for buttons.</span>
+<span class="c">#: What kind of items may be selected in item views.</span>
+<span class="c">#:</span>
+<span class="c">#: ================ ======================================================</span>
+<span class="c">#: value            description</span>
+<span class="c">#: ================ ======================================================</span>
+<span class="c">#: ``items``        Individual items, like table cells.</span>
+<span class="c">#: ``rows``         Only whole rows, not individual table cells.</span>
+<span class="c">#: ``columns``      Only whole columns, not individual table cells.</span>
+<span class="c">#: ================ ======================================================</span>
+<span class="n">SelectionBehavior</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">((</span><span class="s">&#39;items&#39;</span><span class="p">,</span> <span class="s">&#39;rows&#39;</span><span class="p">,</span> <span class="s">&#39;columns&#39;</span><span class="p">))</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#: Do not display buttons.</span>
-    <span class="n">NO_BUTTONS</span> <span class="o">=</span> <span class="mh">0x0</span>
 
-    <span class="c">#: Agree.</span>
-    <span class="n">OK</span> <span class="o">=</span> <span class="mh">0x1</span>
-
-    <span class="c">#: Open.</span>
-    <span class="n">OPEN</span> <span class="o">=</span> <span class="mh">0x2</span>
-
-    <span class="c">#: Save changes.</span>
-    <span class="n">SAVE</span> <span class="o">=</span> <span class="mh">0x4</span>
-
-    <span class="c">#: Reject changes.</span>
-    <span class="n">CANCEL</span> <span class="o">=</span> <span class="mh">0x8</span>
-
-    <span class="c">#: Close without accepintg.</span>
-    <span class="n">CLOSE</span> <span class="o">=</span> <span class="mh">0x10</span>
-
-    <span class="c">#: Discard changes.</span>
-    <span class="n">DISCARD</span> <span class="o">=</span> <span class="mh">0x20</span>
-
-    <span class="c">#: Apply changes.</span>
-    <span class="n">APPLY</span> <span class="o">=</span> <span class="mh">0x40</span>
-
-    <span class="c">#: Reset changes.</span>
-    <span class="n">RESET</span> <span class="o">=</span> <span class="mh">0x80</span>
-
-    <span class="c">#: Restore defaults.</span>
-    <span class="n">RESTORE_DEFAULTS</span> <span class="o">=</span> <span class="mh">0x100</span>
-
-    <span class="c">#: Get help.</span>
-    <span class="n">HELP</span> <span class="o">=</span> <span class="mh">0x200</span>
-
-    <span class="c">#: Save all changes.</span>
-    <span class="n">SAVE_ALL</span> <span class="o">=</span> <span class="mh">0x400</span>
-
-    <span class="c">#: Accept once.</span>
-    <span class="n">YES</span> <span class="o">=</span> <span class="mh">0x800</span>
-
-    <span class="c">#: Accept this choice, and subsequent choices.</span>
-    <span class="n">YES_TO_ALL</span> <span class="o">=</span> <span class="mh">0x1000</span>
-
-    <span class="c">#: Reject once.</span>
-    <span class="n">NO</span> <span class="o">=</span> <span class="mh">0x2000</span>
-
-    <span class="c">#: Reject this choice, and subsequent choices.</span>
-    <span class="n">NO_TO_ALL</span> <span class="o">=</span> <span class="mh">0x4000</span>
-
-    <span class="c">#: Abort updates.</span>
-    <span class="n">ABORT</span> <span class="o">=</span> <span class="mh">0x8000</span>
-
-    <span class="c">#: Retry action.</span>
-    <span class="n">RETRY</span> <span class="o">=</span> <span class="mh">0x10000</span>
-
-    <span class="c">#: Ignore.</span>
-    <span class="n">IGNORE</span> <span class="o">=</span> <span class="mh">0x20000</span>
-
-    <span class="c">#: Display both an `OK` button and a `CANCEL` button.</span>
-    <span class="n">OK_CANCEL</span> <span class="o">=</span> <span class="n">OK</span> <span class="o">|</span> <span class="n">CANCEL</span>
-
-    <span class="c">#: Display both a `YES` button and a `NO` button.</span>
-    <span class="n">YES_NO</span> <span class="o">=</span> <span class="n">YES</span> <span class="o">|</span> <span class="n">NO</span>
-
-</div>
-<div class="viewcode-block" id="DataRole"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.DataRole">[docs]</a><span class="k">class</span> <span class="nc">DataRole</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The type or purpose of data in a model.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#: Display data prominently, as text.</span>
-    <span class="n">DISPLAY</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="c">#: Render the data as an icon.</span>
-    <span class="n">DECORATION</span> <span class="o">=</span> <span class="mi">1</span>
-
-    <span class="c">#: Render the data in an editor-friendly form.</span>
-    <span class="n">EDIT</span> <span class="o">=</span> <span class="mi">2</span>
-
-    <span class="c">#: Display the data as tooltip text.</span>
-    <span class="n">TOOL_TIP</span> <span class="o">=</span> <span class="mi">3</span>
-
-    <span class="c">#: Display the data in the status bar.</span>
-    <span class="n">STATUS_TIP</span> <span class="o">=</span> <span class="mi">4</span>
-
-    <span class="c">#: Display the data for &quot;What&#39;s This?&quot; mode.</span>
-    <span class="n">WHATS_THIS</span> <span class="o">=</span> <span class="mi">5</span>
-
-    <span class="c">#: The data specifies a font.</span>
-    <span class="n">FONT</span> <span class="o">=</span> <span class="mi">6</span>
-
-    <span class="c">#: The data specifies text alignment.</span>
-    <span class="n">TEXT_ALIGNMENT</span> <span class="o">=</span> <span class="mi">7</span>
-
-    <span class="c">#: The data represents a background display style.</span>
-    <span class="n">BACKGROUND</span> <span class="o">=</span> <span class="mi">8</span>
-
-    <span class="c">#: The data represents a foreground display style.</span>
-    <span class="n">FOREGROUND</span> <span class="o">=</span> <span class="mi">9</span>
-
-    <span class="c">#: Determine whether an item is in the checked state.</span>
-    <span class="n">CHECK_STATE</span> <span class="o">=</span> <span class="mi">10</span>
-
-    <span class="c">#: The data is a size hint for display in views.</span>
-    <span class="n">SIZE_HINT</span> <span class="o">=</span> <span class="mi">11</span>
-
-    <span class="c">#: The data corresponds to a user.</span>
-    <span class="n">USER</span> <span class="o">=</span> <span class="mi">12</span>
-
-    <span class="c"># XXX - HACK!</span>
-    <span class="c">#: A tuple containing all display roles.</span>
-    <span class="n">ALL</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">12</span><span class="p">))</span>
-
-</div>
-<div class="viewcode-block" id="ItemFlags"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.ItemFlags">[docs]</a><span class="k">class</span> <span class="nc">ItemFlags</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; Specify the actions that can be performed on model items.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#: The item is not configured for user interaction via a view.</span>
-    <span class="n">NO_FLAGS</span> <span class="o">=</span> <span class="mh">0x0</span>
-
-    <span class="c">#: The item can be selected in a view.</span>
-    <span class="n">IS_SELECTABLE</span> <span class="o">=</span> <span class="mh">0x1</span>
-
-    <span class="c">#: The item can be edited in a view.</span>
-    <span class="n">IS_EDITABLE</span> <span class="o">=</span> <span class="mh">0x2</span>
-
-    <span class="c">#: The item can be dragged.</span>
-    <span class="n">IS_DRAG_ENABLED</span> <span class="o">=</span> <span class="mh">0x4</span>
-
-    <span class="c">#: Another item can be dropped onto this one.</span>
-    <span class="n">IS_DROP_ENABLED</span> <span class="o">=</span> <span class="mh">0x8</span>
-
-    <span class="c">#: The item&#39;s &quot;checked&quot; state can be changed from a view.</span>
-    <span class="n">IS_USER_CHECKABLE</span> <span class="o">=</span> <span class="mh">0x10</span>
-
-    <span class="c">#: This item permits user interaction in a view.</span>
-    <span class="n">IS_ENABLED</span> <span class="o">=</span> <span class="mh">0x20</span>
-
-    <span class="c">#: The item is checkable, and it has three distinct states.</span>
-    <span class="n">IS_TRISTATE</span> <span class="o">=</span> <span class="mh">0x40</span>
-
-</div>
-<div class="viewcode-block" id="Match"><a class="viewcode-back" href="../../developer_guide/api_ref/enaml.html#enaml.enums.Match">[docs]</a><span class="k">class</span> <span class="nc">Match</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; The type of a text search.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c">#: An exact match.</span>
-    <span class="n">EXACTLY</span> <span class="o">=</span> <span class="mh">0x0</span>
-
-    <span class="c">#: The data contains the sought item.</span>
-    <span class="n">CONTAINS</span> <span class="o">=</span> <span class="mh">0x1</span>
-
-    <span class="c">#: The data starts with the search term.</span>
-    <span class="n">STARTS_WITH</span> <span class="o">=</span> <span class="mh">0x2</span>
-
-    <span class="c">#: The data ends with the search term.</span>
-    <span class="n">ENDS_WITH</span> <span class="o">=</span> <span class="mh">0x4</span>
-
-    <span class="c">#: A regular expression match.</span>
-    <span class="n">REG_EXP</span> <span class="o">=</span> <span class="mh">0x8</span>
-
-    <span class="c">#: Match all items.</span>
-    <span class="n">WILD_CARD</span> <span class="o">=</span> <span class="mh">0x10</span>
-
-    <span class="c">#: Search for a string literal.</span>
-    <span class="n">FIXED_STRING</span> <span class="o">=</span> <span class="mh">0x20</span>
-
-    <span class="c">#: Search in a case-sensitive manner.</span>
-    <span class="n">CASE_SENSITIVE</span> <span class="o">=</span> <span class="mh">0x40</span>
-
-    <span class="c">#: Wrap from the bottom of the text to the top. Continue searching.</span>
-    <span class="n">WRAP</span> <span class="o">=</span> <span class="mh">0x80</span>
-
-    <span class="c">#: Search recursively.</span>
-    <span class="n">RECURSIVE</span> <span class="o">=</span> <span class="mh">0x100</span></div>
+<span class="c">#: Exactly what actions to do when programmatically setting the selection in</span>
+<span class="c">#: item views.</span>
+<span class="c">#:</span>
+<span class="c">#: ==================== ======================================================</span>
+<span class="c">#: value                description</span>
+<span class="c">#: ==================== ======================================================</span>
+<span class="c">#: ``no_update``        Make no selection.</span>
+<span class="c">#: ``clear``            Clear the complete selection.</span>
+<span class="c">#: ``select``           Select the specified indices.</span>
+<span class="c">#: ``deselect``         Deselect the specified indices.</span>
+<span class="c">#: ``toggle``           Toggle the selection of the specified indices.</span>
+<span class="c">#: ``current``          Update the &quot;current&quot; index.</span>
+<span class="c">#: ``rows``             Expand the selection to span rows.</span>
+<span class="c">#: ``columns``          Expand the selection to span columns.</span>
+<span class="c">#: ``select_current``   Select the given selection and update the &quot;current&quot;</span>
+<span class="c">#:                      index.</span>
+<span class="c">#: ``toggle_current``   Toggle the given selection and update the &quot;current&quot;</span>
+<span class="c">#:                      index.</span>
+<span class="c">#: ``clear_select``     Clear the whole selection and select the given</span>
+<span class="c">#:                      indices.</span>
+<span class="c">#: ==================== ======================================================</span>
+<span class="n">SelectionCommand</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">((</span>
+    <span class="s">&#39;clear_select&#39;</span><span class="p">,</span> <span class="s">&#39;no_update&#39;</span><span class="p">,</span> <span class="s">&#39;clear&#39;</span><span class="p">,</span> <span class="s">&#39;select&#39;</span><span class="p">,</span> <span class="s">&#39;deselect&#39;</span><span class="p">,</span> <span class="s">&#39;toggle&#39;</span><span class="p">,</span> 
+    <span class="s">&#39;current&#39;</span><span class="p">,</span> <span class="s">&#39;rows&#39;</span><span class="p">,</span> <span class="s">&#39;columns&#39;</span><span class="p">,</span> <span class="s">&#39;select_current&#39;</span><span class="p">,</span> <span class="s">&#39;toggle_current&#39;</span><span class="p">,</span>
+<span class="p">))</span>
 </pre></div>
 
           </div>
@@ -397,9 +273,12 @@
           <a href="../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.enums</a></li>
@@ -409,7 +288,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

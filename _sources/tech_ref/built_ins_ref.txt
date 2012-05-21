@@ -3,10 +3,112 @@
 |Enaml| Built-in Widgets
 ===============================================================================
 
-The following components are built into |Enaml| and available without import.
+.. note::
 
-.. automodule:: enaml.widgets.combo_box
-    :members:
+    This section may be best formated as cross-references that point to
+    the API documentation for each of the widgets, preferably with a
+    gallery-style image of the widget. Maybe like the TraitsUI pages?
 
-.. class:: enaml.widgets.combo_box.ComboBox
-..    :members:
+The following widgets are available from the default toolkit. (|Enaml| looks
+for the ETS_TOOLKIT environment variable, and if it is not set, it uses Qt.)
+
+.. autoenaml_decl:: enaml.widgets.action.Action
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.container.Container
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.date_edit.DateEdit
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.datetime_edit.DatetimeEdit
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.dialog.Dialog
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.calendar.Calendar
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.check_box.CheckBox
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.combo_box.ComboBox
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.enable_canvas.EnableCanvas
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.field.Field
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.float_slider.FloatSlider
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.form.Form
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.group_box.GroupBox
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.html.Html
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.image.Image
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.label.Label
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.list_view.ListView
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.main_window.MainWindow
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.menu_bar.MenuBar
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.menu.Menu
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.progress_bar.ProgressBar
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.push_button.PushButton
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.radio_button.RadioButton
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.scroll_area.ScrollArea
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.slider.Slider
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.spin_box.SpinBox
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.splitter.Splitter
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.text_editor.TextEditor
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.table_view.TableView
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.tab_group.TabGroup
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.tab.Tab
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.traitsui_item.TraitsUIItem
+    :noindex:
+
+.. autoenaml_decl:: enaml.widgets.tree_view.TreeView
+    :noindex:
+
+

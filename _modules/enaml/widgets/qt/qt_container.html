@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.qt.qt_container &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.qt.qt_container &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.qt.qt_container</a></li>
@@ -79,26 +82,54 @@
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">.qt_component</span> <span class="kn">import</span> <span class="n">QtComponent</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
+
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">.qt_layout_component</span> <span class="kn">import</span> <span class="n">QtLayoutComponent</span>
 <span class="kn">from</span> <span class="nn">.qt_resizing_widgets</span> <span class="kn">import</span> <span class="n">QResizingFrame</span><span class="p">,</span> <span class="n">QResizingWidget</span>
 
 <span class="kn">from</span> <span class="nn">..container</span> <span class="kn">import</span> <span class="n">AbstractTkContainer</span>
 
 
-<div class="viewcode-block" id="QtContainer"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer">[docs]</a><span class="k">class</span> <span class="nc">QtContainer</span><span class="p">(</span><span class="n">QtComponent</span><span class="p">,</span> <span class="n">AbstractTkContainer</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A Qt4 implementation of Container.</span>
+<span class="k">class</span> <span class="nc">_QResizingFrame</span><span class="p">(</span><span class="n">QResizingFrame</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A subclass of QResizingFrame which calls back onto the shell</span>
+<span class="sd">    Container to get the size hint. If that size hint is invalid, it</span>
+<span class="sd">    falls back onto the Qt default.</span>
 
-<span class="sd">    QtContainer is usually to be used as a base class for other container</span>
-<span class="sd">    widgets. However, it may also be used directly as an undecorated </span>
-<span class="sd">    container for widgets for layout purposes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qt_container</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QResizingFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qt_container</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">qt_container</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Computes the size hint from the given Container, falling</span>
+<span class="sd">        back on the default size hint computation if the Container </span>
+<span class="sd">        returns one that is invalid.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="n">qt_container</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qt_container</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">qt_container</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">shell</span> <span class="o">=</span> <span class="n">qt_container</span><span class="o">.</span><span class="n">shell_obj</span>
+            <span class="k">if</span> <span class="n">shell</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">sh</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">size_hint</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">sh</span> <span class="o">!=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QSize</span><span class="p">(</span><span class="o">*</span><span class="n">sh</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">_QResizingFrame</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+
+<div class="viewcode-block" id="QtContainer"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer">[docs]</a><span class="k">class</span> <span class="nc">QtContainer</span><span class="p">(</span><span class="n">QtLayoutComponent</span><span class="p">,</span> <span class="n">AbstractTkContainer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt4 implementation of Container.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="QtContainer.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Creates the underlying Qt widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QResizingFrame</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-    </div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">_QResizingFrame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+</div>
 <div class="viewcode-block" id="QtContainer.bind"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Binds the signal handlers for the widget.</span>
 
@@ -113,37 +144,17 @@
 <span class="sd">        has been resized.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># Notice that we are calling do_layout() here instead of </span>
-        <span class="c"># set_needs_layout() since we want the layout to happen</span>
+        <span class="c"># Notice that we are calling refresh() here instead of </span>
+        <span class="c"># request_refresh() since we want the refresh to happen</span>
         <span class="c"># immediately. Otherwise the resize layouts will appear </span>
         <span class="c"># to lag in the ui. This is a safe operation since by the</span>
         <span class="c"># time we get this resize event, the widget has already </span>
         <span class="c"># changed size. Further, the only geometry that gets set</span>
         <span class="c"># by the layout manager is that of our children. And should</span>
         <span class="c"># it be required to resize this widget from within the layout</span>
-        <span class="c"># call, then the layout manager will do that via invoke_later.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">do_layout</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="QtContainer.size_hint"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.container.Container.html#enaml.widgets.qt.qt_container.QtContainer.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Returns a (width, height) tuple of integers which represent</span>
-<span class="sd">        the suggested size of the widget for its current state, ignoring</span>
-<span class="sd">        any windowing decorations. This value is used by the layout</span>
-<span class="sd">        manager to determine how much space to allocate the widget.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">size_hint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">sizeHint</span><span class="p">()</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">size_hint</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">size_hint</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
-</div>
-    <span class="k">def</span> <span class="nf">_reset_layout_margins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Reset the layout margins for this widget.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">QtContainer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_reset_layout_margins</span><span class="p">()</span>
-        <span class="c"># Now reset our children&#39;s layout margins to account for the fact that</span>
-        <span class="c"># they have recorded our own margins.</span>
-        <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">children</span><span class="p">:</span>
-            <span class="n">child</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">_reset_layout_margins</span><span class="p">()</span></div>
-</pre></div>
+        <span class="c"># call, then the layout manager will do that asynchronously.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div></div></div>
 
           </div>
         </div>
@@ -157,9 +168,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.qt.qt_container</a></li>
@@ -169,7 +183,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

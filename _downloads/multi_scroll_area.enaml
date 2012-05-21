@@ -9,8 +9,6 @@ using group-style layout constraints. The scrollbars appear as needed
 for the various components.
 
 """
-:: python ::
-
 from enaml.item_models.abstract_item_model import AbstractTableModel
 
 class MyModel(AbstractTableModel):
@@ -32,10 +30,8 @@ class MyModel(AbstractTableModel):
         if index is not None:
             return 42
 
-:: end ::
 
-
-LargeForm(Form):
+enamldef LargeForm(Form):
     Label:
         text = "First name:"
     Field:
@@ -102,7 +98,7 @@ LargeForm(Form):
         pass
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = "Multi Scroll Area"
     Container:
         constraints = [

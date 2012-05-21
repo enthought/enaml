@@ -40,6 +40,9 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -139,16 +142,16 @@ is changed programmatically.</li>
 <dt id="enaml.widgets.combo_box.ComboBox.value">
 <tt class="descname">value</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.value" title="Permalink to this definition">¶</a></dt>
 <dd><p>The currently selected item from the collection. If this value
-is set to a value that is not in <a class="reference internal" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox.items" title="enaml.widgets.combo_box.ComboBox.items"><tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt></a> then the computed
-<a class="reference internal" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox.index" title="enaml.widgets.combo_box.ComboBox.index"><tt class="xref py py-attr docutils literal"><span class="pre">index</span></tt></a> will be -1.</p>
+is set to a value that is not in <tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt> then the computed
+<tt class="xref py py-attr docutils literal"><span class="pre">index</span></tt> will be -1.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="enaml.widgets.combo_box.ComboBox.index">
 <tt class="descname">index</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.index" title="Permalink to this definition">¶</a></dt>
 <dd><p>The integer index of the current selection in items. If the index
-is out of range of <a class="reference internal" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox.items" title="enaml.widgets.combo_box.ComboBox.items"><tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt></a> then the index it is set to -1,
-and the current <a class="reference internal" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox.value" title="enaml.widgets.combo_box.ComboBox.value"><tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></a> is left unchanged.</p>
+is out of range of <tt class="xref py py-attr docutils literal"><span class="pre">items</span></tt> then the index it is set to -1,
+and the current <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt> is left unchanged.</p>
 </dd></dl>
 
 <dl class="attribute">
@@ -162,14 +165,14 @@ strings for display. Defaults to str.</p>
 <dt id="enaml.widgets.combo_box.ComboBox.labels">
 <tt class="descname">labels</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.labels" title="Permalink to this definition">¶</a></dt>
 <dd><p>A readonly property that holds the component items as a list of
-strings that are produced by the <a class="reference internal" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox.to_string" title="enaml.widgets.combo_box.ComboBox.to_string"><tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt></a> attribute.</p>
+strings that are produced by the <tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt> attribute.</p>
 </dd></dl>
 
 <dl class="attribute">
 <dt id="enaml.widgets.combo_box.ComboBox.selected_text">
 <tt class="descname">selected_text</tt><em class="property"> = None</em><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.selected_text" title="Permalink to this definition">¶</a></dt>
 <dd><p>A readonly property that will return the result of calling
-<a class="reference internal" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox.to_string" title="enaml.widgets.combo_box.ComboBox.to_string"><tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt></a> on <a class="reference internal" href="../../../tech_ref/built_ins_ref.html#enaml.widgets.combo_box.ComboBox.value" title="enaml.widgets.combo_box.ComboBox.value"><tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></a></p>
+<tt class="xref py py-attr docutils literal"><span class="pre">to_string</span></tt> on <tt class="xref py py-attr docutils literal"><span class="pre">value</span></tt></p>
 </dd></dl>
 
 <dl class="attribute">
@@ -193,12 +196,6 @@ width weakly, by default.</p>
 <dd><p>Overridden parent class trait</p>
 </dd></dl>
 
-<dl class="attribute">
-<dt id="enaml.widgets.combo_box.ComboBox.__implements__">
-<tt class="descname">__implements__</tt><a class="headerlink" href="#enaml.widgets.combo_box.ComboBox.__implements__" title="Permalink to this definition">¶</a></dt>
-<dd><p>alias of <tt class="xref py py-class docutils literal"><span class="pre">__NoInterface__</span></tt></p>
-</dd></dl>
-
 </dd></dl>
 
 <div class="section" id="backends">
@@ -206,11 +203,11 @@ width weakly, by default.</p>
 <div class="section" id="qt">
 <h3>Qt<a class="headerlink" href="#qt" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-57a2b5abae8cbc27bff482300007ef124ee607f2.png" alt="Inheritance diagram of enaml.widgets.qt.qt_combo_box.QtComboBox" usemap="#inheritance282f39b53b" class="inheritance"/>
+<img src="../../../_images/inheritance-e4e310ecc9c6d41743e3bf71d2e43827acdcb786.png" alt="Inheritance diagram of enaml.widgets.qt.qt_combo_box.QtComboBox" usemap="#inheritance282f39b53b" class="inheritance"/>
 <map id="inheritance282f39b53b" name="inheritance282f39b53b">
 <area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="551,45,616,67"/>
-<area shape="rect" id="node25" href="#enaml.widgets.qt.qt_combo_box.QtComboBox" title="QtComboBox" alt="" coords="682,65,764,88"/>
-<area shape="rect" id="node11" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="207,45,292,67"/>
+<area shape="rect" id="node21" href="#enaml.widgets.qt.qt_combo_box.QtComboBox" title="QtComboBox" alt="" coords="682,65,764,88"/>
+<area shape="rect" id="node10" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="207,45,292,67"/>
 </map>
 </p>
 <dl class="class">
@@ -276,11 +273,11 @@ if the value is not in the list of items.</p>
 <div class="section" id="wx">
 <h3>Wx<a class="headerlink" href="#wx" title="Permalink to this headline">¶</a></h3>
 <p class="graphviz">
-<img src="../../../_images/inheritance-655869e5610003b6bf13e6cd9707ffdf1fc94066.png" alt="Inheritance diagram of enaml.widgets.wx.wx_combo_box.WXComboBox" usemap="#inheritance613b37b6cb" class="inheritance"/>
+<img src="../../../_images/inheritance-ff5be08ec42ce5543b9ca8af0975a85d641efe96.png" alt="Inheritance diagram of enaml.widgets.wx.wx_combo_box.WXComboBox" usemap="#inheritance613b37b6cb" class="inheritance"/>
 <map id="inheritance613b37b6cb" name="inheritance613b37b6cb">
-<area shape="rect" id="node17" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="548,85,615,107"/>
-<area shape="rect" id="node2" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="203,4,291,26"/>
-<area shape="rect" id="node16" href="#enaml.widgets.wx.wx_combo_box.WXComboBox" title="WXComboBox" alt="" coords="679,64,764,87"/>
+<area shape="rect" id="node7" href="enaml.widgets.component.Component.html#enaml.widgets.wx.wx_component.WXComponent" title="WXComponent" alt="" coords="203,4,291,26"/>
+<area shape="rect" id="node2" href="enaml.widgets.control.Control.html#enaml.widgets.wx.wx_control.WXControl" title="WXControl" alt="" coords="548,44,615,67"/>
+<area shape="rect" id="node17" href="#enaml.widgets.wx.wx_combo_box.WXComboBox" title="WXComboBox" alt="" coords="679,64,764,87"/>
 </map>
 </p>
 <dl class="class">
@@ -358,6 +355,9 @@ object.</p>
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
@@ -379,7 +379,7 @@ object.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on Jan 27, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

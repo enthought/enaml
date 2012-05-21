@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.styling.style_sheet &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.styling.style_sheet &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.styling.style_sheet</a></li>
@@ -115,7 +118,7 @@
 <span class="n">NO_STYLE</span> <span class="o">=</span> <span class="n">NO_STYLE</span><span class="p">()</span>
 
 
-<div class="viewcode-block" id="BoxedValue"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.BoxedValue">[docs]</a><span class="k">class</span> <span class="nc">BoxedValue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="BoxedValue"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.BoxedValue">[docs]</a><span class="k">class</span> <span class="nc">BoxedValue</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A lightweight object which boxes another object.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -125,7 +128,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
 
 </div>
-<div class="viewcode-block" id="StyleValue"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleValue">[docs]</a><span class="k">class</span> <span class="nc">StyleValue</span><span class="p">(</span><span class="n">BoxedValue</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleValue"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleValue">[docs]</a><span class="k">class</span> <span class="nc">StyleValue</span><span class="p">(</span><span class="n">BoxedValue</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A BoxedValue subclass that is used by the style sheet when </span>
 <span class="sd">    returning style matches. This allows other application code to</span>
 <span class="sd">    distinguish between values retrieved from the style sheet and</span>
@@ -135,21 +138,21 @@
     <span class="k">pass</span>
 
 </div>
-<div class="viewcode-block" id="style"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.style">[docs]</a><span class="k">class</span> <span class="nc">style</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="style"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.style">[docs]</a><span class="k">class</span> <span class="nc">style</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An object which represents a style declaration in a style sheet.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;selectors&#39;</span><span class="p">,</span> <span class="s">&#39;properties&#39;</span><span class="p">)</span>
 
-<div class="viewcode-block" id="style.__init__"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.style.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">selectors</span><span class="p">,</span> <span class="o">**</span><span class="n">properties</span><span class="p">):</span>
+<div class="viewcode-block" id="style.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.style.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">selectors</span><span class="p">,</span> <span class="o">**</span><span class="n">properties</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Constructs a style object.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        *selectors</span>
-<span class="sd">            A sequence of strings following the selector syntax.</span>
+<span class="sd">        selectors : list</span>
+<span class="sd">            A list of strings following the selector syntax.</span>
 
-<span class="sd">        **properties</span>
+<span class="sd">        properties : dict</span>
 <span class="sd">            A sequence of keywords specifiying the styling values.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -157,31 +160,31 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">properties</span>
 
 </div></div>
-<div class="viewcode-block" id="IStyleNodeData"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData">[docs]</a><span class="k">class</span> <span class="nc">IStyleNodeData</span><span class="p">(</span><span class="n">Interface</span><span class="p">):</span>
+<div class="viewcode-block" id="IStyleNodeData"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData">[docs]</a><span class="k">class</span> <span class="nc">IStyleNodeData</span><span class="p">(</span><span class="n">Interface</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An interface used by the style sheet selectors to query for</span>
 <span class="sd">    the styling information required to perform a match.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="IStyleNodeData.node_id"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.node_id">[docs]</a>    <span class="k">def</span> <span class="nf">node_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IStyleNodeData.node_id"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.node_id">[docs]</a>    <span class="k">def</span> <span class="nf">node_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the id of the element being styled as a string.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
-<div class="viewcode-block" id="IStyleNodeData.node_classes"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.node_classes">[docs]</a>    <span class="k">def</span> <span class="nf">node_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IStyleNodeData.node_classes"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.node_classes">[docs]</a>    <span class="k">def</span> <span class="nf">node_classes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the classes of the element being styled as an</span>
 <span class="sd">        iterable of strings.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
-<div class="viewcode-block" id="IStyleNodeData.node_type"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.node_type">[docs]</a>    <span class="k">def</span> <span class="nf">node_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IStyleNodeData.node_type"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.node_type">[docs]</a>    <span class="k">def</span> <span class="nf">node_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the type of the element being styled as a string.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
-<div class="viewcode-block" id="IStyleNodeData.parent_node"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.parent_node">[docs]</a>    <span class="k">def</span> <span class="nf">parent_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="IStyleNodeData.parent_node"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IStyleNodeData.parent_node">[docs]</a>    <span class="k">def</span> <span class="nf">parent_node</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns an IStyleQuery object for the parent element of the</span>
 <span class="sd">        element being styled.</span>
 
@@ -189,7 +192,7 @@
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
 </div></div>
-<div class="viewcode-block" id="Selector"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.Selector">[docs]</a><span class="k">class</span> <span class="nc">Selector</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="Selector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.Selector">[docs]</a><span class="k">class</span> <span class="nc">Selector</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A Selector for use in the StyleSheet.</span>
 
 <span class="sd">    The base Selector class is used as the default match-all selector.</span>
@@ -220,7 +223,7 @@
 
     <span class="n">order</span> <span class="o">=</span> <span class="n">Int</span>
 
-<div class="viewcode-block" id="Selector.match"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.Selector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+<div class="viewcode-block" id="Selector.match"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.Selector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the match of the selector for the given query.</span>
 
 <span class="sd">        Arguments</span>
@@ -240,7 +243,7 @@
         <span class="k">return</span> <span class="bp">True</span><span class="p">,</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="TypeSelector"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.TypeSelector">[docs]</a><span class="k">class</span> <span class="nc">TypeSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
+<div class="viewcode-block" id="TypeSelector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.TypeSelector">[docs]</a><span class="k">class</span> <span class="nc">TypeSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A style selector which matches element types.</span>
 
 <span class="sd">    See Also</span>
@@ -250,12 +253,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">node_type</span> <span class="o">=</span> <span class="n">Str</span>
 
-<div class="viewcode-block" id="TypeSelector.match"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.TypeSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_type</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="ClassSelector"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.ClassSelector">[docs]</a><span class="k">class</span> <span class="nc">ClassSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="ClassSelector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.ClassSelector">[docs]</a><span class="k">class</span> <span class="nc">ClassSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A style selector which matches style classes.</span>
 
 <span class="sd">    See Also</span>
@@ -265,7 +268,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">node_classes</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ClassSelector.match"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.ClassSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">these_classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_classes</span>
         <span class="n">specificity</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">node_class</span> <span class="ow">in</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_classes</span><span class="p">():</span>
@@ -274,8 +277,8 @@
         <span class="n">match</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">specificity</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="n">specificity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="QualSelector"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.QualSelector">[docs]</a><span class="k">class</span> <span class="nc">QualSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="QualSelector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.QualSelector">[docs]</a><span class="k">class</span> <span class="nc">QualSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A style selector which matches type qualified classes.</span>
 
 <span class="sd">    See Also</span>
@@ -287,7 +290,7 @@
 
     <span class="n">node_classes</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="nb">set</span><span class="p">)</span>
 
-<div class="viewcode-block" id="QualSelector.match"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.QualSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">match</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="n">specificity</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">type_match</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_type</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_type</span>
@@ -302,8 +305,8 @@
         <span class="n">match</span> <span class="o">=</span> <span class="nb">bool</span><span class="p">(</span><span class="n">specificity</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="n">specificity</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="IDSelector"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.IDSelector">[docs]</a><span class="k">class</span> <span class="nc">IDSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="IDSelector"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.IDSelector">[docs]</a><span class="k">class</span> <span class="nc">IDSelector</span><span class="p">(</span><span class="n">Selector</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; A style selector which matches element ids.</span>
 
 <span class="sd">    See Also</span>
@@ -313,12 +316,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">node_id</span> <span class="o">=</span> <span class="n">Str</span>
 
-<div class="viewcode-block" id="IDSelector.match"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.IDSelector.match">[docs]</a>    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">match</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="n">match</span> <span class="o">=</span> <span class="n">node_data</span><span class="o">.</span><span class="n">node_id</span><span class="p">()</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">node_id</span>
         <span class="k">return</span> <span class="n">match</span><span class="p">,</span> <span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">properties</span><span class="p">)</span>
 
-</div></div>
-<div class="viewcode-block" id="StyleSheet"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet">[docs]</a><span class="k">class</span> <span class="nc">StyleSheet</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="StyleSheet"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet">[docs]</a><span class="k">class</span> <span class="nc">StyleSheet</span><span class="p">(</span><span class="n">HasStrictTraits</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An object representing a style sheet.</span>
 
 <span class="sd">    The style sheet is constructed with a sequence of &#39;style&#39; objects</span>
@@ -357,7 +360,7 @@
 
     <span class="n">updated</span> <span class="o">=</span> <span class="n">Event</span>
 
-<div class="viewcode-block" id="StyleSheet.__init__"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="o">*</span><span class="n">styles</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleSheet.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>  <span class="o">*</span><span class="n">styles</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Construct a style sheet object.</span>
 
 <span class="sd">        Parameters</span>
@@ -465,7 +468,7 @@
 
         <span class="k">return</span> <span class="n">updated_properties</span>
 
-<div class="viewcode-block" id="StyleSheet.update"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">styles</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleSheet.update"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.update">[docs]</a>    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">styles</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the style sheet with the given style objects.</span>
 
 <span class="sd">        This will trigger a &#39;sheet_updated&#39; event.</span>
@@ -478,7 +481,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_styles</span><span class="p">(</span><span class="o">*</span><span class="n">styles</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="StyleSheet.replace"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">styles</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleSheet.replace"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.replace">[docs]</a>    <span class="k">def</span> <span class="nf">replace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">styles</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Replace the style sheet with the give style objects.</span>
 
 <span class="sd">        Parameters</span>
@@ -492,7 +495,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_counter</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">count</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">updated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_styles</span><span class="p">(</span><span class="o">*</span><span class="n">styles</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="StyleSheet.get_property"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.get_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleSheet.get_property"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.get_property">[docs]</a>    <span class="k">def</span> <span class="nf">get_property</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">node_data</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns the style property for the given tag.</span>
 
 <span class="sd">        This method is used to query the style sheet for the value of a</span>
@@ -527,13 +530,13 @@
 
         <span class="k">return</span> <span class="n">res</span>
 </div>
-<div class="viewcode-block" id="StyleSheet.get_tags"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.get_tags">[docs]</a>    <span class="k">def</span> <span class="nf">get_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleSheet.get_tags"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.get_tags">[docs]</a>    <span class="k">def</span> <span class="nf">get_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns an iterable of all the tags in the style_sheet.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_property_selectors</span><span class="o">.</span><span class="n">iterkeys</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="StyleSheet.has_tag"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.has_tag">[docs]</a>    <span class="k">def</span> <span class="nf">has_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<div class="viewcode-block" id="StyleSheet.has_tag"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.style_sheet.StyleSheet.has_tag">[docs]</a>    <span class="k">def</span> <span class="nf">has_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Returns True or False depending on whether the tag is in the</span>
 <span class="sd">        style sheet.</span>
 
@@ -553,9 +556,12 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.styling.style_sheet</a></li>
@@ -565,7 +571,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

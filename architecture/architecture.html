@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Design and Architecture &mdash; enaml 0.1alpha documentation</title>
+    <title>Design and Architecture &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,9 +27,9 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
     <link rel="up" title="Enaml Architecture Reference" href="index.html" />
-    <link rel="next" title="Developer’s Guide" href="../developer_guide/index.html" />
+    <link rel="next" title="Enaml API Reference" href="../api_ref/index.html" />
     <link rel="prev" title="Enaml Architecture Reference" href="index.html" /> 
   </head>
   <body>
@@ -40,15 +40,18 @@
           <a href="../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../developer_guide/index.html" title="Developer’s Guide"
+          <a href="../api_ref/index.html" title="Enaml API Reference"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Enaml Architecture Reference"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" accesskey="U">Enaml Architecture Reference</a> &raquo;</li>
   
     <li><a href="#">Design and Architecture</a></li>
@@ -100,6 +103,11 @@
             
   <div class="section" id="design-and-architecture">
 <h1>Design and Architecture<a class="headerlink" href="#design-and-architecture" title="Permalink to this headline">¶</a></h1>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This documentation is not current and does not reflect the way
+Enaml currently works.</p>
+</div>
 <p>Enaml is designed with a flexible, open architecture.  It is designed to be
 able to adapt to different UI toolkit backends beyond the currently supported
 Qt and Wx backends, as well as allowing other key parts of the infrastructure
@@ -125,7 +133,7 @@ that will be used in the view.  Finally the show() method starts the application
 mainloop if needed and makes the UI components visible.</p>
 <p>The enaml.imports() context manager provides an import hook that detects when an
 <tt class="docutils literal"><span class="pre">.enaml</span></tt> file is being imported, parses it into an Enaml AST and uses
-<a class="reference internal" href="../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_compiler.EnamlCompiler" title="enaml.parsing.enaml_compiler.EnamlCompiler"><tt class="xref py py-class docutils literal"><span class="pre">EnamlCompiler</span></tt></a> to compile it to Enaml
+<tt class="xref py py-class docutils literal"><span class="pre">EnamlCompiler</span></tt> to compile it to Enaml
 bytecode. From the importer&#8217;s point of view it creates a standard Python module
 which has one or more <tt class="xref py py-class docutils literal"><span class="pre">EnamlDefinition</span></tt> objects which create
 re-usable UI templates.  The <tt class="xref py py-class docutils literal"><span class="pre">EnamlDefinition</span></tt> objects can be used by
@@ -186,7 +194,7 @@ the user&#8217;s code.</p>
 </li>
 <li><p class="first">Create the Enaml shell version of the Widget.  This will at least be a
 subclass of <tt class="xref py py-class docutils literal"><span class="pre">BaseComponent</span></tt>,
-and most likely a subclass of <a class="reference internal" href="../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">Control</span></tt></a>
+and most likely a subclass of <tt class="xref py py-class docutils literal"><span class="pre">Control</span></tt>
 or <tt class="xref py py-class docutils literal"><span class="pre">AbstractTkContainer</span></tt>.  This class
 defines the interface that the Enaml markup language sees and can use.
 There should be, at a minimum, traits corresponding to values that can
@@ -269,7 +277,7 @@ Enaml widget and change the appropriate toolkit state.</p>
 <p>If you are writing a control, you may need to handle error and exceptions
 generated by invalid values, either coming in to the widget from the
 underlying model, or from values entered by the user.  The
-<a class="reference internal" href="../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a> class provides a standard API
+<tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt> class provides a standard API
 for registering these:</p>
 <div class="highlight-python"><pre>:py:attr:`error`
     This is a boolean trait which is True if an invalid value was
@@ -279,7 +287,7 @@ for registering these:</p>
     This is a trait which holds the Exception object that caused
     the error to be flagged.</pre>
 </div>
-<p>The <a class="reference internal" href="../developer_guide/api_ref/widgets/enaml.widgets.control.Control.html#enaml.widgets.control.Control" title="enaml.widgets.control.Control"><tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt></a> class provides two helper
+<p>The <tt class="xref py py-class docutils literal"><span class="pre">enaml.widgets.control.Control</span></tt> class provides two helper
 contexts which can be used to automatically capture any exceptions:</p>
 <div class="highlight-python"><pre>:py:meth:`capture_exceptions`
     This will capture any exceptions generated by a block of code
@@ -383,7 +391,7 @@ constructor dictionary before you create any views:</p>
 <span class="n">QT_CONSTRUCTORS</span><span class="p">[</span><span class="s">&#39;MyNewWidget&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ctor</span>
 </pre></div>
 </div>
-<p>Any subsequent calls to <a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.toolkit.qt_toolkit" title="enaml.toolkit.qt_toolkit"><tt class="xref py py-func docutils literal"><span class="pre">qt_toolkit()</span></tt></a> will
+<p>Any subsequent calls to <tt class="xref py py-func docutils literal"><span class="pre">qt_toolkit()</span></tt> will
 now contain your new widget.</p>
 <p>Alternatively, you may want to create your own toolkit that is
 separate from the usual backend toolkit:</p>
@@ -459,12 +467,12 @@ sufficient to copy the stylesheet for an existing backend, since the
 stylesheet definitions are toolkit-independent.</p>
 </li>
 <li><p class="first">Create a new toolkit factory for your new backend.  This should look
-something like the current <a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.toolkit.wx_toolkit" title="enaml.toolkit.wx_toolkit"><tt class="xref py py-class docutils literal"><span class="pre">enaml.toolkit.wx_toolkit</span></tt></a> or
-<a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.toolkit.qt_toolkit" title="enaml.toolkit.qt_toolkit"><tt class="xref py py-class docutils literal"><span class="pre">enaml.toolkit.qt_toolkit</span></tt></a> factories.  This factory should
+something like the current <tt class="xref py py-class docutils literal"><span class="pre">enaml.toolkit.wx_toolkit</span></tt> or
+<tt class="xref py py-class docutils literal"><span class="pre">enaml.toolkit.qt_toolkit</span></tt> factories.  This factory should
 create a Toolkit instance, which is a dictionary subclass whose keys
 are the available Enaml entity names.  Usually this will consist of the
 toolkit&#8217;s constructor dictionary from (1) together with the standard
-<tt class="docutils literal"><span class="pre">OPERATORS</span></tt> from <a class="reference internal" href="../developer_guide/api_ref/enaml.html#module-enaml.toolkit" title="enaml.toolkit"><tt class="xref py py-mod docutils literal"><span class="pre">enaml.toolkit</span></tt></a> and a <tt class="docutils literal"><span class="pre">utils</span></tt> dictionary.
+<tt class="docutils literal"><span class="pre">OPERATORS</span></tt> from <tt class="xref py py-mod docutils literal"><span class="pre">enaml.toolkit</span></tt> and a <tt class="docutils literal"><span class="pre">utils</span></tt> dictionary.
 In additon the following attributes need to be supplied with callables:</p>
 <div class="highlight-python"><pre>:py:attr:`create_app`
     A function that is responsible for obtaining (or creating, if it
@@ -513,10 +521,10 @@ interactions that your notification system supports for its models.  These
 subclasses will need to implement appropriate versions of the <tt class="xref py py-meth docutils literal"><span class="pre">bind()</span></tt>
 and <tt class="xref py py-meth docutils literal"><span class="pre">eval_expression()</span></tt> methods.</p>
 <p>For the four basic expression bindings, you will most likely need to create
-subclasses of  <a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression" title="enaml.expressions.SimpleExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.SimpleExpression</span></tt></a>,
+subclasses of  <tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.SimpleExpression</span></tt>,
 <tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.UpdatingExpression</span></tt>,
-<a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression" title="enaml.expressions.DelegatingExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.DelegatingExpression</span></tt></a>, and
-<a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.NotifyingExpression" title="enaml.expressions.NotifyingExpression"><tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.NotifyingExpression</span></tt></a>.
+<tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.DelegatingExpression</span></tt>, and
+<tt class="xref py py-class docutils literal"><span class="pre">enaml.expressions.NotifyingExpression</span></tt>.
 When implementing overriden methods, all of these subclasses
 must check to see whether the model object is of the new model type, and if
 it is not then they need to fall back to using the standard superclass
@@ -524,7 +532,7 @@ implementation of the method.  If this is not done then expressions involving
 widget traits will fail to work correctly.</p>
 <blockquote>
 <div><dl class="docutils">
-<dt><a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.SimpleExpression" title="enaml.expressions.SimpleExpression"><tt class="xref py py-class docutils literal"><span class="pre">SimpleExpression</span></tt></a></dt>
+<dt><tt class="xref py py-class docutils literal"><span class="pre">SimpleExpression</span></tt></dt>
 <dd><p class="first">This class needs to be able to provide a default value for the
 expression, but does not need to react to changes in the model object
 or in the Enaml namespace.</p>
@@ -548,21 +556,21 @@ object.  This callback will probably look something like the
 <tt class="xref py py-meth docutils literal"><span class="pre">update_object()</span></tt> method, but may need to perform additional
 steps depending on your model.</p>
 </dd>
-<dt><a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.NotifyingExpression" title="enaml.expressions.NotifyingExpression"><tt class="xref py py-class docutils literal"><span class="pre">NotifyingExpression</span></tt></a></dt>
+<dt><tt class="xref py py-class docutils literal"><span class="pre">NotifyingExpression</span></tt></dt>
 <dd><p class="first">This class requires the ability to execute a code expression whenever
 an Enaml attribute changes.</p>
 <p class="last">You may need to override the <tt class="xref py py-meth docutils literal"><span class="pre">notify()</span></tt> method to compute the
 expression correctly, but ideally you should be able to use this
 class unmodified.</p>
 </dd>
-<dt><a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression" title="enaml.expressions.DelegatingExpression"><tt class="xref py py-class docutils literal"><span class="pre">DelegatingExpression</span></tt></a></dt>
+<dt><tt class="xref py py-class docutils literal"><span class="pre">DelegatingExpression</span></tt></dt>
 <dd><p class="first">This class requires both the ability to analyze and react to changes
 in expression dependencies, but also push changes from the Enaml
 trait which it is connected to onto the designated object.</p>
 <p>This will require an appropriate <tt class="xref py py-meth docutils literal"><span class="pre">bind()</span></tt> method similar to
 the one that the <tt class="xref py py-class docutils literal"><span class="pre">BindingExpression</span></tt> uses,
 although the allowable expressions are much simpler for
-<a class="reference internal" href="../developer_guide/api_ref/enaml.html#enaml.expressions.DelegatingExpression" title="enaml.expressions.DelegatingExpression"><tt class="xref py py-class docutils literal"><span class="pre">DelegatingExpression</span></tt></a>.</p>
+<tt class="xref py py-class docutils literal"><span class="pre">DelegatingExpression</span></tt>.</p>
 <p class="last">You will also need to override the implementations of
 <tt class="xref py py-meth docutils literal"><span class="pre">update_object()</span></tt> and <tt class="xref py py-meth docutils literal"><span class="pre">update_delegate()</span></tt> to
 appropriately change the value on the underlying model.</p>
@@ -620,15 +628,18 @@ the rest of the Enaml file.</p>
           <a href="../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../developer_guide/index.html" title="Developer’s Guide"
+          <a href="../api_ref/index.html" title="Enaml API Reference"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Enaml Architecture Reference"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Architecture Reference</a> &raquo;</li>
   
     <li><a href="#">Design and Architecture</a></li>
@@ -638,7 +649,7 @@ the rest of the Enaml file.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.dialog &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.dialog &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.dialog</a></li>
@@ -81,15 +84,18 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
 
-<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Event</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span>
 
 <span class="kn">from</span> <span class="nn">.window</span> <span class="kn">import</span> <span class="n">Window</span><span class="p">,</span> <span class="n">AbstractTkWindow</span>
 
 <span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">DialogResult</span><span class="p">,</span> <span class="n">Modality</span>
+<span class="kn">from</span> <span class="nn">..util.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
 
 
 <span class="k">class</span> <span class="nc">AbstractTkDialog</span><span class="p">(</span><span class="n">AbstractTkWindow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a Dialog.</span>
 
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `accepted`.</span>
@@ -117,11 +123,11 @@
     <span class="n">active</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Bool</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_active&#39;</span><span class="p">)</span>
 
     <span class="c">#: Fired when the dialog is opened.</span>
-    <span class="n">opened</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">opened</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: Fired when the dialog is closed. The event payload will be the </span>
     <span class="c">#: dialog result.</span>
-    <span class="n">closed</span> <span class="o">=</span> <span class="n">Event</span>
+    <span class="n">closed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
 
     <span class="c">#: A read only property which is set to the result of the dialog; </span>
     <span class="c">#: &#39;rejected&#39; if rejected() was called or the window was closed via </span>
@@ -135,33 +141,18 @@
     <span class="c">#: dialog is shown will have no effect.</span>
     <span class="n">modality</span> <span class="o">=</span> <span class="n">Modality</span>
 
+    <span class="c">#: Overridden parent class trait.</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkDialog</span><span class="p">)</span>
+    
     <span class="c">#: An internal trait used to store the active state of the dialog.</span>
-    <span class="n">_active</span> <span class="o">=</span> <span class="n">Bool</span>
+    <span class="n">_active</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
 
     <span class="c">#: An internal trait used to store the result of the dialog.</span>
     <span class="n">_result</span> <span class="o">=</span> <span class="n">DialogResult</span><span class="p">(</span><span class="s">&#39;rejected&#39;</span><span class="p">)</span>
-
-    <span class="c">#: Overridden parent class trait.</span>
-    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkDialog</span><span class="p">)</span>
-
-<div class="viewcode-block" id="Dialog.accept"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `accepted`.</span>
-
-<span class="sd">        Call this method to trigger the same behavior as clicking</span>
-<span class="sd">        on the Ok button.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
-</div>
-<div class="viewcode-block" id="Dialog.reject"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `rejected`.</span>
-
-<span class="sd">        Call this method to trigger the same behavior as clicking</span>
-<span class="sd">        on the Cancel button.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
-</div>
+        
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Property Getters</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
     <span class="k">def</span> <span class="nf">_get_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; The property getter for the &#39;active&#39; attribute.</span>
 
@@ -173,7 +164,66 @@
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span>
-</pre></div></div>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract Method Implementations</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Dialog.show"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make the dialog visible on the screen.</span>
+
+<span class="sd">        If the dialog is not already fully initialized, then the &#39;setup&#39;</span>
+<span class="sd">        method will be called prior to making the dialog visible.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : native toolkit widget, optional</span>
+<span class="sd">            Provide this argument if the dialog should have another</span>
+<span class="sd">            widget as its logical parent. This may help with stacking</span>
+<span class="sd">            order and/or visibility hierarchy depending on the toolkit</span>
+<span class="sd">            backend.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">resize_to_initial</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_minimum_size</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_maximum_size</span><span class="p">()</span>
+            
+        <span class="c"># Note that we don&#39;t start the event loop after making a Dialog</span>
+        <span class="c"># visible. Dialogs are shown modally and typically start their </span>
+        <span class="c"># own event loop. Thus, set_visble(True) will block and starting</span>
+        <span class="c"># an event loop after it returns may cause a dead lock</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Dialog.hide"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog.hide">[docs]</a>    <span class="k">def</span> <span class="nf">hide</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the dialog. Typically, code should call either &#39;accept&#39;</span>
+<span class="sd">        or &#39;reject&#39; to close the dialog instead of &#39;hide&#39;.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Auxiliary Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Dialog.accept"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `accepted`.</span>
+
+<span class="sd">        Call this method to trigger the same behavior as clicking on an</span>
+<span class="sd">        Ok button.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Dialog.reject"><a class="viewcode-back" href="../../../developer_guide/api_ref/widgets/enaml.widgets.dialog.Dialog.html#enaml.widgets.dialog.Dialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `rejected`.</span>
+
+<span class="sd">        Call this method to trigger the same behavior as clicking on a</span>
+<span class="sd">        Cancel button.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
+</pre></div></div></div>
 
           </div>
         </div>
@@ -187,9 +237,12 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.dialog</a></li>
@@ -199,7 +252,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

@@ -9,20 +9,19 @@ several large space-consuming widgets in a manner that allows the
 user to interactively resize the space allocated to each widget.
 
 """
-:: python ::
-
 from enaml.item_models.standard_models import TableModel
 
+import numpy as np
+
+
 # A (1000, 100) table of data
-table = [[i + (100 * j) for i in xrange(100)] for j in xrange(1000)]
+table =  np.arange(1000*100).reshape((1000, 100))
 
 # A very plain-jane table model
 table_model = TableModel(table)
 
-:: end ::
 
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     title = 'Splitters'
     Splitter:
         orientation = 'vertical'

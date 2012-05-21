@@ -19,7 +19,7 @@ printed to the shell.
 from enaml.stdlib.radio_group import RadioGroup
 
 
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr how_many: int = 10
     Container:
         SpinBox:
@@ -31,12 +31,12 @@ Main(MainWindow):
         RadioGroup:
             id: rgroup
             orientation << switch.value
-            selected_index >> print('selected index:', selected_index)
+            selected_index :: print 'selected index:', selected_index
             items << range(how_many)
         PushButton:
             text = 'Disable 3, 4, 5'
-            clicked >> setattr(rgroup, 'disabled_buttons', [3, 4, 5])
+            clicked :: rgroup.disabled_buttons = [3, 4, 5]
         PushButton:
             text = 'Disable 1, 7, 9'
-            clicked >> setattr(rgroup, 'disabled_buttons', [1, 7, 9])
+            clicked :: rgroup.disabled_buttons = [1, 7, 9]
 

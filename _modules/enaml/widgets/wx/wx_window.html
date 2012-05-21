@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.widgets.wx.wx_window &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.widgets.wx.wx_window &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.wx.wx_window</a></li>
@@ -79,140 +82,85 @@
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">import</span> <span class="nn">wx</span>
-
-<span class="kn">from</span> <span class="nn">.wx_container</span> <span class="kn">import</span> <span class="n">WXContainer</span>
+<span class="kn">from</span> <span class="nn">.wx_component</span> <span class="kn">import</span> <span class="n">WXComponent</span>
+<span class="kn">from</span> <span class="nn">.wx_sizable</span> <span class="kn">import</span> <span class="n">WXSizable</span>
 
 <span class="kn">from</span> <span class="nn">..window</span> <span class="kn">import</span> <span class="n">AbstractTkWindow</span>
 
 
-<div class="viewcode-block" id="WXWindow"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow">[docs]</a><span class="k">class</span> <span class="nc">WXWindow</span><span class="p">(</span><span class="n">WXContainer</span><span class="p">,</span> <span class="n">AbstractTkWindow</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; A wxPython implementation of a Window.</span>
-
-<span class="sd">    WXWindow uses a combined set of wx.Frame - wx.Window widget to create</span>
-<span class="sd">    a simple top level window which contains other child widgets and</span>
-<span class="sd">    layouts. Because of this dual behaviour some enaml calls need</span>
-<span class="sd">    to be delegated to the wx.Frame and some to the wx.Window.</span>
+<div class="viewcode-block" id="WXWindow"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow">[docs]</a><span class="k">class</span> <span class="nc">WXWindow</span><span class="p">(</span><span class="n">WXComponent</span><span class="p">,</span> <span class="n">WXSizable</span><span class="p">,</span> <span class="n">AbstractTkWindow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wxPython implementation of a Window. It serves as a base class</span>
+<span class="sd">    for WXMainWindow and WXDialog. It is not meant to be used directly.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">_initializing</span> <span class="o">=</span> <span class="bp">False</span>
-
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Setup methods</span>
     <span class="c">#--------------------------------------------------------------------------</span>
 <div class="viewcode-block" id="WXWindow.create"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Creates the underlying wx.Frame control.</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying Wx widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># FIXME: this is an ugly hack since the wx.Frame does not show</span>
-        <span class="c"># well. It is advised in the wxWidget documentation to add a</span>
-        <span class="c"># Panel or Window control before adding the children.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_frame</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;A WXWindow is a base class and cannot be used directly&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </div>
 <div class="viewcode-block" id="WXWindow.initialize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Intializes the attributes on the wx.Frame.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_initializing</span> <span class="o">=</span> <span class="bp">True</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="nb">super</span><span class="p">(</span><span class="n">WXWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
-        <span class="k">finally</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_initializing</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_central_widget</span><span class="p">()</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Implementation</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXWindow.maximize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Maximizes the window to fill the screen.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            </div>
+<div class="viewcode-block" id="WXWindow.minimize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Minimizes the window to the task bar.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Iconize</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            </div>
+<div class="viewcode-block" id="WXWindow.normalize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Restores the window after it has been minimized or maximized.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Maximize</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+</div>
 <div class="viewcode-block" id="WXWindow.shell_title_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;title&#39; attribute.</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;title&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-    
+    </div>
+<div class="viewcode-block" id="WXWindow.shell_central_widget_changed"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.shell_central_widget_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_central_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;central_widget&#39; attribute on </span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_central_widget</span><span class="p">()</span>
+       
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Widget Update Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXWindow.update_central_widget"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.update_central_widget">[docs]</a>    <span class="k">def</span> <span class="nf">update_central_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the central widget from the value on the shell </span>
+<span class="sd">        object. This method must be implemented by subclasses.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
 <div class="viewcode-block" id="WXWindow.set_title"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Sets the title of the frame.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="o">.</span><span class="n">SetTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
-    </div>
-<div class="viewcode-block" id="WXWindow.set_visible"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden from the parent class to raise the window to</span>
-<span class="sd">        the front if it should be shown.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># Don&#39;t show the window if we&#39;re not initializing.</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initializing</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
-                <span class="c"># Wx doesn&#39;t reliably emit resize events when making a </span>
-                <span class="c"># ui visible. So this extra call to update cns helps make </span>
-                <span class="c"># sure things are arranged nicely.</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">set_needs_update_constraints</span><span class="p">()</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="o">.</span><span class="n">Show</span><span class="p">()</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="o">.</span><span class="n">Hide</span><span class="p">()</span>
-
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Overridden Geometry Methods </span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="WXWindow.resize"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to do the resize on the </span>
-<span class="sd">        internal wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_resize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
-    </div>
-<div class="viewcode-block" id="WXWindow.min_size"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to get the min size on </span>
-<span class="sd">        the internal wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="WXWindow.set_min_size"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to set the min size on the</span>
-<span class="sd">        internal wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">,</span> <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="WXWindow.pos"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to get the position of</span>
-<span class="sd">        the internal wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="WXWindow.move"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to do the move on the internal</span>
-<span class="sd">        wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_move</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="WXWindow.frame_geometry"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.frame_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to get the frame geometry</span>
-<span class="sd">        of the internal wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_frame_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="WXWindow.geometry"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to get the geometry</span>
-<span class="sd">        of the internal wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">)</span>
-    </div>
-<div class="viewcode-block" id="WXWindow.set_geometry"><a class="viewcode-back" href="../../../../developer_guide/api_ref/widgets/enaml.widgets.window.Window.html#enaml.widgets.wx.wx_window.WXWindow.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Overridden parent class method to set the geometry</span>
-<span class="sd">        of the internal wx.Frame object.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_frame</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 </pre></div></div></div>
 
           </div>
@@ -227,9 +175,12 @@
           <a href="../../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.widgets.wx.wx_window</a></li>
@@ -239,7 +190,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

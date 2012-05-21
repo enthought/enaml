@@ -1,6 +1,0 @@
-<map id="inheritancedb24ee247c" name="inheritancedb24ee247c">
-<area shape="rect" id="node1" href="enaml.widgets.control.Control.html#enaml.widgets.qt.qt_control.QtControl" title="QtControl" alt="" coords="467,37,521,56"/>
-<area shape="rect" id="node20" href="enaml.widgets.bounded_date.BoundedDate.html#enaml.widgets.qt.qt_bounded_date.QtBoundedDate" title="QtBoundedDate" alt="" coords="590,37,668,56"/>
-<area shape="rect" id="node11" href="enaml.widgets.component.Component.html#enaml.widgets.qt.qt_component.QtComponent" title="QtComponent" alt="" coords="173,37,245,56"/>
-<area shape="rect" id="node31" href="#enaml.widgets.qt.qt_date_edit.QtDateEdit" title="QtDateEdit" alt="" coords="706,55,765,73"/>
-</map>

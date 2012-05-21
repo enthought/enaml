@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.parsing.enaml_ast &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.parsing.enaml_ast &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.parsing.enaml_ast</a></li>
@@ -132,10 +135,11 @@
 <span class="sd">        The compiled Python code object for the py_ast.</span>
 <span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;py_ast&#39;</span><span class="p">,</span> <span class="s">&#39;code&#39;</span><span class="p">)</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;py_txt&#39;</span><span class="p">,</span> <span class="s">&#39;py_ast&#39;</span><span class="p">,</span> <span class="s">&#39;code&#39;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">py_ast</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">py_txt</span><span class="p">,</span> <span class="n">py_ast</span><span class="p">,</span> <span class="n">code</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Python</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">py_txt</span> <span class="o">=</span> <span class="n">py_txt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">py_ast</span> <span class="o">=</span> <span class="n">py_ast</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="n">code</span>
 
@@ -203,6 +207,37 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
 
 </div>
+<div class="viewcode-block" id="AttributeDeclaration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.AttributeDeclaration">[docs]</a><span class="k">class</span> <span class="nc">AttributeDeclaration</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AST node which represents an attribute declaration.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the attribute being declared.</span>
+
+<span class="sd">    type_name : str or None</span>
+<span class="sd">        The name of the type of the attribute. If None, the attribute</span>
+<span class="sd">        can be of any type.</span>
+
+<span class="sd">    default : AttributeBinding or None</span>
+<span class="sd">        The default binding of the attribute, or None if no default </span>
+<span class="sd">        is provided.</span>
+<span class="sd">        </span>
+<span class="sd">    is_event : boolean</span>
+<span class="sd">        Whether or not this declaration represents a write-only</span>
+<span class="sd">        event.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;type_name&#39;</span><span class="p">,</span> <span class="s">&#39;default&#39;</span><span class="p">,</span> <span class="s">&#39;is_event&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">type_name</span><span class="p">,</span> <span class="n">default</span><span class="p">,</span> <span class="n">is_event</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AttributeDeclaration</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">type_name</span> <span class="o">=</span> <span class="n">type_name</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">default</span> <span class="o">=</span> <span class="n">default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_event</span> <span class="o">=</span> <span class="n">is_event</span>
+
+</div>
 <div class="viewcode-block" id="AttributeBinding"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.AttributeBinding">[docs]</a><span class="k">class</span> <span class="nc">AttributeBinding</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AST node which represents an expression attribute binding.</span>
 
@@ -241,110 +276,6 @@
         <span class="nb">super</span><span class="p">(</span><span class="n">BoundExpression</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">op</span> <span class="o">=</span> <span class="n">op</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">expr</span> <span class="o">=</span> <span class="n">expr</span>
-
-</div>
-<div class="viewcode-block" id="BoundCodeBlock"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.BoundCodeBlock">[docs]</a><span class="k">class</span> <span class="nc">BoundCodeBlock</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; An ast Node which represents a bound block of Python code.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
-
-</div>
-<div class="viewcode-block" id="Defn"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Defn">[docs]</a><span class="k">class</span> <span class="nc">Defn</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; An ast Node which represents a defn block.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    name : str</span>
-<span class="sd">        The name of the defn block.</span>
-<span class="sd">    </span>
-<span class="sd">    parameters : Parameters</span>
-<span class="sd">        A Parameters node for the parameters passed to the defn.</span>
-<span class="sd">    </span>
-<span class="sd">    doc : str</span>
-<span class="sd">        The documentation string of the defn.</span>
-<span class="sd">    </span>
-<span class="sd">    body : list</span>
-<span class="sd">        A list of ast nodes comprising the body of the defn.</span>
-<span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;parameters&#39;</span><span class="p">,</span> <span class="s">&#39;doc&#39;</span><span class="p">,</span> <span class="s">&#39;body&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">doc</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Defn</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">doc</span> <span class="o">=</span> <span class="n">doc</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
-
-</div>
-<div class="viewcode-block" id="Parameters"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Parameters">[docs]</a><span class="k">class</span> <span class="nc">Parameters</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; An ast Node representing the parameters definition of a defn.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    names : list</span>
-<span class="sd">        A list of strings which are the names of the parameters.</span>
-<span class="sd">    </span>
-<span class="sd">    defaults : list</span>
-<span class="sd">        A list of Python nodes representing any default parameter</span>
-<span class="sd">        values.</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;names&#39;</span><span class="p">,</span> <span class="s">&#39;defaults&#39;</span><span class="p">)</span>
-    
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">defaults</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Parameters</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">defaults</span> <span class="o">=</span> <span class="n">defaults</span>
-        
-</div>
-<div class="viewcode-block" id="Call"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Call">[docs]</a><span class="k">class</span> <span class="nc">Call</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; An ast Node representing a defn call.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    name : str</span>
-<span class="sd">        The name of the defn being called.</span>
-<span class="sd">    </span>
-<span class="sd">    arguments : list</span>
-<span class="sd">        A list of Argument or KeywordArgument nodes which are the </span>
-<span class="sd">        arguments being passed to the defn.</span>
-<span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;arguments&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">Call</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">arguments</span> <span class="o">=</span> <span class="n">arguments</span>
-
-</div>
-<div class="viewcode-block" id="Argument"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.Argument">[docs]</a><span class="k">class</span> <span class="nc">Argument</span><span class="p">(</span><span class="n">Python</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; An ast node representing an argument passed to a defn.</span>
-<span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>    
-    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
-
-</div>
-<div class="viewcode-block" id="KeywordArgument"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.enaml_ast.KeywordArgument">[docs]</a><span class="k">class</span> <span class="nc">KeywordArgument</span><span class="p">(</span><span class="n">ASTNode</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot; An ast node representing a keyword argument passed to a defn.</span>
-
-<span class="sd">    Attributes</span>
-<span class="sd">    ----------</span>
-<span class="sd">    name : str</span>
-<span class="sd">        The name of the keyword argument.</span>
-<span class="sd">    </span>
-<span class="sd">    argument : Argument</span>
-<span class="sd">        An Argument node which is the value of the keyword argument.</span>
-<span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;name&#39;</span><span class="p">,</span> <span class="s">&#39;argument&#39;</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">(</span><span class="n">KeywordArgument</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">lineno</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">argument</span> <span class="o">=</span> <span class="n">argument</span>
 </pre></div></div>
 
           </div>
@@ -359,9 +290,12 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.parsing.enaml_ast</a></li>
@@ -371,7 +305,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>

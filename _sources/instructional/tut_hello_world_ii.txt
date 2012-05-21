@@ -3,22 +3,27 @@
 "Hello World" tutorial - Part II
 ===============================================================================
 
-This is a basic tutorial to explain the basic features of an |Enaml| user
-interface. It sets up a minimal GUI to display a simple message.
+This tutorial expands on the "Hello world!" tutorial and introduces a few new
+concepts:
+
+* Comment Blocks
+* Enaml Containers
+* Use of |Enaml| code from within Python
+
 
 |Enaml| supports implementing a `model-view-controller architecture
-<http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_ . An
+<http://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller>`_ , in
+which it is desirable to separate the data or object model from the view. An
 '.enaml' file describes the *view*, and the *model* is treated by Python code,
 usually in the form of `Traits objects
 <http://code.enthought.com/projects/traits/>`_ . The |Enaml| module handles
 most/all of the *controller* aspects of the GUI.
 
-Let's get started with a basic "hello world" example:
+Let's describe a slightly more advanced view in the file
+(:download:`hello_world_view.enaml
+<../../../examples/hello_world/hello_world_view.enaml>`):
 
-Here is our minimalist .enaml file describing a message-displaying GUI
-(:download:`download here <../../../examples/hello_world/hello_world.enaml>`):
-
-.. literalinclude:: ../../../examples/hello_world/hello_world.enaml
+.. literalinclude:: ../../../examples/hello_world/hello_world_view.enaml
     :language: python
 
 Here is the Python code to use the GUI (:download:`download here
@@ -33,6 +38,14 @@ The resulting GUI looks like this (in Mac OS):
 
 Let's take a closer look at the |Enaml| file.
 
+The declaration block differs from the previous one in a number of ways.
+
+ * It starts with a comment block.
+ * It is not called "Main" since we will call it from a Python program
+ * It has an ``attr``, a locally defined attribute
+ * The label is put inside a ``Container``, whose primary purpose here is to
+   improve the spacing around the label.
+
 Comment Blocks
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -42,14 +55,15 @@ a comment line and is ignored during lexing and parsing.
 ::
 
  #-----------------------------------------------------------------------------
- #  Copyright (c) 2011, Enthought, Inc.
- #  All rights reserved.
+ #  This is an Enaml comment block.
+ #  It looks like a Python comment block.
  #-----------------------------------------------------------------------------
 
-.. _defn-block-tut:
+.. _attr-tut:
 
-``defn`` Blocks
+|Enaml| attributes
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 Next, we use a ``defn`` block to construct a view that is available for
 external Python functions to import. The syntax is similar to that of `Python

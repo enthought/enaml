@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.parsing.lexer &mdash; enaml 0.1alpha documentation</title>
+    <title>enaml.parsing.lexer &mdash; enaml 0.2alpha documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.1alpha',
+        VERSION:     '0.2alpha',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.1alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -38,9 +38,12 @@
           <a href="../../../genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.parsing.lexer</a></li>
@@ -85,16 +88,17 @@
 
 <span class="kn">from</span> <span class="nn">..exceptions</span> <span class="kn">import</span> <span class="n">EnamlSyntaxError</span>
 
-<span class="k">def</span> <span class="nf">_raise_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">klass</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="n">klass</span><span class="p">(</span><span class="n">message</span> <span class="o">+</span> <span class="s">&#39; - lineno: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_raise_error</span><span class="p">(</span><span class="n">klass</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="n">klass</span><span class="p">(</span><span class="n">message</span> <span class="o">+</span> <span class="s">&#39; (</span><span class="si">%s</span><span class="s">, line </span><span class="si">%s</span><span class="s">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">))</span>
 
 
-<span class="k">def</span> <span class="nf">raise_syntax_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-    <span class="n">_raise_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">EnamlSyntaxError</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">raise_syntax_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+    <span class="n">_raise_error</span><span class="p">(</span><span class="n">EnamlSyntaxError</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">raise_indentation_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-    <span class="n">_raise_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="ne">IndentationError</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">raise_indentation_error</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+    <span class="n">_raise_error</span><span class="p">(</span><span class="ne">IndentationError</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="EnamlLexer"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer">[docs]</a><span class="k">class</span> <span class="nc">EnamlLexer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -190,9 +194,6 @@
         <span class="s">&#39;not&#39;</span><span class="p">:</span> <span class="s">&#39;NOT&#39;</span><span class="p">,</span>
         <span class="s">&#39;or&#39;</span><span class="p">:</span> <span class="s">&#39;OR&#39;</span><span class="p">,</span>
         <span class="s">&#39;pass&#39;</span><span class="p">:</span> <span class="s">&#39;PASS&#39;</span><span class="p">,</span>
-
-        <span class="c"># Enaml reserved</span>
-        <span class="s">&#39;defn&#39;</span><span class="p">:</span> <span class="s">&#39;DEFN&#39;</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="n">tokens</span> <span class="o">=</span> <span class="p">(</span><span class="n">tokens</span> <span class="o">+</span> 
@@ -343,7 +344,7 @@
     <span class="n">t_TRIPLEQ1_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">t_TRIPLEQ1_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;Invalid Syntax&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># TRIPLEQ2 strings</span>
@@ -379,7 +380,7 @@
     <span class="n">t_TRIPLEQ2_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
 
     <span class="k">def</span> <span class="nf">t_TRIPLEQ2_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;Invalid Syntax&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># SINGLEQ1 strings</span>
@@ -409,7 +410,8 @@
     <span class="n">t_SINGLEQ1_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
     
     <span class="k">def</span> <span class="nf">t_SINGLEQ1_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;EOL while scanning single quoted string.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;EOL while scanning single quoted string.&#39;</span><span class="p">,</span> 
+                           <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># SINGLEQ2 strings</span>
@@ -439,7 +441,8 @@
     <span class="n">t_SINGLEQ2_ignore</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
     
     <span class="k">def</span> <span class="nf">t_SINGLEQ2_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;EOL while scanning single quoted string.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;EOL while scanning single quoted string.&#39;</span><span class="p">,</span> 
+                           <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
     
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Raw Python</span>
@@ -472,7 +475,8 @@
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">t_RAWPYTHON_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;Error in raw python block.&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;Error in raw python block.&#39;</span><span class="p">,</span> 
+                           <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Miscellaneous Token Rules</span>
@@ -484,16 +488,27 @@
         <span class="k">return</span> <span class="n">t</span>
 
     <span class="k">def</span> <span class="nf">t_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
-        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;Invalid Syntax&#39;</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">raise_syntax_error</span><span class="p">(</span><span class="s">&#39;invalid syntax&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
         
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Normal Class Items</span>
     <span class="c">#--------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="EnamlLexer.__init__"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="s">&#39;Enaml&#39;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">lex</span><span class="p">(</span><span class="n">module</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token_stream</span> <span class="o">=</span> <span class="bp">None</span>
-        </div>
-<div class="viewcode-block" id="EnamlLexer.input"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.input">[docs]</a>    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+        <span class="c"># Ply has a bit of an inconsistency when using a class as a </span>
+        <span class="c"># lexer instead of a module. The .lexer attribute of tokens </span>
+        <span class="c"># created by the ply lexer are set to that ply lexer instance, </span>
+        <span class="c"># but the .lexer attribute of tokens created by the ply parser </span>
+        <span class="c"># are set to the instance of this class. So, when the p_error </span>
+        <span class="c"># function is called in the parser, we can&#39;t be sure which lexer</span>
+        <span class="c"># will be set on the error token. Since we need the filename in</span>
+        <span class="c"># that function, we add it as an attribute on both lexers.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span>
+
+    <span class="k">def</span> <span class="nf">input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">txt</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">input</span><span class="p">(</span><span class="n">txt</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_token_stream</span><span class="p">()</span>
 
@@ -501,44 +516,47 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">paren_count</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">is_raw</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">at_line_start</span> <span class="o">=</span> <span class="bp">False</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.token"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.token">[docs]</a>    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">token</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">tok</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_stream</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
             <span class="k">return</span> <span class="n">tok</span>
         <span class="k">except</span> <span class="ne">StopIteration</span><span class="p">:</span>
             <span class="k">pass</span>
-    </div>
-<div class="viewcode-block" id="EnamlLexer.__iter__"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.__iter__">[docs]</a>    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">token_stream</span>
-   </div>
-<div class="viewcode-block" id="EnamlLexer.dedent"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.dedent">[docs]</a>    <span class="k">def</span> <span class="nf">dedent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+   
+    <span class="k">def</span> <span class="nf">dedent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
         <span class="c"># Synthesize a DEDENT Token</span>
         <span class="n">tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;DEDENT&#39;</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">lineno</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">tok</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">return</span> <span class="n">tok</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.indent"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.indent">[docs]</a>    <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">indent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
         <span class="c"># Synthesize an INDENT Token.</span>
         <span class="n">tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;INDENT&#39;</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">lineno</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">tok</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">return</span> <span class="n">tok</span>
-</div>
+
     <span class="k">def</span> <span class="nf">newline</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lineno</span><span class="p">):</span>
         <span class="n">tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;NEWLINE&#39;</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span>
         <span class="n">tok</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">lineno</span>
-        <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="n">lineno</span>
+        <span class="n">tok</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">tok</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">return</span> <span class="n">tok</span>
 
-<div class="viewcode-block" id="EnamlLexer.make_token_stream"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.make_token_stream">[docs]</a>    <span class="k">def</span> <span class="nf">make_token_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_token_stream</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lexer</span><span class="o">.</span><span class="n">token</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_py_blocks</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_strings</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
@@ -546,8 +564,8 @@
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">synthesize_indentation_tokens</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
         <span class="n">token_stream</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_endmarker</span><span class="p">(</span><span class="n">token_stream</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">token_stream</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.create_py_blocks"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.create_py_blocks">[docs]</a>    <span class="k">def</span> <span class="nf">create_py_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">create_py_blocks</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">token_stream</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="s">&#39;PY_BLOCK_START&#39;</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="n">tok</span>
@@ -570,7 +588,7 @@
                     <span class="n">nl_tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
                     <span class="n">nl_tok</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">start_tok</span><span class="o">.</span><span class="n">lineno</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Newline required after a &quot;:: python ::&quot; tag&#39;</span>
-                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">nl_tok</span><span class="p">)</span>
+                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">nl_tok</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
             <span class="c"># yield the newline token since it&#39;s needed by the parser</span>
             <span class="k">yield</span> <span class="n">nl_tok</span>
@@ -591,19 +609,16 @@
             <span class="k">if</span> <span class="n">end_tok</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
                 <span class="c"># Reach end of input without an :: end :: delimiter</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;EOF while scanning raw python block&#39;</span>
-                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">start_tok</span><span class="p">)</span>
+                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">start_tok</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
               
-            <span class="c"># Create the python text to add to the py block token</span>
-            <span class="c"># creating blank lines as necessary so that syntax errors</span>
-            <span class="c"># get reported with correct line numbers. The captured</span>
-            <span class="c"># text gets handed directly to Python&#39;s compile function.</span>
-            <span class="n">leader</span> <span class="o">=</span> <span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span> <span class="o">*</span> <span class="n">start_tok</span><span class="o">.</span><span class="n">lineno</span>
-            <span class="n">py_txt</span> <span class="o">=</span> <span class="n">leader</span> <span class="o">+</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">py_toks</span><span class="p">)</span>
+            <span class="c"># Create the python text to add to the py block token.</span>
+            <span class="n">py_txt</span> <span class="o">=</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tok</span><span class="o">.</span><span class="n">value</span> <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">py_toks</span><span class="p">)</span>
                    
             <span class="c"># create a python token</span>
             <span class="n">py_block</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
             <span class="n">py_block</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">start_tok</span><span class="o">.</span><span class="n">lineno</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">py_block</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">py_block</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
             <span class="n">py_block</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">py_txt</span>
             <span class="n">py_block</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="s">&#39;PY_BLOCK&#39;</span>
 
@@ -626,12 +641,12 @@
                     <span class="n">nl_tok</span> <span class="o">=</span> <span class="n">lex</span><span class="o">.</span><span class="n">LexToken</span><span class="p">()</span>
                     <span class="n">nl_tok</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="n">end_tok</span><span class="o">.</span><span class="n">lineno</span>
                 <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Newline required after a &quot;:: end ::&quot; tag&#39;</span>
-                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">nl_tok</span><span class="p">)</span>
+                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">nl_tok</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
             
             <span class="c"># The parser requires the newline token</span>
             <span class="k">yield</span> <span class="n">nl_tok</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.create_strings"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.create_strings">[docs]</a>    <span class="k">def</span> <span class="nf">create_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">create_strings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">token_stream</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">tok</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&quot;STRING_START_&quot;</span><span class="p">):</span>
                 <span class="k">yield</span> <span class="n">tok</span>
@@ -653,7 +668,7 @@
                     <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="o">%</span> <span class="s">&#39;triple&#39;</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span> <span class="o">%</span> <span class="s">&#39;single&#39;</span>
-                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">start_tok</span><span class="p">)</span>
+                <span class="n">raise_syntax_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">start_tok</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
             <span class="c"># Parse the quoted string.</span>
             <span class="c">#</span>
@@ -699,8 +714,8 @@
     <span class="c">#  1) &quot;if 1: go()&quot; - simple statements have a COLON but no need for an indent</span>
     <span class="c">#  2) &quot;if 1:\n  go()&quot; - complex statements have a COLON NEWLINE and must indent</span>
     <span class="c"># </span>
-    <span class="c"># We only care about whitespace at the start of a line</span></div>
-<div class="viewcode-block" id="EnamlLexer.annotate_indentation_state"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.annotate_indentation_state">[docs]</a>    <span class="k">def</span> <span class="nf">annotate_indentation_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+    <span class="c"># We only care about whitespace at the start of a line</span>
+    <span class="k">def</span> <span class="nf">annotate_indentation_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="n">NO_INDENT</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">MAY_INDENT</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">MUST_INDENT</span> <span class="o">=</span> <span class="mi">2</span>
@@ -738,8 +753,8 @@
 
             <span class="k">yield</span> <span class="n">token</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">at_line_start</span> <span class="o">=</span> <span class="n">at_line_start</span>
-</div>
-<div class="viewcode-block" id="EnamlLexer.synthesize_indentation_tokens"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.synthesize_indentation_tokens">[docs]</a>    <span class="k">def</span> <span class="nf">synthesize_indentation_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">synthesize_indentation_tokens</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="c"># A stack of indentation levels; will never pop item 0</span>
         <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">depth</span> <span class="o">=</span> <span class="mi">0</span>
@@ -778,7 +793,7 @@
                 <span class="c"># The current depth must be larger than the previous level</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">depth</span> <span class="o">&gt;</span> <span class="n">levels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
                     <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Expected an indented block.&#39;</span>
-                    <span class="n">raise_indentation_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+                    <span class="n">raise_indentation_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
                 <span class="n">levels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">depth</span><span class="p">)</span>
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">indent</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
 
@@ -789,7 +804,8 @@
                     <span class="k">pass</span>
                 <span class="k">elif</span> <span class="n">depth</span> <span class="o">&gt;</span> <span class="n">levels</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                     <span class="c"># indentation increase but not in new block</span>
-                    <span class="n">raise_indentation_error</span><span class="p">(</span><span class="s">&#39;Unexpected indent.&#39;</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+                    <span class="n">raise_indentation_error</span><span class="p">(</span><span class="s">&#39;Unexpected indent.&#39;</span><span class="p">,</span> 
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="c"># Back up; but only if it matches a previous level</span>
                     <span class="k">try</span><span class="p">:</span>
@@ -797,7 +813,8 @@
                     <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
                         <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Unindent does not match any outer level &#39;</span>
                                <span class="s">&#39;of indentation.&#39;</span><span class="p">)</span>
-                        <span class="n">raise_indentation_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
+                        <span class="n">raise_indentation_error</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> 
+                                                <span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
                     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)):</span>
                         <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
                         <span class="n">levels</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
@@ -824,8 +841,8 @@
             <span class="k">assert</span> <span class="n">token</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
             <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">levels</span><span class="p">)):</span>
                 <span class="k">yield</span> <span class="bp">self</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="n">token</span><span class="o">.</span><span class="n">lineno</span><span class="p">)</span>
-        </div>
-<div class="viewcode-block" id="EnamlLexer.add_endmarker"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.parsing.html#enaml.parsing.lexer.EnamlLexer.add_endmarker">[docs]</a>    <span class="k">def</span> <span class="nf">add_endmarker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
+        
+    <span class="k">def</span> <span class="nf">add_endmarker</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token_stream</span><span class="p">):</span>
         <span class="k">for</span> <span class="n">tok</span> <span class="ow">in</span> <span class="n">token_stream</span><span class="p">:</span>
             <span class="k">yield</span> <span class="n">tok</span>
 
@@ -834,8 +851,9 @@
         <span class="n">end_marker</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="n">end_marker</span><span class="o">.</span><span class="n">lineno</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">end_marker</span><span class="o">.</span><span class="n">lexpos</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">end_marker</span><span class="o">.</span><span class="n">lexer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lexer</span>
         <span class="k">yield</span> <span class="n">end_marker</span>
-</pre></div></div></div>
+</pre></div></div>
 
           </div>
         </div>
@@ -849,9 +867,12 @@
           <a href="../../../genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.1alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.parsing.lexer</a></li>
@@ -861,7 +882,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on Jan 25, 2012.
+      Last updated on May 21, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
     </div>
   </body>
