@@ -12,7 +12,7 @@ are described in a file with the ".enaml" extension. While the code has some
 similarities to Python, |Enaml| is a separate language.
 
 Here is our minimalist .enaml file describing a message-displaying GUI
-(:download:`download here <../../../examples/hello_world/hello_world_minimal.enaml>`):
+(:download:`download here <../../../examples/hello_world/hello_world_view.enaml>`):
 
 .. literalinclude:: ../../../examples/hello_world/hello_world_minimal.enaml
     :language: python
