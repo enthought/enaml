@@ -21,8 +21,9 @@ toolkits = {
 
 
 def main():
-    usage = 'usage: %prog [options] enaml_file'
+    usage = 'usage: %prog [options] enaml_file [script arguments]'
     parser = optparse.OptionParser(usage=usage, description=__doc__)
+    parser.allow_interspersed_args = False
     parser.add_option('-c', '--component', default='Main',
                       help='The component to view')
     parser.add_option('-t', '--toolkit', default='default',
@@ -34,11 +35,9 @@ def main():
     if len(args) == 0:
         print 'No .enaml file specified'
         sys.exit()
-    elif len(args) > 1:
-        print 'Too many files specified'
-        sys.exit()
     else:
         enaml_file = args[0]
+        script_argv = args[1:]
 
     with open(enaml_file) as f:
         enaml_code = f.read()
@@ -56,6 +55,8 @@ def main():
     # Put the directory of the Enaml file first in the path so relative imports
     # can work.
     sys.path.insert(0, os.path.abspath(os.path.dirname(enaml_file)))
+    # Bung in the command line arguments.
+    sys.argv = [enaml_file] + script_argv
     with imports():
         exec code in ns
 
