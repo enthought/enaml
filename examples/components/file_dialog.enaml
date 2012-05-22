@@ -1,0 +1,38 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+from os.path import abspath
+
+
+enamldef Main(MainWindow):
+    id: window
+    attr path : unicode = u""
+
+    title = 'File Chooser'
+    Container:
+        constraints = [
+            hbox(lbl, fld, pb),
+            align('v_center', lbl, fld, pb),
+            pb.height == fld.height,
+        ]
+        Label:
+            id: lbl
+            text = 'File'
+        Field:
+            id: fld
+            read_only = True
+            value << window.path
+        PushButton:
+            id: pb
+            text = 'Browse'
+            clicked ::
+                dlg = FileDialog(
+                    title='Choose File',
+                    mode='open',
+                    filename=abspath(__file__),
+                )
+                dlg.show()
+                if dlg.result == 'accepted':
+                    window.path = dlg.path
+
