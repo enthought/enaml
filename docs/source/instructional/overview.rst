@@ -41,7 +41,7 @@ recent (2012-current) versions of the following libraries:
   - `PyQt4 <http://www.riverbankcomputing.co.uk/software/pyqt/intro>`_
   - `wxPython <http://www.wxpython.org/>`_ with a recent (> 0.9.1)
     `agw <http://xoomer.virgilio.it/infinity77/AGW_Docs/index.html>`_
-    library
+    library (Windows only)
 - `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
   for parsing *.enaml* files
 - `casuarius <https://github.enthought.com/casuarius>`_ linear constraint
