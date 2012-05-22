@@ -3,7 +3,7 @@
 Enaml API Reference
 ===============
 
-.. warning:: The current version (i.e. 0.2alpha) of :mod:`enaml` is very
+.. warning:: The current version (i.e. 0.2.1) of :mod:`enaml` is very
     early in the development plans thus the API could change and become
     incompatible between revisions.
 
