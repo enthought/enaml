@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.qt_scroll_area &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_scroll_area</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.qt_scroll_area</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c"># All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">.qt_constraints_widget</span> <span class="kn">import</span> <span class="n">QtConstraintsWidget</span>
+
+<span class="kn">from</span> <span class="nn">...components.scroll_area</span> <span class="kn">import</span> <span class="n">AbstractTkScrollArea</span>
+
+
+<span class="n">SCROLLBAR_POLICY_MAP</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">as_needed</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAsNeeded</span><span class="p">,</span>
+    <span class="n">always_off</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOff</span><span class="p">,</span>
+    <span class="n">always_on</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ScrollBarAlwaysOn</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="QtScrollArea"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea">[docs]</a><span class="k">class</span> <span class="nc">QtScrollArea</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkScrollArea</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Qt implementation of a ScrollArea.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtScrollArea.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying QScrollAreacontrol.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtScrollArea.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtScrollArea</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_horizontal_policy</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">horizontal_scrollbar_policy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_vertical_policy</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">vertical_scrollbar_policy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_scrolled_component</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Shell Object Change Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtScrollArea.shell_horizontal_scrollbar_policy_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.shell_horizontal_scrollbar_policy_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_horizontal_scrollbar_policy_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;horizontal_scrollbar_policy&#39;</span>
+<span class="sd">        attribute of the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_horizontal_policy</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtScrollArea.shell_vertical_scrollbar_policy_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.shell_vertical_scrollbar_policy_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_vertical_scrollbar_policy_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;vertical_scrollbar_policy&#39;</span>
+<span class="sd">        attribute of the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_vertical_policy</span><span class="p">(</span><span class="n">policy</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtScrollArea.shell_scrolled_component_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.shell_scrolled_component_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_scrolled_component_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;layout_children&#39; attribute of </span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_scrolled_component</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="QtScrollArea.vertical_scrollbar_thickness"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.vertical_scrollbar_thickness">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_scrollbar_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the pixel thickness of the scrollbar.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrollbar_thickness</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="QtScrollArea.horizontal_scrollbar_thickness"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.horizontal_scrollbar_thickness">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_scrollbar_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the pixel thickness of the scrollbar.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_scrollbar_thickness</span><span class="p">(</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtScrollArea.scroll_to_position"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.scroll_to_position">[docs]</a>    <span class="k">def</span> <span class="nf">scroll_to_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">margin</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Scrolls the area such that position is visible with a</span>
+<span class="sd">        minimum of margin points surrounding position.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+
+        <span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span> <span class="o">=</span> <span class="n">position</span>
+        <span class="n">margin_x</span><span class="p">,</span> <span class="n">margin_y</span> <span class="o">=</span> <span class="n">margin</span>
+
+        <span class="n">widget</span><span class="o">.</span><span class="n">ensureVisible</span><span class="p">(</span><span class="n">pos_x</span><span class="p">,</span> <span class="n">pos_y</span><span class="p">,</span> <span class="n">margin_x</span><span class="p">,</span> <span class="n">margin_y</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtScrollArea.set_horizontal_policy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.set_horizontal_policy">[docs]</a>    <span class="k">def</span> <span class="nf">set_horizontal_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the horizontal scrollbar policy of the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setHorizontalScrollBarPolicy</span><span class="p">(</span><span class="n">SCROLLBAR_POLICY_MAP</span><span class="p">[</span><span class="n">policy</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="QtScrollArea.set_vertical_policy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.set_vertical_policy">[docs]</a>    <span class="k">def</span> <span class="nf">set_vertical_policy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">policy</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the vertical scrollbar policy of the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setVerticalScrollBarPolicy</span><span class="p">(</span><span class="n">SCROLLBAR_POLICY_MAP</span><span class="p">[</span><span class="n">policy</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="QtScrollArea.update_scrolled_component"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_scroll_area.QtScrollArea.update_scrolled_component">[docs]</a>    <span class="k">def</span> <span class="nf">update_scrolled_component</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the QScrollArea&#39;s children with the current children.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">scrolled_component</span>
+        <span class="k">if</span> <span class="n">component</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Auxiliary Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_scrollbar_thickness</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">orientation</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the thickness of a scrollbar for the given orientation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">style</span><span class="p">()</span>
+        <span class="n">options</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QStyleOptionSlider</span><span class="p">()</span>
+        <span class="n">options</span><span class="o">.</span><span class="n">orientation</span> <span class="o">=</span> <span class="n">orientation</span>
+        <span class="k">return</span> <span class="n">style</span><span class="o">.</span><span class="n">pixelMetric</span><span class="p">(</span><span class="n">style</span><span class="o">.</span><span class="n">PM_ScrollBarExtent</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_scroll_area</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

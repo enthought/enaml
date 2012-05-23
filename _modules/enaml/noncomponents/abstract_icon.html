@@ -1,0 +1,291 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.noncomponents.abstract_icon &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.noncomponents.abstract_icon</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.noncomponents.abstract_icon</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">abstractclassmethod</span>
+
+
+<div class="viewcode-block" id="AbstractTkIcon"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_icon.AbstractTkIcon">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkIcon</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract base class which represents a toolkit independent </span>
+<span class="sd">    abstraction of an icon.</span>
+<span class="sd">    </span>
+<span class="sd">    Concrete implemetations of the AbstractTkIcon class allow the user </span>
+<span class="sd">    to specify different images for different states of the icon, so that</span>
+<span class="sd">    a component can select the image which is most appropriate for </span>
+<span class="sd">    display in the widget.</span>
+<span class="sd">    </span>
+<span class="sd">    The icon can specify modes and states, which toolkit objects may use</span>
+<span class="sd">    to select which image to use for display. The available modes are:</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;normal&#39;</span>
+<span class="sd">            A control in its normal mode</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;disabled&#39;</span>
+<span class="sd">            A control which is disabled or greyed-out</span>
+<span class="sd">    </span>
+<span class="sd">        &#39;active&#39;</span>
+<span class="sd">            A control which is currently activiated</span>
+<span class="sd">    </span>
+<span class="sd">        &#39;selected&#39;</span>
+<span class="sd">            A control in a selected state</span>
+<span class="sd">    </span>
+<span class="sd">    Not every mode is used by every backend. </span>
+
+<span class="sd">    The state of an icon may be either:</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;on&#39;</span>
+<span class="sd">            The normal or checked form of the icon.</span>
+<span class="sd">        </span>
+<span class="sd">        &#39;off&#39;</span>
+<span class="sd">            The unchecked form of the icon.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+    
+    <span class="nd">@abstractclassmethod</span>
+<div class="viewcode-block" id="AbstractTkIcon.from_file"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_icon.AbstractTkIcon.from_file">[docs]</a>    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a new icon from a file on disk.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : string</span>
+<span class="sd">            The path to the image to use for the default mode and state.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : AbstractTkIcon</span>
+<span class="sd">            An new icon instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractclassmethod</span>
+<div class="viewcode-block" id="AbstractTkIcon.from_image"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_icon.AbstractTkIcon.from_image">[docs]</a>    <span class="k">def</span> <span class="nf">from_image</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a new icon from an instance of AbstractTkImage using</span>
+<span class="sd">        the default &#39;normal&#39; and &#39;on&#39; states.</span>
+<span class="sd">                </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image : AbstractTkImage</span>
+<span class="sd">            An appropriate instance of AbstractTkImage to use for the</span>
+<span class="sd">            default mode and state.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : AbstractTkIcon</span>
+<span class="sd">            An new icon instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkIcon.get_image"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_icon.AbstractTkIcon.get_image">[docs]</a>    <span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get an appropriate image instance for the requested size, </span>
+<span class="sd">        mode and state.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : (width, height)</span>
+<span class="sd">            The size of the requested image. The returned image may</span>
+<span class="sd">            be smaller, but will never be larger than this size.</span>
+<span class="sd">            </span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The mode of the requested image. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The state of the requested image. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : AbstractTkImage</span>
+<span class="sd">            An appropriate image instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkIcon.add_image"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_icon.AbstractTkIcon.add_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add an image instance for use by the icon with the given </span>
+<span class="sd">        mode and state.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image : AbstractTkImage</span>
+<span class="sd">            An appropriate image instance.</span>
+<span class="sd">            </span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The mode of the image. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The state of the image. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkIcon.actual_size"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_icon.AbstractTkIcon.actual_size">[docs]</a>    <span class="k">def</span> <span class="nf">actual_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the actual size for the requested size, mode, and</span>
+<span class="sd">        state.</span>
+
+<span class="sd">        The returned size may be smaller but will never be larger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : (width, height)</span>
+<span class="sd">            The size of the requested image. The returned image may</span>
+<span class="sd">            be smaller, but will never be larger than this size.</span>
+<span class="sd">            </span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The mode of the requested image. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The state of the requested image. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : (width, height)</span>
+<span class="sd">            The actual size for the requested size. If no suitable</span>
+<span class="sd">            match can be found, the result will be (-1, -1).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkIcon.available_sizes"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_icon.AbstractTkIcon.available_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">available_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the available image sizes for the given mode and </span>
+<span class="sd">        state.</span>
+<span class="sd">        </span>
+<span class="sd">        Sizes other than these may be requested, but the implemetation </span>
+<span class="sd">        may scale down the image on the fly to the requested size.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The requested image mode. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The requested image state. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : [(width, height), ... ]</span>
+<span class="sd">            The list of available sizes for the given mode and state.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.noncomponents.abstract_icon</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

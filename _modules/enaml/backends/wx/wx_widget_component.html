@@ -1,0 +1,460 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.wx.wx_widget_component &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_widget_component</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.wx.wx_widget_component</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+<span class="kn">import</span> <span class="nn">wx.lib.newevent</span>
+
+<span class="kn">from</span> <span class="nn">.wx_base_widget_component</span> <span class="kn">import</span> <span class="n">WXBaseWidgetComponent</span>
+<span class="kn">from</span> <span class="nn">.styling</span> <span class="kn">import</span> <span class="n">wx_color_from_color</span><span class="p">,</span> <span class="n">wx_font_from_font</span>
+
+<span class="kn">from</span> <span class="nn">...components.widget_component</span> <span class="kn">import</span> <span class="n">AbstractTkWidgetComponent</span>
+<span class="kn">from</span> <span class="nn">...layout.geometry</span> <span class="kn">import</span> <span class="n">Rect</span><span class="p">,</span> <span class="n">Size</span><span class="p">,</span> <span class="n">Pos</span>
+
+
+<span class="c">#: An event that is emitted when the minimum size is set on a widget. </span>
+<span class="c">#: This is required by the WXMainWindowSizer to know when to resize</span>
+<span class="c">#: the frame if the central widget&#39;s min size has changed.</span>
+<span class="n">wxMinSizeChanged</span><span class="p">,</span> <span class="n">EVT_MIN_SIZE</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="WXWidgetComponent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent">[docs]</a><span class="k">class</span> <span class="nc">WXWidgetComponent</span><span class="p">(</span><span class="n">WXBaseWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Wx implementation of WidgetComponent.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="WXWidgetComponent.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying Wx widget. As necessary, subclasses</span>
+<span class="sd">        should reimplement this method to create different types of</span>
+<span class="sd">        widgets.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the attributes of the the Wx widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXWidgetComponent</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shell</span><span class="o">.</span><span class="n">bgcolor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_bgcolor</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">bgcolor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shell</span><span class="o">.</span><span class="n">fgcolor</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_fgcolor</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">fgcolor</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">shell</span><span class="o">.</span><span class="n">font</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">font</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.enable_updates"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.enable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">enable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Enable rendering updates for the underlying Wx widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="k">if</span> <span class="n">widget</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">widget</span><span class="o">.</span><span class="n">IsFrozen</span><span class="p">():</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">Thaw</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="WXWidgetComponent.disable_updates"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.disable_updates">[docs]</a>    <span class="k">def</span> <span class="nf">disable_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Disable rendering updates for the underlying Wx widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="k">if</span> <span class="n">widget</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">widget</span><span class="o">.</span><span class="n">IsFrozen</span><span class="p">():</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">Freeze</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_visible"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Show or hide the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Show</span><span class="p">(</span><span class="n">visible</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.size_hint"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a (width, height) tuple of integers which represent</span>
+<span class="sd">        the suggested size of the widget for its current state, ignoring</span>
+<span class="sd">        any windowing decorations. This value is used by the layout </span>
+<span class="sd">        manager to determine how much space to allocate the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetBestSizeTuple</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.layout_geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the (x, y, width, height) to of layout geometry</span>
+<span class="sd">        info for the internal toolkit widget. This should ignore any</span>
+<span class="sd">        windowing decorations, and may be different than the value</span>
+<span class="sd">        returned by geometry() if the widget&#39;s effective layout rect</span>
+<span class="sd">        is different from its paintable rect.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_layout_geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_layout_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_layout_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the layout geometry of the internal widget to the </span>
+<span class="sd">        given x, y, width, and height values. The parameters passed</span>
+<span class="sd">        are equivalent semantics to layout_geometry().</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.geometry">[docs]</a>    <span class="k">def</span> <span class="nf">geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns an (x, y, width, height) tuple of geometry info</span>
+<span class="sd">        for the internal toolkit widget, ignoring any windowing</span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># wx widget.GetClientRect() doesn&#39;t seem to be what we want.</span>
+        <span class="c"># Often, GetRect() and GetClientRect() are the same, but when</span>
+        <span class="c"># they aren&#39;t, GetRect() does the right thing. This is probably</span>
+        <span class="c"># because of asymmetry between GetClientRect and SetDimensions. </span>
+        <span class="c"># Given that, the existing examples have been tested side by </span>
+        <span class="c"># side with Qt on Windows, and these current geometry handlers </span>
+        <span class="c"># &quot;do the right thing&quot; in most cases, plus or minus a pixel or</span>
+        <span class="c"># two difference.</span>
+        <span class="k">return</span> <span class="n">Rect</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetRect</span><span class="p">()</span><span class="o">.</span><span class="n">asTuple</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_geometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_geometry">[docs]</a>    <span class="k">def</span> <span class="nf">set_geometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the geometry of the internal widget to the given</span>
+<span class="sd">        x, y, width, and height values, ignoring any windowing </span>
+<span class="sd">        decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># wx doesn&#39;t seem to have a SetClientDimensions function</span>
+        <span class="c"># or anything similar. SetClientRect *does not* do the right</span>
+        <span class="c"># thing. This SetDimensions *seems* to do the correct thing</span>
+        <span class="c"># but I&#39;m skeptical that it won&#39;t break down in certain </span>
+        <span class="c"># cirumstances and do the wrong thing wrt to window decorations.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetDimensions</span><span class="p">(</span><span class="o">*</span><span class="n">rect</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.min_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.min_size">[docs]</a>    <span class="k">def</span> <span class="nf">min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the hard minimum (width, height) of the widget, </span>
+<span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
+<span class="sd">        to be resized smaller than this value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetSizeTuple</span><span class="p">()</span>
+        <span class="n">client_width</span><span class="p">,</span> <span class="n">client_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span>
+        <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">GetMinSize</span><span class="p">())</span>
+        <span class="n">min_width</span> <span class="o">=</span> <span class="n">min_width</span> <span class="o">-</span> <span class="p">(</span><span class="n">widget_width</span> <span class="o">-</span> <span class="n">client_width</span><span class="p">)</span>
+        <span class="n">min_height</span> <span class="o">=</span> <span class="n">min_height</span> <span class="o">-</span> <span class="p">(</span><span class="n">widget_height</span> <span class="o">-</span> <span class="n">client_height</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_min_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the hard minimum width and height of the widget, ignoring</span>
+<span class="sd">        any windowing decorations. A widget will not be able to be resized </span>
+<span class="sd">        smaller than this value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Wx is lacking a SetMinClientSize function, so we fake it.</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetSizeTuple</span><span class="p">()</span>
+        <span class="n">client_width</span><span class="p">,</span> <span class="n">client_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span>
+        <span class="n">delta_width</span> <span class="o">=</span> <span class="n">widget_width</span> <span class="o">-</span> <span class="n">client_width</span>
+        <span class="n">delta_height</span> <span class="o">=</span> <span class="n">widget_height</span> <span class="o">-</span> <span class="n">client_height</span>
+        <span class="n">min_width</span> <span class="o">=</span> <span class="n">min_width</span> <span class="o">+</span> <span class="n">delta_width</span>
+        <span class="n">min_height</span> <span class="o">=</span> <span class="n">min_height</span> <span class="o">+</span> <span class="n">delta_height</span>
+
+        <span class="c"># Wx won&#39;t automatically reset the max size if the min size</span>
+        <span class="c"># is larger, ugh. Additionally, we don&#39;t want to update the</span>
+        <span class="c"># max size if it&#39;s &lt; 0 since that indicates the max size is</span>
+        <span class="c"># not bounded. </span>
+        <span class="n">max_width</span><span class="p">,</span> <span class="n">max_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">max_width</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">max_height</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">max_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_width</span><span class="p">,</span> <span class="n">max_width</span> <span class="o">+</span> <span class="n">delta_width</span><span class="p">)</span>
+            <span class="n">max_height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">min_height</span><span class="p">,</span> <span class="n">max_height</span> <span class="o">+</span> <span class="n">delta_height</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetMaxSize</span><span class="p">((</span><span class="n">max_width</span><span class="p">,</span> <span class="n">max_height</span><span class="p">))</span>
+
+        <span class="n">widget</span><span class="o">.</span><span class="n">SetMinSize</span><span class="p">((</span><span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">))</span>
+
+        <span class="c"># If the min size is now smaller that the existing size, resize</span>
+        <span class="c"># the widget to meet the min size.</span>
+        <span class="c">#</span>
+        <span class="c"># XXX this is a bit wrong, it should only resize the offending</span>
+        <span class="c"># dimension.</span>
+        <span class="n">new_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">widget_width</span><span class="p">,</span> <span class="n">min_width</span><span class="p">)</span>
+        <span class="n">new_height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">widget_height</span><span class="p">,</span> <span class="n">min_height</span><span class="p">)</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_width</span><span class="p">,</span> <span class="n">new_height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_size</span> <span class="o">!=</span> <span class="p">(</span><span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetSize</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
+
+        <span class="c"># We create and emit a min size event so that if this widget</span>
+        <span class="c"># is the central widget in a MainWindow, the sizer for that</span>
+        <span class="c"># window can properly update the minimum size of the frame.</span>
+        <span class="n">evt</span> <span class="o">=</span> <span class="n">wxMinSizeChanged</span><span class="p">()</span>
+        <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">evt</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.max_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.max_size">[docs]</a>    <span class="k">def</span> <span class="nf">max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the hard maximum (width, height) of the widget, </span>
+<span class="sd">        ignoring any windowing decorations. A widget will not be able</span>
+<span class="sd">        to be resized larger than this value</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Wx is lacking a MaxClientSize function, so we fake it.</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetSizeTuple</span><span class="p">()</span>
+        <span class="n">client_width</span><span class="p">,</span> <span class="n">client_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span>
+        <span class="n">max_width</span><span class="p">,</span> <span class="n">max_height</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">widget</span><span class="o">.</span><span class="n">GetMaxSize</span><span class="p">())</span>
+        <span class="n">max_width</span> <span class="o">=</span> <span class="n">max_width</span> <span class="o">-</span> <span class="p">(</span><span class="n">widget_width</span> <span class="o">-</span> <span class="n">client_width</span><span class="p">)</span>
+        <span class="n">max_height</span> <span class="o">=</span> <span class="n">max_height</span> <span class="o">-</span> <span class="p">(</span><span class="n">widget_height</span> <span class="o">-</span> <span class="n">client_height</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="n">max_width</span><span class="p">,</span> <span class="n">max_height</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_max_size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the hard maximum width and height of the widget, ignoring</span>
+<span class="sd">        any windowing decorations. A widget will not be able to be resized </span>
+<span class="sd">        larger than this value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Wx is lacking a SetMaxClientSize function and at the moment, </span>
+        <span class="c"># it&#39;s uncertain what the maximum allowable size is on wx. For </span>
+        <span class="c"># now, we just fake computation and use the Qt limits.</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">max_width</span><span class="p">,</span> <span class="n">max_height</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetSizeTuple</span><span class="p">()</span>
+        <span class="n">client_width</span><span class="p">,</span> <span class="n">client_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span>
+        <span class="n">delta_width</span> <span class="o">=</span> <span class="n">widget_width</span> <span class="o">-</span> <span class="n">client_width</span>
+        <span class="n">delta_height</span> <span class="o">=</span> <span class="n">widget_height</span> <span class="o">-</span> <span class="n">client_height</span> 
+        <span class="n">max_width</span> <span class="o">=</span> <span class="n">max_width</span> <span class="o">+</span> <span class="n">delta_width</span>
+        <span class="n">max_height</span> <span class="o">=</span> <span class="n">max_height</span> <span class="o">+</span> <span class="n">delta_height</span>
+        <span class="n">max_width</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_width</span><span class="p">,</span> <span class="mi">16777215</span><span class="p">)</span>
+        <span class="n">max_height</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_height</span><span class="p">,</span> <span class="mi">16777215</span><span class="p">)</span>
+
+        <span class="c"># Wx won&#39;t automatically reset the min size if the max size</span>
+        <span class="c"># is smaller. Ugh....</span>
+        <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_size</span><span class="p">()</span>
+        <span class="n">min_width</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_width</span> <span class="o">+</span> <span class="n">delta_width</span><span class="p">,</span> <span class="n">max_width</span><span class="p">)</span>
+        <span class="n">min_height</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_height</span> <span class="o">+</span> <span class="n">delta_height</span><span class="p">,</span> <span class="n">max_height</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetMinSize</span><span class="p">((</span><span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetMaxSize</span><span class="p">((</span><span class="n">max_width</span><span class="p">,</span> <span class="n">max_height</span><span class="p">))</span>
+
+        <span class="c"># If the max size is now larger that the existing size, resize</span>
+        <span class="c"># the widget to meet the max size.</span>
+        <span class="c">#</span>
+        <span class="c"># XXX this is a bit wrong, it should only resize the offending</span>
+        <span class="c"># dimension.</span>
+        <span class="n">new_width</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">widget_width</span><span class="p">,</span> <span class="n">max_width</span><span class="p">)</span>
+        <span class="n">new_height</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">widget_height</span><span class="p">,</span> <span class="n">max_height</span><span class="p">)</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="p">(</span><span class="n">new_width</span><span class="p">,</span> <span class="n">new_height</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_size</span> <span class="o">!=</span> <span class="p">(</span><span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetSize</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.size"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the size of the internal toolkit widget, ignoring any</span>
+<span class="sd">        windowing decorations, as a (width, height) tuple of integers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Size</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">())</span>
+                </div>
+<div class="viewcode-block" id="WXWidgetComponent.resize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.resize">[docs]</a>    <span class="k">def</span> <span class="nf">resize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Resizes the internal toolkit widget according the given</span>
+<span class="sd">        width and height integers, ignoring any windowing decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># SetClientSize completely breaks down on Windows, so we fake </span>
+        <span class="c"># it and hope for the best.</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="n">widget_width</span><span class="p">,</span> <span class="n">widget_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetSizeTuple</span><span class="p">()</span>
+        <span class="n">client_width</span><span class="p">,</span> <span class="n">client_height</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span> 
+        <span class="n">width</span> <span class="o">=</span> <span class="n">width</span> <span class="o">+</span> <span class="p">(</span><span class="n">widget_width</span> <span class="o">-</span> <span class="n">client_width</span><span class="p">)</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="n">height</span> <span class="o">+</span> <span class="p">(</span><span class="n">widget_height</span> <span class="o">-</span> <span class="n">client_height</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetSize</span><span class="p">((</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.pos"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.pos">[docs]</a>    <span class="k">def</span> <span class="nf">pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the position of the internal toolkit widget as an</span>
+<span class="sd">        (x, y) tuple of integers, including any windowing decorations. </span>
+<span class="sd">        The coordinates should be relative to the origin of the widget&#39;s </span>
+<span class="sd">        parent, or to the screen if the widget is toplevel.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">Pos</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetPositionTuple</span><span class="p">())</span>
+            </div>
+<div class="viewcode-block" id="WXWidgetComponent.move"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.move">[docs]</a>    <span class="k">def</span> <span class="nf">move</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pos</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the internal toolkit widget according to the given</span>
+<span class="sd">        x and y integers which are relative to the origin of the</span>
+<span class="sd">        widget&#39;s parent and includes any windowing decorations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Move</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.shell_enabled_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;enabled&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.shell_bgcolor_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.shell_bgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_bgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;bgcolor&#39; attribute on the shell</span>
+<span class="sd">        object. Sets the background color of the internal widget to the </span>
+<span class="sd">        given color.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_bgcolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXWidgetComponent.shell_fgcolor_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.shell_fgcolor_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_fgcolor_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;fgcolor&#39; attribute on the shell</span>
+<span class="sd">        object. Sets the foreground color of the internal widget to the </span>
+<span class="sd">        given color.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_fgcolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.shell_font_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.shell_font_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_font_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;font&#39; attribute on the shell </span>
+<span class="sd">        object. Sets the font of the internal widget to the given font.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_font</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_enabled"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_enabled">[docs]</a>    <span class="k">def</span> <span class="nf">set_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Enable or disable the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_bgcolor"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_bgcolor">[docs]</a>    <span class="k">def</span> <span class="nf">set_bgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the background color of the widget to an appropriate</span>
+<span class="sd">        wxColor given the provided Enaml Color object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wx_color</span> <span class="o">=</span> <span class="n">wx_color_from_color</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetBackgroundColour</span><span class="p">(</span><span class="n">wx_color</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_fgcolor"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_fgcolor">[docs]</a>    <span class="k">def</span> <span class="nf">set_fgcolor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">color</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the foreground color of the widget to an appropriate</span>
+<span class="sd">        wxColor given the provided Enaml Color object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wx_color</span> <span class="o">=</span> <span class="n">wx_color_from_color</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetForegroundColour</span><span class="p">(</span><span class="n">wx_color</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXWidgetComponent.set_font"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_widget_component.WXWidgetComponent.set_font">[docs]</a>    <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">font</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the font of the widget to an appropriate QFont given </span>
+<span class="sd">        the provided Enaml Font object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># There&#39;s no such thing as a NullFont on wx, so if the font is</span>
+        <span class="c"># equivalent to the Enaml default font, and we haven&#39;t yet changed </span>
+        <span class="c"># the font for this instance, then we don&#39;t change it. Otherwise</span>
+        <span class="c"># the fonts won&#39;t be equivalelnt to the default.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">font</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_default_wx_font</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">wx_font</span> <span class="o">=</span> <span class="n">wx_font_from_font</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetFont</span><span class="p">(</span><span class="n">wx_font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_has_default_wx_font</span> <span class="o">=</span> <span class="bp">False</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_widget_component</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

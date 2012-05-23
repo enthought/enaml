@@ -1,0 +1,205 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.qt_dialog &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_dialog</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.qt_dialog</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">.qt_window</span> <span class="kn">import</span> <span class="n">QtWindow</span><span class="p">,</span> <span class="n">QtWindowLayout</span>
+<span class="kn">from</span> <span class="nn">.qt_resizing_widgets</span> <span class="kn">import</span> <span class="n">QResizingDialog</span>
+
+<span class="kn">from</span> <span class="nn">...components.dialog</span> <span class="kn">import</span> <span class="n">AbstractTkDialog</span>
+
+
+<span class="n">_MODAL_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;application_modal&#39;</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">ApplicationModal</span><span class="p">,</span>
+    <span class="s">&#39;window_modal&#39;</span><span class="p">:</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">WindowModal</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="QtDialog"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dialog.QtDialog">[docs]</a><span class="k">class</span> <span class="nc">QtDialog</span><span class="p">(</span><span class="n">QtWindow</span><span class="p">,</span> <span class="n">AbstractTkDialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of a Dialog.</span>
+
+<span class="sd">    This class creates a simple top-level dialog.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtDialog.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dialog.QtDialog.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying QDialog control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QResizingDialog</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtWindowLayout</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="QtDialog.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dialog.QtDialog.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the signal handlers for the dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtDialog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">finished</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_close</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtDialog.accept"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dialog.QtDialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Accept and close the dialog, sending the &#39;finished&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="QtDialog.reject"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dialog.QtDialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Reject and close the dialog, sending the &#39;finished&#39; signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Event Handlers </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qt_result</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the dialog&#39;s finished signal. </span>
+
+<span class="sd">        This translates from a QDialog result into an Enaml result enum</span>
+<span class="sd">        value. The default result is rejection.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">qt_result</span> <span class="o">==</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="o">.</span><span class="n">Accepted</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="s">&#39;accepted&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="s">&#39;rejected&#39;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">_result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">closed</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Overrides</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtDialog.set_visible"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_dialog.QtDialog.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden from the parent class to properly launch and close </span>
+<span class="sd">        the dialog with the specified modality.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">_active</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">opened</span><span class="p">()</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">setWindowModality</span><span class="p">(</span><span class="n">_MODAL_MAP</span><span class="p">[</span><span class="n">shell</span><span class="o">.</span><span class="n">modality</span><span class="p">])</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">exec_</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_dialog</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

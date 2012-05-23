@@ -1,0 +1,217 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.qt_group_box &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_group_box</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.qt_group_box</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">.qt_container</span> <span class="kn">import</span> <span class="n">QtContainer</span>
+<span class="kn">from</span> <span class="nn">.qt_resizing_widgets</span> <span class="kn">import</span> <span class="n">QResizingGroupBox</span>
+
+<span class="kn">from</span> <span class="nn">...components.group_box</span> <span class="kn">import</span> <span class="n">AbstractTkGroupBox</span>
+<span class="kn">from</span> <span class="nn">...layout.geometry</span> <span class="kn">import</span> <span class="n">Box</span>
+
+
+<span class="n">QT_ALIGNMENTS</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+    <span class="n">left</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignLeft</span><span class="p">,</span>
+    <span class="n">right</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignRight</span><span class="p">,</span>
+    <span class="n">center</span><span class="o">=</span><span class="n">QtCore</span><span class="o">.</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignHCenter</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<div class="viewcode-block" id="QtGroupBox"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox">[docs]</a><span class="k">class</span> <span class="nc">QtGroupBox</span><span class="p">(</span><span class="n">QtContainer</span><span class="p">,</span> <span class="n">AbstractTkGroupBox</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt4 implementation of GroupBox.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: Don&#39;t use a widget item to compute the layout rect for a group</span>
+    <span class="c">#: box, it results in not enough space around/above neighbors.</span>
+    <span class="n">use_widget_item_for_layout</span> <span class="o">=</span> <span class="bp">False</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtGroupBox.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying QGroupBox control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QResizingGroupBox</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtGroupBox.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Intializes the widget with the attributes of this instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtGroupBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_flat</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">flat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title_align</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">title_align</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtGroupBox.shell_title_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the title of the group box with the new value from the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We perform the title update in a relayout context to </span>
+        <span class="c"># prevent flicker and multiple calls to relayout.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">request_relayout_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtGroupBox.shell_flat_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.shell_flat_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_flat_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the flat flag of the group box with the new value from</span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We perform the flat update in a relayout context to </span>
+        <span class="c"># prevent flicker and multiple calls to relayout.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">request_relayout_task</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">set_flat</span><span class="p">,</span> <span class="n">flat</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtGroupBox.shell_title_align_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.shell_title_align_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_align_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">align</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the title alignment to the new value from the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title_align</span><span class="p">(</span><span class="n">align</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtGroupBox.get_contents_margins"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.get_contents_margins">[docs]</a>    <span class="k">def</span> <span class="nf">get_contents_margins</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the (top, left, right, bottom) margin values for the</span>
+<span class="sd">        widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">contentsMargins</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Box</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">top</span><span class="p">(),</span> <span class="n">m</span><span class="o">.</span><span class="n">right</span><span class="p">(),</span> <span class="n">m</span><span class="o">.</span><span class="n">bottom</span><span class="p">(),</span> <span class="n">m</span><span class="o">.</span><span class="n">left</span><span class="p">())</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtGroupBox.set_title"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the title of group box.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="QtGroupBox.set_flat"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.set_flat">[docs]</a>    <span class="k">def</span> <span class="nf">set_flat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flat</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the flattened appearance of the group box.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setFlat</span><span class="p">(</span><span class="n">flat</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="QtGroupBox.set_title_align"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_group_box.QtGroupBox.set_title_align">[docs]</a>    <span class="k">def</span> <span class="nf">set_title_align</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">align</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the alignment of the title of the group box.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qt_align</span> <span class="o">=</span> <span class="n">QT_ALIGNMENTS</span><span class="p">[</span><span class="n">align</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">qt_align</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_group_box</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

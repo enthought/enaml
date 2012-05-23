@@ -1,0 +1,460 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.signaling &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.signaling</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.signaling</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">types</span> <span class="kn">import</span> <span class="n">MethodType</span>
+<span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">ref</span><span class="p">,</span> <span class="n">WeakKeyDictionary</span>
+
+
+<div class="viewcode-block" id="Signal"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.signaling.Signal">[docs]</a><span class="k">class</span> <span class="nc">Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A descriptor which provides notification functionality similar</span>
+<span class="sd">    to Qt signals.</span>
+
+<span class="sd">    A Signal is used by creating an instance of it in the body of a</span>
+<span class="sd">    class definition. Connecting to the signal is done through an</span>
+<span class="sd">    instance of that class using the connect/disconnect methods. A </span>
+<span class="sd">    signal is emitted by calling it with any given arguments. When </span>
+<span class="sd">    a signal is emitted, connect handlers are dispatched immediately</span>
+<span class="sd">    with the arguments passed to the signal.</span>
+
+<span class="sd">    Only weak references are kept to the connected handlers. In the</span>
+<span class="sd">    case of bound methods, the lifetime of the connection is tied</span>
+<span class="sd">    to the lifetime of the underlying object and not the method </span>
+<span class="sd">    itself.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">        </span>
+<span class="sd">        class Foo(object):</span>
+<span class="sd">            bar = Signal()</span>
+
+<span class="sd">        class Baz(object):</span>
+<span class="sd">            def spam(self, *args, **kwargs):</span>
+<span class="sd">                print &#39;spam called&#39;, args, kwargs</span>
+<span class="sd">        </span>
+<span class="sd">        def printer(*args, **kwargs):</span>
+<span class="sd">            print &#39;printer called&#39;, args, kwargs</span>
+
+<span class="sd">        &gt;&gt;&gt; foo = Foo()</span>
+<span class="sd">        &gt;&gt;&gt; baz = Baz()</span>
+<span class="sd">        &gt;&gt;&gt; foo.bar.connect(printer)</span>
+<span class="sd">        &gt;&gt;&gt; foo.bar.connect(baz.spam)</span>
+<span class="sd">        &gt;&gt;&gt; foo.bar(42)</span>
+<span class="sd">        printer called (42,) {}</span>
+<span class="sd">        spam called (42,) {}</span>
+<span class="sd">        &gt;&gt;&gt; del baz</span>
+<span class="sd">        &gt;&gt;&gt; foo.bar(16, one=2)</span>
+<span class="sd">        printer called (16,) {&#39;one&#39;: 2}</span>
+<span class="sd">        &gt;&gt;&gt; foo.bar.disconnect(printer)</span>
+<span class="sd">        &gt;&gt;&gt; foo.bar(19)</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_instances&#39;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instances</span> <span class="o">=</span> <span class="n">WeakKeyDictionary</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The data descriptors getter. Returns the _Signal instance</span>
+<span class="sd">        for the given object, creating one if necessary. An error will</span>
+<span class="sd">        be raised if the descriptor is accessed through the class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Signals can only be accessed through an instance&#39;</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">instances</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_instances</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">in</span> <span class="n">instances</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">instances</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">instances</span><span class="p">[</span><span class="n">obj</span><span class="p">]</span> <span class="o">=</span> <span class="n">_Signal</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The data descriptor setter. Raises an error when attempting</span>
+<span class="sd">        to assign to a signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Cannot set the value of a Signal. Signals are read-only.&#39;</span>
+        <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__delete__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The data descriptor deleter. Removes any _Signal instance</span>
+<span class="sd">        for the given object, which will remove all connected handlers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_instances</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
+
+</div>
+<span class="k">class</span> <span class="nc">_Signal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A signal implementation object. Instance of this class are</span>
+<span class="sd">    created as needed by the Signal descriptor. A single instance </span>
+<span class="sd">    of this class is created per instance of the class which owns</span>
+<span class="sd">    the Signal descriptor. This class manages the actual connected</span>
+<span class="sd">    handlers for the object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_connections&#39;</span><span class="p">,</span> <span class="s">&#39;__weakref__&#39;</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">def</span> <span class="nf">_make_connection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private method which creates an appropriate connection </span>
+<span class="sd">        object for the given callback.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object which will be called when the signal</span>
+<span class="sd">            is emitted.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : _MethodConnection or _DirectConnection</span>
+<span class="sd">            If the callable is a bound method, a _MethodConnection is</span>
+<span class="sd">            created. For all other cases, a _DirectConnection is used.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="n">MethodType</span><span class="p">):</span>
+            <span class="n">connection</span> <span class="o">=</span> <span class="n">_MethodConnection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">connection</span> <span class="o">=</span> <span class="n">_DirectConnection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">connection</span>
+
+    <span class="k">def</span> <span class="nf">_connection_dead</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">conn</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A private method which removes the connection object from</span>
+<span class="sd">        the internal list of connections when the connection has died.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        conn : _BaseConnection</span>
+<span class="sd">            The dead _BaseConnection instance to remove.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">connections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span>
+        <span class="k">if</span> <span class="n">conn</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+            <span class="n">connections</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Emits the signal with the given arguments and keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">conn</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span><span class="p">:</span>
+            <span class="n">conn</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Connects the given callback to the signal. The callback</span>
+<span class="sd">        will be called when the signal is emitted. It will be passed</span>
+<span class="sd">        any arguments that were emitted with the signal. A callback</span>
+<span class="sd">        can only be connected to the signal once. Multiple calls to</span>
+<span class="sd">        connect() for the same callback have no effect.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object to invoke whenever the signal is</span>
+<span class="sd">            emitted. If the callback is not callable, and exception</span>
+<span class="sd">            will be raised.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Cannot connect a non-callable to a Signal&#39;</span><span class="p">)</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_connection</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="n">connections</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_connections</span>
+        <span class="k">if</span> <span class="n">conn</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">connections</span><span class="p">:</span>
+            <span class="n">connections</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">disconnect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Disconnects the given callback from the signal. If the </span>
+<span class="sd">        callback was not previously connected, this method has no</span>
+<span class="sd">        effect.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable object to disconnect from the signal. If the</span>
+<span class="sd">            callback is not callable, and exception will be raised.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">callable</span><span class="p">(</span><span class="n">callback</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Cannot disconnect a non-callable from a Signal&#39;</span><span class="p">)</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_connection</span><span class="p">(</span><span class="n">callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_connection_dead</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_BaseConnection</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The base connection class which provides some basic lifetime</span>
+<span class="sd">    management for the connection and stubs out the api which must</span>
+<span class="sd">    be implemented by subclasses.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_parent_ref&#39;</span><span class="p">,</span> <span class="s">&#39;_remove&#39;</span><span class="p">,</span> <span class="s">&#39;__weakref__&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a _BaseConnection</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : _Signal</span>
+<span class="sd">            The _Signal instance which owns this connection. Only a</span>
+<span class="sd">            weak reference is maintained to the _Signal.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">remove</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">selfref</span><span class="o">=</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="n">this</span> <span class="o">=</span> <span class="n">selfref</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">this</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">_connection_dead</span><span class="p">(</span><span class="n">this</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span> <span class="o">=</span> <span class="n">remove</span>
+    
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invokes the underlying callable with the given arguments</span>
+<span class="sd">        and keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Computes the hash of the underlying callable. Two different</span>
+<span class="sd">        connection instances with the same underlying callable should</span>
+<span class="sd">        hash the same.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Performs equality comparison. Two different connection</span>
+<span class="sd">        instances with the same underlying callable should compare</span>
+<span class="sd">        equally.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="k">class</span> <span class="nc">_DirectConnection</span><span class="p">(</span><span class="n">_BaseConnection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A _BaseConnection subclass which makes a direct connection</span>
+<span class="sd">    to the underlying callable.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_callback_ref&#39;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">callback</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a _DirectConnection</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : _Signal</span>
+<span class="sd">            The _Signal instance which owns this connection. Only a</span>
+<span class="sd">            weak reference is maintained to the _Signal.</span>
+
+<span class="sd">        callback : callable</span>
+<span class="sd">            The callable to which the connection should be made. </span>
+<span class="sd">            Only a direct weak reference to the callable is kept.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">_DirectConnection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_callback_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invokes the underlying callable with the given arguments</span>
+<span class="sd">        and keywords.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">callback</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback_ref</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">callback</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Computes and returns the hash of the weak reference to the</span>
+<span class="sd">        underlying callable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_callback_ref</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Performs equality comparison. If comparing against another</span>
+<span class="sd">        instance of _DirectionConnection, the comparison is made between</span>
+<span class="sd">        the weak references to the underlying callables. Otherwise, this</span>
+<span class="sd">        method will return False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_DirectConnection</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callback_ref</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_callback_ref</span>
+        <span class="k">return</span> <span class="bp">False</span>
+    
+
+<span class="k">class</span> <span class="nc">_MethodConnection</span><span class="p">(</span><span class="n">_BaseConnection</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A _BaseConnection subclass which makes a connection to the</span>
+<span class="sd">    constituents of a bound method</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;_im_func&#39;</span><span class="p">,</span> <span class="s">&#39;_im_self_ref&#39;</span><span class="p">,</span> <span class="s">&#39;_im_class&#39;</span><span class="p">,)</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">method</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a _MethodConnection</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : _Signal</span>
+<span class="sd">            The _Signal instance which owns this connection. Only a</span>
+<span class="sd">            weak reference is maintained to the _Signal.</span>
+
+<span class="sd">        method : types.MethodType</span>
+<span class="sd">            The bound method instance to which the connection should</span>
+<span class="sd">            be made. The method is deconstructed into its constituents</span>
+<span class="sd">            and the lifetime of connection is tied to the lifetime</span>
+<span class="sd">            of the bound object. Only a weak reference to that object</span>
+<span class="sd">            is kept.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">_MethodConnection</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_im_func</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">im_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_im_self_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">method</span><span class="o">.</span><span class="n">im_self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_remove</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_im_class</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">im_class</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invokes the underlying method with the given arguments and </span>
+<span class="sd">        keywords. The bound method is reconstructed before being called.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">im_self</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_im_self_ref</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">im_self</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="n">MethodType</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_im_func</span><span class="p">,</span> <span class="n">im_self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_im_class</span><span class="p">)</span>
+            <span class="n">method</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Computes and returns a hash of the consituent components</span>
+<span class="sd">        of the underlying method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_im_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_im_self_ref</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_im_class</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Performs equality comparison. If comparing against another</span>
+<span class="sd">        instance of _MethodConnection, the comparison is made between</span>
+<span class="sd">        the constituent components of the bound method. Otherwise, this</span>
+<span class="sd">        method will return False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">_MethodConnection</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_im_func</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_im_func</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_im_self_ref</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_im_self_ref</span> <span class="ow">and</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_im_class</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">_im_class</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.signaling</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

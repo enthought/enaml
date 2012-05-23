@@ -1,0 +1,442 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Enaml Standard Widget Library &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="up" title="Enaml API Reference" href="index.html" />
+    <link rel="next" title="styling Package" href="enaml.styling.html" />
+    <link rel="prev" title="noncomponents Package" href="enaml.noncomponents.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.styling.html" title="styling Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.noncomponents.html" title="noncomponents Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="index.html" accesskey="U">Enaml API Reference</a> &raquo;</li>
+  
+    <li><a href="#">Enaml Standard Widget Library</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">Enaml Standard Widget Library</a><ul>
+<li><a class="reference internal" href="#fields">Fields</a></li>
+<li><a class="reference internal" href="#radio-group">Radio Group</a></li>
+<li><a class="reference internal" href="#stacked">Stacked</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api_ref/std_library_ref.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="enaml-standard-widget-library">
+<span id="std-library-ref"></span><h1>Enaml Standard Widget Library<a class="headerlink" href="#enaml-standard-widget-library" title="Permalink to this headline">¶</a></h1>
+<p>The following components are available from the standard library:</p>
+<div class="section" id="fields">
+<span id="std-lib-fields"></span><h2>Fields<a class="headerlink" href="#fields" title="Permalink to this headline">¶</a></h2>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.ErrorField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ErrorField</tt><a class="headerlink" href="#enaml.stdlib.fields.ErrorField" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ErrorField updates its background color based on validation
+state and error state.</p>
+</dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.NumberField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">NumberField</tt><a class="headerlink" href="#enaml.stdlib.fields.NumberField" title="Permalink to this definition">¶</a></dt>
+<dd><p>NumberField serves as a base prototype for the other concrete
+number fields. It adds the user attributes &#8216;low&#8217;, &#8216;high&#8217;, and
+&#8216;precision&#8217;, which when changed will cause a new &#8216;validator_class&#8217;
+to be instantiatied and used as the validator for the field.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Input Attributes:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="NumberField.validator_class">
+<tt class="descname">validator_class</tt><em class="property"> = NumberValidator</em><a class="headerlink" href="#NumberField.validator_class" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The validator class that must be used.</p>
+<dl class="attribute">
+<dt id="NumberField.low">
+<tt class="descname">low</tt><em class="property"> = None or number, optional</em><a class="headerlink" href="#NumberField.low" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The lowest acceptable value for the number. If None, there
+is no lower limit to the value. The default is None.</p>
+<dl class="attribute">
+<dt id="NumberField.high">
+<tt class="descname">high</tt><em class="property"> = None or number, optional</em><a class="headerlink" href="#NumberField.high" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The highest acceptable value for the number. If None, there
+is no upper limit to the value. The default is None.</p>
+<dl class="attribute">
+<dt id="NumberField.precision">
+<tt class="descname">precision</tt><em class="property"> = int, optional</em><a class="headerlink" href="#NumberField.precision" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="last">An optional integer to control the precision of floating
+point number formatting. The default is -1 and indicates
+that implementation default precision should be used.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<p>The following Fields all inherit from NumberField, and do the appropriate type
+of numeric validation:</p>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.IntegralNumberField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">IntegralNumberField</tt><a class="headerlink" href="#enaml.stdlib.fields.IntegralNumberField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.RealNumberField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">RealNumberField</tt><a class="headerlink" href="#enaml.stdlib.fields.RealNumberField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.ComplexNumberField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ComplexNumberField</tt><a class="headerlink" href="#enaml.stdlib.fields.ComplexNumberField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.IntField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">IntField</tt><a class="headerlink" href="#enaml.stdlib.fields.IntField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.FloatField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">FloatField</tt><a class="headerlink" href="#enaml.stdlib.fields.FloatField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.ComplexField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ComplexField</tt><a class="headerlink" href="#enaml.stdlib.fields.ComplexField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.BinField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">BinField</tt><a class="headerlink" href="#enaml.stdlib.fields.BinField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.OctField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">OctField</tt><a class="headerlink" href="#enaml.stdlib.fields.OctField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.HexField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">HexField</tt><a class="headerlink" href="#enaml.stdlib.fields.HexField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongBinField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongBinField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongBinField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongOctField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongOctField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongOctField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongHexField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongHexField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongHexField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The following Fields all inherit from NumberField, and accept any expression
+which evaluates to the appropriate type of number:</p>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.IntegralNumberExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">IntegralNumberExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.IntegralNumberExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.RealNumberExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">RealNumberExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.RealNumberExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.ComplexNumberExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ComplexNumberExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.ComplexNumberExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.IntExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">IntExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.IntExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.FloatExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">FloatExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.FloatExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.ComplexExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">ComplexExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.ComplexExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.BinExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">BinExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.BinExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.OctExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">OctExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.OctExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.HexExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">HexExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.HexExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongBinExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongBinExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongBinExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongOctExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongOctExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongOctExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.fields.LongHexExpressionField">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.fields.</tt><tt class="descname">LongHexExpressionField</tt><a class="headerlink" href="#enaml.stdlib.fields.LongHexExpressionField" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="radio-group">
+<span id="std-lib-radio-group"></span><h2>Radio Group<a class="headerlink" href="#radio-group" title="Permalink to this headline">¶</a></h2>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.radio_group.RadioGroup">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.radio_group.</tt><tt class="descname">RadioGroup</tt><a class="headerlink" href="#enaml.stdlib.radio_group.RadioGroup" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Container that automatically generates a group of RadioButtons.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Input Attributes:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="RadioGroup.orientation">
+<tt class="descname">orientation</tt><em class="property"> = string</em><a class="headerlink" href="#RadioGroup.orientation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The orientation of the group of radio buttons, either
+&#8216;horizontal&#8217; or &#8216;vertical&#8217;. Defaults to &#8216;horizontal&#8217;.</p>
+<dl class="attribute">
+<dt id="RadioGroup.items">
+<tt class="descname">items</tt><em class="property"> = Sequence</em><a class="headerlink" href="#RadioGroup.items" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The sequence of items which represent the underlying radio
+buttons. Defaults to an empty list.</p>
+<dl class="attribute">
+<dt id="RadioGroup.to_string">
+<tt class="descname">to_string</tt><em class="property"> = Callable</em><a class="headerlink" href="#RadioGroup.to_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A callable which get mapped across the list of items to
+generate the list of labels for the buttons. Defaults
+to str.</p>
+<dl class="attribute">
+<dt id="RadioGroup.disabled_buttons">
+<tt class="descname">disabled_buttons</tt><em class="property"> = Iterable</em><a class="headerlink" href="#RadioGroup.disabled_buttons" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>An iterable of integers which indicate which radio buttons
+should be disabled. Defaults to an empty list.</p>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name" colspan="2">Synchronized Attributes:</th></tr>
+<tr class="field-even field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="RadioGroup.selected_index">
+<tt class="descname">selected_index</tt><em class="property"> = integer</em><a class="headerlink" href="#RadioGroup.selected_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>An attribute which is updated with the index of the object
+in the list of items that is associated with the currently
+selected radio button. Changing this value will cause a
+corresponding change the appropriately toggled button.
+Setting this value to -1 will result in no radio buttons
+being selected. Defaults to -1.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name" colspan="2">Output Attributes:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="RadioGroup.selected_item">
+<tt class="descname">selected_item</tt><em class="property"> = object</em><a class="headerlink" href="#RadioGroup.selected_item" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The currently selected item from the list of items, or None
+if the list is empty or the selected index is -1.</p>
+<dl class="attribute">
+<dt id="RadioGroup.selected_label">
+<tt class="descname">selected_label</tt><em class="property"> = string</em><a class="headerlink" href="#RadioGroup.selected_label" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="last">The label of the currently selected radio button, or &#8216;&#8217; if
+the list is empty or the selected index is -1.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="stacked">
+<span id="std-lib-stacked"></span><h2>Stacked<a class="headerlink" href="#stacked" title="Permalink to this headline">¶</a></h2>
+<dl class="enaml_decl">
+<dt id="enaml.stdlib.stacked.Stacked">
+<em class="property">Enaml declared component </em><tt class="descclassname">enaml.stdlib.stacked.</tt><tt class="descname">Stacked</tt><a class="headerlink" href="#enaml.stdlib.stacked.Stacked" title="Permalink to this definition">¶</a></dt>
+<dd><p>A Container derivative which holds a stack of children.</p>
+<p>A Stacked widget provides a virtual &#8216;stack&#8217; of children, only one
+of which may be visible at a time. The visible child is selected
+via an integer &#8216;index&#8217;.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name" colspan="2">Public Attributes:</th></tr>
+<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
+<dt id="Stacked.index">
+<tt class="descname">index</tt><em class="property"> = integer</em><a class="headerlink" href="#Stacked.index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p class="last">The index of the visible child. Changing this index will change
+which child of the stack is visible.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.styling.html" title="styling Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.noncomponents.html" title="noncomponents Package"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml API Reference</a> &raquo;</li>
+  
+    <li><a href="#">Enaml Standard Widget Library</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

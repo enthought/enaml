@@ -1,0 +1,249 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.progress_bar &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.progress_bar</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.progress_bar</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">TraitError</span><span class="p">,</span> <span class="n">on_trait_change</span>
+
+<span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">Control</span><span class="p">,</span> <span class="n">AbstractTkControl</span>
+
+<span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">Bounded</span>
+
+
+<div class="viewcode-block" id="AbstractTkProgressBar"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.progress_bar.AbstractTkProgressBar">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkProgressBar</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkProgressBar.shell_value_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.progress_bar.AbstractTkProgressBar.shell_value_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkProgressBar.shell_minimum_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.progress_bar.AbstractTkProgressBar.shell_minimum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_minimum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">minimum</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkProgressBar.shell_maximum_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.progress_bar.AbstractTkProgressBar.shell_maximum_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_maximum_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maximum</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+</div></div>
+<div class="viewcode-block" id="ProgressBar"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.progress_bar.ProgressBar">[docs]</a><span class="k">class</span> <span class="nc">ProgressBar</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A progress bar.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The minimum value that the progress bar can take. Extra checks</span>
+    <span class="c">#: take place to make sure that the user does not programmatically </span>
+    <span class="c">#: set :attr:`minimum` &gt; :attr:`maximum`.</span>
+    <span class="n">minimum</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_minimum&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The internal min value storage</span>
+    <span class="n">_minimum</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="c">#: The maximum value that the progress bar can take. Extra checks </span>
+    <span class="c">#: take place to make sure that the user does not programmatically </span>
+    <span class="c">#: set :attr:`minimum` &gt; :attr:`maximum`.</span>
+    <span class="n">maximum</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_maximum&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The internal max value storage</span>
+    <span class="n">_maximum</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+
+    <span class="c">#: The current value. Default is the minimum value. The value is </span>
+    <span class="c">#: bounded between :attr:`minimum` and :attr:`maximum`. Changing </span>
+    <span class="c">#: the boundary attributes might result in an update of :attr:`value` </span>
+    <span class="c">#: to fit in the new range. Attempts to assign a value outside of </span>
+    <span class="c">#: these bounds will result in a TraitError.</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">Bounded</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="s">&#39;minimum&#39;</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="s">&#39;maximum&#39;</span><span class="p">)</span>
+
+    <span class="c">#: The percentage completed, rounded to an integer. This is a </span>
+    <span class="c">#: readonly property for convenient use by other Components.</span>
+    <span class="n">percentage</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_minimum&#39;</span><span class="p">,</span> <span class="s">&#39;_maximum&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">])</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s content. ProgressBars expand </span>
+    <span class="c">#: to fill the available horizontal space by default.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="s">&#39;ignore&#39;</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkProgressBar</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Property methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_set_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for :attr:`minimum`. Addtional checks are </span>
+<span class="sd">        applied to make sure that :attr:`minimum` &lt; :attr:`maximum`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The minimum value of ProgressBar should be smaller than &#39;</span>
+                   <span class="s">&#39;the current maximum value({0}), but a value of {1} was &#39;</span>
+                   <span class="s">&#39;given&#39;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_set_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for :attr:`maximum`. Addtional checks are </span>
+<span class="sd">        applied to make sure that :attr:`minimum` &lt; :attr:`maximum`</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;The maximum value of ProgressBar should be larger than &#39;</span>
+                   <span class="s">&#39;the current minimum value({0}), but a value of {1} was &#39;</span>
+                   <span class="s">&#39;given&#39;</span><span class="p">)</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="n">msg</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">TraitError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span> <span class="o">=</span> <span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_get_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the ProgressBar maximum.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_maximum</span>
+
+    <span class="k">def</span> <span class="nf">_get_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the ProgressBar minimum.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_minimum</span>
+
+    <span class="k">def</span> <span class="nf">_get_percentage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the ProgressBar percentage.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">minimum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span>
+        <span class="n">maximum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">dy</span> <span class="o">=</span> <span class="n">maximum</span> <span class="o">-</span> <span class="n">minimum</span>
+        <span class="k">if</span> <span class="n">dy</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">elif</span> <span class="n">value</span> <span class="o">==</span> <span class="n">maximum</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">value</span> <span class="o">-</span> <span class="n">minimum</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="mf">100.0</span> <span class="o">*</span> <span class="n">dx</span> <span class="o">/</span> <span class="n">dy</span><span class="p">))</span>
+            <span class="c"># We already excluded the case where the value was exactly the </span>
+            <span class="c"># maximum, so we can&#39;t really be at 100%, so round this down to </span>
+            <span class="c"># 99% if necessary.</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="mi">99</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;minimum, maximum&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_adapt_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Adapt the value to the boundaries</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minimum</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">maximum</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.progress_bar</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,245 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.__init__ &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.__init__</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.__init__</h1><div class="highlight"><pre>
+<span class="c">#-----------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Import Helper</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="imports"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.__init__.imports">[docs]</a><span class="k">def</span> <span class="nf">imports</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Lazily imports and returns an enaml imports context.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.core.import_hooks</span> <span class="kn">import</span> <span class="n">imports</span>
+    <span class="k">return</span> <span class="n">imports</span><span class="p">()</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Toolkit Factory Functions</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#: The private storage for the optional default toolkit function which </span>
+<span class="c">#: overrides that which is computed from environment variables.</span></div>
+<span class="n">_default_toolkit_func</span> <span class="o">=</span> <span class="bp">None</span>
+
+
+<div class="viewcode-block" id="set_default_toolkit_func"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.__init__.set_default_toolkit_func">[docs]</a><span class="k">def</span> <span class="nf">set_default_toolkit_func</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Set the default toolkit function to the given callable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        A callable object which takes no arguments and returns an</span>
+<span class="sd">        instance of Toolkit.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_default_toolkit_func</span>
+    <span class="n">_default_toolkit_func</span> <span class="o">=</span> <span class="n">func</span>
+
+</div>
+<div class="viewcode-block" id="reset_default_toolkit_func"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.__init__.reset_default_toolkit_func">[docs]</a><span class="k">def</span> <span class="nf">reset_default_toolkit_func</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Reset the default toolkit func such that the default toolkit</span>
+<span class="sd">    is computed from environment variables.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">global</span> <span class="n">_default_toolkit_func</span>
+    <span class="n">_default_toolkit_func</span> <span class="o">=</span> <span class="bp">None</span>
+
+</div>
+<div class="viewcode-block" id="default_toolkit"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.__init__.default_toolkit">[docs]</a><span class="k">def</span> <span class="nf">default_toolkit</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Creates an returns the default toolkit object based on the user&#39;s</span>
+<span class="sd">    current ETS_TOOLKIT environment variables, or the default toolkit</span>
+<span class="sd">    function supplied via the set_default_toolkit_func function.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">tk_func</span> <span class="o">=</span> <span class="n">_default_toolkit_func</span>
+    <span class="k">if</span> <span class="n">tk_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">tk_func</span><span class="p">()</span>
+
+    <span class="c"># Accepts forms such as &#39;qt4&#39; and &#39;qt4.agg&#39; to allow for kiva backends</span>
+    <span class="n">toolkit</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;ETS_TOOLKIT&#39;</span><span class="p">,</span> <span class="s">&#39;qt&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">toolkit</span> <span class="o">==</span> <span class="s">&#39;qt&#39;</span> <span class="ow">or</span> <span class="n">toolkit</span> <span class="o">==</span> <span class="s">&#39;qt4&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">qt_toolkit</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">toolkit</span> <span class="o">==</span> <span class="s">&#39;wx&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">wx_toolkit</span><span class="p">()</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid Toolkit: </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">toolkit</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="qt_toolkit"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.__init__.qt_toolkit">[docs]</a><span class="k">def</span> <span class="nf">qt_toolkit</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Creates and return a toolkit object for the Qt backend.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.core.operators</span> <span class="kn">import</span> <span class="n">OPERATORS</span>
+    <span class="kn">from</span> <span class="nn">.core.toolkit</span> <span class="kn">import</span> <span class="n">Toolkit</span>
+    <span class="kn">from</span> <span class="nn">.components.constructors</span> <span class="kn">import</span> <span class="n">CONSTRUCTORS</span>
+    <span class="kn">from</span> <span class="nn">.layout.layout_helpers</span> <span class="kn">import</span> <span class="n">LAYOUT_HELPERS</span>
+    <span class="kn">from</span> <span class="nn">.backends.qt.constructors</span> <span class="kn">import</span> <span class="n">QT_CONSTRUCTORS</span>
+    <span class="kn">from</span> <span class="nn">.backends.qt.qt_application</span> <span class="kn">import</span> <span class="n">QtApplication</span>
+    <span class="kn">from</span> <span class="nn">.backends.qt.noncomponents.toolkit_items</span> <span class="kn">import</span> <span class="n">TOOLKIT_ITEMS</span>
+
+    <span class="n">toolkit</span> <span class="o">=</span> <span class="n">Toolkit</span><span class="p">(</span><span class="n">QT_CONSTRUCTORS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">TOOLKIT_ITEMS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">CONSTRUCTORS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OPERATORS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">LAYOUT_HELPERS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">QtApplication</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">toolkit</span>
+
+</div>
+<div class="viewcode-block" id="wx_toolkit"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.__init__.wx_toolkit">[docs]</a><span class="k">def</span> <span class="nf">wx_toolkit</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Creates and return a toolkit object for the Wx backend.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">.core.operators</span> <span class="kn">import</span> <span class="n">OPERATORS</span>
+    <span class="kn">from</span> <span class="nn">.core.toolkit</span> <span class="kn">import</span> <span class="n">Toolkit</span>
+    <span class="kn">from</span> <span class="nn">.components.constructors</span> <span class="kn">import</span> <span class="n">CONSTRUCTORS</span>
+    <span class="kn">from</span> <span class="nn">.layout.layout_helpers</span> <span class="kn">import</span> <span class="n">LAYOUT_HELPERS</span>
+    <span class="kn">from</span> <span class="nn">.backends.wx.constructors</span> <span class="kn">import</span> <span class="n">WX_CONSTRUCTORS</span>
+    <span class="kn">from</span> <span class="nn">.backends.wx.wx_application</span> <span class="kn">import</span> <span class="n">WXApplication</span>
+    <span class="kn">from</span> <span class="nn">.backends.wx.noncomponents.toolkit_items</span> <span class="kn">import</span> <span class="n">TOOLKIT_ITEMS</span>
+
+    <span class="n">toolkit</span> <span class="o">=</span> <span class="n">Toolkit</span><span class="p">(</span><span class="n">WX_CONSTRUCTORS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">TOOLKIT_ITEMS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">CONSTRUCTORS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">OPERATORS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">LAYOUT_HELPERS</span><span class="p">)</span>
+    <span class="n">toolkit</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">WXApplication</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">toolkit</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Test Helpers</span>
+<span class="c">#------------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="test_collector"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.__init__.test_collector">[docs]</a><span class="k">def</span> <span class="nf">test_collector</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot; Discover and collect tests for the Enaml Package.</span>
+
+<span class="sd">        .. note :: addapted from the unittest2</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestLoader</span>
+
+    <span class="c"># import __main__ triggers code re-execution</span>
+    <span class="n">__main__</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">modules</span><span class="p">[</span><span class="s">&#39;__main__&#39;</span><span class="p">]</span>
+    <span class="n">setupDir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">__main__</span><span class="o">.</span><span class="n">__file__</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">TestLoader</span><span class="p">()</span><span class="o">.</span><span class="n">discover</span><span class="p">(</span><span class="n">setupDir</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.__init__</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

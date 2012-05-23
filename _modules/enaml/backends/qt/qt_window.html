@@ -1,0 +1,292 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.qt_window &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_window</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.qt_window</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt.QtCore</span> <span class="kn">import</span> <span class="n">QSize</span>
+<span class="kn">from</span> <span class="nn">.qt.QtGui</span> <span class="kn">import</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QLayout</span><span class="p">,</span> <span class="n">QIcon</span>
+<span class="kn">from</span> <span class="nn">.qt_widget_component</span> <span class="kn">import</span> <span class="n">QtWidgetComponent</span>
+
+<span class="kn">from</span> <span class="nn">...components.window</span> <span class="kn">import</span> <span class="n">AbstractTkWindow</span>
+
+
+<div class="viewcode-block" id="QtWindowLayout"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout">[docs]</a><span class="k">class</span> <span class="nc">QtWindowLayout</span><span class="p">(</span><span class="n">QLayout</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A QLayout subclass which can have at most one layout item. This</span>
+<span class="sd">    layout item is expanded to fit the allowable space, regardless of its</span>
+<span class="sd">    size policy settings. This is similar to how central widgets behave </span>
+<span class="sd">    in a QMainWindow.</span>
+
+<span class="sd">    The class is designed for use by QtWindow/QtDialog, other uses are at </span>
+<span class="sd">    the user&#39;s own risk.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="QtWindowLayout.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtWindowLayout</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="o">=</span> <span class="bp">None</span>
+    </div>
+<div class="viewcode-block" id="QtWindowLayout.addItem"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout.addItem">[docs]</a>    <span class="k">def</span> <span class="nf">addItem</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which sets the layout item</span>
+<span class="sd">        in the layout. Any old item will be overridden.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="o">=</span> <span class="n">item</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="QtWindowLayout.count"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout.count">[docs]</a>    <span class="k">def</span> <span class="nf">count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which returns 0 if no layout</span>
+<span class="sd">        item is supplied, or 1 if there is a current layout item.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">0</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="ow">is</span> <span class="bp">None</span> <span class="k">else</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="QtWindowLayout.itemAt"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout.itemAt">[docs]</a>    <span class="k">def</span> <span class="nf">itemAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which returns the layout item </span>
+<span class="sd">        for the given index or None if one does not exist.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span>
+</div>
+<div class="viewcode-block" id="QtWindowLayout.takeAt"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout.takeAt">[docs]</a>    <span class="k">def</span> <span class="nf">takeAt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A virtual method implementation which removes and returns the</span>
+<span class="sd">        item at the given index or None if one does not exist.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span> <span class="o">=</span> <span class="bp">None</span>
+            <span class="k">return</span> <span class="n">res</span>
+    </div>
+<div class="viewcode-block" id="QtWindowLayout.sizeHint"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout.sizeHint">[docs]</a>    <span class="k">def</span> <span class="nf">sizeHint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented method to return a proper size hint for the</span>
+<span class="sd">        layout, and hence the Window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QSize</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtWindowLayout.setGeometry"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindowLayout.setGeometry">[docs]</a>    <span class="k">def</span> <span class="nf">setGeometry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rect</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented method which sets the geometry of the managed</span>
+<span class="sd">        widget to fill the given rect.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtWindowLayout</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_item</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">widget</span><span class="p">()</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">rect</span><span class="p">)</span>
+
+</div></div>
+<div class="viewcode-block" id="QtWindow"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow">[docs]</a><span class="k">class</span> <span class="nc">QtWindow</span><span class="p">(</span><span class="n">QtWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkWindow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt4 implementation of a Window.</span>
+<span class="sd">     </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtWindow.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying Qt widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">QtWindowLayout</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="QtWindow.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Intializes the attributes on the underlying Qt widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_icon</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_central_widget</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">central_widget</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract Toolkit Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtWindow.maximize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.maximize">[docs]</a>    <span class="k">def</span> <span class="nf">maximize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Maximizes the window to fill the screen.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">showMaximized</span><span class="p">()</span>
+            </div>
+<div class="viewcode-block" id="QtWindow.minimize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Minimizes the window to the task bar.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">showMinimized</span><span class="p">()</span>
+            </div>
+<div class="viewcode-block" id="QtWindow.restore"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.restore">[docs]</a>    <span class="k">def</span> <span class="nf">restore</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Restores the window after it has been minimized or maximized.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">showNormal</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Shell Object Change Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtWindow.shell_title_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;title&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtWindow.shell_icon_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;icon&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_icon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtWindow.shell_central_widget_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.shell_central_widget_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_central_widget_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;central_widget&#39; attribute on </span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_central_widget</span><span class="p">(</span><span class="n">central_widget</span><span class="p">)</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtWindow.set_central_widget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.set_central_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_central_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the central widget in the window with the given value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># It&#39;s possible for the central widget component to be None.</span>
+        <span class="c"># This must be allowed since the central widget may be generated</span>
+        <span class="c"># by an Include component, in which case it will not exist </span>
+        <span class="c"># during initialization. However, we must have a central widget</span>
+        <span class="c"># for the Window, and so we just fill it with a dummy widget.</span>
+        <span class="k">if</span> <span class="n">central_widget</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">child_widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">child_widget</span> <span class="o">=</span> <span class="n">central_widget</span><span class="o">.</span><span class="n">toolkit_widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">layout</span><span class="p">()</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">child_widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtWindow.set_icon"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the icon of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">icon</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">qicon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">qicon</span> <span class="o">=</span> <span class="n">icon</span><span class="o">.</span><span class="n">as_QIcon</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setWindowIcon</span><span class="p">(</span><span class="n">qicon</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtWindow.set_title"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_window.QtWindow.set_title">[docs]</a>    <span class="k">def</span> <span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the title of the underlying widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_window</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

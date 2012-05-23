@@ -1,0 +1,285 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.tab_group &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.tab_group</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.tab_group</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Property</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">on_trait_change</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.constraints_widget</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkConstraintsWidget</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.layout_task_handler</span> <span class="kn">import</span> <span class="n">LayoutTaskHandler</span>
+<span class="kn">from</span> <span class="nn">.tab</span> <span class="kn">import</span> <span class="n">Tab</span>
+
+<span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">TabPosition</span>
+
+
+<div class="viewcode-block" id="AbstractTkTabGroup"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.AbstractTkTabGroup">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkTabGroup</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit TabGroup interface.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkTabGroup.shell_tabs_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.AbstractTkTabGroup.shell_tabs_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tabs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tabs&#39; attribute of the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkTabGroup.shell_tab_position_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.AbstractTkTabGroup.shell_tab_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tab_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tab_position&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkTabGroup.shell_selected_index_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.AbstractTkTabGroup.shell_selected_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_selected_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;selected_index&#39; attribute on</span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+</div></div>
+<div class="viewcode-block" id="TabGroup"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.TabGroup">[docs]</a><span class="k">class</span> <span class="nc">TabGroup</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">ConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A LayoutComponent that arranges its children as a group of tabs.</span>
+
+<span class="sd">    The TabGroup provides a very simple way of laying out a number of </span>
+<span class="sd">    children as tabs, suitable for configuration dialogs and the like. </span>
+<span class="sd">    It is not suitable for rich tab interfaces where the group of tabs</span>
+<span class="sd">    is the central focus of the application. For that, use a Notebook.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A read-only cached property that returns the tab children</span>
+    <span class="c">#: of this tab group.</span>
+    <span class="n">tabs</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Tab</span><span class="p">)),</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;children&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A readonly property which returns the selected index. If there </span>
+    <span class="c">#: are no tabs in the group, this will return -1.</span>
+    <span class="n">selected_index</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_selected_index&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A readonly property which returns the selected tab. If there are </span>
+    <span class="c">#: no tabs in the group, this will return None.</span>
+    <span class="n">selected_tab</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Tab</span><span class="p">),</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_selected_index&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A TabPosition enum value that indicate where the tabs should</span>
+    <span class="c">#: be drawn on the control. One of &#39;top&#39;, &#39;bottom&#39;, &#39;left&#39;, &#39;right&#39;.</span>
+    <span class="c">#: The default value is &#39;top&#39;.</span>
+    <span class="n">tab_position</span> <span class="o">=</span> <span class="n">TabPosition</span><span class="p">(</span><span class="s">&#39;top&#39;</span><span class="p">)</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width. A TabGroup</span>
+    <span class="c">#: ignores its width hug by default, so it expands freely in width.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="s">&#39;ignore&#39;</span>
+
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; height. A TabGroup</span>
+    <span class="c">#: ignores its height hug by default, so it expands freely in height.</span>
+    <span class="n">hug_height</span> <span class="o">=</span> <span class="s">&#39;ignore&#39;</span>
+
+    <span class="c">#: The private storage for the selected tab index. This attribute</span>
+    <span class="c">#: should be used by the toolkit implementations to communicate the </span>
+    <span class="c">#: current selection. A -1 indicates no selection.</span>
+    <span class="n">_selected_index</span> <span class="o">=</span> <span class="n">Int</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkTabGroup</span><span class="p">)</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Property Getters</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_get_tabs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;tabs&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">child</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Tab</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">flt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_get_selected_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;selected_tab&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_index</span>
+        <span class="n">tabs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tabs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">tabs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">return</span> <span class="n">res</span>
+    
+    <span class="k">def</span> <span class="nf">_get_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;selected_index&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_selected_index</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">idx</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Change Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;tabs, tab_position&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_on_tab_group_deps_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A change handler for triggering a relayout when the tabs or</span>
+<span class="sd">        the position of the tabs change, provided that the component</span>
+<span class="sd">        is initialized.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request_relayout</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Overrides</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="TabGroup.do_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.TabGroup.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
+<span class="sd">        perform necessary update activity when a relayout is requested.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Auxiliary Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="TabGroup.set_selected_tab"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.TabGroup.set_selected_tab">[docs]</a>    <span class="k">def</span> <span class="nf">set_selected_tab</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the selected tab of the group to the given tab.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">tab</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;Cannot set selected tab. Tab </span><span class="si">%s</span><span class="s"> does not exist in &#39;</span>
+                   <span class="s">&#39;the TabGroup&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">tab</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_index</span> <span class="o">=</span> <span class="n">idx</span>
+    </div>
+<div class="viewcode-block" id="TabGroup.set_selected_index"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.tab_group.TabGroup.set_selected_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the selected index of the group to the given index.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tabs</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&quot;Tab index </span><span class="si">%s</span><span class="s"> out of range for TabGroup&quot;</span>
+            <span class="k">raise</span> <span class="ne">IndexError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">idx</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_selected_index</span> <span class="o">=</span> <span class="n">idx</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.tab_group</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

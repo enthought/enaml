@@ -1,0 +1,10 @@
+#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+enamldef Main(MainWindow):
+    attr message = "Hello, world!"
+    Container:
+        Label:
+            text = message
+            

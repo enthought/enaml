@@ -1,0 +1,176 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.tests.components.wx.test_wx_group_box &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.components.wx.test_wx_group_box</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../../index.html">
+              <img class="logo" src="../../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.tests.components.wx.test_wx_group_box</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_test_assistant</span> <span class="kn">import</span> <span class="n">WXTestAssistant</span><span class="p">,</span> <span class="n">skip_nonwindows</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">group_box</span>
+
+
+<span class="nd">@skip_nonwindows</span>
+<div class="viewcode-block" id="TestGroupBox"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_group_box.TestGroupBox">[docs]</a><span class="k">class</span> <span class="nc">TestGroupBox</span><span class="p">(</span><span class="n">WXTestAssistant</span><span class="p">,</span> <span class="n">group_box</span><span class="o">.</span><span class="n">TestGroupBox</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestGroupBox.setUp"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_group_box.TestGroupBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Setup for GroupBox testcases.</span>
+
+<span class="sd">        1. Run the parent setup.</span>
+<span class="sd">        2. Resize the widget and process events to allow for the private</span>
+<span class="sd">           widgets to resize.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestGroupBox</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;win&#39;</span><span class="p">)</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">abstract_obj</span>
+        <span class="n">abstract</span><span class="o">.</span><span class="n">resize</span><span class="p">((</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_wx_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestGroupBox.get_title"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_group_box.TestGroupBox.get_title">[docs]</a>    <span class="k">def</span> <span class="nf">get_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the title text from the tookit widget</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_wx_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">abstract_obj</span>
+        <span class="k">return</span> <span class="n">abstract</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetTitle</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestGroupBox.get_flat"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_group_box.TestGroupBox.get_flat">[docs]</a>    <span class="k">def</span> <span class="nf">get_flat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the flat style status from the tookit widget</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_wx_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">abstract_obj</span>
+        <span class="k">return</span> <span class="n">abstract</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetFlat</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestGroupBox.get_title_align"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_group_box.TestGroupBox.get_title_align">[docs]</a>    <span class="k">def</span> <span class="nf">get_title_align</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the title aligment in the tookit widget</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_wx_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span>
+        <span class="c"># FIXME: this check depends on the size of the current window and</span>
+        <span class="c"># is not very reliable.</span>
+        <span class="n">abstract</span> <span class="o">=</span> <span class="n">component</span><span class="o">.</span><span class="n">abstract_obj</span>
+        <span class="n">align</span> <span class="o">=</span> <span class="n">abstract</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetAlignment</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">align</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ALIGN_LEFT</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;left&#39;</span>
+        <span class="k">elif</span> <span class="n">align</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ALIGN_CENTER</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;center&#39;</span>
+        <span class="k">elif</span> <span class="n">align</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ALIGN_RIGHT</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;right&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="s">&#39;undefined&#39;</span>
+        <span class="k">return</span> <span class="n">res</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.components.wx.test_wx_group_box</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

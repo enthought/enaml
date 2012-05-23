@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>enaml.item_models.abstract_item_model &mdash; enaml 0.2alpha documentation</title>
+    <title>enaml.item_models.abstract_item_model &mdash; enaml 0.2beta-1 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.2beta-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../../../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../../../index.html" />
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -43,7 +43,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.item_models.abstract_item_model</a></li>
@@ -82,11 +82,11 @@
 <span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
 <span class="c">#  All rights reserved.</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
 
 <span class="kn">from</span> <span class="nn">.model_index</span> <span class="kn">import</span> <span class="n">ModelIndex</span>
 
-<span class="kn">from</span> <span class="nn">..util.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+<span class="kn">from</span> <span class="nn">..core.signaling</span> <span class="kn">import</span> <span class="n">Signal</span>
 
 
 <span class="c">#------------------------------------------------------------------------------</span>
@@ -119,67 +119,69 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># AbstractItemModel</span>
 <span class="c">#------------------------------------------------------------------------------</span>
-<div class="viewcode-block" id="AbstractItemModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractItemModel</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractItemModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractItemModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An abstract model for supplying information to heierarchical</span>
 <span class="sd">    widgets.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
     <span class="c">#: Fired by the begin_insert_columns method</span>
-    <span class="n">columns_about_to_be_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">columns_about_to_be_inserted</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the begin_move_columns method</span>
-    <span class="n">columns_about_to_be_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">columns_about_to_be_moved</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the begin_remove_columns method</span>
-    <span class="n">columns_about_to_be_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">columns_about_to_be_removed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_insert_columns method</span>
-    <span class="n">columns_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">columns_inserted</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_move_columns method</span>
-    <span class="n">columns_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">columns_moved</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_remove_rows method</span>
-    <span class="n">columns_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">columns_removed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the begin_insert_rows method</span>
-    <span class="n">rows_about_to_be_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">rows_about_to_be_inserted</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the begin_move_rows method</span>
-    <span class="n">rows_about_to_be_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">rows_about_to_be_moved</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the begin_remove_columns method</span>
-    <span class="n">rows_about_to_be_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">rows_about_to_be_removed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_insert_rows method</span>
-    <span class="n">rows_inserted</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">rows_inserted</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_move_rows method</span>
-    <span class="n">rows_moved</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">rows_moved</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_remove_rows method</span>
-    <span class="n">rows_removed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">rows_removed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the begin_change_layout method</span>
-    <span class="n">layout_about_to_be_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">layout_about_to_be_changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_change_layout method</span>
-    <span class="n">layout_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">layout_changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the begin_reset_model method</span>
-    <span class="n">model_about_to_be_reset</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">model_about_to_be_reset</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the end_reset_model method</span>
-    <span class="n">model_reset</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">model_reset</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the notify_data_changed method</span>
-    <span class="n">data_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">data_changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
     
     <span class="c">#: Fired by the notify_horizontal_header_data_changed method</span>
-    <span class="n">horizontal_header_data_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">horizontal_header_data_changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
 
     <span class="c">#: Fired by the notify_vertical_header_data_changed method</span>
-    <span class="n">vertical_header_data_changed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    <span class="n">vertical_header_data_changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
     
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Model change notification trigger methods </span>
@@ -690,6 +692,7 @@
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Abstract Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@abstractmethod</span>
 <div class="viewcode-block" id="AbstractItemModel.column_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.column_count">[docs]</a>    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Count the number of columns in the children of an item.</span>
 
@@ -704,9 +707,9 @@
 <span class="sd">            The number of columns in the model.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
+    <span class="nd">@abstractmethod</span>
 <div class="viewcode-block" id="AbstractItemModel.row_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.row_count">[docs]</a>    <span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Count the number of rows in the children of an item.</span>
 
@@ -721,9 +724,9 @@
 <span class="sd">            The number of rows in the model.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
+    <span class="nd">@abstractmethod</span>
 <div class="viewcode-block" id="AbstractItemModel.index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Obtain an index coresponding to an item in the model.</span>
 
@@ -744,9 +747,9 @@
 <span class="sd">            An index for the specified item.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 </div>
+    <span class="nd">@abstractmethod</span>
 <div class="viewcode-block" id="AbstractItemModel.parent"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Obtain the parent of a model item.</span>
 
@@ -761,12 +764,10 @@
 <span class="sd">            An index for the parent item.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Data Method </span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
+</div>
+    <span class="nd">@abstractmethod</span>
 <div class="viewcode-block" id="AbstractItemModel.data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the data for a model index as a string for display.</span>
 
@@ -781,8 +782,7 @@
 <span class="sd">            The data as a string for display.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;This method must be implemented by a subclass&#39;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Auxiliary Data Methods</span>
@@ -987,7 +987,7 @@
         <span class="k">return</span> <span class="bp">None</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Data Setter Method</span>
+    <span class="c"># Data Setter Methods</span>
     <span class="c">#--------------------------------------------------------------------------</span></div>
 <div class="viewcode-block" id="AbstractItemModel.set_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update a model item&#39;s data. The default implementation does</span>
@@ -1002,204 +1002,8 @@
 <span class="sd">        index : ModelIndex</span>
 <span class="sd">            The model index for the item to update.</span>
 
-<span class="sd">        value : string</span>
-<span class="sd">            The user supplied value to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    
-    <span class="c">#--------------------------------------------------------------------------</span>
-    <span class="c"># Auxiliary Data Setter Methods</span>
-    <span class="c">#--------------------------------------------------------------------------</span></div>
-<div class="viewcode-block" id="AbstractItemModel.set_decoration"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_decoration">[docs]</a>    <span class="k">def</span> <span class="nf">set_decoration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s icon. The default implementation does</span>
-<span class="sd">        nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
 <span class="sd">        value : object</span>
 <span class="sd">            The user supplied value to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c"># XXX handle icons</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    </div>
-<div class="viewcode-block" id="AbstractItemModel.set_tool_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">set_tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s tool tip. The default implementation does</span>
-<span class="sd">        nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : string</span>
-<span class="sd">            The tool tip to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModel.set_status_tip"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">set_status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s status tip. The default implementation </span>
-<span class="sd">        does nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : string</span>
-<span class="sd">            The status tip to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModel.set_whats_this"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_whats_this">[docs]</a>    <span class="k">def</span> <span class="nf">set_whats_this</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s what&#39;s this? The default implementation </span>
-<span class="sd">        does nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : string</span>
-<span class="sd">            The what&#39;s this? to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    </div>
-<div class="viewcode-block" id="AbstractItemModel.set_font"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_font">[docs]</a>    <span class="k">def</span> <span class="nf">set_font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s font. The default implementation </span>
-<span class="sd">        does nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : Font</span>
-<span class="sd">            The font object to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    </div>
-<div class="viewcode-block" id="AbstractItemModel.set_alignment"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">set_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s alignment. The default implementation </span>
-<span class="sd">        does nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : int</span>
-<span class="sd">            The alignment to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    </div>
-<div class="viewcode-block" id="AbstractItemModel.set_background"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_background">[docs]</a>    <span class="k">def</span> <span class="nf">set_background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s background brush. The default </span>
-<span class="sd">        implementation does nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : Brush</span>
-<span class="sd">            The background brush to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-</div>
-<div class="viewcode-block" id="AbstractItemModel.set_foreground"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_foreground">[docs]</a>    <span class="k">def</span> <span class="nf">set_foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s foreground brush. The default </span>
-<span class="sd">        implementation does nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : Brush</span>
-<span class="sd">            The background brush to set in the model.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1222,32 +1026,8 @@
 <span class="sd">        index : ModelIndex</span>
 <span class="sd">            The model index for the item to update.</span>
 
-<span class="sd">        value : string</span>
+<span class="sd">        value : object</span>
 <span class="sd">            The check state to set in the model.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        success : bool</span>
-<span class="sd">            True if the data was successfully set, False otherwise.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">False</span>
-    </div>
-<div class="viewcode-block" id="AbstractItemModel.set_size_hint"><a class="viewcode-back" href="../../../developer_guide/api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.set_size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">set_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Update a model item&#39;s size hint. The default implementation </span>
-<span class="sd">        does nothing and returns False.</span>
-
-<span class="sd">        Implementations that allow editing must set the &#39;editable&#39; flag</span>
-<span class="sd">        to True, and call notify_data_changed(...) explicity in order</span>
-<span class="sd">        for the table to update.</span>
-
-<span class="sd">        Arguments</span>
-<span class="sd">        ---------</span>
-<span class="sd">        index : ModelIndex</span>
-<span class="sd">            The model index for the item to update.</span>
-
-<span class="sd">        value : (width, height)</span>
-<span class="sd">            The size hint to set in the model.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1278,7 +1058,7 @@
 <span class="sd">            The requested header label</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">section</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">section</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
     </div>
 <div class="viewcode-block" id="AbstractItemModel.vertical_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Get the vertical label for a particular header section.</span>
@@ -1298,7 +1078,7 @@
 <span class="sd">            The requested header label</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">section</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">section</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c">#--------------------------------------------------------------------------</span>
     <span class="c"># Header Data auxiliary methods</span>
@@ -1598,7 +1378,7 @@
         <span class="k">return</span> <span class="bp">None</span>
 </div>
 <div class="viewcode-block" id="AbstractItemModel.horizontal_header_size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.horizontal_header_size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get the horizontal size hint for a particular header section.</span>
+        <span class="sd">&quot;&quot;&quot; Get the size hint for a particular horizontal header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
 
@@ -1609,26 +1389,26 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        data : int</span>
-<span class="sd">            The requested size hint for the width of the header.</span>
+<span class="sd">        value : (width, height)</span>
+<span class="sd">            The size hint to use for the given column number.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
     </div>
 <div class="viewcode-block" id="AbstractItemModel.vertical_header_size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractItemModel.vertical_header_size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Get the vertical size hint for a particular header section.</span>
+        <span class="sd">&quot;&quot;&quot; Get the size hint for a particular vertical header section.</span>
 
 <span class="sd">        The default implementation returns None.</span>
 
 <span class="sd">        Arguments</span>
 <span class="sd">        ---------</span>
 <span class="sd">        section : int</span>
-<span class="sd">            The column number of the header.</span>
+<span class="sd">            The row number of the header.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        data : int</span>
-<span class="sd">            The requested size hint for the height of the header.</span>
+<span class="sd">        value : (width, height)</span>
+<span class="sd">            The size hint to use for the given row number.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
@@ -1645,12 +1425,12 @@
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># AbstractTableModel</span>
 <span class="c">#------------------------------------------------------------------------------</span></div></div>
-<span class="k">class</span> <span class="nc">AbstractTableModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractTableModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractTableModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AbstractItemModel subclass that implements the methods </span>
 <span class="sd">    necessary to restrict the model to a 2-dimensional table of data.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractTableModel.index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that will create a valid</span>
 <span class="sd">        model index for the given row and column if they are valid.</span>
 <span class="sd">        Otherwise, returns an invalid index.</span>
@@ -1658,15 +1438,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="AbstractTableModel.parent"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that always returns None, </span>
 <span class="sd">        forcing the model to be flat.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="AbstractTableModel.has_children"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractTableModel.has_children">[docs]</a>    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method which restrics the model to</span>
 <span class="sd">        2-dimensions.</span>
 
@@ -1678,13 +1458,13 @@
 
 <span class="c">#------------------------------------------------------------------------------</span>
 <span class="c"># AbstractListModel</span>
-<span class="c">#------------------------------------------------------------------------------</span>
-<span class="k">class</span> <span class="nc">AbstractListModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="AbstractListModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractListModel</span><span class="p">(</span><span class="n">AbstractItemModel</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; An AbstractItemModel subclass that implements the methods </span>
 <span class="sd">    necessary to restrict the model to a 1-dimensional list of data.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractListModel.index"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that will create a valid</span>
 <span class="sd">        model index for the given row and column if they are valid.</span>
 <span class="sd">        Otherwise, returns an invalid index.</span>
@@ -1692,15 +1472,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="bp">None</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="AbstractListModel.parent"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Abstract method implementation that always returns an</span>
 <span class="sd">        invalid index, forcing the model to be flat.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">None</span>
-
-    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="AbstractListModel.column_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.column_count">[docs]</a>    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method which restricts the model</span>
 <span class="sd">        to a single column.</span>
 
@@ -1708,8 +1488,8 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="mi">1</span>
-
-    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="AbstractListModel.has_children"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.abstract_item_model.AbstractListModel.has_children">[docs]</a>    <span class="k">def</span> <span class="nf">has_children</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Overridden parent class method which restrics the model</span>
 <span class="sd">        to 1-dimension.</span>
 
@@ -1717,7 +1497,7 @@
         <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">row_count</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
-</pre></div>
+</pre></div></div></div>
 
           </div>
         </div>
@@ -1736,7 +1516,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li>
   
     <li><a href="#">enaml.item_models.abstract_item_model</a></li>
@@ -1746,8 +1526,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 21, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

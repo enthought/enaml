@@ -1,0 +1,225 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.menu &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.menu</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.menu</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Instance</span><span class="p">,</span> <span class="n">Either</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.action</span> <span class="kn">import</span> <span class="n">Action</span>
+<span class="kn">from</span> <span class="nn">.widget_component</span> <span class="kn">import</span> <span class="n">WidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkWidgetComponent</span>
+
+<span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+
+
+<div class="viewcode-block" id="AbstractTkMenu"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.menu.AbstractTkMenu">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkMenu</span><span class="p">(</span><span class="n">AbstractTkWidgetComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a Menu object.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkMenu.shell_title_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.menu.AbstractTkMenu.shell_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;title&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkMenu.shell_contents_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.menu.AbstractTkMenu.shell_contents_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_contents_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">contents</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the list of contents on the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkMenu.popup"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.menu.AbstractTkMenu.popup">[docs]</a>    <span class="k">def</span> <span class="nf">popup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and show the menu as context or popup menu.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        blocking : boolean, optional</span>
+<span class="sd">            Whether or not the popup menu should be displayed in a </span>
+<span class="sd">            blocking context. If False, then this menu object must</span>
+<span class="sd">            be stored on the heap or it will be immediately garbage</span>
+<span class="sd">            collected. Defaults to True.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+</div></div>
+<div class="viewcode-block" id="Menu"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.menu.Menu">[docs]</a><span class="k">class</span> <span class="nc">Menu</span><span class="p">(</span><span class="n">WidgetComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A declarative Enaml Component which represents a menu in a </span>
+<span class="sd">    menu bar.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The title of the menu as displayed by a MenuBar</span>
+    <span class="n">title</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: An event emitted when the menu is about to be shown.</span>
+    <span class="n">about_to_show</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: An event emitted when the menu is about to be hidden.</span>
+    <span class="n">about_to_hide</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: A read-only cached property which holds the list of menu</span>
+    <span class="c">#: contents which are instances of Menu or Action.</span>
+    <span class="n">contents</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span><span class="n">Either</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="s">&#39;Menu&#39;</span><span class="p">),</span> <span class="n">Instance</span><span class="p">(</span><span class="n">Action</span><span class="p">))),</span> 
+        <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;children&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkMenu</span><span class="p">)</span>
+    
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_get_contents</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;contents&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">child</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="p">(</span><span class="n">Menu</span><span class="p">,</span> <span class="n">Action</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">flt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Menu.popup"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.menu.Menu.popup">[docs]</a>    <span class="k">def</span> <span class="nf">popup</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">blocking</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create and show the menu as context or popup menu.</span>
+
+<span class="sd">        If the menu has not been initialized when this method is</span>
+<span class="sd">        called, it will be setup and initialized automatically.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        blocking : boolean, optional</span>
+<span class="sd">            Whether or not the popup menu should be displayed in a </span>
+<span class="sd">            blocking context. If False, then this menu object must</span>
+<span class="sd">            be stored on the heap or it will be immediately garbage</span>
+<span class="sd">            collected. Defaults to True. This option may not be </span>
+<span class="sd">            supported on all toolkit backends. </span>
+<span class="sd">        </span>
+<span class="sd">        parent : Toolkit widget or None, optional</span>
+<span class="sd">            The parent on which to popup the menu. This only has an</span>
+<span class="sd">            effect on menus which are created outside of the normal </span>
+<span class="sd">            Enaml heirarchy and are setup and initialized during the </span>
+<span class="sd">            call to this method. Even then, the popup menu will be a </span>
+<span class="sd">            top-level widget, but it&#39;s lifetime will be tied to that </span>
+<span class="sd">            of the parent.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">setup</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">popup</span><span class="p">(</span><span class="n">blocking</span><span class="o">=</span><span class="n">blocking</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.menu</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

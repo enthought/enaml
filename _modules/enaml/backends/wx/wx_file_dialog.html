@@ -1,0 +1,301 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.wx.wx_file_dialog &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_file_dialog</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.wx.wx_file_dialog</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
+
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_dialog</span> <span class="kn">import</span> <span class="n">WXDialog</span>
+
+<span class="kn">from</span> <span class="nn">...components.file_dialog</span> <span class="kn">import</span> <span class="n">AbstractTkFileDialog</span>
+<span class="kn">from</span> <span class="nn">...guard</span> <span class="kn">import</span> <span class="n">guard</span>
+
+
+<span class="n">STYLE_MODE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;open&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">FD_OPEN</span><span class="p">,</span>
+    <span class="s">&#39;save&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">FD_SAVE</span> <span class="o">|</span> <span class="n">wx</span><span class="o">.</span><span class="n">FD_OVERWRITE_PROMPT</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="n">FILTER_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="s">r&#39;\((.*?\*.*?)\)&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="WXFileDialog"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog">[docs]</a><span class="k">class</span> <span class="nc">WXFileDialog</span><span class="p">(</span><span class="n">WXDialog</span><span class="p">,</span> <span class="n">AbstractTkFileDialog</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Wx implementation of a FileDialog.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXFileDialog.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying wx.FileDialog control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">FileDialog</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXFileDialog.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the attributes of the underlying QFileDialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXFileDialog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">mode</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_multi_select</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">multi_select</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_directory</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">directory</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_filename</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_filters</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">filters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selected_filter</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">selected_filter</span><span class="p">)</span>
+    
+    <span class="c"># The wx.FileDialog doesn&#39;t emit events for anything useful, </span>
+    <span class="c"># so there is nothing which need be bound.</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Shell Object Change Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXFileDialog.shell_mode_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.shell_mode_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dialog for the given mode of behavior.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_mode</span><span class="p">(</span><span class="n">mode</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXFileDialog.shell_multi_select_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.shell_multi_select_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_multi_select_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi_select</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dialog for the given multi select behavior.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_multi_select</span><span class="p">(</span><span class="n">multi_select</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXFileDialog.shell_directory_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.shell_directory_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_directory_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dialog with the new working directory.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;setting_directory&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_directory</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+                </div>
+<div class="viewcode-block" id="WXFileDialog.shell_filename_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.shell_filename_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_filename_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dialog with the new selected filename.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;setting_filename&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_filename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXFileDialog.shell_filters_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.shell_filters_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_filters_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dialog with the new filename filters.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Traits doens&#39;t fire off a change event if an Enum updates</span>
+        <span class="c"># because its underlying values have changed. So, we just </span>
+        <span class="c"># set the selected filter manually here to cover that case.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_filters</span><span class="p">(</span><span class="n">filters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selected_filter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">selected_filter</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXFileDialog.shell_selected_filter_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.shell_selected_filter_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_selected_filter_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_filter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the dialog with the new selected filter.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;setting_selected_filter&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_selected_filter</span><span class="p">(</span><span class="n">selected_filter</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXFileDialog.set_mode"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.set_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the mode behavior of the file dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetWindowStyle</span><span class="p">(</span><span class="n">STYLE_MODE_MAP</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="WXFileDialog.set_multi_select"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.set_multi_select">[docs]</a>    <span class="k">def</span> <span class="nf">set_multi_select</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">multi_select</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the multi select behavior of the file dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetWindowStyle</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">style</span> <span class="o">&amp;</span> <span class="n">wx</span><span class="o">.</span><span class="n">FD_OPEN</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">multi_select</span><span class="p">:</span>
+                <span class="n">style</span> <span class="o">|=</span> <span class="n">wx</span><span class="o">.</span><span class="n">FD_MULTIPLE</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">style</span> <span class="o">&amp;=</span> <span class="o">~</span><span class="n">wx</span><span class="o">.</span><span class="n">FD_MULTIPLE</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetWindowStyle</span><span class="p">(</span><span class="n">style</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXFileDialog.set_directory"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.set_directory">[docs]</a>    <span class="k">def</span> <span class="nf">set_directory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the current directory of the dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetDirectory</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXFileDialog.set_filename"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.set_filename">[docs]</a>    <span class="k">def</span> <span class="nf">set_filename</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the selected filename in the dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetFilename</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXFileDialog.set_filters"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.set_filters">[docs]</a>    <span class="k">def</span> <span class="nf">set_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the name filters in the file dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># This converts Qt&#39;s filter format, which is used by the shell</span>
+        <span class="c"># object, into wx&#39;s wildcard format.</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">filt</span> <span class="ow">in</span> <span class="n">filters</span><span class="p">:</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filt</span><span class="p">)</span>
+            <span class="n">match</span> <span class="o">=</span> <span class="n">FILTER_RE</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">filt</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
+                <span class="n">filt</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s">u&#39;;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filt</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>
+        <span class="n">wildcard</span> <span class="o">=</span> <span class="s">u&#39;|&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetWildcard</span><span class="p">(</span><span class="n">wildcard</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXFileDialog.set_selected_filter"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.set_selected_filter">[docs]</a>    <span class="k">def</span> <span class="nf">set_selected_filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_filter</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the selected name filter in the file dialog.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">filters</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">selected_filter</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetFilterIndex</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXFileDialog.set_central_widget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_file_dialog.WXFileDialog.set_central_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_central_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden parent class method which makes central widget</span>
+<span class="sd">        operations a no-op, since a file dialog has no children.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Auxiliary Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_handle_retcode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">retcode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden parent class method to update the shell object</span>
+<span class="sd">        with new info once the dialog is closed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="k">if</span> <span class="n">retcode</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">ID_OK</span><span class="p">:</span>
+            <span class="n">paths</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetPaths</span><span class="p">()</span>
+            <span class="n">first_path</span> <span class="o">=</span> <span class="n">paths</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">paths</span> <span class="k">else</span> <span class="s">u&#39;&#39;</span>
+            <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;setting_directory&#39;</span><span class="p">):</span>
+                <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;setting_filename&#39;</span><span class="p">):</span>
+                    <span class="n">shell</span><span class="o">.</span><span class="n">directory</span><span class="p">,</span> <span class="n">shell</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">first_path</span><span class="p">)</span>
+                    <span class="n">shell</span><span class="o">.</span><span class="n">_paths</span> <span class="o">=</span> <span class="n">paths</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetFilterIndex</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">filters</span><span class="p">):</span>
+            <span class="n">shell</span><span class="o">.</span><span class="n">selected_filter</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">filters</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXFileDialog</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_handle_retcode</span><span class="p">(</span><span class="n">retcode</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_file_dialog</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

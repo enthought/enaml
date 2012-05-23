@@ -82,7 +82,7 @@ Built-in Components
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Next, we add a series of labels and fields. ``Form``, ``Label`` and ``Field``
-are all from the library of |Enaml| :ref:`built-in components. <built-ins-ref>`
+are all from the library of |Enaml| built-in components.
 
 :py:class:`~enaml.widgets.form.Form` is a built-in container that arranges
 alternating child components into two columns. This is typically done in the

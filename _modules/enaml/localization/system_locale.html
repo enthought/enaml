@@ -1,0 +1,885 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.localization.system_locale &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="enaml.localization" href="../localization.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../localization.html" accesskey="U">enaml.localization</a> &raquo;</li>
+  
+    <li><a href="#">enaml.localization.system_locale</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.localization.system_locale</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">import</span> <span class="nn">locale</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">time</span>
+
+<span class="kn">from</span> <span class="nn">.abstract_locale</span> <span class="kn">import</span> <span class="n">AbstractLocale</span>
+
+
+<span class="c"># nl_langinfo is not available on Windows and as a result locale is </span>
+<span class="c"># mostly useless. So we have to fake a bunch of stuff for that platform</span>
+<span class="c"># and just hard-code it to the english equivalents. </span>
+<span class="n">_win_defaults</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;am&#39;</span><span class="p">:</span> <span class="s">&#39;AM&#39;</span><span class="p">,</span>
+    <span class="s">&#39;pm&#39;</span><span class="p">:</span> <span class="s">&#39;PM&#39;</span><span class="p">,</span>
+    <span class="s">&#39;months&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s">&#39;January&#39;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s">&#39;February&#39;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s">&#39;March&#39;</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s">&#39;April&#39;</span><span class="p">,</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="s">&#39;May&#39;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s">&#39;June&#39;</span><span class="p">,</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="s">&#39;July&#39;</span><span class="p">,</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="s">&#39;August&#39;</span><span class="p">,</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="s">&#39;September&#39;</span><span class="p">,</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="s">&#39;October&#39;</span><span class="p">,</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="s">&#39;November&#39;</span><span class="p">,</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="s">&#39;December&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s">&#39;ab_months&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s">&#39;Jan&#39;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s">&#39;Feb&#39;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s">&#39;Mar&#39;</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s">&#39;Apr&#39;</span><span class="p">,</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="s">&#39;May&#39;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s">&#39;Jun&#39;</span><span class="p">,</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="s">&#39;Jul&#39;</span><span class="p">,</span>
+        <span class="mi">8</span><span class="p">:</span> <span class="s">&#39;Aug&#39;</span><span class="p">,</span>
+        <span class="mi">9</span><span class="p">:</span> <span class="s">&#39;Sep&#39;</span><span class="p">,</span>
+        <span class="mi">10</span><span class="p">:</span> <span class="s">&#39;Oct&#39;</span><span class="p">,</span>
+        <span class="mi">11</span><span class="p">:</span> <span class="s">&#39;Nov&#39;</span><span class="p">,</span>
+        <span class="mi">12</span><span class="p">:</span> <span class="s">&#39;Dec&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s">&#39;days&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s">&#39;Sunday&#39;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s">&#39;Monday&#39;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s">&#39;Tuesday&#39;</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s">&#39;Wednesday&#39;</span><span class="p">,</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="s">&#39;Thursday&#39;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s">&#39;Friday&#39;</span><span class="p">,</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="s">&#39;Saturday&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s">&#39;ab_days&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="s">&#39;Sun&#39;</span><span class="p">,</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="s">&#39;Mon&#39;</span><span class="p">,</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="s">&#39;Tue&#39;</span><span class="p">,</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="s">&#39;Wed&#39;</span><span class="p">,</span>
+        <span class="mi">5</span><span class="p">:</span> <span class="s">&#39;Thu&#39;</span><span class="p">,</span>
+        <span class="mi">6</span><span class="p">:</span> <span class="s">&#39;Fri&#39;</span><span class="p">,</span>
+        <span class="mi">7</span><span class="p">:</span> <span class="s">&#39;Sat&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s">&#39;time&#39;</span><span class="p">:</span> <span class="s">&#39;%I:%M:%S %p&#39;</span><span class="p">,</span>
+    <span class="s">&#39;ab_time&#39;</span><span class="p">:</span> <span class="s">&#39;%H:%M:%S&#39;</span><span class="p">,</span>
+    <span class="s">&#39;date&#39;</span><span class="p">:</span> <span class="s">&#39;%m/</span><span class="si">%d</span><span class="s">/%Y&#39;</span><span class="p">,</span>
+    <span class="s">&#39;datetime&#39;</span><span class="p">:</span> <span class="s">&#39;%a %b </span><span class="si">%e</span><span class="s"> </span><span class="si">%X</span><span class="s"> %Y&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_convert_base</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Convert a base10 integral number into a string represented in</span>
+<span class="sd">    a different number base. Bases from 2-36 inclusive are supported.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">long</span><span class="p">)):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Expected integral number type. Got </span><span class="si">%s</span><span class="s"> instead.&#39;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Expected integer base. Got </span><span class="si">%d</span><span class="s"> instead.&#39;</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">base</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">base</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">base</span> <span class="o">&gt;</span> <span class="mi">36</span><span class="p">:</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Base must be between 2 and 36 inclusive. Got </span><span class="si">%d</span><span class="s"> instead.&#39;</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="n">base</span><span class="p">)</span>
+    
+    <span class="n">digits</span> <span class="o">=</span> <span class="s">&#39;0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ&#39;</span>
+    <span class="n">parts</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">push</span> <span class="o">=</span> <span class="n">parts</span><span class="o">.</span><span class="n">append</span>
+    
+    <span class="n">prefix</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    
+    <span class="n">div</span> <span class="o">=</span> <span class="nb">divmod</span>
+    <span class="k">while</span> <span class="n">value</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">value</span><span class="p">,</span> <span class="n">mod</span> <span class="o">=</span> <span class="n">div</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+        <span class="n">push</span><span class="p">(</span><span class="n">digits</span><span class="p">[</span><span class="n">mod</span><span class="p">])</span>
+    
+    <span class="k">if</span> <span class="n">prefix</span><span class="p">:</span>
+        <span class="n">push</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="s">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">parts</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="SystemLocale"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale">[docs]</a><span class="k">class</span> <span class="nc">SystemLocale</span><span class="p">(</span><span class="n">AbstractLocale</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractLocale which uses the Python</span>
+<span class="sd">    &#39;locale&#39; module for locale-related information. </span>
+
+<span class="sd">    The SystemLocale does not maintain any state and will always reflect </span>
+<span class="sd">    the current system locale information as given by the &#39;locale&#39; module.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="SystemLocale.default"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the system locale if not already initialized and</span>
+<span class="sd">        returns an instance of SystemLocale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">getlocale</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">loc</span> <span class="o">==</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">):</span>
+            <span class="n">locale</span><span class="o">.</span><span class="n">setlocale</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">LC_ALL</span><span class="p">,</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">()</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Properties</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.name"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.name">[docs]</a>    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The RFC 1766 language code for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">getlocale</span><span class="p">()[</span><span class="mi">0</span><span class="p">])</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.encoding"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.encoding">[docs]</a>    <span class="k">def</span> <span class="nf">encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The encoding for strings in the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">getlocale</span><span class="p">()[</span><span class="mi">1</span><span class="p">])</span>
+                </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.am_string"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.am_string">[docs]</a>    <span class="k">def</span> <span class="nf">am_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The string for &quot;AM&quot; time in the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_win_defaults</span><span class="p">[</span><span class="s">&#39;am&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">nl_langinfo</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">AM_STR</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.pm_string"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.pm_string">[docs]</a>    <span class="k">def</span> <span class="nf">pm_string</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The string for &quot;PM&quot; time in the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_win_defaults</span><span class="p">[</span><span class="s">&#39;pm&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">nl_langinfo</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">PM_STR</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.decimal_point"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.decimal_point">[docs]</a>    <span class="k">def</span> <span class="nf">decimal_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The decimal separator for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">localeconv</span><span class="p">()[</span><span class="s">&#39;decimal_point&#39;</span><span class="p">])</span>
+            </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.monetary_decimal_point"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.monetary_decimal_point">[docs]</a>    <span class="k">def</span> <span class="nf">monetary_decimal_point</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The decimal separator for monetary values for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">localeconv</span><span class="p">()[</span><span class="s">&#39;mon_decimal_point&#39;</span><span class="p">])</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.exponential"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.exponential">[docs]</a>    <span class="k">def</span> <span class="nf">exponential</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The exponential character for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Symbol not provided by locale module, so use Python default</span>
+        <span class="k">return</span> <span class="s">u&#39;e&#39;</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.thousands_separator"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.thousands_separator">[docs]</a>    <span class="k">def</span> <span class="nf">thousands_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The thousands separator for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">localeconv</span><span class="p">()[</span><span class="s">&#39;thousands_sep&#39;</span><span class="p">])</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.monetary_thousands_separator"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.monetary_thousands_separator">[docs]</a>    <span class="k">def</span> <span class="nf">monetary_thousands_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The thousands separator for monetary values for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">localeconv</span><span class="p">()[</span><span class="s">&#39;mon_thousands_sep&#39;</span><span class="p">])</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.negative_sign"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.negative_sign">[docs]</a>    <span class="k">def</span> <span class="nf">negative_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The monetary negative sign for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">localeconv</span><span class="p">()[</span><span class="s">&#39;negative_sign&#39;</span><span class="p">])</span>
+                </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="SystemLocale.positive_sign"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.positive_sign">[docs]</a>    <span class="k">def</span> <span class="nf">positive_sign</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The monetary positive sign for the locale.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">localeconv</span><span class="p">()[</span><span class="s">&#39;positive_sign&#39;</span><span class="p">])</span>
+            
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="SystemLocale.month_name"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.month_name">[docs]</a>    <span class="k">def</span> <span class="nf">month_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">month_int</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The month name for the given month integer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        month_int : int</span>
+<span class="sd">            An integer in the range 1 to 12 inclusive.</span>
+<span class="sd">        </span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            If True, return the abbreviate version of the month name.</span>
+<span class="sd">            The default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : string</span>
+<span class="sd">            The month name or an empty string in the month int is out</span>
+<span class="sd">            of range.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">month_int</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">month_int</span> <span class="o">&gt;</span> <span class="mi">12</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">abbreviated</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;ab_months&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;months&#39;</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_win_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">month_int</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s">&#39;AB&#39;</span> <span class="k">if</span> <span class="n">abbreviated</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="p">(</span><span class="s">&#39;MON_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">month_int</span><span class="p">)</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">nl_langinfo</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.day_name"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.day_name">[docs]</a>    <span class="k">def</span> <span class="nf">day_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">day_int</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The day name for the given day integer.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        day_int : int</span>
+<span class="sd">            An integer in the range 1 to 7 inclusive.</span>
+<span class="sd">        </span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            If True, return the abbreviate version of the day name.</span>
+<span class="sd">            The default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : string</span>
+<span class="sd">            The day name or an empty string in the day int is out</span>
+<span class="sd">            of range.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">day_int</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">day_int</span> <span class="o">&gt;</span> <span class="mi">7</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">abbreviated</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;ab_days&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;days&#39;</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_win_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">day_int</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s">&#39;AB&#39;</span> <span class="k">if</span> <span class="n">abbreviated</span> <span class="k">else</span> <span class="s">&#39;&#39;</span>
+            <span class="n">attr</span> <span class="o">=</span> <span class="n">prefix</span> <span class="o">+</span> <span class="p">(</span><span class="s">&#39;DAY_</span><span class="si">%i</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">day_int</span><span class="p">)</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">locale</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">nl_langinfo</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="SystemLocale.time_format"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.time_format">[docs]</a>    <span class="k">def</span> <span class="nf">time_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The format string for a time value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            If True, return the abbreviate version of the time format.</span>
+<span class="sd">            The defaults is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : string</span>
+<span class="sd">            The time format string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">abbreviated</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;ab_time&#39;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">key</span> <span class="o">=</span> <span class="s">&#39;time&#39;</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_win_defaults</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">T_FMT</span> <span class="k">if</span> <span class="n">abbreviated</span> <span class="k">else</span> <span class="n">locale</span><span class="o">.</span><span class="n">T_FMT_AMPM</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">nl_langinfo</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.date_format"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.date_format">[docs]</a>    <span class="k">def</span> <span class="nf">date_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The format string for a date value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            If True, return the abbreviated version of the date format.</span>
+<span class="sd">            The defaults is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : string</span>
+<span class="sd">            The date format string.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Python&#39;s builtin locale (based on langinfo) does not distinguish</span>
+<span class="sd">        abbreviated and non-abbreviated date formats. So the keyword</span>
+<span class="sd">        argument is ignored in this implementation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_win_defaults</span><span class="p">[</span><span class="s">&#39;date&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Python doesn&#39;t support %e in strptime, but %d is equivalent</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">nl_langinfo</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">D_FMT</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%e</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.datetime_format"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.datetime_format">[docs]</a>    <span class="k">def</span> <span class="nf">datetime_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The format string for a datetime value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            If True, return the abbreviated version of the datetime</span>
+<span class="sd">            format. The defaults is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : string</span>
+<span class="sd">            The datetime format string.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Python&#39;s builtin locale (based on langinfo) does not distinguish</span>
+<span class="sd">        abbreviated and non-abbreviated datetime formats. So the keyword</span>
+<span class="sd">        argument is ignored in this implementation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_win_defaults</span><span class="p">[</span><span class="s">&#39;datetime&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Python doesn&#39;t support %e in strptime, but %d is equivalent</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">nl_langinfo</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">D_T_FMT</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%e</span><span class="s">&#39;</span><span class="p">,</span> <span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+        
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Conversions</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="SystemLocale.to_time"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_time">[docs]</a>    <span class="k">def</span> <span class="nf">to_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_str</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the given time string into a datetime.time object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_str : string</span>
+<span class="sd">            A string formatted according to time_format().</span>
+
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            Whether or not the time string is using the abbreviated </span>
+<span class="sd">            format. The default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : datetime.time</span>
+<span class="sd">            The datetime.time object for the string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_format</span><span class="p">(</span><span class="n">abbreviated</span><span class="p">)</span>
+        <span class="n">struct_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">time_str</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">time</span><span class="p">(</span><span class="o">*</span><span class="n">struct_time</span><span class="p">[</span><span class="mi">3</span><span class="p">:</span><span class="mi">6</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.to_date"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_date">[docs]</a>    <span class="k">def</span> <span class="nf">to_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_str</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the date string into a datetime.date object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        date_str : string</span>
+<span class="sd">            A string formatted according to date_format().</span>
+
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            Whether or not the date string is using the abbreviated </span>
+<span class="sd">            format. The default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : datetime.date</span>
+<span class="sd">            The datetime.date object for the string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">date_format</span><span class="p">(</span><span class="n">abbreviated</span><span class="p">)</span>
+        <span class="n">struct_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">date_str</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="p">(</span><span class="o">*</span><span class="n">struct_time</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="SystemLocale.to_datetime"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_datetime">[docs]</a>    <span class="k">def</span> <span class="nf">to_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datetime_str</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the datetime string into a datetime.datetime object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        datetime_str : string</span>
+<span class="sd">            A string formatted according to datetime_format().</span>
+
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            Whether or not the datetime string is using the abbreviated </span>
+<span class="sd">            format. The default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : datetime.datetime</span>
+<span class="sd">            The datetime.datetime object for the string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">fmt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datetime_format</span><span class="p">(</span><span class="n">abbreviated</span><span class="p">)</span>
+        <span class="n">struct_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">datetime_str</span><span class="p">,</span> <span class="n">fmt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="o">*</span><span class="n">struct_time</span><span class="p">[:</span><span class="mi">6</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.to_int"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_int">[docs]</a>    <span class="k">def</span> <span class="nf">to_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">int_str</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the string into an integer using the given base.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        int_str : string</span>
+<span class="sd">            The string representing the integer.</span>
+<span class="sd">        </span>
+<span class="sd">        base : int, optional</span>
+<span class="sd">            The number base to use when parsing the string. The valid</span>
+<span class="sd">            values are the same as those passed to Python&#39;s builtin </span>
+<span class="sd">            &#39;int&#39;. The default is 10.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : int</span>
+<span class="sd">            The parsed integer.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">locale</span><span class="o">.</span><span class="n">atof</span><span class="p">(</span><span class="n">int_str</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="SystemLocale.to_long"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_long">[docs]</a>    <span class="k">def</span> <span class="nf">to_long</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">long_str</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the string into a long integer using the given base.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        long_str : string</span>
+<span class="sd">            The string representing the integer.</span>
+<span class="sd">        </span>
+<span class="sd">        base : int, optional</span>
+<span class="sd">            The number base to use when parsing the string. The valid</span>
+<span class="sd">            values are the same as those passed to Python&#39;s builtin </span>
+<span class="sd">            &#39;int&#39;. The default is 10.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : long</span>
+<span class="sd">            The parsed long integer.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">val</span><span class="p">:</span> <span class="nb">long</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">locale</span><span class="o">.</span><span class="n">atof</span><span class="p">(</span><span class="n">long_str</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.to_float"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_float">[docs]</a>    <span class="k">def</span> <span class="nf">to_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">float_str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the given string into a float.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        float_str : string</span>
+<span class="sd">            The string representing the float.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : float</span>
+<span class="sd">            The parsed float.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">locale</span><span class="o">.</span><span class="n">atof</span><span class="p">(</span><span class="n">float_str</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.to_complex"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_complex">[docs]</a>    <span class="k">def</span> <span class="nf">to_complex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">complex_str</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the given string into a complex.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        complex_str : string</span>
+<span class="sd">            The string representing the complex.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : complex</span>
+<span class="sd">            The parsed complex.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">complex_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">thousands_separator</span><span class="p">,</span> <span class="s">u&#39;&#39;</span><span class="p">)</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">decimal_point</span><span class="p">,</span> <span class="s">u&#39;.&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">complex</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.to_currency"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.to_currency">[docs]</a>    <span class="k">def</span> <span class="nf">to_currency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">currency_str</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">intl</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Parse the given currency string into a float.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        currency_str : string</span>
+<span class="sd">            The string representing the currency.</span>
+<span class="sd">        </span>
+<span class="sd">        symbol : bool, optional</span>
+<span class="sd">            If True, the currency symbol is included in the string. The</span>
+<span class="sd">            default is True.</span>
+<span class="sd">        </span>
+<span class="sd">        group : bool, optional</span>
+<span class="sd">            If True, the grouping marks are included in the string. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        intl : bool, optional</span>
+<span class="sd">            If True, the international version of the currency symbol</span>
+<span class="sd">            is used in the string. This is only used if &#39;symbol&#39; is</span>
+<span class="sd">            True. The default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : float</span>
+<span class="sd">            The parsed float.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="n">currency_str</span>
+        <span class="n">conv</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">localeconv</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">symbol</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">intl</span><span class="p">:</span>
+                <span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">conv</span><span class="p">[</span><span class="s">&#39;int_curr_symbol&#39;</span><span class="p">],</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">conv</span><span class="p">[</span><span class="s">&#39;currency_symbol&#39;</span><span class="p">],</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">group</span><span class="p">:</span>
+            <span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">conv</span><span class="p">[</span><span class="s">&#39;mon_thousands_sep&#39;</span><span class="p">],</span> <span class="s">&#39;&#39;</span><span class="p">)</span>
+        <span class="n">curr</span> <span class="o">=</span> <span class="n">curr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">conv</span><span class="p">[</span><span class="s">&#39;mon_decimal_point&#39;</span><span class="p">],</span> <span class="s">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">curr</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.from_time"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_time">[docs]</a>    <span class="k">def</span> <span class="nf">from_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_obj</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert the given time object into a locale specific string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time_obj : datetime.time</span>
+<span class="sd">            The time object for conversion.</span>
+<span class="sd">        </span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            Whether or not the time string should use the abbreviated </span>
+<span class="sd">            format. The default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            The locale formatted time string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">time_obj</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">time_format</span><span class="p">(</span><span class="n">abbreviated</span><span class="p">)))</span>
+    </div>
+<div class="viewcode-block" id="SystemLocale.from_date"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_date">[docs]</a>    <span class="k">def</span> <span class="nf">from_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date_obj</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert the given date object into a locale specific string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        date_obj : datetime.date</span>
+<span class="sd">            The date object for conversion.</span>
+<span class="sd">        </span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            Whether or not the date string should use the abbreviated </span>
+<span class="sd">            format. The default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            The locale formatted date string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">date_obj</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">date_format</span><span class="p">(</span><span class="n">abbreviated</span><span class="p">)))</span>
+    </div>
+<div class="viewcode-block" id="SystemLocale.from_datetime"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_datetime">[docs]</a>    <span class="k">def</span> <span class="nf">from_datetime</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datetime_obj</span><span class="p">,</span> <span class="n">abbreviated</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert the given datetime object into a locale specific </span>
+<span class="sd">        string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        datetime_obj : datetime.datetime</span>
+<span class="sd">            The datetime object for conversion.</span>
+<span class="sd">        </span>
+<span class="sd">        abbreviated : bool, optional</span>
+<span class="sd">            Whether or not the datetime string should use the abbreviated </span>
+<span class="sd">            format. The default is False.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : string</span>
+<span class="sd">            The locale formatted datetime string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">datetime_obj</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datetime_format</span><span class="p">(</span><span class="n">abbreviated</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.from_int"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_int">[docs]</a>    <span class="k">def</span> <span class="nf">from_int</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Format the integer value according to the locale.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : int</span>
+<span class="sd">            The integer to convert a string.</span>
+<span class="sd">        </span>
+<span class="sd">        base : int, optional</span>
+<span class="sd">            The number base to use when parsing the string. The valid</span>
+<span class="sd">            values are the same as those passed to Python&#39;s builtin </span>
+<span class="sd">            &#39;int&#39;. The default is 10.</span>
+
+<span class="sd">        group : bool, optional</span>
+<span class="sd">            Whether or not to add group separators in the result. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            The locale formatted integer string.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We can specially format bases 2, 8, 16. The others we format</span>
+        <span class="c"># as normal integers after converting them to a proper base.</span>
+        <span class="k">if</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="nb">bin</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">8</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">format_string</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%#o</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">format_string</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%d</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">base</span> <span class="o">==</span> <span class="mi">16</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">locale</span><span class="o">.</span><span class="n">format_string</span><span class="p">(</span><span class="s">&#39;</span><span class="si">%#X</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="n">_convert_base</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.from_long"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_long">[docs]</a>    <span class="k">def</span> <span class="nf">from_long</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Format the long integer value according to the locale.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : long</span>
+<span class="sd">            The long integer to convert a string.</span>
+<span class="sd">        </span>
+<span class="sd">        base : int, optional</span>
+<span class="sd">            The number base to use when parsing the string. The valid</span>
+<span class="sd">            values are the same as those passed to Python&#39;s builtin </span>
+<span class="sd">            &#39;int&#39;. The default is 10.</span>
+
+<span class="sd">        group : bool, optional</span>
+<span class="sd">            Whether or not to add group separators in the result. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            The locale formatted long integer string.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># The int conversion can handle longs</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">group</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.from_float"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_float">[docs]</a>    <span class="k">def</span> <span class="nf">from_float</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">prec</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Format the float value according to the locale.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : float</span>
+<span class="sd">            The float to convert a string.</span>
+<span class="sd">        </span>
+<span class="sd">        group : bool, optional</span>
+<span class="sd">            Whether or not to add group separators in the result. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        prec : int, optional</span>
+<span class="sd">            The number of signficant digits to display in the string. </span>
+<span class="sd">            The default is -1 which means the decision is left up</span>
+<span class="sd">            to the implementor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            The locale formatted integer string.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">prec</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%g</span><span class="s">&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s</span> <span class="o">=</span> <span class="s">&#39;%&#39;</span> <span class="o">+</span> <span class="s">&#39;.</span><span class="si">%d</span><span class="s">g&#39;</span> <span class="o">%</span> <span class="n">prec</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">format_string</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.from_complex"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_complex">[docs]</a>    <span class="k">def</span> <span class="nf">from_complex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">prec</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Format the complex value according to the locale.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : complex</span>
+<span class="sd">            The complex to convert a string.</span>
+<span class="sd">        </span>
+<span class="sd">        group : bool, optional</span>
+<span class="sd">            Whether or not to add group separators in the result. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        prec : int, optional</span>
+<span class="sd">            The number of signficant digits to display for each part. </span>
+<span class="sd">            The default is -1 which means the decision is left up</span>
+<span class="sd">            to the implementor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            The locale formatted complex string.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">real</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">real</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">prec</span><span class="p">)</span>
+        <span class="n">imag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_float</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">imag</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">prec</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">imag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s">&#39;-&#39;</span><span class="p">):</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">real</span> <span class="o">+</span> <span class="n">imag</span> <span class="o">+</span> <span class="s">&#39;j&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">real</span> <span class="o">+</span> <span class="s">&#39;+&#39;</span> <span class="o">+</span> <span class="n">imag</span> <span class="o">+</span> <span class="s">&#39;j&#39;</span>
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="SystemLocale.from_currency"><a class="viewcode-back" href="../../../api_ref/enaml.localization.html#enaml.localization.system_locale.SystemLocale.from_currency">[docs]</a>    <span class="k">def</span> <span class="nf">from_currency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">symbol</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">intl</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert the given value into a locale specific currency</span>
+<span class="sd">        string.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : int, long, or float</span>
+<span class="sd">            The value representing the currency</span>
+<span class="sd">        </span>
+<span class="sd">        symbol : bool, optional</span>
+<span class="sd">            If True, the currency symbol is included in the string. The</span>
+<span class="sd">            default is True.</span>
+<span class="sd">        </span>
+<span class="sd">        group : bool, optional</span>
+<span class="sd">            If True, the grouping marks are included in the string. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">        </span>
+<span class="sd">        intl : bool, optional</span>
+<span class="sd">            If True, the international version of the currency symbol</span>
+<span class="sd">            is used in the string. This is only used if &#39;symbol&#39; is</span>
+<span class="sd">            True. The default is False.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : string</span>
+<span class="sd">            The locale formatted currency string.</span>
+<span class="sd">             </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="n">locale</span><span class="o">.</span><span class="n">currency</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">symbol</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">intl</span><span class="p">))</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+          <li><a href="../localization.html" >enaml.localization</a> &raquo;</li>
+  
+    <li><a href="#">enaml.localization.system_locale</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

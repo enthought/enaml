@@ -1,0 +1,254 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.dialog &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.dialog</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.dialog</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span>
+
+<span class="kn">from</span> <span class="nn">.window</span> <span class="kn">import</span> <span class="n">Window</span><span class="p">,</span> <span class="n">AbstractTkWindow</span>
+
+<span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+<span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">DialogResult</span><span class="p">,</span> <span class="n">Modality</span>
+
+
+<div class="viewcode-block" id="AbstractTkDialog"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.AbstractTkDialog">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkDialog</span><span class="p">(</span><span class="n">AbstractTkWindow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a Dialog.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkDialog.accept"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.AbstractTkDialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `accepted`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkDialog.reject"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.AbstractTkDialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `rejected`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+</div></div>
+<div class="viewcode-block" id="Dialog"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog">[docs]</a><span class="k">class</span> <span class="nc">Dialog</span><span class="p">(</span><span class="n">Window</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Window subclass which adds modal style behavior.</span>
+
+<span class="sd">    The basic dialog has no buttons, but provides methods for the</span>
+<span class="sd">    accept and reject behavior for the dialog.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A read only property which will be True when the dialog is open, </span>
+    <span class="c">#: False otherwise.</span>
+    <span class="n">active</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Bool</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_active&#39;</span><span class="p">)</span>
+
+    <span class="c">#: Fired when the dialog is opened.</span>
+    <span class="n">opened</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: Fired when the dialog is closed. The event payload will be the </span>
+    <span class="c">#: dialog result.</span>
+    <span class="n">closed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: A read only property which is set to the result of the dialog; </span>
+    <span class="c">#: &#39;rejected&#39; if rejected() was called or the window was closed via </span>
+    <span class="c">#: the &#39;x&#39; window button, &#39;accepted&#39; if accept() was called. The </span>
+    <span class="c">#: result is set before the &#39;closed&#39; event is fired.</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">DialogResult</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_result&#39;</span><span class="p">)</span>
+
+    <span class="c">#: An enum which indicates the modality of the dialog. One of </span>
+    <span class="c">#: &#39;application_modal&#39; or &#39;window_modal&#39;. The default value is </span>
+    <span class="c">#: &#39;application_modal&#39;. Changes to this attribute *after* the </span>
+    <span class="c">#: dialog is shown will have no effect.</span>
+    <span class="n">modality</span> <span class="o">=</span> <span class="n">Modality</span>
+
+    <span class="c">#: Overridden parent class trait.</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkDialog</span><span class="p">)</span>
+    
+    <span class="c">#: An internal trait used to store the active state of the dialog.</span>
+    <span class="n">_active</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: An internal trait used to store the result of the dialog.</span>
+    <span class="n">_result</span> <span class="o">=</span> <span class="n">DialogResult</span><span class="p">(</span><span class="s">&#39;rejected&#39;</span><span class="p">)</span>
+        
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Property Getters</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_get_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;active&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_active</span>
+
+    <span class="k">def</span> <span class="nf">_get_result</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;result&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_result</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract Method Implementations</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Dialog.show"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog.show">[docs]</a>    <span class="k">def</span> <span class="nf">show</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Make the dialog visible on the screen. Overridden from the</span>
+<span class="sd">        parent class to properly handle Dialog semantics.</span>
+
+<span class="sd">        If the dialog is not already fully initialized, then the &#39;setup&#39;</span>
+<span class="sd">        method will be called prior to making the dialog visible.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : native toolkit widget, optional</span>
+<span class="sd">            Provide this argument if the dialog should have another</span>
+<span class="sd">            widget as its logical parent. This may help with stacking</span>
+<span class="sd">            order and/or visibility hierarchy depending on the toolkit</span>
+<span class="sd">            backend.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Note that we don&#39;t start the event loop after making a Dialog</span>
+        <span class="c"># visible. Dialogs are shown modally and typically start their </span>
+        <span class="c"># own event loop. Thus, set_visble(True) will block and starting</span>
+        <span class="c"># an event loop after it returns may cause a dead lock.</span>
+        <span class="c">#</span>
+        <span class="c"># XXX pumping the event loop here is a bit of hack. The trick</span>
+        <span class="c"># we used on Window doesn&#39;t work here because the set visible </span>
+        <span class="c"># call actually starts the event loop.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prep_window</span><span class="p">()</span>
+        <span class="n">app</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">toolkit</span><span class="o">.</span><span class="n">app</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">):</span>
+            <span class="n">app</span><span class="o">.</span><span class="n">process_events</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_visible</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Auxiliary Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Dialog.accept"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog.accept">[docs]</a>    <span class="k">def</span> <span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `accepted`.</span>
+
+<span class="sd">        Call this method to trigger the same behavior as clicking on an</span>
+<span class="sd">        Ok button.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Dialog.reject"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.dialog.Dialog.reject">[docs]</a>    <span class="k">def</span> <span class="nf">reject</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Close the dialog and set the result to `rejected`.</span>
+
+<span class="sd">        Call this method to trigger the same behavior as clicking on a</span>
+<span class="sd">        Cancel button.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.dialog</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

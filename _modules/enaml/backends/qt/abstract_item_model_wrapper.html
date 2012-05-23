@@ -1,0 +1,500 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.abstract_item_model_wrapper &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.abstract_item_model_wrapper</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.abstract_item_model_wrapper</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">import</span> <span class="nn">operator</span>
+
+<span class="kn">from</span> <span class="nn">.qt.QtCore</span> <span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QAbstractItemModel</span><span class="p">,</span> <span class="n">QModelIndex</span><span class="p">,</span> <span class="n">QSize</span>
+<span class="kn">from</span> <span class="nn">.styling</span> <span class="kn">import</span> <span class="n">q_color_from_color</span><span class="p">,</span> <span class="n">q_font_from_font</span>
+
+<span class="kn">from</span> <span class="nn">...item_models.abstract_item_model</span> <span class="kn">import</span> <span class="n">AbstractItemModel</span>
+
+
+<span class="c">#: An invalid QModelIndex() for use in conversion routines</span>
+<span class="n">_INVALID_QINDEX</span> <span class="o">=</span> <span class="n">QModelIndex</span><span class="p">()</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Flag Map</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># The construction cost of creating an ItemsFlag object is very high</span>
+<span class="c"># so instead we enumerate all 128 combinations so we can look them </span>
+<span class="c"># up as a simple map. This is a hack to workaround a PySide issue</span>
+<span class="c"># where it doesn&#39;t accept ints as return values from the flags() method</span>
+<span class="n">_qitem_flags</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">NoItemFlags</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsSelectable</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEditable</span><span class="p">,</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDragEnabled</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsDropEnabled</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsUserCheckable</span><span class="p">,</span>
+    <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsEnabled</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">ItemIsTristate</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="n">_QITEM_FLAGS</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">_qitem_flags</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">items</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">combinations</span><span class="p">(</span><span class="n">_qitem_flags</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="nb">reduce</span><span class="p">(</span><span class="n">operator</span><span class="o">.</span><span class="n">or_</span><span class="p">,</span> <span class="n">items</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">_QITEM_FLAGS</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">val</span><span class="p">)]</span> <span class="o">=</span> <span class="n">val</span>
+
+
+<span class="k">del</span> <span class="n">_qitem_flags</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Role Mapping Builders</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_build_getters</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a dictionary of role-&gt;getter methods for the given</span>
+<span class="sd">    model.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">data</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DecorationRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">decoration</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">edit_data</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">tool_tip</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">status_tip</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">WhatsThisRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">whats_this</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">FontRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">font</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextAlignmentRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">alignment</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">BackgroundRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">background</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ForegroundRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">foreground</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckStateRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">check_state</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">size_hint</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">):</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_build_setters</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a dictionary of role-&gt;setter methods for the given</span>
+<span class="sd">    model.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">set_data</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">set_data</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckStateRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">set_check_state</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_build_h_header_getters</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a dictionary of role-&gt;h_header getter methods for the</span>
+<span class="sd">    given model.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_data</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DecorationRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_decoration</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_tool_tip</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_status_tip</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">WhatsThisRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_whats_this</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">FontRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_font</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextAlignmentRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_alignment</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">BackgroundRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_background</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ForegroundRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_foreground</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">horizontal_header_size_hint</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">):</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span> <span class="nf">_build_v_header_getters</span><span class="p">(</span><span class="n">model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Returns a dictionary of role-&gt;v_header getter methods for the</span>
+<span class="sd">    given model.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_data</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DecorationRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_decoration</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_tool_tip</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_status_tip</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">WhatsThisRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_whats_this</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">FontRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_font</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextAlignmentRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_alignment</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">BackgroundRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_background</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ForegroundRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_foreground</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">):</span> <span class="n">model</span><span class="o">.</span><span class="n">vertical_header_size_hint</span><span class="p">,</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">):</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Data Converters</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="k">def</span> <span class="nf">_not_yet_supported</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="c"># use this converter for roles that are not </span>
+    <span class="c"># yet supported.</span>
+    <span class="k">return</span> <span class="bp">None</span>
+
+
+<span class="k">def</span> <span class="nf">_no_convert</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="c"># These values don&#39;t need converting because they should</span>
+    <span class="c"># come from the user model with a Qt compatible type.</span>
+    <span class="k">return</span> <span class="n">val</span>
+
+
+<span class="k">def</span> <span class="nf">_brush_convert</span><span class="p">(</span><span class="n">brush</span><span class="p">):</span>
+    <span class="c"># We don&#39;t yet support a full brush, so for now just </span>
+    <span class="c"># return the color. Which works fine.</span>
+    <span class="k">if</span> <span class="n">brush</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">q_color_from_color</span><span class="p">(</span><span class="n">brush</span><span class="o">.</span><span class="n">color</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_size_convert</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">QSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+
+<span class="c"># Some of these should be LRU cached    </span>
+<span class="k">def</span> <span class="nf">_font_convert</span><span class="p">(</span><span class="n">font</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">font</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">q_font_from_font</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+
+
+<span class="n">_QROLE_CONVERTERS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DisplayRole</span><span class="p">):</span> <span class="n">_no_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">DecorationRole</span><span class="p">):</span> <span class="n">_not_yet_supported</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">EditRole</span><span class="p">):</span> <span class="n">_no_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ToolTipRole</span><span class="p">):</span> <span class="n">_no_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">StatusTipRole</span><span class="p">):</span> <span class="n">_no_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">WhatsThisRole</span><span class="p">):</span> <span class="n">_no_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">FontRole</span><span class="p">):</span> <span class="n">_font_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">TextAlignmentRole</span><span class="p">):</span> <span class="n">_no_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">BackgroundRole</span><span class="p">):</span> <span class="n">_brush_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">ForegroundRole</span><span class="p">):</span> <span class="n">_brush_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">CheckStateRole</span><span class="p">):</span> <span class="n">_not_yet_supported</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">SizeHintRole</span><span class="p">):</span> <span class="n">_size_convert</span><span class="p">,</span>
+    <span class="nb">int</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">UserRole</span><span class="p">):</span> <span class="n">_not_yet_supported</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># AbstractItemModelWrapper</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="AbstractItemModelWrapper"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper">[docs]</a><span class="k">class</span> <span class="nc">AbstractItemModelWrapper</span><span class="p">(</span><span class="n">QAbstractItemModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A QAbstractItemModel subclass which wraps an instance of an</span>
+<span class="sd">    Enaml AbstractItemModel and does the appropriate delegation and</span>
+<span class="sd">    conversion between Python and Qt</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AbstractItemModelWrapper.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item_model</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">AbstractItemModelWrapper</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item_model</span><span class="p">,</span> <span class="n">AbstractItemModel</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;Model must be an instance of AbstractItemModel.&#39;</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span> <span class="o">=</span> <span class="n">item_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_getters</span> <span class="o">=</span> <span class="n">_build_getters</span><span class="p">(</span><span class="n">item_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_setters</span> <span class="o">=</span> <span class="n">_build_setters</span><span class="p">(</span><span class="n">item_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h_header_getters</span> <span class="o">=</span> <span class="n">_build_h_header_getters</span><span class="p">(</span><span class="n">item_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_v_header_getters</span> <span class="o">=</span> <span class="n">_build_v_header_getters</span><span class="p">(</span><span class="n">item_model</span><span class="p">)</span>
+
+        <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
+            <span class="n">signal</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">item_model</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+            <span class="n">signal</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;_&#39;</span> <span class="o">+</span> <span class="n">name</span><span class="p">))</span>
+
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;columns_about_to_be_inserted&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;columns_about_to_be_moved&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;columns_about_to_be_removed&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;columns_inserted&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;columns_moved&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;columns_removed&#39;</span><span class="p">)</span>
+
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;rows_about_to_be_inserted&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;rows_about_to_be_moved&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;rows_about_to_be_removed&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;rows_inserted&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;rows_moved&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;rows_removed&#39;</span><span class="p">)</span>
+
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;layout_about_to_be_changed&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;layout_changed&#39;</span><span class="p">)</span>
+
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;model_about_to_be_reset&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;model_reset&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;data_changed&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;horizontal_header_data_changed&#39;</span><span class="p">)</span>
+        <span class="n">listen</span><span class="p">(</span><span class="s">&#39;vertical_header_data_changed&#39;</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Traits Event Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_columns_about_to_be_inserted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnsAboutToBeInserted</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_columns_about_to_be_moved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnsAboutToBeMoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_columns_about_to_be_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnsAboutToBeRemoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_columns_inserted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnsInserted</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_columns_moved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnsMoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_columns_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">columnsRemoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_rows_about_to_be_inserted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rowsAboutToBeInserted</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_rows_about_to_be_moved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rowsAboutToBeMoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_rows_about_to_be_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rowsAboutToBeRemoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_rows_inserted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rowsInserted</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_rows_moved</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rowsMoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_rows_removed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">parent</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rowsRemoved</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_index</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_layout_about_to_be_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutAboutToBeChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_layout_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layoutChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+            
+    <span class="k">def</span> <span class="nf">_model_about_to_be_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelAboutToBeReset</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_model_reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modelReset</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">top_left</span><span class="p">,</span> <span class="n">bottom_right</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="n">q_top_left</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">top_left</span><span class="p">)</span>
+        <span class="n">q_bottom_right</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">bottom_right</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">q_top_left</span><span class="p">,</span> <span class="n">q_bottom_right</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_horizontal_header_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">first</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headerDataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_vertical_header_data_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt_arg</span><span class="p">):</span>
+        <span class="n">first</span><span class="p">,</span> <span class="n">last</span> <span class="o">=</span> <span class="n">evt_arg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">headerDataChanged</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Vertical</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># AbstractItemModel interface </span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="AbstractItemModelWrapper.buddy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.buddy">[docs]</a>    <span class="k">def</span> <span class="nf">buddy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">enaml_buddy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">buddy</span><span class="p">(</span><span class="n">enaml_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">enaml_buddy</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.canFetchMore"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.canFetchMore">[docs]</a>    <span class="k">def</span> <span class="nf">canFetchMore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="n">enaml_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">can_fetch_more</span><span class="p">(</span><span class="n">enaml_parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.fetchMore"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.fetchMore">[docs]</a>    <span class="k">def</span> <span class="nf">fetchMore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="n">enaml_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">fetchMore</span><span class="p">(</span><span class="n">enaml_parent</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.headerData"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.headerData">[docs]</a>    <span class="k">def</span> <span class="nf">headerData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">orientation</span> <span class="o">==</span> <span class="n">Qt</span><span class="o">.</span><span class="n">Horizontal</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h_header_getters</span><span class="p">[</span><span class="n">role</span><span class="p">](</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_v_header_getters</span><span class="p">[</span><span class="n">role</span><span class="p">](</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.setData"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.setData">[docs]</a>    <span class="k">def</span> <span class="nf">setData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">setter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_setters</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">role</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">setter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">setter</span><span class="p">(</span><span class="n">enaml_index</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="n">res</span>
+        </div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.flags"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">enaml_flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">flags</span><span class="p">(</span><span class="n">enaml_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_QITEM_FLAGS</span><span class="p">[</span><span class="n">enaml_flags</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.rowCount"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.rowCount">[docs]</a>    <span class="k">def</span> <span class="nf">rowCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">row_count</span><span class="p">(</span><span class="n">enaml_index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.columnCount"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.columnCount">[docs]</a>    <span class="k">def</span> <span class="nf">columnCount</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">column_count</span><span class="p">(</span><span class="n">enaml_index</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.index"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.index">[docs]</a>    <span class="k">def</span> <span class="nf">index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="n">enaml_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">column</span><span class="p">,</span> <span class="n">enaml_parent</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">enaml_index</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.parent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.parent">[docs]</a>    <span class="k">def</span> <span class="nf">parent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">enaml_parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">parent</span><span class="p">(</span><span class="n">enaml_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_q_index</span><span class="p">(</span><span class="n">enaml_parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.data"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+        <span class="n">enaml_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">from_q_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">enaml_index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_getters</span><span class="p">[</span><span class="n">role</span><span class="p">](</span><span class="n">enaml_index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">_QROLE_CONVERTERS</span><span class="p">[</span><span class="n">role</span><span class="p">](</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c"># XXX we don&#39;t have a use case at the moment for setHeaderData</span></div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.setHeaderData"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.setHeaderData">[docs]</a>    <span class="k">def</span> <span class="nf">setHeaderData</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">,</span> <span class="n">orientation</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">role</span><span class="p">):</span>
+       <span class="k">return</span> <span class="bp">False</span>
+    </div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.from_q_index"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.from_q_index">[docs]</a>    <span class="k">def</span> <span class="nf">from_q_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">q_index</span><span class="o">.</span><span class="n">isValid</span><span class="p">():</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">q_index</span><span class="o">.</span><span class="n">row</span><span class="p">()</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">q_index</span><span class="o">.</span><span class="n">column</span><span class="p">()</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">q_index</span><span class="o">.</span><span class="n">internalPointer</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_item_model</span><span class="o">.</span><span class="n">create_index</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AbstractItemModelWrapper.to_q_index"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.abstract_item_model_wrapper.AbstractItemModelWrapper.to_q_index">[docs]</a>    <span class="k">def</span> <span class="nf">to_q_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enaml_index</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">enaml_index</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_INVALID_QINDEX</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">enaml_index</span><span class="o">.</span><span class="n">row</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">enaml_index</span><span class="o">.</span><span class="n">column</span>
+        <span class="n">context</span> <span class="o">=</span> <span class="n">enaml_index</span><span class="o">.</span><span class="n">context</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">createIndex</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">,</span> <span class="n">context</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.abstract_item_model_wrapper</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

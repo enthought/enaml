@@ -1,0 +1,632 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.wx.wx_action &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_action</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.wx.wx_action</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">weakref</span>
+
+<span class="kn">import</span> <span class="nn">wx</span>
+<span class="kn">import</span> <span class="nn">wx.lib.newevent</span>
+
+<span class="kn">from</span> <span class="nn">.wx_base_widget_component</span> <span class="kn">import</span> <span class="n">WXBaseWidgetComponent</span>
+
+<span class="kn">from</span> <span class="nn">...components.action</span> <span class="kn">import</span> <span class="n">AbstractTkAction</span>
+
+
+<span class="c">#: A custom event emitted by the wxEnamlAction when it has been triggered</span>
+<span class="n">wxEnamlActionTriggered</span><span class="p">,</span> <span class="n">EVT_ACTION_TRIGGERED</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
+
+<span class="c">#: A custom event emitted by the wxEnamlAction when it has been toggled</span>
+<span class="n">wxEnamlActionToggled</span><span class="p">,</span> <span class="n">EVT_ACTION_TOGGLED</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">lib</span><span class="o">.</span><span class="n">newevent</span><span class="o">.</span><span class="n">NewEvent</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="wxEnamlAction"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction">[docs]</a><span class="k">class</span> <span class="nc">wxEnamlAction</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EvtHandler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An wx.EvtHandler which *acts* like a wx equivalent to a QAction.</span>
+<span class="sd">    It works by managing an internal wxMenuItem. Menus which use </span>
+<span class="sd">    this action must call the Install() method in order for the</span>
+<span class="sd">    underlying wx.MenuItem to be created. This is due to the fact </span>
+<span class="sd">    that using the wx.MenuItem constructor from Python will lead </span>
+<span class="sd">    to segfaults when calling menu.AppendItem(item), hence creating</span>
+<span class="sd">    a usable subclass of wx.MenuItem is out of the question.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="wxEnamlAction.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a wxAction.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : wxEnamlMenu</span>
+<span class="sd">            The wxEnamlMenu instance which is the parent of this action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">wxEnamlAction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+
+        <span class="c"># The parent wx.Menu of this action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+
+        <span class="c"># The internal wx.MenuItem that this action will manage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c"># The text of the action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="c"># Whether or not the action is a separator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_separator</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="c"># Whether or not the action is enabled</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="c"># Whether or not the action is checkable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkable</span> <span class="o">=</span> <span class="bp">False</span>
+        
+        <span class="c"># Whether or not the action is checked</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checked</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="c"># The help text for the action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_help_text</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+
+        <span class="c"># The icon for the action</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_icon</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="c"># Find the parent on which we need to bind the event handler. </span>
+        <span class="c"># If this action is contained in a MenuBar, this will be a</span>
+        <span class="c"># wx.Frame, otherwise it will be a wx.Menu used as a sole </span>
+        <span class="c"># popup menu.</span>
+        <span class="k">while</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">last</span> <span class="o">=</span> <span class="n">parent</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">GetParent</span><span class="p">()</span>
+        <span class="n">last</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_MENU</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnMenuEvent</span><span class="p">)</span>
+
+        <span class="c"># Store away a weak reference to the object on which we</span>
+        <span class="c"># bound the event handler, so we can unbind it in the </span>
+        <span class="c"># Destroy method.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_binder</span> <span class="o">=</span> <span class="n">weakref</span><span class="o">.</span><span class="n">ref</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.OnMenuEvent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.OnMenuEvent">[docs]</a>    <span class="k">def</span> <span class="nf">OnMenuEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for menu events on this action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">menu_item</span><span class="o">.</span><span class="n">GetId</span><span class="p">()</span> <span class="o">==</span> <span class="n">event</span><span class="o">.</span><span class="n">GetId</span><span class="p">():</span>
+            <span class="c"># If the action is checkable, we first need to emit</span>
+            <span class="c"># the toggled event. This behavior is the same as Qt.</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_checked</span> <span class="o">=</span> <span class="n">menu_item</span><span class="o">.</span><span class="n">IsChecked</span><span class="p">()</span>
+                <span class="n">evt</span> <span class="o">=</span> <span class="n">wxEnamlActionToggled</span><span class="p">()</span>
+                <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">)</span>
+            <span class="c"># Next, we emit the standard triggered Event.</span>
+            <span class="n">evt</span> <span class="o">=</span> <span class="n">wxEnamlActionTriggered</span><span class="p">()</span>
+            <span class="n">wx</span><span class="o">.</span><span class="n">PostEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evt</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># Only skip the event if it&#39;s not handled by this action.</span>
+            <span class="c"># Otherwise, we&#39;ll get multiple notifications.</span>
+            <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.GetParent"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.GetParent">[docs]</a>    <span class="k">def</span> <span class="nf">GetParent</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the parent of the action or None if the parent has</span>
+<span class="sd">        already been garbage collected.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.GetMenuItem"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.GetMenuItem">[docs]</a>    <span class="k">def</span> <span class="nf">GetMenuItem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the internal wx.MenuItem being managed by the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+    </div>
+<div class="viewcode-block" id="wxEnamlAction.Install"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.Install">[docs]</a>    <span class="k">def</span> <span class="nf">Install</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Adds this action to the internal parent wx.Menu object at </span>
+<span class="sd">        the given index. If the index is None, the item is appended to</span>
+<span class="sd">        the end of the menu.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">menu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># When creating a new menu item, we need to create a new</span>
+            <span class="c"># id for that item, as well as a valid name for the item.</span>
+            <span class="c"># If we don&#39;t give it a valid name (an empty string is </span>
+            <span class="c"># invalid), then it will segfault. We create the item with </span>
+            <span class="c"># a temporary name, and update it after the item has been </span>
+            <span class="c"># created. We also fully update the rest of item state after </span>
+            <span class="c"># it has been created.</span>
+            <span class="n">menu_id</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">NewId</span><span class="p">()</span>
+            <span class="n">temp_name</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">menu_id</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">idx</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">GetMenuItemCount</span><span class="p">()</span>
+            
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_separator</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">InsertSeparator</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkable</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">InsertCheckItem</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">menu_id</span><span class="p">,</span> <span class="n">temp_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span> <span class="o">=</span> <span class="n">menu</span><span class="o">.</span><span class="n">Insert</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">menu_id</span><span class="p">,</span> <span class="n">temp_name</span><span class="p">)</span>
+
+            <span class="c"># Update the state of the menu item after it&#39;s been created.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SetText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_text</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SetChecked</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_checked</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SetHelp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_help_text</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UpdateMenuBitmaps</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.GetText"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.GetText">[docs]</a>    <span class="k">def</span> <span class="nf">GetText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the current text for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_text</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.SetText"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.SetText">[docs]</a>    <span class="k">def</span> <span class="nf">SetText</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the text for the action. If the given text is the </span>
+<span class="sd">        empty string, then a unique mangled name will be generated</span>
+<span class="sd">        for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s">&#39;Action_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+            <span class="n">item</span><span class="o">.</span><span class="n">SetText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="s">&#39;Action_&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_text</span> <span class="o">=</span> <span class="n">text</span>
+    </div>
+<div class="viewcode-block" id="wxEnamlAction.GetHelp"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.GetHelp">[docs]</a>    <span class="k">def</span> <span class="nf">GetHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the help text for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_help_text</span>
+    </div>
+<div class="viewcode-block" id="wxEnamlAction.SetHelp"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.SetHelp">[docs]</a>    <span class="k">def</span> <span class="nf">SetHelp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the help text for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_help_text</span> <span class="o">=</span> <span class="n">text</span>
+        <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">menu_item</span><span class="o">.</span><span class="n">SetHelp</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.GetIcon"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.GetIcon">[docs]</a>    <span class="k">def</span> <span class="nf">GetIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the WXIcon instance in use for this action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_icon</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.SetIcon"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.SetIcon">[docs]</a>    <span class="k">def</span> <span class="nf">SetIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the icon for this action. The icon should be an instance</span>
+<span class="sd">        of the Enaml WXIcon.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_icon</span> <span class="o">=</span> <span class="n">icon</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.IsSeparator"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.IsSeparator">[docs]</a>    <span class="k">def</span> <span class="nf">IsSeparator</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns whether or not this action is a separator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_separator</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.SetSeparator"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.SetSeparator">[docs]</a>    <span class="k">def</span> <span class="nf">SetSeparator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">separator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets whether or not this action is a separator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># If the menu item has already been created, it needs</span>
+        <span class="c"># be removed from the parent and re-installed since </span>
+        <span class="c"># the separator state cannot be changed in-place.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_separator</span> <span class="o">=</span> <span class="n">separator</span>
+        <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">GetMenuItems</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">menu_item</span><span class="p">)</span>
+                <span class="n">parent</span><span class="o">.</span><span class="n">Remove</span><span class="p">(</span><span class="n">menu_item</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Install</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.IsCheckable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.IsCheckable">[docs]</a>    <span class="k">def</span> <span class="nf">IsCheckable</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns whether or not the action is checkable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkable</span>
+    </div>
+<div class="viewcode-block" id="wxEnamlAction.SetCheckable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.SetCheckable">[docs]</a>    <span class="k">def</span> <span class="nf">SetCheckable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets whether or not the action is checkable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># If the menu item has already been created, it needs</span>
+        <span class="c"># be removed from the parent and re-installed since </span>
+        <span class="c"># the checkable state cannot be changed in-place.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checkable</span> <span class="o">=</span> <span class="n">checkable</span>
+        <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">parent</span><span class="o">.</span><span class="n">GetMenuItems</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">menu_item</span><span class="p">)</span>
+                <span class="n">parent</span><span class="o">.</span><span class="n">Remove</span><span class="p">(</span><span class="n">menu_item</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">Install</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.IsChecked"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.IsChecked">[docs]</a>    <span class="k">def</span> <span class="nf">IsChecked</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns whether or not the action is checked. This only</span>
+<span class="sd">        has semantic meaning if the action is also checkable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checked</span>
+    </div>
+<div class="viewcode-block" id="wxEnamlAction.SetChecked"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.SetChecked">[docs]</a>    <span class="k">def</span> <span class="nf">SetChecked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets whether or not the action is checked. This only has</span>
+<span class="sd">        semantic meaning if the action is also checkable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_checked</span> <span class="o">=</span> <span class="n">checked</span>
+        <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_checkable</span><span class="p">:</span>
+            <span class="n">menu_item</span><span class="o">.</span><span class="n">Check</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.Enable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.Enable">[docs]</a>    <span class="k">def</span> <span class="nf">Enable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Enables or disables the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="o">=</span> <span class="n">enabled</span>
+        <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">menu_item</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">UpdateMenuBitmaps</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="wxEnamlAction.UpdateMenuBitmaps"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.UpdateMenuBitmaps">[docs]</a>    <span class="k">def</span> <span class="nf">UpdateMenuBitmaps</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the menu item bitmaps correctly for the current state.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">icon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_icon</span>
+        <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+        <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">icon</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s">&#39;normal&#39;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_enabled</span> <span class="k">else</span> <span class="s">&#39;disabled&#39;</span>
+            <span class="n">size</span> <span class="o">=</span> <span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">IsCheckable</span><span class="p">():</span>
+                <span class="n">checked_img</span> <span class="o">=</span> <span class="n">icon</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">)</span>
+                <span class="n">checked_bmp</span> <span class="o">=</span> <span class="n">checked_img</span><span class="o">.</span><span class="n">as_wxBitmap</span><span class="p">()</span>
+                <span class="n">unchecked_img</span> <span class="o">=</span> <span class="n">icon</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;off&#39;</span><span class="p">)</span>
+                <span class="n">unchecked_bmp</span> <span class="o">=</span> <span class="n">unchecked_img</span><span class="o">.</span><span class="n">as_wxBitmap</span><span class="p">()</span>
+                <span class="n">menu_item</span><span class="o">.</span><span class="n">SetBitmaps</span><span class="p">(</span><span class="n">checked_bmp</span><span class="p">,</span> <span class="n">unchecked_bmp</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">img</span> <span class="o">=</span> <span class="n">icon</span><span class="o">.</span><span class="n">get_image</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">mode</span><span class="p">)</span>
+                <span class="n">bmp</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">as_wxBitmap</span><span class="p">()</span>
+                <span class="n">menu_item</span><span class="o">.</span><span class="n">SetBitmaps</span><span class="p">(</span><span class="n">bmp</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">NullBitmap</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">menu_item</span><span class="o">.</span><span class="n">SetBitmaps</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">NullBitmap</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">NullBitmap</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="wxEnamlAction.Destroy"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.Destroy">[docs]</a>    <span class="k">def</span> <span class="nf">Destroy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A destructor method which removes the menu item from its</span>
+<span class="sd">        parent before destroying the item and itself.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="p">:</span>
+            <span class="n">menu_item</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_menu_item</span>
+            <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">menu_item</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="c"># This will raise a ValueError if the menu item is</span>
+                    <span class="c"># not in the list. Looping over the list and checking</span>
+                    <span class="c"># for equality won&#39;t work; a wx-ism</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">GetMenuItems</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">menu_item</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">parent</span><span class="o">.</span><span class="n">Remove</span><span class="p">(</span><span class="n">menu_item</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+
+            <span class="k">if</span> <span class="n">menu_item</span><span class="p">:</span>
+                <span class="n">menu_item</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">menu_item</span> <span class="o">=</span> <span class="bp">None</span>
+
+            <span class="c"># Before destroying the action, we need to unbind the event</span>
+            <span class="c"># handler, or it will continue being called for every </span>
+            <span class="c"># menu event which will result in PyDeadObject errors.</span>
+            <span class="n">binder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_binder</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">binder</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">binder</span><span class="o">.</span><span class="n">Unbind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_MENU</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">OnMenuEvent</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">wxEnamlAction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Destroy</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.Freeze"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.Freeze">[docs]</a>    <span class="k">def</span> <span class="nf">Freeze</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An api compatibility method. This is a no-op since actions</span>
+<span class="sd">        cannot be frozen or thawed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="wxEnamlAction.Thaw"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.wxEnamlAction.Thaw">[docs]</a>    <span class="k">def</span> <span class="nf">Thaw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An api compatibility method. This is a no-op since actions</span>
+<span class="sd">        cannot be frozen or thawed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+        
+</div></div>
+<div class="viewcode-block" id="WXAction"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction">[docs]</a><span class="k">class</span> <span class="nc">WXAction</span><span class="p">(</span><span class="n">WXBaseWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkAction</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wx implementation of Action.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXAction.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying QAction object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wxEnamlAction</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXAction.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initializes the underlying QAction object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXAction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">enabled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checkable</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">checkable</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">checked</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_status_tip</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">status_tip</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tool_tip</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">tool_tip</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_icon</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">icon</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_separator</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">separator</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="WXAction.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Binds the event handlers for the underlying QAction object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXAction</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">EVT_ACTION_TRIGGERED</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_triggered</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">EVT_ACTION_TOGGLED</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_toggled</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Change Handlers </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXAction.shell_enabled_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_enabled_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_enabled_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;enabled&#39; attribute of the shell</span>
+<span class="sd">        object. Sets the widget enabled according to the given boolean.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_enabled</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXAction.shell_text_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;text&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.shell_checkable_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_checkable_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_checkable_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;checkable&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checkable</span><span class="p">(</span><span class="n">checkable</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.shell_checked_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_checked_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_checked_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;checked&#39; attribute on the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_checked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXAction.shell_status_tip_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_status_tip_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_status_tip_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status_tip</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;status_tip&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_status_tip</span><span class="p">(</span><span class="n">status_tip</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.shell_tool_tip_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_tool_tip_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tool_tip_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_tip</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tool_tip&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tool_tip</span><span class="p">(</span><span class="n">tool_tip</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.shell_icon_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_icon_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_icon_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;icon&#39; attribute on the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_icon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.shell_description_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_description_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_description_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;description&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="n">description</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXAction.shell_separator_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.shell_separator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_separator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">separator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;separator&#39; attribute on the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_separator</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Signal Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXAction.on_triggered"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.on_triggered">[docs]</a>    <span class="k">def</span> <span class="nf">on_triggered</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A signal handler for the &#39;triggered&#39; signal of the QAction.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">triggered</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WXAction.on_toggled"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.on_toggled">[docs]</a>    <span class="k">def</span> <span class="nf">on_toggled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A signal handler for the &#39;toggled&#39; signal of the QAction.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">checked</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">IsChecked</span><span class="p">()</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">toggled</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXAction.set_enabled"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_enabled">[docs]</a>    <span class="k">def</span> <span class="nf">set_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">enabled</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the enabled state of the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Enable</span><span class="p">(</span><span class="n">enabled</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXAction.set_text"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the text of the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXAction.set_checkable"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_checkable">[docs]</a>    <span class="k">def</span> <span class="nf">set_checkable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checkable</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets whether or not the action is checkable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetCheckable</span><span class="p">(</span><span class="n">checkable</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.set_checked"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_checked">[docs]</a>    <span class="k">def</span> <span class="nf">set_checked</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">checked</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets whether or not the action is checked.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetChecked</span><span class="p">(</span><span class="n">checked</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXAction.set_status_tip"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_status_tip">[docs]</a>    <span class="k">def</span> <span class="nf">set_status_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">status_tip</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the status tip text for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetHelp</span><span class="p">(</span><span class="n">status_tip</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.set_tool_tip"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_tool_tip">[docs]</a>    <span class="k">def</span> <span class="nf">set_tool_tip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tool_tip</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the tool tip text for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX not yet supported</span>
+    </div>
+<div class="viewcode-block" id="WXAction.set_icon"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_icon">[docs]</a>    <span class="k">def</span> <span class="nf">set_icon</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">icon</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the icon for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXAction.set_description"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_description">[docs]</a>    <span class="k">def</span> <span class="nf">set_description</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">description</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the description text for the action.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX not yet supported</span>
+</div>
+<div class="viewcode-block" id="WXAction.set_separator"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_action.WXAction.set_separator">[docs]</a>    <span class="k">def</span> <span class="nf">set_separator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">separator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets whether or not the QAction is a separator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetSeparator</span><span class="p">(</span><span class="n">separator</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_action</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

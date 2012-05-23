@@ -1,0 +1,197 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.tests.components.qt.test_qt_field &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.components.qt.test_qt_field</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../../index.html">
+              <img class="logo" src="../../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.tests.components.qt.test_qt_field</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">enaml.backends.qt.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+
+<span class="kn">from</span> <span class="nn">.qt_test_assistant</span> <span class="kn">import</span> <span class="n">QtTestAssistant</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">field</span>
+
+
+<span class="n">QT_2_ENAML_PASSWORD_MODES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="o">.</span><span class="n">Normal</span><span class="p">:</span> <span class="s">&#39;normal&#39;</span><span class="p">,</span>
+    <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="o">.</span><span class="n">Password</span><span class="p">:</span> <span class="s">&#39;password&#39;</span><span class="p">,</span>
+    <span class="n">QtGui</span><span class="o">.</span><span class="n">QLineEdit</span><span class="o">.</span><span class="n">NoEcho</span><span class="p">:</span> <span class="s">&#39;silent&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="TestQtField"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField">[docs]</a><span class="k">class</span> <span class="nc">TestQtField</span><span class="p">(</span><span class="n">QtTestAssistant</span><span class="p">,</span> <span class="n">field</span><span class="o">.</span><span class="n">TestField</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; QtField tests. </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestQtField.get_value"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the visible text of a field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestQtField.edit_text"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.edit_text">[docs]</a>    <span class="k">def</span> <span class="nf">edit_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simulate typing in a field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestQtField.change_text"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.change_text">[docs]</a>    <span class="k">def</span> <span class="nf">change_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Change text programmatically, rather than &quot;edit&quot; it.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestQtField.set_cursor_position"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.set_cursor_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_cursor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the cursor at a specific position.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setCursorPosition</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestQtField.get_cursor_position"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.get_cursor_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_cursor_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the cursor position.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">cursorPosition</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestQtField.set_selected_text"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.set_selected_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_selected_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">stop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Select text in a field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">setSelection</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestQtField.get_selected_text"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.get_selected_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_selected_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the currently-selected text from a field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">selectedText</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestQtField.get_password_mode"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.get_password_mode">[docs]</a>    <span class="k">def</span> <span class="nf">get_password_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the password mode status of the widget</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">echoMode</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">QT_2_ENAML_PASSWORD_MODES</span><span class="p">[</span><span class="n">mode</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="TestQtField.press_return"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.press_return">[docs]</a>    <span class="k">def</span> <span class="nf">press_return</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simulate a press of the &#39;Return&#39; key.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">returnPressed</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestQtField.gain_focus_if_needed"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.qt.html#enaml.tests.components.qt.test_qt_field.TestQtField.gain_focus_if_needed">[docs]</a>    <span class="k">def</span> <span class="nf">gain_focus_if_needed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Have the widget gain focus if required for the tests.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># qt does the right thing, so we don&#39;t need to gain focus.</span>
+        <span class="k">pass</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.components.qt.test_qt_field</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

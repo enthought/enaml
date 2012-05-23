@@ -1,0 +1,169 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.tests.test_geometry &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.test_geometry</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.tests.test_geometry</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">cPickle</span>
+
+<span class="kn">from</span> <span class="nn">..layout</span> <span class="kn">import</span> <span class="n">geometry</span>
+
+
+<div class="viewcode-block" id="TestPickleGeometry"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry">[docs]</a><span class="k">class</span> <span class="nc">TestPickleGeometry</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPickleGeometry.check_pickling"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.check_pickling">[docs]</a>    <span class="k">def</span> <span class="nf">check_pickling</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls</span><span class="p">,</span> <span class="n">nargs</span><span class="p">):</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span> <span class="o">*</span> <span class="n">nargs</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">pickled</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">protocol</span><span class="o">=</span><span class="n">cPickle</span><span class="o">.</span><span class="n">HIGHEST_PROTOCOL</span><span class="p">)</span>
+        <span class="n">unpickled</span> <span class="o">=</span> <span class="n">cPickle</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">pickled</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">unpickled</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_base_rect"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_base_rect">[docs]</a>    <span class="k">def</span> <span class="nf">test_base_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">BaseRect</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_rect"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_rect">[docs]</a>    <span class="k">def</span> <span class="nf">test_rect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">Rect</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_rect_f"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_rect_f">[docs]</a>    <span class="k">def</span> <span class="nf">test_rect_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">RectF</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_base_box"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_base_box">[docs]</a>    <span class="k">def</span> <span class="nf">test_base_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">BaseBox</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_box"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_box">[docs]</a>    <span class="k">def</span> <span class="nf">test_box</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">Box</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_box_f"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_box_f">[docs]</a>    <span class="k">def</span> <span class="nf">test_box_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">BoxF</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_base_pos"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_base_pos">[docs]</a>    <span class="k">def</span> <span class="nf">test_base_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">BasePos</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_pos"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_pos">[docs]</a>    <span class="k">def</span> <span class="nf">test_pos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">Pos</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_pos_f"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_pos_f">[docs]</a>    <span class="k">def</span> <span class="nf">test_pos_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">PosF</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_base_size"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_base_size">[docs]</a>    <span class="k">def</span> <span class="nf">test_base_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">BaseSize</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_size"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_size">[docs]</a>    <span class="k">def</span> <span class="nf">test_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">Size</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestPickleGeometry.test_size_f"><a class="viewcode-back" href="../../../api_ref/enaml.tests.html#enaml.tests.test_geometry.TestPickleGeometry.test_size_f">[docs]</a>    <span class="k">def</span> <span class="nf">test_size_f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_pickling</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">SizeF</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.test_geometry</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

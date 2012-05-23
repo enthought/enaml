@@ -1,0 +1,325 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.noncomponents.qt_icon &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.noncomponents.qt_icon</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../../index.html">
+              <img class="logo" src="../../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.noncomponents.qt_icon</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt_image</span> <span class="kn">import</span> <span class="n">QtImage</span>
+
+<span class="kn">from</span> <span class="nn">..qt.QtCore</span> <span class="kn">import</span> <span class="n">QSize</span>
+<span class="kn">from</span> <span class="nn">..qt.QtGui</span> <span class="kn">import</span> <span class="n">QIcon</span>
+
+<span class="kn">from</span> <span class="nn">....noncomponents.abstract_icon</span> <span class="kn">import</span> <span class="n">AbstractTkIcon</span>
+
+
+<span class="n">MODE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;normal&#39;</span><span class="p">:</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span>
+    <span class="s">&#39;disabled&#39;</span><span class="p">:</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Disabled</span><span class="p">,</span>
+    <span class="s">&#39;active&#39;</span><span class="p">:</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Active</span><span class="p">,</span>
+    <span class="s">&#39;selected&#39;</span><span class="p">:</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Selected</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="n">STATE_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;on&#39;</span><span class="p">:</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">On</span><span class="p">,</span>
+    <span class="s">&#39;off&#39;</span><span class="p">:</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Off</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="QtIcon"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon">[docs]</a><span class="k">class</span> <span class="nc">QtIcon</span><span class="p">(</span><span class="n">AbstractTkIcon</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt4 implementation of AbstractTkIcon.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="QtIcon.__init__"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qicon</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a QtIcon.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qicon : QIcon instance or None, optional</span>
+<span class="sd">            A QIcon instance holding the data. If None is passed, then </span>
+<span class="sd">            a new QIcon instance will be constructed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">qicon</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">qicon</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qicon</span> <span class="o">=</span> <span class="n">qicon</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract API Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="QtIcon.from_file"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.from_file">[docs]</a>    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a new icon from a file on disk.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : string</span>
+<span class="sd">            The path to the image to use for the default mode and state.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : AbstractTkIcon</span>
+<span class="sd">            An new icon instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_icon</span> <span class="o">=</span> <span class="n">cls</span><span class="p">(</span><span class="n">QIcon</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">new_icon</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="QtIcon.from_image"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.from_image">[docs]</a>    <span class="k">def</span> <span class="nf">from_image</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">image</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create a new icon from an instance of AbstractTkImage using</span>
+<span class="sd">        the default &#39;normal&#39; and &#39;on&#39; states.</span>
+<span class="sd">                </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image : AbstractTkImage</span>
+<span class="sd">            An appropriate instance of AbstractTkImage to use for the</span>
+<span class="sd">            default mode and state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : AbstractTkIcon</span>
+<span class="sd">            An new icon instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">QtImage</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Image must be an instance of QtImage. Got </span><span class="si">%s</span><span class="s"> instead.&#39;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+        <span class="n">new_icon</span> <span class="o">=</span> <span class="n">cls</span><span class="p">()</span>
+        <span class="n">new_icon</span><span class="o">.</span><span class="n">add_image</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="s">&#39;on&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">new_icon</span>
+</div>
+<div class="viewcode-block" id="QtIcon.get_image"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.get_image">[docs]</a>    <span class="k">def</span> <span class="nf">get_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get an appropriate image instance for the requested size, </span>
+<span class="sd">        mode and state.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : (width, height)</span>
+<span class="sd">            The size of the requested image. The returned image may</span>
+<span class="sd">            be smaller, but will never be larger than this size.</span>
+<span class="sd">            </span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The mode of the requested image. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The state of the requested image. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : AbstractTkImage</span>
+<span class="sd">            An appropriate image instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qt_size</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">qt_mode</span> <span class="o">=</span> <span class="n">MODE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">)</span>
+        <span class="n">qt_state</span> <span class="o">=</span> <span class="n">STATE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">On</span><span class="p">)</span>
+        <span class="n">qpixmap</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qicon</span><span class="o">.</span><span class="n">pixmap</span><span class="p">(</span><span class="n">qt_size</span><span class="p">,</span> <span class="n">qt_mode</span><span class="p">,</span> <span class="n">qt_state</span><span class="p">)</span>
+        <span class="n">qimage</span> <span class="o">=</span> <span class="n">qpixmap</span><span class="o">.</span><span class="n">toImage</span><span class="p">()</span>
+        <span class="n">image</span> <span class="o">=</span> <span class="n">QtImage</span><span class="p">(</span><span class="n">qimage</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">image</span>
+    </div>
+<div class="viewcode-block" id="QtIcon.add_image"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.add_image">[docs]</a>    <span class="k">def</span> <span class="nf">add_image</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">image</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add an image instance for use by the icon with the given </span>
+<span class="sd">        mode and state.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        image : AbstractTkImage</span>
+<span class="sd">            An appropriate image instance.</span>
+<span class="sd">            </span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The mode of the image. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The state of the image. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">QtImage</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;Image must be an instance of QtImage. Got </span><span class="si">%s</span><span class="s"> instead.&#39;</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">image</span><span class="p">))</span>
+        <span class="n">qpixmap</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">as_QPixmap</span><span class="p">()</span>
+        <span class="n">qt_mode</span> <span class="o">=</span> <span class="n">MODE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">)</span>
+        <span class="n">qt_state</span> <span class="o">=</span> <span class="n">STATE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">On</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qicon</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">qpixmap</span><span class="p">,</span> <span class="n">qt_mode</span><span class="p">,</span> <span class="n">qt_state</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtIcon.actual_size"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.actual_size">[docs]</a>    <span class="k">def</span> <span class="nf">actual_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the actual size for the requested size, mode, and</span>
+<span class="sd">        state.</span>
+
+<span class="sd">        The returned size may be smaller but will never be larger.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : (width, height)</span>
+<span class="sd">            The size of the requested image. The returned image may</span>
+<span class="sd">            be smaller, but will never be larger than this size.</span>
+<span class="sd">            </span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The mode of the requested image. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The state of the requested image. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : (width, height)</span>
+<span class="sd">            The actual size for the requested size. If no suitable</span>
+<span class="sd">            match can be found, the result will be (-1, -1).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qt_size</span> <span class="o">=</span> <span class="n">QSize</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">)</span>
+        <span class="n">qt_mode</span> <span class="o">=</span> <span class="n">MODE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">)</span>
+        <span class="n">qt_state</span> <span class="o">=</span> <span class="n">STATE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">On</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qicon</span><span class="o">.</span><span class="n">actualSize</span><span class="p">(</span><span class="n">qt_size</span><span class="p">,</span> <span class="n">qt_mode</span><span class="p">,</span> <span class="n">qt_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">size</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="QtIcon.available_sizes"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.available_sizes">[docs]</a>    <span class="k">def</span> <span class="nf">available_sizes</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="n">state</span><span class="o">=</span><span class="s">&#39;on&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the available image sizes for the given mode and </span>
+<span class="sd">        state.</span>
+<span class="sd">        </span>
+<span class="sd">        Sizes other than these may be requested, but the implemetation </span>
+<span class="sd">        may scale down the image on the fly to the requested size.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mode : string, optional</span>
+<span class="sd">            The requested image mode. The default is &#39;normal&#39;.</span>
+<span class="sd">            </span>
+<span class="sd">        state : string, optional</span>
+<span class="sd">            The requested image state. The default is &#39;on&#39;.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : [(width, height), ... ]</span>
+<span class="sd">            The list of available sizes for the given mode and state.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qt_mode</span> <span class="o">=</span> <span class="n">MODE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">Normal</span><span class="p">)</span>
+        <span class="n">qt_state</span> <span class="o">=</span> <span class="n">STATE_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">QIcon</span><span class="o">.</span><span class="n">On</span><span class="p">)</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qicon</span><span class="o">.</span><span class="n">availableSizes</span><span class="p">(</span><span class="n">qt_mode</span><span class="p">,</span> <span class="n">qt_state</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">size</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">size</span><span class="o">.</span><span class="n">height</span><span class="p">())</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">]</span>
+            
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Toolkit Specific</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtIcon.as_QIcon"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_icon.QtIcon.as_QIcon">[docs]</a>    <span class="k">def</span> <span class="nf">as_QIcon</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the underlying QIcon instance.</span>
+
+<span class="sd">        This is provided as a convenience for qt backend components that</span>
+<span class="sd">        require the QIcon instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qicon</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.noncomponents.qt_icon</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

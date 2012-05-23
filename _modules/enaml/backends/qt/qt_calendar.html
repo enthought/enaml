@@ -1,0 +1,208 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.qt_calendar &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_calendar</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.qt_calendar</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtGui</span><span class="p">,</span> <span class="n">QtCore</span>
+<span class="kn">from</span> <span class="nn">.qt_bounded_date</span> <span class="kn">import</span> <span class="n">QtBoundedDate</span>
+
+<span class="kn">from</span> <span class="nn">...components.calendar</span> <span class="kn">import</span> <span class="n">AbstractTkCalendar</span>
+<span class="kn">from</span> <span class="nn">...guard</span> <span class="kn">import</span> <span class="n">guard</span>
+
+
+<span class="c"># Workaround for an incompatibility between PySide and PyQt</span>
+<span class="k">try</span><span class="p">:</span> <span class="c"># pragma: no cover</span>
+    <span class="n">qdate_to_python</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDate</span><span class="o">.</span><span class="n">toPython</span>
+<span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span> <span class="c"># pragma: no cover</span>
+    <span class="n">qdate_to_python</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">QDate</span><span class="o">.</span><span class="n">toPyDate</span>
+
+
+<div class="viewcode-block" id="QtCalendar"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar">[docs]</a><span class="k">class</span> <span class="nc">QtCalendar</span><span class="p">(</span><span class="n">QtBoundedDate</span><span class="p">,</span> <span class="n">AbstractTkCalendar</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of Calendar.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtCalendar.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying QtCalendarWidget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QCalendarWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtCalendar.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Binds the event handlers for the calendar widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtCalendar</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">activated</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_date_activated</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">selectionChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_date_selected</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Event Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtCalendar.on_date_activated"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar.on_date_activated">[docs]</a>    <span class="k">def</span> <span class="nf">on_date_activated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qdate</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the calendar&#39;s activation event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">qdate_to_python</span><span class="p">(</span><span class="n">qdate</span><span class="p">)</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">date</span> <span class="o">=</span> <span class="n">date</span>
+        <span class="n">shell</span><span class="o">.</span><span class="n">activated</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtCalendar.on_date_selected"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar.on_date_selected">[docs]</a>    <span class="k">def</span> <span class="nf">on_date_selected</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the calendar&#39;s selection event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;updating&#39;</span><span class="p">):</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">qdate_to_python</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">selectedDate</span><span class="p">())</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">selected</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtCalendar.set_date"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar.set_date">[docs]</a>    <span class="k">def</span> <span class="nf">set_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets and validates the component date on the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Calling setSelectedDate will trigger the dateChanged signal.</span>
+        <span class="c"># We want to avoid that feeback loop since the value is being </span>
+        <span class="c"># set programatically.</span>
+        <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;updating&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setSelectedDate</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtCalendar.set_min_date"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar.set_min_date">[docs]</a>    <span class="k">def</span> <span class="nf">set_min_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">min_date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the minimum date on the widget with the provided value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Calling setMinimumDate *may* trigger the dateChanged signal,</span>
+        <span class="c"># if the date needs to be clipped. We want to avoid that feeback </span>
+        <span class="c"># loop since the value is being set programatically and the new</span>
+        <span class="c"># date will already have been updated by the shell object.</span>
+        <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;updating&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setMinimumDate</span><span class="p">(</span><span class="n">min_date</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtCalendar.set_max_date"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_calendar.QtCalendar.set_max_date">[docs]</a>    <span class="k">def</span> <span class="nf">set_max_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the maximum date on the widget with the provided value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Calling setMaximumDate *may* trigger the dateChanged signal,</span>
+        <span class="c"># if the date needs to be clipped. We want to avoid that feeback </span>
+        <span class="c"># loop since the value is being set programatically and the new</span>
+        <span class="c"># date will already have been updated by the shell object.</span>
+        <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;updating&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setMaximumDate</span><span class="p">(</span><span class="n">max_date</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_calendar</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

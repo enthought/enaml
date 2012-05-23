@@ -1,0 +1,280 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.wx.wx_tab_group &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_tab_group</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.wx.wx_tab_group</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_constraints_widget</span> <span class="kn">import</span> <span class="n">WXConstraintsWidget</span>
+
+<span class="kn">from</span> <span class="nn">...components.tab_group</span> <span class="kn">import</span> <span class="n">AbstractTkTabGroup</span>
+
+
+<span class="c">#: A mapping from TabPosition enum values to qt tab positions.</span>
+<span class="n">_TAB_POSITION_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;top&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">NB_TOP</span><span class="p">,</span>
+    <span class="s">&#39;bottom&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">NB_BOTTOM</span><span class="p">,</span>
+    <span class="s">&#39;left&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">NB_LEFT</span><span class="p">,</span>
+    <span class="s">&#39;right&#39;</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">NB_RIGHT</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="WXTabGroup"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup">[docs]</a><span class="k">class</span> <span class="nc">WXTabGroup</span><span class="p">(</span><span class="n">WXConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkTabGroup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A wx implementation of the Tabbed container.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXTabGroup.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying wxNotebook control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Changing the tab position of the notebook dynamically is not</span>
+        <span class="c"># supported by wx (the rendering gets all messed up). So, the</span>
+        <span class="c"># tab position must be set at creation time.</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">_TAB_POSITION_MAP</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">tab_position</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Notebook</span><span class="p">(</span><span class="n">parent</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="n">style</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXTabGroup.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the attributes of the wxNotebook.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXTabGroup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_tabs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">selected_index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXTabGroup.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind to the events emitted by the underlying control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXTabGroup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_NOTEBOOK_PAGE_CHANGED</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_page_changed</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Implementation </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXTabGroup.shell_tabs_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.shell_tabs_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tabs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tabs&#39; attribute of the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_tabs</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WXTabGroup.shell_tab_position_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.shell_tab_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tab_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tab_position&#39; attribute of the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Changing tab position dynamically on wx is not supported.</span>
+        <span class="k">pass</span>
+</div>
+<div class="viewcode-block" id="WXTabGroup.shell_selected_index_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.shell_selected_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_selected_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the widget index with the new value from the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selected_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXTabGroup.size_hint"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a (width, height) tuple of integers which represent</span>
+<span class="sd">        the suggested size of the widget for its current state. This</span>
+<span class="sd">        value is used by the layout manager to determine how much</span>
+<span class="sd">        space to allocate the widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX - This size hint computation needs some work. Need to </span>
+        <span class="c"># look at the source for wxNotebook::GetBestSize and see what</span>
+        <span class="c"># is does and compare against QTabWidget::sizeHint. Like always,</span>
+        <span class="c"># the Qt implementation does the right thing and wx does not.</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">curr_shell</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">selected_tab</span>
+
+        <span class="k">if</span> <span class="n">curr_shell</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># QTabWidget default for no tabs</span>
+            <span class="k">return</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+        
+        <span class="n">size_hint</span> <span class="o">=</span> <span class="n">curr_shell</span><span class="o">.</span><span class="n">size_hint</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">size_hint</span> <span class="o">==</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">size_hint</span> <span class="o">=</span> <span class="n">curr_shell</span><span class="o">.</span><span class="n">min_size</span><span class="p">()</span>
+        
+        <span class="n">width_hint</span><span class="p">,</span> <span class="n">height_hint</span> <span class="o">=</span> <span class="n">size_hint</span>
+
+        <span class="c"># Compute the size of the tab so we can offset the size hint.</span>
+        <span class="c"># On Windows, the return value of the height function is a hard</span>
+        <span class="c"># coded default of 20. This is close for the standard font but</span>
+        <span class="c"># will probably break down with different fonts or icons. I&#39;ve</span>
+        <span class="c"># found no other way to measure the height of the tab bar.</span>
+        <span class="n">tab_size</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">RendererNative</span><span class="o">.</span><span class="n">Get</span><span class="p">()</span><span class="o">.</span><span class="n">GetHeaderButtonHeight</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+
+        <span class="c"># Offset the size hint by the tab bar size</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetWindowStyle</span><span class="p">()</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">style</span> <span class="o">&amp;</span> <span class="n">wx</span><span class="o">.</span><span class="n">NB_TOP</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">style</span> <span class="o">&amp;</span> <span class="n">wx</span><span class="o">.</span><span class="n">NB_BOTTOM</span><span class="p">):</span>
+            <span class="n">height_hint</span> <span class="o">+=</span> <span class="n">tab_size</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">width_hint</span> <span class="o">+=</span> <span class="n">tab_size</span>
+        
+        <span class="n">width_hint</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">width_hint</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">width_hint</span><span class="p">,</span> <span class="n">height_hint</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Event Handlers </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_on_page_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the page change event of the underlying </span>
+<span class="sd">        control. Synchronizes the index of the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
+        <span class="c"># Use event.GetSelection since widget.GetSelection returns the</span>
+        <span class="c"># wrong value during this event handler.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">_selected_index</span> <span class="o">=</span> <span class="n">event</span><span class="o">.</span><span class="n">GetSelection</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXTabGroup.set_selected_index"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.set_selected_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the current index of the tab widget. This is overridden</span>
+<span class="sd">        from the parent class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetSelection</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="WXTabGroup.update_tabs"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_tab_group.WXTabGroup.update_tabs">[docs]</a>    <span class="k">def</span> <span class="nf">update_tabs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Populates the notebook with the child notebook pages. This</span>
+<span class="sd">        is an overridden parent class method which sets the title of</span>
+<span class="sd">        of notebook pages properly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># FIXME: there should be a more efficient way to do this, but </span>
+        <span class="c"># for now just remove all present widgets and add the current </span>
+        <span class="c"># ones. If we use DeleteAllPages(), then the child widgets would</span>
+        <span class="c"># be destroyed, which is not the behavior we want.</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        
+        <span class="k">while</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetPageCount</span><span class="p">():</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">RemovePage</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">selected_tab</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">tab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">tabs</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">AddPage</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">toolkit_widget</span><span class="p">,</span> <span class="n">tab</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tab</span> <span class="ow">is</span> <span class="n">selected</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">SetSelection</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_tab_group</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

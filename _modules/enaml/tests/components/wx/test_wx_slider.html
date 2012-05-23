@@ -1,0 +1,297 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.tests.components.wx.test_wx_slider &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.components.wx.test_wx_slider</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../../index.html">
+              <img class="logo" src="../../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.tests.components.wx.test_wx_slider</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">expectedFailure</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_test_assistant</span> <span class="kn">import</span> <span class="n">WXTestAssistant</span><span class="p">,</span> <span class="n">skip_nonwindows</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">slider</span>
+
+
+<span class="c"># A map from wxSlider constants to Enaml TickPosition values.</span>
+<span class="n">TICK_POS_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="n">wx</span><span class="o">.</span><span class="n">SL_BOTTOM</span><span class="p">:</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span>
+                <span class="n">wx</span><span class="o">.</span><span class="n">SL_LEFT</span><span class="p">:</span> <span class="s">&#39;left&#39;</span> <span class="p">,</span>
+                <span class="n">wx</span><span class="o">.</span><span class="n">SL_RIGHT</span><span class="p">:</span> <span class="s">&#39;right&#39;</span><span class="p">,</span>
+                <span class="n">wx</span><span class="o">.</span><span class="n">SL_TOP</span><span class="p">:</span> <span class="s">&#39;top&#39;</span><span class="p">,</span>
+                <span class="n">wx</span><span class="o">.</span><span class="n">SL_BOTTOM</span><span class="p">:</span> <span class="s">&#39;bottom&#39;</span><span class="p">,</span>
+                <span class="n">wx</span><span class="o">.</span><span class="n">SL_BOTH</span><span class="p">:</span> <span class="s">&#39;both&#39;</span><span class="p">,</span>
+                <span class="n">wx</span><span class="o">.</span><span class="n">SL_TICKS</span><span class="p">:</span> <span class="s">&#39;Ticks&#39;</span><span class="p">}</span>
+
+<span class="c"># A map from Wx constants to Enaml enums for horizontal or vertical orientation.</span>
+<span class="n">ORIENTATION_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="n">wx</span><span class="o">.</span><span class="n">SL_HORIZONTAL</span><span class="p">:</span> <span class="s">&#39;horizontal&#39;</span><span class="p">,</span>
+                   <span class="n">wx</span><span class="o">.</span><span class="n">SL_VERTICAL</span><span class="p">:</span> <span class="s">&#39;vertical&#39;</span><span class="p">}</span>
+
+<span class="c"># Map event actions to WX constants</span>
+<span class="n">EVENT_MAP</span> <span class="o">=</span> <span class="p">{</span><span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">PRESSED</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEFT_DOWN</span><span class="p">,</span>
+             <span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">RELEASED</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEFT_UP</span><span class="p">,</span>
+             <span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">HOME</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_BOTTOM</span><span class="p">,</span>
+             <span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">END</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_TOP</span><span class="p">,</span>
+             <span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">STEP_UP</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_LINEUP</span><span class="p">,</span>
+             <span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">STEP_DOWN</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_LINEDOWN</span><span class="p">,</span>
+             <span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">PAGE_UP</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_PAGEUP</span><span class="p">,</span>
+             <span class="n">slider</span><span class="o">.</span><span class="n">TestEvents</span><span class="o">.</span><span class="n">PAGE_DOWN</span><span class="p">:</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_PAGEDOWN</span><span class="p">}</span>
+
+
+<span class="nd">@skip_nonwindows</span>
+<div class="viewcode-block" id="TestWXSlider"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider">[docs]</a><span class="k">class</span> <span class="nc">TestWXSlider</span><span class="p">(</span><span class="n">WXTestAssistant</span><span class="p">,</span> <span class="n">slider</span><span class="o">.</span><span class="n">TestSlider</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; QtLabel tests. &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="TestWXSlider.setUp"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Setup the slider testing based on the wx backend.</span>
+
+<span class="sd">        Special care is needed because we need to have a specific size</span>
+<span class="sd">        of the wx slider in order to properly check the firing of the</span>
+<span class="sd">        pressed thumb event.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestWXSlider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">setUp</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetSize</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">Size</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+
+    <span class="c"># This test fails on windows under wx because the underlying size of the</span>
+    <span class="c"># of the widget is not reliable. So the precomputed mouse position for</span>
+    <span class="c"># the mouse event which is sent can be wrong.</span></div>
+    <span class="nd">@expectedFailure</span>
+<div class="viewcode-block" id="TestWXSlider.test_releasing_the_thumb"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.test_releasing_the_thumb">[docs]</a>    <span class="k">def</span> <span class="nf">test_releasing_the_thumb</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TestWXSlider</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">test_relleasing_the_thumb</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_value"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get a slider&#39;s position.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_minimum"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_minimum">[docs]</a>    <span class="k">def</span> <span class="nf">get_minimum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s minimum value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetMin</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_maximum"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_maximum">[docs]</a>    <span class="k">def</span> <span class="nf">get_maximum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s maximum value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetMax</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_tick_interval"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_tick_interval">[docs]</a>    <span class="k">def</span> <span class="nf">get_tick_interval</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s tick_interval value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetTickFreq</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_tick_position"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_tick_position">[docs]</a>    <span class="k">def</span> <span class="nf">get_tick_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s tick position style.</span>
+
+<span class="sd">        Assertion errors are raised when it is not posible to estimate the</span>
+<span class="sd">        tick positiosn.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetWindowStyle</span><span class="p">()</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">TICK_POS_MAP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">flag</span> <span class="o">&amp;</span> <span class="n">style</span><span class="p">:</span>
+                <span class="n">flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">TICK_POS_MAP</span><span class="p">[</span><span class="n">flag</span><span class="p">])</span>
+
+        <span class="n">number_of_flags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">number_of_flags</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;no_ticks&#39;</span>
+        <span class="k">elif</span> <span class="n">number_of_flags</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s">&#39;The tick position style is expected to have at least&#39;</span>
+                      <span class="s">&#39; two style bits set when the ticks are visible&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">number_of_flags</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="s">&#39;Ticks&#39;</span><span class="p">,</span> <span class="n">flags</span><span class="p">,</span> <span class="s">&#39;When the ticks are visible&#39;</span>
+                      <span class="s">&#39; the position style is expected to have the wx.SL_TICKS&#39;</span>
+                      <span class="s">&#39; bit set&#39;</span><span class="p">)</span>
+            <span class="n">flags</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">flags</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s">&#39;Ticks&#39;</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s">&#39;More than two tick position style flags are set&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">flags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_orientation"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_orientation">[docs]</a>    <span class="k">def</span> <span class="nf">get_orientation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s orientation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">style</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetWindowStyle</span><span class="p">()</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">flag</span> <span class="ow">in</span> <span class="n">ORIENTATION_MAP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">flag</span> <span class="o">&amp;</span> <span class="n">style</span><span class="p">:</span>
+                <span class="n">flags</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ORIENTATION_MAP</span><span class="p">[</span><span class="n">flag</span><span class="p">])</span>
+
+        <span class="n">number_of_flags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">flags</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">number_of_flags</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s">&#39;Orientation should be always set in the widget&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">number_of_flags</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s">&#39;More than one orientation style flags are set&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">flags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_single_step"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_single_step">[docs]</a>    <span class="k">def</span> <span class="nf">get_single_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s single step value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetLineSize</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_page_step"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_page_step">[docs]</a>    <span class="k">def</span> <span class="nf">get_page_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s page step value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetPageSize</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.get_tracking"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.get_tracking">[docs]</a>    <span class="k">def</span> <span class="nf">get_tracking</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the Slider&#39;s tracking status.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">tracking</span>
+</div>
+<div class="viewcode-block" id="TestWXSlider.send_event"><a class="viewcode-back" href="../../../../../api_ref/enaml.tests.components.wx.html#enaml.tests.components.wx.test_wx_slider.TestWXSlider.send_event">[docs]</a>    <span class="k">def</span> <span class="nf">send_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Send an event to the Slider programmatically.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        widget :</span>
+<span class="sd">            The widget to sent the event to.</span>
+
+<span class="sd">        event :</span>
+<span class="sd">            The desired event to be proccessed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event_type</span> <span class="o">=</span> <span class="n">EVENT_MAP</span><span class="p">[</span><span class="n">event</span><span class="p">]</span>
+        <span class="k">if</span>  <span class="n">event_type</span> <span class="ow">in</span> <span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEFT_DOWN</span><span class="p">,</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_LEFT_UP</span><span class="p">):</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Point</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">send_wx_mouse_event</span><span class="p">(</span><span class="n">widget</span><span class="p">,</span> <span class="n">event_type</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetValue</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">event_type</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_BOTTOM</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetMin</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_TOP</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetMax</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_LINEUP</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetLineSize</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_LINEDOWN</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">-=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetLineSize</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_PAGEUP</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">+=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetPageSize</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">event_type</span> <span class="o">==</span> <span class="n">wx</span><span class="o">.</span><span class="n">EVT_SCROLL_PAGEDOWN</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">-=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetPageSize</span><span class="p">()</span>
+
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">event</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">ScrollEvent</span><span class="p">(</span><span class="n">event_type</span><span class="o">.</span><span class="n">typeId</span><span class="p">,</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetId</span><span class="p">())</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">GetEventHandler</span><span class="p">()</span><span class="o">.</span><span class="n">ProcessEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">process_wx_events</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.tests.components.wx.test_wx_slider</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

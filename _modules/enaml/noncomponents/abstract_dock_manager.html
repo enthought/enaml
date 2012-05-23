@@ -1,0 +1,185 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.noncomponents.abstract_dock_manager &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.noncomponents.abstract_dock_manager</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.noncomponents.abstract_dock_manager</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span><span class="p">,</span> <span class="n">abstractproperty</span>
+
+
+<div class="viewcode-block" id="AbstractTkDockManager"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_dock_manager.AbstractTkDockManager">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkDockManager</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkDockManager.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_dock_manager.AbstractTkDockManager.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">dock_panes</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a DockManager instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        *dock_panes</span>
+<span class="sd">            The initial DockPane instances to use with the manager.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractproperty</span>
+<div class="viewcode-block" id="AbstractTkDockManager.main_window"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_dock_manager.AbstractTkDockManager.main_window">[docs]</a>    <span class="k">def</span> <span class="nf">main_window</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A property which gets and sets the manager&#39;s internal </span>
+<span class="sd">        reference to the MainWindow instance. The internal reference</span>
+<span class="sd">        should be stored weakly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkDockManager.add_pane"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_dock_manager.AbstractTkDockManager.add_pane">[docs]</a>    <span class="k">def</span> <span class="nf">add_pane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pane</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Add a dock pane to the manager and hence the window.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pane : DockPane</span>
+<span class="sd">            The DockPane instance to add to the manager. If the pane is</span>
+<span class="sd">            already being managed, this method call is a no-op.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkDockManager.remove_pane"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_dock_manager.AbstractTkDockManager.remove_pane">[docs]</a>    <span class="k">def</span> <span class="nf">remove_pane</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pane</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Remove a dock pane from the manager and hence the window.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pane : DockPane</span>
+<span class="sd">            The DockPane instance to remove from the manager. If the</span>
+<span class="sd">            pane is not being managed, this method call is a no-op.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkDockManager.panes"><a class="viewcode-back" href="../../../api_ref/enaml.noncomponents.html#enaml.noncomponents.abstract_dock_manager.AbstractTkDockManager.panes">[docs]</a>    <span class="k">def</span> <span class="nf">panes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the list of dock panes currently being managed.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list</span>
+<span class="sd">            The list of DockPane instance being managed by this manager.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.noncomponents.abstract_dock_manager</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

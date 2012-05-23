@@ -1,14 +1,14 @@
 Chaco Sine Plot Example
 ===============================================================================
 
-:download:`sine_plot.enaml <../../../examples/chaco/sine_plot.enaml>`
+:download:`sine_plot.enaml <../../../examples/chaco/custom_canvas/sine_plot.enaml>`
 
-:download:`sine_plot.py <../../../examples/chaco/sine_plot.py>`
+:download:`sine_plot.py <../../../examples/chaco/custom_canvas/sine_plot.py>`
 
-.. literalinclude:: ../../../examples/chaco/sine_plot.enaml
+.. literalinclude:: ../../../examples/chaco/custom_canvas/sine_plot.enaml
     :language: python
 
-.. literalinclude:: ../../../examples/chaco/sine_plot.py
+.. literalinclude:: ../../../examples/chaco/custom_canvas/sine_plot.py
     :language: python
 
 ::

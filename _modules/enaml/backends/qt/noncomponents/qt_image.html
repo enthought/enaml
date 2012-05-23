@@ -1,0 +1,282 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.noncomponents.qt_image &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.noncomponents.qt_image</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../../index.html">
+              <img class="logo" src="../../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.noncomponents.qt_image</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2012, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+
+<span class="kn">from</span> <span class="nn">..qt.QtGui</span> <span class="kn">import</span> <span class="n">QImage</span><span class="p">,</span> <span class="n">QPixmap</span>
+
+<span class="kn">from</span> <span class="nn">....noncomponents.abstract_image</span> <span class="kn">import</span> <span class="n">AbstractTkImage</span>
+
+
+<div class="viewcode-block" id="QtImage"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage">[docs]</a><span class="k">class</span> <span class="nc">QtImage</span><span class="p">(</span><span class="n">AbstractTkImage</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt4 implementation of AbstractTkImage.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="QtImage.__init__"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">qimage</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a QtImage.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        qimage : QImage instance or None, optional</span>
+<span class="sd">            A QImage instance which holds the data. If None is passed, </span>
+<span class="sd">            then an empty QImage will be created.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">qimage</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">qimage</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_qimage</span> <span class="o">=</span> <span class="n">qimage</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract API Implementation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="QtImage.from_data"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.from_data">[docs]</a>    <span class="k">def</span> <span class="nf">from_data</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Construct an image from a bytearray of RGBA bytes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : bytearray</span>
+<span class="sd">            A bytearray of the image data in RGBA32 format.</span>
+
+<span class="sd">        size : (width, height)</span>
+<span class="sd">            The width, height size tuple of the image.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : AbstractTkImage</span>
+<span class="sd">            An appropriate image instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Shuffle the bytearray to match Qt&#39;s wonky ARGB format</span>
+        <span class="n">qt_array</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span> <span class="o">==</span> <span class="s">&#39;little&#39;</span><span class="p">:</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">qt_array</span><span class="p">[</span><span class="n">r</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">qt_array</span><span class="p">[</span><span class="n">g</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">qt_array</span><span class="p">[</span><span class="n">b</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">qt_array</span><span class="p">[</span><span class="n">a</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+
+        <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="n">img_data</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">qt_array</span><span class="p">)</span>
+        <span class="n">qimg</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">img_data</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format_ARGB32</span><span class="p">)</span>
+        <span class="c"># Add a strong reference to the data so it doesn&#39;t get pulled out from</span>
+        <span class="c"># under the QImage object.</span>
+        <span class="n">qimg</span><span class="o">.</span><span class="n">_data_keepalive_ptr</span> <span class="o">=</span> <span class="n">img_data</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">qimg</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="QtImage.from_file"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.from_file">[docs]</a>    <span class="k">def</span> <span class="nf">from_file</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Read in the image data from a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : string</span>
+<span class="sd">            The path to the image file on disk.</span>
+
+<span class="sd">        format : string or None, optional</span>
+<span class="sd">            The image format of the data in the file. If not given,</span>
+<span class="sd">            then the image format will be determined automatically</span>
+<span class="sd">            if possible.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : AbstractTkImage</span>
+<span class="sd">            An appropriate image instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">QImage</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">format</span><span class="p">))</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="QtImage.size"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.size">[docs]</a>    <span class="k">def</span> <span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The size of the image as a (width, height) tuple.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : (width, height)</span>
+<span class="sd">            The width, height size tuple of the image.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qimage</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">size</span><span class="o">.</span><span class="n">width</span><span class="p">(),</span> <span class="n">size</span><span class="o">.</span><span class="n">height</span><span class="p">())</span>
+    </div>
+<div class="viewcode-block" id="QtImage.data"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the data for the image as a bytearray of RGBA bytes.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : bytearray</span>
+<span class="sd">            A bytearray of the image data in RGBA32 format.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">qimg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qimage</span>
+        <span class="k">if</span> <span class="n">qimg</span><span class="o">.</span><span class="n">format</span><span class="p">()</span> <span class="o">!=</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format_ARGB32</span><span class="p">:</span>
+            <span class="n">qimg</span> <span class="o">=</span> <span class="n">qimg</span><span class="o">.</span><span class="n">convertToFormat</span><span class="p">(</span><span class="n">QImage</span><span class="o">.</span><span class="n">Format_ARGB32</span><span class="p">)</span>
+
+        <span class="c"># If bits() is None, then the image is invalid.</span>
+        <span class="n">buf</span> <span class="o">=</span> <span class="n">qimg</span><span class="o">.</span><span class="n">bits</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">buf</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">bytearray</span><span class="p">()</span>
+
+        <span class="c"># Qt&#39;s ARGB data format stores data as 0xAARRGGBB. On a little </span>
+        <span class="c"># endian machine, the buffer of bytes will be ordered BBGGRRAA.</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buf</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span> <span class="o">==</span> <span class="s">&#39;little&#39;</span><span class="p">:</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">a</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">0</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">r</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">1</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">g</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">2</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">b</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">out</span><span class="p">[</span><span class="mi">3</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">buf</span><span class="p">[</span><span class="n">a</span><span class="p">::</span><span class="mi">4</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">out</span>
+</div>
+<div class="viewcode-block" id="QtImage.scale"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.scale">[docs]</a>    <span class="k">def</span> <span class="nf">scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a new version of this image scaled to the given size.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : (width, height)</span>
+<span class="sd">            The size of the scaled image.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : AbstractTkImage</span>
+<span class="sd">            A new image of the proper scaled size.</span>
+<span class="sd">            </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QtImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qimage</span><span class="o">.</span><span class="n">scaled</span><span class="p">(</span><span class="o">*</span><span class="n">size</span><span class="p">))</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Toolkit Specific</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtImage.as_QImage"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.as_QImage">[docs]</a>    <span class="k">def</span> <span class="nf">as_QImage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the internal QImage instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_qimage</span>
+</div>
+<div class="viewcode-block" id="QtImage.as_QPixmap"><a class="viewcode-back" href="../../../../../api_ref/enaml.backends.qt.noncomponents.html#enaml.backends.qt.noncomponents.qt_image.QtImage.as_QPixmap">[docs]</a>    <span class="k">def</span> <span class="nf">as_QPixmap</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns a QPixmap generated from the underlying QImage.</span>
+<span class="sd">        </span>
+<span class="sd">        This is provided as a convenience for qt backend components </span>
+<span class="sd">        which require a QPixmap rather than a QImage.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">QPixmap</span><span class="o">.</span><span class="n">fromImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_qimage</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.noncomponents.qt_image</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,447 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.styling.font &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.styling.font</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.styling.font</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">textwrap</span> <span class="kn">import</span> <span class="n">dedent</span>
+
+<span class="kn">from</span> <span class="nn">.style_trait</span> <span class="kn">import</span> <span class="n">StyleTrait</span>
+
+
+<span class="n">_weight_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;light&#39;</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+    <span class="s">&#39;normal&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s">&#39;demi_bold&#39;</span><span class="p">:</span> <span class="mi">63</span><span class="p">,</span>
+    <span class="s">&#39;bold&#39;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span>
+    <span class="s">&#39;black&#39;</span><span class="p">:</span> <span class="mi">87</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="n">_stretch_map</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;ultra_condensed&#39;</span><span class="p">:</span> <span class="mi">50</span><span class="p">,</span>
+    <span class="s">&#39;extra_condensed&#39;</span><span class="p">:</span> <span class="mi">62</span><span class="p">,</span>
+    <span class="s">&#39;condensed&#39;</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span>
+    <span class="s">&#39;semi_condensed&#39;</span><span class="p">:</span> <span class="mi">87</span><span class="p">,</span>
+    <span class="s">&#39;unstretched&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="s">&#39;semi_expanded&#39;</span><span class="p">:</span> <span class="mi">112</span><span class="p">,</span>
+    <span class="s">&#39;expanded&#39;</span><span class="p">:</span> <span class="mi">125</span><span class="p">,</span>
+    <span class="s">&#39;extra_expanded&#39;</span><span class="p">:</span> <span class="mi">150</span><span class="p">,</span>
+    <span class="s">&#39;ultra_expanded&#39;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<span class="n">_spacing_set</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">((</span>
+    <span class="s">&#39;percentage&#39;</span><span class="p">,</span>
+    <span class="s">&#39;absolute&#39;</span><span class="p">,</span>
+<span class="p">))</span>
+
+
+<span class="n">_style_set</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">((</span>
+    <span class="s">&#39;normal&#39;</span><span class="p">,</span>
+    <span class="s">&#39;italic&#39;</span><span class="p">,</span>
+    <span class="s">&#39;oblique&#39;</span><span class="p">,</span>
+<span class="p">))</span>
+
+
+<span class="n">_family_hint_set</span> <span class="o">=</span> <span class="nb">frozenset</span><span class="p">((</span>
+    <span class="s">&#39;any&#39;</span><span class="p">,</span>
+    <span class="s">&#39;sans_serif&#39;</span><span class="p">,</span>
+    <span class="s">&#39;helvetica&#39;</span><span class="p">,</span>
+    <span class="s">&#39;serif&#39;</span><span class="p">,</span>
+    <span class="s">&#39;times&#39;</span><span class="p">,</span>
+    <span class="s">&#39;type_writer&#39;</span><span class="p">,</span>
+    <span class="s">&#39;courier&#39;</span><span class="p">,</span>
+    <span class="s">&#39;old_english&#39;</span><span class="p">,</span>
+    <span class="s">&#39;decorative&#39;</span><span class="p">,</span>
+    <span class="s">&#39;monospace&#39;</span><span class="p">,</span>
+    <span class="s">&#39;fantasy&#39;</span><span class="p">,</span>
+    <span class="s">&#39;cursive&#39;</span><span class="p">,</span>
+    <span class="s">&#39;system&#39;</span><span class="p">,</span>
+<span class="p">))</span>
+
+
+<div class="viewcode-block" id="Font"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font">[docs]</a><span class="k">class</span> <span class="nc">Font</span><span class="p">(</span><span class="nb">tuple</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A tuple subclass which represents a font.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="c">#: A default font instance that will be set at the end of the</span>
+    <span class="c">#: definition of this class. It is useful for comparison.</span>
+    <span class="n">default_font</span> <span class="o">=</span> <span class="bp">None</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Font.from_string"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.from_string">[docs]</a>    <span class="k">def</span> <span class="nf">from_string</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">font_string</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert a space separated string into a font object.</span>
+
+<span class="sd">        The schema for the string is as follows:</span>
+
+<span class="sd">        family [point_size | weight | style | family_hint | *options]</span>
+<span class="sd">            </span>
+<span class="sd">        The family must appear first, but the remaining items can </span>
+<span class="sd">        appear in any order and can be any in quantity. Valid values </span>
+<span class="sd">        for the items are shown below. All values are case insenstive. </span>
+<span class="sd">        Invalid values are ignored. Duplicate items and items of the</span>
+<span class="sd">        same class override any previous items of that class.</span>
+<span class="sd">            </span>
+<span class="sd">        family : a string</span>
+<span class="sd">        </span>
+<span class="sd">        point_size : an integer</span>
+<span class="sd">        </span>
+<span class="sd">        weight : one of [&#39;light&#39;, &#39;normal&#39;, &#39;demi_bold&#39;, &#39;bold&#39;, &#39;black&#39;]</span>
+<span class="sd">        </span>
+<span class="sd">        style : one of [&#39;italic&#39;, &#39;oblique&#39;]</span>
+
+<span class="sd">        family_hint : one of [&#39;sans_serif&#39;, &#39;helvetica&#39;, &#39;serif&#39;, &#39;times&#39;, </span>
+<span class="sd">                              &#39;type_writer&#39;, &#39;courier&#39;, &#39;old_english&#39;, </span>
+<span class="sd">                              &#39;decorative&#39;, &#39;monospace&#39;, &#39;fantasy&#39;, </span>
+<span class="sd">                              &#39;cursive&#39;, &#39;system&#39;]</span>
+<span class="sd">        </span>
+<span class="sd">        *options : one or more of [&#39;underline&#39;, &#39;strikethrough&#39;]</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &#39;consolas 12 bold&#39;</span>
+<span class="sd">        &#39;times underline&#39;</span>
+<span class="sd">        &#39;menlo italic 18 underline demi_bold&#39;</span>
+<span class="sd">        &#39;inconsolata 14 black italic strikethrough monospace underline&#39;</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">part</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">font_string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">parts</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;Invalid font string `</span><span class="si">%s</span><span class="s">`&#39;</span> <span class="o">%</span> <span class="n">font_string</span><span class="p">)</span>
+    
+        <span class="n">kw</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">kw</span><span class="p">[</span><span class="s">&#39;family&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
+            
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">point_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">part</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s">&#39;point_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">point_size</span>
+                <span class="k">continue</span>
+            
+            <span class="c"># &#39;normal&#39; is used for both weight and style. It&#39;s the</span>
+            <span class="c"># default for both, so we just skip it since we can&#39;t</span>
+            <span class="c"># resolve the ambiguity (nor do we need to).</span>
+            <span class="k">if</span> <span class="n">part</span> <span class="o">==</span> <span class="s">&#39;normal&#39;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_weight_map</span><span class="p">:</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s">&#39;weight&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
+            <span class="k">elif</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_style_set</span><span class="p">:</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s">&#39;style&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
+            <span class="k">elif</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">_family_hint_set</span><span class="p">:</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s">&#39;family_hint&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">part</span>
+            <span class="k">elif</span> <span class="n">part</span> <span class="o">==</span> <span class="s">&#39;underline&#39;</span><span class="p">:</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s">&#39;underline&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">elif</span> <span class="n">part</span> <span class="o">==</span> <span class="s">&#39;strikethrough&#39;</span><span class="p">:</span>
+                <span class="n">kw</span><span class="p">[</span><span class="s">&#39;strikethrough&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">True</span>
+
+        <span class="k">return</span> <span class="n">Font</span><span class="p">(</span><span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Font.__new__"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.__new__">[docs]</a>    <span class="k">def</span> <span class="nf">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="s">&#39;&#39;</span><span class="p">,</span> <span class="n">point_size</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> 
+        <span class="n">underline</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">strikethrough</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">family_hint</span><span class="o">=</span><span class="s">&#39;any&#39;</span><span class="p">,</span> 
+        <span class="n">spacing_type</span><span class="o">=</span><span class="s">&#39;percentage&#39;</span><span class="p">,</span> <span class="n">letter_spacing</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">word_spacing</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> 
+        <span class="n">stretch</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+         
+        <span class="c">#----------------------------------------------------------------------</span>
+        <span class="c"># Argument Type Checking</span>
+        <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;family must be a string&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">point_size</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;point_size must be an int&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;weight must be an int or a string&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">style</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;style must be a string&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">underline</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;underline must be a bool&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">strikethrough</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;strikethrough must be a bool&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">family_hint</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;family_hint must be a string&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spacing_type</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;spacing_type must be a string&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">letter_spacing</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;letter_spacing must be a float&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">word_spacing</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;word_spacing must be a float&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stretch</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&#39;stretch must be an int or a string&#39;</span><span class="p">)</span>
+
+        <span class="c">#----------------------------------------------------------------------</span>
+        <span class="c"># Argument Value Checking</span>
+        <span class="c">#----------------------------------------------------------------------</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">weight</span> <span class="o">&lt;=</span> <span class="mi">99</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;weight must be -1 &lt;= weight &lt;= 99&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">weight</span> <span class="o">=</span> <span class="n">weight</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">weight</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_weight_map</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;weight must be one of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">_weight_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">weight</span> <span class="o">=</span> <span class="n">_weight_map</span><span class="p">[</span><span class="n">weight</span><span class="p">]</span>
+
+        <span class="n">style</span> <span class="o">=</span> <span class="n">style</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">style</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_style_set</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;style must be one of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">list</span><span class="p">(</span><span class="n">_style_set</span><span class="p">))</span>
+        
+        <span class="n">family_hint</span> <span class="o">=</span> <span class="n">family_hint</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">family_hint</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_family_hint_set</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;family_hint must be one of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">list</span><span class="p">(</span><span class="n">_family_hint_set</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="n">spacing_type</span> <span class="o">=</span> <span class="n">spacing_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">spacing_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_spacing_set</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;spacing_type must be one of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="nb">list</span><span class="p">(</span><span class="n">_spacing_set</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stretch</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">1</span> <span class="o">&lt;=</span> <span class="n">stretch</span> <span class="o">&lt;=</span> <span class="mi">4000</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s">&#39;stretch must be 1 &lt;= stretch &lt;= 4000&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">stretch</span> <span class="o">=</span> <span class="n">stretch</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">stretch</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_stretch_map</span><span class="p">:</span>
+                <span class="n">msg</span> <span class="o">=</span> <span class="s">&#39;stretch must be one of </span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="n">_stretch_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">stretch</span> <span class="o">=</span> <span class="n">_stretch_map</span><span class="p">[</span><span class="n">stretch</span><span class="p">]</span>
+        
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">point_size</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">underline</span><span class="p">,</span> <span class="n">strikethrough</span><span class="p">,</span>
+                <span class="n">family_hint</span><span class="p">,</span> <span class="n">spacing_type</span><span class="p">,</span> <span class="n">letter_spacing</span><span class="p">,</span> <span class="n">word_spacing</span><span class="p">,</span>
+                <span class="n">stretch</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="nb">tuple</span><span class="o">.</span><span class="n">__new__</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">vals</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Font.__repr__"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.__repr__">[docs]</a>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">templ</span> <span class="o">=</span> <span class="n">dedent</span><span class="p">(</span><span class="s">&quot;&quot;&quot;</span><span class="se">\</span>
+<span class="s">        Font(</span>
+<span class="s">            family         =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            point_size     =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            weight         =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            style          =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            underline      =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            strikethrough  =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            family_hint    =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            spacing_type   =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            letter_spacing =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            word_spacing   =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">            stretch        =    </span><span class="si">%s</span><span class="s"></span>
+<span class="s">        )</span>
+<span class="s">        &quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">templ</span> <span class="o">%</span> <span class="bp">self</span>
+</div>
+<div class="viewcode-block" id="Font.__str__"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.__str__">[docs]</a>    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__repr__</span><span class="p">()</span>
+            </div>
+<div class="viewcode-block" id="Font.__nonzero__"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.__nonzero__">[docs]</a>    <span class="k">def</span> <span class="nf">__nonzero__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_font</span>
+        </div>
+<div class="viewcode-block" id="Font.clone"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.clone">[docs]</a>    <span class="k">def</span> <span class="nf">clone</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">point_size</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">style</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+        <span class="n">underline</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">strikethrough</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">family_hint</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+        <span class="n">spacing_type</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">letter_spacing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">word_spacing</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+        <span class="n">stretch</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+
+        <span class="n">these</span> <span class="o">=</span> <span class="p">(</span><span class="n">family</span><span class="p">,</span> <span class="n">point_size</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">style</span><span class="p">,</span> <span class="n">underline</span><span class="p">,</span>
+                 <span class="n">strikethrough</span><span class="p">,</span> <span class="n">family_hint</span><span class="p">,</span> <span class="n">spacing_type</span><span class="p">,</span> <span class="n">letter_spacing</span><span class="p">,</span>
+                 <span class="n">word_spacing</span><span class="p">,</span> <span class="n">stretch</span><span class="p">)</span>
+
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">((</span><span class="n">this</span> <span class="k">if</span> <span class="n">this</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="k">else</span> <span class="n">other</span><span class="p">)</span> 
+                <span class="k">for</span> <span class="p">(</span><span class="n">this</span><span class="p">,</span> <span class="n">other</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">these</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">Font</span><span class="p">(</span><span class="o">*</span><span class="n">vals</span><span class="p">)</span>
+</div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.family"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.family">[docs]</a>    <span class="k">def</span> <span class="nf">family</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.point_size"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.point_size">[docs]</a>    <span class="k">def</span> <span class="nf">point_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.weight"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.weight">[docs]</a>    <span class="k">def</span> <span class="nf">weight</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.style"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.style">[docs]</a>    <span class="k">def</span> <span class="nf">style</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.underline"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.underline">[docs]</a>    <span class="k">def</span> <span class="nf">underline</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.strikethrough"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.strikethrough">[docs]</a>    <span class="k">def</span> <span class="nf">strikethrough</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.family_hint"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.family_hint">[docs]</a>    <span class="k">def</span> <span class="nf">family_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.spacing_type"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.spacing_type">[docs]</a>    <span class="k">def</span> <span class="nf">spacing_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.letter_spacing"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.letter_spacing">[docs]</a>    <span class="k">def</span> <span class="nf">letter_spacing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">8</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.word_spacing"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.word_spacing">[docs]</a>    <span class="k">def</span> <span class="nf">word_spacing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">9</span><span class="p">]</span>
+    </div>
+    <span class="nd">@property</span>
+<div class="viewcode-block" id="Font.stretch"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.Font.stretch">[docs]</a>    <span class="k">def</span> <span class="nf">stretch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+             
+
+<span class="c"># Create an instance of a default font for comparison purposes</span></div></div>
+<span class="n">Font</span><span class="o">.</span><span class="n">default_font</span> <span class="o">=</span> <span class="n">Font</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="FontTrait"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.FontTrait">[docs]</a><span class="k">class</span> <span class="nc">FontTrait</span><span class="p">(</span><span class="n">StyleTrait</span><span class="p">):</span>
+    
+<div class="viewcode-block" id="FontTrait.create_default"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.FontTrait.create_default">[docs]</a>    <span class="k">def</span> <span class="nf">create_default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">Font</span><span class="p">()</span>
+    </div>
+<div class="viewcode-block" id="FontTrait.convert"><a class="viewcode-back" href="../../../api_ref/enaml.styling.html#enaml.styling.font.FontTrait.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="n">Font</span><span class="o">.</span><span class="n">from_string</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">):</span>
+                <span class="n">font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_default</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">Font</span><span class="p">):</span>
+            <span class="n">font</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_default</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">font</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.styling.font</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

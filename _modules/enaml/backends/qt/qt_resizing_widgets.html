@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.qt_resizing_widgets &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_resizing_widgets</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.qt_resizing_widgets</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c"># All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot; Subclasses of standard QWidgets that add a `resized` signal that will </span>
+<span class="sd">pass on notifications of resize events to Enaml.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtCore</span><span class="p">,</span> <span class="n">QtGui</span>
+
+
+<span class="c">#: A private flag which is used at startup time to enable debug painting</span>
+<span class="c">#: for the Qt resizable widgets.</span>
+<span class="n">_debug</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">&#39;ENAML_DEBUG_PAINT&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="QResizingWidget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_resizing_widgets.QResizingWidget">[docs]</a><span class="k">class</span> <span class="nc">QResizingWidget</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract base class for testing if a QWidget subclass exposes</span>
+<span class="sd">    a `resized` signal. Virtual subclasses must explicitly register </span>
+<span class="sd">    themselves with the .register() method.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+</div>
+<span class="k">def</span> <span class="nf">_resizable</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A private class decorator/factory which takes a QWidget subclass </span>
+<span class="sd">    and adds code which converts its resize events into a &#39;resized&#39; </span>
+<span class="sd">    signal. If the debug paint environment flag is set, it adds the </span>
+<span class="sd">    custom painting code as well.</span>
+
+<span class="sd">    Paramters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    cls : QWidget subclass</span>
+<span class="sd">        The QWidget subclass to which resizing functionality is added.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result : QWidget subclass</span>
+<span class="sd">        A new subclass with the resizing functionality implemented.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">_debug</span><span class="p">:</span>
+
+        <span class="k">class</span> <span class="nc">QResizable</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot; A QWidget subclass that passes its resize events back </span>
+<span class="sd">            to Enaml through a Qt signal.</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c">#: A signal which is emitted on a resize event.</span>
+            <span class="n">resized</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot; Converts a resize event in into a signal.</span>
+
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">QResizable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+            
+            <span class="k">def</span> <span class="nf">paintEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot; Paints debug layout rects of all the children during</span>
+<span class="sd">                a paint event.</span>
+
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">QResizable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">paintEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="n">qp</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QPainter</span><span class="p">()</span>
+                <span class="n">qp</span><span class="o">.</span><span class="n">begin</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">qp</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                    <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidget</span><span class="p">):</span>
+                            <span class="n">layout_item</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QWidgetItem</span><span class="p">(</span><span class="n">child</span><span class="p">)</span>
+                            <span class="n">geom</span> <span class="o">=</span> <span class="n">layout_item</span><span class="o">.</span><span class="n">geometry</span><span class="p">()</span>
+                            <span class="n">qp</span><span class="o">.</span><span class="n">drawRect</span><span class="p">(</span><span class="n">geom</span><span class="p">)</span>
+                <span class="k">finally</span><span class="p">:</span>
+                    <span class="n">qp</span><span class="o">.</span><span class="n">end</span><span class="p">()</span>
+            
+        <span class="n">QResizable</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;_debug_resizable&#39;</span>
+                
+    <span class="k">else</span><span class="p">:</span>
+        
+        <span class="k">class</span> <span class="nc">QResizable</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot; A QWidget subclass that passes its resize events back </span>
+<span class="sd">            to Enaml through a Qt signal.</span>
+
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="c">#: A signal which is emitted on a resize event.</span>
+            <span class="n">resized</span> <span class="o">=</span> <span class="n">QtCore</span><span class="o">.</span><span class="n">Signal</span><span class="p">()</span>
+
+            <span class="k">def</span> <span class="nf">resizeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+                <span class="sd">&quot;&quot;&quot; Converts a resize event in into a signal.</span>
+
+<span class="sd">                &quot;&quot;&quot;</span>
+                <span class="nb">super</span><span class="p">(</span><span class="n">QResizable</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">resizeEvent</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">resized</span><span class="o">.</span><span class="n">emit</span><span class="p">()</span>
+    
+        <span class="n">QResizable</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span> <span class="o">+</span> <span class="s">&#39;_resizable&#39;</span> 
+          
+    <span class="n">QResizingWidget</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">QResizable</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">QResizable</span>
+
+
+<span class="n">QResizingFrame</span> <span class="o">=</span> <span class="n">_resizable</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QFrame</span><span class="p">)</span>
+
+
+<span class="n">QResizingDialog</span> <span class="o">=</span> <span class="n">_resizable</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QDialog</span><span class="p">)</span>
+
+
+<span class="n">QResizingMainWindow</span> <span class="o">=</span> <span class="n">_resizable</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QMainWindow</span><span class="p">)</span>
+
+
+<span class="n">QResizingGroupBox</span> <span class="o">=</span> <span class="n">_resizable</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QGroupBox</span><span class="p">)</span>
+
+
+<span class="n">QResizingScrollArea</span> <span class="o">=</span> <span class="n">_resizable</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QScrollArea</span><span class="p">)</span>
+
+
+<span class="n">QResizingTabWidget</span> <span class="o">=</span> <span class="n">_resizable</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">)</span>
+
+
+<span class="n">QResizingSplitter</span> <span class="o">=</span> <span class="n">_resizable</span><span class="p">(</span><span class="n">QtGui</span><span class="o">.</span><span class="n">QSplitter</span><span class="p">)</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_resizing_widgets</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,523 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.container &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.container</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.container</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">List</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">cached_property</span><span class="p">,</span> <span class="n">Bool</span><span class="p">,</span> <span class="n">WeakRef</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.constraints_widget</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkConstraintsWidget</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.layout_task_handler</span> <span class="kn">import</span> <span class="n">LayoutTaskHandler</span>
+
+<span class="kn">from</span> <span class="nn">..layout.constrainable</span> <span class="kn">import</span> <span class="n">PaddingConstraints</span><span class="p">,</span> <span class="n">Constrainable</span>
+<span class="kn">from</span> <span class="nn">..layout.constraints_layout</span> <span class="kn">import</span> <span class="n">ConstraintsLayout</span>
+<span class="kn">from</span> <span class="nn">..layout.layout_helpers</span> <span class="kn">import</span> <span class="n">expand_constraints</span>
+<span class="kn">from</span> <span class="nn">..layout.geometry</span> <span class="kn">import</span> <span class="n">Size</span><span class="p">,</span> <span class="n">Box</span>
+    
+
+<div class="viewcode-block" id="AbstractTkContainer"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.AbstractTkContainer">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkContainer</span><span class="p">(</span><span class="n">AbstractTkConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit Container interface.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+
+</div>
+<div class="viewcode-block" id="Container"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container">[docs]</a><span class="k">class</span> <span class="nc">Container</span><span class="p">(</span><span class="n">LayoutTaskHandler</span><span class="p">,</span> <span class="n">PaddingConstraints</span><span class="p">,</span> <span class="n">ConstraintsWidget</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Component subclass that provides functionality for laying out </span>
+<span class="sd">    constrainable children according to their system of constraints.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: A read-only cached property which returns the constraints layout</span>
+    <span class="c">#: manager for this container, or None if the layout is being managed</span>
+    <span class="c">#: by a parent container.</span>
+    <span class="n">layout_manager</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span>
+        <span class="n">Instance</span><span class="p">(</span><span class="n">ConstraintsLayout</span><span class="p">),</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;owns_layout&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c">#: The list of children that can participate in constraints based</span>
+    <span class="c">#: layout. This list is composed of components in the list of </span>
+    <span class="c">#: children that are instances of Constrainable.</span>
+    <span class="n">constraints_children</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span>
+        <span class="n">List</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Constrainable</span><span class="p">)),</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;children&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c">#: A read-only property which returns True if this container owns</span>
+    <span class="c">#: its layout and is responsible for setting the geometry of its</span>
+    <span class="c">#: children, or False if that responsibility has been transferred</span>
+    <span class="c">#: to another component in the hierarchy.</span>
+    <span class="n">owns_layout</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Bool</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;_layout_owner&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A container has a default padding of 10 on all sides.</span>
+    <span class="n">padding</span> <span class="o">=</span> <span class="n">Box</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+    
+    <span class="c">#: A private trait which stores a weak reference to the owner of </span>
+    <span class="c">#: the layout for this container, or None if this container owns </span>
+    <span class="c">#: its layout.</span>
+    <span class="n">_layout_owner</span> <span class="o">=</span> <span class="n">WeakRef</span><span class="p">(</span><span class="n">allow_none</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#: A private cached property which computes the size hint whenever </span>
+    <span class="c">#: the size_hint_updated event is fired.</span>
+    <span class="n">_size_hint</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Instance</span><span class="p">(</span><span class="n">Size</span><span class="p">),</span> <span class="n">depends_on</span><span class="o">=</span><span class="s">&#39;size_hint_updated&#39;</span><span class="p">)</span>
+
+    <span class="c">#: Overridden parent class trait.</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkContainer</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Property Getters</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_get_constraints_children</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Cached property getter for the &#39;constraints_children&#39; </span>
+<span class="sd">        attribute. This getter returns the sublist of children that are </span>
+<span class="sd">        instances of ConstraintsWidget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flt</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">child</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Constrainable</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">filter</span><span class="p">(</span><span class="n">flt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">children</span><span class="p">)</span>
+    
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_get_layout_manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;layout_manager&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ConstraintsLayout</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_get_owns_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;owns_layout&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span> <span class="ow">is</span> <span class="bp">None</span>
+
+    <span class="nd">@cached_property</span>
+    <span class="k">def</span> <span class="nf">_get__size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;_size_hint&#39; attribtue.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># XXX we can probably do better than the min size. Maybe have </span>
+        <span class="c"># the layout manager compute a preferred size, or something</span>
+        <span class="c"># similar to a preferred size. But I don&#39;t know at the moment</span>
+        <span class="c"># what it would actually mean to have a preferred size from </span>
+        <span class="c"># a set of constraints.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_min_size</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Change Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_constraints_children_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A handler which requests a relayout when the constraints</span>
+<span class="sd">        children change, provided that the container is initialized.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">request_relayout</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_setup_init_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class setup method that performs any</span>
+<span class="sd">        layout initialization necessary for the component. The layout is</span>
+<span class="sd">        initialized from the bottom up.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">_setup_init_layout</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initialize_layout</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Layout Handling</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="Container.initialize_layout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.initialize_layout">[docs]</a>    <span class="k">def</span> <span class="nf">initialize_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class method that initializes the </span>
+<span class="sd">        layout manager for the first time, and binds the relevant</span>
+<span class="sd">        layout change handlers.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># We only need to initialize the manager if we own the layout.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="n">constraints</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_constraints</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">constraints</span><span class="p">)</span>
+            <span class="c"># We fire off a size hint updated event here since, if</span>
+            <span class="c"># for some reason, the size hint was computed before </span>
+            <span class="c"># the layout was initialized, the value will be wrong</span>
+            <span class="c"># and cached. So we need to clear the cache so that it </span>
+            <span class="c"># will be recomputed by the next consumer that needs it.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Container.relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.relayout">[docs]</a>    <span class="k">def</span> <span class="nf">relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
+<span class="sd">        to the layout owner if necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">relayout</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">relayout</span><span class="p">()</span>
+            </div>
+<div class="viewcode-block" id="Container.refresh"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.refresh">[docs]</a>    <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
+<span class="sd">        to the layout owner if necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Container.request_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
+<span class="sd">        to the layout owner if necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">request_relayout</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_relayout</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Container.request_refresh"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
+<span class="sd">        to the layout owner if necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">request_refresh</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_refresh</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Container.request_relayout_task"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_relayout_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_relayout_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
+<span class="sd">        to the layout owner if necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">sup</span><span class="o">.</span><span class="n">request_relayout_task</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_relayout_task</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            </div>
+<div class="viewcode-block" id="Container.request_refresh_task"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.request_refresh_task">[docs]</a>    <span class="k">def</span> <span class="nf">request_refresh_task</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented parent class method which forwards the call</span>
+<span class="sd">        to the layout owner if necessary.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span><span class="p">:</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Container</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">sup</span><span class="o">.</span><span class="n">request_refresh_task</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span><span class="o">.</span><span class="n">request_refresh_task</span><span class="p">(</span><span class="n">callback</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Container.do_relayout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.do_relayout">[docs]</a>    <span class="k">def</span> <span class="nf">do_relayout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
+<span class="sd">        actually perform the layout.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># At this point, we know that we own the layout since the</span>
+        <span class="c"># calls that trigger the call to this method would have </span>
+        <span class="c"># already been forwarded on to the layout owner. So, at</span>
+        <span class="c"># this point, we just have to recompute the constraints</span>
+        <span class="c"># and do a refresh.</span>
+
+        <span class="c"># TODO There is a big opportunity here to optimize by calling</span>
+        <span class="c"># .update_constraints() on the layout manager instead of just</span>
+        <span class="c"># recomputing everything from scratch, but that will require</span>
+        <span class="c"># tracking the created constraints so for now we just punt.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_constraints</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_refresh</span><span class="p">()</span>
+
+        <span class="c"># We emit the size hint updated event at this point since</span>
+        <span class="c"># we are still inside a freeze context. This means that if</span>
+        <span class="c"># our parent is a toplevel window, it can set the new size</span>
+        <span class="c"># of the window before leaving the context which helps </span>
+        <span class="c"># eleminate flicker during the resize.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size_hint_updated</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Container.do_refresh"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.do_refresh">[docs]</a>    <span class="k">def</span> <span class="nf">do_refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A reimplemented LayoutTaskHandler handler method which will</span>
+<span class="sd">        actually perform the refresh.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># At this point, we know that we own the layout since the</span>
+        <span class="c"># calls that trigger the call to this method would have </span>
+        <span class="c"># already been forwarded on to the layout owner. So, at</span>
+        <span class="c"># this point, we just have to do a refresh.</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
+        <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">layout</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">apply_layout</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Container.apply_layout"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.apply_layout">[docs]</a>    <span class="k">def</span> <span class="nf">apply_layout</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The callback invoked by the layout manager when there are</span>
+<span class="sd">        new layout values available. This traverses the constraints </span>
+<span class="sd">        children for which this container has layout ownership and </span>
+<span class="sd">        applies the geometry updates.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">stack</span> <span class="o">=</span> <span class="p">[((</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">constraints_children</span><span class="p">)]</span>
+        <span class="n">pop</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span>
+        <span class="n">push</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">append</span>
+        <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">offset</span><span class="p">,</span> <span class="n">children</span> <span class="o">=</span> <span class="n">pop</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">child</span> <span class="ow">in</span> <span class="n">children</span><span class="p">:</span>
+                <span class="n">new_offset</span> <span class="o">=</span> <span class="n">child</span><span class="o">.</span><span class="n">update_layout_geometry</span><span class="p">(</span><span class="o">*</span><span class="n">offset</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Container</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">_layout_owner</span> <span class="ow">is</span> <span class="bp">self</span><span class="p">:</span>
+                        <span class="n">push</span><span class="p">((</span><span class="n">new_offset</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">constraints_children</span><span class="p">))</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Constraints Computation</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Container.compute_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.compute_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">compute_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Descends the tree for all containers and children for which</span>
+<span class="sd">        this container can manage layout, and aggregates all of their</span>
+<span class="sd">        constraints into a single list.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">expand</span> <span class="o">=</span> <span class="n">expand_constraints</span>
+
+        <span class="n">cns</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">cns_extend</span> <span class="o">=</span> <span class="n">cns</span><span class="o">.</span><span class="n">extend</span>
+
+        <span class="c"># We don&#39;t care about the size hint constraints for a container</span>
+        <span class="c"># which manages a layout because the actual size is the input</span>
+        <span class="c"># to the solver.</span>
+        <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">hard_constraints</span><span class="p">()))</span>
+        <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">padding_constraints</span><span class="p">()))</span>
+        <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_constraints</span><span class="p">()))</span>
+        <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_constraints</span><span class="p">()))</span>
+
+        <span class="n">stack</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints_children</span><span class="p">)</span>
+        <span class="n">stack_pop</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">pop</span>
+        <span class="n">stack_extend</span> <span class="o">=</span> <span class="n">stack</span><span class="o">.</span><span class="n">extend</span>
+        <span class="k">while</span> <span class="n">stack</span><span class="p">:</span>
+            <span class="n">child</span> <span class="o">=</span> <span class="n">stack_pop</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">Container</span><span class="p">):</span>
+                <span class="c"># When we take over layout ownership of a container we</span>
+                <span class="c"># don&#39;t care about its size hint constraints since we</span>
+                <span class="c"># deal with its children directly.</span>
+                <span class="k">if</span> <span class="n">child</span><span class="o">.</span><span class="n">transfer_layout_ownership</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+                    <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">hard_constraints</span><span class="p">()))</span>
+                    <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">padding_constraints</span><span class="p">()))</span>
+                    <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">user_constraints</span><span class="p">()))</span>
+                    <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">component_constraints</span><span class="p">()))</span>
+                    <span class="n">stack_extend</span><span class="p">(</span><span class="n">child</span><span class="o">.</span><span class="n">constraints_children</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c"># If we aren&#39;t taking over layout ownership, then we</span>
+                    <span class="c"># don&#39;t care about any of the container&#39;s internal </span>
+                    <span class="c"># constraints.</span>
+                    <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">hard_constraints</span><span class="p">()))</span>
+                    <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">size_hint_constraints</span><span class="p">()))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">hard_constraints</span><span class="p">()))</span>
+                <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">size_hint_constraints</span><span class="p">()))</span>
+                <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">user_constraints</span><span class="p">()))</span>
+                <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">component_constraints</span><span class="p">()))</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">PaddingConstraints</span><span class="p">):</span>
+                    <span class="n">cns_extend</span><span class="p">(</span><span class="n">expand</span><span class="p">(</span><span class="n">child</span><span class="p">,</span> <span class="n">child</span><span class="o">.</span><span class="n">padding_constraints</span><span class="p">()))</span>
+                    
+        <span class="k">return</span> <span class="n">cns</span>
+</div>
+<div class="viewcode-block" id="Container.default_user_constraints"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.default_user_constraints">[docs]</a>    <span class="k">def</span> <span class="nf">default_user_constraints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Constraints to use if the constraints trait is an empty list.</span>
+<span class="sd">        The default container behavior is to put the layout children into</span>
+<span class="sd">        a vertical box layout.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">..layout.layout_helpers</span> <span class="kn">import</span> <span class="n">vbox</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">vbox</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">constraints_children</span><span class="p">)]</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Overrides</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Container.size_hint"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.size_hint">[docs]</a>    <span class="k">def</span> <span class="nf">size_hint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden parent class method to return the size hint of </span>
+<span class="sd">        the container from the layout manager. If the container does not</span>
+<span class="sd">        own its layout, or if the layout has not been initialized, then</span>
+<span class="sd">        this method will return (-1, -1). This method does not rely on </span>
+<span class="sd">        the size hint computation of the underlying toolkit widget. Thus,</span>
+<span class="sd">        the underlying widget may call back into this method as needed</span>
+<span class="sd">        to get a size hint from the layout manager.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Since this may be called very often by user code, especially </span>
+        <span class="c"># if the toolkit widget is using it as a replacement for its</span>
+        <span class="c"># internal size hint computation, we must cache the value or</span>
+        <span class="c"># it will be too expensive to use under heavy resize loads.</span>
+        <span class="c"># This returns the value from the cached property which is </span>
+        <span class="c"># updated whenver the size_hint_updated event is fired.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_hint</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Auxiliary Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Container.transfer_layout_ownership"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.transfer_layout_ownership">[docs]</a>    <span class="k">def</span> <span class="nf">transfer_layout_ownership</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">owner</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method which can be called by other components in the</span>
+<span class="sd">        hierarchy to gain ownership responsibility for the layout </span>
+<span class="sd">        of the children of this container. By default, the transfer</span>
+<span class="sd">        is allowed and is the mechanism which allows constraints to</span>
+<span class="sd">        cross widget boundaries. Subclasses should reimplement this </span>
+<span class="sd">        method if different behavior is desired.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        owner : BaseComponent</span>
+<span class="sd">            The component which has taken ownership responsibility</span>
+<span class="sd">            for laying out the children of this component. All </span>
+<span class="sd">            relayout and refresh requests will be forwarded to this</span>
+<span class="sd">            component.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results : bool</span>
+<span class="sd">            True if the transfer was allowed, False otherwise.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_layout_owner</span> <span class="o">=</span> <span class="n">owner</span>
+        <span class="k">return</span> <span class="bp">True</span>
+    </div>
+<div class="viewcode-block" id="Container.compute_min_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.compute_min_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_min_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calculates the minimum size of the container which would </span>
+<span class="sd">        allow all constraints to be satisfied. If this container does</span>
+<span class="sd">        not own its layout, or if the layout has not been initialized,</span>
+<span class="sd">        then this method will return (-1, -1).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">get_min_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Size</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">w</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">h</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="Container.compute_max_size"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.container.Container.compute_max_size">[docs]</a>    <span class="k">def</span> <span class="nf">compute_max_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Calculates the maximum size of the container which would </span>
+<span class="sd">        allow all constraints to be satisfied. If this container does</span>
+<span class="sd">        not own its layout, or if the layout has not been initialized</span>
+<span class="sd">        then this method will return (-1, -1).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">owns_layout</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">initialized</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">width</span>
+            <span class="n">height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">height</span>
+            <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">layout_manager</span><span class="o">.</span><span class="n">get_max_size</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Size</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">w</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">h</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">Size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.container</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

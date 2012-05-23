@@ -9,7 +9,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Chaco Sine Plot Example &mdash; enaml 0.2alpha documentation</title>
+    <title>Chaco Sine Plot Example &mdash; enaml 0.2beta-1 documentation</title>
     
     <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -17,7 +17,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '0.2alpha',
+        VERSION:     '0.2beta-1',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -27,7 +27,7 @@
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
     <link rel="shortcut icon" href="../_static/et.ico"/>
-    <link rel="top" title="enaml 0.2alpha documentation" href="../index.html" />
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
     <link rel="up" title="Examples Gallery" href="example.html" />
     <link rel="next" title="Chaco Lotka-Volterra Population Model Plot Example" href="ex_lotka_volterra.html" />
     <link rel="prev" title="Stacked Forms Example" href="ex_stacked.html" /> 
@@ -51,7 +51,7 @@
         <li class="right" >
           <a href="ex_stacked.html" title="Stacked Forms Example"
              accesskey="P">previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" accesskey="U">Examples Gallery</a> &raquo;</li>
   
@@ -93,8 +93,129 @@
             
   <div class="section" id="chaco-sine-plot-example">
 <h1>Chaco Sine Plot Example<a class="headerlink" href="#chaco-sine-plot-example" title="Permalink to this headline">¶</a></h1>
-<p><tt class="xref download docutils literal"><span class="pre">sine_plot.enaml</span></tt></p>
-<p><tt class="xref download docutils literal"><span class="pre">sine_plot.py</span></tt></p>
+<p><a class="reference download internal" href="../_downloads/sine_plot.enaml"><tt class="xref download docutils literal"><span class="pre">sine_plot.enaml</span></tt></a></p>
+<p><a class="reference download internal" href="../_downloads/sine_plot.py"><tt class="xref download docutils literal"><span class="pre">sine_plot.py</span></tt></a></p>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2011, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+""" UI for sine_plot_example.py
+
+Run sine_plot_example.py to view this demo.
+
+"""
+from numpy import pi
+
+from range import FloatRange, get_sliders
+
+
+enamldef Main(MainWindow):
+    attr model
+    title = 'Sine Plot'
+    Container:
+        constraints = [
+            hbox(plot, vbox(form, spacer)),
+            align('left', *get_sliders(self)),
+            align('right', *get_sliders(self)),
+            plot.width &gt;= 500,
+            plot.height &gt;= 500,
+        ]
+        SimplePlot:
+            id: plot
+            data &lt;&lt; dict(x=model.x, y_sin=model.y_sin, y_cos=model.y_cos)
+            commands = [
+                plot.plot(('x', 'y_sin'), type='line', name='sin', color='black'),
+                plot.plot(('x', 'y_cos'), type='line', name='cos', color='red'),
+                plot.yrange(low_setting= -4.0, high_setting=4.0),
+            ]
+            xtitle = 'X'
+            ytitle = 'sin and cos'
+            padding_right = 10
+            padding_top = 10
+        Form:
+            id: form
+            Label:
+                text = "Phase:"
+            FloatRange:
+                minimum = 0.0
+                maximum = 2*pi
+                value := model.phase
+            Label:
+                text = "Amplitude:"
+            FloatRange:
+                minimum = 0.0
+                maximum = 3.0
+                value := model.amplitude
+            Label:
+                text = "Frequency:"
+            FloatRange:
+                minimum = 0.0
+                maximum = 2*pi
+                value := model.w
+
+</pre>
+</div>
+<div class="highlight-python"><div class="highlight"><pre><span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="sd">&quot;&quot;&quot; Driver for the sine plot example.</span>
+
+<span class="sd">The window will show a Chaco plot on the left with sin(x) and cos(x) </span>
+<span class="sd">functions. The right side of the window will be a Form showing sliders </span>
+<span class="sd">that control the phase, amplitude, and angular frequency of the sinusoidal </span>
+<span class="sd">functions. The plot will update whenever the slider values change.</span>
+
+<span class="sd">This demo requires numpy and Chaco.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Array</span><span class="p">,</span> <span class="n">Float</span><span class="p">,</span> <span class="n">Property</span>
+
+<span class="kn">import</span> <span class="nn">enaml</span>
+
+
+<span class="k">class</span> <span class="nc">SineModel</span><span class="p">(</span><span class="n">HasTraits</span><span class="p">):</span>
+    <span class="c">#: The phase of the sine wave.</span>
+    <span class="n">phase</span> <span class="o">=</span> <span class="n">Float</span><span class="p">()</span>
+
+    <span class="c">#: The amplitude of the sine wave.</span>
+    <span class="n">amplitude</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c">#: The angular frequency of the sine wave.</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">Float</span><span class="p">(</span><span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c">#: The data.</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">Array</span><span class="p">()</span>
+    <span class="k">def</span> <span class="nf">_x_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">6</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="mi">301</span><span class="p">)</span>
+
+    <span class="n">y_sin</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;phase&#39;</span><span class="p">,</span> <span class="s">&#39;amplitude&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">_get_y_sin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
+
+    <span class="n">y_cos</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Array</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;phase&#39;</span><span class="p">,</span> <span class="s">&#39;amplitude&#39;</span><span class="p">,</span> <span class="s">&#39;w&#39;</span><span class="p">])</span>
+    <span class="k">def</span> <span class="nf">_get_y_cos</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amplitude</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">phase</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">simple_plot</span> <span class="kn">import</span> <span class="n">SimplePlot</span>
+    <span class="n">SimplePlot</span><span class="o">.</span><span class="n">activate</span><span class="p">()</span>
+
+    <span class="k">with</span> <span class="n">enaml</span><span class="o">.</span><span class="n">imports</span><span class="p">():</span>
+        <span class="kn">from</span> <span class="nn">sine_plot</span> <span class="kn">import</span> <span class="n">Main</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">SineModel</span><span class="p">()</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">Main</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</pre></div>
+</div>
 <div class="highlight-python"><pre>$ python sine_plot.py</pre>
 </div>
 <img alt="../_images/chaco_sine_plot.png" src="../_images/chaco_sine_plot.png" />
@@ -124,7 +245,7 @@
         <li class="right" >
           <a href="ex_stacked.html" title="Stacked Forms Example"
              >previous</a> |</li>
-        <li><a href="../index.html">enaml 0.2alpha documentation</a> &raquo;</li>
+        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
           <li><a href="index.html" >Enaml Getting Started Guide and Tutorials</a> &raquo;</li>
           <li><a href="example.html" >Examples Gallery</a> &raquo;</li>
   
@@ -135,8 +256,8 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 21, 2012.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.2pre/65e4c29a24e4+.
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

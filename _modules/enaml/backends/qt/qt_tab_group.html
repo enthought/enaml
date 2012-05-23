@@ -1,0 +1,233 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.qt.qt_tab_group &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_tab_group</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.qt.qt_tab_group</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.qt</span> <span class="kn">import</span> <span class="n">QtGui</span>
+<span class="kn">from</span> <span class="nn">.qt_constraints_widget</span> <span class="kn">import</span> <span class="n">QtConstraintsWidget</span>
+
+<span class="kn">from</span> <span class="nn">...components.tab_group</span> <span class="kn">import</span> <span class="n">AbstractTkTabGroup</span>
+
+
+<span class="c">#: A mapping from TabPosition enum values to qt tab positions.</span>
+<span class="n">_TAB_POSITION_MAP</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s">&#39;top&#39;</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="o">.</span><span class="n">North</span><span class="p">,</span>
+    <span class="s">&#39;bottom&#39;</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="o">.</span><span class="n">South</span><span class="p">,</span>
+    <span class="s">&#39;left&#39;</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="o">.</span><span class="n">West</span><span class="p">,</span>
+    <span class="s">&#39;right&#39;</span><span class="p">:</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="o">.</span><span class="n">East</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="QtTabGroup"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup">[docs]</a><span class="k">class</span> <span class="nc">QtTabGroup</span><span class="p">(</span><span class="n">QtConstraintsWidget</span><span class="p">,</span> <span class="n">AbstractTkTabGroup</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Qt implementation of TabGroup.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># Simpilar to QtGroupBox, don&#39;t use a widget item to compute layout</span>
+    <span class="c"># geometry, or layouts dont get enough space between other controls</span>
+    <span class="c"># and the tab widget.</span>
+    <span class="n">use_widget_item_for_layout</span> <span class="o">=</span> <span class="bp">False</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtTabGroup.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Create the underlying QTabWidget control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">QtGui</span><span class="o">.</span><span class="n">QTabWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTabGroup.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize the attributes of the QTabWidget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtTabGroup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_tabs</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selected_index</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">selected_index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tab_position</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">tab_position</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTabGroup.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind to the events emitted by the underlying control.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">QtTabGroup</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">currentChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_on_current_changed</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Abstract Implementation </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="QtTabGroup.shell_tabs_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.shell_tabs_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tabs_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tabs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tabs&#39; attribute of the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_tabs</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="QtTabGroup.shell_tab_position_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.shell_tab_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_tab_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;tab_position&#39; attribute of the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_tab_position</span><span class="p">(</span><span class="n">tab_position</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTabGroup.shell_selected_index_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.shell_selected_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_selected_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the widget index with the new value from the shell </span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_selected_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Event Handlers </span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_on_current_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The event handler for the &#39;currentChanged&#39; signal of the </span>
+<span class="sd">        underlying control. Synchronizes the index of the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">_selected_index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">currentIndex</span><span class="p">()</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods </span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="QtTabGroup.set_tab_position"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.set_tab_position">[docs]</a>    <span class="k">def</span> <span class="nf">set_tab_position</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tab_position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the position of the tabs on the underlying tab widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">q_tab_position</span> <span class="o">=</span> <span class="n">_TAB_POSITION_MAP</span><span class="p">[</span><span class="n">tab_position</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setTabPosition</span><span class="p">(</span><span class="n">q_tab_position</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTabGroup.set_selected_index"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.set_selected_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_selected_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the current index of the tab widget. This is overridden</span>
+<span class="sd">        from the parent class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="QtTabGroup.update_tabs"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.qt.html#enaml.backends.qt.qt_tab_group.QtTabGroup.update_tabs">[docs]</a>    <span class="k">def</span> <span class="nf">update_tabs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the QTabWidget&#39;s children with the current children.</span>
+<span class="sd">        This is an overridden parent class method.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">shell</span><span class="o">.</span><span class="n">selected_tab</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">tab</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">tabs</span><span class="p">):</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">addTab</span><span class="p">(</span><span class="n">tab</span><span class="o">.</span><span class="n">toolkit_widget</span><span class="p">,</span> <span class="n">tab</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">tab</span> <span class="ow">is</span> <span class="n">selected</span><span class="p">:</span>
+                <span class="n">widget</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.qt.qt_tab_group</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

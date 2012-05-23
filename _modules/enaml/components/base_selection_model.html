@@ -1,0 +1,265 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.base_selection_model &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.base_selection_model</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.base_selection_model</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c"># All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">Instance</span>
+
+<span class="kn">from</span> <span class="nn">.base_widget_component</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BaseWidgetComponent</span><span class="p">,</span> <span class="n">AbstractTkBaseWidgetComponent</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">..enums</span> <span class="kn">import</span> <span class="n">SelectionMode</span><span class="p">,</span> <span class="n">SelectionBehavior</span>
+<span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+
+
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkBaseSelectionModel</span><span class="p">(</span><span class="n">AbstractTkBaseWidgetComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit BaseSelectionModel interface.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel.clear"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Clear the selection and the current index.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel.get_current_index"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel.get_current_index">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Return the current ModelIndex or None if there is not one.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel.set_current_index"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel.set_current_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the current ModelIndex.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel.set_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;clear_select&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the current selection.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel.get_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel.get_selection">[docs]</a>    <span class="k">def</span> <span class="nf">get_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the current selection.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel.set_selection_mode"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel.set_selection_mode">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection_mode</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkBaseSelectionModel.set_selection_behavior"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.AbstractTkBaseSelectionModel.set_selection_behavior">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection_behavior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection_behavior</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+</div></div>
+<div class="viewcode-block" id="BaseSelectionModel"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.BaseSelectionModel">[docs]</a><span class="k">class</span> <span class="nc">BaseSelectionModel</span><span class="p">(</span><span class="n">BaseWidgetComponent</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The base class for item selection models.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: Updated when the current ModelIndex changes. Gets a 2-tuple of</span>
+    <span class="c">#: (old ModelIndex, new ModelIndex)</span>
+    <span class="n">current_event</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: Updated when the current selection changes. Gets a 2-tuple of</span>
+    <span class="c">#: (deleted items, added items). Each selection is a list of</span>
+    <span class="c">#: (top_left ModelIndex, bottom_right ModelIndex) tuples specifying</span>
+    <span class="c">#: rectangular ranges of selected cells.</span>
+    <span class="n">selection_event</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: The selection mode.</span>
+    <span class="n">selection_mode</span> <span class="o">=</span> <span class="n">SelectionMode</span>
+
+    <span class="c">#: What kinds of things can be selected.</span>
+    <span class="n">selection_behavior</span> <span class="o">=</span> <span class="n">SelectionBehavior</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkBaseSelectionModel</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseSelectionModel.clear"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.BaseSelectionModel.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Clear the selection and the current index.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="BaseSelectionModel.set_current_index"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.BaseSelectionModel.set_current_index">[docs]</a>    <span class="k">def</span> <span class="nf">set_current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the current ModelIndex.</span>
+
+<span class="sd">        This is the cell used for keyboard focus and is usually set when</span>
+<span class="sd">        the user clicks a cell. This may be independent of the selection. </span>
+<span class="sd">        It is frequently rendered with a dashed border.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : ModelIndex</span>
+<span class="sd">            The index to make current.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_current_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseSelectionModel.get_current_index"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.BaseSelectionModel.get_current_index">[docs]</a>    <span class="k">def</span> <span class="nf">get_current_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the current ModelIndex.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">get_current_index</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="BaseSelectionModel.set_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.BaseSelectionModel.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selection</span><span class="p">,</span> <span class="n">command</span><span class="o">=</span><span class="s">&#39;clear_select&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the current selection.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        selection : list of (ModelIndex, ModelIndex) tuples</span>
+<span class="sd">            Each tuple is an inclusive range specifying a bounding box</span>
+<span class="sd">            for a given selection range.</span>
+<span class="sd">            </span>
+<span class="sd">        command : single or sequence of SelectionCommand, optional</span>
+<span class="sd">            Exactly what action to perform given these selection ranges. </span>
+<span class="sd">            See the `SelectionCommand` documentation for the complete </span>
+<span class="sd">            set. Sequences of SelectionCommands will be treated as </span>
+<span class="sd">            binary-ORing the flags.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">selection</span><span class="p">,</span> <span class="n">command</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="BaseSelectionModel.get_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.base_selection_model.BaseSelectionModel.get_selection">[docs]</a>    <span class="k">def</span> <span class="nf">get_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the current selection.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        selection : list of (ModelIndex, ModelIndex) tuples</span>
+<span class="sd">            Each tuple is an inclusive range specifying a bounding box </span>
+<span class="sd">            for a given selection range.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">get_selection</span><span class="p">()</span>
+</div>
+    <span class="k">def</span> <span class="nf">_selection_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_selection_mode</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_selection_behavior_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_selection_behavior</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.base_selection_model</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

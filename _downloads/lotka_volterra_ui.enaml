@@ -7,10 +7,8 @@
 Run lotka_volterra.py to view this demo.
 
 """
-from range import Range
+from range import FloatRange, get_sliders
 
-
-:: python ::
 
 def pop_bounds(data_low, data_high, margin, tight_bounds):
     """ Return "nice" boundaries for the given population data range.
@@ -25,21 +23,15 @@ def pop_bounds(data_low, data_high, margin, tight_bounds):
     high = q * 20.0
     return (0.0, high)
 
-:: end ::
 
-
-Main(MainWindow):
+enamldef Main(MainWindow):
     attr model
     title = "Lotka-Volterra Model"
     Container:
         constraints = [
-            hbox(plot, vbox(form, _space_)),
-            align('left', prey0_range.slider, predator0_range.slider,
-                prey_growth_range.slider, predation_rate_range.slider,
-                predator_death_range.slider, predator_growth_range.slider),
-            align('right', prey0_range.slider, predator0_range.slider,
-                prey_growth_range.slider, predation_rate_range.slider,
-                predator_death_range.slider, predator_growth_range.slider),
+            hbox(plot, vbox(form, spacer)),
+            align('left', *get_sliders(self)),
+            align('right', *get_sliders(self)),
             plot.width >= 500,
             plot.height >= 500,
         ]
@@ -56,7 +48,7 @@ Main(MainWindow):
             ytitle = 'Population'
             padding_right = 10
             padding_top = 10
-            bgcolor << color_selector.value
+            plot_bgcolor << color_selector.value
         Form:
             id: form
             Label:
@@ -67,43 +59,37 @@ Main(MainWindow):
                 value = items[0]
             Label:
                 text = "Initial Prey:"
-            Range:
-                id: prey0_range
+            FloatRange:
                 minimum = 0.0
                 maximum = 10.0
                 value := model.prey0
             Label:
                 text = "Initial Predators:"
-            Range:
-                id: predator0_range
+            FloatRange:
                 minimum = 0.0
                 maximum = 10.0
                 value := model.predator0
             Label:
                 text = "Prey Growth:"
-            Range:
-                id: prey_growth_range
+            FloatRange:
                 minimum = 0.0
                 maximum = 2.0
                 value := model.prey_growth
             Label:
                 text = "Predation Rate:"
-            Range:
-                id: predation_rate_range
+            FloatRange:
                 minimum = 0.0
                 maximum = 2.0
                 value := model.predation_rate
             Label:
                 text = "Predator Death:"
-            Range:
-                id: predator_death_range
+            FloatRange:
                 minimum = 0.0
                 maximum = 2.0
                 value := model.predator_death
             Label:
                 text = "Predator Growth:"
-            Range:
-                id: predator_growth_range
+            FloatRange:
                 minimum = 0.0
                 maximum = 2.0
                 value := model.predator_growth

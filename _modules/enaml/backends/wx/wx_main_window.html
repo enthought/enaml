@@ -1,0 +1,293 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.backends.wx.wx_main_window &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_main_window</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../../index.html">
+              <img class="logo" src="../../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.backends.wx.wx_main_window</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">import</span> <span class="nn">wx</span>
+
+<span class="kn">from</span> <span class="nn">.wx_widget_component</span> <span class="kn">import</span> <span class="n">EVT_MIN_SIZE</span>
+<span class="kn">from</span> <span class="nn">.wx_window</span> <span class="kn">import</span> <span class="n">WXWindow</span>
+
+<span class="kn">from</span> <span class="nn">...components.main_window</span> <span class="kn">import</span> <span class="n">AbstractTkMainWindow</span>
+
+
+<div class="viewcode-block" id="WXMainWindowSizer"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindowSizer">[docs]</a><span class="k">class</span> <span class="nc">WXMainWindowSizer</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">PySizer</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A custom wx Sizer for use in the WXMainWindow. This sizer expands</span>
+<span class="sd">    its child to fit the allowable space, but respects the minimum size</span>
+<span class="sd">    of the child.</span>
+
+<span class="sd">    There can only be one widget in this sizer at a time and it should</span>
+<span class="sd">    be added via the .Add(...) method. Old items will be removed </span>
+<span class="sd">    automatically (but not destroyed).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="WXMainWindowSizer.__init__"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindowSizer.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXMainWindowSizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span> <span class="o">=</span> <span class="bp">None</span>
+</div>
+<div class="viewcode-block" id="WXMainWindowSizer.OnWidgetMinSize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindowSizer.OnWidgetMinSize">[docs]</a>    <span class="k">def</span> <span class="nf">OnWidgetMinSize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An event handler which is called when the min size is set </span>
+<span class="sd">        on the central widget. It updates the internal cached min size</span>
+<span class="sd">        and updates the frame sizing.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span><span class="o">.</span><span class="n">GetMinSize</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">UpdateFrameSizing</span><span class="p">()</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="WXMainWindowSizer.Add"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindowSizer.Add">[docs]</a>    <span class="k">def</span> <span class="nf">Add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Adds the given widget to the sizer, removing the old widget</span>
+<span class="sd">        if present. The old widget is not destroyed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Clear</span><span class="p">(</span><span class="n">deleteWindows</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="n">old_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span>
+        <span class="k">if</span> <span class="n">old_widget</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">old_widget</span><span class="o">.</span><span class="n">Unbind</span><span class="p">(</span><span class="n">EVT_MIN_SIZE</span><span class="p">,</span> <span class="n">handler</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">OnWidgetMinSize</span><span class="p">)</span>
+        <span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">EVT_MIN_SIZE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">OnWidgetMinSize</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span> <span class="o">=</span> <span class="n">widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span> <span class="o">=</span> <span class="n">widget</span><span class="o">.</span><span class="n">GetMinSize</span><span class="p">()</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">WXMainWindowSizer</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">widget</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">UpdateFrameSizing</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+<div class="viewcode-block" id="WXMainWindowSizer.CalcMin"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindowSizer.CalcMin">[docs]</a>    <span class="k">def</span> <span class="nf">CalcMin</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the computed minimum size for the for the frame.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span>
+    </div>
+<div class="viewcode-block" id="WXMainWindowSizer.RecalcSizes"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindowSizer.RecalcSizes">[docs]</a>    <span class="k">def</span> <span class="nf">RecalcSizes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Resizes the child to fit the available space of the window.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_widget</span>
+        <span class="k">if</span> <span class="n">widget</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">SetSize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">GetSize</span><span class="p">())</span>
+                </div>
+<div class="viewcode-block" id="WXMainWindowSizer.UpdateFrameSizing"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindowSizer.UpdateFrameSizing">[docs]</a>    <span class="k">def</span> <span class="nf">UpdateFrameSizing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the minimum size allowed of the frame and resizes it </span>
+<span class="sd">        if necessary. This is called whenever the minimum size of the</span>
+<span class="sd">        central widget changes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">GetContainingWindow</span><span class="p">()</span>
+        <span class="n">min_width</span><span class="p">,</span> <span class="n">min_height</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_size</span>
+        <span class="n">frame_width</span><span class="p">,</span> <span class="n">frame_height</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">GetSizeTuple</span><span class="p">()</span>
+        <span class="n">client_width</span><span class="p">,</span> <span class="n">client_height</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">GetClientSizeTuple</span><span class="p">()</span>
+        <span class="n">delta_width</span> <span class="o">=</span> <span class="n">frame_width</span> <span class="o">-</span> <span class="n">client_width</span>
+        <span class="n">delta_height</span> <span class="o">=</span> <span class="n">frame_height</span> <span class="o">-</span> <span class="n">client_height</span>
+        <span class="n">new_min_width</span> <span class="o">=</span> <span class="n">min_width</span> <span class="o">+</span> <span class="n">delta_width</span>
+        <span class="n">new_min_height</span> <span class="o">=</span> <span class="n">min_height</span> <span class="o">+</span> <span class="n">delta_height</span>
+        <span class="n">frame</span><span class="o">.</span><span class="n">SetMinSize</span><span class="p">((</span><span class="n">new_min_width</span><span class="p">,</span> <span class="n">new_min_height</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">new_min_width</span> <span class="o">&gt;</span> <span class="n">frame_width</span> <span class="ow">or</span> <span class="n">new_min_height</span> <span class="o">&gt;</span> <span class="n">frame_height</span><span class="p">:</span>
+            <span class="n">resize_width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">new_min_width</span><span class="p">,</span> <span class="n">frame_width</span><span class="p">)</span>
+            <span class="n">resize_height</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">new_min_height</span><span class="p">,</span> <span class="n">frame_height</span><span class="p">)</span>
+            <span class="n">frame</span><span class="o">.</span><span class="n">SetSize</span><span class="p">((</span><span class="n">resize_width</span><span class="p">,</span> <span class="n">resize_height</span><span class="p">))</span>
+
+</div></div>
+<div class="viewcode-block" id="WXMainWindow"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow">[docs]</a><span class="k">class</span> <span class="nc">WXMainWindow</span><span class="p">(</span><span class="n">WXWindow</span><span class="p">,</span> <span class="n">AbstractTkMainWindow</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A Wx implementation of a MainWindow.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Setup Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXMainWindow.create"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow.create">[docs]</a>    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Creates the underlying wx.Frame with an appropriate main</span>
+<span class="sd">        window sizer.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Frame</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetSizer</span><span class="p">(</span><span class="n">WXMainWindowSizer</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="WXMainWindow.initialize"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Intializes the attributes on the wx.Frame.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXMainWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+        <span class="n">shell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_menu_bar</span><span class="p">(</span><span class="n">shell</span><span class="o">.</span><span class="n">menu_bar</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXMainWindow.bind"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow.bind">[docs]</a>    <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Bind the signal handlers for the wx.Frame.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">WXMainWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">Bind</span><span class="p">(</span><span class="n">wx</span><span class="o">.</span><span class="n">EVT_CLOSE</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_on_close</span><span class="p">)</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Change Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="WXMainWindow.shell_menu_bar_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow.shell_menu_bar_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_menu_bar_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menu_bar</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Update the menu bar of the window with the new value from</span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_menu_bar</span><span class="p">(</span><span class="n">menu_bar</span><span class="p">)</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Event Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+    <span class="k">def</span> <span class="nf">_on_close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Emits the closed event on the shell object when the main </span>
+<span class="sd">        window is closed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">Skip</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">closed</span><span class="p">()</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Widget Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="WXMainWindow.set_central_widget"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow.set_central_widget">[docs]</a>    <span class="k">def</span> <span class="nf">set_central_widget</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">central_widget</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the central widget in the window with the given value.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># It&#39;s possible for the central widget component to be None.</span>
+        <span class="c"># This must be allowed since the central widget may be generated</span>
+        <span class="c"># by an Include component, in which case it will not exist </span>
+        <span class="c"># during initialization. However, we must have a central widget</span>
+        <span class="c"># for the Dialog, and so we just fill it with a dummy widget.</span>
+        <span class="n">central_widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shell_obj</span><span class="o">.</span><span class="n">central_widget</span>
+        <span class="k">if</span> <span class="n">central_widget</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">child_widget</span> <span class="o">=</span> <span class="n">wx</span><span class="o">.</span><span class="n">Panel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">child_widget</span> <span class="o">=</span> <span class="n">central_widget</span><span class="o">.</span><span class="n">toolkit_widget</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">GetSizer</span><span class="p">()</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="n">child_widget</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXMainWindow.set_menu_bar"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow.set_menu_bar">[docs]</a>    <span class="k">def</span> <span class="nf">set_menu_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menu_bar</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Updates the menu bar in the main window with the given Enaml</span>
+<span class="sd">        MenuBar instance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">menu_bar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetMenuBar</span><span class="p">(</span><span class="n">menu_bar</span><span class="o">.</span><span class="n">toolkit_widget</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="o">.</span><span class="n">SetMenuBar</span><span class="p">(</span><span class="bp">None</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="WXMainWindow.set_visible"><a class="viewcode-back" href="../../../../api_ref/enaml.backends.wx.html#enaml.backends.wx.wx_main_window.WXMainWindow.set_visible">[docs]</a>    <span class="k">def</span> <span class="nf">set_visible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">visible</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden from the parent class to raise the window to</span>
+<span class="sd">        the front if it should be shown.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">widget</span>
+        <span class="k">if</span> <span class="n">visible</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">Show</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">Raise</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">widget</span><span class="o">.</span><span class="n">Show</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.backends.wx.wx_main_window</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

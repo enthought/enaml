@@ -1,0 +1,261 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.combo_box &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.combo_box</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.combo_box</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Property</span><span class="p">,</span> <span class="n">Str</span>
+
+<span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">Control</span><span class="p">,</span> <span class="n">AbstractTkControl</span>
+
+<span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+
+
+<div class="viewcode-block" id="AbstractTkComboBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.AbstractTkComboBox">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkComboBox</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit ComboBox interface.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkComboBox.shell_labels_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.AbstractTkComboBox.shell_labels_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_labels_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;labels&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkComboBox.shell_index_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.AbstractTkComboBox.shell_index_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_index_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;index&#39; attribute on the shell</span>
+<span class="sd">        object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+</div></div>
+<div class="viewcode-block" id="ComboBox"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.combo_box.ComboBox">[docs]</a><span class="k">class</span> <span class="nc">ComboBox</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A drop-down list from which one item can be selected at a time.</span>
+
+<span class="sd">    Use a combo box to select a single item from a collection of items.</span>
+<span class="sd">    To select multiple items from a collection of items use a ListBox.</span>
+
+<span class="sd">    The combo box works by first using the to_string callable to convert</span>
+<span class="sd">    the value and the list of items into strings for display and then </span>
+<span class="sd">    using the index of the combo box to make appropriate selections.</span>
+
+<span class="sd">    .. note::</span>
+<span class="sd">        - If a value is specified that does not exist in the list of</span>
+<span class="sd">          items then the box is deselected and the index attribute will</span>
+<span class="sd">          be set to -1. However, the value attribute will still be </span>
+<span class="sd">          assigned the invalid value.</span>
+<span class="sd">        - If list of items is changed then component will try to find</span>
+<span class="sd">          the current value in the list and select it. If the value is</span>
+<span class="sd">          not found then the index will be updated to -1.</span>
+<span class="sd">        - The selected event is only emitted when the user selects</span>
+<span class="sd">          a valid value through the ui control, not when the value</span>
+<span class="sd">          is changed programmatically.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The objects that compose the collection.</span>
+    <span class="n">items</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span><span class="n">Any</span><span class="p">)</span>
+
+    <span class="c">#: The currently selected item from the collection. If this value</span>
+    <span class="c">#: is set to a value that is not in :attr:`items` then the computed </span>
+    <span class="c">#: :attr:`index` will be -1.</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">Any</span>
+
+    <span class="c">#: The integer index of the current selection in items. If the index</span>
+    <span class="c">#: is out of range of :attr:`items` then the index it is set to -1, </span>
+    <span class="c">#: and the current :attr:`value` is left unchanged.</span>
+    <span class="n">index</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Int</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;_value&#39;</span><span class="p">,</span> <span class="s">&#39;items[]&#39;</span><span class="p">])</span>
+
+    <span class="c">#: A callable which will convert the objects in the items list to</span>
+    <span class="c">#: strings for display. Defaults to str.</span>
+    <span class="n">to_string</span> <span class="o">=</span> <span class="n">Callable</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+    <span class="c">#: A readonly property that holds the component items as a list of</span>
+    <span class="c">#: strings that are produced by the :attr:`to_string` attribute.</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">List</span><span class="p">(</span><span class="n">Str</span><span class="p">),</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;to_string&#39;</span><span class="p">,</span> <span class="s">&#39;items[]&#39;</span><span class="p">])</span>
+
+    <span class="c">#: A readonly property that will return the result of calling</span>
+    <span class="c">#: :attr:`to_string` on :attr:`value`</span>
+    <span class="n">selected_text</span> <span class="o">=</span> <span class="n">Property</span><span class="p">(</span><span class="n">Str</span><span class="p">,</span> <span class="n">depends_on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;to_string&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">])</span>
+
+    <span class="c">#: Fired when a new selection is made by the user through the ui,</span>
+    <span class="c">#: but not when changed programatically. The event object will contain</span>
+    <span class="c">#: the selected value.</span>
+    <span class="n">selected</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width. ComboBoxes hug </span>
+    <span class="c">#: width weakly, by default.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="s">&#39;weak&#39;</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkComboBox</span><span class="p">)</span>
+
+    <span class="c">#: An internal attribute that is used to synchronize :attr:`index`.</span>
+    <span class="n">_value</span> <span class="o">=</span> <span class="n">Any</span>
+
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Property Handlers</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">__value_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The default value handler for :attr:`_value`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">_get_index</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for :attr:`index`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_value</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">return</span> <span class="n">idx</span>
+            
+    <span class="k">def</span> <span class="nf">_set_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for :attr:`index`. If the index is out </span>
+<span class="sd">        of bounds of :attr:`items`, then :attr:`index` is set to -1 and </span>
+<span class="sd">        :attr:`value` is left unchanged.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">items</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">idx</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+           <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">items</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">_value_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">val</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Forwards a change in :attr:`value` to :attr:`_value` so </span>
+<span class="sd">        that :attr:`index` can be properly updated.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_value</span> <span class="o">=</span> <span class="n">val</span>
+
+    <span class="k">def</span> <span class="nf">_get_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for :attr:`labels`. Converts the </span>
+<span class="sd">        component items to a list of string labels.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_string</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">)</span>
+    
+    <span class="k">def</span> <span class="nf">_get_selected_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for :attr:`selected_text`.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.combo_box</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

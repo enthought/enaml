@@ -1,0 +1,488 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.monitors &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.monitors</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.monitors</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span> <span class="nn">weakref</span> <span class="kn">import</span> <span class="n">ref</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="n">HasTraits</span><span class="p">,</span> <span class="n">Disallow</span>
+
+<span class="kn">from</span> <span class="nn">.byteplay</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="n">ROT_THREE</span><span class="p">,</span> <span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">LOAD_ATTR</span><span class="p">,</span> <span class="n">ROT_TWO</span><span class="p">,</span> <span class="n">BUILD_TUPLE</span><span class="p">,</span> 
+    <span class="n">UNPACK_SEQUENCE</span><span class="p">,</span> <span class="n">POP_TOP</span><span class="p">,</span> <span class="n">DUP_TOP</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">.signaling</span> <span class="kn">import</span> <span class="n">Signal</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Monitor</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="AbstractMonitor"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractMonitor">[docs]</a><span class="k">class</span> <span class="nc">AbstractMonitor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract base class which defines the api for implementing </span>
+<span class="sd">    an expression monitor. </span>
+
+<span class="sd">    An expression Monitor is responsible for generating bytecode which</span>
+<span class="sd">    will be inserted into a Python expression and which inspects the</span>
+<span class="sd">    Python stack during the evaluation to determine if it is appropriate</span>
+<span class="sd">    to attach some form of notifier to the constiuents. If a notifier is </span>
+<span class="sd">    warranted, it should make the appropriate connections to emit the</span>
+<span class="sd">    expression_changed signal when the expression has changed.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="c">#: A signal which is emitted when the expression has changed.</span>
+    <span class="n">expression_changed</span> <span class="o">=</span> <span class="n">Signal</span><span class="p">()</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractMonitor.get_insertion_code"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractMonitor.get_insertion_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_insertion_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates the byteplay code operations to be inserted into </span>
+<span class="sd">        the expression code object in order to monitor execution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        code_list : list of (op_code, op_arg)</span>
+<span class="sd">            The list of byteplay code operations for the expression.</span>
+<span class="sd">            If no code need be generated, an empty list should be </span>
+<span class="sd">            returned.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list of (insertion_idx, code_ops)</span>
+<span class="sd">            A list of 2-tuples where the first item is an integer index</span>
+<span class="sd">            into the original code_list and the second item is the list</span>
+<span class="sd">            of byteplay code operations to insert into the final code.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The generated instertion code *must* have a net-zero effect on </span>
+<span class="sd">        the Python stack. This means that the inserted code should leave</span>
+<span class="sd">        the stack exactly the way it found it. If this is not maintained,</span>
+<span class="sd">        then random exceptions and/or crashes *will* result.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractMonitor.reset"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractMonitor.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Unhook any previously connected notifiers. This method is </span>
+<span class="sd">        called by the owner expression when notifiers should be removed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Attribute Monitor</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="AbstractAttributeMonitor"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractAttributeMonitor">[docs]</a><span class="k">class</span> <span class="nc">AbstractAttributeMonitor</span><span class="p">(</span><span class="n">AbstractMonitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract monitor which monitors the expression evaluation for </span>
+<span class="sd">    attribute access and calls a method with the object and attribute </span>
+<span class="sd">    which is being accessed.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AbstractAttributeMonitor.get_insertion_code"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractAttributeMonitor.get_insertion_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_insertion_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates the byteplay code operations to be inserted into </span>
+<span class="sd">        the expression code object to monitor attribute accesses. When</span>
+<span class="sd">        an attribute access occurs, the &#39;monitor_attribute&#39; method will </span>
+<span class="sd">        be called with the object and attribute name as arguments.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># A weak closure which is injected into the stack to call the</span>
+        <span class="c"># monitor method upon attribute access.</span>
+        <span class="k">def</span> <span class="nf">code_binder</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">selfref</span><span class="o">=</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="n">this</span> <span class="o">=</span> <span class="n">selfref</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">this</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">this</span><span class="o">.</span><span class="n">monitor_attribute</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+        
+        <span class="c"># The list of code segments that will be inserted into the</span>
+        <span class="c"># new bytecode for the expression.</span>
+        <span class="n">insertion_code</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">op_arg</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">code_list</span><span class="p">):</span>
+            <span class="c"># This bit of code is injected between the object on TOS</span>
+            <span class="c"># and its pending attribute access. The TOS obj is duped,</span>
+            <span class="c"># the rotated above the binder code. The attr is loaded,</span>
+            <span class="c"># and the binder is called with the object and attr. The</span>
+            <span class="c"># return value of the binder is discarded. This leaves the</span>
+            <span class="c"># original TOS and pending attribute access to continue on</span>
+            <span class="c"># as normal</span>
+            <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="n">LOAD_ATTR</span><span class="p">:</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="n">DUP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">code_binder</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">ROT_TWO</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">op_arg</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0002</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">POP_TOP</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                <span class="p">]</span>
+                <span class="n">insertion_code</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">code</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">insertion_code</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractAttributeMonitor.monitor_attribute"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractAttributeMonitor.monitor_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Hooks up any necessary monitors for the given object and </span>
+<span class="sd">        attribute. </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : object</span>
+<span class="sd">            The object on which the attribute access is being performed.</span>
+<span class="sd">        </span>
+<span class="sd">        attr : string</span>
+<span class="sd">            The name of the attribute which is being accessed on the</span>
+<span class="sd">            object.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Abstract Call Monitor</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="AbstractCallMonitor"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractCallMonitor">[docs]</a><span class="k">class</span> <span class="nc">AbstractCallMonitor</span><span class="p">(</span><span class="n">AbstractMonitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract monitor which monitors the expression evaluation for </span>
+<span class="sd">    function calls and calls a method with the object and arguments which</span>
+<span class="sd">    are being called.</span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="AbstractCallMonitor.get_insertion_code"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractCallMonitor.get_insertion_code">[docs]</a>    <span class="k">def</span> <span class="nf">get_insertion_code</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code_list</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Generates the byteplay code operations to be inserted into </span>
+<span class="sd">        the expression code object to monitor function calls. When an</span>
+<span class="sd">        attribute access occurs, the &#39;monitor_function&#39; method will be </span>
+<span class="sd">        called with the object, args, and kwargs.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># A weak closure which is injected into the stack to call the</span>
+        <span class="c"># monitor method on function call.</span>
+        <span class="k">def</span> <span class="nf">code_binder</span><span class="p">(</span><span class="n">func_obj</span><span class="p">,</span> <span class="n">arg_tuple</span><span class="p">,</span> <span class="n">arg_spec</span><span class="p">,</span> <span class="n">selfref</span><span class="o">=</span><span class="n">ref</span><span class="p">(</span><span class="bp">self</span><span class="p">)):</span>
+            <span class="n">this</span> <span class="o">=</span> <span class="n">selfref</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">this</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">nargs</span> <span class="o">=</span> <span class="n">arg_spec</span> <span class="o">&amp;</span> <span class="mh">0xFF</span>
+                <span class="n">args</span> <span class="o">=</span> <span class="n">arg_tuple</span><span class="p">[:</span><span class="n">nargs</span><span class="p">]</span>
+                <span class="n">kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">arg_tuple</span><span class="p">[</span><span class="n">nargs</span><span class="p">::</span><span class="mi">2</span><span class="p">],</span> <span class="n">arg_tuple</span><span class="p">[</span><span class="n">nargs</span><span class="o">+</span><span class="mi">1</span><span class="p">::</span><span class="mi">2</span><span class="p">]))</span>
+                <span class="n">this</span><span class="o">.</span><span class="n">monitor_function</span><span class="p">(</span><span class="n">func_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">)</span>
+            <span class="c"># The UNPACK_SEQUENCE op_codes which will unpack these </span>
+            <span class="c"># return values will unpack things onto the stack in the</span>
+            <span class="c"># reverse of how they are provided. So, we pre-reverse them</span>
+            <span class="c"># so they come out in the right order.</span>
+            <span class="k">return</span> <span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">arg_tuple</span><span class="p">)),</span> <span class="n">func_obj</span><span class="p">)</span>
+                
+        <span class="c"># The list of code segments that will be inserted into the</span>
+        <span class="c"># new bytecode for the expression.</span>
+        <span class="n">insertion_code</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="p">(</span><span class="n">op</span><span class="p">,</span> <span class="n">op_arg</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">code_list</span><span class="p">):</span>
+            <span class="c"># This bit of code is injected just before a function call</span>
+            <span class="c"># is performed. The arguments on the stack are packed into</span>
+            <span class="c"># tuple. The code binder is then pushed onto the stack and</span>
+            <span class="c"># rotated under the func_obj and arg_tuple. The arg spec</span>
+            <span class="c"># is then loaded and the code binder is invoked. The return </span>
+            <span class="c"># value of the code binder is the original func_obj and </span>
+            <span class="c"># arg_tuple. This return tuple is unpacked, and then the </span>
+            <span class="c"># arg_tuple is unpacked and the function call proceeds as </span>
+            <span class="c"># normal.</span>
+            <span class="k">if</span> <span class="n">op</span> <span class="o">==</span> <span class="n">CALL_FUNCTION</span><span class="p">:</span>
+                <span class="c"># This computes the number of objects on the stack </span>
+                <span class="c"># between TOS and the object being called. Only the</span>
+                <span class="c"># last 16bits of the op_arg are signifcant. The lowest</span>
+                <span class="c"># 8 are the number of positional args on the stack,</span>
+                <span class="c"># the upper 8 is the number of kwargs. For kwargs, the</span>
+                <span class="c"># number of items on the stack is twice this number </span>
+                <span class="c"># since the values on the stack alternate name, value.</span>
+                <span class="n">n_stack_args</span> <span class="o">=</span> <span class="p">(</span><span class="n">op_arg</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">((</span><span class="n">op_arg</span> <span class="o">&gt;&gt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="mh">0xFF</span><span class="p">)</span>
+                <span class="n">code</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="p">(</span><span class="n">BUILD_TUPLE</span><span class="p">,</span> <span class="n">n_stack_args</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">code_binder</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">ROT_THREE</span><span class="p">,</span> <span class="bp">None</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">LOAD_CONST</span><span class="p">,</span> <span class="n">op_arg</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">CALL_FUNCTION</span><span class="p">,</span> <span class="mh">0x0003</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">UNPACK_SEQUENCE</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
+                    <span class="p">(</span><span class="n">UNPACK_SEQUENCE</span><span class="p">,</span> <span class="n">n_stack_args</span><span class="p">),</span>
+                <span class="p">]</span>
+                <span class="n">insertion_code</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">idx</span><span class="p">,</span> <span class="n">code</span><span class="p">))</span>
+            
+            <span class="c"># TODO - CALL_FUNCTION_VAR, CALL_FUNCTION_KW, CALL_FUNCTION_VAR_KW</span>
+
+        <span class="k">return</span> <span class="n">insertion_code</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractCallMonitor.monitor_function"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.AbstractCallMonitor.monitor_function">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Hooks up any necessary monitors for the given function object</span>
+<span class="sd">        and the args and kwargs with which it is being called.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func_obj : callable object</span>
+<span class="sd">            The function-like object which is being called.</span>
+<span class="sd">        </span>
+<span class="sd">        args : tuple</span>
+<span class="sd">            The arguments being passed to the function.</span>
+
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            The keyword arguments being passed to the function.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Trait Notification Handler</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<span class="k">class</span> <span class="nc">_TraitNotificationHandler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A thin class which makes it easier to manage the lifetime of </span>
+<span class="sd">    a trait notifier.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a TraitNotificationHandler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parent : AbstractMonitor</span>
+<span class="sd">            The AbstractMonitor instance which is the parent of this</span>
+<span class="sd">            handler. Only a weak reference to the parent is kept.</span>
+
+<span class="sd">        obj : HasTraits</span>
+<span class="sd">            The HasTraits instance on which we are attaching a listener.</span>
+<span class="sd">        </span>
+<span class="sd">        attr : string</span>
+<span class="sd">            The trait attribute on the object to which we should listen.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span> <span class="o">=</span> <span class="n">ref</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+        <span class="n">obj</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The trait change callback which will emit the expression</span>
+<span class="sd">        changed signal on the parent.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">parent</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parent_ref</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">parent</span><span class="o">.</span><span class="n">expression_changed</span><span class="p">()</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Trait Handler Mixin</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="TraitHandlerMixin"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitHandlerMixin">[docs]</a><span class="k">class</span> <span class="nc">TraitHandlerMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A mixin class which adds the common binding code for the trait</span>
+<span class="sd">    monitor classes below.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TraitHandlerMixin.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitHandlerMixin.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TraitHandlerMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c"># A dictionary which holds the notification handlers. A key</span>
+        <span class="c"># in the dictionary is an (obj_id, attr) tuple and the value</span>
+        <span class="c"># is the notification handler for that pair. The object id </span>
+        <span class="c"># is used to avoid ref cycles and potential hashing issues.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span> <span class="o">=</span> <span class="p">{}</span>
+</div>
+<div class="viewcode-block" id="TraitHandlerMixin.reset"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitHandlerMixin.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Clears the existing handlers which results in the notifiers</span>
+<span class="sd">        being destroyed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="TraitHandlerMixin.do_binding"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitHandlerMixin.do_binding">[docs]</a>    <span class="k">def</span> <span class="nf">do_binding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Hooks up a notifier to the object attribute pair if the </span>
+<span class="sd">        object is a HasTraits instance and the attribute refers to </span>
+<span class="sd">        a valid trait on the object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># Don&#39;t hook up multiple identifiers to the same object/attr</span>
+        <span class="c"># pair. Use the id of the object to prevent an accidental ref</span>
+        <span class="c"># cycle to the object.</span>
+        <span class="n">handlers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handlers</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">obj</span><span class="p">),</span> <span class="n">attr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">handlers</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">HasTraits</span><span class="p">):</span>
+            <span class="c"># Only hook up a notifier if the attribute access refers to</span>
+            <span class="c"># a proper trait. We check for Disallow trait types since </span>
+            <span class="c"># those can be returned by instances of HasStrictTraits</span>
+            <span class="n">trait</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">trait</span><span class="p">(</span><span class="n">attr</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">trait</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">trait</span><span class="o">.</span><span class="n">trait_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">Disallow</span><span class="p">:</span>
+                <span class="n">handler</span> <span class="o">=</span> <span class="n">_TraitNotificationHandler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+                <span class="n">handlers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">handler</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Trait Attribute Monitor</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="TraitAttributeMonitor"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitAttributeMonitor">[docs]</a><span class="k">class</span> <span class="nc">TraitAttributeMonitor</span><span class="p">(</span><span class="n">TraitHandlerMixin</span><span class="p">,</span> <span class="n">AbstractAttributeMonitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AbstractAttributeMonitor implementation which binds listeners</span>
+<span class="sd">    to trait attributes on HasTraits classes.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TraitAttributeMonitor.monitor_attribute"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitAttributeMonitor.monitor_attribute">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_attribute</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Hooks up any necessary trait change notifiers for the given</span>
+<span class="sd">        object and attribute. </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        obj : object</span>
+<span class="sd">            The object on which the attribute access is being performed.</span>
+<span class="sd">        </span>
+<span class="sd">        attr : string</span>
+<span class="sd">            The name of the attribute which is being accessed on the</span>
+<span class="sd">            object.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_binding</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Trait Getattr Monitor</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="TraitGetattrMonitor"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitGetattrMonitor">[docs]</a><span class="k">class</span> <span class="nc">TraitGetattrMonitor</span><span class="p">(</span><span class="n">TraitHandlerMixin</span><span class="p">,</span> <span class="n">AbstractCallMonitor</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An AbstractCallMonitor implementation which binds listeners to</span>
+<span class="sd">    trait attributes on HasTraits classes which are accessed through a</span>
+<span class="sd">    call to the builtin getattr.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TraitGetattrMonitor.monitor_function"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.monitors.TraitGetattrMonitor.monitor_function">[docs]</a>    <span class="k">def</span> <span class="nf">monitor_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func_obj</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Hooks up any necessary trait change notifiers for the given</span>
+<span class="sd">        call to getattr</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func_obj : callable object</span>
+<span class="sd">            The function-like object which is being called. If this is</span>
+<span class="sd">            not the builtin getattr, or if the call spec is invalid for</span>
+<span class="sd">            getattr, this method is a no-op.</span>
+<span class="sd">        </span>
+<span class="sd">        args : tuple</span>
+<span class="sd">            The arguments being passed to the function.</span>
+
+<span class="sd">        kwargs : dict</span>
+<span class="sd">            The keyword arguments being passed to the function.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_args</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">func_obj</span> <span class="ow">is</span> <span class="ow">not</span> <span class="nb">getattr</span> <span class="ow">or</span> <span class="n">n_args</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">n_args</span> <span class="o">&gt;</span> <span class="mi">3</span> <span class="ow">or</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">return</span>
+        
+        <span class="n">obj</span><span class="p">,</span> <span class="n">attr</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">return</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_binding</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">attr</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.monitors</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

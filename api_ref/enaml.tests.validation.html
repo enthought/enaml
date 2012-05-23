@@ -1,0 +1,273 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>validation Package &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../index.html" />
+    <link rel="up" title="tests Package" href="enaml.tests.html" />
+    <link rel="next" title="validation Package" href="enaml.validation.html" />
+    <link rel="prev" title="util Package" href="enaml.tests.util.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.validation.html" title="validation Package"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.util.html" title="util Package"
+             accesskey="P">previous</a> |</li>
+        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="enaml.tests.html" accesskey="U">tests Package</a> &raquo;</li>
+  
+    <li><a href="#">validation Package</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<h3>Page Contents</h3>
+<ul>
+<li><a class="reference internal" href="#">validation Package</a><ul>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">validation</span></tt> Package</a></li>
+<li><a class="reference internal" href="#module-enaml.tests.validation.test_coercing_validator"><tt class="docutils literal"><span class="pre">test_coercing_validator</span></tt> Module</a></li>
+<li><a class="reference internal" href="#module-enaml.tests.validation.test_number_validators"><tt class="docutils literal"><span class="pre">test_number_validators</span></tt> Module</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/api_ref/enaml.tests.validation.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="validation-package">
+<h1>validation Package<a class="headerlink" href="#validation-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="id1">
+<h2><tt class="xref py py-mod docutils literal"><span class="pre">validation</span></tt> Package<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<span class="target" id="module-enaml.tests.validation"></span></div>
+<div class="section" id="module-enaml.tests.validation.test_coercing_validator">
+<span id="test-coercing-validator-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">test_coercing_validator</span></tt> Module<a class="headerlink" href="#module-enaml.tests.validation.test_coercing_validator" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator">
+<em class="property">class </em><tt class="descclassname">enaml.tests.validation.test_coercing_validator.</tt><tt class="descname">TestCoercingValidator</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></tt></p>
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_all_valid">
+<tt class="descname">test_all_valid</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_all_valid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_all_valid" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_thru_convert">
+<tt class="descname">test_thru_convert</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_thru_convert"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_thru_convert" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_thru_format">
+<tt class="descname">test_thru_format</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_thru_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_thru_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_default_format">
+<tt class="descname">test_default_format</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_default_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_default_format" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_convert_func">
+<tt class="descname">test_convert_func</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_convert_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_convert_func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_coerce_func">
+<tt class="descname">test_coerce_func</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_coerce_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_coerce_func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_format_func">
+<tt class="descname">test_format_func</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_format_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_format_func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_normalize">
+<tt class="descname">test_normalize</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_normalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_normalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_convert_coerce_func">
+<tt class="descname">test_convert_coerce_func</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_convert_coerce_func"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_convert_coerce_func" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_has_locale">
+<tt class="descname">test_has_locale</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_has_locale"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_has_locale" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_locale_raises">
+<tt class="descname">test_locale_raises</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_locale_raises"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_locale_raises" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_locale_allow_none">
+<tt class="descname">test_locale_allow_none</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_coercing_validator.html#TestCoercingValidator.test_locale_allow_none"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.test_locale_allow_none" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.__module__">
+<tt class="descname">__module__</tt><em class="property"> = 'enaml.tests.validation.test_coercing_validator'</em><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.__unittest_skip__">
+<tt class="descname">__unittest_skip__</tt><em class="property"> = True</em><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.__unittest_skip__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.tests.validation.test_coercing_validator.TestCoercingValidator.__unittest_skip_why__">
+<tt class="descname">__unittest_skip_why__</tt><em class="property"> = 'Skipping Validation Tests'</em><a class="headerlink" href="#enaml.tests.validation.test_coercing_validator.TestCoercingValidator.__unittest_skip_why__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-enaml.tests.validation.test_number_validators">
+<span id="test-number-validators-module"></span><h2><tt class="xref py py-mod docutils literal"><span class="pre">test_number_validators</span></tt> Module<a class="headerlink" href="#module-enaml.tests.validation.test_number_validators" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="enaml.tests.validation.test_number_validators.TestNumberValidators">
+<em class="property">class </em><tt class="descclassname">enaml.tests.validation.test_number_validators.</tt><tt class="descname">TestNumberValidators</tt><big>(</big><em>methodName='runTest'</em><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_number_validators.html#TestNumberValidators"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_number_validators.TestNumberValidators" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">unittest.case.TestCase</span></tt></p>
+<dl class="method">
+<dt id="enaml.tests.validation.test_number_validators.TestNumberValidators.test_number_validator">
+<tt class="descname">test_number_validator</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_number_validators.html#TestNumberValidators.test_number_validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_number_validators.TestNumberValidators.test_number_validator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_number_validators.TestNumberValidators.test_number_out_of_range">
+<tt class="descname">test_number_out_of_range</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_number_validators.html#TestNumberValidators.test_number_out_of_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_number_validators.TestNumberValidators.test_number_out_of_range" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="enaml.tests.validation.test_number_validators.TestNumberValidators.test_integral_number_validator">
+<tt class="descname">test_integral_number_validator</tt><big>(</big><big>)</big><a class="reference internal" href="../_modules/enaml/tests/validation/test_number_validators.html#TestNumberValidators.test_integral_number_validator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#enaml.tests.validation.test_number_validators.TestNumberValidators.test_integral_number_validator" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.tests.validation.test_number_validators.TestNumberValidators.__module__">
+<tt class="descname">__module__</tt><em class="property"> = 'enaml.tests.validation.test_number_validators'</em><a class="headerlink" href="#enaml.tests.validation.test_number_validators.TestNumberValidators.__module__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.tests.validation.test_number_validators.TestNumberValidators.__unittest_skip__">
+<tt class="descname">__unittest_skip__</tt><em class="property"> = True</em><a class="headerlink" href="#enaml.tests.validation.test_number_validators.TestNumberValidators.__unittest_skip__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="enaml.tests.validation.test_number_validators.TestNumberValidators.__unittest_skip_why__">
+<tt class="descname">__unittest_skip_why__</tt><em class="property"> = 'Skipping Validation Tests'</em><a class="headerlink" href="#enaml.tests.validation.test_number_validators.TestNumberValidators.__unittest_skip_why__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="enaml.validation.html" title="validation Package"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="enaml.tests.util.html" title="util Package"
+             >previous</a> |</li>
+        <li><a href="../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="index.html" >Enaml API Reference</a> &raquo;</li>
+          <li><a href="enaml.tests.html" >tests Package</a> &raquo;</li>
+  
+    <li><a href="#">validation Package</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

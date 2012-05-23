@@ -20,9 +20,7 @@ We're setting up a view which builds on a top-level ``MainWindow``. The view
 has an attribute ``model`` which must be an instance of ``ProgressModel``,
 and by default it is initialized to an instance of the class.  The window
 has a ``Container`` which itself contains three widgets: a ``ProgressBar``, a
-``Label``, and a ``PushButton``. (In the :ref:`tech-ref` you can find a list and
-descriptions of widgets and components from the :ref:`built-ins <built-ins-ref>`
-and :ref:`standard library <std-library-ref>`.)
+``Label``, and a ``PushButton``.
 
 The result when you run it looks like:
 

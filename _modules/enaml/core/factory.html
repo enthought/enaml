@@ -1,0 +1,243 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.core.factory &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.factory</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.core.factory</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">.base_component</span> <span class="kn">import</span> <span class="n">BaseComponent</span>
+<span class="kn">from</span> <span class="nn">.toolkit</span> <span class="kn">import</span> <span class="n">Toolkit</span>
+
+
+<div class="viewcode-block" id="EnamlFactory"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlFactory">[docs]</a><span class="k">class</span> <span class="nc">EnamlFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract base class that defines the interface required</span>
+<span class="sd">    to instantiate and Enaml declarative component. This class handles</span>
+<span class="sd">    registering a factory as a virtual base class of the component</span>
+<span class="sd">    instance and makes sure that a component is associated with a</span>
+<span class="sd">    proper toolkit.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+<div class="viewcode-block" id="EnamlFactory.__call__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlFactory.__call__">[docs]</a>    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invokes the underlying Enaml build function and applies the</span>
+<span class="sd">        given keyword arguments as attributes to the result. </span>
+
+<span class="sd">        This a convienence method of the factory which makes is callable</span>
+<span class="sd">        from Python code. This method will not be called by the Enaml</span>
+<span class="sd">        runtime.</span>
+
+<span class="sd">        Paramters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            The initial attribute values to apply to the component after </span>
+<span class="sd">            it as been instantiated.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : BaseComponent</span>
+<span class="sd">            The BaseComponent instance that was created.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__enaml_call__</span><span class="p">()</span>
+        <span class="n">component</span><span class="o">.</span><span class="n">trait_set</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">component</span>
+</div>
+<div class="viewcode-block" id="EnamlFactory.__enaml_call__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlFactory.__enaml_call__">[docs]</a>    <span class="k">def</span> <span class="nf">__enaml_call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifiers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">toolkit</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Invokes the underlying Enaml build function, creating the </span>
+<span class="sd">        locals and toolkit if necessary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        identifiers : dict or None, optional</span>
+<span class="sd">            The dict of identifiers to use when binding expressions</span>
+<span class="sd">            on the component. If None, a new dict will be created.</span>
+<span class="sd">        </span>
+<span class="sd">        toolkit : Toolkit or None, optional</span>
+<span class="sd">            The Toolkit to use when building the object tree. If None,</span>
+<span class="sd">            the currently active toolkit will be used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : BaseComponent</span>
+<span class="sd">            The BaseComponent instance that was created.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">identifiers</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">identifiers</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">if</span> <span class="n">toolkit</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">toolkit</span> <span class="o">=</span> <span class="n">Toolkit</span><span class="o">.</span><span class="n">active_toolkit</span><span class="p">()</span>
+        <span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">identifiers</span><span class="p">,</span> <span class="n">toolkit</span><span class="p">)</span>
+        <span class="n">component</span><span class="o">.</span><span class="n">toolkit</span> <span class="o">=</span> <span class="n">toolkit</span>
+        <span class="n">component</span><span class="o">.</span><span class="n">_bases</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">component</span>
+</div>
+<div class="viewcode-block" id="EnamlFactory.__instancecheck__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlFactory.__instancecheck__">[docs]</a>    <span class="k">def</span> <span class="nf">__instancecheck__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">instance</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overrides isinstance(obj, ctor) for instances of this factory</span>
+<span class="sd">        class. This allows one check if a component instance was created </span>
+<span class="sd">        by a given factory instance using standard Python idioms.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instance</span><span class="p">,</span> <span class="n">BaseComponent</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span> <span class="ow">in</span> <span class="n">instance</span><span class="o">.</span><span class="n">_bases</span>
+        <span class="k">return</span> <span class="bp">False</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="EnamlFactory.build"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlFactory.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">toolkit</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An abstract method which must be implemented by subclasses</span>
+<span class="sd">        to build an return an instance of BaseComponent.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        identifiers : dict</span>
+<span class="sd">            The dict of identifiers to use when binding expressions</span>
+<span class="sd">            on the component.</span>
+<span class="sd">        </span>
+<span class="sd">        toolkit : Toolkit</span>
+<span class="sd">            The Toolkit to use when building the object tree.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : BaseComponent</span>
+<span class="sd">            The BaseComponent instance that was created.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Enaml Declaration</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="EnamlDeclaration"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlDeclaration">[docs]</a><span class="k">class</span> <span class="nc">EnamlDeclaration</span><span class="p">(</span><span class="n">EnamlFactory</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An EnamlFactory which exposes a compiled Enaml declaration</span>
+<span class="sd">    function with an interface that is easy to use from Python.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="EnamlDeclaration.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlDeclaration.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__func__</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__doc__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__name__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__module__</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__module__</span>
+</div>
+<div class="viewcode-block" id="EnamlDeclaration.__repr__"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlDeclaration.__repr__">[docs]</a>    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&#39;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__name__</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="EnamlDeclaration.build"><a class="viewcode-back" href="../../../api_ref/enaml.core.html#enaml.core.factory.EnamlDeclaration.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">identifiers</span><span class="p">,</span> <span class="n">toolkit</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; An abstractmethod implementation that returns the Enaml</span>
+<span class="sd">        component generated by the internal compiled Enaml function.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__func__</span><span class="p">(</span><span class="n">identifiers</span><span class="p">,</span> <span class="n">toolkit</span><span class="p">)</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.core.factory</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,547 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.validation.number_validators &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.validation.number_validators</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.validation.number_validators</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">ast</span> <span class="kn">import</span> <span class="n">literal_eval</span>
+<span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span><span class="p">,</span> <span class="n">Real</span><span class="p">,</span> <span class="n">Integral</span><span class="p">,</span> <span class="n">Complex</span>
+
+<span class="kn">from</span> <span class="nn">.coercing_validator</span> <span class="kn">import</span> <span class="n">CoercingValidator</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Base Number Validator</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="NumberValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.NumberValidator">[docs]</a><span class="k">class</span> <span class="nc">NumberValidator</span><span class="p">(</span><span class="n">CoercingValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A CoercingValidator subclass which accepts number strings which </span>
+<span class="sd">    will be converted using the builtin Python number types.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The type of the number to which the string must evaluate to be</span>
+    <span class="c">#: considered for validity.</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="n">Number</span>
+
+<div class="viewcode-block" id="NumberValidator.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.NumberValidator.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">precision</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a NumberValidator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        low : Number or None, optional</span>
+<span class="sd">            The lowest acceptable value for the number. If None, there</span>
+<span class="sd">            is no lower limit to the value. The default is None.</span>
+<span class="sd">        </span>
+<span class="sd">        high : Number or None, optional</span>
+<span class="sd">            The highest acceptable value for the number. If None, there</span>
+<span class="sd">            is no upper limit to the value. The default is None.</span>
+
+<span class="sd">        precision : integer, optional</span>
+<span class="sd">            An optional integer to control the precision of floating</span>
+<span class="sd">            point number formatting. The default is -1 and indicates</span>
+<span class="sd">            that implementation default precision should be used.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            The keyword arguments necessary to initialize an instance</span>
+<span class="sd">            of CoercingValidator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">NumberValidator</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">low</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">high</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">precision</span> <span class="o">=</span> <span class="n">precision</span>
+</div>
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the function</span>
+<span class="sd">        ast.literal_eval to safetly evaluate the text. </span>
+<span class="sd">        </span>
+<span class="sd">        Subclasses may override this to provide locale-aware text </span>
+<span class="sd">        conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_post_convert_fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method intended to be overridden by subclasses which is</span>
+<span class="sd">        called when conversion of the text fails. Such a failure would</span>
+<span class="sd">        normally consider the input as INVALID. However, if this method</span>
+<span class="sd">        returns True, then the text will be considered INTERMEDIATE. This</span>
+<span class="sd">        is useful to handle cases where, for example, scientific notation</span>
+<span class="sd">        is being entered and the trailing [eE][+-]? characters cause</span>
+<span class="sd">        conversion to fail.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            True if the failing text should be considered INTERMEDIATE,</span>
+<span class="sd">            False otherwise.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="NumberValidator.validate"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.NumberValidator.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Validates the input text against the rules of the validator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : unicode string</span>
+<span class="sd">            The input string supplied by the user.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : int</span>
+<span class="sd">            One of the class attribute constants INVALID, INTERMEDIATE, </span>
+<span class="sd">            or VALID.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The string is INVALID under the following conditions:</span>
+<span class="sd">            - The string fails coercing validation.</span>
+<span class="sd">        </span>
+<span class="sd">        The string is INTERMEDIATE under the following conditions:</span>
+<span class="sd">            - The string is empty.</span>
+<span class="sd">            - The coerced value is less than the low value.</span>
+<span class="sd">            - The coerced value is greater than the high value.</span>
+
+<span class="sd">        The string is ACCEPTABLE for all other situations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">text</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">INTERMEDIATE</span>
+
+        <span class="n">validity</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">validity</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_post_convert_fail</span><span class="p">(</span><span class="n">text</span><span class="p">):</span>
+                <span class="n">validity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">INTERMEDIATE</span>
+            <span class="k">return</span> <span class="n">validity</span>
+            
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_type</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">INVALID</span>
+
+        <span class="n">low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span>
+        <span class="k">if</span> <span class="n">low</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">low</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">INVALID</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">INTERMEDIATE</span>
+        
+        <span class="n">high</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span>
+        <span class="k">if</span> <span class="n">high</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="n">high</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">INVALID</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">INTERMEDIATE</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ACCEPTABLE</span>
+
+</div></div>
+<span class="k">class</span> <span class="nc">_PostConvertMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A validator mixin class which provides a post convert fail method</span>
+<span class="sd">    which validates failing text based on given endings.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_fail_endings</span> <span class="o">=</span> <span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_post_convert_fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Validates failing text based on the endings provided in the</span>
+<span class="sd">        &#39;valid_fail_endings&#39; iterable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">ending</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">valid_fail_endings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="n">ending</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">ending</span><span class="p">):</span>
+                <span class="n">new</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">ending</span><span class="p">)]</span>
+                <span class="n">validity</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">validity</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># numbers.Number Validators</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="IntegralNumberValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.IntegralNumberValidator">[docs]</a><span class="k">class</span> <span class="nc">IntegralNumberValidator</span><span class="p">(</span><span class="n">NumberValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A NumberValidator for Integral number types using the abstract </span>
+<span class="sd">    base class numbers.Integral for type checking.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="n">Integral</span>
+
+</div>
+<div class="viewcode-block" id="RealNumberValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.RealNumberValidator">[docs]</a><span class="k">class</span> <span class="nc">RealNumberValidator</span><span class="p">(</span><span class="n">_PostConvertMixin</span><span class="p">,</span> <span class="n">NumberValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A NumberValidator for Real number types using the abstract </span>
+<span class="sd">    base class numbers.Real for type checking.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="n">Real</span>
+
+    <span class="n">valid_fail_endings</span> <span class="o">=</span> <span class="p">(</span><span class="s">u&#39;-&#39;</span><span class="p">,</span> <span class="s">u&#39;e&#39;</span><span class="p">,</span> <span class="s">u&#39;E&#39;</span><span class="p">,</span> <span class="s">u&#39;e+&#39;</span><span class="p">,</span> <span class="s">u&#39;E+&#39;</span><span class="p">,</span> <span class="s">u&#39;e-&#39;</span><span class="p">,</span> <span class="s">u&#39;E-&#39;</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ComplexNumberValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.ComplexNumberValidator">[docs]</a><span class="k">class</span> <span class="nc">ComplexNumberValidator</span><span class="p">(</span><span class="n">NumberValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A NumberValidator for Complex number types using the abstract </span>
+<span class="sd">    base class numbers.Complex for type checking.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="n">Complex</span>
+
+    <span class="k">def</span> <span class="nf">_post_convert_fail</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A post convert fail method which allows trailing &#39;+&#39; and</span>
+<span class="sd">        &#39;-&#39; symbols, as well scientific notation and missing &#39;j&#39; </span>
+<span class="sd">        characters.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">text</span> <span class="o">==</span> <span class="s">u&#39;-&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+        <span class="k">if</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">u&#39;+&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">text</span> <span class="o">!=</span> <span class="s">u&#39;+&#39;</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s">u&#39;+&#39;</span> <span class="ow">in</span> <span class="n">text</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">text</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s">u&#39;j&#39;</span><span class="p">):</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">text</span> <span class="o">+</span> <span class="s">u&#39;j&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">new</span> <span class="o">=</span> <span class="n">text</span>
+        
+        <span class="n">validity</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">validity</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        
+        <span class="c"># If the text is still invalid, we may be entering trailing</span>
+        <span class="c"># scientific notation which we explicitly allow. Rather than </span>
+        <span class="c"># ignoring the symbols, we attempt to complete them by adding</span>
+        <span class="c"># a 0 exponential. This makes the substitution position aware.</span>
+        <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="p">(</span><span class="s">u&#39;e+&#39;</span><span class="p">,</span> <span class="s">u&#39;e-&#39;</span><span class="p">,</span> <span class="s">u&#39;E+&#39;</span><span class="p">,</span> <span class="s">u&#39;E-&#39;</span><span class="p">,</span> <span class="s">u&#39;e&#39;</span><span class="p">,</span> <span class="s">u&#39;E&#39;</span><span class="p">):</span>
+            <span class="n">subbed</span> <span class="o">=</span> <span class="n">new</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span> <span class="n">sub</span> <span class="o">+</span> <span class="s">u&#39;0&#39;</span><span class="p">)</span>
+            <span class="n">validity</span><span class="p">,</span> <span class="n">value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate</span><span class="p">(</span><span class="n">subbed</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">validity</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">INVALID</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">True</span>
+        
+        <span class="k">return</span> <span class="bp">False</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Concrete Number Validators</span>
+<span class="c">#------------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="IntValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.IntValidator">[docs]</a><span class="k">class</span> <span class="nc">IntValidator</span><span class="p">(</span><span class="n">IntegralNumberValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A NumberValidator for &#39;int&#39; number types which uses the given</span>
+<span class="sd">    locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="nb">int</span>
+
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_int</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="LongValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.LongValidator">[docs]</a><span class="k">class</span> <span class="nc">LongValidator</span><span class="p">(</span><span class="n">IntegralNumberValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A NumberValidator for &#39;long&#39; number types which uses the given</span>
+<span class="sd">    locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="nb">long</span>
+
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_long</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_long</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="FloatValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.FloatValidator">[docs]</a><span class="k">class</span> <span class="nc">FloatValidator</span><span class="p">(</span><span class="n">RealNumberValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A NumberValidator for &#39;float&#39; number types which uses the given</span>
+<span class="sd">    locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="nb">float</span>
+
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_float</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">group</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_float</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="ComplexValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.ComplexValidator">[docs]</a><span class="k">class</span> <span class="nc">ComplexValidator</span><span class="p">(</span><span class="n">ComplexNumberValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A NumberValidator for &#39;complex&#39; number types which uses the </span>
+<span class="sd">    given locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">number_type</span> <span class="o">=</span> <span class="nb">complex</span>
+
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_complex</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">prec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_complex</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="BinValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.BinValidator">[docs]</a><span class="k">class</span> <span class="nc">BinValidator</span><span class="p">(</span><span class="n">IntValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An IntValidator which converts and displays as a binary string</span>
+<span class="sd">    and uses the given locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_int</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="OctValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.OctValidator">[docs]</a><span class="k">class</span> <span class="nc">OctValidator</span><span class="p">(</span><span class="n">IntValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An IntValidator which converts and displays as an octal string</span>
+<span class="sd">    and uses the given locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_int</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="HexValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.HexValidator">[docs]</a><span class="k">class</span> <span class="nc">HexValidator</span><span class="p">(</span><span class="n">_PostConvertMixin</span><span class="p">,</span> <span class="n">IntValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An IntValidator which converts and displays as a hex string</span>
+<span class="sd">    and uses the given locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_fail_endings</span> <span class="o">=</span> <span class="p">(</span><span class="s">u&#39;0x&#39;</span><span class="p">,</span> <span class="s">u&#39;0X&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_int</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_int</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="LongBinValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.LongBinValidator">[docs]</a><span class="k">class</span> <span class="nc">LongBinValidator</span><span class="p">(</span><span class="n">LongValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A LongValidator which converts and displays as a binary string</span>
+<span class="sd">    and uses the given locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_long</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default converts method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_long</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="LongOctValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.LongOctValidator">[docs]</a><span class="k">class</span> <span class="nc">LongOctValidator</span><span class="p">(</span><span class="n">LongValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A LongValidator which converts and displays as an octal string</span>
+<span class="sd">    and uses the given locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_long</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_long</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="LongHexValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.number_validators.LongHexValidator">[docs]</a><span class="k">class</span> <span class="nc">LongHexValidator</span><span class="p">(</span><span class="n">_PostConvertMixin</span><span class="p">,</span> <span class="n">LongValidator</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A LongValidator which converts and displays as a hex string</span>
+<span class="sd">    and uses the given locale object to perform conversion.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">valid_fail_endings</span> <span class="o">=</span> <span class="p">(</span><span class="s">u&#39;0x&#39;</span><span class="p">,</span> <span class="s">u&#39;0X&#39;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default format method which uses the provided</span>
+<span class="sd">        locale object to perform the formatting.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">from_long</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Overridden default convert method which uses the provided</span>
+<span class="sd">        locale object to perform the conversion.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">locale</span><span class="o">.</span><span class="n">to_long</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.validation.number_validators</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

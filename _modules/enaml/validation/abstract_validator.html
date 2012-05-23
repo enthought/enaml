@@ -1,0 +1,307 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.validation.abstract_validator &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.validation.abstract_validator</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.validation.abstract_validator</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">ABCMeta</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">..localization</span> <span class="kn">import</span> <span class="n">get_default_locale</span>
+<span class="kn">from</span> <span class="nn">..localization.abstract_locale</span> <span class="kn">import</span> <span class="n">AbstractLocale</span>
+
+
+<div class="viewcode-block" id="AbstractValidator"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.abstract_validator.AbstractValidator">[docs]</a><span class="k">class</span> <span class="nc">AbstractValidator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; An abstract base class defining the behavior of validators.</span>
+
+<span class="sd">    Validators are used to check the text input by the user is valid</span>
+<span class="sd">    for conversion, perform that conversion when requested, and to</span>
+<span class="sd">    format a user value to unicode string for display.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">__metaclass__</span> <span class="o">=</span> <span class="n">ABCMeta</span>
+
+    <span class="c">#: A constant representing a clearly invalid result. For example,</span>
+    <span class="c">#: the text &#39;asdf&#39; is clearly invalid when a number string is</span>
+    <span class="c">#: expected.</span>
+    <span class="n">INVALID</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c">#: A constant which represents a string which is in a plausible</span>
+    <span class="c">#: intermediate state on its way to being valid. For example the</span>
+    <span class="c">#: string &#39;123&#39; is intermediate if a 4 digit number string is </span>
+    <span class="c">#: expected.</span>
+    <span class="n">INTERMEDIATE</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c">#: A constant which represents a string that is acceptable inpute </span>
+    <span class="c">#: for the current context.</span>
+    <span class="n">ACCEPTABLE</span> <span class="o">=</span> <span class="mi">2</span>
+
+<div class="viewcode-block" id="AbstractValidator.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.abstract_validator.AbstractValidator.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">locale</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an AbstractValidator.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        locale : AbstractLocale or None, optional</span>
+<span class="sd">            If provided, a Locale object which may assist in converting</span>
+<span class="sd">            to/from the string value. Whether or not the locale is used</span>
+<span class="sd">            is dependent on the given subclass.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">locale</span> <span class="o">=</span> <span class="n">locale</span>
+    </div>
+    <span class="k">def</span> <span class="nf">_get_locale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;locale&#39; attribute. This returns</span>
+<span class="sd">        the current locale, or retrieves the default locale if one has </span>
+<span class="sd">        not yet been assigned to the validator.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">locale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locale</span>
+        <span class="k">if</span> <span class="n">locale</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">locale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_locale</span> <span class="o">=</span> <span class="n">get_default_locale</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">locale</span>
+    
+    <span class="k">def</span> <span class="nf">_set_locale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for the &#39;locale&#39; attribute.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">AbstractLocale</span><span class="p">):</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;locale object must be an instance of AbstractLocale or &#39;</span>
+                   <span class="s">&#39;None. Got </span><span class="si">%s</span><span class="s"> instead.&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">msg</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">value</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_locale</span> <span class="o">=</span> <span class="n">value</span>
+    
+    <span class="c">#: A property which returns the locale object for this validator.</span>
+    <span class="c">#: If one is not explicitly provided, the framework default locale</span>
+    <span class="c">#: object will be used.</span>
+    <span class="n">locale</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_locale</span><span class="p">,</span> <span class="n">_set_locale</span><span class="p">)</span>
+
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractValidator.validate"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.abstract_validator.AbstractValidator.validate">[docs]</a>    <span class="k">def</span> <span class="nf">validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Validate the input text for the given context. </span>
+
+<span class="sd">        This is an abstract method and must be implemented by subclasses.</span>
+<span class="sd">        This method should analyze the user text and return one of three</span>
+<span class="sd">        class attribute constants: INVALID, INTERMEDIATE, or ACCEPTABLE. </span>
+<span class="sd">        These constants have the following semantic meanings:</span>
+<span class="sd">            </span>
+<span class="sd">            INVALID : The text is clearly invalid, and the addition of</span>
+<span class="sd">                more characters cannot make it valid. Example: the text</span>
+<span class="sd">                &#39;asdf&#39; is invalid when a number string is expected.</span>
+
+<span class="sd">            INTERMEDIATE : The text is a plausible value that can be made</span>
+<span class="sd">                valid with the addition of more text. Example: the text</span>
+<span class="sd">                &#39;123&#39; is intermediate when a 4 digit number string is </span>
+<span class="sd">                expected.</span>
+
+<span class="sd">            ACCEPTABLE : The text is an acceptable value. </span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : unicode string</span>
+<span class="sd">            The input string supplied by the user.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : int</span>
+<span class="sd">            One of the class attribute constants INVALID, INTERMEDIATE, </span>
+<span class="sd">            or ACCEPTABLE.</span>
+<span class="sd">        </span>
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method will be called with high frequency. Implementations</span>
+<span class="sd">        should therefore take care to make sure that the method executes</span>
+<span class="sd">        quickly.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractValidator.convert"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.abstract_validator.AbstractValidator.convert">[docs]</a>    <span class="k">def</span> <span class="nf">convert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert the input text into an appropriate value.</span>
+
+<span class="sd">        This is an abstract method and must be implemented by subclasses.</span>
+<span class="sd">        This method is used to convert from the user input text into a</span>
+<span class="sd">        context-dependent value. This method will only be called if the</span>
+<span class="sd">        &#39;validate&#39; method returned an ACCEPTABLE result. When this method </span>
+<span class="sd">        is called is determined by the owner of the validator and is not</span>
+<span class="sd">        necessarily immediately after a call to &#39;validate&#39;.</span>
+
+<span class="sd">        If the input text cannot be properly converted, a ValueError</span>
+<span class="sd">        should be raised.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : unicode string</span>
+<span class="sd">            The input string supplied by the user.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : object</span>
+<span class="sd">            An appropriately converted object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractValidator.format"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.abstract_validator.AbstractValidator.format">[docs]</a>    <span class="k">def</span> <span class="nf">format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Convert the input value into a string which is appropriate</span>
+<span class="sd">        for display.</span>
+
+<span class="sd">        This is an abstract method and must be implemented by subclasses.</span>
+<span class="sd">        This method is used to convert from a context dependent model</span>
+<span class="sd">        value into a unicode string suitable for display. This method</span>
+<span class="sd">        will be called whenever a model value changes and the display</span>
+<span class="sd">        should be updated. This method should always succeed.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value : object</span>
+<span class="sd">            The context-dependent input value.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            A formatted unicode string for display.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+<div class="viewcode-block" id="AbstractValidator.normalize"><a class="viewcode-back" href="../../../api_ref/enaml.validation.html#enaml.validation.abstract_validator.AbstractValidator.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Attempt to convert the given input text into a valid unicode</span>
+<span class="sd">        string according to the rules of the validator.</span>
+
+<span class="sd">        This method may be called by various controls at various times,</span>
+<span class="sd">        such as when the control loses focus. This provides a chance for</span>
+<span class="sd">        the programmer to coerce the text into a valid string or to fix</span>
+<span class="sd">        the formatting of the user string. It is not necessary to return</span>
+<span class="sd">        a valid value from this method, as the returned value will be </span>
+<span class="sd">        tested again for validity. The default implementation of this </span>
+<span class="sd">        method does nothing and returns the input string.</span>
+
+<span class="sd">        If the method cannot properly normalize the string, the original</span>
+<span class="sd">        text should be returned.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        text : unicode string</span>
+<span class="sd">            The input string supplied by the user.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : unicode string</span>
+<span class="sd">            The string to use in the control in lieu of the user supplied</span>
+<span class="sd">            string.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">text</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.validation.abstract_validator</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

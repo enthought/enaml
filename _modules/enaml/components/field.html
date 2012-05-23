@@ -1,0 +1,760 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.components.field &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.field</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.components.field</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">traits.api</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">Bool</span><span class="p">,</span> <span class="n">Int</span><span class="p">,</span> <span class="n">Unicode</span><span class="p">,</span> <span class="n">Enum</span><span class="p">,</span> <span class="n">Instance</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">on_trait_change</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">.control</span> <span class="kn">import</span> <span class="n">Control</span><span class="p">,</span> <span class="n">AbstractTkControl</span>
+
+<span class="kn">from</span> <span class="nn">..core.trait_types</span> <span class="kn">import</span> <span class="n">EnamlEvent</span>
+<span class="kn">from</span> <span class="nn">..guard</span> <span class="kn">import</span> <span class="n">guard</span>
+<span class="kn">from</span> <span class="nn">..validation</span> <span class="kn">import</span> <span class="n">AbstractValidator</span><span class="p">,</span> <span class="n">CoercingValidator</span>
+
+
+<div class="viewcode-block" id="AbstractTkField"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField">[docs]</a><span class="k">class</span> <span class="nc">AbstractTkField</span><span class="p">(</span><span class="n">AbstractTkControl</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; The abstract toolkit interface for a Field.</span>
+
+<span class="sd">    Toolkit implementations of Field are slighly more complicated than</span>
+<span class="sd">    other controls, given the flexibility required for validation and</span>
+<span class="sd">    conversion.</span>
+
+<span class="sd">    The major deviation from other toolkit controls is that the shell</span>
+<span class="sd">    object is responsible for updating the toolkit field by calling</span>
+<span class="sd">    the get_text/set_text methods, as opposed to having the toolkit</span>
+<span class="sd">    object rely on change notification from the shell. The reason this</span>
+<span class="sd">    is done this way is so that the majority of the conversion and</span>
+<span class="sd">    validation logic can be managed by the shell, instead of repeating</span>
+<span class="sd">    the same logic in every backend. </span>
+
+<span class="sd">    In order for the toolkit object to communicate successfully with</span>
+<span class="sd">    the shell object, it must call three methods at various points</span>
+<span class="sd">    in time:</span>
+<span class="sd">        </span>
+<span class="sd">        _field_text_edited</span>
+<span class="sd">            This should be called when the user has edited the text in</span>
+<span class="sd">            the UI, and that text has validated as either ACCEPTABLE</span>
+<span class="sd">            or INTERMEDIATE using the shell&#39;s validator object. Text</span>
+<span class="sd">            which validates as INVALID should be rejected. i.e. the</span>
+<span class="sd">            text should not be allowed to be entered into the field.</span>
+<span class="sd">            This means that validation must be performed before the</span>
+<span class="sd">            new text is actually drawn on the screen.</span>
+<span class="sd">        </span>
+<span class="sd">        _field_return_pressed</span>
+<span class="sd">            This should be called when the user presses the return key</span>
+<span class="sd">            while the field has focus, but only if the text in the</span>
+<span class="sd">            field validates as ACCEPTABLE. If return is pressed while</span>
+<span class="sd">            the text is INTERMEDIATE, the &#39;normalize&#39; method of the </span>
+<span class="sd">            shell&#39;s validator should be invoked and if the returned</span>
+<span class="sd">            text validates as ACCEPTABLE, the new text should be used</span>
+<span class="sd">            and this method called. If the &#39;normalize&#39; method returns</span>
+<span class="sd">            INVALID or INTERMEDIATE text, that text should be ignored</span>
+<span class="sd">            and this method should not be called.</span>
+<span class="sd">        </span>
+<span class="sd">        _field_lost_focus</span>
+<span class="sd">            This method should be called when the field loses focus.</span>
+<span class="sd">            If the text in the field does not validate as ACCEPTABLE,</span>
+<span class="sd">            then the &#39;normalize&#39; method on the shell&#39;s validator should</span>
+<span class="sd">            be invoked. If the returned text validates as ACCEPTABLE,</span>
+<span class="sd">            it should be substituted. Otherwise, it should be ignored.</span>
+<span class="sd">            In any cases, this method should always be called when the</span>
+<span class="sd">            field loses focus.</span>
+<span class="sd">    </span>
+<span class="sd">    The shell object provides a &#39;validator&#39; object with two methods which</span>
+<span class="sd">    should be used by the toolkit implementation:</span>
+<span class="sd">        </span>
+<span class="sd">        validate</span>
+<span class="sd">            This method accepts the text in the field and returns one</span>
+<span class="sd">            of three results:</span>
+<span class="sd">                </span>
+<span class="sd">                validator.ACCEPTABLE</span>
+<span class="sd">                    The text is acceptable input for the field.</span>
+<span class="sd">                </span>
+<span class="sd">                validator.INTERMEDIATE</span>
+<span class="sd">                    The text can be made acceptable by the addition of</span>
+<span class="sd">                    more characters.</span>
+<span class="sd">                </span>
+<span class="sd">                validator.INVALID</span>
+<span class="sd">                    The text is clearly not valid and adding more </span>
+<span class="sd">                    characters cannot make it valid.</span>
+<span class="sd">            </span>
+<span class="sd">            When the user attempts to input a string which validates as</span>
+<span class="sd">            INVALID, this input should be silently rejected before the </span>
+<span class="sd">            new characters are even drawn to the screen.</span>
+<span class="sd">        </span>
+<span class="sd">        normalize</span>
+<span class="sd">            This method accepts the text in the field and returns a</span>
+<span class="sd">            new string, which may or may not be different. This method</span>
+<span class="sd">            allows the programmer a chance to fixup the user&#39;s input</span>
+<span class="sd">            into a potentially acceptable value. The rules for when</span>
+<span class="sd">            to call this method are described above.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.get_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the current unicode text in the field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.set_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the current unicode text in the field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.shell_validator_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_validator_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_validator_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;validator&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.shell_max_length_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_max_length_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_max_length_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_length</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;max_length&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span> 
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.shell_read_only_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_read_only_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_read_only_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">read_only</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;read_only&#39; attribute on the </span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.shell_cursor_position_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_cursor_position_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_cursor_position_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cursor_position</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;cursor_position&#39; attribute on </span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.shell_placeholder_text_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_placeholder_text_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_placeholder_text_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">placeholder_text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;placeholder_text&#39; attribute on </span>
+<span class="sd">        the shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+    </div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.shell_password_mode_changed"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.shell_password_mode_changed">[docs]</a>    <span class="k">def</span> <span class="nf">shell_password_mode_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The change handler for the &#39;password_mode&#39; attribute on the</span>
+<span class="sd">        shell object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.set_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the selection to the bounds of start and end.</span>
+
+<span class="sd">        If the indices are invalid, no selection will be made, and any</span>
+<span class="sd">        current selection will be cleared.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        start : Int</span>
+<span class="sd">            The start selection index, zero based.</span>
+
+<span class="sd">        end : Int</span>
+<span class="sd">            The end selection index, zero based.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.select_all"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Select all the text in the field.</span>
+
+<span class="sd">        If there is no text in the field, the selection will be empty.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.deselect"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Deselect any selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.clear"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Clear the field of all text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.backspace"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simple backspace functionality.</span>
+
+<span class="sd">        If no text is selected, deletes the character to the left of </span>
+<span class="sd">        the cursor. Otherwise, it deletes the selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.delete"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simple delete functionality.</span>
+
+<span class="sd">        If no text is selected, deletes the character to the right of </span>
+<span class="sd">        the cursor. Otherwise, it deletes the selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.end"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the cursor to the end of the line.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        mark : bool, optional</span>
+<span class="sd">            If True, select the text from the current position to the </span>
+<span class="sd">            end of the field. Defaults to False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.home"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the cursor to the beginning of the line.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        mark : bool, optional</span>
+<span class="sd">            If True, select the text from the current position to the </span>
+<span class="sd">            beginning of the field. Defaults to False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.cut"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Cuts the selected text from the field.</span>
+
+<span class="sd">        Copies the selected text to the clipboard then deletes the </span>
+<span class="sd">        selected text from the field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.copy"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Copies the selected text to the clipboard.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.paste"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Paste the contents of the clipboard into the field.</span>
+
+<span class="sd">        Inserts the contents of the clipboard into the field at the </span>
+<span class="sd">        current cursor position, replacing any selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.insert"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Insert the text into the field.</span>
+
+<span class="sd">        Inserts the given text into the field at the current cursor </span>
+<span class="sd">        position, replacing any selected text.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            The text to insert into the field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.undo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Undoes the last operation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+</div>
+    <span class="nd">@abstractmethod</span>
+<div class="viewcode-block" id="AbstractTkField.redo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.AbstractTkField.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Redoes the last operation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+</div></div>
+<div class="viewcode-block" id="Field"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field">[docs]</a><span class="k">class</span> <span class="nc">Field</span><span class="p">(</span><span class="n">Control</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A single-line editable text widget.</span>
+
+<span class="sd">    Among many other attributes, a Field accepts a validator object</span>
+<span class="sd">    which allows any arbitrary python object to be displayed and edited</span>
+<span class="sd">    by the Field.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c">#: The Python value to display in the field. The default value</span>
+    <span class="c">#: is an empty string.</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">Any</span><span class="p">(</span><span class="s">u&#39;&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A validator which manages validation/conversion to and from the</span>
+    <span class="c">#: widget&#39;s unicode text and the value attribute.</span>
+    <span class="n">validator</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractValidator</span><span class="p">,</span> <span class="n">factory</span><span class="o">=</span><span class="n">CoercingValidator</span><span class="p">)</span>
+
+    <span class="c">#: The maximum length of the field in characters. The default value</span>
+    <span class="c">#: is Zero and indicates there is no maximum length.</span>
+    <span class="n">max_length</span> <span class="o">=</span> <span class="n">Int</span>
+
+    <span class="c">#: Whether or not the field is read only. Defaults to False.</span>
+    <span class="n">read_only</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: The position of the cursor in the field. Defaults to Zero.</span>
+    <span class="n">cursor_position</span> <span class="o">=</span> <span class="n">Int</span>
+
+    <span class="c">#: The grayed-out text to display if &#39;value&#39; is empty and the</span>
+    <span class="c">#: widget doesn&#39;t have focus. Defaults to the empty string.</span>
+    <span class="n">placeholder_text</span> <span class="o">=</span> <span class="n">Unicode</span>
+    
+    <span class="c">#: How to obscure password text in the field.</span>
+    <span class="n">password_mode</span> <span class="o">=</span> <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;normal&#39;</span><span class="p">,</span> <span class="s">&#39;password&#39;</span><span class="p">,</span> <span class="s">&#39;silent&#39;</span><span class="p">)</span>
+
+    <span class="c">#: A boolean which is set to True if the user has changed the text</span>
+    <span class="c">#: from the ui, False otherwise. This is reset to False if the</span>
+    <span class="c">#: value is updated programmatically. This should be considered</span>
+    <span class="c">#: read-only and any assignment by the user will be ignored.</span>
+    <span class="n">modified</span> <span class="o">=</span> <span class="n">Bool</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="c">#: A unicode attribute that is updated with the text selected in the</span>
+    <span class="c">#: field. This should be considered read-only and any assignment by </span>
+    <span class="c">#: the user will be ignored. Use the various selection methods to</span>
+    <span class="c">#: programmatically change the selection.</span>
+    <span class="n">selected_text</span> <span class="o">=</span> <span class="n">Unicode</span>
+
+    <span class="c">#: A boolean indicating whether or not the text typed by the user </span>
+    <span class="c">#: is acceptable for conversion as indicated by the validator. Note</span>
+    <span class="c">#: that this is distinctly different from the &#39;error&#39; attribute which</span>
+    <span class="c">#: indicates an error occured while converting acceptable text to the</span>
+    <span class="c">#: Python value. This should be considered read-only and assignment </span>
+    <span class="c">#: by the user will be ignored.</span>
+    <span class="n">acceptable</span> <span class="o">=</span> <span class="n">Bool</span>
+    <span class="k">def</span> <span class="nf">_acceptable_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">))</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">ACCEPTABLE</span>
+
+    <span class="c">#: A list of strings which indicates when the text the in the field</span>
+    <span class="c">#: should be converted to a Python object representation and stored </span>
+    <span class="c">#: in the &#39;value&#39; attribute. The default mode triggers submissions </span>
+    <span class="c">#: on lost focus events and return pressed events. Allowable modes </span>
+    <span class="c">#: are &#39;always&#39;, &#39;lost_focus&#39;, and &#39;return_pressed&#39;. A submission </span>
+    <span class="c">#: can also be manually triggered by calling the &#39;submit()&#39; method.</span>
+    <span class="n">submit_mode</span> <span class="o">=</span> <span class="n">List</span><span class="p">(</span>
+        <span class="n">Enum</span><span class="p">(</span><span class="s">&#39;lost_focus&#39;</span><span class="p">,</span> <span class="s">&#39;return_pressed&#39;</span><span class="p">,</span> <span class="s">&#39;always&#39;</span><span class="p">),</span>
+        <span class="n">value</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;lost_focus&#39;</span><span class="p">,</span> <span class="s">&#39;return_pressed&#39;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c">#: Fired when the text is changed by the user explicitly through</span>
+    <span class="c">#: the ui but not programmatically. The event object will contain</span>
+    <span class="c">#: the text.</span>
+    <span class="n">text_edited</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+
+    <span class="c">#: Fired when the return/enter key is pressed in the field, provided </span>
+    <span class="c">#: that the text in the field validates as ACCEPTABLE.</span>
+    <span class="n">return_pressed</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+    
+    <span class="c">#: Fired when the widget has lost input focus.</span>
+    <span class="n">lost_focus</span> <span class="o">=</span> <span class="n">EnamlEvent</span>
+        
+    <span class="c">#: How strongly a component hugs it&#39;s contents&#39; width. Fields ignore </span>
+    <span class="c">#: the width hug by default, so they expand freely in width.</span>
+    <span class="n">hug_width</span> <span class="o">=</span> <span class="s">&#39;ignore&#39;</span>
+
+    <span class="c">#: Overridden parent class trait</span>
+    <span class="n">abstract_obj</span> <span class="o">=</span> <span class="n">Instance</span><span class="p">(</span><span class="n">AbstractTkField</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Field.get_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.get_text">[docs]</a>    <span class="k">def</span> <span class="nf">get_text</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Get the current text as a unicode string.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.set_text"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.set_text">[docs]</a>    <span class="k">def</span> <span class="nf">set_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Set the current text without an event notification.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Field.set_selection"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.set_selection">[docs]</a>    <span class="k">def</span> <span class="nf">set_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the selection to the bounds of start and end.</span>
+
+<span class="sd">        If the indices are invalid, no selection will be made, and any</span>
+<span class="sd">        current selection will be cleared.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        start : Int</span>
+<span class="sd">            The start selection index, zero based.</span>
+
+<span class="sd">        end : Int</span>
+<span class="sd">            The end selection index, zero based.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">set_selection</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Field.select_all"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.select_all">[docs]</a>    <span class="k">def</span> <span class="nf">select_all</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Select all the text in the field.</span>
+
+<span class="sd">        If there is no text in the field, the selection will be empty.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">select_all</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.deselect"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.deselect">[docs]</a>    <span class="k">def</span> <span class="nf">deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Deselect any selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">deselect</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.clear"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Clear the field of all text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.backspace"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.backspace">[docs]</a>    <span class="k">def</span> <span class="nf">backspace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simple backspace functionality.</span>
+
+<span class="sd">        If no text is selected, deletes the character to the left of </span>
+<span class="sd">        the cursor. Otherwise, it deletes the selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">backspace</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.delete"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.delete">[docs]</a>    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Simple delete functionality.</span>
+
+<span class="sd">        If no text is selected, deletes the character to the right of</span>
+<span class="sd">        the cursor. Otherwise, it deletes the selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.end"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.end">[docs]</a>    <span class="k">def</span> <span class="nf">end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the cursor to the end of the line.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        mark : bool, optional</span>
+<span class="sd">            If True, select the text from the current position to the </span>
+<span class="sd">            end of the field. Defaults to False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">end</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">mark</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Field.home"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.home">[docs]</a>    <span class="k">def</span> <span class="nf">home</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mark</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Moves the cursor to the beginning of the line.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        mark : bool, optional</span>
+<span class="sd">            If True, select the text from the current position to the </span>
+<span class="sd">            beginning of the field. Defaults to False.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">home</span><span class="p">(</span><span class="n">mark</span><span class="o">=</span><span class="n">mark</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Field.cut"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.cut">[docs]</a>    <span class="k">def</span> <span class="nf">cut</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Cuts the selected text from the field.</span>
+
+<span class="sd">        Copies the selected text to the clipthen deletes the selected</span>
+<span class="sd">        text from the field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">cut</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.copy"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Copies the selected text to the clipboard.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.paste"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.paste">[docs]</a>    <span class="k">def</span> <span class="nf">paste</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Paste the contents of the clipboard into the field.</span>
+
+<span class="sd">        Inserts the contents of the clipboard into the field at the </span>
+<span class="sd">        current cursor position, replacing any selected text.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">paste</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.insert"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.insert">[docs]</a>    <span class="k">def</span> <span class="nf">insert</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Insert the text into the field.</span>
+
+<span class="sd">        Inserts the given text into the field at the current cursor </span>
+<span class="sd">        position, replacing any selected text.</span>
+
+<span class="sd">        Arguments</span>
+<span class="sd">        ---------</span>
+<span class="sd">        text : str</span>
+<span class="sd">            The text to insert into the field.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Field.undo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.undo">[docs]</a>    <span class="k">def</span> <span class="nf">undo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Undoes the last operation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">undo</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Field.redo"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.redo">[docs]</a>    <span class="k">def</span> <span class="nf">redo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Redoes the last operation.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abstract_obj</span><span class="o">.</span><span class="n">redo</span><span class="p">()</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Submission Machinery</span>
+    <span class="c">#--------------------------------------------------------------------------</span></div>
+<div class="viewcode-block" id="Field.submit"><a class="viewcode-back" href="../../../api_ref/enaml.components.html#enaml.components.field.Field.submit">[docs]</a>    <span class="k">def</span> <span class="nf">submit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">format</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method which is called to perform the submission. </span>
+
+<span class="sd">        A submit involves converting the current text in the field into a </span>
+<span class="sd">        Python value using the current validator, and storing that value</span>
+<span class="sd">        in the &#39;value&#39; attribute. If an error occurs during conversion,</span>
+<span class="sd">        then the &#39;invalid&#39;, &#39;error&#39; and &#39;exception&#39; attributes on the </span>
+<span class="sd">        field will be set appropriately.</span>
+
+<span class="sd">        If the current text does not validate as ACCEPTABLE then the</span>
+<span class="sd">        &#39;value&#39; attribute will not be changed. In such case if &#39;format&#39;</span>
+<span class="sd">        is True, then the existing value will be formatted and the </span>
+<span class="sd">        display text updated.</span>
+<span class="sd">        </span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        format : bool, optional</span>
+<span class="sd">            Whether or not to re-format the text after conversion and</span>
+<span class="sd">            submission. A False value is useful for submitting the value</span>
+<span class="sd">            without causing the text in the field to be updated. The</span>
+<span class="sd">            default is True.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : bool</span>
+<span class="sd">            True if the submission is successful, or False if the text</span>
+<span class="sd">            is not valid or the conversion from text to value fails. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acceptable</span> <span class="o">=</span> <span class="n">acceptable</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">)</span>
+
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="n">acceptable</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">e</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">return</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c"># Setting the value attribute may fire off a model </span>
+                <span class="c"># subscription which has the potential to raise other</span>
+                <span class="c"># exceptions. XXX we may want to log this exception</span>
+                <span class="c"># at some point in the future.</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="k">with</span> <span class="n">guard</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;submitting&#39;</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="n">e</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="k">return</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">res</span> <span class="o">=</span> <span class="bp">True</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">exception</span> <span class="o">=</span> <span class="bp">None</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">error</span> <span class="o">=</span> <span class="bp">False</span>
+
+        <span class="k">if</span> <span class="n">format</span><span class="p">:</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acceptable</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">res</span>
+</div>
+    <span class="nd">@on_trait_change</span><span class="p">(</span><span class="s">&#39;value, validator&#39;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_update_text_from_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A change handler which updates the displayed text whenever</span>
+<span class="sd">        the &#39;value&#39; or the &#39;validator&#39; attributes change.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">guard</span><span class="o">.</span><span class="n">guarded</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s">&#39;submitting&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="bp">False</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span>
+            <span class="n">text</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acceptable</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">)</span>
+    
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="c"># Field Update Methods</span>
+    <span class="c">#--------------------------------------------------------------------------</span>
+    <span class="k">def</span> <span class="nf">_field_text_edited</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method which should be called by the toolkit implementation</span>
+<span class="sd">        whenever the user edits the text in the ui, but not when the text</span>
+<span class="sd">        has been updated by a call to set_text(). This method should not</span>
+<span class="sd">        be called if the user input validates as INVALID as such text</span>
+<span class="sd">        should be rejected entirely.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">modified</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="k">if</span> <span class="s">&#39;always&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit_mode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">(</span><span class="n">format</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validator</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">acceptable</span> <span class="o">=</span> <span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">validate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_text</span><span class="p">())</span> <span class="o">==</span> <span class="n">v</span><span class="o">.</span><span class="n">ACCEPTABLE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">text_edited</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_field_return_pressed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method which should be called by the toolkit implementation</span>
+<span class="sd">        whenever the user presses the return key, but only if the text in </span>
+<span class="sd">        the field validates as ACCEPTABLE.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;return_pressed&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit_mode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_pressed</span><span class="p">()</span>
+    
+    <span class="k">def</span> <span class="nf">_field_lost_focus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A method which should be called by the toolkit implementation </span>
+<span class="sd">        whenever the field loses focus.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&#39;lost_focus&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">submit_mode</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">submit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lost_focus</span><span class="p">()</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.components.field</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>

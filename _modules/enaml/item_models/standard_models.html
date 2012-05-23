@@ -1,0 +1,850 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>enaml.item_models.standard_models &mdash; enaml 0.2beta-1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/enthought_doc.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '0.2beta-1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="shortcut icon" href="../../../_static/et.ico"/>
+    <link rel="top" title="enaml 0.2beta-1 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.item_models.standard_models</a></li>
+  
+
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../../index.html">
+              <img class="logo" src="../../../_static/e-logo-rev.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for enaml.item_models.standard_models</h1><div class="highlight"><pre>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c">#  Copyright (c) 2011, Enthought, Inc.</span>
+<span class="c">#  All rights reserved.</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="kn">from</span> <span class="nn">.abstract_item_model</span> <span class="kn">import</span> <span class="p">(</span>
+    <span class="n">AbstractListModel</span><span class="p">,</span> <span class="n">AbstractTableModel</span><span class="p">,</span> <span class="n">ITEM_IS_SELECTABLE</span><span class="p">,</span>
+    <span class="n">ITEM_IS_ENABLED</span><span class="p">,</span> <span class="n">ITEM_IS_EDITABLE</span><span class="p">,</span>
+<span class="p">)</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># List Model</span>
+<span class="c">#------------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="ListModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel">[docs]</a><span class="k">class</span> <span class="nc">ListModel</span><span class="p">(</span><span class="n">AbstractListModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractListModel which is intended</span>
+<span class="sd">    to be easy to use for data models which behave more-or-less like</span>
+<span class="sd">    one dimensional sequences.</span>
+
+<span class="sd">    The data object can be updated dynamically after instantiation by </span>
+<span class="sd">    using the &#39;data_source&#39; property.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_flags</span> <span class="o">=</span> <span class="n">ITEM_IS_ENABLED</span> <span class="o">|</span> <span class="n">ITEM_IS_SELECTABLE</span>
+
+<div class="viewcode-block" id="ListModel.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">display_data_converter</span><span class="o">=</span><span class="nb">unicode</span><span class="p">,</span>
+                 <span class="n">edit_data_converter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">background_brush_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="n">foreground_brush_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">font_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="n">vertical_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">horizontal_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a ListModel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : 1D sequence-like object</span>
+<span class="sd">            A sequence-like object that provides the data for the model.</span>
+<span class="sd">            At a minimum it must support __getitem__ and __len__, and</span>
+<span class="sd">            if editable, __setitem__.</span>
+<span class="sd">        </span>
+<span class="sd">        editable : bool, optional</span>
+<span class="sd">            A bool which indicates whether or not the model is editable.</span>
+<span class="sd">            If True, editing a cell will be done with an editor that is</span>
+<span class="sd">            appropriate for the type of data given in the model. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">            </span>
+<span class="sd">        display_data_converter : callable, optional</span>
+<span class="sd">            An optional callable which should take a single argument: the</span>
+<span class="sd">            value for the cell, and return a unicode value to use as the</span>
+<span class="sd">            display value in the cell. The default value is the builtin</span>
+<span class="sd">            unicode object.</span>
+<span class="sd">        </span>
+<span class="sd">        edit_data_converter : callable or None, optional</span>
+<span class="sd">            An optional callable which should take a single argument: the</span>
+<span class="sd">            unicode value typed by the user, and return a value to set</span>
+<span class="sd">            in the model. This converter is only used when the model is</span>
+<span class="sd">            declared as editable. If this converter is not supplied and</span>
+<span class="sd">            the model is editable, then the type of the converted value</span>
+<span class="sd">            will be determined automatically based on the input type. If</span>
+<span class="sd">            a converter is supplied, and it cannot convert the value, it</span>
+<span class="sd">            should raise a ValueError and the change will be ignored. The</span>
+<span class="sd">            default value is None.</span>
+<span class="sd">        </span>
+<span class="sd">        background_brush_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts two </span>
+<span class="sd">            arguments: the data value and the row index, and returns</span>
+<span class="sd">            a brush for the background of the cell. The default is</span>
+<span class="sd">            None.</span>
+<span class="sd">        </span>
+<span class="sd">        foreground_brush_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts two </span>
+<span class="sd">            arguments: the data value and the row index, and returns</span>
+<span class="sd">            a brush for the foreground of the cell. The default is</span>
+<span class="sd">            None.</span>
+<span class="sd">        </span>
+<span class="sd">        font_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts two </span>
+<span class="sd">            arguments: the data value and the row index, and returns</span>
+<span class="sd">            a font for the cell. The default is None.</span>
+<span class="sd">        </span>
+<span class="sd">        vertical_headers : sequence-like object or None</span>
+<span class="sd">            If provided, is should be a sequence like object which</span>
+<span class="sd">            will be indexed with an integer index to retrieve a</span>
+<span class="sd">            unicode string for the given row header. </span>
+<span class="sd">        </span>
+<span class="sd">        horizontal_headers : sequence-like object or None</span>
+<span class="sd">            If provided, is should be a sequence like object which</span>
+<span class="sd">            will be indexed with an integer index to retrieve a</span>
+<span class="sd">            unicode string for the given column header.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_editable</span> <span class="o">=</span> <span class="n">editable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_display_data_converter</span> <span class="o">=</span> <span class="n">display_data_converter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span> <span class="o">=</span> <span class="n">edit_data_converter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_background_brush_func</span> <span class="o">=</span> <span class="n">background_brush_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_foreground_brush_func</span> <span class="o">=</span> <span class="n">foreground_brush_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_font_func</span> <span class="o">=</span> <span class="n">font_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertical_headers</span> <span class="o">=</span> <span class="n">vertical_headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_horizontal_headers</span> <span class="o">=</span> <span class="n">horizontal_headers</span>
+</div>
+    <span class="k">def</span> <span class="nf">_get_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;data_source&#39; property.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+    
+    <span class="k">def</span> <span class="nf">_set_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for the &#39;data_source&#39; property.    </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin_reset_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_reset_model</span><span class="p">()</span>
+    
+    <span class="n">data_source</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_data_source</span><span class="p">,</span> <span class="n">_set_data_source</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ListModel.flags"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the flags for the items in the model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_flags</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editable</span><span class="p">:</span>
+            <span class="n">flags</span> <span class="o">|=</span> <span class="n">ITEM_IS_EDITABLE</span>
+        <span class="k">return</span> <span class="n">flags</span>
+</div>
+<div class="viewcode-block" id="ListModel.data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the data point from the data source converted to a </span>
+<span class="sd">        unicode for display.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_data_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="ListModel.edit_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.edit_data">[docs]</a>    <span class="k">def</span> <span class="nf">edit_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the data value for editing. If an edit converter is</span>
+<span class="sd">        provided, then the unicode form of the data is returned, </span>
+<span class="sd">        otherwise, the raw datapoint is returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ListModel.set_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.set_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the data source with the converted value, emits the </span>
+<span class="sd">        proper changed notification and returns True. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span>
+        <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">index</span><span class="o">.</span><span class="n">row</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_data_changed</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="ListModel.row_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.row_count">[docs]</a>    <span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the number of rows in the data source.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ListModel.background"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.background">[docs]</a>    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the brush for the background of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">brush_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_brush_func</span>
+        <span class="k">if</span> <span class="n">brush_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="k">return</span> <span class="n">brush_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">row</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ListModel.foreground"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.foreground">[docs]</a>    <span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the brush for the foreground of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">brush_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_foreground_brush_func</span>
+        <span class="k">if</span> <span class="n">brush_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="k">return</span> <span class="n">brush_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">row</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ListModel.font"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.font">[docs]</a>    <span class="k">def</span> <span class="nf">font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the font for the foreground of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">font_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_func</span>
+        <span class="k">if</span> <span class="n">font_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="k">return</span> <span class="n">font_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">row</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ListModel.vertical_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.vertical_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the vertical header data for the given section.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertical_headers</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ListModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">sup</span><span class="o">.</span><span class="n">vertical_header_data</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+    </div>
+<div class="viewcode-block" id="ListModel.horizontal_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ListModel.horizontal_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the horiztonal header data for the given section.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_horizontal_headers</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ListModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">sup</span><span class="o">.</span><span class="n">horizontal_header_data</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Table Model</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="TableModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel">[docs]</a><span class="k">class</span> <span class="nc">TableModel</span><span class="p">(</span><span class="n">AbstractTableModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractTableModel which is intended</span>
+<span class="sd">    to be easy to use for data models which behave like two dimensional</span>
+<span class="sd">    arrays.</span>
+
+<span class="sd">    The data object can be updated dynamically after instantiation by </span>
+<span class="sd">    using the &#39;data_source&#39; property.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_flags</span> <span class="o">=</span> <span class="n">ITEM_IS_ENABLED</span> <span class="o">|</span> <span class="n">ITEM_IS_SELECTABLE</span>
+
+<div class="viewcode-block" id="TableModel.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">display_data_converter</span><span class="o">=</span><span class="nb">unicode</span><span class="p">,</span>
+                 <span class="n">edit_data_converter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">background_brush_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="n">foreground_brush_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">font_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span>
+                 <span class="n">vertical_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">horizontal_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize a TableModel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : 2D array-like object</span>
+<span class="sd">            An array-like object that provides the data for the model.</span>
+<span class="sd">            At a minimum it must support __getitem__ which can be</span>
+<span class="sd">            indexed with a (row, col) tuple, and have a &#39;shape&#39; attribute</span>
+<span class="sd">            which gives an (nrows, ncols) tuple. If the model is also</span>
+<span class="sd">            editable, it should support __setitem__</span>
+
+<span class="sd">        editable : bool, optional</span>
+<span class="sd">            A bool which indicates whether or not the model is editable.</span>
+<span class="sd">            If True, editing a cell will be done with an editor that is</span>
+<span class="sd">            appropriate for the type of data given in the model. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">            </span>
+<span class="sd">        display_converter : callable, optional</span>
+<span class="sd">            An optional callable which should take a single argument: the</span>
+<span class="sd">            value for the cell, and return a unicode value to use as the</span>
+<span class="sd">            display value in the cell. The default value is the builtin</span>
+<span class="sd">            unicode object.</span>
+<span class="sd">        </span>
+<span class="sd">        edit_converter : callable or None, optional</span>
+<span class="sd">            An optional callable which should take a single argument: the</span>
+<span class="sd">            unicode value typed by the user, and return a value to set</span>
+<span class="sd">            in the model. This converter is only used when the model is</span>
+<span class="sd">            declared as editable. If this converter is not supplied and</span>
+<span class="sd">            the model is editable, then the type of the converted value</span>
+<span class="sd">            will be determined automatically based on the input type. If</span>
+<span class="sd">            a converter is supplied, and it cannot convert the value, it</span>
+<span class="sd">            should raise a ValueError and the change will be ignored. The</span>
+<span class="sd">            default value is None.</span>
+<span class="sd">        </span>
+<span class="sd">        background_brush_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts three</span>
+<span class="sd">            arguments: the data value, the row index and column index, </span>
+<span class="sd">            and returns a brush for the background of the cell. The </span>
+<span class="sd">            default is None.</span>
+<span class="sd">        </span>
+<span class="sd">        foreground_brush_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts three</span>
+<span class="sd">            arguments: the data value, the row index and column index, </span>
+<span class="sd">            and returns a brush for the foreground of the cell. The </span>
+<span class="sd">            default is None.</span>
+<span class="sd">        </span>
+<span class="sd">        font_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts three</span>
+<span class="sd">            arguments: the data value, the row index and column index, </span>
+<span class="sd">            and returns a font for the cell. The default is None.</span>
+
+<span class="sd">        vertical_headers : sequence-like object or None</span>
+<span class="sd">            If provided, is should be a sequence like object which</span>
+<span class="sd">            will be indexed with an integer index to retrieve a</span>
+<span class="sd">            unicode string for the given row header. </span>
+<span class="sd">        </span>
+<span class="sd">        horizontal_headers : sequence-like object or None</span>
+<span class="sd">            If provided, is should be a sequence like object which</span>
+<span class="sd">            will be indexed with an integer index to retrieve a</span>
+<span class="sd">            unicode string for the given column header.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_editable</span> <span class="o">=</span> <span class="n">editable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_display_data_converter</span> <span class="o">=</span> <span class="n">display_data_converter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span> <span class="o">=</span> <span class="n">edit_data_converter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_background_brush_func</span> <span class="o">=</span> <span class="n">background_brush_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_foreground_brush_func</span> <span class="o">=</span> <span class="n">foreground_brush_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_font_func</span> <span class="o">=</span> <span class="n">font_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertical_headers</span> <span class="o">=</span> <span class="n">vertical_headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_horizontal_headers</span> <span class="o">=</span> <span class="n">horizontal_headers</span>
+    </div>
+    <span class="k">def</span> <span class="nf">_get_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;data_source&#39; property.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+    
+    <span class="k">def</span> <span class="nf">_set_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for the &#39;data_source&#39; property.    </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin_reset_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_reset_model</span><span class="p">()</span>
+    
+    <span class="n">data_source</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_data_source</span><span class="p">,</span> <span class="n">_set_data_source</span><span class="p">)</span>
+
+<div class="viewcode-block" id="TableModel.flags"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the flags for the items in the model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_flags</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editable</span><span class="p">:</span>
+            <span class="n">flags</span> <span class="o">|=</span> <span class="n">ITEM_IS_EDITABLE</span>
+        <span class="k">return</span> <span class="n">flags</span>
+</div>
+<div class="viewcode-block" id="TableModel.data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot; Returns the data point from the data source converted to a </span>
+<span class="sd">        unicode for display.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_data_converter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="TableModel.edit_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.edit_data">[docs]</a>    <span class="k">def</span> <span class="nf">edit_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the data value for editing. If an edit converter is</span>
+<span class="sd">        provided, then the unicode form of the data is returned, </span>
+<span class="sd">        otherwise, the raw datapoint is returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="TableModel.set_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.set_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the data source with the converted value, emits the </span>
+<span class="sd">        proper changed notification and returns True. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span>
+        <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_data_changed</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+        </div>
+<div class="viewcode-block" id="TableModel.row_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.row_count">[docs]</a>    <span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the number of rows in the data source.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    </div>
+<div class="viewcode-block" id="TableModel.column_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.column_count">[docs]</a>    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the number of columns in the data source.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+</div>
+<div class="viewcode-block" id="TableModel.background"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.background">[docs]</a>    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the brush for the background of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">brush_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_brush_func</span>
+        <span class="k">if</span> <span class="n">brush_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">return</span> <span class="n">brush_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="TableModel.foreground"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.foreground">[docs]</a>    <span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the brush for the foreground of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">brush_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_foreground_brush_func</span>
+        <span class="k">if</span> <span class="n">brush_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">return</span> <span class="n">brush_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TableModel.font"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.font">[docs]</a>    <span class="k">def</span> <span class="nf">font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the font for the foreground of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">font_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_func</span>
+        <span class="k">if</span> <span class="n">font_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">return</span> <span class="n">font_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">],</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TableModel.vertical_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.vertical_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the vertical header data for the given section.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertical_headers</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">TableModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">sup</span><span class="o">.</span><span class="n">vertical_header_data</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+    </div>
+<div class="viewcode-block" id="TableModel.horizontal_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.TableModel.horizontal_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the horiztonal header data for the given section.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_horizontal_headers</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">TableModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">sup</span><span class="o">.</span><span class="n">horizontal_header_data</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="c">#------------------------------------------------------------------------------</span>
+<span class="c"># Object Model</span>
+<span class="c">#------------------------------------------------------------------------------</span></div></div>
+<div class="viewcode-block" id="ObjectModel"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel">[docs]</a><span class="k">class</span> <span class="nc">ObjectModel</span><span class="p">(</span><span class="n">AbstractTableModel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; A concrete implementation of AbstractTableModel which is intended</span>
+<span class="sd">    to be easy to use for data models which display list of objects </span>
+<span class="sd">    where each object corresponds to a row in the table.</span>
+
+<span class="sd">    The data object can be updated dynamically after instantiation by </span>
+<span class="sd">    using the &#39;data_source&#39; property.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">base_flags</span> <span class="o">=</span> <span class="n">ITEM_IS_ENABLED</span> <span class="o">|</span> <span class="n">ITEM_IS_SELECTABLE</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="ObjectModel.format_header"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.format_header">[docs]</a>    <span class="k">def</span> <span class="nf">format_header</span><span class="p">(</span><span class="n">header</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; A simple formatter class which converts an attribute name</span>
+<span class="sd">        in a form more-or-less suitable for a column header.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">header</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;_&#39;</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ObjectModel.__init__"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">transpose</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">editable</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
+                 <span class="n">display_data_converter</span><span class="o">=</span><span class="nb">unicode</span><span class="p">,</span> <span class="n">edit_data_converter</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="n">background_brush_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">foreground_brush_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="n">font_func</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">vertical_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> 
+                 <span class="n">horizontal_headers</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Initialize an ObjectModel.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : a 2-tuple of (object, column_attributes)</span>
+<span class="sd">            A tuple whose first element is a sequence-like object that</span>
+<span class="sd">            provides the row objects for the model, and whose second</span>
+<span class="sd">            element is a sequence-like object that provides the string </span>
+<span class="sd">            names of the attributes of the objects which provide the</span>
+<span class="sd">            data for the columns. At a minimum both elements must support</span>
+<span class="sd">            __getitem__ and __len__.</span>
+
+<span class="sd">        transpose : bool, optional</span>
+<span class="sd">            A boolean which indicates that the model should be transposed</span>
+<span class="sd">            such that the objects represent columns and the attributes</span>
+<span class="sd">            represent rows. The default is False.</span>
+
+<span class="sd">        editable : bool, optional</span>
+<span class="sd">            A bool which indicates whether or not the model is editable.</span>
+<span class="sd">            If True, editing a cell will be done with an editor that is</span>
+<span class="sd">            appropriate for the type of data given in the model. The</span>
+<span class="sd">            default is False.</span>
+<span class="sd">            </span>
+<span class="sd">        display_converter : callable, optional</span>
+<span class="sd">            An optional callable which should take a single argument: the</span>
+<span class="sd">            value for the cell, and return a unicode value to use as the</span>
+<span class="sd">            display value in the cell. The default value is the builtin</span>
+<span class="sd">            unicode object.</span>
+<span class="sd">        </span>
+<span class="sd">        edit_converter : callable or None, optional</span>
+<span class="sd">            An optional callable which should take a single argument: the</span>
+<span class="sd">            unicode value typed by the user, and return a value to set</span>
+<span class="sd">            in the model. This converter is only used when the model is</span>
+<span class="sd">            declared as editable. If this converter is not supplied and</span>
+<span class="sd">            the model is editable, then the type of the converted value</span>
+<span class="sd">            will be determined automatically based on the input type. If</span>
+<span class="sd">            a converter is supplied, and it cannot convert the value, it</span>
+<span class="sd">            should raise a ValueError and the change will be ignored. The</span>
+<span class="sd">            default value is None.</span>
+<span class="sd">        </span>
+<span class="sd">        background_brush_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts three</span>
+<span class="sd">            arguments: the data value, the row index and column index, </span>
+<span class="sd">            and returns a brush for the background of the cell. The </span>
+<span class="sd">            default is None.</span>
+<span class="sd">        </span>
+<span class="sd">        foreground_brush_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts three</span>
+<span class="sd">            arguments: the data value, the row index and column index, </span>
+<span class="sd">            and returns a brush for the foreground of the cell. The </span>
+<span class="sd">            default is None.</span>
+<span class="sd">        </span>
+<span class="sd">        font_func : callable or None, optional</span>
+<span class="sd">            If provided, it should be a callable which accepts three</span>
+<span class="sd">            arguments: the data value, the row index and column index, </span>
+<span class="sd">            and returns a font for the cell. The default is None.</span>
+
+<span class="sd">        vertical_headers : sequence-like object or None</span>
+<span class="sd">            If provided, is should be a sequence like object which</span>
+<span class="sd">            will be indexed with an integer index to retrieve a</span>
+<span class="sd">            unicode string for the given row header. </span>
+<span class="sd">        </span>
+<span class="sd">        horizontal_headers : sequence-like object or None</span>
+<span class="sd">            If provided, is should be a sequence like object which</span>
+<span class="sd">            will be indexed with an integer index to retrieve a</span>
+<span class="sd">            unicode string for the given column header.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span> <span class="o">=</span> <span class="n">transpose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_editable</span> <span class="o">=</span> <span class="n">editable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_display_data_converter</span> <span class="o">=</span> <span class="n">display_data_converter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span> <span class="o">=</span> <span class="n">edit_data_converter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_background_brush_func</span> <span class="o">=</span> <span class="n">background_brush_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_foreground_brush_func</span> <span class="o">=</span> <span class="n">foreground_brush_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_font_func</span> <span class="o">=</span> <span class="n">font_func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_vertical_headers</span> <span class="o">=</span> <span class="n">vertical_headers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_horizontal_headers</span> <span class="o">=</span> <span class="n">horizontal_headers</span>
+    </div>
+    <span class="k">def</span> <span class="nf">_get_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;data_source&#39; property.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+    
+    <span class="k">def</span> <span class="nf">_set_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for the &#39;data_source&#39; property.    </span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin_reset_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_reset_model</span><span class="p">()</span>
+    
+    <span class="n">data_source</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_data_source</span><span class="p">,</span> <span class="n">_set_data_source</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property getter for the &#39;transpose&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span>
+    
+    <span class="k">def</span> <span class="nf">_set_transpose</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; The property setter for the &#39;transposed&#39; property.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">begin_reset_model</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">end_reset_model</span><span class="p">()</span>
+    
+    <span class="n">transpose</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_transpose</span><span class="p">,</span> <span class="n">_set_transpose</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="ObjectModel.flags"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.flags">[docs]</a>    <span class="k">def</span> <span class="nf">flags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the flags for the items in the model.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">flags</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_flags</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_editable</span><span class="p">:</span>
+            <span class="n">flags</span> <span class="o">|=</span> <span class="n">ITEM_IS_EDITABLE</span>
+        <span class="k">return</span> <span class="n">flags</span>
+</div>
+<div class="viewcode-block" id="ObjectModel.data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.data">[docs]</a>    <span class="k">def</span> <span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span> 
+        <span class="sd">&quot;&quot;&quot; Returns the data point from the data source converted to a </span>
+<span class="sd">        unicode for display.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span>
+        <span class="n">objs</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">objs</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_display_data_converter</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ObjectModel.edit_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.edit_data">[docs]</a>    <span class="k">def</span> <span class="nf">edit_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the data value for editing. If an edit converter is</span>
+<span class="sd">        provided, then the unicode form of the data is returned, </span>
+<span class="sd">        otherwise, the raw datapoint is returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+                <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span>
+            <span class="n">objs</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">objs</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ObjectModel.set_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.set_data">[docs]</a>    <span class="k">def</span> <span class="nf">set_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Sets the data source with the converted value, emits the </span>
+<span class="sd">        proper changed notification and returns True. </span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">converter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_edit_data_converter</span>
+        <span class="k">if</span> <span class="n">converter</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="n">converter</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+            <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span>
+        <span class="n">objs</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">objs</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify_data_changed</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">True</span>
+        </div>
+<div class="viewcode-block" id="ObjectModel.row_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.row_count">[docs]</a>    <span class="k">def</span> <span class="nf">row_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the number of rows in the data source.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="ObjectModel.column_count"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.column_count">[docs]</a>    <span class="k">def</span> <span class="nf">column_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the number of columns in the data source.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">parent</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="ObjectModel.background"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.background">[docs]</a>    <span class="k">def</span> <span class="nf">background</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the brush for the background of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">brush_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_background_brush_func</span>
+        <span class="k">if</span> <span class="n">brush_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+                <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span>
+            <span class="n">objs</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">objs</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">brush_func</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ObjectModel.foreground"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.foreground">[docs]</a>    <span class="k">def</span> <span class="nf">foreground</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the brush for the foreground of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">brush_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_foreground_brush_func</span>
+        <span class="k">if</span> <span class="n">brush_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+                <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span>
+            <span class="n">objs</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">objs</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">brush_func</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ObjectModel.font"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.font">[docs]</a>    <span class="k">def</span> <span class="nf">font</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the font for the foreground of the given index,</span>
+<span class="sd">        or None.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">font_func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_font_func</span>
+        <span class="k">if</span> <span class="n">font_func</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">row</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">row</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="n">index</span><span class="o">.</span><span class="n">column</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+                <span class="n">row</span><span class="p">,</span> <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="p">,</span> <span class="n">row</span>
+            <span class="n">objs</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">objs</span><span class="p">[</span><span class="n">row</span><span class="p">],</span> <span class="n">attrs</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="k">return</span> <span class="n">font_func</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ObjectModel.vertical_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.vertical_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">vertical_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the vertical header data for the given section.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_vertical_headers</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">section</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">sup</span><span class="o">.</span><span class="n">vertical_header_data</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+    </div>
+<div class="viewcode-block" id="ObjectModel.horizontal_header_data"><a class="viewcode-back" href="../../../api_ref/enaml.item_models.html#enaml.item_models.standard_models.ObjectModel.horizontal_header_data">[docs]</a>    <span class="k">def</span> <span class="nf">horizontal_header_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">section</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Returns the horiztonal header data for the given section.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_horizontal_headers</span>
+        <span class="k">if</span> <span class="n">headers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">headers</span><span class="p">[</span><span class="n">section</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transpose</span><span class="p">:</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_header</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">section</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">sup</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObjectModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+                <span class="n">res</span> <span class="o">=</span> <span class="n">sup</span><span class="o">.</span><span class="n">horizontal_header_data</span><span class="p">(</span><span class="n">section</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../enaml-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">enaml 0.2beta-1 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li>
+  
+    <li><a href="#">enaml.item_models.standard_models</a></li>
+  
+
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2012, Enthought, Inc..
+      Last updated on May 23, 2012.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+    </div>
+  </body>
+</html>
