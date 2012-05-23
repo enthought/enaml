@@ -31,6 +31,22 @@ class AbstractTkImageView(AbstractTkControl):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def shell_preserve_aspect_ratio_changed(self, preserve):
+        """ The change handler for the 'preserve_aspect_ratio' attribute
+        on the shell component.
+
+        """
+        self.set_preserve_aspect_ratio(preserve)
+
+    @abstractmethod
+    def shell_allow_upscaling_changed(self, allow):
+        """ The change handler for the 'allow_upscaling' attribute on 
+        the shell component.
+
+        """
+        self.set_allow_upscaling(allow)
+
 
 class ImageView(Control):
     """ A simple viewer for instances of AbstractTkImage.
@@ -40,8 +56,14 @@ class ImageView(Control):
     image = Instance(AbstractTkImage)
     
     #: Whether or not to scale the image with the size of the component.
-    scale_to_fit = Bool(False)
+    scale_to_fit = Bool(True)
     
+    #: Whether or not to preserve the aspect ratio if scaling the image.
+    preserve_aspect_ratio = Bool(True)
+
+    #: Whether to allow upscaling of an image if scale_to_fit is True.
+    allow_upscaling = Bool(True)
+
     #: An image view hugs its width weakly by default.
     hug_width = 'weak'
 
