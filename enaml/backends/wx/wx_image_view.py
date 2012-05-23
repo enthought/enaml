@@ -202,6 +202,20 @@ class WXImageView(WXControl, AbstractTkImageView):
         """
         self.set_scale_to_fit(scale_to_fit)
 
+    def shell_preserve_aspect_ratio_changed(self, preserve):
+        """ The change handler for the 'preserve_aspect_ratio' attribute
+        on the shell component.
+
+        """
+        pass # Not yet implemented on wx
+
+    def shell_allow_upscaling_changed(self, allow):
+        """ The change handler for the 'allow_upscaling' attribute on 
+        the shell component.
+
+        """
+        pass # Not yet implemented on wx
+
     #--------------------------------------------------------------------------
     # Widget Update Methods
     #--------------------------------------------------------------------------
