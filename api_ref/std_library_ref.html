@@ -119,43 +119,6 @@ state and error state.</p>
 number fields. It adds the user attributes &#8216;low&#8217;, &#8216;high&#8217;, and
 &#8216;precision&#8217;, which when changed will cause a new &#8216;validator_class&#8217;
 to be instantiatied and used as the validator for the field.</p>
-<table class="docutils field-list" frame="void" rules="none">
-<col class="field-name" />
-<col class="field-body" />
-<tbody valign="top">
-<tr class="field-odd field"><th class="field-name" colspan="2">Input Attributes:</th></tr>
-<tr class="field-odd field"><td>&nbsp;</td><td class="field-body"><dl class="first attribute">
-<dt id="NumberField.validator_class">
-<tt class="descname">validator_class</tt><em class="property"> = NumberValidator</em><a class="headerlink" href="#NumberField.validator_class" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>The validator class that must be used.</p>
-<dl class="attribute">
-<dt id="NumberField.low">
-<tt class="descname">low</tt><em class="property"> = None or number, optional</em><a class="headerlink" href="#NumberField.low" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>The lowest acceptable value for the number. If None, there
-is no lower limit to the value. The default is None.</p>
-<dl class="attribute">
-<dt id="NumberField.high">
-<tt class="descname">high</tt><em class="property"> = None or number, optional</em><a class="headerlink" href="#NumberField.high" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p>The highest acceptable value for the number. If None, there
-is no upper limit to the value. The default is None.</p>
-<dl class="attribute">
-<dt id="NumberField.precision">
-<tt class="descname">precision</tt><em class="property"> = int, optional</em><a class="headerlink" href="#NumberField.precision" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<p class="last">An optional integer to control the precision of floating
-point number formatting. The default is -1 and indicates
-that implementation default precision should be used.</p>
-</td>
-</tr>
-</tbody>
-</table>
 </dd></dl>
 
 <p>The following Fields all inherit from NumberField, and do the appropriate type
@@ -435,7 +398,7 @@ which child of the stack is visible.</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

@@ -148,11 +148,11 @@
         <span class="k">pass</span>
 
 </div></div>
-<div class="viewcode-block" id="TestBaseSelectionModel"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel">[docs]</a><span class="k">class</span> <span class="nc">TestBaseSelectionModel</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">SelectionTestHelper</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel">[docs]</a><span class="k">class</span> <span class="nc">TestBaseSelectionModel</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">SelectionTestHelper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing selection models.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="TestBaseSelectionModel.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up tests for Enaml&#39;s BaseSelectionModel.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -181,14 +181,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_view</span><span class="o">.</span><span class="n">selection_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_view</span><span class="o">.</span><span class="n">item_model</span>
 </div>
-<div class="viewcode-block" id="TestBaseSelectionModel.test_empty_initial_selection"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_empty_initial_selection">[docs]</a>    <span class="k">def</span> <span class="nf">test_empty_initial_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.test_empty_initial_selection"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_empty_initial_selection">[docs]</a>    <span class="k">def</span> <span class="nf">test_empty_initial_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; No selection.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tk_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">),</span> <span class="p">[])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_clear_select"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_clear_select">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_clear_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_clear_select"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_clear_select">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_clear_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the &#39;clear_select&#39; command.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -206,7 +206,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tk_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">),</span> <span class="p">[])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="p">[])</span>
 </div>
-<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_clear_select_rows"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_clear_select_rows">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_clear_select_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_clear_select_rows"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_clear_select_rows">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_clear_select_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the (&#39;clear_select&#39;, &#39;rows&#39;) command.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -216,7 +216,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tk_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">),</span> <span class="n">test_sel</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="n">test_sel</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_no_update"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_no_update">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_no_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_no_update"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_no_update">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_no_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the &#39;no_update&#39; command.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -234,7 +234,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tk_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">),</span> <span class="n">new</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="n">new</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_select"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_select">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_select"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_select">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_select</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the &#39;select&#39; command.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -248,7 +248,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tk_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">),</span> <span class="n">pysel</span><span class="o">+</span><span class="n">new</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="n">pysel</span><span class="o">+</span><span class="n">new</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_deselect"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_deselect">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_deselect"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_deselect">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_deselect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the &#39;deselect&#39; command.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -263,7 +263,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tk_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">),</span> <span class="n">remainder</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="n">remainder</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_toggle"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestBaseSelectionModel.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestBaseSelectionModel.test_set_selection_toggle"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestBaseSelectionModel.test_set_selection_toggle">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selection_toggle</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the &#39;toggle&#39; command.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -279,11 +279,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="n">remainder</span><span class="p">)</span>
 
 </div></div>
-<div class="viewcode-block" id="TestRowSelectionModel"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestRowSelectionModel.html#enaml.tests.components.selection_models.TestRowSelectionModel">[docs]</a><span class="k">class</span> <span class="nc">TestRowSelectionModel</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">SelectionTestHelper</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRowSelectionModel"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestRowSelectionModel">[docs]</a><span class="k">class</span> <span class="nc">TestRowSelectionModel</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">SelectionTestHelper</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing RowSelectionModel</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="TestRowSelectionModel.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestRowSelectionModel.html#enaml.tests.components.selection_models.TestRowSelectionModel.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRowSelectionModel.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestRowSelectionModel.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up tests for Enaml&#39;s RowSelectionModel</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -313,7 +313,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_view</span><span class="o">.</span><span class="n">selection_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">item_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table_view</span><span class="o">.</span><span class="n">item_model</span>
 </div>
-<div class="viewcode-block" id="TestRowSelectionModel.test_set_selected_rows"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestRowSelectionModel.html#enaml.tests.components.selection_models.TestRowSelectionModel.test_set_selected_rows">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selected_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRowSelectionModel.test_set_selected_rows"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestRowSelectionModel.test_set_selected_rows">[docs]</a>    <span class="k">def</span> <span class="nf">test_set_selected_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the selection of rows through the selected_rows trait.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -333,7 +333,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_tk_selection</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">),</span> <span class="n">new</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_py_selection</span><span class="p">(),</span> <span class="n">new</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestRowSelectionModel.test_get_selected_rows"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.selection_models.TestRowSelectionModel.html#enaml.tests.components.selection_models.TestRowSelectionModel.test_get_selected_rows">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_selected_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestRowSelectionModel.test_get_selected_rows"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.selection_models.TestRowSelectionModel.test_get_selected_rows">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_selected_rows</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test that the selected_rows trait gets updated correctly when the</span>
 <span class="sd">        selection is set elsewhere.</span>
 
@@ -370,7 +370,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

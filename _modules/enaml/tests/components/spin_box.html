@@ -85,7 +85,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestSpinBox"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox">[docs]</a><span class="k">class</span> <span class="nc">TestSpinBox</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox">[docs]</a><span class="k">class</span> <span class="nc">TestSpinBox</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing spin boxes.</span>
 
 <span class="sd">    Tooklit testcases need to provide the following methods</span>
@@ -117,7 +117,7 @@
 <span class="sd">        Simulate a click on the &#39;down&#39; spin button.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="TestSpinBox.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up before the spin box tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -139,7 +139,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;spinbox&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_initial_attributes"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_initial_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_initial_attributes"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_initial_attributes">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_attributes</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Compare the Enaml SpinBox&#39;s attributes with its toolkit widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -151,7 +151,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_step</span><span class="p">(</span><span class="n">widget</span><span class="p">),</span> <span class="n">component</span><span class="o">.</span><span class="n">step</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_wrap</span><span class="p">(</span><span class="n">widget</span><span class="p">),</span> <span class="n">component</span><span class="o">.</span><span class="n">wrap</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_change_low"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_change_low">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_low</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_change_low"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_change_low">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_low</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the spin box&#39;s minimum value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -163,7 +163,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component_low</span><span class="p">,</span> <span class="n">new_low</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">widget_low</span><span class="p">,</span> <span class="n">component_low</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_change_high"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_change_high">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_high</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_change_high"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_change_high">[docs]</a>    <span class="k">def</span> <span class="nf">test_change_high</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Update the spin box&#39;s maximum value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -175,7 +175,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component_high</span><span class="p">,</span> <span class="n">new_high</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">widget_high</span><span class="p">,</span> <span class="n">component_high</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_step_up"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_step_up">[docs]</a>    <span class="k">def</span> <span class="nf">test_step_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_step_up"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_step_up">[docs]</a>    <span class="k">def</span> <span class="nf">test_step_up</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simulate a press of the spin box&#39;s &#39;up&#39; button.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -188,7 +188,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_widget_value</span><span class="p">,</span> <span class="n">old_widget_value</span> <span class="o">+</span> <span class="n">widget_step</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">new_widget_value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_step_down"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_step_down">[docs]</a>    <span class="k">def</span> <span class="nf">test_step_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_step_down"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_step_down">[docs]</a>    <span class="k">def</span> <span class="nf">test_step_down</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Simulate a press of the spin box&#39;s &#39;down&#39; button.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -201,7 +201,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">new_widget_value</span><span class="p">,</span> <span class="n">old_widget_value</span> <span class="o">-</span> <span class="n">widget_step</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">new_widget_value</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_wrap_top"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_wrap_top">[docs]</a>    <span class="k">def</span> <span class="nf">test_wrap_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_wrap_top"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_wrap_top">[docs]</a>    <span class="k">def</span> <span class="nf">test_wrap_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check that a spin box wraps appropriately, from top to bottom.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -212,7 +212,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">component</span><span class="o">.</span><span class="n">low</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_wrap_bottom"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_wrap_bottom">[docs]</a>    <span class="k">def</span> <span class="nf">test_wrap_bottom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_wrap_bottom"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_wrap_bottom">[docs]</a>    <span class="k">def</span> <span class="nf">test_wrap_bottom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check that a spin box wraps appropriately, from bottom to top.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -223,7 +223,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">component</span><span class="o">.</span><span class="n">high</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_no_wrap_top"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_no_wrap_top">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_wrap_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_no_wrap_top"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_no_wrap_top">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_wrap_top</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check that a spin box doesn&#39;t wrap from top to bottom.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -236,7 +236,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_no_wrap_bottom"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_no_wrap_bottom">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_wrap_bottom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_no_wrap_bottom"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_no_wrap_bottom">[docs]</a>    <span class="k">def</span> <span class="nf">test_no_wrap_bottom</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check that a spin box doesn&#39;t wrap from bottom to top.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -249,7 +249,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">low</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">component</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_value</span><span class="p">(</span><span class="n">widget</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="TestSpinBox.test_text_display"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.spin_box.TestSpinBox.html#enaml.tests.components.spin_box.TestSpinBox.test_text_display">[docs]</a>    <span class="k">def</span> <span class="nf">test_text_display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestSpinBox.test_text_display"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.spin_box.TestSpinBox.test_text_display">[docs]</a>    <span class="k">def</span> <span class="nf">test_text_display</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Check the displayed text.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -342,7 +342,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

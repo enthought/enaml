@@ -85,11 +85,11 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestWindow"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.window.TestWindow.html#enaml.tests.components.window.TestWindow">[docs]</a><span class="k">class</span> <span class="nc">TestWindow</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestWindow"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.window.TestWindow">[docs]</a><span class="k">class</span> <span class="nc">TestWindow</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing Windows.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="TestWindow.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.window.TestWindow.html#enaml.tests.components.window.TestWindow.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestWindow.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.window.TestWindow.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up Window tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -104,13 +104,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;window&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestWindow.test_initial_title"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.window.TestWindow.html#enaml.tests.components.window.TestWindow.test_initial_title">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestWindow.test_initial_title"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.window.TestWindow.test_initial_title">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_title</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial title of a Window.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;title&#39;</span><span class="p">,</span> <span class="s">&#39;foo&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestWindow.test_title_changed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.window.TestWindow.html#enaml.tests.components.window.TestWindow.test_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestWindow.test_title_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.window.TestWindow.test_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the title of the Window.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -155,7 +155,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

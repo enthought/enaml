@@ -92,12 +92,12 @@
     <span class="k">return</span> <span class="n">closure</span>
 
 </div>
-<div class="viewcode-block" id="TestDialog"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog">[docs]</a><span class="k">class</span> <span class="nc">TestDialog</span><span class="p">(</span><span class="n">TestWindow</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog">[docs]</a><span class="k">class</span> <span class="nc">TestDialog</span><span class="p">(</span><span class="n">TestWindow</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing Dialogs.</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="TestDialog.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up Dialog tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -117,13 +117,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">event_log</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">on_trait_change</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_append_event_handler</span><span class="p">,</span> <span class="s">&#39;anytrait&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestDialog.test_initial_active"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.test_initial_active">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.test_initial_active"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.test_initial_active">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_active</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial value of the active flag on the Dialog.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">active</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
     </div>
-<div class="viewcode-block" id="TestDialog.test_result_value"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.test_result_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.test_result_value"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.test_result_value">[docs]</a>    <span class="k">def</span> <span class="nf">test_result_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the modification of the result value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -133,7 +133,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">reject</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">result</span><span class="p">,</span> <span class="s">&#39;rejected&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestDialog.test_show_close"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.dialog.TestDialog.html#enaml.tests.components.dialog.TestDialog.test_show_close">[docs]</a>    <span class="k">def</span> <span class="nf">test_show_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestDialog.test_show_close"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.dialog.TestDialog.test_show_close">[docs]</a>    <span class="k">def</span> <span class="nf">test_show_close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the behavior when showing and closing the dialog.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -216,7 +216,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

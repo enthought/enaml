@@ -111,6 +111,18 @@ are described in a file with the &#8221;.enaml&#8221; extension. While the code 
 similarities to Python, Enaml is a separate language.</p>
 <p>Here is our minimalist .enaml file describing a message-displaying GUI
 (<a class="reference download internal" href="../_downloads/hello_world_view.enaml"><tt class="xref download docutils literal"><span class="pre">download</span> <span class="pre">here</span></tt></a>):</p>
+<div class="highlight-python"><pre>#------------------------------------------------------------------------------
+#  Copyright (c) 2012, Enthought, Inc.
+#  All rights reserved.
+#------------------------------------------------------------------------------
+enamldef Main(MainWindow):
+    attr message = "Hello, world!"
+    Container:
+        Label:
+            text = message
+            
+</pre>
+</div>
 <p>Use the special helper function <tt class="docutils literal"><span class="pre">enaml-run</span></tt> to run it from the command line
 with</p>
 <div class="highlight-python"><pre>$ enaml-run hello_world_view.enaml</pre>
@@ -215,7 +227,7 @@ mainloop:</p>
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

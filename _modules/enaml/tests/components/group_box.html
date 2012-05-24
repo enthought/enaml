@@ -87,7 +87,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestGroupBox"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.group_box.TestGroupBox.html#enaml.tests.components.group_box.TestGroupBox">[docs]</a><span class="k">class</span> <span class="nc">TestGroupBox</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestGroupBox"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.group_box.TestGroupBox">[docs]</a><span class="k">class</span> <span class="nc">TestGroupBox</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing labels.</span>
 
 <span class="sd">    Tooklit testcases need to provide the following methods:</span>
@@ -109,7 +109,7 @@
 <span class="sd">    &lt;method&gt;(component, widget).</span>
 
 <span class="sd">    &quot;&quot;&quot;</span>
-<div class="viewcode-block" id="TestGroupBox.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.group_box.TestGroupBox.html#enaml.tests.components.group_box.TestGroupBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestGroupBox.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.group_box.TestGroupBox.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up label tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -136,7 +136,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;gb&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestGroupBox.test_initialization"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.group_box.TestGroupBox.html#enaml.tests.components.group_box.TestGroupBox.test_initialization">[docs]</a>    <span class="k">def</span> <span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestGroupBox.test_initialization"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.group_box.TestGroupBox.test_initialization">[docs]</a>    <span class="k">def</span> <span class="nf">test_initialization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test initialization</span>
 
 <span class="sd">        Test that the atrributes of the GroupBox have the</span>
@@ -151,7 +151,7 @@
 
     <span class="c"># This is an expected failure on Qt since the call later event</span>
     <span class="c"># do not get process without the event loop running.</span></div>
-<div class="viewcode-block" id="TestGroupBox.test_title_changed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.group_box.TestGroupBox.html#enaml.tests.components.group_box.TestGroupBox.test_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestGroupBox.test_title_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.group_box.TestGroupBox.test_title_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_title_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the title text of the GroupBox.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -161,7 +161,7 @@
 
     <span class="c"># This is an expected failure on Qt since the call later event</span>
     <span class="c"># do not get process without the event loop running.</span></div>
-<div class="viewcode-block" id="TestGroupBox.test_flat_style_changed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.group_box.TestGroupBox.html#enaml.tests.components.group_box.TestGroupBox.test_flat_style_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_flat_style_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestGroupBox.test_flat_style_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.group_box.TestGroupBox.test_flat_style_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_flat_style_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the flat style border of the GroupBox.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -169,7 +169,7 @@
         <span class="n">component</span><span class="o">.</span><span class="n">flat</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;flat&#39;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestGroupBox.test_title_align_changed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.group_box.TestGroupBox.html#enaml.tests.components.group_box.TestGroupBox.test_title_align_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_title_align_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestGroupBox.test_title_align_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.group_box.TestGroupBox.test_title_align_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_title_align_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the title alignment.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -181,7 +181,7 @@
         <span class="n">component</span><span class="o">.</span><span class="n">title_align</span> <span class="o">=</span> <span class="s">&#39;center&#39;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEnamlInSync</span><span class="p">(</span><span class="n">component</span><span class="p">,</span> <span class="s">&#39;title_align&#39;</span><span class="p">,</span> <span class="s">&#39;center&#39;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestGroupBox.test_invalid_alignment"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.group_box.TestGroupBox.html#enaml.tests.components.group_box.TestGroupBox.test_invalid_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">test_invalid_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestGroupBox.test_invalid_alignment"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.group_box.TestGroupBox.test_invalid_alignment">[docs]</a>    <span class="k">def</span> <span class="nf">test_invalid_alignment</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the title alignment to an invalid value.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -242,7 +242,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

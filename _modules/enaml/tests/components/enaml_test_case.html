@@ -91,7 +91,7 @@
 <span class="kn">from</span> <span class="nn">enaml.core.enaml_compiler</span> <span class="kn">import</span> <span class="n">EnamlCompiler</span>
 
 
-<div class="viewcode-block" id="required_method"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.components.enaml_test_case.required_method">[docs]</a><span class="k">def</span> <span class="nf">required_method</span><span class="p">(</span><span class="n">function_object</span><span class="p">):</span>
+<div class="viewcode-block" id="required_method"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.enaml_test_case.required_method">[docs]</a><span class="k">def</span> <span class="nf">required_method</span><span class="p">(</span><span class="n">function_object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Decorator for required methods.</span>
 
 <span class="sd">    The decorator wraps an *empty* method to raise an NotImplementedError</span>
@@ -106,7 +106,7 @@
     <span class="k">return</span> <span class="n">proxy_function</span>
 
 </div>
-<div class="viewcode-block" id="EnamlTestCase"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.components.enaml_test_case.EnamlTestCase">[docs]</a><span class="k">class</span> <span class="nc">EnamlTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlTestCase"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.enaml_test_case.EnamlTestCase">[docs]</a><span class="k">class</span> <span class="nc">EnamlTestCase</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Base class for testing Enaml object widgets.</span>
 
 <span class="sd">    This class provide utility methods and assertion functions to help</span>
@@ -116,7 +116,7 @@
     <span class="c"># default toolkit to use for the enaml source parsing</span>
     <span class="n">toolkit</span> <span class="o">=</span> <span class="n">default_toolkit</span><span class="p">()</span>
 
-<div class="viewcode-block" id="EnamlTestCase.component_by_name"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.components.enaml_test_case.EnamlTestCase.component_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlTestCase.component_by_name"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.enaml_test_case.EnamlTestCase.component_by_name">[docs]</a>    <span class="k">def</span> <span class="nf">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Find an item in the view with a given name. The component</span>
 <span class="sd">        should have the name set its &#39;name&#39; attribute.</span>
 
@@ -135,7 +135,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">component</span><span class="o">.</span><span class="n">find_by_name</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="EnamlTestCase.parse_and_create"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.components.enaml_test_case.EnamlTestCase.parse_and_create">[docs]</a>    <span class="k">def</span> <span class="nf">parse_and_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlTestCase.parse_and_create"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.enaml_test_case.EnamlTestCase.parse_and_create">[docs]</a>    <span class="k">def</span> <span class="nf">parse_and_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Parses and compiles the source. The source should have a</span>
 <span class="sd">        component defined with the name &#39;MainView&#39;. </span>
 
@@ -165,7 +165,7 @@
         <span class="n">cmpnt</span><span class="o">.</span><span class="n">setup</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">cmpnt</span>
 </div>
-<div class="viewcode-block" id="EnamlTestCase.assertEnamlInSync"><a class="viewcode-back" href="../../../../developer_guide/tests/components.html#enaml.tests.components.enaml_test_case.EnamlTestCase.assertEnamlInSync">[docs]</a>    <span class="k">def</span> <span class="nf">assertEnamlInSync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+<div class="viewcode-block" id="EnamlTestCase.assertEnamlInSync"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.enaml_test_case.EnamlTestCase.assertEnamlInSync">[docs]</a>    <span class="k">def</span> <span class="nf">assertEnamlInSync</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">component</span><span class="p">,</span> <span class="n">attribute_name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Verify that the requested attribute is properly set</span>
 
 <span class="sd">        The method compares the attribute value in the Enaml object and</span>
@@ -237,7 +237,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

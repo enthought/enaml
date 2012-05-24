@@ -85,7 +85,7 @@
 <span class="kn">from</span> <span class="nn">.enaml_test_case</span> <span class="kn">import</span> <span class="n">EnamlTestCase</span><span class="p">,</span> <span class="n">required_method</span>
 
 
-<div class="viewcode-block" id="TestHtml"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.html.TestHtml.html#enaml.tests.components.html.TestHtml">[docs]</a><span class="k">class</span> <span class="nc">TestHtml</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="TestHtml"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.html.TestHtml">[docs]</a><span class="k">class</span> <span class="nc">TestHtml</span><span class="p">(</span><span class="n">EnamlTestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot; Logic for testing Html widgets.</span>
 
 <span class="sd">    The toolkits return HTML as plain text, so we do not compare formatting.</span>
@@ -99,7 +99,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">text</span> <span class="o">=</span> <span class="s">&#39;That is a bold claim.&#39;</span>
 
-<div class="viewcode-block" id="TestHtml.setUp"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.html.TestHtml.html#enaml.tests.components.html.TestHtml.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestHtml.setUp"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.html.TestHtml.setUp">[docs]</a>    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Set up before the Html tests.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -114,14 +114,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">component</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component_by_name</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="p">,</span> <span class="s">&#39;html&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">widget</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">component</span><span class="o">.</span><span class="n">toolkit_widget</span>
 </div>
-<div class="viewcode-block" id="TestHtml.test_initial_source"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.html.TestHtml.html#enaml.tests.components.html.TestHtml.test_initial_source">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestHtml.test_initial_source"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.html.TestHtml.test_initial_source">[docs]</a>    <span class="k">def</span> <span class="nf">test_initial_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Test the initial source of an Html widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">widget_source</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_source</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">widget</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">widget_source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="TestHtml.test_source_changed"><a class="viewcode-back" href="../../../../developer_guide/tests/widgets/enaml.tests.components.html.TestHtml.html#enaml.tests.components.html.TestHtml.test_source_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_source_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="TestHtml.test_source_changed"><a class="viewcode-back" href="../../../../api_ref/enaml.tests.components.html#enaml.tests.components.html.TestHtml.test_source_changed">[docs]</a>    <span class="k">def</span> <span class="nf">test_source_changed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Change the source of an Html widget.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -169,7 +169,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>

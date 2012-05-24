@@ -14,7 +14,7 @@ similarities to Python, |Enaml| is a separate language.
 Here is our minimalist .enaml file describing a message-displaying GUI
 (:download:`download here <../../../examples/hello_world/hello_world_view.enaml>`):
 
-.. literalinclude:: ../../../examples/hello_world/hello_world_minimal.enaml
+.. literalinclude:: ../../../examples/hello_world/hello_world_view.enaml
     :language: python
 
 Use the special helper function ``enaml-run`` to run it from the command line
@@ -42,7 +42,7 @@ component, ``Main``, which derives from ``MainWindow``, a component in the
 
 With the this line of code, we have defined the start of a *definition
 block*.
- 
+
 In general, we could call this almost anything we want, as long as it is a
 Python-valid name. In this case, however, by giving it the special name "Main"
 we get to run it from the command line with the special ``enaml-run``

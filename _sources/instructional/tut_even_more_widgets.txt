@@ -1,4 +1,4 @@
-.. _tutorial_more_widgets:
+.. _tutorial_even_more_widgets:
 
 More on |Enaml| Widgets
 ===============================================================================
@@ -29,13 +29,13 @@ and one for an employer (abbreviated here for succinctness)::
             text = "First name:"
         Field:
             value := employee.first_name
-            
+
         # ... etc
-        
+
         ToggleButton:
             checked := show_employer
             text << ('Hide' if show_employer else 'Show') + ' Employer Details'
-    
+
     enamldef EmployerForm(Form):
         attr employer
         Label:
@@ -43,7 +43,7 @@ and one for an employer (abbreviated here for succinctness)::
         Field:
             value << employer.company_name
             enabled << en_cb.checked
-        # ... etc    
+        # ... etc
 
 This sort of |Enaml| code should be fairly familiar to you at this point
 (although there are some new things which we will highlight later).
@@ -58,8 +58,8 @@ Having defined the two forms, there is a third definition in the .enaml file::
     enamldef EmployeeView(MainWindow):
         id: main
         attr employee
-    
-        title << "Employee Record for: %s, %s" % (employee.last_name, 
+
+        title << "Employee Record for: %s, %s" % (employee.last_name,
                                                 employee.first_name)
         Container:
             constraints << [
@@ -74,8 +74,8 @@ Having defined the two forms, there is a third definition in the .enaml file::
                 EmployeeForm:
                     id: top_form
                     # We access the employee object through the identifier
-                    # 'main' here, because the EmployeeForm also has an 
-                    # 'employee' attribute declared, and that would be 
+                    # 'main' here, because the EmployeeForm also has an
+                    # 'employee' attribute declared, and that would be
                     # found first.
                     employee = main.employee
             GroupBox:

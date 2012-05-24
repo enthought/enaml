@@ -101,9 +101,8 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../api_ref/enaml.html#enaml.runner.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">usage</span> <span class="o">=</span> <span class="s">&#39;usage: %prog [options] enaml_file [script arguments]&#39;</span>
+    <span class="n">usage</span> <span class="o">=</span> <span class="s">&#39;usage: %prog [options] enaml_file&#39;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="n">usage</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="n">__doc__</span><span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">allow_interspersed_args</span> <span class="o">=</span> <span class="bp">False</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-c&#39;</span><span class="p">,</span> <span class="s">&#39;--component&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;Main&#39;</span><span class="p">,</span>
                       <span class="n">help</span><span class="o">=</span><span class="s">&#39;The component to view&#39;</span><span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;-t&#39;</span><span class="p">,</span> <span class="s">&#39;--toolkit&#39;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s">&#39;default&#39;</span><span class="p">,</span>
@@ -115,9 +114,11 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="k">print</span> <span class="s">&#39;No .enaml file specified&#39;</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&#39;Too many files specified&#39;</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">enaml_file</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">script_argv</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">enaml_file</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
         <span class="n">enaml_code</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
@@ -135,8 +136,6 @@
     <span class="c"># Put the directory of the Enaml file first in the path so relative imports</span>
     <span class="c"># can work.</span>
     <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">enaml_file</span><span class="p">)))</span>
-    <span class="c"># Bung in the command line arguments.</span>
-    <span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="n">enaml_file</span><span class="p">]</span> <span class="o">+</span> <span class="n">script_argv</span>
     <span class="k">with</span> <span class="n">imports</span><span class="p">():</span>
         <span class="k">exec</span> <span class="n">code</span> <span class="ow">in</span> <span class="n">ns</span>
 
@@ -184,7 +183,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2012, Enthought, Inc..
-      Last updated on May 23, 2012.
+      Last updated on May 24, 2012.
       Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
