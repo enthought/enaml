@@ -29,8 +29,10 @@ The goals of the |Enaml| project are to:
 Prerequisites
 ^^^^^^^^^^^^^
 
-Enaml is developed using `Python <http://python.org/>`_ 2.7 and requires
-recent (2012-current) versions of the following libraries:
+Enaml is developed using `Python <http://python.org/>`_ 2.7 and requires recent
+(2012-current) versions of the following libraries, available in the `Enthought
+Python Distribution <http://enthought.com/products/getepd.php>`_ or at the
+links below:
 
 *Required*:
 
@@ -44,20 +46,23 @@ recent (2012-current) versions of the following libraries:
     library (Windows only)
 - `PLY <http://www.dabeaz.com/ply/>`_ (Python Lex-Yacc),
   for parsing *.enaml* files
-- `casuarius <https://github.enthought.com/casuarius>`_ linear constraint
+- `casuarius <https://github.com/enthought/casuarius>`_ linear constraint
   solver.
 - `distribute <http://pypi.python.org/pypi/distribute>`_ (package
   installation)
 
-*Optional*:
+*Optional for compiling the documentation*:
 
-- `Graphviz <http://www.graphviz.org/>`_ (used for documentation)
+- `Sphinx <http://sphinx.pocoo.org/>`_
+- `Graphviz <http://www.graphviz.org/>`_ 
 
 
 Installation
 ^^^^^^^^^^^^
 
-To install the package please check out `the source from github
+|Enaml| can be installed as part of the `Enthought Python Distribution
+<http://enthought.com/products/getepd.php>`_; or, to install the package from
+the source code check out `the github repository
 <https://github.com/enthought/enaml>`_
 
 Then install with::
