@@ -5,6 +5,8 @@
 *.so
 *.DS_Store
 *.enamlc
+*.c
+*.tmLanguage
 /build
 /dist
 /docs/build
