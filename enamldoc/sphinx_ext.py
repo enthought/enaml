@@ -23,8 +23,6 @@ from sphinx.ext.autodoc import ModuleDocumenter
 
 from enaml_domain import EnamlDomain
 
-from enthought.debug.api import called_from
-
 from enaml.core.import_hooks import EnamlImporter
 EnamlImporter.install()
 
