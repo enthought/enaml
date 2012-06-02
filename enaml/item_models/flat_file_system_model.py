@@ -111,7 +111,7 @@ class FlatFileSystemModel(AbstractListModel):
         return self._contents[index.row].rel_path
 
     def alignment(self, index):
-        """ Returns the alignment for te given row. By default, items
+        """ Returns the alignment for the given row. By default, items
         align to the left and vertically centered.
 
         """
