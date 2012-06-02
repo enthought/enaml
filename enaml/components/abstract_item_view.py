@@ -4,14 +4,15 @@
 #------------------------------------------------------------------------------
 from abc import abstractmethod
 
-from traits.api import Instance, Property, cached_property
+from traits.api import Instance, Property, Enum, cached_property
 
 from .base_selection_model import BaseSelectionModel
 from .control import Control, AbstractTkControl
 
-from ..core.trait_types import EnamlEvent
+from ..core.trait_types import EnamlEvent, CoercingInstance
 from ..item_models.abstract_item_model import AbstractItemModel
 from ..item_models.model_index import ModelIndex
+from ..layout.geometry import Size
 
 
 class AbstractTkItemView(AbstractTkControl):
@@ -26,6 +27,30 @@ class AbstractTkItemView(AbstractTkControl):
         """
         raise NotImplementedError
 
+    @abstractmethod
+    def shell_icon_size_changed(self, size):
+        """ The change handle for the 'icon_size' attribute on the 
+        shell object.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_horizontal_scroll_mode_changed(self, mode):
+        """ The change handler for the 'horizontal_scroll_mode' attribute
+        on the shell object.
+
+        """
+        raise NotImplementedError
+
+    @abstractmethod
+    def shell_vertical_scroll_mode_changed(self, mode):
+        """ The change handler for the 'vertical_scroll_mode' attribute
+        on the shell object.
+
+        """
+        raise NotImplementedError
+
 
 # XXX rename this to ItemView
 class AbstractItemView(Control):
@@ -35,6 +60,15 @@ class AbstractItemView(Control):
     """
     #: The AbstractItemModel instance being displayed by the view.
     item_model = Instance(AbstractItemModel)
+
+    #: The size of the icons in the item view.
+    icon_size = CoercingInstance(Size, (-1, -1))
+
+    #: Whether the view scrolls vertically by item or by pixel.
+    horizontal_scroll_mode = Enum('item', 'pixel')
+
+    #: Whether the view scrolls vertically by item or by pixel.
+    vertical_scroll_mode = Enum('item', 'pixel')
 
     #: The selection model for this view. If more than one selection
     #: model is declared and exception will be raised.
