@@ -81,7 +81,7 @@ class AbstractTkImage(object):
         raise NotImplementedError
 
     @abstractmethod
-    def scale(self, size):
+    def scale(self, size, preserve_aspect_ratio=False):
         """ Create a new version of this image scaled to the given size.
         
         Parameters
@@ -93,6 +93,10 @@ class AbstractTkImage(object):
         -------
         results : AbstractTkImage
             A new image of the proper scaled size.
+        
+        preserve_aspect_ratio : bool, optional
+            Whether to preserve the original aspect ratio of the image
+            when scaling to the new size.
             
         """
         raise NotImplementedError
