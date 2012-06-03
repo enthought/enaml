@@ -149,5 +149,6 @@ QT_CONSTRUCTORS = dict((
     constructor('action'),
     ('Canvas', canvas_ctor),
     constructor('dock_pane'),
+    constructor('thumbnail_view'),
 ))
 
