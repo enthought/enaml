@@ -39,7 +39,7 @@ class ThumbnailModel(AbstractListModel):
     thumbnails.
 
     """
-    def __init__(self, thumbs=None, thumb_size=(128, 128), text_height=24):
+    def __init__(self, thumbs=None):
         """ Initialize a ThumbnailModel
 
         Parameters
@@ -47,19 +47,8 @@ class ThumbnailModel(AbstractListModel):
         thumbs : list, optional
             An initial list of Thumbnail objects to be used by the model.
 
-        thumb_size : 2-tuple of ints, optional
-            The (width, height) size to use when rendering the thumbnail
-            images. The default is (128, 128).
-
-        text_height : int, optional
-            The amount of additional height to add to an item to account
-            for the text under a thumbnail. Defaults to 24.
-
         """
         self._thumbs = thumbs[:] if thumbs is not None else []
-        self._thumb_size = thumb_size
-        self._text_height = text_height
-        self._size_hint = (thumb_size[0], thumb_size[1] + text_height)
         self._toolkit = Toolkit.active_toolkit()
         self._icon_cls = self._toolkit['Icon']
 
@@ -95,13 +84,6 @@ class ThumbnailModel(AbstractListModel):
         """
         image = self._thumbs[index.row].image
         return self._icon_cls.from_image(image)
-
-    def size_hint(self):
-        """ Returns the size hint as the current icon size plus 25 extra
-        pixels in height to account for the text under the thumbnail.
-
-        """
-        return self._size_hint
 
     #--------------------------------------------------------------------------
     # Private API
@@ -161,43 +143,6 @@ class ThumbnailModel(AbstractListModel):
         self.begin_reset_model()
         self._thumbs = thumbs[:]
         self.end_reset_model()
-
-    #--------------------------------------------------------------------------
-    # Public Properties
-    #--------------------------------------------------------------------------
-    def _get_thumb_size(self):
-        """ Returns the thumbnail size in use by the model.
-
-        """
-        return self._thumb_size
-
-    @_refresh_data
-    def _set_thumb_size(self, size):
-        """ Set the thumbnail size in use by the model and trigger an
-        appropriate refresh.
-
-        """
-        self._thumb_size = size
-        self._size_hint = (size[0], size[1] + self._text_height)
-
-    thumb_size = property(_get_thumb_size, _set_thumb_size)
-
-    def _get_text_height(self):
-        """ Returns the text height padding in use by the model.
-
-        """
-        return self._text_height
-
-    @_refresh_data
-    def _set_text_height(self, height):
-        """ Set the text height padding to use in the model and trigger
-        an appropriate refresh.
-
-        """
-        self._text_height = height
-        self._size_hint = (self._size_hint[0], self._size_hint[1] + height)
-
-    text_height = property(_get_text_height, _set_text_height)
 
     #--------------------------------------------------------------------------
     # Public Methods
