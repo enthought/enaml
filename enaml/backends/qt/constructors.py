@@ -150,5 +150,6 @@ QT_CONSTRUCTORS = dict((
     ('Canvas', canvas_ctor),
     constructor('dock_pane'),
     constructor('thumbnail_view'),
+    constructor('tool_bar'),
 ))
 
