@@ -233,6 +233,12 @@ class ThumbnailModel(AbstractListModel):
         """
         self._toolkit.app.call_on_main(self._remove, idx, count)
 
+    def thumbnail(self, index):
+        """ Returns the thumbnail for the given model index.
+
+        """
+        return self._thumbs[index.row]
+        
     def thumbnails(self):
         """ Returns the thumbnails in the model.
 

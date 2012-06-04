@@ -137,6 +137,10 @@ enamldef ThumbnailFSViewer(ThumbnailView):
     # process of thumbnails from the specified directory
     event load_thumbs
 
+    # An event which will be fired when a thumbnail is selected 
+    # with a single left click of the mouse.
+    event thumbnail_selected
+
     # The directory from which to load the thumbnails
     attr directory: str = '.'
 
@@ -165,6 +169,10 @@ enamldef ThumbnailFSViewer(ThumbnailView):
     # is appropriate.
     attr thumb_loader: ThumbnailFSLoader = ThumbnailFSLoader(max_thumb_size)
 
+    # A attribute used to indicate that the current thumbnails are
+    # dirty an should be reloaded on the next load_thumbs event.
+    attr dirty: bool = True
+
     # By default, thumbnails are displayed as a single column. But the
     # user is free to excercise any of the layout options of the normal
     # ThumbnailView.
@@ -174,13 +182,26 @@ enamldef ThumbnailFSViewer(ThumbnailView):
     # populated on demand by the thumbnail loader.
     item_model = ThumbnailModel()
 
+    # Flip the dirty flag when the directory changes.
+    directory :: self.dirty = True
+
     # Handle the load_thumbs event by clearing the current model of
     # its thumbnails and calling the loader to populate the model.
     # Since the loader maintains a cache. Loading the same directory
-    # more than once should be efficient.
-    load_thumbs :: 
-        item_model.clear()
-        thumb_loader.load_thumbs(
-            item_model, directory, pattern, recursive_load,
-        )
+    # more than once should be efficient. The thumbs are only loaded
+    # if the dirty flag is set to True. So if you wish to hard reload
+    # the same directory. The dirty flag must be manually set to True.
+    load_thumbs ::
+        if dirty:
+            item_model.clear()
+            thumb_loader.load_thumbs(
+                item_model, directory, pattern, recursive_load,
+            )
+            self.dirty = False
+
+    # Fire off the thumbnail selected event when the mouse is clicked.
+    clicked ::
+        index = event.new
+        thumb = item_model.thumbnail(index)
+        thumbnail_selected(thumb)
 
