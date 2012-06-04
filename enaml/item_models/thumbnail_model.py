@@ -144,6 +144,14 @@ class ThumbnailModel(AbstractListModel):
         self._thumbs = thumbs[:]
         self.end_reset_model()
 
+    def _clear(self):
+        """ Clears the internal list of thumbnails and resets the model.
+
+        """
+        self.begin_reset_model()
+        self._thumbs = []
+        self.end_reset_model()
+        
     #--------------------------------------------------------------------------
     # Public Methods
     #--------------------------------------------------------------------------
@@ -259,4 +267,11 @@ class ThumbnailModel(AbstractListModel):
 
         """
         self._toolkit.app.call_on_main(self._set_thumbnails, thumbs)
+
+    def clear(self):
+        """ Clear the model of all thumbnails and trigger the 
+        appropriate refresh.
+
+        """
+        self._toolkit.app.call_on_main(self._clear)
 
