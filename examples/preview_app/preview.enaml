@@ -59,6 +59,7 @@ enamldef PreviewToolBar(ToolBar):
         visible << view_config.show_thumbnails
         minimum = 16
         maximum = 256
+        tick_position = 'no_ticks'
         value := view_config.thumb_size
         initialized ::
             import sys
