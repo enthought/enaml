@@ -149,7 +149,7 @@ enamldef ThumbnailFSViewer(ThumbnailView):
     attr recursive_load: bool = False
 
     # A regex pattern to use when matching filenames for images.
-    attr pattern: str = r'.*?\.(jpeg|jpg|png)$'
+    attr file_pattern: str = r'.*?\.(jpeg|jpg|png)$'
 
     # The maximum expected size the thumbnails will be. This controls
     # how images will be scaled when loaded by the thumbnail loader.
@@ -195,7 +195,7 @@ enamldef ThumbnailFSViewer(ThumbnailView):
         if dirty:
             item_model.clear()
             thumb_loader.load_thumbs(
-                item_model, directory, pattern, recursive_load,
+                item_model, directory, file_pattern, recursive_load,
             )
             self.dirty = False
 
