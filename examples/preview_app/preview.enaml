@@ -2,137 +2,108 @@
 #  Copyright (c) 2012, Enthought, Inc.
 #  All rights reserved.
 #------------------------------------------------------------------------------
-from traits.api import HasTraits, Bool, Range, Event
 import os
 
 from enaml.stdlib.flat_file_system_view import FlatFileSystemView
 from enaml.stdlib.stacked import Stacked
 from enaml.stdlib.thumbnail_fs_viewer import ThumbnailFSViewer
 
-
-class ViewConfig(HasTraits):
-    """ A simple state object to share amongst the various ui 
-    widgets. This is not strictly required, but makes the code
-    more unified.
-
-    """
-    #: The size of the thumbnails in the ui.
-    thumb_size = Range(16, 256, value=150)
-
-    #: Whether or not to show the thumbnail view.
-    show_thumbnails = Bool(False)
-
-
-enamldef PreviewThumbnailViewer(ThumbnailFSViewer):
-    """ A custom thumbnail fs viewer which can change its layout from
-    single column to multi column based on the value of a flag and 
-    setup for use in the PreviewBrowserPane.
-
-    """
-    attr multi_column: bool = False
-    flow << 'left_to_right' if multi_column else 'top_to_bottom'
-    wrapping << True if multi_column else False
-    recursive_load = True
-    icon_size << (view_config.thumb_size, view_config.thumb_size)
-    bgcolor << browse_bgcolor
-    show_focus_rect = False
-    thumbnail_selected ::
-        thumb = event.new
-        nonlocals.selected_image_path = thumb.metadata['path']
-
-
-enamldef PreviewToolBar(ToolBar):
-    """ A toolbar configured for use by the preview app.
-
-    """
-    Action:
-        text = 'Browse'
-        checkable = True
-        checked << not view_config.show_thumbnails
-        toggled :: view_config.show_thumbnails = not checked
-    Action:
-        text = 'Thumbnails'
-        checkable = True
-        checked << view_config.show_thumbnails
-        toggled :: view_config.show_thumbnails = checked 
-    Slider:
-        visible << view_config.show_thumbnails
-        minimum = 16
-        maximum = 256
-        tick_position = 'no_ticks'
-        value := view_config.thumb_size
-        initialized ::
-            import sys
-            if sys.platform == 'darwin':
-                from enaml.backends.qt.qt.QtCore import Qt
-                toolkit_widget.setAttribute(Qt.WA_MacMiniSize, True)
+from preview_config import ViewConfig
 
 
 enamldef ImageBrowserPane(DockPane):
-    """ A dock pane for browsing for jpg and png image files. The 
-    selected image path is exported as the 'image_path' attribute.
+    """ The dock pane browser for the Enaml preview app.
 
+    This dock pane contains a Stacked widget which holds a flat 
+    filestystem browser and a thumbnail viewer widget. Choosing
+    between the widgets is accomplished by toggling between buttons
+    on a toolbar at the bottom of the pane.
+
+    When selecting images in either the file browser or the thumbnail
+    browser, the path of the selected image is exported via the 
+    'selected_image_path' attribute. At some point in the future
+    we may wish to push the selected image path onto a model stack
+    so that information can be used in other places. For now, this
+    is sufficient. 
+
+    The thumbnail viewer reloads its thumbnails whenever it becomes
+    visible. Its directory is updated when the user navigates the
+    filesystem widget.
+    
     """
     id: browse_pane
 
     # The view config object which must be supplied by the main window.
-    attr view_config
+    attr view_config: ViewConfig
 
     # Child widgets image selector widgets should upate this path
     # with their image path as the selection changes.
     attr selected_image_path: str = ''
 
-    # Child widgets should use this file pattern when determining
-    # which image files should be show in the widget.
-    attr image_file_pattern = r'.*?(jpeg|jpg|png)$'
-
-    # Child widgets should use this color as their background color
-    # in oder to be standardized.
-    attr browse_bgcolor = (235, 239, 246)
-
     closable = False
-    dock_area = 'left'
+    dock_area := view_config.dock_area
+    floating := view_config.floating_dock
     title << 'Browse For Images' if stacked.index == 0 else 'Select Image'
 
     Container:
         padding = 0
-        constraints = [vbox(stacked, tbar, spacing=0)]
+        constraints = [vbox(stacked, tbar, spacing=0)] 
         Stacked:
             id: stacked
             padding = 0
-            index << int(view_config.show_thumbnails)
-            index ::
-                if index == 1:
+            index << {'textual': 0, 'thumbnails': 1}[view_config.visible_browser_widget]
+            index :: 
+                if index == 1: 
                     tnviewer.load_thumbs()
             FlatFileSystemView:
                 select_file_on_single_click = True
-                file_pattern << image_file_pattern
-                bgcolor << browse_bgcolor
+                file_pattern << view_config.image_file_pattern
+                bgcolor << view_config.browser_bgcolor
                 selected_file >> selected_image_path
                 directory >> tnviewer.directory
                 show_focus_rect = False
                 hug_width = 'ignore'
-            PreviewThumbnailViewer:
+            ThumbnailFSViewer:
                 id: tnviewer
-                multi_column << (
-                    dock_area == 'top' or 
-                    dock_area == 'bottom' or 
-                    browse_pane.floating
-                )
-        PreviewToolBar:
+                recursive_load << view_config.recursive_load
+                flow << 'top_to_bottom' if (view_config.thumb_layout == 'vertical') else 'left_to_right'
+                wrapping << view_config.thumb_layout == 'grid'
+                icon_size << (view_config.thumb_size, view_config.thumb_size)
+                bgcolor << view_config.browser_bgcolor
+                file_pattern << view_config.image_file_pattern
+                show_focus_rect = False
+                thumbnail_selected ::
+                    thumb = event.new
+                    nonlocals.selected_image_path = thumb.metadata['path']
+        ToolBar:
             id: tbar
-
-
-enamldef CentralImagePreview(ImageView):
-    """ A custom image view setup appropriately for the preview app.
-    The main window need only supply the 'image' attribute.
-
-    """
-    constraints = [width >= 200, height >= 200]
-    bgcolor = (146, 146, 146)
-    allow_upscaling = False
-    hug = ('ignore', 'ignore')
-    resist_clip = ('ignore', 'ignore')
+            Action:
+                text = 'Browse'
+                checkable = True
+                checked << view_config.visible_browser_widget == 'textual'
+                toggled :: 
+                    if checked:
+                        view_config.visible_browser_widget = 'textual'
+            Action:
+                text = 'Thumbnails'
+                checkable = True
+                checked << view_config.visible_browser_widget == 'thumbnails'
+                toggled :: 
+                    if checked:
+                        view_config.visible_browser_widget = 'thumbnails' 
+            Slider:
+                visible << view_config.visible_browser_widget == 'thumbnails'
+                minimum << view_config.min_thumb_size
+                maximum << view_config.max_thumb_size
+                value := view_config.thumb_size
+                tick_position = 'no_ticks'
+                initialized ::
+                    # Add a little bit of platform specific customization 
+                    # so things look cleaner on OSX.
+                    import sys
+                    if sys.platform == 'darwin':
+                        from enaml.backends.qt.qt.QtCore import Qt
+                        toolkit_widget.setAttribute(Qt.WA_MacMiniSize, True)
 
 
 enamldef PreviewMain(MainWindow):
@@ -140,17 +111,27 @@ enamldef PreviewMain(MainWindow):
     functionality in the vein of the OSX preview application.
 
     """
-    attr view_config = ViewConfig()
+    # A ViewConfig instance which must be supplied by the consumer of 
+    # the main application window.
+    attr view_config: ViewConfig
+
+    # The main browser widget pane, which must be supplied with the
+    # view configuration object as given to the main window. Since
+    # dock panes are not technically children in the MainWindow
+    # heierarchy, they are unable to dynamically scope the attributes
+    # of the main window.
     attr browser_pane = ImageBrowserPane(view_config=view_config)
+
     dock_manager = DockManager(browser_pane)
     title << os.path.split(browser_pane.selected_image_path)[-1]
+
     Container:
         padding = 0
-        CentralImagePreview:
+        ImageView:
+            constraints = [width >= 200, height >= 200]
+            bgcolor << view_config.viewer_bgcolor
+            allow_upscaling = False
+            hug = ('ignore', 'ignore')
+            resist_clip = ('ignore', 'ignore')
             image << Image.from_file(browser_pane.selected_image_path)
-
-
-def main():
-    app = PreviewMain()
-    app.show()
 
