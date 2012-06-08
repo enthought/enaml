@@ -220,6 +220,9 @@ button = QtPushButton(None, tk)
 task = CallTask(lambda res: None, button.create, None)
 app.post_to_ui(task)
 
+task = CallTask(lambda res: None, button.bind)
+app.post_to_ui(task)
+
 task = CallTask(lambda res: None, button.show)
 app.post_to_ui(task)
 
