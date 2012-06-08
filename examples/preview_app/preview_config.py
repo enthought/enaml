@@ -31,6 +31,9 @@ class ViewConfig(HasTraits):
     #: The regex pattern to use when searching for images.
     image_file_pattern = Property(Str, depends_on='search_image_exts')
 
+    #: The directory currently being searched.
+    search_dir = Str('.')
+    
     #: The minimum allowed thumbnail size.
     min_thumb_size = Int(16)
 

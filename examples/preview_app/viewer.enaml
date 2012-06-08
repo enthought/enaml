@@ -60,12 +60,13 @@ enamldef ImageBrowserPane(DockPane):
                 file_pattern << view_config.image_file_pattern
                 bgcolor << view_config.browser_bgcolor
                 selected_file >> selected_image_path
-                directory >> tnviewer.directory
+                directory := view_config.search_dir
                 show_focus_rect = False
                 hug_width = 'ignore'
             ThumbnailFSViewer:
                 id: tnviewer
                 recursive_load << view_config.recursive_load
+                directory << view_config.search_dir
                 flow << 'top_to_bottom' if (view_config.thumb_layout == 'vertical') else 'left_to_right'
                 wrapping << view_config.thumb_layout == 'grid'
                 icon_size << (view_config.thumb_size, view_config.thumb_size)
