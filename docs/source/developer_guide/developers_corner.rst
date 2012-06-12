@@ -49,7 +49,7 @@ Sphinx Directives and Roles
 
 .. rst:directive:: enaml:enaml_defn
 
-    For |Enaml| **defn** statements. Arguments display as with functions.
+    For |Enaml| **enamldef** statements. Arguments display as with functions.
 
 .. rst:directive:: autoenaml_defn:: import.hierarchy.enaml_defn
 
@@ -61,10 +61,10 @@ Sphinx Directives and Roles
     automodule works for |Enaml| files as it does for python modules. No
     special syntax is necessary.
 
-.. rst:role:: enaml_comp
+.. #rst:role:: enaml_comp
 
-    Use the :rst:role:`enaml_comp` role to create a cross-reference to a
-    previously described ``enaml_decl`` or ``enaml_defn``
+..    Use the :rst:role:`enaml_comp` role to create a cross-reference to a
+..    previously described ``enaml_decl`` or ``enaml_defn``
 
 Including the Sphinx extension ``refactor_doc`` allows use of formatted
 docstrings as described below.

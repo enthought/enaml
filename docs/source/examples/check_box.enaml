@@ -1,4 +1,4 @@
-defn MainWindow:
+enamldef MainWindow:
     Window:
         title = "CheckBox example"
         constraints = [vertical(top, check1, check2, bottom),

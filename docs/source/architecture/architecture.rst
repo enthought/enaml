@@ -508,7 +508,7 @@ and override the operators in just that instance::
 Or for even more fine grained control (and are accepting or horrible, horrible
 hacks) then you can pass in an operator as a local variable to an EnamlDefinition::
 
-    defn MainWindow(my_model, __operator_LessLessLess__):
+    enamldef MainWindow(my_model, __operator_LessLessLess__):
         Window:
             PushButton:
                 # The <<< operator is resolved to the 2nd argument 

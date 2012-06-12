@@ -17,8 +17,7 @@ or even hook the runtime to apply their own expression dependency behavior.
 Indeed, about the only thing not hookable is the Enaml langauge syntax
 itself.
 
-The enamldoc package provides a Sphinx extension for documenting Enaml object
-types "enaml_decl" and "enaml_defn".
+The enamldoc package provides a Sphinx extension for documenting Enaml objects.
 
 Prerequisites
 -------------
